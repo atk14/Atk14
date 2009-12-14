@@ -1,5 +1,7 @@
 <?
 /**
+* Zkopirovano z ATK14 a upraveno pro potreby GR.
+* 
 * Vygeneruje strankovac vysledku.
 * Ocekava se, ze se posunuje parametrem from (mozno predefinovat).
 *	
@@ -28,8 +30,14 @@ function smarty_function_paginator($params,&$smarty){
 
 	$out = array();
 
-	if($total_amount<=$max_amount){ return ""; }
-
+	if($total_amount<=$max_amount){
+		if($total_amount>4){
+			$out[] = "<ul id=\"paginator\">";
+			$out[] = "<li class=\"no-link first-child last-child\">".sprintf(_("%s položek celkem"),$total_amount)."</li>";
+			$out[] = "</ul>";
+		}
+		return join("\n",$out);
+	}
 
 	$out[] = "<ul id=\"paginator\">";
 
@@ -68,10 +76,12 @@ function smarty_function_paginator($params,&$smarty){
 	if(($from+$max_amount)<$total_amount){
 		$par["$from_name"] = $from + $max_amount;
 		$url = Atk14Utils::BuildLink($par,$smarty,array("connector" => "&amp;"));
-		$out[] = "<li class=\"last-child\"><a href=\"$url\">"._("další")." &raquo;</a></li>";
+		$out[] = "<li><a href=\"$url\">"._("další")." &raquo;</a></li>";
 	}else{
-		$out[] = "<li class=\"no-link last-child\">"._("další")." &raquo;</li>";
+		$out[] = "<li class=\"no-link\">"._("další")." &raquo;</li>";
 	}
+
+	$out[] = "<li class=\"no-link last-child\">".sprintf(_("%s položek celkem"),$total_amount)."</li>";
 
 	$out[] = "</ul>";
 
