@@ -114,6 +114,54 @@ class inobj_TableRecord_Base extends inobj{
 		return $this;
 	}
 
+	function Finder($options){
+		// staticke volani bude obsahovat option class_name
+		if(isset($options["class_name"])){
+			$class_name = $options["class_name"];
+			unset($options["class_name"]);
+
+			$obj = new $class_name();
+			return $obj->Finder($options);
+		}
+
+		$options = array_merge(array(
+			"order" => $this->_IdFieldName,
+			"conditions" => array(),
+			"bind_ar" => array(),
+			"limit" => null,
+			"offset" => null,
+		),$options);
+
+		$conditions = $options["conditions"];
+		if(is_string($conditions) && strlen($conditions)==0){ $conditions = array(); }
+		if(is_string($conditions)){ $conditions = array($conditions); }
+		$bind_ar = $options["bind_ar"];
+
+		$query = $this->_dbmole->escapeTableName4Sql($this->_TableName);
+		if(sizeof($conditions)>0){
+			$query .= " WHERE (".join(") AND (",$conditions).")";
+		}
+
+		$query_count = "SELECT COUNT(*) FROM ".$query;
+
+		$query = "SELECT $this->_IdFieldName FROM $query ORDER BY $options[order]";
+
+		unset($options["order"]);
+		unset($options["bind_ar"]);
+		unset($options["conditions"]);
+
+		$finder = new inobj_TableRecord_Finder(array(
+			"class_name" => get_class($this),
+			"query" => $query,
+			"query_count" => $query_count,
+			"options" => $options,
+			"bind_ar" => $bind_ar,
+		),$this->_dbmole);
+		$finder->_dbmole = &$this->_dbmole;
+		
+		return $finder;				
+	}
+
 	/**
 	* // staticke volani
 	* $articles = inobj_TableRecord::FindAll(array(
@@ -130,6 +178,8 @@ class inobj_TableRecord_Base extends inobj{
 	*		"conditions" => "author_id=:author_id",
 	*		"bind_ar" => array(":author_id" => 123)
 	*	));
+	*
+	* TODO: obsah metody predelat jako implementaci volani inobj_TableRecord::Finder()
 	*/
 	function FindAll($options = array()){
 		// staticke volani bude obsahovat option class_name
@@ -154,7 +204,7 @@ class inobj_TableRecord_Base extends inobj{
 
 		$query = "SELECT $this->_IdFieldName FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName);
 		if(sizeof($conditions)>0){
-			$query .= " WHERE ".join(" AND ",$conditions);
+			$query .= " WHERE (".join(") AND (",$conditions).")";
 		}
 		$query .= " ORDER BY $options[order]";
 
