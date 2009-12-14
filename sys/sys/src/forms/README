@@ -1,0 +1,9 @@
+PHP implementace formularu dle http://www.djangoproject.com/documentation/newforms/
+(revize 7012, 9.1.2008)
+
+Priklad pouziti je nastinen v demo aplikaci (viz adresar ./demo/).
+Funkcnost formularu je radne proverena testy (viz adresar ./test/)
+
+Zavislosti:
+
+* soubor functions.inc z adresare sys/extras/
