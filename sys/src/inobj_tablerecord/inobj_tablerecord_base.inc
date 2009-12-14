@@ -45,12 +45,17 @@ class inobj_TableRecord_Base extends inobj{
 	}
 
 	function &GetDbmole(){
+		// TODO: toto je takove vachrlate
+		if(class_exists("OracleMole")){
+			return OracleMole::GetInstance();
+		}
 		return PgMole::GetInstance();
 	}
 
 	function getTableName(){ return $this->_TableName; }
 	function getSequenceName(){ return $this->_SequenceName; }
 	function getId(){ return $this->_RecordValues[$this->_IdFieldName]; }
+	function hasKey($key){ return in_array($key,array_keys($this->_RecordValues)); }
 
 	/**
 	* $article = inobj_Article::GetInstanceById(111);
@@ -273,18 +278,23 @@ class inobj_TableRecord_Base extends inobj{
 	}
 
 	/**
-	* Vrati hodnotu daneho db policka.
-	* 
-	* Vracena hodnota muze byt integer, float, string, null...
+	* Vrati hodnotu daneho policka (prip. policek).
 	*
-	* @access public
-	* @param string $field_name
-	* @return mixed
+	* $u->getValue("name");
+	* $u->getValue(array("name","email")); // returns array("Pan Davelka","davelka@gm.com")
+	* $u->getValue(array("name" => "name","email" => "email")); // returns array("name" => "Pan Davelka", "email" => "davelka@gm.com")
 	*/
 	function getValue($field_name){
+		if(is_array($field_name)){
+			$out = array();
+			foreach($field_name as $k => $v){
+				$out[$k] = $this->getValue($v);
+			}
+			return $out;
+		}
 		settype($field_name,"string");
 		if(!in_array($field_name,$this->getKeys())){
-			error_log("inobj_TableRecord::getValue() warning: accessing non existing field $this->_TableName.$field_name, returning null");
+			error_log(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name, returning null");
 			return null;
 		}
 		$this->_readValueIfWasNotRead($field_name);
@@ -304,7 +314,7 @@ class inobj_TableRecord_Base extends inobj{
 	*/
 	function getValues($options = array()){
 		$options = array_merge(array(
-			"return_id" => false
+			"return_id" => false,
 		),$options);
 		$this->_readValueIfWasNotRead(array_keys($this->_TableStructure));
 		$out = $this->_RecordValues;
@@ -313,6 +323,11 @@ class inobj_TableRecord_Base extends inobj{
 		}
 		return $out;
 	}
+
+	/**
+	* 
+	*/
+	function toArray(){ return $this->getValues(array("return_id" => true)); }
 
 	/**
 	* Vrati pole vsech poli, ktere zaznam obsahuje.
