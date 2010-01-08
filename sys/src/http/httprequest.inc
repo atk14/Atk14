@@ -369,8 +369,14 @@ class HTTPRequest{
 		return $out;
 	}
 
-	function getAllGetVars(){ return $GLOBALS["_GET"]; }
+	function getAllGetVars(){
+		if(isset($this->_ForceGetVars)){ return $this->_ForceGetVars; }
+		return $GLOBALS["_GET"];
+	}
+
 	function getGetVars(){ return $this->getAllGetVars(); }
+
+	function setGetVars($vars){ $this->_ForceGetVars = $vars; }
 
 
 	function getPostVar($var_name){

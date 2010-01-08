@@ -15,7 +15,7 @@ function smarty_function_javascript_script_tag($params,&$smarty){
 	if(file_exists($filename)){
 		$src = $src."?".filemtime($filename);
 	}else{
-		return "<!-- javascript file not found: $params[file] -->";
+		return "<!-- javascript file not found: $filename -->";
 	}
 
 	unset($params["file"]);

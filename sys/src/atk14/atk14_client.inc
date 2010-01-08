@@ -13,7 +13,15 @@ class Atk14Client{
 		$GLOBALS["_COOKIE"] = array();
 	}
 
+	function get($path,$params = array()){
+		return $this->_doRequest("GET",$path,$params);
+	}
+
 	function post($path,$params = array()){
+		return $this->_doRequest("POST",$path,$params);
+	}
+
+	function _doRequest($method,$path,$params){
 		$request = new HTTPRequest();
 
 		$this->flash->reset();
@@ -32,8 +40,13 @@ class Atk14Client{
 			list($namespace,$lang,$controller,$action) = $path_ar;
 		}
 
-		$request->setMethod("POST");
-		$request->setPostVars($params);
+		$request->setMethod($method);
+		if($method=="POST"){
+			$request->setPostVars($params);
+		}
+		if($method=="GET"){
+			$request->setGetVars($params);
+		}
 		$request->setUri(Atk14Url::BuildLink(array(
 			"namespace" => $namespace,
 			"action" => $action,

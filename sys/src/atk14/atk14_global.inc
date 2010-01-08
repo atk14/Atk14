@@ -66,7 +66,9 @@ class Atk14Global{
 		if(isset($_SERVER["SCRIPT_FILENAME"]) && preg_match("/dispatcher.php$/",$_SERVER["SCRIPT_FILENAME"])){
 			$out = preg_replace("/dispatcher.php$/","",$_SERVER["SCRIPT_FILENAME"]);
 		}
-		if(defined("ATK14_DOCUMENT_ROOT")){ $out = ATK14_DOCUMENT_ROOT; }
+		if(defined("PATH_ATK14_APPLICATION")){
+			$out = PATH_ATK14_APPLICATION."/../";
+		}
 		if(substr($out,-1)!="/"){ $out .= "/"; }
 		return $out;
 	}

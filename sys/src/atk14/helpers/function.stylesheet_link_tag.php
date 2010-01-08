@@ -25,7 +25,7 @@ function smarty_function_stylesheet_link_tag($params,&$smarty){
 	if(file_exists($filename)){
 		$href = $href."?".filemtime($filename);
 	}else{
-		return "<!-- stylesheet file not found: $params[file] -->";
+		return "<!-- stylesheet file not found: $filename -->";
 	}
 
 	unset($params["file"]);
