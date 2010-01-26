@@ -299,7 +299,8 @@ class Atk14Form extends Form
     *    "login" => "karel.kulek",
     *    "password" => "heslicko"
     * ));
-    * $this->set_initial($this->params); // object tridy
+    * $this->set_initial($this->params); // object tridy Dictionary
+    * $this->set_initial($user); // object tridy inobj_TableRecord
     */
     function set_initial($key_or_values,$value = null)
     {
