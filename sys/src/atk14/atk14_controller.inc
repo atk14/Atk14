@@ -33,6 +33,8 @@ class Atk14Controller{
 		$this->session = &Atk14Session::GetInstance();
 		$this->cookies_enabled = $this->session->cookiesEnabled();
 
+		$this->sorting = new Atk14Sorting($this->params);
+
 		$this->layout_name = "";
 		$this->render_layout = true;	
 
@@ -215,6 +217,9 @@ class Atk14Controller{
 			$smarty->assign("page_description",$this->page_description);
 			$smarty->assign_by_ref("flash",$this->flash); // !!! musi byt predavani referenci
 			$smarty->assign_by_ref("form",$this->form);
+			if(!isset($this->tpl_data["sorting"])){
+				$smarty->assign_by_ref("sorting",$this->sorting);
+			}
 			// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
 			$smarty->compile_id = $smarty->compile_id."_ATK14_".$this->namespace."_{$this->controller}_";
 			reset($this->tpl_data);
