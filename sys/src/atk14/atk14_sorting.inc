@@ -1,4 +1,33 @@
 <?
+/**
+* Within a controller's method:
+*
+*		$sorting = new Atk14Sorting($this->params);
+*		$sorting->add("name");
+*		$sorting->add("created",array("reverse" => true));
+*		$sorting->add("rank",array("ascending_ordering" => "rank DESC, id ASC", "descending_ordering" => "rank ASC, id DESC"));
+*
+*		$finder = inobj_TableRecord::Finder(array(
+*			"class_name" => "Book",
+*			"order" => $sorting->getOrder(),
+*		));
+*	
+*		$this->tpl_data["finder"] = $finder;
+* 	$this->sorting = $sorting;
+*
+* Within a template:
+*	
+*		<table>
+*			<thead>
+*				<tr>
+*					{sortable key=name}<th>Name</th>{/sortable}
+*					{sortable key=created}<th>Create date</th>{/sortable}
+*					...
+*				</tr>
+*			</thead>
+*		</table>
+* 
+*/
 class Atk14Sorting{
 	var $_Ordering = array();
 	var $_OrderingStrings = array();
@@ -12,13 +41,14 @@ class Atk14Sorting{
 			"ascending_ordering" => null,
 			"descending_ordering" => null,
 			"title" => _("Sort table by this column"),
+			"reverse" => false,
 		),$options);
 
 		if(!isset($options["ascending_ordering"])){
-			$options["ascending_ordering"] = "$options[order_by] ASC";
+			$options["ascending_ordering"] = "$options[order_by] ".($options["reverse"] ? "DESC" : "ASC");
 		}
 		if(!isset($options["descending_ordering"])){
-			$options["descending_ordering"] = "$options[order_by] DESC";
+			$options["descending_ordering"] = "$options[order_by] ".($options["reverse"] ? "ASC" : "DESC");
 		}
 
 		$this->_Ordering[$key] = $options;
