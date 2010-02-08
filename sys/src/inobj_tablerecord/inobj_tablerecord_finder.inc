@@ -43,4 +43,16 @@ class inobj_TableRecord_Finder{
 		}
 		return $this->_RecordsCount;
 	}
+
+	function getTotalAmount(){
+		return $this->getRecordsCount();
+	}
+
+	function getLimit(){
+		return $this->_QueryOptions["limit"];
+	}
+
+	function getOffset(){
+		return $this->_QueryOptions["offset"];
+	}
 }

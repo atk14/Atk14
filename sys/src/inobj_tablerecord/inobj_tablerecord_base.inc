@@ -128,8 +128,8 @@ class inobj_TableRecord_Base extends inobj{
 			"order" => $this->_IdFieldName,
 			"conditions" => array(),
 			"bind_ar" => array(),
-			"limit" => null,
-			"offset" => null,
+			"limit" => 20,
+			"offset" => 0,
 		),$options);
 
 		$conditions = $options["conditions"];
