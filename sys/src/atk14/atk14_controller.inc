@@ -504,7 +504,8 @@ class Atk14Controller{
 			$request_index = 0;
 		}
 
-		$session_name = "step_$step_unique";
+		// important to mix up current namespace/controller/action into the session name
+		$session_name = "step_{$step_unique}_".substr(md5($this->namespace.$this->controller.$this->action),16);
 		if(!$state = $this->session->getValue($session_name)){
 			$state = array(
 				"current_step_index" => 0,
@@ -515,6 +516,7 @@ class Atk14Controller{
 		}
 		$this->walking_state = &$state;
 		$state["step_unique"] = $step_unique;
+		$state["step_session_name"] = $session_name;
 
 		$session_index = $state["current_step_index"];
 
@@ -573,7 +575,7 @@ class Atk14Controller{
 			$state["form_data"][$step] = $this->form->cleaned_data;
 		}
 		$state["current_step_index"]++;
-		$this->session->setValue("step_".$state["step_unique"],$state);
+		$this->session->setValue($state["step_session_name"],$state);
 	}
 
 	function _execute_current_step(){
