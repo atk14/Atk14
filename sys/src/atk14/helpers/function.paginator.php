@@ -42,22 +42,24 @@ function smarty_function_paginator($params,&$smarty){
 	$out = array();
 
 	if($total_amount<=$max_amount){
-		if($total_amount>4){
-			$out[] = "<ul id=\"paginator\">";
-			$out[] = "<li class=\"no-link first-child last-child\">".sprintf(_("%s položek celkem"),$total_amount)."</li>";
-			$out[] = "</ul>";
+		if($total_amount>=4){
+			$out[] = "<div class=\"paginator\">";
+			$out[] = "<p>".sprintf(_("%s items total"),$total_amount)."</p>";
+			$out[] = "</div>";
+			
 		}
 		return join("\n",$out);
 	}
 
-	$out[] = "<ul id=\"paginator\">";
+	$out[] = "<div class=\"paginator\">";
+	$out[] = "<ul>";
 
+	$first_child = true;
 	if($from>0){
 		$par["$from_name"] = $from - $max_amount;
 		$url = Atk14Utils::BuildLink($par,$smarty,array("connector" => "&amp;"));
-		$out[] = "<li class=\"first-child\"><a href=\"$url\">&laquo; "._("předchozí")."</a></li>";
-	}else{
-		$out[] = "<li class=\"no-link first-child\">&laquo; "._("předchozí")."</li>";
+		$out[] = "<li class=\"first-child prev\"><a href=\"$url\">"._("prev")."</a></li>";
+		$first_child = false;
 	}
 
 	$cur_from = 0;
@@ -67,8 +69,21 @@ function smarty_function_paginator($params,&$smarty){
 	while($cur_from < $total_amount){
 		$par["$from_name"] = $cur_from;
 		$url = Atk14Utils::BuildLink($par,$smarty,array("connector" => "&amp;"));
-		$_class = $cur_from == $from ? " class=\"active\"" : "";
-		$out[] = "<li$_class><a href=\"$url\">$screen</a></li>";
+		$_class = array();
+		$cur_from==$from && ($_class[] = "active");
+		$first_child && ($_class[] = "first-child") && ($first_child = false);
+
+		if($steps==$current_step && $screen==$current_step){
+			$_class[] = "last-child";
+		}
+
+		$_class = $_class ? " class=\"".join(" ",$_class)."\"" : "";
+
+		if($cur_from==$from){
+			$out[] = "<li$_class>$screen</li>";
+		}else{
+			$out[] = "<li$_class><a href=\"$url\">$screen</a></li>";
+		}
 		$screen++;
 
 		if($screen>2 && $current_step>6 && $screen<$current_step-4 && $screen<$steps-10){
@@ -87,14 +102,13 @@ function smarty_function_paginator($params,&$smarty){
 	if(($from+$max_amount)<$total_amount){
 		$par["$from_name"] = $from + $max_amount;
 		$url = Atk14Utils::BuildLink($par,$smarty,array("connector" => "&amp;"));
-		$out[] = "<li><a href=\"$url\">"._("další")." &raquo;</a></li>";
-	}else{
-		$out[] = "<li class=\"no-link\">"._("další")." &raquo;</li>";
+		$out[] = "<li class=\"last-child next\"><a href=\"$url\">"._("next")."</a></li>";
 	}
 
-	$out[] = "<li class=\"no-link last-child\">".sprintf(_("%s položek celkem"),$total_amount)."</li>";
-
 	$out[] = "</ul>";
+
+	$out[] = "<p>".sprintf(_("%s items total"),$total_amount)."</p>";
+	$out[] = "</div>";
 
 	return join("\n",$out);
 }
