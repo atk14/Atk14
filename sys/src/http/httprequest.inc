@@ -405,7 +405,10 @@ class HTTPRequest{
 		}
 		return $out;
 	}
+	function getCookie($name){ return $this->getCookieVar($name); }
+
 	function getCookieVars(){ return $GLOBALS["_COOKIE"]; }
+	function getCookies(){ return $this->getCookieVars(); }
 
 	function getVars($order = "GPC"){
 		$out = array();
