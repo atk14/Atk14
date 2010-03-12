@@ -92,7 +92,8 @@ function sendmail($params = array()){
 		"charset" => SENDMAIL_DEFAULT_BODY_CHARSET,
 		"mime_type" => SENDMAIL_DEFAULT_BODY_MIME_TYPE,
 		"attachments" => array(),
-		"attachment" => null
+		"attachment" => null,
+		"build_message_only" => false,
 	),$params);
 
 	// toto jsou zastarale parametry...
@@ -153,7 +154,7 @@ function sendmail($params = array()){
 		}
 
 		$HEADERS .= "MIME-Version: 1.0\n";
-		$HEADERS .= "Content-Type: $BODY_MIME_TYPE; charset=$BODY_CHARSET\n";
+		$HEADERS .= "Content-Type: $BODY_MIME_TYPE".($BODY_CHARSET!="" ? "; charset=$BODY_CHARSET" : "")."\n";
 		$HEADERS .= "Content-Transfer-Encoding: $params[transfer_encoding]\n";
 
 		if($params["transfer_encoding"]=="quoted-printable"){
@@ -191,6 +192,14 @@ function sendmail($params = array()){
 		"headers" => $HEADERS,
 	);
 
+	// v $BODY nechceme sekvence \r\n, funguje to spatne
+	// problemy nastavaly v pripade pouziti quoted-printable kodovani
+	$BODY = str_replace("\r","",$BODY);
+
+	if($params["build_message_only"]){
+		return $out;
+	}
+
 	if(function_exists("sendmail_hook_send")){
 		return sendmail_hook_send($out,$orig_params);
 	}
@@ -200,6 +209,99 @@ function sendmail($params = array()){
 	}
 
 	return $out;
+}
+
+/**
+* sendhtmlmail(array(
+*		"from" => "test@test.com",
+*		"to" => "user@gmail.com",
+*		"charset" => "ISO-8859-2",
+*
+*		"plain" => "Plain text version",
+*		"html" => "<html>Html version<img src="cid:c8792dkQW"><br><img src="cid:tytdk2392981"></html>",
+*		"images" => array(
+*			array(
+*				"filename" => "sea.gif",
+*				"content" => $binary_content,
+*				"cid" => "c8792dkQW",
+*			),
+*			array(
+*				"filename" => "mountain.jpg",
+*				"content" => $binary_content_2,
+*				"cid" => "tytdk2392981",
+*			)
+*		)
+*	))
+*/
+function sendhtmlmail($options){
+	$options = array_merge(array(
+		"subject" => "",
+		"charset" => SENDMAIL_DEFAULT_BODY_CHARSET,
+		"plain" => "",
+		"html" => "",
+		"images" => array(),
+	),$options);
+
+
+	$rel_boundary = _sendmail_get_boundary();
+	$alt_boundary = _sendmail_get_boundary();
+
+	$body = array();
+	$body[] = "Content-Type: multipart/related; boundary=$rel_boundary";
+	$body[] = "";
+	$body[] = "--$rel_boundary";
+	$body[] = "Content-Type: multipart/alternative; boundary=$alt_boundary";
+	$body[] = "";
+	$body[] = "--$alt_boundary";
+	$body[] = "Content-Type: text/plain; charset=$options[charset]";
+	$body[] = "Content-Transfer-Encoding: quoted-printable";
+	$body[] = "";
+	$body[] = _sendmail_quoted_printable_encode($options["plain"]);
+	$body[] = "";
+	$body[] = "--$alt_boundary";
+	$body[] = "Content-Type: text/html; charset=$options[charset]";
+	$body[] = "Content-Transfer-Encoding: quoted-printable";
+	$body[] = "";
+	$body[] = _sendmail_quoted_printable_encode($options["html"]);
+	$body[] = "";
+	$body[] = "--$alt_boundary--";
+
+	foreach($options["images"] as $im){
+		$_suffix = strtolower(preg_replace("/.*\\.([^.]+)$/","\\1",$im["filename"]));
+		$_suffix=="jpg" && ($_suffix = "jpeg");
+		$_mtype = "image/$_suffix";
+
+		$body[] = "--$rel_boundary";
+		$body[] = "Content-Type: image/$_suffix; name=\"$im[filename]\"";
+		$body[] = "Content-Transfer-Encoding: base64";
+		$body[] = "X-Attachment-Id: $im[cid]";
+		$body[] = "Content-ID: <$im[cid]>";
+		$body[] = "";
+		$body[] = _sendmail_base64_encode($im["content"]);
+	}
+	$body[] = "--$rel_boundary--";
+
+	//$boundary = _sendmail_get_boundary();
+	//$body = "--$boundary\n$body\n--$boundary--";
+
+	$options["mime_type"] = array_shift($body); // v prvnim radku je mime_type - momentalne to bude vzdy multipart/related; v budoucnu to muze byt multipart/mixed, pokud budou nejake prilohy
+	$options["mime_type"] = preg_replace("/^Content-Type: /","",$options["mime_type"]);
+	array_shift($body); // prazdny radek
+	$options["body"] = join("\n",$body);
+	$options["subject"] = _sendmail_escape_subject($options["subject"],$options["charset"]);
+	$options["charset"] = "";
+	$options["transfer_encoding"] = "7bit";
+	unset($options["plain"]);
+	unset($options["html"]);
+	unset($options["images"]);
+	return sendmail($options);
+}
+
+function _sendmail_get_boundary(){
+	static $counter;
+	if(!isset($counter)){ $counter = 0; }
+	$counter++;
+	return $counter."a".substr(md5(uniqid('').$counter),0,27-strlen($counter));
 }
 
 function _sendmail_correct_address($addr){
@@ -258,6 +360,10 @@ function _sendmail_quoted_printable_encode($string){
 	
 	$string = preg_replace('/[^\r\n]{71,73}[^=\r\n]{2}/', "$0=\r\n", $string);
   return $string;
+}
+
+function _sendmail_base64_encode($content){
+	return chunk_split(base64_encode($content),76,"\n");
 }
 
 function _sendmail_lf_to_crlf($string){
