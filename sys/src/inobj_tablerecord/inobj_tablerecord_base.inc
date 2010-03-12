@@ -114,6 +114,27 @@ class inobj_TableRecord_Base extends inobj{
 		return $this;
 	}
 
+	/**
+	* $finder = inobj_TableRecord::Finder(array(
+	*		"class_name" => "Book",
+	*		"conditions" => array("title LIKE :q"),
+	*		"bind_ar" => array(":q" => "%Prague%"),
+	*	
+	*		"limit" => 20,
+	*		"offset" => 0,
+	*	));
+	*	$total_amount = $finder->getTotalAmount();
+	*	$books = $finder->getRecords();
+	*
+	* Je mozne predat vlastni $query:
+	* $finder = inobj_TableRecord::Finder(array(
+	*		"class_name" => "Book",
+	*		"query" => "SELECT books.id FROM books,book_authors WHERE ...",
+	*		"query_count" => "SELECT COUNT(*) FROM ...",
+	*		"bind_ar" => $bind_ar,
+	*		"order" => null, // nekdy je dobre nenechat metodu Finder pripojit ORDER BY automaticky
+	*	));
+	*/
 	function Finder($options){
 		// staticke volani bude obsahovat option class_name
 		if(isset($options["class_name"])){
@@ -124,12 +145,21 @@ class inobj_TableRecord_Base extends inobj{
 			return $obj->Finder($options);
 		}
 
+		// order_by se prevede na order
+		if(isset($options["order_by"])){
+			$options["order"] = $options["order_by"];
+			unset($options["order_by"]);
+		}
+
 		$options = array_merge(array(
 			"order" => $this->_IdFieldName,
 			"conditions" => array(),
 			"bind_ar" => array(),
 			"limit" => 20,
 			"offset" => 0,
+
+			"query" => null,
+			"query_count" => null,
 		),$options);
 
 		$conditions = $options["conditions"];
@@ -137,18 +167,35 @@ class inobj_TableRecord_Base extends inobj{
 		if(is_string($conditions)){ $conditions = array($conditions); }
 		$bind_ar = $options["bind_ar"];
 
-		$query = $this->_dbmole->escapeTableName4Sql($this->_TableName);
-		if(sizeof($conditions)>0){
-			$query .= " WHERE (".join(") AND (",$conditions).")";
+		if(isset($options["query"])){
+			$query = $options["query"];
+			if(isset($options["query_count"])){
+				$query_count = $options["query_count"];
+			}else{
+				$query_count = "SELECT COUNT(*) FROM ($query)__q__";
+			}
+
+		}else{
+			$query = $this->_dbmole->escapeTableName4Sql($this->_TableName);
+			if(sizeof($conditions)>0){
+				$query .= " WHERE (".join(") AND (",$conditions).")";
+			}
+
+			$query_count = "SELECT COUNT(*) FROM ".$query;
+
+
+			$query = "SELECT $this->_IdFieldName FROM $query";
 		}
 
-		$query_count = "SELECT COUNT(*) FROM ".$query;
-
-		$query = "SELECT $this->_IdFieldName FROM $query ORDER BY $options[order]";
+		if(isset($options["order"])){
+			$query .= " ORDER BY $options[order]";
+		}
 
 		unset($options["order"]);
 		unset($options["bind_ar"]);
 		unset($options["conditions"]);
+		unset($options["query"]);
+		unset($options["query_count"]);
 
 		$finder = new inobj_TableRecord_Finder(array(
 			"class_name" => get_class($this),
@@ -189,6 +236,12 @@ class inobj_TableRecord_Base extends inobj{
 
 			$obj = new $class_name();
 			return $obj->FindAll($options);
+		}
+
+		// order_by se prevede na order
+		if(isset($options["order_by"])){
+			$options["order"] = $options["order_by"];
+			unset($options["order_by"]);
 		}
 
 		$options = array_merge(array(
@@ -630,6 +683,10 @@ class inobj_TableRecord_Base extends inobj{
 
 	function _Hook_BeforeDestroy(){
 
+	}
+
+	function __toString(){
+		return sprintf("[%s #%s]",get_class($this),$this->getId());
 	}
 }
 ?>
