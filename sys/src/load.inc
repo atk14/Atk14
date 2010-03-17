@@ -43,7 +43,9 @@ if(TEST){
 	define("TEMP",dirname(__FILE__)."/../../tmp/");
 }
 
-//$dbmole = &PgMole::GetInstance();
+// global variable $dbmole holds database connection
+// at the moment only postgresql is supported
+$dbmole = &PgMole::GetInstance();
 
 function &dbmole_connection(&$dbmole){
 	global $ATK14_GLOBAL;
