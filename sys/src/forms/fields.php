@@ -583,6 +583,7 @@ class MultipleChoiceField extends ChoiceField
         $this->update_messages(array(
             'invalid_choice' => _('Select a valid choice. %(value)s is not one of the available choices.'),
             'invalid_list' => _('Enter a list of values.'),
+            'required' => _('Please, choose the right options.'),
         ));
     }
 

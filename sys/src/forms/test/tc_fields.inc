@@ -708,10 +708,10 @@ class tc_fields extends tc_base
                 'field' => new ChoiceField(array('choices'=>array('1'=>'1', '2'=>'2'))),
                 'params' => array(
                     array(
-                        'clean'=>'', 'error'=>'This field is required.', 'result'=>null
+                        'clean'=>'', 'error'=>'Please, choose the right option.', 'result'=>null
                     ),
                     array(
-                        'clean'=>null, 'error'=>'This field is required.', 'result'=>null
+                        'clean'=>null, 'error'=>'Please, choose the right option.', 'result'=>null
                     ),
                     array(
                         'clean'=>1, 'error'=>null, 'result'=>'1'
@@ -774,10 +774,10 @@ class tc_fields extends tc_base
                 'field' => new MultipleChoiceField(array('choices'=>array('1'=>'1', '2'=>'2'))),
                 'params' => array(
                     array(
-                        'clean'=>'', 'error'=>'This field is required.', 'result'=>null
+                        'clean'=>'', 'error'=>'Please, choose the right options.', 'result'=>null
                     ),
                     array(
-                        'clean'=>null, 'error'=>'This field is required.', 'result'=>null
+                        'clean'=>null, 'error'=>'Please, choose the right options.', 'result'=>null
                     ),
                     array(
                         'clean'=>array(1), 'error'=>null, 'result'=>array('1')
@@ -798,7 +798,7 @@ class tc_fields extends tc_base
                         'clean'=>'hello', 'error'=>'Enter a list of values.', 'result'=>null
                     ),
                     array(
-                        'clean'=>array(), 'error'=>'This field is required.', 'result'=>null
+                        'clean'=>array(), 'error'=>'Please, choose the right options.', 'result'=>null
                     ),
                     array(
                         'clean'=>array('3'), 'error'=>'Select a valid choice. 3 is not one of the available choices.', 'result'=>null
