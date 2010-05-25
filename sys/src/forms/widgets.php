@@ -559,6 +559,16 @@ class CheckboxSelectMultiple extends SelectMultiple
     }
 }
 
+class FileInput extends Input{
+    var $input_type = "file";
+    function value_from_datadict($data, $name)
+    {
+        global $_FILES;
+        if(!isset($_FILES[$name])){ return null; }
+        return HTTPUploadedFile::GetInstance($_FILES[$name],$name);
+    }
+}
+
 
 // vim: set et ts=4 sw=4 enc=utf-8 fenc=utf-8 si: 
 ?>

@@ -642,5 +642,48 @@ class IPAddressField extends RegexField
     }
 }
 
+/**
+* Toto pole vraci instanci tridy HTTPUploadedFile.
+*/
+class FileField extends Field{
+    function FileField($options = array()){
+        $options = array_merge(array(
+            "widget" => new FileInput(), 
+        ),$options);
+        parent::Field($options);
+    }
+    function clean($value){
+        list($err,$value) = parent::clean($value);
+        if(isset($err)){ return array($err,null); }
+        return array(null,$value);
+    }
+}
+
+class ImageField extends FileField{
+    function ImageField($options = array()){
+        $options = array_merge(array(
+            "max_width" => null,
+            "max_height" => null,
+        ),$options);
+        parent::FileField($options);
+
+        $this->update_messages(array(
+            'not_image' => _('Ensure this file is image.'),
+            'max_width' => _('Ensure this image is at most %max% pixels wide (it is %width%).'),
+            'max_height' => _('Ensure this value is at most %max% pixels high (it is %height%).'),
+        ));
+        $this->max_width = $options["max_width"];
+        $this->max_height = $options["max_height"];
+    }
+    function clean($value){
+        list($err,$value) = parent::clean($value);
+        if(isset($err)){ return array($err,null); }
+        if(!isset($value)){ return array(null,null); }
+        if(!$value->isImage()){ return array($this->messages['not_image'],null); }
+
+        return array(null,$value);
+    }
+}
+
 // vim: set et ts=4 sw=4 enc=utf-8 fenc=utf-8 si: 
 ?>
