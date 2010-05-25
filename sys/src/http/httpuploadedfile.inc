@@ -100,7 +100,9 @@ class HTTPUploadedFile{
 		$out = `$command`;
 		// /tmp/xxsEEws: text/plain charset=us-ascii
 		// -> text/plain
-		if(preg_match("/^.*?:\\s*([^\\s]+\\/[^\\s]+)/",$out,$matches)){
+		// ya.gif: image/gif; charset=binary
+		// -> image/gif
+		if(preg_match("/^.*?:\\s*([^\\s]+\\/[^\\s;]+)/",$out,$matches)){
 			$mime_type = $matches[1];
 		}else{
 			$mime_type = "application/octet-stream";
