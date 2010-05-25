@@ -647,7 +647,9 @@ class inobj_TableRecord_Base extends inobj{
 			$id = $this->_dbmole->selectInsertId();
 		}
 		
-		return inobj_TableRecord::_GetInstanceById(get_class($this),$id);
+		$out = inobj_TableRecord::_GetInstanceById(get_class($this),$id);
+		$out->_Hook_afterCreateNewRecord();
+		return $out;
 	}
 
 	function _fieldsToRead(){
@@ -679,6 +681,13 @@ class inobj_TableRecord_Base extends inobj{
 	*/
 	function _Hook_setValues($fields){
 		
+	}
+
+	/**
+	* Bude spusteno ihned po vytvoreni zaznamu.
+	*/
+	function _Hook_afterCreateNewRecord(){
+
 	}
 
 	function _Hook_BeforeDestroy(){

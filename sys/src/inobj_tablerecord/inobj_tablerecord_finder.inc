@@ -48,6 +48,8 @@ class inobj_TableRecord_Finder{
 		return $this->getRecordsCount();
 	}
 
+	function isEmpty(){ return $this->getTotalAmount()==0; }
+
 	function getLimit(){
 		return $this->_QueryOptions["limit"];
 	}
