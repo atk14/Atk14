@@ -135,10 +135,10 @@ class Atk14Controller{
 
 		// pokud nenajdeme formular urceny presne pro tuto akci, pokusime se najit ApplicationForm a nakonec Atk14Form
 		if(!isset($this->form)){ // pokud uz mame form z _before_filter, tak ho prece nezahodime - TODO: jsem zarazeny z toho, ze se _before_filter() pouzsti drive
-			($this->form = Atk14Form::GetInstanceByControler($this)) || ($this->form = Atk14Form::GetDefaultForm($this));
+			($this->form = Atk14Form::GetInstanceByController($this)) || ($this->form = Atk14Form::GetDefaultForm($this));
 		}
 
-		$this->mailer = Atk14Mailer::GetInstanceByControler($this);
+		$this->mailer = Atk14Mailer::GetInstanceByController($this);
 
 		if(!$cache){
 			Atk14Timer::Start("executing action $action");

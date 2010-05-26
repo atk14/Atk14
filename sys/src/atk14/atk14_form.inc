@@ -121,19 +121,19 @@ class Atk14Form extends Form
 
     /**
     *
-    * $form = Atk14Form::GetInstanceByControlerAndAction("login","login");
+    * $form = Atk14Form::GetInstanceByControllerAndAction("login","login");
     * 
     * @static
     */
-    function GetInstanceByControlerAndAction($controller,$action,$controller_obj = null)
+    function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null)
     {
         ($form = Atk14Form::GetInstanceByFilename("$controller/{$controller}_{$action}_form.inc",$controller_obj)) || 
         ($form = Atk14Form::GetInstanceByFilename("$controller/{$action}_form.inc",$controller_obj));
         return $form;
     }
 
-    function GetInstanceByControler($controller){
-        return Atk14Form::GetInstanceByControlerAndAction($controller->controller,$controller->action,$controller);
+    function GetInstanceByController($controller){
+        return Atk14Form::GetInstanceByControllerAndAction($controller->controller,$controller->action,$controller);
     }
 
     /**

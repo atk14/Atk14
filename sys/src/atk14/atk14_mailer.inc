@@ -15,7 +15,7 @@ class Atk14Mailer{
 
 	var $namespace = null;
 
-	function GetInstanceByControler($controller){
+	function GetInstanceByController($controller){
 		$out = null;
 		if(Atk14Require::Load("controllers/$controller->namespace/application_mailer.inc")){
 			$out = new ApplicationMailer();
@@ -65,7 +65,7 @@ class Atk14Mailer{
 		return $this->_send();
 	}
 
-	function add_attachment($content,$filename = "data",$mime_type = "application/octed-stream"){
+	function add_attachment($content,$filename = "data",$mime_type = "application/octet-stream"){
 		$this->_attachments[] = array(
 			"filename" => $filename,
 			"mime_type" => $mime_type,
