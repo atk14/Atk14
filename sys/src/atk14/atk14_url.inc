@@ -119,8 +119,11 @@ class Atk14Url{
 			"controller" => $out["controller"],
 			"action" => $out["action"],
 			"lang" => $out["lang"],
-			"page_title" => $out["__page_title__"],
-			"page_description" => $out["__page_description__"],
+
+			// protoze jsme page_title a page_description ziskali v def. jazyku (a tedy mozna v jinem nez v prave aktivnim), je tady pouziti funkce _()
+			"page_title" => strlen($out["__page_title__"]) ? _($out["__page_title__"]) : "",
+			"page_description" => strlen($out["__page_description__"]) ? _($out["__page_description__"]) : "",
+
 			"get_params" => $get_params,
 			"force_redirect" => $_force_redirect
 		);
