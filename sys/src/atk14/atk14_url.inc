@@ -19,6 +19,7 @@ class Atk14Url{
 		global $ATK14_GLOBAL,$_GET;
 		settype($uri,"string");
 
+		// /domain-examination/plovarna.cz/?small=1 --> domain-examination/plovarna.cz
 		// /domain-examination/plovarna.cz?small=1 --> domain-examination/plovarna.cz
 		$uri = $requested_uri;
 		$uri = preg_replace("/\\?.*/","",$uri);
@@ -88,7 +89,7 @@ class Atk14Url{
 		$get_params = array();
 		reset($out);
 		while(list($key,) = each($out)){
-			if(in_array($key,array("controller","action","lang","__page_title__","__page_description__"))){ continue; }
+			if(in_array($key,array("controller","action","lang","__page_title__","__page_description__","__omit_trailing_slash__"))){ continue; }
 			$get_params[$key] = $out[$key];
 		}
 
@@ -166,8 +167,8 @@ class Atk14Url{
 		unset($_params["lang"]);
 
 		$out = "";
-		reset($routes);
-		while(list($pattern,$rules) = each($routes)){
+		foreach($routes as $pattern => $rules){	
+			//var_dump($pattern);
 			if(!(
 				Atk14Url::_ParamMatches($rules["controller"],$params["controller"]) &&
 				Atk14Url::_ParamMatches($rules["action"],$params["action"]) &&
@@ -177,11 +178,13 @@ class Atk14Url{
 			}
 
 			$_pattern_params = $rules;
+			$omit_trailing_slash = isset($rules["__omit_trailing_slash__"]) ? (bool)$rules["__omit_trailing_slash__"] : false;
 			unset($_pattern_params["controller"]);
 			unset($_pattern_params["action"]);
 			unset($_pattern_params["lang"]);
 			unset($_pattern_params["__page_title__"]);
 			unset($_pattern_params["__page_description__"]);
+			unset($_pattern_params["__omit_trailing_slash__"]);
 
 			$_matched = true;
 			reset($_pattern_params);
@@ -199,6 +202,7 @@ class Atk14Url{
 			if(!$_matched){ continue; }
 
 			$out = $pattern;
+			
 			break;
 		}
 
@@ -230,7 +234,7 @@ class Atk14Url{
 		}
 
 		$_lomitko = "";
-		if(strlen($out)>0){ $_lomitko = "/"; }
+		if(strlen($out)>0 && !$omit_trailing_slash){ $_lomitko = "/"; }
 		$_namespace = "";
 		if(strlen($params["namespace"])>0){ $_namespace = "$params[namespace]/"; }
 		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out.$_lomitko;
