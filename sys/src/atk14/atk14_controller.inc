@@ -402,6 +402,16 @@ class Atk14Controller{
 	}
 
 	/**
+	* $create_url = $this->_link_to_action("create_new");
+	* $done_url = $this->_link_to_action("create_new",array("done" => "1"));
+	* $done_url = $this->_link_to_action("create_new",array(),array("connector" => "&"));
+	*/
+	function _link_to_action($action,$other_params = array(),$options = array()){
+		$other_params["action"] = $action;
+		return $this->_link_to($other_params,$options);
+	}
+
+	/**
 	* Realize HTTP redirection.
 	*
 	*		$this->_redirect_to("http://www.domenka.cz/");
