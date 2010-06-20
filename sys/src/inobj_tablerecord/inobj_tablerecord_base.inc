@@ -134,6 +134,15 @@ class inobj_TableRecord_Base extends inobj{
 	*		"bind_ar" => $bind_ar,
 	*		"order" => null, // nekdy je dobre nenechat metodu Finder pripojit ORDER BY automaticky
 	*	));
+	*
+	* Podminky je mozne predat i jako asociativni pole
+	*	$finder = inobj_TableRecord::Finder(array(
+	*		"class_name" => "Book",
+	*		"conditions" => array(
+	*			"author_id" => 123,
+	*		),
+	*	));
+	* 
 	*/
 	function Finder($options){
 		// staticke volani bude obsahovat option class_name
@@ -146,7 +155,7 @@ class inobj_TableRecord_Base extends inobj{
 		}
 
 		// order_by se prevede na order
-		if(isset($options["order_by"])){
+		if(in_array("order_by",array_keys($options))){
 			$options["order"] = $options["order_by"];
 			unset($options["order_by"]);
 		}
@@ -166,6 +175,8 @@ class inobj_TableRecord_Base extends inobj{
 		if(is_string($conditions) && strlen($conditions)==0){ $conditions = array(); }
 		if(is_string($conditions)){ $conditions = array($conditions); }
 		$bind_ar = $options["bind_ar"];
+
+		inobj_TableRecord_Base::_NormalizeConditions($conditions,$bind_ar);
 
 		if(isset($options["query"])){
 			$query = $options["query"];
@@ -239,7 +250,7 @@ class inobj_TableRecord_Base extends inobj{
 		}
 
 		// order_by se prevede na order
-		if(isset($options["order_by"])){
+		if(in_array("order_by",array_keys($options))){
 			$options["order"] = $options["order_by"];
 			unset($options["order_by"]);
 		}
@@ -254,6 +265,8 @@ class inobj_TableRecord_Base extends inobj{
 		if(is_string($conditions) && strlen($conditions)==0){ $conditions = array(); }
 		if(is_string($conditions)){ $conditions = array($conditions); }
 		$bind_ar = $options["bind_ar"];
+
+		inobj_TableRecord_Base::_NormalizeConditions($conditions,$bind_ar);
 
 		$query = "SELECT $this->_IdFieldName FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName);
 		if(sizeof($conditions)>0){
@@ -284,6 +297,24 @@ class inobj_TableRecord_Base extends inobj{
 
 		if(isset($records[0])){ return $records[0]; }
 		return null;
+	}
+
+	// prevod asociativniho pole podminek na pole indexovane
+	function _NormalizeConditions(&$conditions,&$bind_ar){
+		$_conditions = array();
+		foreach($conditions as $k => $v){
+			if(!is_numeric($k)){
+				if(!is_null($v)){
+					$_conditions[] = "$k=:$k";
+					$bind_ar[":$k"] = $v;
+				}else{
+					$_conditions[] = "$k IS NULL";
+				}
+			}else{
+				$_conditions[] = $conditions[$k];
+			}
+		}
+		$conditions = $_conditions;
 	}
 
 	/**
