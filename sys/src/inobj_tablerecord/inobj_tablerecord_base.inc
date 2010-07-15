@@ -221,6 +221,16 @@ class inobj_TableRecord_Base extends inobj{
 	}
 
 	/**
+	* Pro pripady, kdy je potreba nekam vratit Finder, ktery se bude tvarit jako prazdny.
+	* Vhodna napr. pri vyskytu chyby ve vyhledavacim formulari.
+	*
+	* $finder = inobj_TableRecord::EmptyFinder();
+	*/
+	function EmptyFinder(){
+		return new inobj_TableRecord_EmptyFinder();
+	}
+
+	/**
 	* // staticke volani
 	* $articles = inobj_TableRecord::FindAll(array(
 	*		"class_name" => "inobj_Article",

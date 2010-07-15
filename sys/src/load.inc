@@ -20,6 +20,7 @@ require_once(dirname(__FILE__)."/inobj_tablerecord/inobj.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_base.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_finder.inc");
+require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_emptyfinder.inc");
 require_once(dirname(__FILE__)."/smarty/libs/Smarty.class.php");
 require_once(dirname(__FILE__)."/class_autoload.inc");
 
