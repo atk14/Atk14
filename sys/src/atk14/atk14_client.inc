@@ -13,6 +13,13 @@ class Atk14Client{
 		$GLOBALS["_COOKIE"] = array();
 	}
 
+	/**
+	* $controller = $client->get("books/index");
+	* $controller = $client->get("books/index",array("q" => "Mark Twain"));
+	*
+	* $controller = $client->get("en/books/index"); // with language
+	* $controller = $client->get("admin/en/books/index"); // with namespace
+	*/
 	function get($path,$params = array()){
 		return $this->_doRequest("GET",$path,$params);
 	}

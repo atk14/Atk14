@@ -118,6 +118,10 @@ class Input extends Widget
 {
     var $input_type = null; // toto musi definovat konkretni odvozene tridy
 
+    function Input($options = array()){
+        parent::Widget($options);
+    }
+
     function render($name, $value, $options=array())
     {
         if(is_bool($value)){ $value = (int)$value;}
@@ -561,12 +565,6 @@ class CheckboxSelectMultiple extends SelectMultiple
 
 class FileInput extends Input{
     var $input_type = "file";
-
-    function render($name, $value, $options=array())
-    {
-        // zde je $value objekt tridy HTTPUploadedFile -> pro rendering z toho udelame prazdny string
-        return parent::render($name, "", $options);
-    }
     function value_from_datadict($data, $name)
     {
         global $_FILES;
