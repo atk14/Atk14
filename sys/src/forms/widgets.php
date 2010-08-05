@@ -565,6 +565,12 @@ class CheckboxSelectMultiple extends SelectMultiple
 
 class FileInput extends Input{
     var $input_type = "file";
+
+    function render($name, $value, $options=array())
+    {
+        // zde je $value objekt tridy HTTPUploadedFile -> pro rendering z toho udelame prazdny string
+        return parent::render($name, "", $options);
+    }
     function value_from_datadict($data, $name)
     {
         global $_FILES;
