@@ -1,0 +1,17 @@
+development:
+  host: 127.0.0.1
+  database: atk14_devel
+  username: atk14_devel
+  password: p
+
+test:
+  host: 127.0.0.1
+  database: atk14_test
+  username: atk14_test
+  password: p
+
+production:
+  host: 127.0.0.1
+  database: atk14_production
+  username: atk14_production
+  password: p
