@@ -24,12 +24,22 @@ require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_emptyfinder
 require_once(dirname(__FILE__)."/smarty/libs/Smarty.class.php");
 require_once(dirname(__FILE__)."/class_autoload.inc");
 
-require_once(dirname(__FILE__)."/../../app/forms/application_form.inc");
-require_once(dirname(__FILE__)."/../../app/models/load.inc");
+if(file_exists(dirname(__FILE__)."/../../app/forms/application_form.inc")){
+	require_once(dirname(__FILE__)."/../../app/forms/application_form.inc");
+}
+if(file_exists(dirname(__FILE__)."/../../app/forms/form.inc")){
+	require_once(dirname(__FILE__)."/../../app/forms/form.inc");
+}
 
 if(defined("TEST") && TEST){
 	define("DEVELOPMENT",false);
 	define("PRODUCTION",false);
+}elseif(defined("DEVELOPMENT") && DEVELOPMENT){
+	define("TEST",false);
+	define("PRODUCTION",false);	
+}elseif(defined("PRODUCTION") && PRODUCTION){
+	define("DEVELOPMENT",false);
+	define("TEST",false);
 }else{
 	define("DEVELOPMENT",$HTTP_REQUEST->getRemoteAddr()=="127.0.0.1" || preg_match("/^(192\\.168\\.|10\\.|172\\.16\\.)/",$HTTP_REQUEST->getRemoteAddr()));
 	define("PRODUCTION",!DEVELOPMENT);
@@ -56,6 +66,8 @@ function &dbmole_connection(&$dbmole){
 	$database_ar = $ATK14_GLOBAL->getValue("database");
 	if(DEVELOPMENT){
 		$d = $database_ar["development"];
+	}elseif(TEST){
+		$d = $database_ar["test"];
 	}else{
 		$d = $database_ar["production"];
 	}
