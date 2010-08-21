@@ -1,4 +1,6 @@
 <?
+require_once(dirname(__FILE__)."/model.inc");
+
 // PHP5 is autoload capable
 class_autoload(dirname(__FILE__));
 

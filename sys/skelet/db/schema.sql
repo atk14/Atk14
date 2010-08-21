@@ -1,10 +1,10 @@
-/*
- * Database schema for Postgresql
- *
+--
+-- Database schema for Postgresql
+--
 
-/*
- * Tables sessions and session_values are mandatory for every ATK14 applications.
- */
+--
+-- Tables sessions and session_values are mandatory for every ATK14 applications.
+--
 CREATE SEQUENCE seq_sessions;
 CREATE TABLE sessions(
         id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_sessions'),
