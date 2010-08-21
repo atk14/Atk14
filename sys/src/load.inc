@@ -30,6 +30,7 @@ if(file_exists(dirname(__FILE__)."/../../app/forms/application_form.inc")){
 if(file_exists(dirname(__FILE__)."/../../app/forms/form.inc")){
 	require_once(dirname(__FILE__)."/../../app/forms/form.inc");
 }
+require_once(dirname(__FILE__)."/../../app/models/load.inc");
 
 if(defined("TEST") && TEST){
 	define("DEVELOPMENT",false);
