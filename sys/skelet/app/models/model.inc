@@ -1,4 +1,4 @@
 <?
-class ApplicationModel extends inobj_TableRecord{
+class Model extends inobj_TableRecord{
 	
 }
