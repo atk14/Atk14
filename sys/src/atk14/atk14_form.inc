@@ -64,6 +64,10 @@ class Atk14Form extends Form
     {
         global $HTTP_REQUEST;
 
+        $options = array_merge(array(
+            "call_set_up" => true,
+        ),$options);
+
         $this->atk14_constructor_options = $options;
 
         $this->atk14_action = str_replace("&","&amp;",$HTTP_REQUEST->getRequestURI());
@@ -73,7 +77,7 @@ class Atk14Form extends Form
 
         $this->atk14_error_title = _("Formular obsahuje chyby, proto nemuze byt zpracovan.");
 
-        $this->set_up();
+        $options["call_set_up"] && $this->set_up();
     }
 
     /**
