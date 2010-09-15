@@ -312,7 +312,7 @@ class Atk14Form extends Form
         if(is_object($key_or_values)){ return $this->set_initial($key_or_values->toArray()); }
 
         if(!isset($this->atk14_initial_values)){ $this->atk14_initial_values = array(); }
-        $this->atk14_initial_values = array_merge($key_or_values,$this->atk14_initial_values);
+        $this->atk14_initial_values = array_merge($this->atk14_initial_values,$key_or_values);
     }
 
 
