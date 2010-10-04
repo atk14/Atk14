@@ -1,0 +1,18 @@
+development:
+  database: atk14_demo
+  #host: 192.168.2.4
+  host: 127.0.0.1
+  username: atk14_demo
+  password: demo
+
+test:
+  database: atk14_demo
+  host: 192.168.2.4
+  username: atk14_demo
+  password: demo
+
+production:
+  database: atk14_demo
+  host: 192.168.2.4
+  username: atk14_demo
+  password: demo
