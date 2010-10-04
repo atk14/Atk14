@@ -72,6 +72,7 @@ class Dictionary{
 
 	function merge($ary){
 		if(is_object($ary)){ $ary = $ary->toArray(); }
+		if(!isset($ary)){ return; }
 		$this->_Values = array_merge($this->_Values,$ary);
 	}
 
@@ -84,6 +85,7 @@ class Dictionary{
 	}
 
 	function isEmpty(){ return $this->size()==0; }
+	function notEmpty(){ return !$this->isEmpty(); }
 
 	/**
 	* Prida hodnotu na zacatek pole.

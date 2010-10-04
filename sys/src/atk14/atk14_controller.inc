@@ -1,5 +1,4 @@
 <?
-
 class Atk14Controller{
 
 	var $action_executed = false;
@@ -9,8 +8,14 @@ class Atk14Controller{
 	var $_atk14_prepended_after_filters = array();
 	var $_atk14_appended_after_filters = array();
 
-	function atk14__initialize($options){
+	function atk14__initialize($options = array()){
 		global $ATK14_GLOBAL;
+
+		$options = array_merge(array(
+			"request" => null,
+			"params" => null, 
+		),$options);
+
 		$this->lang = $ATK14_GLOBAL->getValue("lang");
 		$this->langz = $this->lang;
 		if($this->langz=="cs"){ $this->langz = "cz"; } 
@@ -646,4 +651,3 @@ function atk14_smarty_prefilter($tpl_source, &$smarty){
 	*/
 	return $tpl_source;
 }
-?>
