@@ -477,6 +477,10 @@ class RadioInput
 */
 class RadioSelect extends Select
 {
+    function RadioSelect($option = array()){
+        parent::Select($option);
+    }
+
     function _renderer($name, $value, $attrs, $choices)
     {
         $output = array();
