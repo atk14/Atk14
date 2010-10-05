@@ -64,12 +64,15 @@ function smarty_function_render($params,&$smarty){
 		unset($params["item"]);
 		unset($params["from"]);
 
+		$collection_size = sizeof($collection);
 		reset($collection);
 		$counter = 0;
 		while(list($_key,$_item) = each($collection)){
 			if(isset($key)){ $smarty->assign($key,$_key); }
 			if(isset($item)){ $smarty->assign($item,$_item); }
 			$smarty->assign("__counter__",$counter);
+			$smarty->assign("__first__",$counter==0);
+			$smarty->assign("__last__",$counter==($collection_size-1));
 
 			// zbytek parametru se naasignuje do sablonky jako v predhozim pripade
 			reset($params);
