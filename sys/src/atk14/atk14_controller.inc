@@ -221,7 +221,7 @@ class Atk14Controller{
 			$smarty->assign("page_title",$this->page_title);
 			$smarty->assign("page_description",$this->page_description);
 			$smarty->assign_by_ref("flash",$this->flash); // !!! musi byt predavani referenci
-			$smarty->assign_by_ref("form",$this->form);
+			$smarty->assign("form",$this->form);
 			if(!isset($this->tpl_data["sorting"])){
 				$smarty->assign_by_ref("sorting",$this->sorting);
 			}
