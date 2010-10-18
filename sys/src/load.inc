@@ -9,6 +9,7 @@ require_once(dirname(__FILE__)."/miniyaml.inc");
 require_once(dirname(__FILE__)."/files.inc");
 require_once(dirname(__FILE__)."/dates.inc");
 require_once(dirname(__FILE__)."/date.inc");
+require_once(dirname(__FILE__)."/xmole.inc");
 require_once(dirname(__FILE__)."/stringbuffer.inc");
 require_once(dirname(__FILE__)."/stopwatch.inc");
 require_once(dirname(__FILE__)."/logger.inc");

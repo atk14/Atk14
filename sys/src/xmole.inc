@@ -188,8 +188,11 @@ class XMole{
 		if(!$stat){
 			$this->_error = true;
 			$this->_error_msg = "XML parser error (".(xml_get_error_code($this->_parser))."): ".xml_error_string(xml_get_error_code($this->_parser))." on line ".xml_get_current_line_number($this->_parser);
+			xml_parser_free($this->_parser);
 			return false;
 		}
+
+		xml_parser_free($this->_parser);
 
 		return true;
 	}
@@ -726,5 +729,7 @@ class XMole{
 		$x->_output_encoding = $this->_output_encoding;
 		return $x;
 	}
+
+	function __toString(){ return "instance of ".get_class($this); }
 }
 ?>

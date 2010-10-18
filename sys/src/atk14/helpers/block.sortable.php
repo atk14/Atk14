@@ -39,10 +39,16 @@ function smarty_block_sortable($params, $content, &$smarty, &$repeat){
 		$_active = " active";
 		$_arrow = " <span class=\"arrow-down\">&dArr;</span>";
 	}
-	$_class = " class=\"sortable$_active\"";
-	if(preg_match("/^<([^>]+)>(.+)(<\\/[^>]+>)$/",trim($content),$matches)){
+	$content = trim($content);
+	// is there already an class attribute?
+	$_class_orig = "";
+	if(preg_match("/^<([^>]*)( class=\"([^\"]*)\")/",$content,$matches)){
+		$_class_orig = $matches[3]." ";
+		$content = preg_replace("/^<([^>]*)( class=\"([^\"]*)\")/","<\\1",$content);
+	}
+	$_class = " class=\"{$_class_orig}sortable$_active\"";
+	if(preg_match("/^<([^>]+)>(.+)(<\\/[^>]+>)$/",$content,$matches)){
 		return "<$matches[1]$_class><a href=\"$href\" title=\"".htmlspecialchars($sorting->getTitle($key))."\" rel=\"nofolow\">$matches[2]$_arrow</a>$matches[3]";
 	}
 	return "<a href=\"$href\" title=\"".htmlspecialchars($sorting->getTitle($key))."\" rel=\"nofolow\"$_class>$content$_arrow</a>";
 }
-?>
