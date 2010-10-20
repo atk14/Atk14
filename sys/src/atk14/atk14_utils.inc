@@ -41,7 +41,7 @@ class Atk14Utils{
 	* Escapne string pro pouziti v javascriptu.
 	*/
 	function EscapeForJavascript($content){
-		return EasyReplace($content,array("\\" => "\\\\", "\n" => "\\n","\r" => "\\r","\"" => "\\\""));
+		return EasyReplace($content,array("\\" => "\\\\", "\n" => "\\n","\r" => "\\r","\t" => "\\t","\"" => "\\\""));
 	}
 
 	/**
