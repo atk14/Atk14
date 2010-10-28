@@ -334,6 +334,10 @@ class Atk14Form extends Form
     {
         if(is_string($key_or_values)){ return $this->set_hidden_field(array($key_or_values => $value)); }
 
+        foreach($key_or_values as $k => $v){
+            if(is_object($v)){ $key_or_values[$k] = $v->getId(); }
+        }
+
         $this->atk14_hidden_fields = array_merge($this->atk14_hidden_fields,$key_or_values);
     }
 
