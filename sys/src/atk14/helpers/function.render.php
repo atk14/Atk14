@@ -12,6 +12,9 @@
 *	{render parial="product" from=$products item=product} 
 *
 * {render parial="article" from=$articles item=article key=article_id}
+* 
+* {render parial=article_item from=$articles item=article}
+* {render parial=article_item from=$articles} {* zde bude item automaticky nastaveno na article *}
 *
 *
 * Dale je mozne render pouzit misto for(;;){ }:
@@ -19,7 +22,7 @@
 */
 function smarty_function_render($params,&$smarty){
 	Atk14Timer::Start("helper function.render");
-	$template_name = $params["partial"];
+	$template_name = $partial = $params["partial"];
 	unset($params["partial"]);
 
 	$template_name = preg_replace("/([^\\/]+)$/","_\\1",$template_name);
@@ -59,7 +62,12 @@ function smarty_function_render($params,&$smarty){
 			unset($params["step"]);
 		}
 
-		$item = isset($params["item"]) ? $params["item"] : null;
+		$item = null;
+		if(isset($params["item"])){
+			$item = $params["item"];
+		}elseif(preg_match("/^(.+)_item$/",$partial,$matches)){
+			$item = $matches[1];
+		}
 
 		unset($params["item"]);
 		unset($params["from"]);
