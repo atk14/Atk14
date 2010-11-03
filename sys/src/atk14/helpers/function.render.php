@@ -65,7 +65,7 @@ function smarty_function_render($params,&$smarty){
 		$item = null;
 		if(isset($params["item"])){
 			$item = $params["item"];
-		}elseif(preg_match("/^(.+)_item$/",$partial,$matches)){
+		}elseif(preg_match("/([^\\/]+)$/",$partial,$matches)){
 			$item = $matches[1];
 		}
 
