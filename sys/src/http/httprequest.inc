@@ -52,7 +52,7 @@ class HTTPRequest{
 		$this->_AutoInitialize();
 	}
 
-	function AddSSLPort($port){
+	function addSSLPort($port){
 		settype($port,"integer");
 		$this->_SSLPorts[] = $port;
 	}
@@ -162,7 +162,7 @@ class HTTPRequest{
 		return $this->_HTTPRequest_scriptName;
 	}
 	function getRemoteAddr(){
-		return $GLOBALS["_SERVER"]["REMOTE_ADDR"];
+		return isset($GLOBALS["_SERVER"]["REMOTE_ADDR"]) ? $GLOBALS["_SERVER"]["REMOTE_ADDR"] : null;
 	}
 	function getServerName(){
 		return $this->_HTTPRequest_serverName;
@@ -229,16 +229,7 @@ class HTTPRequest{
 	*/
 	function xhr(){
 		if(isset($this->_ForceXhr)){ return $this->_ForceXhr; }
-		$headers = $this->_HTTPRequest_headers;
-		reset($headers);
-		while(list($key,$value) = each($headers)){
-			$key = strtolower($key);
-			$value = strtolower($value);
-			if($key=="x-requested-with" && $value=="xmlhttprequest"){
-				return true;
-			}
-		}
-		return false;
+		return strtolower($this->getHeader("X-Requested-With"))=="xmlhttprequest";
 	}
 
 	function setXhr($value = true){
@@ -465,6 +456,9 @@ class HTTPRequest{
 	* 
 	* $file->moveTo("data/store/path/");
 	* $file->moveTo("data/store/path/data.txt");
+	*
+	* Ale pozor!! Pokud to radne uploadnuty soubor nenajde, zkusi to vratit instanci HTTPXFile(),
+	* tedy soubor uploadnuty pomoci XHR.
 	*/
 	function getUploadedFile($name = null,$options = array()){
 		$out = null;
@@ -476,6 +470,9 @@ class HTTPRequest{
 				break;
 			}
 		}
+
+		if(!$out){ $out = HTTPXFile::GetInstance(array("name" => $name)); }
+
 		return $out;
 	}
 
@@ -531,6 +528,22 @@ class HTTPRequest{
 			case "serialize":
 				return serialize($static_ar);
 				break;
+		}
+	}
+
+	function getHeaders(){
+		return $this->_HTTPRequest_headers;
+	}
+
+	/**
+	* // vrati stejnou hodnotu:
+	* $val = $request->getHeader("X-File-Name");
+	* $val = $request->getHeader("x-file-name");
+	*/
+	function getHeader($header){
+		$header = strtoupper($header);
+		foreach($this->getHeaders() as $k => $v){
+			if(strtoupper($k)==$header){ return $v; }
 		}
 	}
 
@@ -676,4 +689,3 @@ class HTTPRequest{
 	}
 
 }
-?>

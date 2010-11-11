@@ -1,9 +1,11 @@
 <?
 class HTTPUploadedFile{
 	var $_FILE = array();
-	var $_Name = "";
-	var $_TmpFileName = "";
-	var $_MimeType = "";
+	var $_Name = ""; // image
+	var $_TmpFileName = ""; // /tmp/Xis403s
+	var $_FileName  = ""; // my_image.jpg
+
+	var $_MimeType = null;
 
 	function GetInstances($options = array()){
 		global $_FILES;
@@ -35,8 +37,8 @@ class HTTPUploadedFile{
 		$out = new HTTPUploadedFile();
 		$out->_FILE = $FILE;
 		$out->_TmpFileName = $FILE["tmp_name"];
-		$out->_MimeType = $out->_determineFileType($FILE);
 		$out->_Name = $name;
+		$out->_FileName = $FILE["name"];
 		return $out;
 	}
 
@@ -45,7 +47,7 @@ class HTTPUploadedFile{
 	}
 	
 	function getFileName(){
-		$filename = $this->_FILE["name"];
+		$filename = $this->_FileName;
 		if($filename==""){ $filename = "_"; }
 		$filename = preg_replace("/[^a-zA-Z0-9_. -]/","_",$filename);
 		return $filename;
@@ -56,7 +58,7 @@ class HTTPUploadedFile{
 	}
 
 	function getMimeType(){
-		//return $this->_FILE["type"];
+		if(!$this->_MimeType){ return $this->_determineFileType(); }
 		return $this->_MimeType;
 	}
 
@@ -72,6 +74,12 @@ class HTTPUploadedFile{
 			return true;
 		}
 		return false;
+	}
+
+	function cleanUp(){
+		if($tmp_file = $this->getTmpFileName()){
+			files::unlink($tmp_file,$err,$err_str);
+		}
 	}
 
 	function getContent(){
@@ -95,8 +103,8 @@ class HTTPUploadedFile{
 		return $this->_ImageHeight;	
 	}
 
-	function _determineFileType($FILE){
-		$command = "file -i ".escapeshellarg($FILE["tmp_name"]);
+	function _determineFileType(){
+		$command = "file -i ".escapeshellarg($this->getTmpFileName());
 		$out = `$command`;
 		// /tmp/xxsEEws: text/plain charset=us-ascii
 		// -> text/plain
@@ -122,4 +130,3 @@ class HTTPUploadedFile{
 		list($this->_ImageWidth,$this->_ImageHeight) = $ar;
 	}
 }
-?>

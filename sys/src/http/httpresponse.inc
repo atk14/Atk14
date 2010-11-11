@@ -253,7 +253,7 @@ class HTTPResponse{
 		}
 	}
 
-	function writeln($string_to_write){
+	function writeln($string_to_write = ""){
 		settype($string_to_write,"string");
 		$this->_OutputBuffer->AddString($string_to_write."\n");
 	}

@@ -4,6 +4,7 @@ require_once("$__PATH__/httpcookie.inc");
 require_once("$__PATH__/httprequest.inc");
 require_once("$__PATH__/httpresponse.inc");
 require_once("$__PATH__/httpuploadedfile.inc");
+require_once("$__PATH__/httpxfile.inc");
 
 if(!isset($HTTP_RESPONSE)){
 	$HTTP_RESPONSE = new HTTPResponse();
