@@ -32,13 +32,15 @@ function smarty_function_render($params,&$smarty){
 
 	$original_tpl_vars = $smarty->_tpl_vars;
 
+	$out = array();
+
 	if(!isset($params["from"])){
 	
 		reset($params);
 		while(list($key,$value) = each($params)){
 			$smarty->assign($key,$value);
 		}
-		$smarty->display($template_name);
+		$out[] = $smarty->fetch($template_name);
 
 	}else{
 
@@ -88,12 +90,14 @@ function smarty_function_render($params,&$smarty){
 				$smarty->assign($key,$value);
 			}
 
-			$smarty->display($template_name);
+			$out[] = $smarty->fetch($template_name);
 			$counter++;
 		}
 	}
 
 	$smarty->_tpl_vars = $original_tpl_vars; // vraceni puvodnich hodnot do smarty objectu
+
 	Atk14Timer::Stop("helper function.render");
+
+	return join("",$out);
 }
-?>

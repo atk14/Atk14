@@ -198,40 +198,7 @@ class Atk14Controller{
 				return $this->_after_render();
 			}
 
-			$smarty = Atk14Utils::GetSmarty(array(
-				$ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$controller_name/",
-				$ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/",
-				$ATK14_GLOBAL->getApplicationPath()."views/",
-				dirname(__FILE__)."/views/",
-			),array(
-				"controller_name" => $controller_name
-			));
-			// nabindovani hodnot do smarty, ktere by volani action metody nemelo zmenit...
-			$smarty->assign("namespace",$this->namespace);
-			$smarty->assign("controller",$this->controller);
-			$smarty->assign("action",$this->action);
-			$smarty->assign("requested_controller",$this->requested_controller);
-			$smarty->assign("requested_action",$this->requested_action);
-			$smarty->assign("lang",$this->lang);
-			$smarty->assign("langz",$this->langz);
-			$smarty->assign("public",$ATK14_GLOBAL->getPublicBaseHref());
-			$smarty->assign("root",$ATK14_GLOBAL->getBaseHref());
-			$smarty->assign_by_ref("params",$this->params);
-			$smarty->assign_by_ref("request",$this->request);
-			$smarty->assign("page_title",$this->page_title);
-			$smarty->assign("page_description",$this->page_description);
-			$smarty->assign_by_ref("flash",$this->flash); // !!! musi byt predavani referenci
-			$smarty->assign("form",$this->form);
-			if(!isset($this->tpl_data["sorting"])){
-				$smarty->assign_by_ref("sorting",$this->sorting);
-			}
-			// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
-			$smarty->compile_id = $smarty->compile_id."_ATK14_".$this->namespace."_{$this->controller}_";
-			reset($this->tpl_data);
-			while(list($_key,) =each($this->tpl_data)){
-				$smarty->assign($_key,$this->tpl_data[$_key]);
-			}
-			$smarty->atk14_contents = array();
+			$smarty = $this->_get_smarty();
 
 			if(!$cache){
 				$action_content = array(
@@ -259,6 +226,73 @@ class Atk14Controller{
 
 			return $this->_after_render();
 		}
+	}
+
+	/**
+	* Umoznuje vyrenderovat parcialni sablonku v metode kontroleru.
+	* To se muze hodit napr. pri generovani HTML snippetu ve formatu json.
+	* 
+	* Upozornuji, ze pred volanim _render() nedochazi k volani _before_render().
+	* 
+	* $content = $this->_render("article_item");
+	*
+	* $content = $this->_render("article_item",array("from" => $articles));
+	*
+	* $content = $this->_render(array(
+	*		"partial" => "article_item",
+	*		"from" => $articles
+	*	));
+	*/
+	function _render($params_or_partial,$params = array()){
+		if(is_string($params_or_partial)){
+			$params["partial"] = $params_or_partial;
+		}else{
+			$params = $params_or_partial;
+		}
+
+		$smarty = $this->_get_smarty();
+		Atk14Require::Helper("function.render",$smarty);
+		return smarty_function_render($params,$smarty);
+	}
+
+	function _get_smarty(){
+		global $ATK14_GLOBAL;
+
+		$smarty = Atk14Utils::GetSmarty(array(
+			$ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$this->controller/",
+			$ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/",
+			$ATK14_GLOBAL->getApplicationPath()."views/",
+			dirname(__FILE__)."/views/",
+		),array(
+			"controller_name" => $this->controller,
+		));
+		// nabindovani hodnot do smarty, ktere by volani action metody nemelo zmenit...
+		$smarty->assign("namespace",$this->namespace);
+		$smarty->assign("controller",$this->controller);
+		$smarty->assign("action",$this->action);
+		$smarty->assign("requested_controller",$this->requested_controller);
+		$smarty->assign("requested_action",$this->requested_action);
+		$smarty->assign("lang",$this->lang);
+		$smarty->assign("langz",$this->langz);
+		$smarty->assign("public",$ATK14_GLOBAL->getPublicBaseHref());
+		$smarty->assign("root",$ATK14_GLOBAL->getBaseHref());
+		$smarty->assign_by_ref("params",$this->params);
+		$smarty->assign_by_ref("request",$this->request);
+		$smarty->assign("page_title",$this->page_title);
+		$smarty->assign("page_description",$this->page_description);
+		$smarty->assign_by_ref("flash",$this->flash); // !!! musi byt predavani referenci
+		$smarty->assign("form",$this->form);
+		if(!isset($this->tpl_data["sorting"])){
+			$smarty->assign_by_ref("sorting",$this->sorting);
+		}
+		// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
+		$smarty->compile_id = $smarty->compile_id."_ATK14_".$this->namespace."_{$this->controller}_";
+		reset($this->tpl_data);
+		while(list($_key,) =each($this->tpl_data)){
+			$smarty->assign($_key,$this->tpl_data[$_key]);
+		}
+		$smarty->atk14_contents = array();
+		return $smarty;
 	}
 
 	function _prepend_before_filter($method_name){
