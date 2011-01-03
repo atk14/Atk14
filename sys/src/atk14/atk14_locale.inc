@@ -48,11 +48,21 @@ class Atk14Locale{
 		return date($pattern,strtotime($iso_datetime));	
 	}
 
+	/**
+	* Pokud rozpoznani datumu s casem selze, bude volano Atk14Locale::ParseDate().
+	* 
+	* Atk14Locale::ParseDateTime("31.12.2010 12:30"); // "2010-12-31 12:30:00"
+	* Atk14Locale::ParseDateTime("31.12.2010"); // "2010-12-31 00:00:00"
+	*/
 	function ParseDateTime($localized_datetime){
 		$pattern = _("atk14.parse_datetime_pattern");
 		if($pattern == "atk14.parse_datetime_pattern"){ $pattern = "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"; }
 
-		return Atk14Locale::_ParseDateTime($localized_datetime,$pattern);
+		if(!$out = Atk14Locale::_ParseDateTime($localized_datetime,$pattern)){
+			$out = Atk14Locale::ParseDate($localized_datetime);
+			if($out){ $out .= " 00:00:00"; }
+	 	}
+		return $out;
 	}
 
 	function FormatDateTimeWithSeconds($iso_datetime){
@@ -64,11 +74,19 @@ class Atk14Locale{
 		return date($pattern,strtotime($iso_datetime));
 	}
 
+	/**
+	* Atk14Locale::ParseDateTimeWithSeconds("31.12.2010 12:30:22"); // "2010-12-31 12:30:22"
+	* Atk14Locale::ParseDateTimeWithSeconds("31.12.2010 12:30"); // "2010-12-31 12:30:00"
+	* Atk14Locale::ParseDateTimeWithSeconds("31.12.2010"); // "2010-12-31 00:00:00"
+	*/
 	function ParseDateTimeWithSeconds($localized_datetime){
 		$pattern = _("atk14.parse_datetime_with_seconds_pattern");
 		if($pattern == "atk14.parse_datetime_with_seconds_pattern"){ $pattern = "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})$/"; }
 
-		return Atk14Locale::_ParseDateTime($localized_datetime,$pattern);
+		if(!$out = Atk14Locale::_ParseDateTime($localized_datetime,$pattern)){
+			$out = Atk14Locale::ParseDateTime($localized_datetime);
+		}
+		return $out;
 	}
 
 	function _ParseDateTime($localized_datetime,$pattern){
@@ -103,4 +121,3 @@ class Atk14Locale{
 		return sprintf("%02d:%02d:%02s",$hours,$minutes,$seconds);
 	}
 }
-?>
