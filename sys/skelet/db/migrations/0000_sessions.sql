@@ -1,17 +1,3 @@
---
--- Database schema for Postgresql
---
-
---
---
---
-CREATE TABLE schema_magrations(
-	version VARCHAR(255) PRIMARY KEY
-);
-
---
--- Tables sessions and session_values are mandatory for every ATK14 application.
---
 CREATE SEQUENCE seq_sessions;
 CREATE TABLE sessions(
         id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_sessions'),
@@ -39,14 +25,3 @@ CREATE TABLE session_values(
 );
 CREATE INDEX in_sessionvalues_sessionid ON session_values(session_id);
 CREATE INDEX in_sessionvalues_expiration ON session_values(expiration);
-
-
---
---
-CREATE SEQUENCE seq_creatures;
-CREATE TABLE creatures(
-        id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_creatures'),
-				name VARCHAR(255),
-				description TEXT,
-				image_url VARCHAR(255)
-);
