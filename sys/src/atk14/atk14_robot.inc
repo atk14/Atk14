@@ -1,0 +1,4 @@
+<?
+class Atk14Robot{
+
+}

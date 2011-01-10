@@ -35,20 +35,7 @@ if(file_exists(dirname(__FILE__)."/../../app/forms/form.inc")){
 }
 require_once(dirname(__FILE__)."/../../app/models/load.inc");
 
-if(defined("TEST") && TEST){
-	define("DEVELOPMENT",false);
-	define("PRODUCTION",false);
-}elseif(defined("DEVELOPMENT") && DEVELOPMENT){
-	define("TEST",false);
-	define("PRODUCTION",false);	
-}elseif(defined("PRODUCTION") && PRODUCTION){
-	define("DEVELOPMENT",false);
-	define("TEST",false);
-}else{
-	define("DEVELOPMENT",$HTTP_REQUEST->getRemoteAddr()=="127.0.0.1" || preg_match("/^(192\\.168\\.|10\\.|172\\.16\\.)/",$HTTP_REQUEST->getRemoteAddr()));
-	define("PRODUCTION",!DEVELOPMENT);
-	define("TEST",false);
-}
+Atk14Utils::DetermineEnvironment();
 
 if(TEST){
 	define("LOGGER_DEFAULT_LOG_FILE",dirname(__FILE__)."/../../log/test.log");
@@ -148,4 +135,3 @@ function EasyReplace($str,$replaces){
   }   
   return str_replace($_replaces_keys,$_replaces_values,$str);
 }
-?>

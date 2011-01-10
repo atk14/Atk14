@@ -1,5 +1,47 @@
 <?
 class Atk14Utils{
+
+	/**
+	* 
+	*/
+	function DetermineEnvironment(){
+		global $HTTP_REQUEST;
+		// Determining environment constants (i.e. DEVELOPMENT, TEST, PRODUCTION).
+		// An existing constant has the strongest importance.
+		if(defined("TEST") && TEST){
+			define("DEVELOPMENT",false);
+			define("PRODUCTION",false);
+		}elseif(defined("DEVELOPMENT") && DEVELOPMENT){
+			define("TEST",false);
+			define("PRODUCTION",false);	
+		}elseif(defined("PRODUCTION") && PRODUCTION){
+			define("DEVELOPMENT",false);
+			define("TEST",false);
+
+		// No environment constant was defined? Checking out the ATK14_ENV environment variable...
+		}elseif(strtoupper(getenv("ATK14_ENV"))=="TEST"){
+			define("TEST",true);
+			define("DEVELOPMENT",false);
+			define("PRODUCTION",false);
+		}elseif(strtoupper(getenv("ATK14_ENV"))=="DEVELOPMENT"){
+			define("TEST",false);
+			define("DEVELOPMENT",true);
+			define("PRODUCTION",false);
+		}elseif(strtoupper(getenv("ATK14_ENV"))=="PRODUCTION"){
+			define("TEST",false);
+			define("DEVELOPMENT",false);
+			define("PRODUCTION",true);
+
+		// At last there is an auto determination.
+		// If there is an internal remote address or there is no remote address at all (i.e. a script is running from a console),
+		// environment is treat as DEVELOPMENT.
+		}else{
+			define("DEVELOPMENT",$HTTP_REQUEST->getRemoteAddr()=="127.0.0.1" || preg_match("/^(192\\.168\\.|10\\.|172\\.16\\.)/",$HTTP_REQUEST->getRemoteAddr()) || $HTTP_REQUEST->getRemoteAddr()=="");
+			define("PRODUCTION",!DEVELOPMENT);
+			define("TEST",false);
+		}
+	}
+
 	/**
 	* Nahraje vsechny $ATK14_GLOBAL->getApplicationPath()/../config/*.inc soubory.
 	* Drive preferovane umisteni $ATK14_GLOBAL->getApplicationPath()/conf/*.inc.

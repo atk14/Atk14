@@ -35,7 +35,7 @@ class Atk14Global{
 	* Toto je dulezite pro sestavovani URL.
 	* Kazda URL bude timto zacinat.
 	*
-	* "/", "/application/"... 
+	* "/", "/eshop/"... 
 	*/
 	function getBaseHref(){
 		global $_SERVER;
@@ -52,7 +52,7 @@ class Atk14Global{
 	/**
 	* Adresar v URL, ktery smeruje do ./public/
 	*
-	* "/public/", "/application/public/"...
+	* "/public/", "/eshop/public/"...
 	*/
 	function getPublicBaseHref(){
 		return $this->getBaseHref()."public/";
@@ -90,10 +90,13 @@ class Atk14Global{
 	* @return string 			ie "/var/www/apps/eshop/app/"
 	*/
 	function getApplicationPath(){
-		global $_SERVER;
 		$out = $this->_getRoot()."app/";
 		if(defined("PATH_ATK14_APPLICATION")){ $out = PATH_ATK14_APPLICATION; }
 		return $out;
+	}
+
+	function getMigrationsPath(){
+		return $this->_getRoot()."db/migrations/";
 	}
 
 	/**

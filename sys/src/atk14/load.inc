@@ -14,6 +14,8 @@ require_once("$__PATH__/atk14_require.inc");
 require_once("$__PATH__/atk14_mailer.inc");
 require_once("$__PATH__/atk14_sorting.inc");
 require_once("$__PATH__/atk14_client.inc");
+require_once("$__PATH__/atk14_migration.inc");
+require_once("$__PATH__/atk14_robot.inc");
 
 $ATK14_GLOBAL = &Atk14Global::GetInstance();
 
@@ -26,4 +28,3 @@ if(file_exists($ATK14_GLOBAL->getApplicationPath()."forms/fields.inc")){
 if(file_exists($ATK14_GLOBAL->getApplicationPath()."forms/widgets.inc")){
 	require_once($ATK14_GLOBAL->getApplicationPath()."forms/widgets.inc");
 }
-?>
