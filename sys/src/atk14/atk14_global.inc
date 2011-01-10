@@ -96,7 +96,7 @@ class Atk14Global{
 	}
 
 	function getMigrationsPath(){
-		return $this->_getRoot()."db/migrations/";
+		return defined("PATH_ATK14_MIGRATIONS") ? PATH_ATK14_MIGRATIONS : $this->_getRoot()."db/migrations/";
 	}
 
 	/**
