@@ -45,8 +45,30 @@ class Atk14Global{
 		if(isset($_SERVER["SCRIPT_NAME"]) && preg_match("/dispatcher.php$/",$_SERVER["SCRIPT_NAME"])){
 			$out = preg_replace("/dispatcher.php$/","",$_SERVER["SCRIPT_NAME"]);
 		}
-		if(defined("ATK14_BASE_HREF")){ $out = ATK14_BASE_HREF; }
+		if(defined("ATK14_BASE_HREF")){ $out = ATK14_BASE_HREF; } // the most preffered constant!
 		return $out;
+	}
+
+	function getHttpHost(){
+		global $HTTP_REQUEST;
+		if(isset($HTTP_REQUEST)){ $out = $HTTP_REQUEST->getHttpHost(); }
+		if(defined("ATK14_HTTP_HOST")){ $out = ATK14_HTTP_HOST; }
+		return $out;
+	}
+
+	/**
+	* Returns default language code.
+	* It's the first code in config/locale.yml
+	*
+	* @return string "en", "cs"...
+	*/
+	function getDefaultLang(){
+		global $ATK14_GLOBAL;
+
+		$langs = array_keys($ATK14_GLOBAL->getValue("locale"));
+
+		if(isset($langs[0])){ return $langs[0]; }
+		return "cs";
 	}
 
 	/**
@@ -69,6 +91,7 @@ class Atk14Global{
 		if(defined("PATH_ATK14_APPLICATION")){
 			$out = PATH_ATK14_APPLICATION."/../";
 		}
+		if(defined("ATK14_DOCUMENT_ROOT")){ $out = ATK14_DOCUMENT_ROOT; } // the most preffered constant!
 		if(substr($out,-1)!="/"){ $out .= "/"; }
 		return $out;
 	}
@@ -129,7 +152,7 @@ class Atk14Global{
 			// tyto pravidla zachyti vsechno
 			if(!isset($routes[""])){
 					$routes[""] = array(
-						"lang" => "cs",
+						"lang" => $this->getDefaultLang(),
 						"__path__" => "main/index",
 						"__page_title__" => "My Application",
 						"__page_description__" => "my beautiful application"
@@ -204,7 +227,7 @@ class Atk14Global{
 				}
 
 				//zde se nastavuje defaultni jazyk
-				if(!isset($value["lang"])){ $value["lang"] = "cs"; }
+				if(!isset($value["lang"])){ $value["lang"] = $this->getDefaultLang(); }
 
 				$routes[$key] = $value;
 			}

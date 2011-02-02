@@ -78,7 +78,7 @@ class Atk14Url{
 				"namespace" => $namespace,
 				"controller" => "application",
 				"action" => "error404",
-				"lang" => "cs", // defaultni jazyk
+				"lang" => $ATK14_GLOBAL->getDefaultLang(),
 				"page_title" => "",
 				"page_description" => "",
 				"get_params" => array(),
@@ -243,7 +243,7 @@ class Atk14Url{
 
 		if($options["with_hostname"]){
 			$_server_port = isset($options["port"]) ? $options["port"] : $HTTP_REQUEST->getServerPort();
-			$hostname = (is_string($options["with_hostname"])) ? $options["with_hostname"] : $HTTP_REQUEST->getHTTPHost();
+			$hostname = (is_string($options["with_hostname"])) ? $options["with_hostname"] : $ATK14_GLOBAL->getHttpHost();
 			if($HTTP_REQUEST->sslActive()){
 				$_exp_port = 443;
 				$_proto = "https";
