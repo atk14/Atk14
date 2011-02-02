@@ -1,15 +1,7 @@
 <?
-class Creature extends Model{
-	function Creature(){
-		parent::Model("creatures");
-	}
-
-	function GetInstanceById($id){
-		return Model::_GetInstanceById("Creature",$id);
-	}
-
-	function CreateNewRecord($values,$options = array()){
-		return Model::_CreateNewRecord("Creature",$values,$options);
+class Creature extends ApplicationModel{
+	function __construct(){
+		parent::__construct("creatures");
 	}
 
 	function getName(){ return $this->g("name"); }
