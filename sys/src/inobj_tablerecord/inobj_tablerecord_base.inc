@@ -44,12 +44,55 @@ class inobj_TableRecord_Base extends inobj{
 		}
 	}
 
+	/**
+	* Works in PHP5.3 and above.
+	* 
+	* $article = Article::GetInstanceById($id); // there's no need to define GetInstanceById() in the Article class.
+	*/
+	static function GetInstanceById($id,$options = array()){
+		return inobj_TableRecord::_GetInstanceById(get_called_class(),$id,$options);
+	}
+
+	/**
+	* Works in PHP5.3 and above.
+	* 
+	* $article = Article::CreateNewRecord(array("title" => "February Highlights")); // there's no need to define CreateNewRecord() in the Article class.
+	*/
+	static function CreateNewRecord($id,$options = array()){
+		return inobj_TableRecord::_CreateNewRecord(get_called_class(),$id,$options);
+	}
+
 	function &GetDbmole(){
 		// TODO: toto je takove vachrlate
 		if(class_exists("OracleMole")){
 			return OracleMole::GetInstance();
 		}
 		return PgMole::GetInstance();
+	}
+
+	/**
+	* $article = inobj_Article:GetInstanceById(123);
+	* $id = inobj_TableRecord::ObjToId($article); // returns 123
+	* $id = inobj_TableRecord::ObjToId(123); // returns 123
+	* $id = inobj_TableRecord::ObjToId(null); // returns null
+	*/
+	function ObjToId($object){
+		return is_object($object) ? $object->getId() : $object;
+	}
+
+	/**
+	* Converts an $id (integer) to instance of a $class_name.
+	*
+	* $article = inobj_TableRecord::IdToObj(123,"inobj_Article");
+	* $article = inobj_TableRecord::IdToObj(null,"inobj_Article"); // returns null
+	* 
+	* $article = inobj_Article:GetInstanceById(123);
+	* $article = inobj_TableRecord::IdToObj($article,"inobj_Article"); // returns $article untouched
+	*/
+	function IdToObj($id,$class_name){
+		if(!isset($id)){ return null; }
+		if(is_object($id)){ return $id; }
+		return call_user_func(array($class_name,"GetInstanceById"),$id);
 	}
 
 	function getTableName(){ return $this->_TableName; }
@@ -94,12 +137,14 @@ class inobj_TableRecord_Base extends inobj{
 	* Vyhleda zaznam podle id.
 	* 
 	* @access public
-	* @param mixed $id							integer, string nebo pole
+	* @param mixed $id							integer, string, objekt, pole
 	* @return inobj_TableRecord			nebo null, pokud zaznam neexistuje (nebo doslo k chybe);
 	*																pokue je $id pole, bude vraceno rovnez pole
 	*/
 	function find($id,$options = array()){
 		if(!isset($id)){ return null; }
+
+		if(is_object($id)){ $id = $id->getId(); }
 
 		if(is_array($id)){
 			return $this->_FindByArray($id,$options);
@@ -119,14 +164,14 @@ class inobj_TableRecord_Base extends inobj{
 	*		"class_name" => "Book",
 	*		"conditions" => array("title LIKE :q"),
 	*		"bind_ar" => array(":q" => "%Prague%"),
-	*	
 	*		"limit" => 20,
 	*		"offset" => 0,
 	*	));
+	*
 	*	$total_amount = $finder->getTotalAmount();
 	*	$books = $finder->getRecords();
 	*
-	* Je mozne predat vlastni $query:
+	* // it's possible to define the specific SQL query
 	* $finder = inobj_TableRecord::Finder(array(
 	*		"class_name" => "Book",
 	*		"query" => "SELECT books.id FROM books,book_authors WHERE ...",
@@ -135,25 +180,31 @@ class inobj_TableRecord_Base extends inobj{
 	*		"order" => null, // nekdy je dobre nenechat metodu Finder pripojit ORDER BY automaticky
 	*	));
 	*
-	* Podminky je mozne predat i jako asociativni pole
+	* // conditions could be passed as an associative array
 	*	$finder = inobj_TableRecord::Finder(array(
 	*		"class_name" => "Book",
 	*		"conditions" => array(
 	*			"author_id" => 123,
 	*		),
 	*	));
-	* 
+	*
+  * // as of PHP5.3
+	* $finder = Book::Finder(array(
+	*		"limit" => 20,
+	*	));
 	*/
-	function Finder($options){
-		// staticke volani bude obsahovat option class_name
+	static function Finder($options){
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
-
-			$obj = new $class_name();
-			return $obj->Finder($options);
+		}else{
+			$class_name = get_called_class();
 		}
+		$obj = new $class_name();
+		return $obj->_finder($options);
+	}
 
+	function _finder($options){
 		// order_by se prevede na order
 		if(in_array("order_by",array_keys($options))){
 			$options["order"] = $options["order_by"];
@@ -217,7 +268,8 @@ class inobj_TableRecord_Base extends inobj{
 		),$this->_dbmole);
 		$finder->_dbmole = &$this->_dbmole;
 		
-		return $finder;				
+		return $finder;
+
 	}
 
 	/**
@@ -230,8 +282,8 @@ class inobj_TableRecord_Base extends inobj{
 		return new inobj_TableRecord_EmptyFinder();
 	}
 
+
 	/**
-	* // staticke volani
 	* $articles = inobj_TableRecord::FindAll(array(
 	*		"class_name" => "inobj_Article",
 	*		"conditions" => array("deleted='N'","published='Y'"),
@@ -240,25 +292,28 @@ class inobj_TableRecord_Base extends inobj{
 	*		"offset" => 80,
 	* ));
 	*
-	* // u volani pres instanci jiz nenastavujeme "class_name"
-	* $a = new inobj_Article();
-	* $article = $a->FindAll(array(
-	*		"conditions" => "author_id=:author_id",
-	*		"bind_ar" => array(":author_id" => 123)
-	*	));
+	* // as of PHP5.3
+	* $articles = Article::FindAll(array(
+	*		"conditions" => array("deleted='N'","published='Y'"),
+	*		"order" => "create_date",
+	*		"limit" => 20,
+	*		"offset" => 80,
+	* ));
 	*
 	* TODO: obsah metody predelat jako implementaci volani inobj_TableRecord::Finder()
 	*/
-	function FindAll($options = array()){
-		// staticke volani bude obsahovat option class_name
+	static function FindAll($options = array()){
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
-
-			$obj = new $class_name();
-			return $obj->FindAll($options);
+		}else{
+			$class_name = get_called_class();
 		}
+		$obj = new $class_name();
+		return $obj->_findAll($options);
+	}
 
+	function _findAll($options = array()){
 		// order_by se prevede na order
 		if(in_array("order_by",array_keys($options))){
 			$options["order"] = $options["order_by"];
@@ -291,19 +346,36 @@ class inobj_TableRecord_Base extends inobj{
 		return $this->find($this->_dbmole->selectIntoArray($query,$bind_ar,$options));
 	}
 
-	function FindFirst($options = array()){
-		$options["limit"] = 1;
-		// staticke volani bude obsahovat option class_name
+	/**
+	* $article = inobj_TableRecord::FindFirst(array(
+	*		"class_name" => "Article",
+	*		"conditions" => array(
+	*			"created_at" => "2011-02-01" 
+	*		),
+	*	));
+	*
+	*	// as of PHP5.3
+	* $article = Article::FindFirst(array(
+	*		"conditions" => array(
+	*			"created_at" => "2011-02-01" 
+	*		),
+	*	));
+	*
+	*/
+	static function FindFirst($options = array()){
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
-
-			$obj = new $class_name();
-			$records = $obj->FindAll($options);
-
 		}else{
-			$record = $this->FindAll($options);
+			$class_name = get_called_class();
 		}
+		$obj = new $class_name();
+		return $obj->_findFirst($options);
+	}
+
+	function _findFirst($options = array()){
+		$options["limit"] = 1;
+		$record = $this->FindAll($options);
 
 		if(isset($records[0])){ return $records[0]; }
 		return null;
@@ -314,7 +386,10 @@ class inobj_TableRecord_Base extends inobj{
 		$_conditions = array();
 		foreach($conditions as $k => $v){
 			if(!is_numeric($k)){
-				if(!is_null($v)){
+				if(is_array($v)){
+					$_conditions[] = "$k IN :$k";
+					$bind_ar[":$k"] = $v;
+				}elseif(!is_null($v)){
 					$_conditions[] = "$k=:$k";
 					$bind_ar[":$k"] = $v;
 				}else{

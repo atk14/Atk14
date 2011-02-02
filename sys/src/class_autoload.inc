@@ -32,11 +32,25 @@ function __class_autoload__($options_or_class_name){
 		$class_name = $options_or_class_name;
 		if(isset($store_filenames[strtolower($class_name)])){ require_once($store_filenames[strtolower($class_name)]); }
 		foreach($directories as $d){
-			if(file_exists("$d/".strtolower($class_name).".inc")){ require_once("$d/".strtolower($class_name).".inc"); }
-			if(file_exists("$d/$class_name.inc")){ require_once("$d/$class_name.inc"); }
+			$_filenames = array(
+				$class_name,
+				preg_replace("/([a-z])([A-Z])/","\\1_\\2",$class_name), // RedFruit -> red_fruit
+			);
 
-			if(file_exists("$d/".strtolower($class_name).".php")){ require_once("$d/".strtolower($class_name).".php"); }
-			if(file_exists("$d/$class_name.php")){ require_once("$d/$class_name.php"); }
+			$filenames = array();
+			foreach($_filenames as $f){
+				if(in_array("$f.inc",$filenames)){ continue; }
+				$filenames[] = "$f.inc";
+				$filenames[] = "$f.php";
+				if(strtolower($f)!=$f){
+					$filenames[] = strtolower($f).".inc";
+					$filenames[] = strtolower($f).".php";
+				}
+			}
+
+			foreach($filenames as $f){
+				if(file_exists("$d/$f")){ require_once("$d/$f"); }
+			}
 		}
 
 		return;

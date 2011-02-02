@@ -33,9 +33,22 @@ if(file_exists(dirname(__FILE__)."/../../app/forms/application_form.inc")){
 if(file_exists(dirname(__FILE__)."/../../app/forms/form.inc")){
 	require_once(dirname(__FILE__)."/../../app/forms/form.inc");
 }
-require_once(dirname(__FILE__)."/../../app/models/load.inc");
+
+// Loading model classes
+if(file_exists(dirname(__FILE__)."/../../app/models/load.inc")){
+	// either there is a load.inc file...
+	require_once(dirname(__FILE__)."/../../app/models/load.inc");
+}else{
+	// or class_autoload() is applied	
+	class_autoload(dirname(__FILE__)."/../../app/models/");
+}
 
 Atk14Utils::DetermineEnvironment();
+
+require_once(dirname(__FILE__)."/../../config/local_settings.inc");
+require_once(dirname(__FILE__)."/default_settings.inc");
+
+require_once(dirname(__FILE__)."/packer.inc");
 
 if(TEST){
 	define("LOGGER_DEFAULT_LOG_FILE",dirname(__FILE__)."/../../log/test.log");

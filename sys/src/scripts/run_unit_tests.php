@@ -22,7 +22,8 @@
 
 error_reporting(255);
 
-chdir($_ENV["PWD"]);
+// v PHP5.3 neexistuje $_ENV["PWD"] ??
+isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 
 if(preg_match("/^4/",phpversion())){
 	define("PHP4",true);

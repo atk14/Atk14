@@ -53,6 +53,7 @@ class Atk14Utils{
 		}
 		$dir = opendir($path);
 		while($file = readdir($dir)){
+			if($file=="local_settings.inc"){ continue; } // this is ugly hack :( i need to delay loading of ./config/local_settings.inc
 			if(preg_match("/.inc$/",$file) && is_file($path.$file)){
 				require_once($path.$file);
 				//require_once($ATK14_GLOBAL->getApplicationPath()."conf/$file");
