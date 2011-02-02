@@ -56,7 +56,7 @@
 		{if $field->errors()}
 			<ul class="error_list">
 				{foreach from=$field->errors() item=err_item}
-					<li>{$err_item|h}</li>
+					<li>{$err_item}</li>
 				{/foreach}
 			</ul>
 		{/if}
