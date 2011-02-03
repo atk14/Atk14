@@ -375,7 +375,7 @@ class inobj_TableRecord_Base extends inobj{
 
 	function _findFirst($options = array()){
 		$options["limit"] = 1;
-		$record = $this->FindAll($options);
+		$records = $this->_findAll($options);
 
 		if(isset($records[0])){ return $records[0]; }
 		return null;
