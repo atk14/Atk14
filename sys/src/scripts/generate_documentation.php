@@ -22,9 +22,6 @@ $output_dir = $ATK14_GLOBAL->getApplicationPath()."../tmp/documentation";
 if (!file_exists($output_dir)) {
 	files::mkdir($output_dir, &$err, &$err_str);
 }
-var_dump($src_dir);
-var_dump($output_dir);
-exit();
 
 $command = "phpdoc -o HTML:frames:DOM/phpdoc.de -d $src_dir -t $output_dir";
 
