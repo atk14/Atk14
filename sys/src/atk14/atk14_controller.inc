@@ -1,13 +1,122 @@
 <?
+/**
+ * Base class for controllers.
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
+
+/**
+ * Base class for controllers.
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
 class Atk14Controller{
 
+	/**
+	 *
+	 * @var HTTPRequest
+	 *
+	 */
+	var $request = null;
+
+	/**
+	 *
+	 * @var HTTPResponse
+	 *
+	 */
+	var $response = null;
+
+	/**
+	 * Instance of {@link Atk14Mailer} class.
+	 *
+	 * The $mailer variable can be used to execute mailer actions in a similar way to common controller actions
+	 *
+	 * @var Atk14Mailer
+	 *
+	 */
+	var $mailer = null;
+
+	/**
+	 * Name of the controller
+	 *
+	 * @var string
+	 *
+	 */
+	var $controller = "";
+
+	/**
+	 * Name of the action being currently executed
+	 *
+	 * @var string
+	 *
+	 */
+	var $action = "";
+
+	/**
+	 * Current language used
+	 *
+	 * @var string
+	 *
+	 */
+	var $lang = "";
+
 	var $action_executed = false;
+
+	/**
+	 * Parameters from http request
+	 *
+	 * @var Dictionary
+	 *
+	 */
+	var $params = null;
+
+	/**
+	 * Instance of {@link Atk14Form} used in current controllers action.
+	 *
+	 * @var Atk14Form
+	 *
+	 */
+	var $form = null;
+
+	/**
+	 * @access private
+	 *
+	 */
 	var $_atk14_caches_action = array();
+
+	/**
+	 * @access private
+	 *
+	 */
+
 	var $_atk14_prepended_before_filters = array();
+	/**
+	 * @access private
+	 *
+	 */
+
 	var $_atk14_appended_before_filters = array();
+	/**
+	 * @access private
+	 *
+	 */
+
 	var $_atk14_prepended_after_filters = array();
+	/**
+	 * @access private
+	 *
+	 */
+
 	var $_atk14_appended_after_filters = array();
 
+	/**
+	 * @access private
+	 *
+	 */
 	function atk14__initialize($options = array()){
 		global $ATK14_GLOBAL;
 
@@ -66,8 +175,16 @@ class Atk14Controller{
 		$this->_initialize();
 	}
 
+	/**
+	 * @access private
+	 *
+	 */
 	function atk14__ExecuteAction($action){ return $this->_execute_action($action,array("force_to_set_template_name" => false)); }
 
+	/**
+	 * @access private
+	 *
+	 */
 	function atk14__runBeforeFilters(){
 		Atk14Timer::Start("running before filters");
 		$filters = Atk14Utils::JoinArrays(
@@ -84,6 +201,10 @@ class Atk14Controller{
 		Atk14Timer::Stop("running before filters");
 	}
 
+	/**
+	 * @access private
+	 *
+	 */
 	function atk14__runAfterFilters(){
 		Atk14Timer::Start("running after filters");
 		$filters = Atk14Utils::JoinArrays(
@@ -123,6 +244,18 @@ class Atk14Controller{
 		$this->render_template = false;
 	}
 
+	/**
+	 * Executes another action defined in current controller.
+	 *
+	 * <ul>
+	 * 	<li>force_to_set_template_name - </li>
+	 * </ul>
+	 *
+	 * @param string $action name of action executed
+	 * @param array $options
+	 * @access protected
+	 *
+	 */
 	function _execute_action($action,$options = array()){
 		global $ATK14_GLOBAL;
 
@@ -321,25 +454,41 @@ class Atk14Controller{
 	}
 
 	/**
-	* Tato metoda bude spustena pred samotnou action.
-	*
-	*/
+	 * Tato metoda bude spustena pred samotnou action.
+	 *
+	 * @access protected
+	 *
+	 */
 	function _before_filter(){
 		
 	}
 
+	/**
+	 * This method is executed before rendering, after action is executed
+	 *
+	 * @access protected
+	 *
+	 */
 	function _before_render(){
 
 	}
 
+	/**
+	 * This method is executed after rendering.
+	 *
+	 * @access protected
+	 *
+	 */
 	function _after_render(){
 		
 	}
 
 	/**
-	* Tato metoda bude spustena po spusteni action.
-	*
-	*/
+	 * Tato metoda bude spustena po spusteni action.
+	 *
+	 * @access protected
+	 *
+	 */
 	function _after_filter(){
 
 	}
@@ -360,6 +509,11 @@ class Atk14Controller{
 		}
 	}
 
+
+	/**
+	 * @access private
+	 *
+	 */
 	function _atk14_write_action_cache(&$content){
 		if(!$recipe = $this->_atk14_get_action_cache_recipe()){ return; }
 
@@ -375,6 +529,10 @@ class Atk14Controller{
 		files::write_to_file($recipe["filename"],$serialized,$err,$err_msg);
 	}
 
+	/**
+	 * @access private
+	 *
+	 */
 	function _atk14_read_action_cache(&$cache){
 		if(!$recipe = $this->_atk14_get_action_cache_recipe()){ return; }
 
@@ -389,6 +547,10 @@ class Atk14Controller{
 		}
 	}
 
+	/**
+	 * @access private
+	 *
+	 */
 	function _atk14_get_action_cache_recipe(){
 		global $ATK14_GLOBAL;
 
@@ -414,21 +576,37 @@ class Atk14Controller{
 
 
 	/**
-	* Sestavi link.
-	*
-	* Pokud bude v parametrech chybet "controller" i "action", budou oba parametry
-	* nastaveny na $this->controller a $this->action.
-	* 
-	* Pokud nebude v $params uveden jen "controller", bude nastav na $this->controller,
-	* chybejici $params["action"] bude nahrazen za "index" a
-	* $params["lang"] bude prip. naplnen $this->lang.
-	*
-	* $url = $this->_link_to(array("action" => "overview"));
-	* $url = $this->_link_to(array("action" => "overview", "id" => 2045),array("connector" => "&")); // defaultni connector je "&amp;"
-	* $url = $this->_link_to(); // link na akt controller, action a jazyk
-	*
-	* @return string
-	*/
+	 * Generates a URL.
+	 * 
+	 * Takes parameters 'controller' and 'action' and generates a URL. When they both are missing, current values of controller and action will be used from $this->controller and $this->action.
+	 *
+	 * When only 'controller' is missing, $this->controller will be used
+	 *
+	 * When only 'action' is missing, 'index' will be used.
+	 *
+	 * For missing 'lang' $this->lang will be used.
+	 *
+	 * Pokud bude v parametrech chybet "controller" i "action", budou oba parametry
+	 * nastaveny na $this->controller a $this->action.
+	 *
+	 * Pokud nebude v $params uveden jen "controller", bude nastav na $this->controller,
+	 * chybejici $params["action"] bude nahrazen za "index" a
+	 * $params["lang"] bude prip. naplnen $this->lang.
+	 *
+	 * <code>
+	 * $url = $this->_link_to(array("action" => "overview"));
+	 * $url = $this->_link_to(array("action" => "overview", "id" => 2045),array("connector" => "&")); // defaultni connector je "&amp;"
+	 * $url = $this->_link_to(); // link na akt controller, action a jazyk
+	 * </code>
+	 *
+	 * @param array $params
+	 * @param array $options options as described in {@link Atk14Url::BuildLink()}
+	 *
+	 * @return string
+	 * @access protected
+	 * @see Atk14::BuildLink()
+	 *
+	 */
 	function _link_to($params = array(),$options = array()){
 		settype($params,"array");
 
@@ -451,23 +629,29 @@ class Atk14Controller{
 	}
 
 	/**
-	* Realize HTTP redirection.
-	*
-	*		$this->_redirect_to("http://www.domenka.cz/");
-	*		$this->_redirect_to(array("action" => "overview"));
-	*		$this->_redirect_to(); // redirect to the same URL
-	*
-	* 
-	* Moving permanently
-	* 	$this->_redirect_to(array("action" => "overview",array("moved_permanently" => true)));
-	* or
-	* 	$this->_redirect_to(array("action" => "overview",array("status" => 301)));
-	* 
-	* 
-	* Unless status or moved_permanently option is specified,
-	*  - after a GET request the "302 Found" status is automatically used
-	*  - after a POST request the "303 See Other" status is automatically used
-	*/
+	 * Realize HTTP redirection.
+	 *
+	 *		$this->_redirect_to("http://www.domenka.cz/");
+	 *		$this->_redirect_to(array("action" => "overview"));
+	 *		$this->_redirect_to(); // redirect to the same URL
+	 *
+	 * 
+	 * Moving permanently
+	 * 	$this->_redirect_to(array("action" => "overview",array("moved_permanently" => true)));
+	 * or
+	 * 	$this->_redirect_to(array("action" => "overview",array("status" => 301)));
+	 * 
+	 * 
+	 * Unless status or moved_permanently option is specified,
+	 *  - after a GET request the "302 Found" status is automatically used
+	 *  - after a POST request the "303 See Other" status is automatically used
+	 *
+	 *
+	 * @param array $params
+	 * @param array $options
+	 * @access protected
+	 *
+	 */
 	function _redirect_to($params = array(),$options = array()){
 		if(is_string($params)){
 			$url = $params;
@@ -511,25 +695,36 @@ class Atk14Controller{
 	}
 
 	/**
-	* $this->_walk(array(
-	*		"get_domain_name",
-	*		"get_data",
-	*		"register",
-	*		"done"
-	*	));
-	*
-	* V $options["extra_params"] mohou byt uvedeny dalsi parametry, ktere sa budou automaticky prevadet pri kazdem presemerovani a
-	* vlozi se automaticky do action atributu formularu.
-	*
-	*		$this->_walk(array(
-	*			"get_password",
-	*			"rules_agreement",
-	*			"confirm",
-	*			"done",
-	*		),
-	*			array("extra_params" => array( "hashed_id" => $this->password_sender->getHashedId()))
-	*		);
-	*/
+	 * This method is used for creating actions with multiple steps.
+	 *
+	 *
+	 * <code>
+	 * $this->_walk(array(
+	 * 	"get_domain_name",
+	 * 	"get_data",
+	 * 	"register",
+	 * 	"done"
+	 * 	));
+	 * 	</code>
+	 *
+	 * 	V $options["extra_params"] mohou byt uvedeny dalsi parametry, ktere sa budou automaticky prevadet pri kazdem presemerovani a
+	 * 	vlozi se automaticky do action atributu formularu.
+	 *
+	 * <code>
+	 * 	$this->_walk(array(
+	 * 		"get_password",
+	 * 		"rules_agreement",
+	 * 		"confirm",
+	 * 		"done",
+	 * 		),
+	 * 		array("extra_params" => array( "hashed_id" => $this->password_sender->getHashedId()))
+	 * 	);
+	 * 	</code>
+	 *
+	 * 	@param array $steps Array with identifiers for each step.
+	 * 	@param array $options Extra options
+	 * 	@access protected
+	 */
 	function _walk($steps,$options = array()){
 		$options = array_merge(array(
 			"extra_params" => array(),
@@ -599,16 +794,19 @@ class Atk14Controller{
 	}
 
 	/**
-	* Transparentne prejde (aniz by byl uzivatel presmerovan na dalsi krok).
-	* Ulozi stav do session.
-	* !!! Ve step metodach je nutne volat timto zpusobem:
-	* 	return $this->_next_step();
-	*	!!! Pouziti return je zde dulezite.
-	*
-	* Jako parametr je mozne dat to, co vraci aktualni krok.
-	*
-	* @return vystup z dalsiho kroku
-	*/
+	 * Transparentne prejde (aniz by byl uzivatel presmerovan na dalsi krok).
+	 * Ulozi stav do session.
+	 * !!! Ve step metodach je nutne volat timto zpusobem:
+	 * 	<code>
+	 * 	return $this->_next_step();
+	 * 	</code>
+	 *
+	 *	!!! Pouziti return je zde dulezite.
+	 *
+	 * Jako parametr je mozne dat to, co vraci aktualni krok.
+	 *
+	 * @return string vystup z dalsiho kroku
+	 */
 	function _next_step($current_step_returns = true){
 		$this->_save_walking_state($current_step_returns);
 		return $this->_execute_current_step();

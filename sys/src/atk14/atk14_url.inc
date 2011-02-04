@@ -1,4 +1,19 @@
 <?
+/**
+ * Class for working with Urls.
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
+
+/**
+ * Class for working with Urls.
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
 class Atk14Url{
 
 	/**
@@ -130,6 +145,12 @@ class Atk14Url{
 		);
 	}
 
+	/**
+	 * Generates a URL
+	 *
+	 * @param string $params
+	 *
+	 */
 	function BuildLink($params,$options = array()){
 		global $ATK14_GLOBAL,$HTTP_REQUEST;
 		Atk14Timer::Start("Atk14Url::BuildLink");

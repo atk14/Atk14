@@ -1,7 +1,25 @@
 <?
 /**
-* 
-*/
+ * Smarty plugin that generates remote link
+ *
+ * The generated link is handled with javascript and sent as remote. When javascript is not present, click on the link is sent as normal request.
+ *
+ * @package Atk14
+ * @subpackage Helpers
+ * @see smarty_block_a
+ *
+ */
+
+/**
+ *
+ * @param array $params Uses same parameters as {@link smarty_block_a}. Here is description of additional parameters:
+ *
+ * <ul>
+ * 	<li><b>_method</b> - method for sending the request. Defaults to GET
+ * </ul>
+ * @param string $content content of the Smarty block
+ *
+ */
 function smarty_block_a_remote($params, $content, &$smarty, &$repeat)
 {
 	$attributes = array();
