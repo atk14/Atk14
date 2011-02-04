@@ -12,25 +12,28 @@
  * It's closely connected from any template by {sortable} smarty helper.
  *
  *
- * Here is example of use:
- * <code>
+ * Here is example of use.
+ *
  * Within a controller's method:
  *
- *		$sorting = new Atk14Sorting($this->params);
- *		$sorting->add("name");
- *		$sorting->add("created",array("reverse" => true));
- *		$sorting->add("rank",array("ascending_ordering" => "rank DESC, id ASC", "descending_ordering" => "rank ASC, id DESC"));
+ * <code>
+ *	$sorting = new Atk14Sorting($this->params);
+ *	$sorting->add("name");
+ *	$sorting->add("created",array("reverse" => true));
+ *	$sorting->add("rank",array("ascending_ordering" => "rank DESC, id ASC", "descending_ordering" => "rank ASC, id DESC"));
  *
- *		$finder = inobj_TableRecord::Finder(array(
- *			"class_name" => "Book",
- *			"order" => $sorting->getOrder(),
- *		));
+ *	$finder = inobj_TableRecord::Finder(array(
+ *		"class_name" => "Book",
+ *		"order" => $sorting->getOrder(),
+ *	));
  *	
- *		$this->tpl_data["finder"] = $finder;
+ *	$this->tpl_data["finder"] = $finder;
  * 	$this->sorting = $sorting;
+ * 	</code>
  *
  * Within a template:
  *	
+ *	<code>
  *		<table>
  *			<thead>
  *				<tr>
@@ -40,7 +43,7 @@
  *				</tr>
  *			</thead>
  *		</table>
- *		</code>
+ *	</code>
  * @package Atk14
  * @subpackage Core
  * 

@@ -17,19 +17,28 @@
 class Atk14Url{
 
 	/**
-	*
-	* $stat = Atk14Url::RecognizeRoute($HTTP_REQUEST->getRequestURI());
-	* 
-	* $stat["controller"];
-	* $stat["action"];
-	* $stat["lang"];
-	* $stat["page_title"];
-	* $stat["page_description"];
-	* $stat["get_params"]; // asociativni pole
-	* 
-	* Pokud nebude URI rozpoznano, bude vracen null
-	*
-	*/
+	 * Decodes URI into array of elements.
+	 *
+	 * When nothing is recognized, returns null.
+	 *
+	 * <code>
+	 * $stat = Atk14Url::RecognizeRoute($HTTP_REQUEST->getRequestURI());
+	 * </code>
+	 * 
+	 * @param string $requested_uri URI to decode
+	 *
+	 * @return array description of URI, contains these parameters:
+	 * <ul>
+	 * 	<li><b>controller</b> - name of controller</li>
+	 * 	<li><b>action</b> - name of action</li>
+	 * 	<li><b>lang</b> - language</li>
+	 * 	<li><b>page_title</b> - </li>
+	 * 	<li><b>page_description</b> - </li>
+	 * 	<li><b>get_params</b> - associative array of params sent in request</li>
+	 * </ul>
+	 *
+	 * @static
+	 */
 	function RecognizeRoute($requested_uri){
 		global $ATK14_GLOBAL,$_GET;
 		settype($uri,"string");
@@ -148,7 +157,10 @@ class Atk14Url{
 	/**
 	 * Generates a URL
 	 *
-	 * @param string $params
+	 * @param array $params
+	 * @param array $options
+	 * @return string generated URL
+	 * @static
 	 *
 	 */
 	function BuildLink($params,$options = array()){
@@ -302,6 +314,10 @@ class Atk14Url{
 		return $out;
 	}
 
+	/**
+	 * @access private
+	 *
+	 */
 	function _ParamMatches($rule,&$param){
 		return
 			isset($param) &&

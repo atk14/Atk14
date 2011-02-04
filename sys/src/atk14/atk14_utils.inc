@@ -1,9 +1,33 @@
 <?
+/**
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
+
+/**
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
 class Atk14Utils{
 
 	/**
-	* 
-	*/
+	 * Determines environment.
+	 *
+	 * Determines environment and depending on that defines some constants.
+	 *
+	 * It first checks whether some of constants TEST,DEVELOPMENT or PRODUCTION is defined.
+	 *
+	 * If none of them is defined it checks the system environment variable ATK14_ENV and when found it defines constants TEST,DEVELOPMENT and PRODUCTION depending on the value of ATK14_ENV
+	 *
+	 * When even ATK14_ENV is not defined it defines these constants depending on REMOTE_ADDRESS.
+	 * For localhost or addresses in 192.168.0.0 and 172.16.0.0 or no IP(script is run from console) it defines environment as DEVELOPMENT, otherwise PRODUCTION.
+	 *
+	 * @static
+	 */
 	function DetermineEnvironment(){
 		global $HTTP_REQUEST;
 		// Determining environment constants (i.e. DEVELOPMENT, TEST, PRODUCTION).
@@ -43,9 +67,13 @@ class Atk14Utils{
 	}
 
 	/**
-	* Nahraje vsechny $ATK14_GLOBAL->getApplicationPath()/../config/*.inc soubory.
-	* Drive preferovane umisteni $ATK14_GLOBAL->getApplicationPath()/conf/*.inc.
-	*/
+	 * Load all config files.
+	 *
+	 * Loads all config files (*.inc) in directory $ATK14_GLOBAL->getApplicationPath()/../config/
+	 * Also tries to use formerly prefered directory $ATK14_GLOBAL->getApplicationPath()/conf
+	 *
+	 * @static
+	 */
 	function LoadConfig(){
 		global $ATK14_GLOBAL;
 		if(!file_exists($path = $ATK14_GLOBAL->getApplicationPath()."../config/")){
@@ -71,9 +99,18 @@ class Atk14Utils{
 	}
 
 	/**
-	* Atk14Utils::LoadControllers("help_controller");
-	* Nahraje vse potrebne pro HelpController a nakonec nahraje i HelpController samotny.
-	*/
+	 * Loads resources for a controller and also the controller.
+	 *
+	 * <code>
+	 * Atk14Utils::LoadControllers("help_controller");
+	 * </code>
+	 *
+	 * This code loads all resources needed by HelpController and in the end loads the HelpController
+	 *
+	 * @static
+	 * @param string $controller_name name of controller
+	 *
+	 */
 	function LoadControllers($controller_name){
 		Atk14Require::Controller("ApplicationController");
 		Atk14Require::Controller("_*");
@@ -81,8 +118,12 @@ class Atk14Utils{
 	}
 
 	/**
-	* Escapne string pro pouziti v javascriptu.
-	*/
+	 * Escapes string for use in javascript.
+	 *
+	 * @params string $content string to be escaped
+	 * @return string escaped string
+	 * @static
+	 */
 	function EscapeForJavascript($content){
 		return EasyReplace($content,array("\\" => "\\\\", "\n" => "\\n","\r" => "\\r","\t" => "\\t","\"" => "\\\"", "<script" => '<scr" + "ipt', "</script>" => '</scr" + "ipt>'));
 	}
@@ -98,6 +139,8 @@ class Atk14Utils{
 	*
 	* Pri sestavovani linku jsou ignorovany vsechny parametry zacinajici podtrzitkem.
 	* Tyto parametry jsou uvazovany jako atributy html tagu.
+	*
+	* @static
 	*/
 	function BuildLink(&$params,&$smarty,$options = array()){
 		$options = array_merge(array(
@@ -152,13 +195,18 @@ class Atk14Utils{
 	}
 
 	/**
-	*	Spoji atributy do stringu
-	*
-	* $attrs -> array("href" => "http://www.link.cz/", "class" => "red");
-	*
-	* $attrs = Atk14Utils::JoinAttributes($attrs);
-	* echo "<a$attrs>text linku</a>"
-	*/
+	 * Joins attributes to a string.
+	 *
+	 * <code>
+	 * $attrs -> array("href" => "http://www.link.cz/", "class" => "red");
+	 * $attrs = Atk14Utils::JoinAttributes($attrs);
+	 * echo "<a$attrs>text linku</a>"
+	 * </code>
+	 *
+	 * @param array $attributes
+	 * @return string joined attributes
+	 * @static
+	 */
 	function JoinAttributes($attributes){
 		reset($attributes);
 		$out = array();
@@ -168,6 +216,19 @@ class Atk14Utils{
 		return join("",$out);
 	}
 
+	/**
+	 * Returns instance of Smarty object.
+	 *
+	 *
+	 * @param string $template_dir
+	 * @param array $options
+	 * <ul>
+	 * <li><b>controller_name</b></li>
+	 * </ul>
+	 *
+	 * @return Smarty instance of Smarty
+	 * @static
+	 */
 	function GetSmarty($template_dir = null, $options = array()){
 		global $ATK14_GLOBAL;
 
@@ -229,8 +290,16 @@ class Atk14Utils{
 	}
 
 	/**
-	* Atk14Utils::ErrorLog("chybi sablona _item.tpl",$http_response);
-	*/
+	 * Writes a message to error log and to the output defined by HTTPResponse
+	 *
+	 * <code>
+	 * Atk14Utils::ErrorLog("chybi sablona _item.tpl",$http_response);
+	 * </code>
+	 *
+	 * @param string $message
+	 * @param HTTPResponse
+	 * @static
+	 */
 	function ErrorLog($message,&$response){
 		$message = "AK14 error: $message";
 		error_log($message);
@@ -242,9 +311,14 @@ class Atk14Utils{
 	}
 
 	/**
-	* Vyprodukoval tento kontroler nejaky vystup?
-	* Pouziva se pro testovani v before filtrech.
-	*/
+	 * Tests if controller produced any output.
+	 *
+	 * Is used for testing in _before_filters
+	 *
+	 * @params Atk14Controller &$controller
+	 * @return boolean true - output produced, false - nothing produced
+	 * @static
+	 */
 	function ResponseProduced(&$controller){
 		return !(
 			strlen($controller->response->getLocation())==0 &&
@@ -255,8 +329,13 @@ class Atk14Utils{
 	}
 
 	/**
-	* Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d")); // -> array("a","b","c","d")
-	*/
+	 * Joins arrays
+	 * <code>
+	 * Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d")); // -> array("a","b","c","d")
+	 * </code>
+	 * @return array joined arrays
+	 * @static
+	 */
 	function JoinArrays(){
 		$out = array();
 		$arguments = func_get_args();

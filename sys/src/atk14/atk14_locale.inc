@@ -1,9 +1,36 @@
 <?
+/**
+ * Class for managing locale based resources.
+ *
+ * Converts dates and time formats between different locales
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
+
+/**
+ * Class for managing locale based resources.
+ *
+ * Converts dates and time formats between different locales
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
 class Atk14Locale{
 
 	/**
-	* Atk14Locale::FormatDate("1982-12-31"); // "31.12.1982"
-	*/
+	 * Formats Date
+	 * 
+	 * <code>
+	 * Atk14Locale::FormatDate("1982-12-31"); // "31.12.1982"
+	 * </code>
+	 *
+	 * @param string $iso_date date in ISO format
+	 * @return string date in localized format
+	 * @static
+	 */
 	function FormatDate($iso_date){
 		if(strlen($iso_date)==0){ return ""; }
 
@@ -14,8 +41,17 @@ class Atk14Locale{
 	}
 
 	/**
-	* Atk14Locale::ParseDate("31.12.1982"); // "1982-12-31"
-	*/
+	 * Parses date in localized format and converts it to ISO format
+	 *
+	 * <code>
+	 * Atk14Locale::ParseDate("31.12.1982"); // "1982-12-31"
+	 * </code>
+	 *
+	 * @param string $localized_date
+	 * @return string date in ISO format
+	 * @static
+	 *
+	 */
 	function ParseDate($localized_date){
 		$pattern = _("atk14.parse_date_pattern");
 		if($pattern == "atk14.parse_date_pattern"){ $pattern = "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4})$/"; }
@@ -34,11 +70,20 @@ class Atk14Locale{
 	}
 
 	/**
-	* Zformatuje iso datetime az na hodiny a mninuty.
-	* Nikoli vteriny!!!
-	*
-	* Atk14Locale::FormatDateTime("1982-12-31 12:33:00"); // "31.12.1982 12:33"
-	*/
+	 * Formats datetime in ISO format to localized format.
+	 *
+	 * NOTE: Does not convert seconds!!!
+	 * Zformatuje iso datetime az na hodiny a mninuty.
+	 *
+	 * <code>
+	 * Atk14Locale::FormatDateTime("1982-12-31 12:33:00");
+	 * </code>
+	 * outputs "31.12.1982 12:33"
+	 *
+	 * @param string $iso_datetime datetime in ISO format
+	 * @return string datetime in localized format
+	 * @static
+	 */
 	function FormatDateTime($iso_datetime){
 		if(strlen($iso_datetime)==0){ return ""; }
 

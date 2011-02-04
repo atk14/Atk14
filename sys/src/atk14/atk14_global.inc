@@ -1,16 +1,32 @@
 <?
 /**
-*	Trida pro ukladani globalnich promennych.
-* 
-*/
+ * Class for storing of application globals.
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
+
+/**
+ * Class for storing of globals.
+ *
+ * @package Atk14
+ * @subpackage Core
+ *
+ */
 class Atk14Global{
+	/**
+	 * @access private
+	 * @var array
+	 */
 	var $_Store = array();
 
 	/**
-	* Staticka metoda pro ziskani jedinacka.
-	* 
-	* 
-	*/
+	 * Staticka metoda pro ziskani jedinacka.
+	 *
+	 * @return Atk14Global
+	 * @static
+	 */
 	function &GetInstance(){
 		static $instance;
 		if(!isset($instance)){
@@ -19,10 +35,18 @@ class Atk14Global{
 		return $instance;
 	}
 
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 */
 	function setValue($name,$value){
 		$this->_Store[$name] = $value;
 	}
 
+	/**
+	 * @param $name name of global variable
+	 * @return mixed
+	 */
 	function getValue($name){
 		if(isset($this->_Store[$name])){
 			return $this->_Store[$name];
@@ -31,12 +55,14 @@ class Atk14Global{
 	}
 
 	/**
-	* Adresar v url, ve kterem je aplikace umistena.
-	* Toto je dulezite pro sestavovani URL.
-	* Kazda URL bude timto zacinat.
-	*
-	* "/", "/eshop/"... 
-	*/
+	 * Adresar v url, ve kterem je aplikace umistena.
+	 * 
+	 * Toto je dulezite pro sestavovani URL. Kazda URL bude timto zacinat.
+	 *
+	 * "/", "/eshop/"... 
+	 *
+	 * @return string application directory
+	 */
 	function getBaseHref(){
 		global $_SERVER;
 		$out = "/";
@@ -49,6 +75,9 @@ class Atk14Global{
 		return $out;
 	}
 
+	/**
+	 * @return string HTTP_HOST
+	 */
 	function getHttpHost(){
 		global $HTTP_REQUEST;
 		if(isset($HTTP_REQUEST)){ $out = $HTTP_REQUEST->getHttpHost(); }
@@ -57,11 +86,12 @@ class Atk14Global{
 	}
 
 	/**
-	* Returns default language code.
-	* It's the first code in config/locale.yml
-	*
-	* @return string "en", "cs"...
-	*/
+	 * Returns default language code.
+	 *
+	 * It's the first code in config/locale.yml
+	 *
+	 * @return string "en", "cs"...
+	 */
 	function getDefaultLang(){
 		global $ATK14_GLOBAL;
 
@@ -72,10 +102,13 @@ class Atk14Global{
 	}
 
 	/**
-	* Adresar v URL, ktery smeruje do ./public/
-	*
-	* "/public/", "/eshop/public/"...
-	*/
+	 *
+	 * Adresar v URL, ktery smeruje do ./public/
+	 *
+	 * "/public/", "/eshop/public/"...
+	 *
+	 * @return string public directory path
+	 */
 	function getPublicBaseHref(){
 		return $this->getBaseHref()."public/";
 	}
@@ -97,20 +130,22 @@ class Atk14Global{
 	}
 
 	/**
-	* Absolutni cesta ve filesystemu k adresari ./public/
-	*
-	* @return string 			ie "/var/www/apps/my_atk14_app/public/"
-	*/
+	 * Absolute path in filesystem to directory ./public/
+	 *
+	 * @return string directory path, ie "/var/www/apps/my_atk14_app/public/"
+	 *
+	 */
 	function getPublicRoot(){
 		$out = $this->_getRoot()."public/";
 		return $out;
 	}
 
 	/**
-	* Absolutni cesta ve filesystemu, ktera smeruje do adresare s aplikaci.
-	* V tomto adresi jsou pak hledany podadresare controllers, views, layouts....
-	*
-	* @return string 			ie "/var/www/apps/eshop/app/"
+	 * Absolute path in filesystem leading to directory with application.
+	 *
+	 * This directory is searched for basic application directories (controllers, views, layouts ...)
+	 *
+	 * @return string application directory path, ie "/var/www/apps/eshop/app/"
 	*/
 	function getApplicationPath(){
 		$out = $this->_getRoot()."app/";
@@ -118,15 +153,36 @@ class Atk14Global{
 		return $out;
 	}
 
+	/**
+	 * Absolute path in filesystem leading to directory with migrations scripts.
+	 *
+	 * This directory is searched for basic application directories (controllers, views, layouts ...)
+	 *
+	 * @return string application directory path, ie "/var/www/apps/eshop/app/"
+	*/
 	function getMigrationsPath(){
 		return defined("PATH_ATK14_MIGRATIONS") ? PATH_ATK14_MIGRATIONS : $this->_getRoot()."db/migrations/";
 	}
 
 	/**
-	* Vrati popis routes v internim rozvinutem formatu.
-	* Je mozne filtrovat routes pouze pro dany lang/controller/action:
-	* $routes = $ATK14_GLOBAL->getPreparedRoutes("",array("path" => "en/product/detail"));
-	*/
+	 * Returns routes description in a form used internally.
+	 *
+	 * It is possible to filter information for specific lang/controller/action
+	 *
+	 * <code>
+	 * $routes = $ATK14_GLOBAL->getPreparedRoutes("",array("path" => "en/product/detail"));
+	 * </code>
+	 *
+	 * @param string $namespace
+	 * @param array $options possible options:
+	 * <ul>
+	 * 	<li>lang</li>
+	 * 	<li>controller</li>
+	 * 	<li>action</li>
+	 * 	<li>path</li>
+	 * </ul>
+	 * @return array
+	 */
 	function getPreparedRoutes($namespace = "",$options = array()){
 		static $ROUTES_STORE, $ROUTES_BY_PATH, $ROUTES_WITH_NO_PATH;
 
