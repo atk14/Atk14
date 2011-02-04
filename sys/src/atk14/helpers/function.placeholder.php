@@ -5,7 +5,7 @@
  * The tag places content stored by {content}{/content} tag.
  * The tag takes one parameter 'for' which identifies the stored content. Default value of the parameter is 'main'.
  *
- * Alse see {@link smarty_block_content()}
+ * Also see {@link smarty_block_content()}
  *
  * <code>
  * <html>

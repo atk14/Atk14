@@ -12,4 +12,9 @@
 
 require_once(dirname(__FILE__)."/load.inc");
 
+print_r(array(
+	"DEVELOPMENT" => DEVELOPMENT,
+	"PRODUCTION" => PRODUCTION,
+	"TEST" => TEST,
+));
 print_r($__CONFIG_CONSTANTS__);

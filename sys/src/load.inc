@@ -1,32 +1,48 @@
 <?
+/**
+* There are a few components needs to be loaded.
+* Atk14 connects these components to the right order.
+*/
+
 error_reporting(255);
 
-define("APP_DOCUMENT_ROOT",dirname(__FILE__)."/../../");
+// we need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
+// HTTP* classes give us right advices about environment & configuration
+require_once(dirname(__FILE__)."/stringbuffer.inc");
+require_once(dirname(__FILE__)."/http/load.inc");
+require_once(dirname(__FILE__)."/atk14/atk14_utils.inc");
+Atk14Utils::DetermineEnvironment();
 
+// now we are gonna to set up config constants
+require_once(dirname(__FILE__)."/../../config/local_settings.inc");
+require_once(dirname(__FILE__)."/default_settings.inc");
+
+// load the rest...
 require_once(dirname(__FILE__)."/dictionary.inc");
-require_once(dirname(__FILE__)."/sessionstorer.inc");
 require_once(dirname(__FILE__)."/miniyaml.inc");
 require_once(dirname(__FILE__)."/files.inc");
 require_once(dirname(__FILE__)."/dates.inc");
 require_once(dirname(__FILE__)."/date.inc");
 require_once(dirname(__FILE__)."/xmole.inc");
-require_once(dirname(__FILE__)."/stringbuffer.inc");
 require_once(dirname(__FILE__)."/stopwatch.inc");
 require_once(dirname(__FILE__)."/logger.inc");
-require_once(dirname(__FILE__)."/http/load.inc");
 require_once(dirname(__FILE__)."/json_initialize.inc");
-require_once(dirname(__FILE__)."/forms/load.inc");
+require_once(dirname(__FILE__)."/smarty/libs/Smarty.class.php");
+require_once(dirname(__FILE__)."/class_autoload.inc");
 require_once(dirname(__FILE__)."/dbmole/dbmole.inc");
 require_once(dirname(__FILE__)."/dbmole/pgmole.inc");
-require_once(dirname(__FILE__)."/atk14/load.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_base.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_finder.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_emptyfinder.inc");
-require_once(dirname(__FILE__)."/smarty/libs/Smarty.class.php");
-require_once(dirname(__FILE__)."/class_autoload.inc");
+require_once(dirname(__FILE__)."/sessionstorer.inc");
+require_once(dirname(__FILE__)."/packer.inc");
+require_once(dirname(__FILE__)."/sendmail.inc");
+require_once(dirname(__FILE__)."/forms/load.inc");
+require_once(dirname(__FILE__)."/atk14/load.inc");
 
+// ...and load basic application`s objects
 if(file_exists(dirname(__FILE__)."/../../app/forms/application_form.inc")){
 	require_once(dirname(__FILE__)."/../../app/forms/application_form.inc");
 }
@@ -43,23 +59,8 @@ if(file_exists(dirname(__FILE__)."/../../app/models/load.inc")){
 	class_autoload(dirname(__FILE__)."/../../app/models/");
 }
 
-Atk14Utils::DetermineEnvironment();
-
-require_once(dirname(__FILE__)."/../../config/local_settings.inc");
-require_once(dirname(__FILE__)."/default_settings.inc");
-
-require_once(dirname(__FILE__)."/packer.inc");
-
-if(TEST){
-	define("LOGGER_DEFAULT_LOG_FILE",dirname(__FILE__)."/../../log/test.log");
-	define("TEMP",dirname(__FILE__)."/../../tmp/test/");
-}else{
-	define("LOGGER_DEFAULT_LOG_FILE",dirname(__FILE__)."/../../log/application.log");
-	define("TEMP",dirname(__FILE__)."/../../tmp/");
-}
-
 // global variable $dbmole holds database connection
-// at the moment only postgresql is supported
+// at the moment only postgresql is supported (why don't just support the best open source database worldwide?)
 $dbmole = &PgMole::GetInstance();
 
 function &dbmole_connection(&$dbmole){
@@ -75,7 +76,6 @@ function &dbmole_connection(&$dbmole){
 	}else{
 		$d = $database_ar["production"];
 	}
-	
 
 	switch($dbmole->getDatabaseType()){
 		case "mysql":
@@ -96,7 +96,7 @@ function &dbmole_connection(&$dbmole){
 
 function dbmole_error_handler($dbmole){
 	if(PRODUCTION){
-		$dbmole->sendErrorReportToEmail("jaromir.tomek@ntvage.cz");
+		$dbmole->sendErrorReportToEmail(ATK14_ADMIN_EMAIL);
 		$dbmole->logErrorReport(); // zaloguje chybu do error logu
 
 		$response = Atk14Dispatcher::ExecuteAction("application","error500",array(
