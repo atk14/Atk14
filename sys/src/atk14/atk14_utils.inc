@@ -79,6 +79,15 @@ class Atk14Utils{
 		if(!file_exists($path = $ATK14_GLOBAL->getApplicationPath()."../config/")){
 			$path = $ATK14_GLOBAL->getApplicationPath()."conf/";
 		}
+
+		if(file_exists($_f = $path."database.yml")){
+			$ATK14_GLOBAL->setValue("database",miniYAML::Load(files::get_file_content($_f,$e,$e_s)));
+		}
+
+		if(file_exists($_f = $path."locale.yml")){
+			$ATK14_GLOBAL->setValue("locale",miniYAML::Load(files::get_file_content($_f,$e,$e_s)));
+		}
+
 		$dir = opendir($path);
 		while($file = readdir($dir)){
 			if($file=="local_settings.inc"){ continue; } // this is ugly hack :( i need to delay loading of ./config/local_settings.inc
@@ -88,14 +97,6 @@ class Atk14Utils{
 			}
 		}
 		closedir($dir);
-
-		if(file_exists($_f = $path."database.yml")){
-			$ATK14_GLOBAL->setValue("database",miniYAML::Load(files::get_file_content($_f,$e,$e_s)));
-		}
-
-		if(file_exists($_f = $path."locale.yml")){
-			$ATK14_GLOBAL->setValue("locale",miniYAML::Load(files::get_file_content($_f,$e,$e_s)));
-		}
 	}
 
 	/**

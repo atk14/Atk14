@@ -95,9 +95,11 @@ class Atk14Global{
 	function getDefaultLang(){
 		global $ATK14_GLOBAL;
 
-		$langs = array_keys($ATK14_GLOBAL->getValue("locale"));
+		if(!is_null($locales = $ATK14_GLOBAL->getValue("locale"))){
+			$langs = array_keys($locales);
 
-		if(isset($langs[0])){ return $langs[0]; }
+			if(isset($langs[0])){ return $langs[0]; }
+		}
 		return "cs";
 	}
 
