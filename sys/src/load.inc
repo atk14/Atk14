@@ -50,16 +50,14 @@ if(file_exists(dirname(__FILE__)."/../../app/forms/form.inc")){
 	require_once(dirname(__FILE__)."/../../app/forms/form.inc");
 }
 
-// Loading model classes, the load file is optinal
-class_autoload(dirname(__FILE__)."/../../app/models/");
-if(file_exists(dirname(__FILE__)."/../../app/models/load.inc")){
-	require_once(dirname(__FILE__)."/../../app/models/load.inc");
-}
-
-// Loading field (and widget) classes, the load file is optinal again
-class_autoload(dirname(__FILE__)."/../../app/fields/");
-if(file_exists(dirname(__FILE__)."/../../app/fields/load.inc")){
-	require_once(dirname(__FILE__)."/../../app/fields/load.inc");
+// Loading model classes, field (and widget) classes and external (3rd party) libs.
+// In every directory class_autoload() is applied. I believe it can do a lot.
+// But everywhere the load file is optional.
+foreach(array("app/models","app/fields","lib") as $_d_){
+	class_autoload(dirname(__FILE__)."/../../$_d_/");
+	if(file_exists(dirname(__FILE__)."/../../$_d_/load.inc")){
+		require_once(dirname(__FILE__)."/../../$_d_/load.inc");
+	}
 }
 
 // global variable $dbmole holds database connection
