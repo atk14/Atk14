@@ -50,13 +50,16 @@ if(file_exists(dirname(__FILE__)."/../../app/forms/form.inc")){
 	require_once(dirname(__FILE__)."/../../app/forms/form.inc");
 }
 
-// Loading model classes
+// Loading model classes, the load file is optinal
+class_autoload(dirname(__FILE__)."/../../app/models/");
 if(file_exists(dirname(__FILE__)."/../../app/models/load.inc")){
-	// either there is a load.inc file...
 	require_once(dirname(__FILE__)."/../../app/models/load.inc");
-}else{
-	// or class_autoload() is applied	
-	class_autoload(dirname(__FILE__)."/../../app/models/");
+}
+
+// Loading field (and widget) classes, the load file is optinal again
+class_autoload(dirname(__FILE__)."/../../app/fields/");
+if(file_exists(dirname(__FILE__)."/../../app/fields/load.inc")){
+	require_once(dirname(__FILE__)."/../../app/fields/load.inc");
 }
 
 // global variable $dbmole holds database connection
