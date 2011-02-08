@@ -7,6 +7,7 @@ class IndexForm extends ApplicationForm{
 			"label" => _("Search term"),
 			"required" => false,
 			"max_length" => 100,
+			"required" => true,
 		)));
 	}
 }

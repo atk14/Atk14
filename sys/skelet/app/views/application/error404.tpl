@@ -2,4 +2,6 @@
 
 <p>{t escape=no uri=$request->getRequestUri()|h}We are deeply sorry, but the page on the URI <em>%1</em> wasn't found.{/t}</p>
 
+<p>{t}This is app/views/application/error404.tpl template{/t}</p>
+
 <p>{a controller=main action=index}{t}Go to the homepage{/t}{/a}</p>

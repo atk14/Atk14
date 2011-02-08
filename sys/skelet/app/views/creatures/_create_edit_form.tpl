@@ -1,3 +1,5 @@
+{render partial=shared/form_error}
+
 {form}
 	<fieldset>
 		{render partial=shared/form_field fields=name,description,image_url}

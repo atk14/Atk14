@@ -13,5 +13,5 @@
 
 	{capture assign=url_en}{link_to lang=en}{/capture}
 	{capture assign=url_cs}{link_to lang=cs}{/capture}
-	<li>{t escape=no url_en=$url_en url_cs=$url_cs}switch the language: <a href="%1">english</a> or <a href="%2">čeština</a>{/t}</li>
+	<li>{t escape=no url_en=$url_en url_cs=$url_cs}switch the language: <a href="%1">english</a> or <a href="%2">czech</a>{/t}</li>
 </ul>

@@ -7,7 +7,7 @@
 
 		{render partial=shared/layout/meta_headers}
 
-		<title>{$page_title|h} | Snake Oil</title>
+		<title>{$page_title|h} | ATK14 Powered Website</title>
 		<meta name="description" content="{$page_description|h}" />
 
 		{stylesheet_link_tag file="blueprint/screen.css" media="screen, projection"}
@@ -34,7 +34,7 @@
 	<body id="body_{$controller}_{$action}">
 		<div class="container">  
 
-		<h1>Snake Oil website</h1>
+		<h1>ATK14 Powered Website</h1>
 
 		{render partial=shared/layout/flash_message}
 

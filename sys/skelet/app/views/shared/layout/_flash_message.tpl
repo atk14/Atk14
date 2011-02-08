@@ -1,4 +1,6 @@
 {*
+ * Displays flash message if there is any.
+ *
  * Beware! There is no html escaping,
  * thus one can places a link to somewhere withing the flash message or something.
  *}
