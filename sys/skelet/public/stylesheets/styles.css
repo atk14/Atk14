@@ -1,22 +1,24 @@
-/* loading cursor during asynchronous javascript */
-body.loading, body.loading button, body.loading input {
+/*
+ * Loading cursor during asynchronous javascript
+ */
+body.loading, body.loading button, body.loading input, body.loading a, body.loading select {
 	cursor: wait;
 }
 
-.todo {background-color:#FF8; color:#880;}
-
-.clear {clear:both;}
-
-.error_field, .mainerr { background-color:#fbe3e4; padding-top:1em; padding-bottom:1em; }
-.error_field *, .mainerr * { color:#8a1f11; }
-.mainerr { font-size:1.2em;padding:1em; margin-bottom:1.5em; }
-.mainerr p {margin-bottom:0;}
+/*
+ * Styling form elements.
+ *
+ * see shared templates
+ *		app/views/shared/_form*
+ *		app/views/shared/_generic_form*
+ */
+.error_field { background-color:#fbe3e4; padding-top:1em; padding-bottom:1em; }
+.error_field * { color:#8a1f11; }
 .error_field select, .error_field input, .error_field textarea { color:#000; }
 label { padding-right:8px; font-weight:normal; }
 ul.error_list { list-style-type:none; padding-left:0; margin-left: 13.5em; margin-bottom:0; }
 ul.error_list li { padding-left:0; }
 
-/* helpy ve formularich; rozlisujeme div a span */
 fieldset .help { color: gray; }
 fieldset div.help{ clear: both; padding-left: 13em; }
 
@@ -24,6 +26,7 @@ ul.radios, ul.checkboxes {
 	float: left;
 	margin: 0;
 }
+
 ul.radios label, ul.checkboxes label{
 	float: none;
 	text-align: left;
@@ -33,12 +36,17 @@ ul.radios, ul.checkboxes{
 	list-style: none;
 }
 
-/* error explanation */
+/*
+ * Error explanation produced by
+ * {$form->get_error_report()}
+ */
 .errorExplanation{ border: 2px solid #fbc2c4; color: #8a1f11; }
 .errorExplanation h3{ background-color: #fbe3e4; color: #8a1f11; padding: 1em; font-size: 100%; border-bottom: 2px solid #fbc2c4; } 
 .errorExplanation ul{ padding: 0.5em 3em; }
 
-/* paginator */
+/*
+ * Paginator
+ */
 .paginator {
 	margin:0;
 	border-top:1px silver solid;
