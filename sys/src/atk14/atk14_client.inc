@@ -1,5 +1,42 @@
 <?
+/**
+ * Class that simulates client browser.
+ *
+ * @package Atk14
+ * @subpackage Core
+ * @author Jaromir Tomek
+ */
+
+/**
+ * Class that simulates client browser.
+ *
+ * This class is suitable for testing controllers.
+ *
+ * @package Atk14
+ * @subpackage Core
+ * @author Jaromir Tomek
+ * @todo Some more explanation
+ */
 class Atk14Client{
+	
+	/**
+	 * @var Atk14Session
+	 */
+	var $session = null;
+
+	/**
+	 * @var Atk14Flash
+	 */
+	var $flash = null;
+
+	/**
+	 * @var ApplicationController
+	 */
+	var $controller = null;
+
+	/**
+	 *
+	 */
 	function Atk14Client(){
 		$this->session = &Atk14Session::GetInstance();
 		$this->flash = &Atk14Flash::GetInstance();
@@ -9,25 +46,46 @@ class Atk14Client{
 		$GLOBALS["_SERVER"]["REMOTE_ADDR"] = "0.0.0.0";
 	}
 
+	/**
+	 * Disables cookies.
+	 */
 	function disableCookies(){
 		$GLOBALS["_COOKIE"] = array();
 	}
 
 	/**
-	* $controller = $client->get("books/index");
-	* $controller = $client->get("books/index",array("q" => "Mark Twain"));
-	*
-	* $controller = $client->get("en/books/index"); // with language
-	* $controller = $client->get("admin/en/books/index"); // with namespace
-	*/
+	 * Sends a GET request.
+	 *
+	 * <code>
+	 * $controller = $client->get("books/index");
+	 * $controller = $client->get("books/index",array("q" => "Mark Twain"));
+	 * $controller = $client->get("en/books/index"); // with language
+	 * $controller = $client->get("admin/en/books/index"); // with namespace
+	 * </code>
+	 *
+	 * @param string $path
+	 * @param array $params
+	 * @return ApplicationController
+	 */
 	function get($path,$params = array()){
 		return $this->_doRequest("GET",$path,$params);
 	}
 
+	/**
+	 * Sends a POST request.
+	 *
+	 * @param string $path
+	 * @param array $params
+	 * @return ApplicationController
+	 */
 	function post($path,$params = array()){
 		return $this->_doRequest("POST",$path,$params);
 	}
 
+	/**
+	 * Common method to make HTTP requests
+	 * @access private
+	 */
 	function _doRequest($method,$path,$params){
 		$request = new HTTPRequest();
 
@@ -72,10 +130,20 @@ class Atk14Client{
 		return $ctrl;
 	}
 
+	/**
+	 * Gets content from response.
+	 *
+	 * @return string response content
+	 */
 	function getContent(){
 		return $this->controller->response->buffer->toString();
 	}
 
+	/**
+	 * Gets status code of server response.
+	 *
+	 * @return int HTTP status code
+	 */
 	function getStatusCode(){
 		return $this->controller->response->getStatusCode();
 	}

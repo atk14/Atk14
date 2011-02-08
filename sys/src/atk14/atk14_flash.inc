@@ -4,6 +4,7 @@
  *
  * @package Atk14
  * @subpackage Core
+ * @author Jaromir Tomek
  */
 
 /**
@@ -26,8 +27,14 @@
  *
  * @package Atk14
  * @subpackage Core
+ * @author Jaromir Tomek
  */
 class Atk14Flash{
+
+	/**
+	 * @access private
+	 * @var bool
+	 */
 	var $_FlashRead = false;
 
 	/**
@@ -43,11 +50,13 @@ class Atk14Flash{
 	}
 
 	/**
-	* Staticka metoda pro ziskani jedinacka.
-	* @static
-	* @return Atk14Flash instance tridy Atk14Flash
-	* 
-	*/
+	 * Staticka metoda pro ziskani jedinacka.
+	 *
+	 * @static
+	 * @return Atk14Flash instance of class Atk14Flash
+	 *
+	 */
+
 	function &GetInstance(){
 		static $instance;
 		if(!isset($instance)){

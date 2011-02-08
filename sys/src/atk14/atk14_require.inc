@@ -1,29 +1,68 @@
 <?
 /**
-* Trida pro snadne includovani souboru.
-*
+ * Class for simple including of files.
+ *
+ * @package Atk14
+ * @subpackage Core
+ * @author Jaromir Tomek
+ *
+ */
 
-*/
+/**
+ * Class for simple including of files.
+ *
+ * @package Atk14
+ * @subpackage Core
+ * @author Jaromir Tomek
+ *
+ */
 class Atk14Require{
 	/**
-	* // nacteni vsech formularu pro kontroler article
-	* // automaticky bude doplnen namespace, takze napr. tak mohou byt natazeny vsechny soubory z forms/admin/article/
-	* Atk14Require::Forms("article/*");
-	*/
+	 * Loads forms by pattern.
+	 *
+	 * It automatically uses current namespace.
+	 *
+	 * This example loads all forms for controller article:
+	 * <code>
+	 * Atk14Require::Forms("article/*");
+	 * </code>
+	 * @param string $pattern
+	 * @return array
+	 */
 	function Forms($pattern){
 		global $ATK14_GLOBAL;
 		return Atk14Require::_Files("forms/".$ATK14_GLOBAL->getValue("namespace")."/$pattern");
 	}
 
 	/**
-	* Do parametru neuvadet namespace - ten bude pridan automaticky.
-	* 
-	* Atk14Require::Controller("ApplicationController");
-	* Atk14Require::Controller("HelpController");
-	* Atk14Require::Controller("help_controller");
-	* Atk14Require::Controller("help_controller.inc");
-	* Atk14Require::Controller("_*");
-	*/
+	 * Loads a controller.
+	 *
+	 * Loads a controller by name. The controller name can be specified by several ways:
+	 *
+	 * Namespace doesn't have to be specified, it is used automatically.
+	 * <ul>
+	 * 	<li>classname
+	 * 	<code>
+	 * 	Atk14Require::Controller("ApplicationController");
+	 * 	Atk14Require::Controller("HelpController");
+	 * 	</code>
+	 * 	</li>
+	 * 	<li>filename. You don't have to specify suffix, it will be added automatically.
+	 * 	<code>
+	 * 	Atk14Require::Controller("help_controller");
+	 * 	Atk14Require::Controller("help_controller.inc");
+	 * 	</code>
+	 * 	</li>
+	 * 	<li>other
+	 * 	<code>
+	 * 	Atk14Require::Controller("_*");
+	 * 	</code>
+	 * 	</li>
+	 * </ul>
+	 *
+	 * @param string $controller_name 
+	 * @return array
+	 */
 	function Controller($controller_name){
 		global $ATK14_GLOBAL;
 		$filename = "";
@@ -45,11 +84,16 @@ class Atk14Require{
 	}
 
 	/**
-	* Nahraje helper.
-	*
-	* Atk14Require::Helper("modifier.format_datetime",$smarty);
-	* Atk14Require::Helper("modifier.format_datetime.php",$smarty);
-	*/
+	 * Loads a helper
+	 *
+	 * <code>
+	 * Atk14Require::Helper("modifier.format_datetime",$smarty);
+	 * Atk14Require::Helper("modifier.format_datetime.php",$smarty);
+	 * </code>
+	 *
+	 * @param string $filename name of helper. extension doesn't have to be specified, it will be added automatically
+	 * @return array
+	 */
 	function Helper($filename,&$smarty){
 		!preg_match("/\\.php$/",$filename) && ($filename .= ".php");
 		$plugins_dir = $smarty->plugins_dir;
@@ -62,12 +106,29 @@ class Atk14Require{
 	}
 
 	/**
-	* Atk14Require::Load("controllers/application_mailer.inc");
-	*/
+	 * Loads filename specified by pattern.
+	 *
+	 * Alias of {@link _Files()} method.
+	 * <code>
+	 * Atk14Require::Load("controllers/application_mailer.inc");
+	 * </code>
+	 *
+	 * @param string $pattern
+	 * @return array
+	 * @uses _Files()
+	 * @static
+	 */
 	function Load($pattern){
 		return Atk14Require::_Files($pattern);
 	}
 
+	/**
+	 *
+	 * Loads files specified by pattern.
+	 *
+	 * @static
+	 *
+	 */
 	function _Files($pattern){
 		global $ATK14_GLOBAL;
 

@@ -1,4 +1,19 @@
 <?
+/**
+ * Class for managing database migrations.
+ *
+ * @package Atk14
+ * @subpackage Core
+ * @author Jaromir Tomek
+ */
+
+/**
+ * Class for managing database migrations.
+ *
+ * @package Atk14
+ * @subpackage Core
+ * @author Jaromir Tomek
+ */
 class Atk14Migration{
 
 	function Atk14Migration($version){
@@ -9,6 +24,10 @@ class Atk14Migration{
 		$this->logger = &Atk14Migration::GetLogger();
 	}
 
+	/**
+	 * @static
+	 * @return logger
+	 */
 	function &GetLogger(){
 		static $logger;
 		if(!isset($logger)){
@@ -19,6 +38,9 @@ class Atk14Migration{
 		return $logger;
 	}
 
+	/**
+	 * Process prepared migrations.
+	 */
 	function migrateUp(){
 		$this->dbmole->begin();
 		$this->up();
@@ -32,12 +54,18 @@ class Atk14Migration{
 		return true;
 	}
 
+	/**
+	 * @abstract
+	 */
 	function up(){
 		// must be coverred by the descendent...
 	}
 
 	// TODO: to be implemented: migrateDown() and down(), unless it is not needed
 
+	/**
+	 * @access private
+	 */
 	function _fail($message){
 		$this->logger->error($message);
 		$this->logger->flush();

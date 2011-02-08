@@ -4,6 +4,7 @@
  *
  * @package Atk14
  * @subpackage Core
+ * @author Jaromir Tomek
  *
  */
 
@@ -12,6 +13,7 @@
  *
  * @package Atk14
  * @subpackage Core
+ * @author Jaromir Tomek
  *
  */
 class Atk14Controller{
@@ -26,7 +28,6 @@ class Atk14Controller{
 	/**
 	 *
 	 * @var HTTPResponse
-	 *
 	 */
 	var $response = null;
 
@@ -36,7 +37,6 @@ class Atk14Controller{
 	 * The $mailer variable can be used to execute mailer actions in a similar way to common controller actions
 	 *
 	 * @var Atk14Mailer
-	 *
 	 */
 	var $mailer = null;
 
@@ -44,7 +44,6 @@ class Atk14Controller{
 	 * Name of the controller
 	 *
 	 * @var string
-	 *
 	 */
 	var $controller = "";
 
@@ -52,15 +51,20 @@ class Atk14Controller{
 	 * Name of the action being currently executed
 	 *
 	 * @var string
-	 *
 	 */
 	var $action = "";
+
+	/**
+	 * Name of template to render. By default it set to $action, but you can override it by setting it anytime in a controllers method.
+	 *
+	 * @var string
+	 */
+	var $template_name = null;
 
 	/**
 	 * Current language used
 	 *
 	 * @var string
-	 *
 	 */
 	var $lang = "";
 
@@ -70,52 +74,57 @@ class Atk14Controller{
 	 * Parameters from http request
 	 *
 	 * @var Dictionary
-	 *
 	 */
 	var $params = null;
+
+	/**
+	 * Session instance.
+	 *
+	 * @see Atk14Session
+	 * @var Atk14Session
+	 */
+	var $session = null;
 
 	/**
 	 * Instance of {@link Atk14Form} used in current controllers action.
 	 *
 	 * @var Atk14Form
-	 *
 	 */
 	var $form = null;
 
 	/**
 	 * @access private
-	 *
 	 */
 	var $_atk14_caches_action = array();
 
 	/**
 	 * @access private
-	 *
 	 */
-
 	var $_atk14_prepended_before_filters = array();
+
 	/**
 	 * @access private
-	 *
 	 */
-
 	var $_atk14_appended_before_filters = array();
+
 	/**
 	 * @access private
-	 *
 	 */
-
 	var $_atk14_prepended_after_filters = array();
+
 	/**
 	 * @access private
-	 *
 	 */
-
 	var $_atk14_appended_after_filters = array();
 
 	/**
+	 * Data for Smarty templates
+	 * @var array
+	 */
+	var $tpl_data = array();
+
+	/**
 	 * @access private
-	 *
 	 */
 	function atk14__initialize($options = array()){
 		global $ATK14_GLOBAL;
@@ -225,6 +234,11 @@ class Atk14Controller{
 		$this->render_template = false;
 	}
 
+	/**
+	 * Renders error page for missing page.
+	 *
+	 * Renders page with error message and sets HTTP status code 404.
+	 */
 	function error404(){
 		if($this->request->xhr()){
 			$this->response->write("alert('Requested URI was not found!');");
@@ -234,11 +248,21 @@ class Atk14Controller{
 		$this->render_template = false;
 	}
 
+	/**
+	 * Render error page for internal server error.
+	 *
+	 * Render page with error message and sets HTTP status code 500.
+	 */
 	function error500(){
 		$this->response->internalServerError();
 		$this->render_template = false;
 	}
 
+	/**
+	 * Renders error page for unauthorized user.
+	 *
+	 * Renders page with error message and sets HTTP status 403.
+	 */
 	function error403(){
 		$this->response->forbidden();
 		$this->render_template = false;
@@ -254,6 +278,9 @@ class Atk14Controller{
 	 * @param string $action name of action executed
 	 * @param array $options
 	 * @access protected
+	 *
+	 * @uses Atk14Mailer::GetInstanceByController()
+	 * @uses Atk14Form::GetInstanceByController()
 	 *
 	 */
 	function _execute_action($action,$options = array()){

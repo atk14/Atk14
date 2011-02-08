@@ -1,16 +1,30 @@
 <?
 /**
-* Atk14DispatcherDispatch::Dispatch();
-*/
+ * @package Atk14
+ * @subpackage Core
+ * @author Jaromir Tomek
+ */
+
+/**
+ * <code>
+ * Atk14DispatcherDispatch::Dispatch();
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage Core
+ * @author Jaromir Tomek
+ * @todo Write some explanation
+ */
 class Atk14Dispatcher{
 	function Atk14Dispatcher($options = array()){
 		
 	}
 
 	/**
-	*
-	* @static
-	*/
+	 * @static
+	 * @param array $options
+	 * @return HTTPReponse
+	 */
 	function Dispatch($options = array()){
 		global $HTTP_RESPONSE,$HTTP_REQUEST,$ATK14_LOGGER, $ATK14_GLOBAL, $_GET;
 
@@ -70,10 +84,14 @@ class Atk14Dispatcher{
 	}
 
 	/**
-	* 
-	* @static
-	* @return HTTPReponse
-	*/
+	 * Executes action in a controller.
+	 *
+	 * @static
+	 * @param string $controller_name
+	 * @param string $action
+	 * @param array $options
+	 * @return HTTPReponse
+	 */
 	function ExecuteAction($controller_name,$action,$options = array()){
 		global $ATK14_GLOBAL;
 		$namespace = $ATK14_GLOBAL->getValue("namespace");
