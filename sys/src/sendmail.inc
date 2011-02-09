@@ -86,6 +86,7 @@ function sendmail($params = array()){
 		"to" => SENDMAIL_EMPTY_TO_REPLACE,
 		"cc" => null,
 		"bcc" => null,
+		"return_path" => null,
 		"subject" => "",
 		"body" => "",
 		"transfer_encoding" => SENDMAIL_DEFAULT_TRANSFER_ENCODING, // zpusob kodovani body (nikoli prilohy): "8bit" nebo "quoted-printable"
@@ -116,6 +117,7 @@ function sendmail($params = array()){
 	}
 	$BCC = join(", ",$BCC);
 	$CC = _sendmail_correct_address($params['cc']);
+	$RETURN_PATH = isset($params["return_path"]) ? $params["return_path"] : $FROM;
 	$SUBJECT = _sendmail_escape_subject($params['subject'],$params["charset"]);
 	$BODY = $params['body'];
 	if(SENDMAIL_BODY_AUTO_PREFIX!=""){
@@ -187,6 +189,7 @@ function sendmail($params = array()){
 		"from" => $FROM,
 		"bcc" => $BCC,
 		"cc" => $CC,
+		"return_path" => $RETURN_PATH,
 		"subject" => $SUBJECT,
 		"body" => $BODY,
 		"headers" => $HEADERS,
@@ -205,6 +208,10 @@ function sendmail($params = array()){
 	}
 
 	if(SENDMAIL_DO_NOT_SEND_MAILS==false){
+		if(preg_match("/([^@<>\"']+)@([^@<>\"']+)/",$RETURN_PATH,$matches)){
+			putenv("QMAILUSER=$matches[1]");
+			putenv("QMAILHOST=$matches[2]");
+		}
 		mail($TO,$SUBJECT,$BODY,$HEADERS);
 	}
 
@@ -321,20 +328,30 @@ function _sendmail_correct_address($addr){
 function _sendmail_escape_subject($subject,$charset){
 	if(translate::check_encoding($subject,"ascii")){ return $subject; }
 	$out = array();
+	$escape_in_use = false;
 	$out[] = "=?$charset?Q?";
 	for($i=0;$i<strlen($subject);$i++){
 		$c = $subject[$i];
-		if($c=="=" || $c=="?" || !translate::check_encoding($c,"ascii")){
+		if(in_array($c,array("=","?",":","/","_","[","]")) || !translate::check_encoding($c,"ascii")){
 			$out[] = "=".strtoupper(dechex(ord($c)));
+			$escape_in_use = true;
 		}else{
-			$out[] = $c;
+			// RFC 2047 dovoluje mezeru nahradit podtrzitkem
+			$out[] = ($c==" ")?"_":$c;
+			if ($c==" ") $escape_in_use = true;
 		}
 	}
+	if(!$escape_in_use){ return $subject; }
+
 	$out[] = "?=";
 	return join("",$out);
 }
 
-function _sendmail_quoted_printable_encode($string){
+function _sendmail_quoted_printable_encode($string,$options = array()){
+	$options = array_merge(array(
+		"split_up_long_lines_in_spaces" => true,
+	),$options);
+
 	$valid_non_alphanumeric_chars = "$<>[]{}()._-/,?!#@\"'&*+`;:~^|";
 
 	$back_replaces = array(
@@ -358,6 +375,33 @@ function _sendmail_quoted_printable_encode($string){
 	$string = preg_replace("/\\t$/","=09",$string);
 	$string = preg_replace("/ $/","=20",$string);
 	
+	if($options["split_up_long_lines_in_spaces"]){
+		$ar = preg_split('/\r\n/',$string);
+		$out = array();
+		$max_length = 72; // takto nizka hodnota byla zjistena zkusmo - souvisi to se rozmezim {71,73}, ktere je pouzito nize
+		for($i=0;$i<sizeof($ar);$i++){
+			$line = $ar[$i];
+			if(strlen($line)<=$max_length){ $out[] = $line; continue; }
+			$_line = "";
+			$_first = true;
+			$words = preg_split("/ /",$line);
+			for($j=0;$j<sizeof($words);$j++){
+				$word = $words[$j];
+				$last_word = ($j+1)==sizeof($words);
+				if((strlen($_line) + strlen($word) + ($_first ? 0 : 1)) >= $max_length){
+					if(!$_first){ $out[] = $_line." ="; }
+					$_line = "";
+					$_first = true;
+				}
+				if(strlen($word)>=$max_length){ $out[] = $word.($last_word ? "" : " ="); continue; }
+				$_line .= ($_first ? "" : " ").$word;
+				$_first = false;
+			}
+			if(strlen($_line)){ $out[] = $_line; }
+		}
+		$string = join("\r\n",$out);
+	}
+
 	$string = preg_replace('/[^\r\n]{71,73}[^=\r\n]{2}/', "$0=\r\n", $string);
   return $string;
 }

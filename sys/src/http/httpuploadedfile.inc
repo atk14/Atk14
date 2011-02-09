@@ -76,6 +76,15 @@ class HTTPUploadedFile{
 		return false;
 	}
 
+	/**
+	* $file->moveToTemp();
+	* $file->moveToTemp("my_image.jpg");
+	*/
+	function moveToTemp($filename = ""){
+		if(!$filename){ $filename = "moved_uploaded_file_".uniqid().rand(1,9999 ); }
+		return $this->moveTo(TEMP."/$filename");
+	}
+
 	function cleanUp(){
 		if($tmp_file = $this->getTmpFileName()){
 			files::unlink($tmp_file,$err,$err_str);
