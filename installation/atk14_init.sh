@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # This script installs and initializes ATK14 in working directory.
-# Also creates required databases and roles in Postgresl, configures and restarts Apache.
+# Also creates required databases and roles in Postgresql, configures and restarts Apache.
 #
 # Root's rights are required for some operations.
 # So you'll be asked for your sudo password.
@@ -36,18 +36,18 @@ fi
 # setting up some initials
 PWD=`pwd`                                 # /home/joe/webapps/myapp
 APPNAME=`basename "$PWD"`                 # myapp
-PG_USER=postgres                          # Postgresl's service account name
+PG_USER=postgres                          # Postgresql's service account name
 DBNAME_DEVEL="${APPNAME}_devel"           # myapp_devel
 DBNAME_TEST="${APPNAME}_test"             # myapp_test
 PG_PASSWORD=`random_string 6`
 SECRET_TOKEN=`random_string 64`
 
 echo "Your new ATK14 app will be >> $APPNAME <<"
-echo "Two new databases will be created in Postgresl: $DBNAME_DEVEL and $DBNAME_TEST"
-echo "Two new users will be created in Postgresl: $DBNAME_DEVEL and $DBNAME_TEST"
+echo "Two new databases will be created in Postgresql: $DBNAME_DEVEL and $DBNAME_TEST"
+echo "Two new users will be created in Postgresql: $DBNAME_DEVEL and $DBNAME_TEST"
 echo "New virtual host will be configured in Apache: $APPNAME.localhost"
 echo "New record will be added to /etc/hosts: 127.0.0.1 $APPNAME.localhost"
-echo "And even you may by asked for your sudo password!"
+echo "And even more you will be asked for your sudo password!"
 echo -n "Sounds good to you? (press y if so) "
 read confirm
 if [ "$confirm" != "y" ]; then
