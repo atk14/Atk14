@@ -23,7 +23,7 @@
 
 /**
  * @param array $params the only parameter is <b>for</b> which identifies the place to store the block
- * @param array $content
+ * @param string $content
  *
  */
 function smarty_block_content($params,$content,&$smarty,&$repeat){

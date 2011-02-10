@@ -1,4 +1,22 @@
 <?
+/**
+ * Smarty plugin for creating forms.
+ *
+ * Basic usage:
+ * <code>
+ * {form}
+ * {render partial=shared/form_field fields=first_name,last_name,email}
+ * {/form}
+ * </code>
+ * @package Atk14
+ * @subpackage Helpers
+ * @author Jaromir Tomek
+ */
+
+/**
+ * @param array $params
+ * @param string $content
+ */
 function smarty_block_form($params, $content, &$smarty, &$repeat)
 {
 	$params = array_merge(array(

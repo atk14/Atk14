@@ -1,5 +1,20 @@
 <?
+/**
+ * @package Atk14
+ * @subpackage Internals
+ *
+ *
+ *
+ *
+ */
+
 if (get_magic_quotes_gpc()) {
+	/**
+	 * Strips slashes in strings passed in array.
+	 *
+	 * @param array $array array of strings to strip slashes from
+	 * @return array
+	 */
 	function stripslashes_array($array) {
 			return is_array($array) ? array_map('stripslashes_array', $array) : stripslashes($array);
 	}
@@ -11,52 +26,109 @@ if (get_magic_quotes_gpc()) {
 	//$_REQUEST = stripslashes_array($_REQUEST);
 }
 
+/**
+ * HTTPRequest class provides all information about HTTP request.
+ *
+ * Instance of the class is available in any {@link Atk14Controller} descendant as $request variable.
+ *
+ * @package Atk14
+ * @subpackage Internals
+ *
+ */
 class HTTPRequest{
 
+	/**
+	 * @access private
+	 */
 	var $_HTTPRequest_documentRoot = "";
 	
 	/**
-	* Server name nastaveny v httpd.conf.
-	*/
+	 * Server name as set in httpd.conf.
+	 *
+	 * @access private
+	 */
 	var $_HTTPRequest_serverName = "";
 	
 	/**
-	* Jmeno serveru, ktere napise uzivak do url.
-	*/
+	 * Jmeno serveru, ktere napise uzivak do url.
+	 * @access private
+	 */
 	var $_HTTPRequest_HTTPHost = "";
+
+	/**
+	 * Protocol used.
+	 * @access private
+	 */
 	var $_HTTPRequest_serverProtocol = "";
+
+	/**
+	 * @access private
+	 */
 	var $_HTTPRequest_serverPort = null;
+
+	/**
+	 * @access private
+	 */
 	var $_HTTPRequest_scriptName = "";
+
+	/**
+	 * @access private
+	 */
 	var $_HTTPRequest_scriptFilename = "";
 
+	/**
+	 * @access private
+	 */
 	var $_HTTPRequest_headers = array();
 
+	/**
+	 * @access private
+	 * @var array
+	 */
 	var $_SSLPorts = array(443);
 
 	//var $_HTTPRequest_paramsGet = array();
 	//var $_HTTPRequest_paramsPost = array();
 	//var $_HTTPRequest_paramsCookie = array();
 
+	/**
+	 * @var string
+	 * @access private
+	 */
+	var $_HTTPRequest_BasicAuth_Username = null;
 
 	/**
-	* @var string
-	*/
-	var $_HTTPRequest_BasicAuth_Username = null;
-	/**
-	* @var string
-	*/
+	 * @var string
+	 * @access private
+	 */
 	var $_HTTPRequest_BasicAuth_Password = null;
 
 
+	/**
+	 * @return HTTPRequest
+	 */
 	function HTTPRequest(){
 		$this->_AutoInitialize();
 	}
 
+
+	/**
+	 *
+	 *
+	 * @param int $port port number. possible string is converted to integer.
+	 */
 	function addSSLPort($port){
 		settype($port,"integer");
 		$this->_SSLPorts[] = $port;
 	}
 
+	/**
+	 * Class initialization.
+	 *
+	 * Does the main part of the class initialization. Sets all parameters of current request.
+	 *
+	 * @access private
+	 */
 	function _AutoInitialize(){
 		global $_SERVER;
 		if(function_exists("getallheaders")){ // ve cli PHP funkce getallheaders neexistuje
@@ -132,11 +204,25 @@ class HTTPRequest{
 		}
 		
 	}
+
+	/**
+	 * Gets request URI.
+	 *
+	 * @return string
+	 */
 	function getRequestUri(){
 		global $_SERVER;
 		if(isset($this->_ForceRequestUri)){ return $this->_ForceRequestUri; }
 		return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : "";
 	}
+
+	/**
+	 * Gets request URI.
+	 *
+	 * Alias to {@link getRequestUri()} method
+	 *
+	 * @return string
+	 */
 	function getUri(){ return $this->getRequestUri(); }
 
 	function setRequestUri($uri){ $this->_ForceRequestUri = $uri; }
@@ -155,31 +241,73 @@ class HTTPRequest{
 		$uri = $this->getRequestUri();
 		return "$proto://$hostname$port$uri";
 	}
+
+	/**
+	 * Gets HTTP referer.
+	 *
+	 * @return string
+	 */
 	function getHttpReferer(){
 		return isset($GLOBALS["_SERVER"]["HTTP_REFERER"]) ? $GLOBALS["_SERVER"]["HTTP_REFERER"] : "";
 	}
+
+	/**
+	 * Gets name of script executed.
+	 *
+	 * @return string
+	 */
 	function getScriptName(){
 		return $this->_HTTPRequest_scriptName;
 	}
+
+	/**
+	 * Gets remote IP address.
+	 *
+	 * @return string
+	 */
 	function getRemoteAddr(){
 		return isset($GLOBALS["_SERVER"]["REMOTE_ADDR"]) ? $GLOBALS["_SERVER"]["REMOTE_ADDR"] : null;
 	}
+
+	/**
+	 * Gets server name.
+	 *
+	 * Returns server name as set in server configuration (httpd.conf)
+	 *
+	 * @return string
+	 */
 	function getServerName(){
 		return $this->_HTTPRequest_serverName;
 	}
+
+	/**
+	 * Gets port number.
+	 *
+	 * @return integer
+	 */
 	function getServerPort(){
 		return $this->_HTTPRequest_serverPort;
 	}
+
+	/**
+	 * Gets HTTP host.
+	 *
+	 * Returns server name as given by user in URI
+	 *
+	 * @return string
+	 */
 	function getHTTPHost(){
 		return $this->_HTTPRequest_HTTPHost;
 	}
 
 	/**
-	* Vrati string "username:password".
-	* 
-	* @access public
-	* @return string
-	*/
+	 * Returns authentication string.
+	 *
+	 * Returns string in the form "username:password".
+	 *
+	 * @access public
+	 * @return string
+	 */
 	function getBasicAuthString(){
 		if(strlen($this->_HTTPRequest_BasicAuth_Username)>0 || strlen($this->_HTTPRequest_BasicAuth_Password)>0){
 			return "$this->_HTTPRequest_BasicAuth_Username:$this->_HTTPRequest_BasicAuth_Password";
@@ -187,14 +315,29 @@ class HTTPRequest{
 		return "";
 	}
 
+	/**
+	 * Returns username from basic authentication string.
+	 *
+	 * @return string
+	 */
 	function getBasicAuthUsername(){
 		return $this->_HTTPRequest_BasicAuth_Username;
 	}
 
+	/**
+	 * Returns password from basic authentication string.
+	 *
+	 * @return string
+	 */
 	function getBasicAuthPassword(){
 		return $this->_HTTPRequest_BasicAuth_Password;
 	}
 
+	/**
+	 * Returns request method.
+	 * 
+	 * @return string
+	 */
 	function getRequestMethod(){
 		if(isset($this->_ForceRequestMethod)){ return $this->_ForceRequestMethod; }
 
@@ -206,27 +349,54 @@ class HTTPRequest{
 			return $out;
 		}
 	}
+
+	/**
+	 * Returns request method.
+	 *
+	 * Alias to {@link getRequestMethod()}
+	 *
+	 * @return string
+	 */
 	function getMethod(){ return $this->getRequestMethod(); }
 
 	function setRequestMethod($method){ $this->_ForceRequestMethod = strtoupper($method); }
 	function setMethod($method){ $this->setRequestMethod($method); }
 
-	// is this a POST request 
+	/**
+	 * Checks if current request was sent by POST method.
+	 *
+	 * @return bool
+	 */
 	function post(){ return $this->getRequestMethod()=="POST"; }
 
-	// is this a GET request 
+	/**
+	 * Checks if current request was sent by GET method.
+	 *
+	 * @return bool
+	 */
 	function get(){ return $this->getRequestMethod()=="GET"; }
 
-	// is this a PUT request 
+	/**
+	 * Checks if current request was sent by PUT method.
+	 *
+	 * @return bool
+	 */
 	function put(){ return $this->getRequestMethod()=="PUT"; }
 
-	// is this a DELETE request 
+	/**
+	 * Checks if current request was sent by DELETE method.
+	 *
+	 * @return bool
+	 */
 	function delete(){ return $this->getRequestMethod()=="DELETE"; }
 
 	/**
-	* Je toto XHR request?
-	* Funguje s JQuery.
-	*/
+	 * Checks if current request was sent as asynchronous or XmlHttpRequest.
+	 *
+	 * Works with JQuery.
+	 *
+	 * @return bool
+	 */
 	function xhr(){
 		if(isset($this->_ForceXhr)){ return $this->_ForceXhr; }
 		return strtolower($this->getHeader("X-Requested-With"))=="xmlhttprequest";
@@ -238,10 +408,10 @@ class HTTPRequest{
 	}
 
 	/**
-	* 
-	* @access public
-	* @return string    napr. "text/plain"; nebo null, pokud content-type neni nastaven
-	*/
+	 * Returns content of ContentType HTTP header.
+	 *
+	 * @return string    napr. "text/plain"; null when content-type is not set
+	 */
 	function getContentType(){
 		if(isset($GLOBALS["HTTP_SERVER_VARS"]["CONTENT_TYPE"])){
 			$_content_type = $GLOBALS["HTTP_SERVER_VARS"]["CONTENT_TYPE"];	
@@ -254,11 +424,10 @@ class HTTPRequest{
 	}
 
 	/**
-	*
-	* 
-	* @access public
-	* @return string			nebo null v pripade, ze charset neni definovan
-	*/
+	 * Returns content of Accept-Charset HTTP header.
+	 *
+	 * @return string	charset	specification or null when charset is not set
+	 */
 	function getContentCharset(){
 		if(isset($GLOBALS["HTTP_SERVER_VARS"]["CONTENT_TYPE"])){
 			$_content_type = $GLOBALS["HTTP_SERVER_VARS"]["CONTENT_TYPE"];	
@@ -271,14 +440,19 @@ class HTTPRequest{
 		return null;	
 	}
 
+	/**
+	 * Returns content of User-Agent HTTP header
+	 *
+	 * @return string
+	 */
 	function getUserAgent(){ return $GLOBALS["_SERVER"]["HTTP_USER_AGENT"]; }
 
 	/**
-	* 
-	* 
-	* @access public
-	* @return string			nebo null, pokud zadna data neexistuji
-	*/
+	 * Return raw post data.
+	 *
+	 *
+	 * @return string null when no raw data exist
+	 */
 	function getRawPostData(){
 		if(isset($GLOBALS["HTTP_RAW_POST_DATA"])){
 			return $GLOBALS["HTTP_RAW_POST_DATA"];
@@ -286,7 +460,20 @@ class HTTPRequest{
 		return null;
 	}
 
+	/**
+	 * Checks if the request comes over SSL.
+	 *
+	 * Alias to method {@link sslActive()}.
+	 *
+	 * @return bool
+	 */
 	function ssl(){ return $this->sslActive(); }
+	
+	/**
+	 * Checks if the request comes over SSL.
+	 *
+	 * @return bool
+	 */
 	function sslActive(){
 		//TODO: https by se melo spis zjistovat: $GLOBALS["_SERVER"]["HTTPS"]=="on" || isset($GLOBALS["_SERVER"]["SSL_PROTOCOL"])
 		if(!isset($this->_HTTPRequest_serverPort)){
@@ -298,6 +485,21 @@ class HTTPRequest{
 		return false;
 	}
 
+	/**
+	 * Returns value of a parameter sent in the HTTP request.
+	 *
+	 * It searches all GET ,POST variables and cookies.
+	 * Option $order specifies that only parameters of particular type are searched. At also specifies order in which are the types searched.
+	 * <ul>
+	 * 	<li><b>G</b> - GET parameters</li>
+	 * 	<li><b>P</b> - POST parameters</li>
+	 * 	<li><b>C</b> - Cookies</li>
+	 * </ul>
+	 *
+	 * @param string $var_name name of variable to check
+	 * @param string $order order and types of parameters which are searched
+	 * @return bool
+	 */
 	function getVar($var_name,$order = "GPC"){
 		settype($var_name,"string");
 		settype($order,"string");
@@ -323,14 +525,19 @@ class HTTPRequest{
 	}
 
 	/**
-	* Zjisti, zda se parametr nachazi v HTTP requestu.
-	* Volitelnym parametrem $order je napr. mozne parametr vyhledavat pouze v POSTU ("P").
-	* 
-	* @access public
-	* @param string $var_name			jmeno parametru
-	* @param string $order				kde vstude hledat: "G" GET, "P" POST, "C" Cookies
-	* @return bool
-	*/
+	 * Checks if a parameter was sent in the HTTP request.
+	 *
+	 * Option $order specifies that only parameters of particular type are searched. At also specifies order in which are the types searched.
+	 * <ul>
+	 * 	<li><b>G</b> - GET parameters</li>
+	 * 	<li><b>P</b> - POST parameters</li>
+	 * 	<li><b>C</b> - Cookies</li>
+	 * </ul>
+	 *
+	 * @param string $var_name name of variable to check
+	 * @param string $order order and types of parameters which are searched
+	 * @return bool
+	 */
 	function isVarDefined($var_name,$order = "GPC"){
 		settype($var_name,"string");
 		settype($order,"string");
@@ -343,14 +550,47 @@ class HTTPRequest{
 		return false;
 	}
 
+	/**
+	 * Checks if a parameter was sent in the HTTP request.
+	 *
+	 * Alias to {@link isVarDefined} method.
+	 *
+	 * @return bool
+	 */
 	function defined($var_name,$order = "GPC"){
 		return $this->isVarDefined($var_name,$order);
 	}
 
+	/**
+	 * Checks if a POST parameter is defined.
+	 *
+	 * @param string $var_name name of POST parameter
+	 * @return bool
+	 */
 	function isPostVarDefined($var_name){ return $this->IsVarDefined($var_name,"P"); }
+
+	/**
+	 * Checks if a GET parameter is defined.
+	 *
+	 * @param string $var_name name of GET parameter
+	 * @return bool
+	 */
 	function isGetVarDefined($var_name){ return $this->IsVarDefined($var_name,"G"); }
+
+	/**
+	 * Checks if a cookie variable is defined.
+	 *
+	 * @param string $var_name name of cookie variable
+	 * @return bool
+	 */
 	function isCookieVarDefined($var_name){ return $this->IsVarDefined($var_name,"C"); }
 
+	/**
+	 * Returns value of GET parameter.
+	 *
+	 * @param string $var_name
+	 * @return string
+	 */
 	function getGetVar($var_name){
 		settype($var_name,"string");
 		$out = null;
@@ -360,16 +600,34 @@ class HTTPRequest{
 		return $out;
 	}
 
+	/**
+	 * Returns all parameters sent in query string.
+	 *
+	 * @return array
+	 */
 	function getAllGetVars(){
 		if(isset($this->_ForceGetVars)){ return $this->_ForceGetVars; }
 		return $GLOBALS["_GET"];
 	}
 
+	/**
+	 * Returns all parameters sent in query string.
+	 *
+	 * Alias to {@link getAllGetVars()}.
+	 *
+	 * @return array
+	 */
 	function getGetVars(){ return $this->getAllGetVars(); }
 
 	function setGetVars($vars){ $this->_ForceGetVars = $vars; }
 
 
+	/**
+	 * Gets a particular POST variable.
+	 *
+	 * @param string $var_name
+	 * @return string
+	 */
 	function getPostVar($var_name){
 		settype($var_name,"string");
 		$out = null;
@@ -380,14 +638,33 @@ class HTTPRequest{
 		return $out;
 	}
 
+	/**
+	 * Returns all parameters sent in POST.
+	 *
+	 * @return array
+	 */
 	function getAllPostVars(){
 		if(isset($this->_ForcePostVars)){ return $this->_ForcePostVars; }
 		return $GLOBALS["_POST"];
 	}
+
+	/**
+	 * Returns all parameters sent in POST.
+	 *
+	 * Alias to {@link getAllPostVars()}
+	 *
+	 * @return array
+	 */
 	function getPostVars(){ return $this->getAllPostVars(); }
 
 	function setPostVars($vars){ $this->_ForcePostVars = $vars; }
 
+	/**
+	 * Returns value of a cookie $var_name.
+	 *
+	 * @param string $var_name
+	 * @return string value of cookie $var_name
+	 */
 	function getCookieVar($var_name){
 		settype($var_name,"string");
 		$out = null;
@@ -396,11 +673,49 @@ class HTTPRequest{
 		}
 		return $out;
 	}
+
+	/**
+	 * Returns value of a cookie $var_name.
+	 *
+	 * Alias to {@link getCookieVar()} method.
+	 *
+	 * @param string $var_name
+	 * @return string value of cookie $var_name
+	 */
 	function getCookie($name){ return $this->getCookieVar($name); }
 
+	/**
+	 * Returns all variables in cookies.
+	 *
+	 * @return array
+	 */
 	function getCookieVars(){ return $GLOBALS["_COOKIE"]; }
+
+	/**
+	 * Returns all variables in cookies.
+	 *
+	 * Alias to {@link getCookieVars()} method.
+	 *
+	 * @return array
+	 */
 	function getCookies(){ return $this->getCookieVars(); }
 
+	/**
+	 * Returns all variables of specified type from request.
+	 *
+	 *
+	 * You specify type of variables in $order param. 
+	 * It also specifies order in which are the types searched.
+	 * <ul>
+	 * 	<li><b>G</b> - GET parameters</li>
+	 * 	<li><b>P</b> - POST parameters</li>
+	 * 	<li><b>C</b> - Cookies</li>
+	 * </ul>
+	 *
+	 * If there is parameter specified in more than one types then value from the later specified type overrides the first one.
+	 * @return array
+	 *
+	 */
 	function getVars($order = "GPC"){
 		$out = array();
 
@@ -425,13 +740,20 @@ class HTTPRequest{
 		return $out;
 	}
 
+	/**
+	 * Checks if there are some uploaded files.
+	 *
+	 * @return true
+	 */
 	function filesUploaded(){
 		return sizeof($this->getUploadedFiles())>0;
 	}
 
 	/**
-	* TODO: Toto nefunguje...
-	*/
+	 *
+	 * @internal Toto nefunguje
+	 * @todo: spravit
+	 */
 	function filesUploadedWithNoError(){
 		//echo "<pre>";
 		//var_dump($GLOBALS["_FILES"]);
@@ -439,27 +761,48 @@ class HTTPRequest{
 		return sizeof($this->getUploadedFiles())==sizeof($GLOBALS["_FILES"]);
 	}
 
+	/**
+	 * Returns all uploaded files.
+	 * 
+	 * @param array $options 
+	 * @return array array of HTTPUploadedFile instances
+	 */
 	function getUploadedFiles($options = array()){
 		return HTTPUploadedFile::GetInstances($options);
 	}
 
 	/**
-	* // vrati prvni uploadnuty soubor
-	* $file = $request->getUploadedFile();
-	*
-	* // vrati uploadnuty soubor podle nazvu
-	* $file = $request->getUploadedFile("userfile");
-	* echo "filename: ".$file->getFileName()."\n";
-	* echo "size: ".$file->getFileSize()."\n";
-	*
-	* echo $file->getContent();
-	* 
-	* $file->moveTo("data/store/path/");
-	* $file->moveTo("data/store/path/data.txt");
-	*
-	* Ale pozor!! Pokud to radne uploadnuty soubor nenajde, zkusi to vratit instanci HTTPXFile(),
-	* tedy soubor uploadnuty pomoci XHR.
-	*/
+	 * Returns a uploaded file.
+	 *
+	 * Method returns uploaded file specified by $name.
+	 *
+	 * <code>
+	 * $file = $request->getUploadedFile("userfile");
+	 * </code>
+	 *
+	 *
+	 * When no $name is passed it returns first uploaded file:
+	 * <code>
+	 * $file = $request->getUploadedFile();
+	 * </code>
+	 *
+	 *
+	 * You can perform various operations on the returned object
+	 * <code>
+	 * echo "filename: ".$file->getFileName()."\n";
+	 * echo "size: ".$file->getFileSize()."\n";
+	 * echo $file->getContent();
+	 * $file->moveTo("data/store/path/");
+	 * $file->moveTo("data/store/path/data.txt");
+	 * </code>
+	 *
+	 * Notice: When no file is found it tries to find a file uploaded as XmlHttpRequest.
+	 * 
+	 * @param string $name
+	 * @param array $options
+	 * @return HTTPUploadedFile|HTTPXFile
+	 * @todo various operations komentare presunout do popisu tridy HTTPUploadedFile
+	 */
 	function getUploadedFile($name = null,$options = array()){
 		$out = null;
 		$files = $this->getUploadedFiles($options);
@@ -489,10 +832,11 @@ class HTTPRequest{
 	}
 
 	/**
-	* Vrati "otisk" informaci o klientovi.
-	* 
-	* @param $output_format   "string", "md5", "array" nebo "serialize"
-	*/
+	 * Gets a footprint of a client
+	 *
+	 * @param string $output_format valid options are "string", "md5", "array", "serialize"
+	 * @return string|array depends on $output_format. When $output_format is set to array the method returns array, in other cases returns string
+	 */
 	function getClientFootprint($output_format = "string"){
 		if($output_format=="md5"){
 			return md5($this->getClientFootprint("string"));
@@ -531,15 +875,29 @@ class HTTPRequest{
 		}
 	}
 
+	/**
+	 * Returns all HTTP headers
+	 *
+	 * @return array
+	 */
 	function getHeaders(){
 		return $this->_HTTPRequest_headers;
 	}
 
 	/**
-	* // vrati stejnou hodnotu:
-	* $val = $request->getHeader("X-File-Name");
-	* $val = $request->getHeader("x-file-name");
-	*/
+	 * Returns a  particular request header.
+	 *
+	 * Method is case insensitive.
+	 *
+	 *
+	 * These calls return same value:
+	 * <code>
+	 * $val = $request->getHeader("X-File-Name");
+	 * $val = $request->getHeader("x-file-name");
+	 * </code>
+	 *
+	 * @return string content of the header.
+	 */
 	function getHeader($header){
 		$header = strtoupper($header);
 		foreach($this->getHeaders() as $k => $v){
@@ -548,12 +906,12 @@ class HTTPRequest{
 	}
 
 	/**
-	* Detekce mobilniho zarizeni.
-	*
-	* Poutzito ze:
-	*	PHP to detect mobile phpnes
-	*	http://www.andymoore.info/php-to-detect-mobile-phones/
-	*/
+	 * Detects mobile device.
+	 *
+	 * This code is inspired by code published in article 'PHP to detect mobile phones'( http://www.andymoore.info/php-to-detect-mobile-phones/ ).
+	 *
+	 * @return bool true when the request comes from a mobile device, otherwise false
+	 */
 	function mobileDevice(){
 		global $_SERVER;
 
@@ -671,14 +1029,20 @@ class HTTPRequest{
 		}	
 	}
 
+	/**
+	 * Checks if the request comes from IPhone or IPad device
+	 *
+	 * @return bool
+	 */
 	function iphone(){
 		return preg_match('/iphone/',$this->getUserAgent()) || preg_match('/ipod/',$this->getUserAgent());
 	}
 
 	/**
-	* Toto je Valiskova funkce. Neni jasne, k cemu to je....
+	* {@internal Toto je Valiskova funkce. Neni jasne, k cemu to je....}
 	*
-	* TODO: nejake escapovani podle defaultniho parametru (flagu)?
+	* @todo nejake escapovani podle defaultniho parametru (flagu)?
+	* @todo zjistit funkci metody
 	*/
 	function getAllEncodedGetvars(){
     $output = array();
