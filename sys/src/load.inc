@@ -19,15 +19,15 @@ require_once(dirname(__FILE__)."/default_settings.inc");
 
 // load the rest...
 require_once(dirname(__FILE__)."/dictionary/load.inc");
-require_once(dirname(__FILE__)."/miniyaml.inc");
-require_once(dirname(__FILE__)."/files/load.inc");
+require_once(dirname(__FILE__)."/miniyaml/miniyaml.inc");
+require_once(dirname(__FILE__)."/files/files.inc");
 require_once(dirname(__FILE__)."/dates/load.inc");
-require_once(dirname(__FILE__)."/xmole.inc");
-require_once(dirname(__FILE__)."/stopwatch.inc");
-require_once(dirname(__FILE__)."/logger.inc");
+require_once(dirname(__FILE__)."/xmole/xmole.inc");
+require_once(dirname(__FILE__)."/stopwatch/stopwatch.inc");
+require_once(dirname(__FILE__)."/logger/logger.inc");
 require_once(dirname(__FILE__)."/json/load.inc");
 require_once(dirname(__FILE__)."/smarty/libs/Smarty.class.php");
-require_once(dirname(__FILE__)."/class_autoload.inc");
+require_once(dirname(__FILE__)."/class_autoload/class_autoload.inc");
 require_once(dirname(__FILE__)."/dbmole/dbmole.inc");
 require_once(dirname(__FILE__)."/dbmole/pgmole.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj.inc");
@@ -35,9 +35,9 @@ require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_base.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_finder.inc");
 require_once(dirname(__FILE__)."/inobj_tablerecord/inobj_tablerecord_emptyfinder.inc");
-require_once(dirname(__FILE__)."/sessionstorer.inc");
-require_once(dirname(__FILE__)."/packer.inc");
-require_once(dirname(__FILE__)."/sendmail.inc");
+require_once(dirname(__FILE__)."/sessionstorer/sessionstorer.inc");
+require_once(dirname(__FILE__)."/packer/packer.inc");
+require_once(dirname(__FILE__)."/sendmail/sendmail.inc");
 require_once(dirname(__FILE__)."/forms/load.inc");
 require_once(dirname(__FILE__)."/atk14/load.inc");
 
