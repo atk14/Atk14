@@ -18,14 +18,14 @@ require_once(dirname(__FILE__)."/../../config/local_settings.inc");
 require_once(dirname(__FILE__)."/default_settings.inc");
 
 // load the rest...
-require_once(dirname(__FILE__)."/dictionary.inc");
+require_once(dirname(__FILE__)."/dictionary/load.inc");
 require_once(dirname(__FILE__)."/miniyaml.inc");
-require_once(dirname(__FILE__)."/files.inc");
+require_once(dirname(__FILE__)."/files/load.inc");
 require_once(dirname(__FILE__)."/dates/load.inc");
 require_once(dirname(__FILE__)."/xmole.inc");
 require_once(dirname(__FILE__)."/stopwatch.inc");
 require_once(dirname(__FILE__)."/logger.inc");
-require_once(dirname(__FILE__)."/json_initialize.inc");
+require_once(dirname(__FILE__)."/json/load.inc");
 require_once(dirname(__FILE__)."/smarty/libs/Smarty.class.php");
 require_once(dirname(__FILE__)."/class_autoload.inc");
 require_once(dirname(__FILE__)."/dbmole/dbmole.inc");

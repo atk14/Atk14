@@ -1,0 +1,3 @@
+<?
+require("../files.inc");
+?>
