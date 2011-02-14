@@ -49,13 +49,13 @@ class StringBuffer{
 	}
 
 	/**
-	* Nahradi v bufferu string jinym stringem.
-	* 
-	* @access public
-	* @param string $search
-	* @param string $replace			nebo to muze byt dalsi StringBuffer
-	*	@return null
-	*/
+	 * Replaces string in buffer with replacement string.
+	 *
+	 * @access public
+	 *
+	 * @param string $search replaced string
+	 * @param string|StringBuffer $replace	replacement string. or another StringBuffer object
+	 */
 	function Replace($search,$replace){
 		settype($search,"string");
 
