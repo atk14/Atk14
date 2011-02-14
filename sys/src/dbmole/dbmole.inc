@@ -25,6 +25,7 @@ class DbMole{
 	var $_Query = "";
 	var $_BindAr = array();
 	var $_Options = array();
+	var $_QueriesExecuted = 0;
 
 	var $_CacheDir = null;
 
@@ -240,6 +241,7 @@ class DbMole{
 	function getQuery(){ return $this->_Query; }
 	function getBindAr(){ return $this->_BindAr; }
 	function getOptions(){ return $this->_Options; }
+	function getQueriesExecuted(){ return $this->_QueriesExecuted; }
 	function getConfigurationName(){ return $this->_ConfigurationName; }
 
 	function getErrorReport(){
@@ -429,6 +431,14 @@ class DbMole{
 	}
 
 	/**
+	* Zkratka pro vycteni integeru.
+	*/
+	function selectInt($query,$bind_ar = array(), $options = array()){
+		$options["type"] = "integer";
+		return $this->selectSingleValue($query,$bind_ar,$options);
+	}
+
+	/**
 	* Provede SQL dostaz a seradi vsechny hodnoty ze vsech radku do indexoveho pole.
 	*
 	* $article_ids = $dbmole->selectIntoArray("SELECT id FROM articles WHERE source_id=100010");
@@ -474,20 +484,35 @@ class DbMole{
 	}
 
 	/**
+	* // v sql jsou 2 pole
 	* $articles = $dbmole->selectIntoAssociativeArray("SELECT id,name FROM articles WHERE source_id=100010");
-	* $articles ->
 	*		array(
 	*			"12" => "Nazev 1",
 	*			"3342" => "Nazev 2",
 	*			"2311" => "Nazev 3",
 	*			...
 	*		)
+	*
+	*	// v sql je jiny pocet nez 2
+	* $articles = $dbmole->selectIntoAssociativeArray("SELECT id,name,author FROM articles WHERE source_id=100010");
+	*		array(
+	*			"12" => array("name" => "Nazev 1", "author" => "Jan Tuna"),
+	*			"3342" => array("name" => "Nazev 2", "author" => "Dr. Kanal"),
+	*			...
+	*		)
 	*/
 	function selectIntoAssociativeArray($query,$bind_ar = array(), $options = array()){
 		$out = array();
-		$ar = $this->selectIntoArray($query,$bind_ar,$options);
-		for($i=0;$i<sizeof($ar);$i = $i + 2){
-			$out[$ar[$i]] = $ar[$i+1];
+		$rows = $this->selectRows($query,$bind_ar,$options);
+		foreach($rows as $row){
+			$keys = array_keys($row);
+			if(sizeof($keys)==2){
+				$out[$row[$keys[0]]] = $row[$keys[1]];
+			}else{
+				$k = $row[$keys[0]];
+				unset($row[$keys[0]]);
+				$out[$k] = $row; 
+			}
 		}
 		return $out;
 	}
@@ -612,10 +637,34 @@ class DbMole{
 	function selectSequenceCurrval($sequence_name){ return null; }
 	function usesSequencies(){ return true; }
 
+	/**
+	* $dbmole->executeQuery("SELECT * FROM articles WHERE id=:id",array(":id" => 123));
+	*
+	* // bindovat lze i pole
+	* $dbmole->executeQuery("SELECT * FROM articles WHERE id IN :ids",array(":ids" => array(123,124,125)));
+	* // toto bude prevedeno automaticky prevedeno na:
+	* // $dbmole->executeQuery("SELECT * FROM articles WHERE id IN (:ids_0, :ids_1, :ids_2)",array(":ids_0" => 123, ":ids_1" => 124, ":ids_2" => 125));
+	*/
 	function executeQuery($query,$bind_ar = array(),$options = array()){
 		settype($query,"string");
 		settype($bind_ar,"array");
 		settype($options,"array");
+
+		// prevod prip. poli v $bind_ar
+		$b_ar = array();
+		foreach($bind_ar as $key => $value){
+			if(is_array($value)){
+				$replace = array();
+				foreach($value as $_k => $_v){
+					$b_ar["{$key}_$_k"] = $_v;
+					$replace[] = "{$key}_$_k";
+				}
+				$query = str_replace($key,"(".join(", ",$replace).")",$query);
+				continue;
+			}
+			$b_ar[$key] = $value;
+		}
+		$bind_ar = $b_ar;
 
 		$this->_initializeBeforeDoingSQL();
 
@@ -626,6 +675,8 @@ class DbMole{
 		$this->_hookBeforeQueryExecution();
 
 		$out = $this->_executeQuery();
+
+		$this->_QueriesExecuted++;
 
 		$this->_hookAfterQueryExecution();
 
@@ -665,9 +716,10 @@ class DbMole{
 		reset($bind_ar);
 		while(list($key,$value) = each($bind_ar)){
 			if(!isset($value)){ $bind_ar[$key] = "NULL"; continue; }
-			if(is_integer($value)){ continue; }
-			if(is_float($value)){ continue; }
-			$value = $this->escapeString4Sql($value);
+			if(is_object($value)){ $value = $value->getId(); }
+			if(!is_integer($value) && !is_float($value)){
+				$value = $this->escapeString4Sql($value);
+			}
 			$bind_ar[$key] = $value;
 		}
 		$query_to_execute = strtr($query,$bind_ar);
