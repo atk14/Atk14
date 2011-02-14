@@ -1,4 +1,2 @@
 <?
-require("../dates.inc");
-require("../date.inc");
-?>
+require("../load.inc");

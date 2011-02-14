@@ -118,7 +118,10 @@ class Date{
 	* $d = Date::Tomorrow();
 	* $d->daysFromToday(); // +1
 	*/
-	function daysFromToday(){ return dates::get_difference(dates::now(),$this->getDate()); }
+	function daysFromToday(){ return $this->daysFrom(Date::Today()); }
+	function daysFrom($date){
+		return dates::get_difference($date->getDate(),$this->getDate());
+	}
 	function isWeekend(){ return ($this->getIsoWeekDay()==6 || $this->getIsoWeekDay()==7); }
 	function isToday(){ return $this->compare(Date::Today())==0; }
 	function isTomorow(){ return $this->compare(Date::Tomorrow())==0; }
@@ -152,6 +155,7 @@ class Date{
 	}
 
 	function isTheSame($date){ return $this->compare($date)==0; }
+	function isSameLike($date){ return $this->isTheSame($date); } // lepsi english :)
 	function isOlderThan($date){ return $this->compare($date)<0; }
 	function isOlderOrSameLike($date){ return $this->isOlderThan($date) || $this->isTheSame($date); }
 	function isNewerThan($date){ return $this->compare($date)>0; }
@@ -216,6 +220,12 @@ class Date{
 		return $out->getMonthFirstDay();
 	}
 
+	function getPrevMonthLastDay(){
+		$out = $this->getMonthFirstDay();
+		$out->addDays(-1);
+		return $out;
+	}
+
 	function getNextMonthFirstDay(){
 		$out = $this->getMonthLastDay();
 		return $out->plusDay();
@@ -252,5 +262,8 @@ class Date{
 		if(!is_string($date)){ $date = $date->getDate(); }
 		return $date;
 	}
+
+	// magic method
+	function __toString(){ return $this->toString(); }
 }
 ?>
