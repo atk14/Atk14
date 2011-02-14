@@ -752,7 +752,7 @@ class HTTPRequest{
 	/**
 	 *
 	 * @internal Toto nefunguje
-	 * @todo: spravit
+	 * @todo spravit
 	 */
 	function filesUploadedWithNoError(){
 		//echo "<pre>";

@@ -1,39 +1,118 @@
 <?
 /**
-* 
-* $response->buffer->Replace("toto nahradit","timto");
-*/
+ * @package Atk14
+ * @subpackage Internals
+ */
+
+/**
+ * HTTPResponse class provides methods to control HTTP response.
+ *
+ * Instance of the class is available in any {@link Atk14Controller} descendant as $response variable.
+ *
+ * @package Atk14
+ * @subpackage Internals
+ */
 class HTTPResponse{
+
+	/**
+	 * @access private
+	 * @var integer
+	 */
 	var $_StatusCode = 200;
 
+	/**
+	 * @access private
+	 * @var string
+	 */
 	var $_Location = null;
+
+	/**
+	 * @access private
+	 */
 	var $_LocationMovedPermanently = false;
+
+	/**
+	 * @access private
+	 */
 	var $_LocationMovedWithStatus = null;
 
+	/**
+	 * @access private
+	 * @var string
+	 */
 	var $_ContentType = "text/html";
+
+	/**
+	 * @access private
+	 */
 	var $_ContentCharset = null;
+
+	/**
+	 * @access private
+	 */
 	var $_Headers = array();
 	
+	/**
+	 * @access private
+	 */
 	var $_StatusCode_Redefined = false;
+
+	/**
+	 * @access private
+	 */
 	var $_Location_Redefined = false;
-	var $_ContentType_Redefined = false;
-	var $_ContentCharset_Redefined = false;
-
-	var $_HTTPCookies = array();
-
-	var $_OutputBuffer = null;
-	var $_OutputBuffer_Flush_Started = false;
 	
 	/**
-	* Konstruktor.
-	*
-	*/
+	 * @access private
+	 */
+	var $_ContentType_Redefined = false;
+	
+	/**
+	 * @access private
+	 */
+	var $_ContentCharset_Redefined = false;
+
+	/**
+	 * @access private
+	 */
+	var $_HTTPCookies = array();
+
+	/**
+	 * @access private
+	 * @var StringBuffer
+	 */
+	var $_OutputBuffer = null;
+
+	/**
+	 * @access private
+	 */
+	var $_OutputBuffer_Flush_Started = false;
+
+	/**
+	 * @var StringBuffer
+	 */
+	var $buffer = null;
+	
+	/**
+	 * Constructor.
+	 */
 	function HTTPResponse(){
 		$this->_OutputBuffer = new StringBuffer();
 		$this->buffer = &$this->_OutputBuffer;
 	}
 
+	/**
+	 * Gets status code.
+	 *
+	 * @return integer
+	 */
 	function getStatusCode(){ return $this->_StatusCode; }
+
+	/**
+	 * Sets status code of the response.
+	 *
+	 * @param integer $code
+	 */
 	function setStatusCode($code){
 		settype($code,"integer");
 		$this->_StatusCode_Redefined = true;
@@ -41,6 +120,14 @@ class HTTPResponse{
 	}
 
 
+	/**
+	 * Gets status message.
+	 *
+	 * Gets status message as stated in RFC 2616.
+	 * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+	 *
+	 * @return string
+	 */
 	function getStatusMessage(){
 		$_status_message = "Unknown";
 		//cerpano z
@@ -95,16 +182,36 @@ class HTTPResponse{
 		return $_status_message;
 	}
 	
+	/**
+	 * Gets location.
+	 *
+	 * @return string
+	 */
 	function getLocation(){ return $this->_Location;}
 
 	/**
-	*
-	*	  // vyvola presmerovani 302 Found
-	*		$response->setLocation("/?redirected=1");
-	*
-	*		// vyvola presmerovani 301 Moved Permanently
-	*		$response->setLocation("/?redirected=1",array("moved_permanently" => true));
-	*/
+	 * Forces client to redirection.
+	 *
+	 * Forces client to redirection by setting Location HTTP header.
+	 * Option <b>moved_permanently</b> sets HTTP status code to 301.
+	 *
+	 * Redirects client with status code '302 Found':
+	 * <code>
+	 *	$response->setLocation("/?redirected=1");
+	 * </code>
+	 *
+	 * Redirects client with status code '301 Moved Permanently':
+	 * </code>
+	 *	$response->setLocation("/?redirected=1",array("moved_permanently" => true));
+	 * </code>
+	 *
+	 * @param string $url
+	 * @param array $options
+	 * <ul>
+	 * 	<li><b>status</b> - explicitly set status code</li>
+	 * 	<li><b>moved_permanently</b> - </li>
+	 * </ul>
+	 */
 	function setLocation($url,$options = array()){
 		$options = array_merge(array(
 			"moved_permanently" => false,
@@ -130,16 +237,30 @@ class HTTPResponse{
 		$this->setStatusCode(isset($options["status"]) ? $options["status"] : ($options["moved_permanently"] ? 301 : 302));
 		return;
 	}
+
 	/**
-	* Whether response redirects or not.
-	*/
+	 * Checks if the response redirects or not.
+	 *
+	 * @return bool
+	 */
 	function redirected(){ return strlen($this->getLocation())>0; }
 
+	/**
+	 * Sets Content-Type response header.
+	 *
+	 * @param string $content_type
+	 */
 	function setContentType($content_type){
 		settype($content_type,"string");
 		$this->_ContentType_Redefined = true;
 		$this->_ContentType = $content_type;
 	}
+
+	/**
+	 * Gets content of ContentType response header.
+	 *
+	 * @return string
+	 */
 	function getContentType(){ return $this->_ContentType;}
 
 	function setContentCharset($content_charset){
@@ -147,13 +268,38 @@ class HTTPResponse{
 		$this->_ContentCharset_Redefined = true;
 		$this->_ContentCharset = $content_charset;
 	}
+
+	/**
+	 * Gets content of charset part of ContentType response header.
+	 *
+	 * @return string
+	 */
 	function getContentCharset(){ return $this->_ContentCharset;}
 
+	/**
+	 * Gets content of Content-Length response Header.
+	 *
+	 * @return integer
+	 */
 	function getContentLength(){
 		return $this->_OutputBuffer->getLength();
 	}
 
+	/**
+	 * Gets all response headers.
+	 *
+	 * @return array
+	 */
 	function getHeaders(){ return $this->_Headers; }
+
+	/**
+	 * Sets response HTTP header.
+	 *
+	 * Sets content of HTTP response header to a value. Parameters should be passed as strings but values passed as other types are retyped to string.
+	 *
+	 * @param string $name
+	 * @param string $value
+	 */
 	function setHeader($name,$value){
 		settype($name,"string");
 		settype($value,"string");
@@ -218,6 +364,14 @@ class HTTPResponse{
 		$this->_writeStatusMessage($message);
 	}
 
+	/**
+	 * Writes status message to output buffer.
+	 *
+	 * The status message written to buffer is wrapped in HTML code.
+	 *
+	 * @param string $message a string that is added to the standard message belonging to current status code.
+	 * @param string $title optional title. when not passed the status message is used.
+	 */
 	function _writeStatusMessage($message,$title = ""){
 
 		if($title==""){ $title = $this->getStatusMessage(); }
@@ -232,20 +386,29 @@ class HTTPResponse{
 		");
 	}
 
+	/**
+	 * Returns output buffer.
+	 *
+	 * @return StringBuffer
+	 */
 	function &getOutputBuffer(){ return $this->_OutputBuffer; }
 
 	/**
-	*  
-	* @access public
-	* @param HTTPCookie $http_cookie
-	* @return null
-	*/
+	 * Adds a cookie.
+	 *
+	 * @param HTTPCookie $http_cookie
+	 */
 	function addCookie($http_cookie){
 		if(!isset($http_cookie)){ return; }
 
 		$this->_HTTPCookies[] = $http_cookie;
 	}
 
+	/**
+	 * Writes a string to output buffer.
+	 *
+	 * @param string $string_to_write
+	 */
 	function write($string_to_write){
 		settype($string_to_write,"string");
 		if(strlen($string_to_write)>0){
@@ -253,24 +416,31 @@ class HTTPResponse{
 		}
 	}
 
+	/**
+	 * Writes a string to output buffer and appends a new line .
+	 *
+	 * @param string $string_to_write
+	 */
 	function writeln($string_to_write = ""){
 		settype($string_to_write,"string");
 		$this->_OutputBuffer->AddString($string_to_write."\n");
 	}
 
+	/**
+	 * Clears output buffer.
+	 */
 	function clearOutputBuffer(){
 		$this->_OutputBuffer->Clear();
 	}
 
 	/**
-	* Realizuje tisk na vystup - urceno pro postupny tisk vystupu.
-	*
-	* Pri prvnim volani vytiskne HTTP hlavicky a obsah vystupniho bufferu.
-	* Pri dalsim volani flush() uz nebudou vytisteny hlavicky.
-	* Po zavolani je vzdy vystupni buffer vyprazdnen.
-	* 
-	* @access public
-	*/
+	 * Sends content to output.
+	 *
+	 * Intended for sequential output of content.
+	 * On first call method outputs HTTP headers and content of buffer. The headers are not output on second call.
+	 *
+	 * Output buffer is cleared after each call.
+	 */
 	function flush(){
 		if(!$this->_OutputBuffer_Flush_Started){
 			$this->_flushHeaders();
@@ -284,13 +454,12 @@ class HTTPResponse{
 	}
 	
 	/**
-	* Realizuje tisk na vystup - urceno pro tisk vseho najednou (typicky na konci skriptu).
-	*
-	* Na rozdil od flush() vytiskne i hlavicku Content-Length,
-	* pokud to bude mozne.
-	*
-	* @access public
-	*/
+	 * Sends everything to output.
+	 *
+	 * Outputs all content of output buffer with headers. This method is typically used at the end of a script.
+	 * In contrary to flush() method it also outputs the Content-Length HTTP header if it is possible.
+	 *
+	 */
 	function flushAll(){
 		if(!$this->_OutputBuffer_Flush_Started){
 			$this->_flushHeaders();
@@ -305,20 +474,22 @@ class HTTPResponse{
 	}
 
 	/**
-	* Vytiskne pouze HTTP hlavicky (vcetne pripadnych cookies).
-	* Pouzivat jen ve spec. pripadech. Pro vsechny bezne pripady staci pouzivat metody HTTPResponse::flush() nebo HTTPResponse::flushAll().
-	*
-	* @access public
-	*/
+	 * Outputs HTTP headers.
+	 *
+	 * Only HTTP headers (with possible cookies).
+	 * Should be used only in special cases. Commonly used method is {@link HTTPResponse::flush()} or {@link HTTPResponse::flushAll()}
+	 *
+	 * @access public
+	 */
 	function printHeaders(){
 		$this->_flushHeaders();
 	}
 
 	/**
-	* Vytiskne HTTP hlavicky.
-	*
-	* @access private
-	*/
+	 * Outputs HTTP headers.
+	 *
+	 * @access private
+	 */
 	function _flushHeaders(){
 		$_status_message = $this->getStatusMessage();
 		header("HTTP/1.0 $this->_StatusCode $_status_message");
@@ -346,13 +517,13 @@ class HTTPResponse{
 	}
 
 	/**
-	* Pripoji jiny objekt tridy HTTPResponse.
-	* TODO: dodelat hlavicky, cookies...
-	*
-	* @access public
-	* @param HTTPResponse $http_response
-	* @return null
-	*/
+	 * Concatenates another HTTPResponse object.
+	 *
+	 * @todo complete headers, cookies
+	 * @access public
+	 *
+	 * @param HTTPResponse $http_response
+	 */
 	function concatenate($http_response){
 		$this->_OutputBuffer->AddStringBuffer($http_response->_OutputBuffer);
 

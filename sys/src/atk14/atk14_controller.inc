@@ -282,6 +282,7 @@ class Atk14Controller{
 	 * @uses Atk14Mailer::GetInstanceByController()
 	 * @uses Atk14Form::GetInstanceByController()
 	 *
+	 * @todo explain options
 	 */
 	function _execute_action($action,$options = array()){
 		global $ATK14_GLOBAL;
@@ -658,25 +659,40 @@ class Atk14Controller{
 	/**
 	 * Realize HTTP redirection.
 	 *
-	 *		$this->_redirect_to("http://www.domenka.cz/");
-	 *		$this->_redirect_to(array("action" => "overview"));
-	 *		$this->_redirect_to(); // redirect to the same URL
-	 *
-	 * 
-	 * Moving permanently
-	 * 	$this->_redirect_to(array("action" => "overview",array("moved_permanently" => true)));
-	 * or
-	 * 	$this->_redirect_to(array("action" => "overview",array("status" => 301)));
-	 * 
-	 * 
+	 * This method is built up on HTTPResponse::setLocation() method and it offers some options to simpler pass URLs to redirect to.
 	 * Unless status or moved_permanently option is specified,
 	 *  - after a GET request the "302 Found" status is automatically used
 	 *  - after a POST request the "303 See Other" status is automatically used
 	 *
+	 * Common usage of the method:
+	 * <code>
+	 *	$this->_redirect_to("http://www.domenka.cz/");
+	 *	$this->_redirect_to(array("action" => "overview"));
+	 * </code>
 	 *
-	 * @param array $params
+	 * This call redirects to the same URL
+	 * <code>
+	 *	$this->_redirect_to();
+	 * </code>
+	 *
+	 * Moving permanently
+	 * <code>
+	 * 	$this->_redirect_to(array("action" => "overview",array("moved_permanently" => true)));
+	 * </code>
+	 *
+	 * or
+	 * <code>
+	 * 	$this->_redirect_to(array("action" => "overview",array("status" => 301)));
+	 * </code>
+	 * 
+	 * 
+	 *
+	 *
+	 * @param array|string $params
 	 * @param array $options
 	 * @access protected
+	 *
+	 * @uses HTTPResponse::setLocation()
 	 *
 	 */
 	function _redirect_to($params = array(),$options = array()){
