@@ -431,7 +431,7 @@ class files{
 	* @param string 	$filename				jmeno souboru
 	* @param boolean 	&$error 				priznak chyby
 	* @param string 	&$error_str 		popis chyby
-	* @return int											0 => neni; 1 => je; null => chyba
+	* @return int											0 => neni; 1 => je
 	*/
 	function is_readable_and_writable($filename,&$error,&$error_str){
 		$error = false;
@@ -442,7 +442,7 @@ class files{
 		if(!file_exists($filename)){
 			$error = true;
 			$error_str = "file does't exist";
-			return null;
+			return 0;
 		}
 
 		$_UID_ = posix_getuid();
