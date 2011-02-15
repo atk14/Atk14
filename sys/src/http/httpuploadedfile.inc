@@ -1,6 +1,6 @@
 <?
 /**
- * Class providing operations on uploaded file.
+ * Class provides operations on uploaded file.
  *
  * @package Atk14
  * @subpackage Internals
@@ -9,7 +9,7 @@
  */
 
 /**
- * Class providing operations on uploaded file.
+ * Class provides operations on uploaded file.
  *
  * @package Atk14
  * @subpackage Internals
@@ -147,7 +147,7 @@ class HTTPUploadedFile{
 	 * Moves the file from temporary directory to a new place.
 	 *
 	 * @param string $new_filename
-	 * @return bool true or false when an error occurs
+	 * @return bool true, false when an error occurs
 	 */
 	function moveTo($new_filename){
 		if(is_dir($new_filename)){
@@ -172,7 +172,7 @@ class HTTPUploadedFile{
 	 *
 	 * @param string $filename custom filename
 	 * @uses @moveToTemp()
-	 * @return bool true or false when error occurs
+	 * @return bool true, false when error occurs
 	 */
 	function moveToTemp($filename = ""){
 		if(!$filename){ $filename = "moved_uploaded_file_".uniqid().rand(1,9999 ); }
@@ -180,7 +180,7 @@ class HTTPUploadedFile{
 	}
 
 	/**
-	 * Removes temporary file when exists.
+	 * Removes temporary file when some exists.
 	 *
 	 */
 	function cleanUp(){

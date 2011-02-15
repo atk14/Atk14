@@ -93,9 +93,6 @@ class HTTPResponse{
 	 */
 	var $buffer = null;
 	
-	/**
-	 * Constructor.
-	 */
 	function HTTPResponse(){
 		$this->_OutputBuffer = new StringBuffer();
 		$this->buffer = &$this->_OutputBuffer;
@@ -184,6 +181,8 @@ class HTTPResponse{
 	
 	/**
 	 * Gets location.
+	 *
+	 * Returns value that will be set in Location HTTP header.
 	 *
 	 * @return string
 	 */
@@ -346,6 +345,12 @@ class HTTPResponse{
 		$this->_writeStatusMessage($message);
 	}
 
+	/**
+	 * Writes 'Internal server error' message to output buffer.
+	 *
+	 * @param string $message own message to send to output. Can be omited and default message will be used
+	 * @uses _writeStatusMessage()
+	 */
 	function internalServerError($message = null){
 		$this->setStatusCode(500);
 		$this->clearOutputBuffer();
@@ -355,6 +360,12 @@ class HTTPResponse{
 		$this->_writeStatusMessage($message);
 	}
 
+	/**
+	 * Writes 'URL not found' message to output buffer.
+	 *
+	 * @param string $message own message to send to output. Can be omited and default message will be used
+	 * @uses _writeStatusMessage()
+	 */
 	function notFound($message = null){
 		$this->setStatusCode(404);
 		$this->clearOutputBuffer();
@@ -371,6 +382,7 @@ class HTTPResponse{
 	 *
 	 * @param string $message a string that is added to the standard message belonging to current status code.
 	 * @param string $title optional title. when not passed the status message is used.
+	 * @access private
 	 */
 	function _writeStatusMessage($message,$title = ""){
 
@@ -395,6 +407,8 @@ class HTTPResponse{
 
 	/**
 	 * Adds a cookie.
+	 *
+	 * Adds a cookie to the internal cookies array. They are sent to the output by {@link flush()} or {@link flushAll()} methods.
 	 *
 	 * @param HTTPCookie $http_cookie
 	 */

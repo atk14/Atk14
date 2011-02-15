@@ -1039,11 +1039,14 @@ class HTTPRequest{
 	}
 
 	/**
-	* {@internal Toto je Valiskova funkce. Neni jasne, k cemu to je....}
-	*
-	* @todo nejake escapovani podle defaultniho parametru (flagu)?
-	* @todo zjistit funkci metody
-	*/
+	 * Gets encoded GET variables.
+	 *
+	 * {@internal Toto je Valiskova funkce. Neni jasne, k cemu to je....}}
+	 *
+	 * @todo nejake escapovani podle defaultniho parametru (flagu)?
+	 * @todo zjistit funkci metody
+	 *
+	 */
 	function getAllEncodedGetvars(){
     $output = array();
     foreach ($GLOBALS["_GET"] as $name => $value) {

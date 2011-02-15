@@ -1,14 +1,32 @@
 <?
+/**
+ * Class provides operations with strings.
+ *
+ * @package Atk14
+ * @subpackage Internals
+ */
+
+/**
+ * Class provides operations with strings.
+ *
+ * Internally the class holds its content in array of strings as they were added.
+ *
+ * @package Atk14
+ * @subpackage Internals
+ */
 class StringBuffer{
+
+	/**
+	 * @access private
+	 */
 	var $_Buffer = array();
 	
 	/**
-	* Konstruktor.
-	* Jako volitelny parametr je mozne predat string, ktery se hned vlozi do instance.
-	* 
-	* @access public
-	* @param string $string_to_add
-	*/
+	 * Creates new instance of StringBuffer.
+	 *
+	 * By default it creates an instance with empty buffer. Optionally you can pass a string to begin with.
+	 * @param string $string_to_add
+	 */
 	function StringBuffer($string_to_add = ""){
 		settype($string_to_add,"string");
 		if(strlen($string_to_add)>0){
@@ -16,22 +34,44 @@ class StringBuffer{
 		}
 	}
 
+	/**
+	 * Returns content of the buffer.
+	 *
+	 * @return string
+	 */
 	function toString(){
 		return join("",$this->_Buffer);
 	}
 	
+	/**
+	 * Adds another string to the buffer.
+	 *
+	 * @param string $string_to_add
+	 */
 	function AddString($string_to_add){
 		settype($string_to_add,"string");
 		if(strlen($string_to_add)>0){
 			$this->_Buffer[] = $string_to_add;
 		}
 	}
+
+	/**
+	 * Adds content of another StringBuffer to the buffer.
+	 *
+	 * @param StringBuffer $stringbuffer_to_add
+	 */
 	function AddStringBuffer($stringbuffer_to_add){
 		if(!isset($stringbuffer_to_add)){ return;}
 		for($i=0;$i<sizeof($stringbuffer_to_add->_Buffer);$i++){
 			$this->_Buffer[] = $stringbuffer_to_add->_Buffer[$i];
 		}
 	}
+
+	/**
+	 * Returns length of buffer content.
+	 *
+	 * @return integer
+	 */
 	function getLength(){
 		$out = 0;
 		for($i=0;$i<sizeof($this->_Buffer);$i++){
@@ -39,11 +79,19 @@ class StringBuffer{
 		}
 		return $out;
 	}
+
+	/**
+	 * Echoes content of buffer.
+	 */
 	function PrintOut(){
 		for($i=0;$i<sizeof($this->_Buffer);$i++){
 			echo $this->_Buffer[$i];
 		}
 	}
+
+	/**
+	 * Clears buffer.
+	 */
 	function Clear(){
 		$this->_Buffer = array();
 	}

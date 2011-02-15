@@ -1,5 +1,24 @@
 <?
+/**
+ * Class provides operations on files uploaded via asynchronous requests
+ *
+ * @package Atk14
+ * @subpackage Internals
+ * @author Jaromir Tomek
+ */
+
+/**
+ * Class provides operations on files uploaded via asynchronous requests
+ *
+ * @package Atk14
+ * @subpackage Internals
+ * @author Jaromir Tomek
+ */
 class HTTPXFile extends HTTPUploadedFile{
+	/**
+	 * @param array $options
+	 * @return HTTPXFile
+	 */
 	function GetInstance($options = array()){
 		global $HTTP_REQUEST;
 
@@ -16,6 +35,9 @@ class HTTPXFile extends HTTPUploadedFile{
 		}
 	}
 
+	/**
+	 * @access private
+	 */
 	function _writeTmpFile($content){
 		if($this->_TmpFileName){ return; }
 		$this->_TmpFileName = TEMP."/http_x_file_".uniqid().rand(0,9999);
