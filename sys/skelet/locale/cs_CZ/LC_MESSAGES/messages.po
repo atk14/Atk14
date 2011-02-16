@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-16 14:41+0100\n"
-"PO-Revision-Date: 2011-02-16 15:02+0100\n"
-"Last-Translator: Yarri <yarri@listonos.cz>\n"
+"POT-Creation-Date: 2011-02-16 15:18+0100\n"
+"PO-Revision-Date: 2011-02-16 15:22+0100\n"
+"Last-Translator: Yarri <do-not-write-me@ever.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -40,24 +40,20 @@ msgstr "Příšerka byla úspěšně změněna."
 
 #: ../app/controllers/main_controller.inc:4
 #: ../sys/skelet/app/controllers/main_controller.inc:4
-#: smarty.c:71
-#: smarty.c:164
+#: smarty.c:83
 msgid "Welcome!"
 msgstr "Vítejte"
 
 #: ../app/forms/creatures/create_new_form.inc:5
 #: ../sys/skelet/app/forms/creatures/create_new_form.inc:5
-#: smarty.c:17
-#: smarty.c:29
-#: smarty.c:110
-#: smarty.c:122
+#: smarty.c:23
+#: smarty.c:38
 msgid "Name"
 msgstr "Jméno"
 
 #: ../app/forms/creatures/create_new_form.inc:10
 #: ../sys/skelet/app/forms/creatures/create_new_form.inc:10
-#: smarty.c:32
-#: smarty.c:125
+#: smarty.c:41
 msgid "Description"
 msgstr "Popis"
 
@@ -232,137 +228,123 @@ msgid "Ensure this value is at most %max% pixels high (it is %height%)."
 msgstr ""
 
 #: smarty.c:2
-#: smarty.c:95
+#: smarty.c:5
+msgid "ATK14 Powered Website"
+msgstr "Webové místo pohání ATK14"
+
+#: smarty.c:8
 msgid "Listing creatures"
 msgstr "Seznam příšer"
 
-#: smarty.c:5
-#: smarty.c:98
+#: smarty.c:11
 msgid "Search"
 msgstr "Hledat"
 
-#: smarty.c:8
-#: smarty.c:101
+#: smarty.c:14
 msgid "Create a new creature"
 msgstr "Vytvořit novou příšeru"
 
-#: smarty.c:11
-#: smarty.c:104
+#: smarty.c:17
 msgid "Nothing was found."
 msgstr "Nic nebylo nalezeno."
 
-#: smarty.c:14
-#: smarty.c:107
+#: smarty.c:20
 msgid "Id"
 msgstr "Id"
 
-#: smarty.c:20
-#: smarty.c:113
+#: smarty.c:26
+msgid "Update creature"
+msgstr "Aktualizovat příšerku"
+
+#: smarty.c:29
 msgid "detail"
 msgstr "podrobnosti"
 
-#: smarty.c:23
-#: smarty.c:116
+#: smarty.c:32
 msgid "edit"
 msgstr "editovat"
 
-#: smarty.c:26
-#: smarty.c:119
+#: smarty.c:35
 msgid "destroy"
 msgstr "smazat"
 
-#: smarty.c:35
-#: smarty.c:128
+#: smarty.c:44
 msgid "Image"
 msgstr "Obrázek"
 
-#: smarty.c:38
-#: smarty.c:131
+#: smarty.c:47
 msgid "An image of the creature"
 msgstr "Obrázek příšerky"
 
-#: smarty.c:41
-#: smarty.c:134
+#: smarty.c:50
 msgid "New Creature Form"
 msgstr "Formulář pro vytvoření nové příšerky"
 
-#: smarty.c:44
-#: smarty.c:137
+#: smarty.c:53
+msgid "Create new creature"
+msgstr "Vytvořit novou příšerku"
+
+#: smarty.c:56
 msgid "Error 404: Page not found"
 msgstr "Chyba 404: Stránka nebyla nalezena."
 
-#: smarty.c:47
-#: smarty.c:140
+#: smarty.c:59
 msgid "We are deeply sorry, but the page on the URI <em>%1</em> wasn't found."
 msgstr "Je nám velmi líto, ale stránka s touto adresou URI <em>%1</em> nebyla nalezena."
 
-#: smarty.c:50
-#: smarty.c:143
+#: smarty.c:62
 msgid "This is app/views/application/error404.tpl template"
 msgstr "Toto je šablona app/views/application/error404.tpl"
 
-#: smarty.c:53
-#: smarty.c:146
+#: smarty.c:65
 msgid "Go to the homepage"
 msgstr "Jděte na homepage"
 
-#: smarty.c:56
-#: smarty.c:149
+#: smarty.c:68
 msgid "required"
 msgstr "povinné"
 
-#: smarty.c:59
-#: smarty.c:152
+#: smarty.c:71
 msgid "Example:"
 msgstr "Příklad"
 
-#: smarty.c:62
-#: smarty.c:155
+#: smarty.c:74
 msgid "Save"
 msgstr "Uložit"
 
-#: smarty.c:65
-#: smarty.c:158
+#: smarty.c:77
 msgid "The following difficulties have occurred during the form processing:"
 msgstr ""
 
-#: smarty.c:68
-#: smarty.c:161
+#: smarty.c:80
 msgid "Some of the items were filled incorrectly. Please, check the form and correct the errors."
 msgstr ""
 
-#: smarty.c:74
-#: smarty.c:167
+#: smarty.c:86
 msgid "Nice to see you."
 msgstr "Rád vás vidím."
 
-#: smarty.c:77
-#: smarty.c:170
+#: smarty.c:89
 msgid "This HTTP request is handled by the MainController and the index() action."
-msgstr ""
+msgstr "Tento HTTP požadavek je obsloužen kontrolerem MainController a jeho akcí index()."
 
-#: smarty.c:80
-#: smarty.c:173
+#: smarty.c:92
 msgid "This is app/views/main/index.tpl template."
-msgstr ""
+msgstr "Toto je šablona app/views/main/index.tpl."
 
-#: smarty.c:83
-#: smarty.c:176
+#: smarty.c:95
 msgid "Where to go?"
 msgstr "Kam zajít?"
 
-#: smarty.c:86
-#: smarty.c:179
+#: smarty.c:98
 msgid "visit the Creatures show"
 msgstr "navštívit Přehlídku příšer"
 
-#: smarty.c:89
-#: smarty.c:182
+#: smarty.c:101
 msgid "check out 404 error page"
 msgstr "prověřte chybovou stránku 404"
 
-#: smarty.c:92
-#: smarty.c:185
+#: smarty.c:104
 msgid "switch the language: <a href=\"%1\">english</a> or <a href=\"%2\">czech</a>"
 msgstr "Změnit jazyk: <a href=\"%1\">angličtina</a> nebo <a href=\"%2\">čeština</a>"
 

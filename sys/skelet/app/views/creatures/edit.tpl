@@ -1,3 +1,4 @@
 <h2>{$page_title}</h2>
 
-{render partial=create_edit_form button_label="Update creature"}
+{capture assign=label}{t}Update creature{/t}{/capture}
+{render partial=create_edit_form button_label=$label}

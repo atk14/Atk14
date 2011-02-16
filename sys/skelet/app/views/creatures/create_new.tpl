@@ -1,3 +1,4 @@
 <h2>{t}New Creature Form{/t}</h2>
 
-{render partial=create_edit_form button_label="Creature new creature"}
+{capture assign=label}{t}Create new creature{/t}{/capture}
+{render partial=create_edit_form button_label=$label}

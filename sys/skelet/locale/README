@@ -1,17 +1,17 @@
-vytvori soubory files_php a files_smarty_templates, ktere obsahuji seznam souboru, ze kterych se bude gettext slovnik vytvaret
+Creates files files_php and files_smarty_templates with a list of files to be searched for possible gettext phrases.
 $ make files-list
 
-vytvori v akt. adresari soubor messages.po se vsema frazema.
+Creates the messages.po file with all phrases in the current folder.
 $ make gettext
 
-spoji messages.po s sk_SK/LC_MESSAGES/messages.po, en_EN...
+Merges just created messages.po with en_US/LC_MESSAGES/messages.po, cs_CZ/LC_MESSAGES/messages.po and so on.
 $ make merge-all
 
-nyni doprelozit chybejici texty
-$ poedit en_US/LC_MESSAGES/messages.po 
+Now it is time to translate all new messages.
+$ poedit cs_CZ/LC_MESSAGES/messages.po
 
-udela ve vsech adresarich messages.mo
+Compiles messages.po files into messages.mo files.
 $ make compile-all
 
-smaze vsechny pracovni soubory
+Wipes out all the working files.
 $ make clear
