@@ -5,6 +5,9 @@
  *
  * Just run ./generate_documentation.php
  *
+ * Add -a or -app flag to also generate documentation of application
+ *
+ *
  * Requires PhpDocumentor
  *
  * You can install it with pear.
@@ -17,8 +20,20 @@
 require_once(dirname(__FILE__)."/load.inc");
 
 $src_dirs = array();
+
+if (isset($argv)) {
+	foreach($argv as $arg) {
+		switch($arg) {
+		case "-a":
+		case "-app":
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath();
+		}
+	}
+}
 $src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/atk14";
+$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/dictionary";
 $src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/http";
+$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/stringbuffer";
 
 $output_dir = $ATK14_GLOBAL->getApplicationPath()."../tmp/documentation";
 
