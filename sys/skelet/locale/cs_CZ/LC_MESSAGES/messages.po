@@ -1,0 +1,371 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-02-16 14:41+0100\n"
+"PO-Revision-Date: 2011-02-16 15:02+0100\n"
+"Last-Translator: Yarri <yarri@listonos.cz>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../app/controllers/creatures_controller.inc:34
+#: ../sys/skelet/app/controllers/creatures_controller.inc:34
+msgid "A new creature has been successfuly created"
+msgstr "Nová příšerka byla vytvořena"
+
+#: ../app/controllers/creatures_controller.inc:43
+#: ../sys/skelet/app/controllers/creatures_controller.inc:43
+#, php-format
+msgid "Detail of the creature #%s"
+msgstr "Podrobnosti o příšerce #%s"
+
+#: ../app/controllers/creatures_controller.inc:50
+#: ../sys/skelet/app/controllers/creatures_controller.inc:50
+#, php-format
+msgid "Editing the creature #%s"
+msgstr "Editovat příšerku #%s"
+
+#: ../app/controllers/creatures_controller.inc:57
+#: ../sys/skelet/app/controllers/creatures_controller.inc:57
+msgid "The creature has been changed successfuly."
+msgstr "Příšerka byla úspěšně změněna."
+
+#: ../app/controllers/main_controller.inc:4
+#: ../sys/skelet/app/controllers/main_controller.inc:4
+#: smarty.c:71
+#: smarty.c:164
+msgid "Welcome!"
+msgstr "Vítejte"
+
+#: ../app/forms/creatures/create_new_form.inc:5
+#: ../sys/skelet/app/forms/creatures/create_new_form.inc:5
+#: smarty.c:17
+#: smarty.c:29
+#: smarty.c:110
+#: smarty.c:122
+msgid "Name"
+msgstr "Jméno"
+
+#: ../app/forms/creatures/create_new_form.inc:10
+#: ../sys/skelet/app/forms/creatures/create_new_form.inc:10
+#: smarty.c:32
+#: smarty.c:125
+msgid "Description"
+msgstr "Popis"
+
+#: ../app/forms/creatures/create_new_form.inc:16
+#: ../sys/skelet/app/forms/creatures/create_new_form.inc:16
+msgid "Image URL"
+msgstr "URL obrázku"
+
+#: ../app/forms/creatures/index_form.inc:7
+#: ../sys/skelet/app/forms/creatures/index_form.inc:7
+msgid "Search term"
+msgstr "Hledat výraz"
+
+#: ../sys/src/atk14/atk14_locale.inc:37
+msgid "atk14.date_format"
+msgstr "j.n.Y"
+
+#: ../sys/src/atk14/atk14_locale.inc:56
+msgid "atk14.parse_date_pattern"
+msgstr "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4})$/"
+
+#: ../sys/src/atk14/atk14_locale.inc:90
+msgid "atk14.datetime_format"
+msgstr "j.n.Y H:i"
+
+#: ../sys/src/atk14/atk14_locale.inc:103
+msgid "atk14.parse_datetime_pattern"
+msgstr "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"
+
+#: ../sys/src/atk14/atk14_locale.inc:116
+msgid "atk14.datetime_with_seconds_format"
+msgstr "j.n.Y H:i:s"
+
+#: ../sys/src/atk14/atk14_locale.inc:128
+msgid "atk14.parse_datetime_with_seconds_pattern"
+msgstr "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})$/"
+
+#: ../sys/src/atk14/atk14_form.inc:163
+msgid "Formular obsahuje chyby, proto nemuze byt zpracovan."
+msgstr ""
+
+#: ../sys/src/atk14/atk14_sorting.inc:89
+msgid "Sort table by this column"
+msgstr "Třídit tabulku podle tohoto sloupce"
+
+#: ../app/helpers/modifier.display_bool.php:9
+#: ../sys/skelet/app/helpers/modifier.display_bool.php:9
+msgid "Yes"
+msgstr "Ano"
+
+#: ../app/helpers/modifier.display_bool.php:11
+#: ../sys/skelet/app/helpers/modifier.display_bool.php:11
+msgid "No"
+msgstr "Ne"
+
+#: ../sys/src/atk14/helpers/function.paginator.php:64
+#: ../sys/src/atk14/helpers/function.paginator.php:127
+#, php-format
+msgid "%s items total"
+msgstr "%s položek celkem"
+
+#: ../sys/src/atk14/helpers/function.paginator.php:78
+msgid "prev"
+msgstr "předchozí"
+
+#: ../sys/src/atk14/helpers/function.paginator.php:122
+msgid "next"
+msgstr "následující"
+
+#: ../sys/src/atk14/helpers/function.to_sentence.php:6
+msgid "and"
+msgstr "a"
+
+#: ../sys/src/forms/fields.php:58
+msgid "This field is required."
+msgstr "Toto pole je povinné"
+
+#: ../sys/src/forms/fields.php:59
+msgid "Enter a valid value."
+msgstr "Vložta správnou hodnotu."
+
+#: ../sys/src/forms/fields.php:156
+#: ../sys/src/forms/fields.php:354
+msgid "Ensure this value has at most %max% characters (it has %length%)."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:157
+#: ../sys/src/forms/fields.php:355
+msgid "Ensure this value has at least %min% characters (it has %length%)."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:158
+msgid "Ensure this value has at most %max% characters."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:159
+msgid "Ensure this value has at least %min% characters."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:160
+msgid "Ensure this value has between %min% and %max% characters."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:237
+msgid "Enter a whole number."
+msgstr "Zadejte celé číslo."
+
+#: ../sys/src/forms/fields.php:238
+#: ../sys/src/forms/fields.php:288
+msgid "Ensure this value is less than or equal to %value%."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:239
+#: ../sys/src/forms/fields.php:289
+msgid "Ensure this value is greater than or equal to %value%."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:287
+msgid "Enter a number."
+msgstr "Zadejte číslo."
+
+#: ../sys/src/forms/fields.php:396
+msgid "Enter a valid e-mail address."
+msgstr "Zadejte platnou e-mailovou adresu."
+
+#: ../sys/src/forms/fields.php:438
+msgid "Select a valid choice. That choice is not one of the available choices."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:439
+msgid "Please, choose the right option."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:507
+msgid "Enter a valid date."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:542
+msgid "Enter a valid date, hours and minutes."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:555
+msgid "Enter a valid date, hours, minutes and seconds."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:584
+msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:585
+msgid "Enter a list of values."
+msgstr "Zadejte seznam hodnot."
+
+#: ../sys/src/forms/fields.php:586
+msgid "Please, choose the right options."
+msgstr "Prosím, vyberte správnou možnost."
+
+#: ../sys/src/forms/fields.php:637
+msgid "Enter a valid IP address."
+msgstr "Vložte platnou IP adresu."
+
+#: ../sys/src/forms/fields.php:671
+msgid "Ensure this file is image."
+msgstr "Ověřte, že tento soubor je obrázek."
+
+#: ../sys/src/forms/fields.php:672
+msgid "Ensure this image is at most %max% pixels wide (it is %width%)."
+msgstr ""
+
+#: ../sys/src/forms/fields.php:673
+msgid "Ensure this value is at most %max% pixels high (it is %height%)."
+msgstr ""
+
+#: smarty.c:2
+#: smarty.c:95
+msgid "Listing creatures"
+msgstr "Seznam příšer"
+
+#: smarty.c:5
+#: smarty.c:98
+msgid "Search"
+msgstr "Hledat"
+
+#: smarty.c:8
+#: smarty.c:101
+msgid "Create a new creature"
+msgstr "Vytvořit novou příšeru"
+
+#: smarty.c:11
+#: smarty.c:104
+msgid "Nothing was found."
+msgstr "Nic nebylo nalezeno."
+
+#: smarty.c:14
+#: smarty.c:107
+msgid "Id"
+msgstr "Id"
+
+#: smarty.c:20
+#: smarty.c:113
+msgid "detail"
+msgstr "podrobnosti"
+
+#: smarty.c:23
+#: smarty.c:116
+msgid "edit"
+msgstr "editovat"
+
+#: smarty.c:26
+#: smarty.c:119
+msgid "destroy"
+msgstr "smazat"
+
+#: smarty.c:35
+#: smarty.c:128
+msgid "Image"
+msgstr "Obrázek"
+
+#: smarty.c:38
+#: smarty.c:131
+msgid "An image of the creature"
+msgstr "Obrázek příšerky"
+
+#: smarty.c:41
+#: smarty.c:134
+msgid "New Creature Form"
+msgstr "Formulář pro vytvoření nové příšerky"
+
+#: smarty.c:44
+#: smarty.c:137
+msgid "Error 404: Page not found"
+msgstr "Chyba 404: Stránka nebyla nalezena."
+
+#: smarty.c:47
+#: smarty.c:140
+msgid "We are deeply sorry, but the page on the URI <em>%1</em> wasn't found."
+msgstr "Je nám velmi líto, ale stránka s touto adresou URI <em>%1</em> nebyla nalezena."
+
+#: smarty.c:50
+#: smarty.c:143
+msgid "This is app/views/application/error404.tpl template"
+msgstr "Toto je šablona app/views/application/error404.tpl"
+
+#: smarty.c:53
+#: smarty.c:146
+msgid "Go to the homepage"
+msgstr "Jděte na homepage"
+
+#: smarty.c:56
+#: smarty.c:149
+msgid "required"
+msgstr "povinné"
+
+#: smarty.c:59
+#: smarty.c:152
+msgid "Example:"
+msgstr "Příklad"
+
+#: smarty.c:62
+#: smarty.c:155
+msgid "Save"
+msgstr "Uložit"
+
+#: smarty.c:65
+#: smarty.c:158
+msgid "The following difficulties have occurred during the form processing:"
+msgstr ""
+
+#: smarty.c:68
+#: smarty.c:161
+msgid "Some of the items were filled incorrectly. Please, check the form and correct the errors."
+msgstr ""
+
+#: smarty.c:74
+#: smarty.c:167
+msgid "Nice to see you."
+msgstr "Rád vás vidím."
+
+#: smarty.c:77
+#: smarty.c:170
+msgid "This HTTP request is handled by the MainController and the index() action."
+msgstr ""
+
+#: smarty.c:80
+#: smarty.c:173
+msgid "This is app/views/main/index.tpl template."
+msgstr ""
+
+#: smarty.c:83
+#: smarty.c:176
+msgid "Where to go?"
+msgstr "Kam zajít?"
+
+#: smarty.c:86
+#: smarty.c:179
+msgid "visit the Creatures show"
+msgstr "navštívit Přehlídku příšer"
+
+#: smarty.c:89
+#: smarty.c:182
+msgid "check out 404 error page"
+msgstr "prověřte chybovou stránku 404"
+
+#: smarty.c:92
+#: smarty.c:185
+msgid "switch the language: <a href=\"%1\">english</a> or <a href=\"%2\">czech</a>"
+msgstr "Změnit jazyk: <a href=\"%1\">angličtina</a> nebo <a href=\"%2\">čeština</a>"
+
+#~ msgid "Where to go"
+#~ msgstr "Kam zajít"
+

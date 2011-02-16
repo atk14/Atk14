@@ -6,7 +6,7 @@
 
 <p>{t}This is app/views/main/index.tpl template.{/t}</p>
 
-<h3>{t}Where to go{/t}</h3>
+<h3>{t}Where to go?{/t}</h3>
 <ul>
 	<li>{a controller=creatures}{t}visit the Creatures show{/t}{/a}</li>
 	<li><a href="/non-existing-page">{t}check out 404 error page{/t}</a></li>

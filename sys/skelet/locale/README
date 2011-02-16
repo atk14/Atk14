@@ -1,0 +1,17 @@
+vytvori soubory files_php a files_smarty_templates, ktere obsahuji seznam souboru, ze kterych se bude gettext slovnik vytvaret
+$ make files-list
+
+vytvori v akt. adresari soubor messages.po se vsema frazema.
+$ make gettext
+
+spoji messages.po s sk_SK/LC_MESSAGES/messages.po, en_EN...
+$ make merge-all
+
+nyni doprelozit chybejici texty
+$ poedit en_US/LC_MESSAGES/messages.po 
+
+udela ve vsech adresarich messages.mo
+$ make compile-all
+
+smaze vsechny pracovni soubory
+$ make clear
