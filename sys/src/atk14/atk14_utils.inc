@@ -121,7 +121,7 @@ class Atk14Utils{
 	/**
 	 * Escapes string for use in javascript.
 	 *
-	 * @params string $content string to be escaped
+	 * @param string $content string to be escaped
 	 * @return string escaped string
 	 * @static
 	 */
@@ -174,15 +174,21 @@ class Atk14Utils{
 	}
 
 	/**
-	* Vytahne z $params vsechny hodnoty, jimz klic zacina podrtzitkem.
-	* 
-	* $params = array("id" => "20", "_class" => "red", "_id" => "red_link");
-	* $attrs = Atk14Utils::ExtractAttributes($params);
-	* 
-	*	$attrs --> array("class" => "red","id" => "red_link")
-	* $params --> array("id" => "20")
-	*
-	*/
+	 * Extracts attributes from $params beginning with underscore.
+	 *
+	 * <code>
+	 * $params = array("id" => "20", "_class" => "red", "_id" => "red_link");
+	 * $attrs = Atk14Utils::ExtractAttributes($params);
+	 * </code>
+	 *
+	 * $attrs will contain array("class" => "red","id" => "red_link").
+	 *
+	 * $params will contain array("id" => "20").
+	 *
+	 * @param array &$params
+	 * @return array
+	 * @static
+	 */
 	function ExtractAttributes(&$params){
 		$attributes = array();
 		reset($params);
@@ -316,7 +322,7 @@ class Atk14Utils{
 	 *
 	 * Is used for testing in _before_filters
 	 *
-	 * @params Atk14Controller &$controller
+	 * @param Atk14Controller &$controller
 	 * @return boolean true - output produced, false - nothing produced
 	 * @static
 	 */

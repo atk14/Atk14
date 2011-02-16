@@ -1,11 +1,35 @@
 <?
 /**
-* Eskapuje string pro javascript. Vystup obsahuje i uvozovky!
-* 
-* <script type="text/javascript">
-* 	var message={jstring}Zprava pro tebe: {render partial="message"}{/jstring};
-*	</script>
-*/
+ * Smarty block plugin
+ *
+ * Escapes string for use in javascript.
+ * Output string is surrounded with quotes.
+ *
+ * <code>
+ * <script type="text/javascript">
+ * 	var message={jstring}Zprava pro tebe: {render partial="message"}{/jstring};
+ * </script>
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage Helpers
+ */
+
+/**
+ * Smarty block function
+ *
+ * Reserved parameters:
+ * <ul>
+ * 	<li>escape  escaping mode
+ * 	<ul>
+ * 		<li>html - escapes some html code</li>
+ * 	</ul>
+ * 	</li>
+ * </ul>
+ *
+ * @param array $params some options
+ * @param string $content string to be escaped
+ */
 function smarty_block_jstring($params,$content,&$smarty,&$repeat){
 	$params = array_merge(array(
 		"escsape" => ""

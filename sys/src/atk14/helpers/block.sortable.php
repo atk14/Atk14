@@ -1,21 +1,63 @@
 <?
 /**
-* Usage:
-*
-*		<tr>
-*		{sortable key=name}<th>Name</th>{/sortable} 
-*		</tr>
-*
-*		or
-*
-*		<tr>
-*		{sortable key=name}<td>Name</td>{/sortable} 
-*		</tr>
-*
-*		or
-*
-*		{sortable key=name}Name{/sortable} 
-*/
+ * Smarty block plugin.
+ *
+ * Plugin simplifies ordering of listed records.
+ * Wraps tagged content with a link containing parameters determining sorting. These parameters are recognized in a controller using {@link Atk14Sorting} class.
+ *
+ * In a template:
+ * <code>
+ * <tr>
+ *		{sortable key=title}<th>Title</th>{/sortable}
+ *		{sortable key=code}<th>Code</th>{/sortable}
+ * <tr>
+ * </code>
+ *
+ * Then in your controller:
+ * <code>
+ * $this->sorting->add("title",array("order_by" => "UPPER(title)"));
+ * $this->sorting->add("code");
+ *
+ * $finder = Book::Finder(array(
+ * 	"conditions" => $conditions,
+ *  "bind_ar" => $bind_ar,
+ *  "order" => $this->sorting->getOrder(),
+ *  "limit" => 10,
+ *  "offset" => $this->params->getInt("from"),
+ * ));
+ * </code>
+ *
+ *
+ * Another example:
+ * <code>
+ * <tr>
+ *		{sortable key=name}<td>Name</td>{/sortable} 
+ * </tr>
+ * </code>
+ *
+ * or
+ * <code>
+ * <tr>
+ *		{sortable key=name}Name{/sortable} 
+ * </tr>
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage Helpers
+ */
+
+/**
+ * Smarty block function.
+ *
+ * Reserved parameters:
+ * <ul>
+ * 	<li>key - name of the key to sort by corresponding to value passed to {@link Atk14Sorting::add()}</li>
+ * </ul>
+ *
+ * @param array $params
+ * @param string $content
+ *
+ */
 function smarty_block_sortable($params, $content, &$smarty, &$repeat){
 	$params = array_merge(array(
 		// ??? TODO: neco jako wrap_with_th_tag => true

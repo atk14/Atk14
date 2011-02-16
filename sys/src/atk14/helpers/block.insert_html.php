@@ -1,14 +1,27 @@
 <?
 /**
-* {insert_html id="content_div" position="bottom"}<em>Tento text bude pridan.</em>{/insert_html}
-* {insert_html selector="form div" position="bottom"}<em>Tento text bude pridan.</em>{/insert_html}
-*
-* Mozne hodnoty position:
-*		* prepend
-*		* append (default)
-*		* before
-* 	* after
-*/
+ * Smarty block plugin
+ *
+ * <code>
+ * {insert_html id="content_div" position="bottom"}<em>Tento text bude pridan.</em>{/insert_html}
+ * {insert_html selector="form div" position="bottom"}<em>Tento text bude pridan.</em>{/insert_html}
+ * </code>
+ *
+ *
+ * Mozne hodnoty position:
+ * - prepend pred
+ * - append (default)
+ * - before pred
+ * - after
+ *
+ * @package Atk14
+ * @subpackage Helpers
+ */
+
+/**
+ * Smarty block function.
+ *
+ */
 function smarty_block_insert_html($params, $content, &$smarty, &$repeat){
 	$content = Atk14Utils::EscapeForJavascript($content);
 

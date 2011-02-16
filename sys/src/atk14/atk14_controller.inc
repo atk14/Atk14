@@ -55,7 +55,9 @@ class Atk14Controller{
 	var $action = "";
 
 	/**
-	 * Name of template to render. By default it set to $action, but you can override it by setting it anytime in a controllers method.
+	 * Name of template to render.
+	 *
+	 * By default it set to $action, but you can override it by setting it anytime in a controllers method.
 	 *
 	 * @var string
 	 */
@@ -91,6 +93,13 @@ class Atk14Controller{
 	 * @var Atk14Form
 	 */
 	var $form = null;
+
+	/**
+	 * Instance of {@link Atk14Sorting} class.
+	 *
+	 * @var Atk14Sorting
+	 */
+	var $sorting = null;
 
 	/**
 	 * @access private
