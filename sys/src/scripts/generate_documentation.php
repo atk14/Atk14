@@ -32,6 +32,7 @@ if (isset($argv)) {
 }
 $src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/atk14";
 $src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/dictionary";
+$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/forms";
 $src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/http";
 $src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/stringbuffer";
 
@@ -42,7 +43,7 @@ if (!file_exists($output_dir)) {
 }
 
 $src_dir = join(",", $src_dirs);
-$command = "phpdoc -o HTML:frames:DOM/phpdoc.de -d $src_dir -t $output_dir";
+$command = "phpdoc -o HTML:frames:DOM/phpdoc.de -d $src_dir -t $output_dir -i tc_*.inc,load.inc,initialize.inc";
 
 $val = system($command, $ret);
 
