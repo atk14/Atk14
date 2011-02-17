@@ -1,27 +1,39 @@
 <?php
 /**
-* Widgets -- HTML reprezentace formularovych poli.
-*
-* Kazde pole ma defaultne nastaveno, jakym zpusobem se ma 
-* vykreslovat v HTML strance. Napr. CharField se generuje
-* jako <input type="text" />. Defaultni nastaveni lze ale
-* prebit a konkretni formularova pole mohou mit vice podob
-* (napr. pole pro datum muze byt jako jedno pole pro zadani
-* retezce s datumem, ale stejne tak to muze byt sada 3 selectu,
-* ve kterych se datum naklika; v obou pripadech pujde ale o 
-* stejne formularove pole, ktere bude vracet stejnou hodnotu
-* at uz je vykresleno jakkoliv).
-*/
+ * Widgets -- HTML representation of form fields.
+ *
+ *
+ * Each field has its own code that is rendered in HTML.
+ * For example {@link CharField} is rendered as <input type="text" />
+ *
+ * The way the field is rendered can be changed.
+ * For example a field for date can be rendered both as a text field and also as a select with 3 options.
+ * In both cases they are the same field that return the same value whatever it is rendered.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 
 
 /**
-* Pomocna funkce, ktera prevadi pole parametru na HTML atributy.
-* tj. 
-*   array('src':'1.jpg', 'alt':'obrazek')
-* na 
-*   src="1.jpg" alt="obrazek"
-* Hodnoty jsou escapovany, klice se neescapuji.
-*/
+ * Converts an array to HTML attributes.
+ *
+ * Small helper function.
+ * Hodnoty jsou escapovany, klice se neescapuji.
+ *
+ * Example. This array
+ * <code>
+ *   array('src':'1.jpg', 'alt':'obrazek')
+ * </code>
+ *
+ * will be converted to
+ * <code>
+ *   src="1.jpg" alt="obrazek"
+ * </code>
+ *
+ * @param array $attrs
+ * @return string
+ */
 function flatatt($attrs)
 {
     $out = array();
@@ -33,14 +45,41 @@ function flatatt($attrs)
 
 
 /**
-* Pomocna funkce pro spojeni poli.
-*
-* Narozdil od merge_array tato funkce prevadi klice na retezce
-* a teprve potom pole spoji. Tj. pokud se ve 2 polich objevi
-* polozka pod indexem 1 (integer), pak hodnota z druheho pole
-* prepise puvodne definovanou.
-* V tomto konkretnim pripade se nativni merge_array chova jinak.
-*/
+ * Merges arrays.
+ *
+ * Unlike {@link array_merge} my_array_merge first converts keys to integers.
+ * If a key is available in two arrays (in first array as 1 (integer) and in the second array as "1" (string))
+ * then the value from the second array overrides the value from the first array.
+ *
+ * <code>
+ * $ary_data = array(
+ *  array(
+ *      "1" => "banana",
+ *      "2" => "lemon",
+ *      "3" => "orange"
+ *      ),
+ *  array(
+ *      1 => "yellow banana",
+ *      "4" => "pineapple",
+ *      "5" => "apple"
+ *      ));
+ * $new_data = my_array_merge($ary_data);
+ * </code>
+ * 
+ * Result:
+ * <code>
+ *  array(
+ *      "1" => "yellow banana",
+ *      "2" => "lemon",
+ *      "3" => "orange",
+ *      "4" => "pineapple",
+ *      "5" => "apple"
+ *      )
+ * </code>
+ *
+ * @param array $data
+ * @return array
+ */
 function my_array_merge($data)
 {
     $output = array();
@@ -54,8 +93,13 @@ function my_array_merge($data)
 
 
 /**
-* Bazova trida, ze ktere jsou odvozeny vsechny widgety.
-*/
+ * Parent class for all widget types.
+ *
+ * This class shouldn't be used directly but through its descendant.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class Widget
 {
     function Widget($options=array())
@@ -73,8 +117,14 @@ class Widget
     }
 
     /**
-    * Vykresli widget jako HTML prvek formulare.
-    */
+     * Renders widget as a HTML element.
+     *
+     * @param string $name
+     * @param mixed $value
+     * @param array $attrs
+     * @return string HTML code of the element
+     * @abstract
+     */
     function render($name, $value, $attrs)
     {
         return ''; // NOTE: Django v tomto miste generuje vyjimku (ktera vyvola tusim chybu 50x)
@@ -112,8 +162,13 @@ class Widget
 
 
 /**
-* Zakladni trida pro vetsinu <input> widgetu.
-*/
+ * Base class for most widgets.
+ *
+ * Most <input> fields use this class.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class Input extends Widget
 {
     var $input_type = null; // toto musi definovat konkretni odvozene tridy
@@ -143,10 +198,18 @@ class Input extends Widget
 
 
 /**
-* <input type="text" />
-*
-* 2008-07-10: Horka novinka - defaultne to bude mit atribut class="text"
-*/
+ * Widget for text input field.
+ *
+ * Outputs field of this type:
+ * <code>
+ * <input type="text" />
+ * </code>
+ *
+ * By default the element has attribute class set to "text"
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class TextInput extends Input
 {
     var $input_type = 'text';
@@ -163,12 +226,19 @@ class TextInput extends Input
     }
 }
 
-
 /**
-* <input type="password" />
-*
-* 2008-07-10: Horka novinka - defaultne to bude mit atribut class="text"
-*/
+ * Widget for password input field.
+ *
+ * Outputs field of this type:
+ * <code>
+ * <input type="password" />
+ * </code>
+ *
+ * By default the element has attribute class set to "text"
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class PasswordInput extends Input
 {
     var $input_type = 'password';
@@ -197,10 +267,17 @@ class PasswordInput extends Input
     }
 }
 
-
 /**
-* <input type="hidden" />
-*/
+ * Widget for hidden input field.
+ *
+ * Outputs field of this type:
+ * <code>
+ * <input type="hidden" />
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class HiddenInput extends Input
 {
     var $input_type = 'hidden';
@@ -255,10 +332,17 @@ class MultipleHiddenInput extends HiddenInput
 }
 */
 
-
 /**
-* <textarea></textarea>
-*/
+ * Widget for text area input field.
+ *
+ * Outputs field of this type:
+ * <code>
+ * <textarea></textarea>
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class Textarea extends Widget
 {
     function Textarea($options=array())
@@ -286,10 +370,17 @@ class Textarea extends Widget
     }
 }
 
-
 /**
-* <input type="checkbox" />
-*/
+ * Widget for checkbox input field.
+ *
+ * Outputs field of this type:
+ * <code>
+ * <input type="checkbox" />
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class CheckboxInput extends Widget
 {
     function CheckboxInput($options=array())
@@ -333,12 +424,19 @@ class CheckboxInput extends Widget
     }
 }
 
-
 /**
-* <select>
-*   <option value="1">jedna</option>
-* </select>
-*/
+ * Widget for select input field.
+ *
+ * Outputs field of this type:
+ * <code>
+ * <select>
+ *   <option value="1">jedna</option>
+ * </select>
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class Select extends Widget
 {
     function Select($options=array())
@@ -379,12 +477,19 @@ class Select extends Widget
     }
 }
 
-
 /**
-* <select multiple="multiple">
-*   <option value="1">1</option>
-* </select>
-*/
+ * Widget for multiple select input field.
+ *
+ * Outputs field of this type:
+ * <code>
+ * <select multiple="multiple">
+ *   <option value="1">jedna</option>
+ * </select>
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class SelectMultiple extends Widget
 {
     function SelectMultiple($options=array())
@@ -429,10 +534,12 @@ class SelectMultiple extends Widget
     }
 }
 
-
 /**
-* Pomocna trida na vykresleni jednoho radio buttonu.
-*/
+ * Widget for radio button input field.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class RadioInput
 {
     function RadioInput($name, $value, $attrs, $choice, $index)
@@ -471,10 +578,14 @@ class RadioInput
     }
 }
 
-
 /**
-* Vykresli radio buttony podle pole $choices jako <ul><li> seznam.
-*/
+ * Renders radio buttons as unordered list.
+ *
+ * <ul /><li />
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class RadioSelect extends Select
 {
     function RadioSelect($option = array()){
@@ -514,10 +625,14 @@ class RadioSelect extends Select
     }
 }
 
-
 /**
-* Vykresli check buttony podle pole $choices jako <ul class="checkboxes"><li> seznam.
-*/
+ * Renders checkboxes as unordered list.
+ *
+ * Each value in $choices renders as <li /> item in <ul /> list.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class CheckboxSelectMultiple extends SelectMultiple
 {
     function my_check_test($value)
@@ -567,6 +682,12 @@ class CheckboxSelectMultiple extends SelectMultiple
     }
 }
 
+/**
+ * Widget for rendering file input field.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class FileInput extends Input{
     var $input_type = "file";
 

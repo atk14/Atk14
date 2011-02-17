@@ -1,14 +1,18 @@
 <?php
 /**
-* Fields -- jednotlive polozky formulare.
-*/
+ * Input field classes.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 
-require_once(dirname(__FILE__).'/widgets.php');
-//require_once(dirname(__FILE__).'/../functions.inc');
 
 /**
-* Objekt pro sber pravidel pro JS validator a jedno pole.
-*/
+ * Objekt pro sber pravidel pro JS validator a jedno pole.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class JsValidator{
     function JsValidator(){
         $this->_messages = array();
@@ -28,10 +32,28 @@ class JsValidator{
 
 
 /**
-* Zakladni trida, ze ktere se odvozuji vsechny ostatni.
-*/
+ * Parent input field class.
+ *
+ * Base class for all fields.
+ * This class shouldn't be used directly but through its descendant.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @abstract
+ */
 class Field
 {
+
+    /**
+     * Widget instance.
+     *
+     * Defines how the input field is rendered.
+     *
+     * @var Widget
+     */
+    var $widget = null;
+
+
     function Field($options=array())
     {
         // default data
@@ -91,8 +113,14 @@ class Field
     }
 
     /**
-    * Validace formularoveho pole.
-    */
+     * Field value validation.
+     *
+     * Checks if the field doesn't contain empty value.
+     *
+     * @param mixed $value
+     * @return array
+     * @see check_empty_value()
+     */
     function clean($value)
     {
         if ($this->required && $this->check_empty_value($value)) {
@@ -107,9 +135,13 @@ class Field
     }
 
     /**
-    * Pomocna funkce, zjisti jestli je zadana hodnota "prazdna"
-    * (null, prazdny retezec '', prazdne pole).
-    */
+     * Checks if the entered value is "empty".
+     *
+     * Checks for null, empty string "", empty array values.
+     *
+     * @param mixed $value
+     * @return bool true if field contains empty value
+     */
     function check_empty_value($value) {
         return 
             is_null($value) ||
@@ -135,8 +167,11 @@ class Field
 
 
 /**
-* Pole pro retezec.
-*/
+ * Field for strings.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class CharField extends Field
 {
     function CharField($options=array())
@@ -218,8 +253,11 @@ class CharField extends Field
 
 
 /**
-* Pole pro integer.
-*/
+ * Field for integers.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class IntegerField extends Field
 {
     function IntegerField($options=array())
@@ -268,8 +306,11 @@ class IntegerField extends Field
 
 
 /**
-* Pole pro float.
-*/
+ * Field for floats.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class FloatField extends Field
 {
     function FloatField($options=array())
@@ -318,8 +359,11 @@ class FloatField extends Field
 
 
 /**
-* Pole pro logickou hodnotu.
-*/
+ * Field for boolean values.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class BooleanField extends Field
 {
     function BooleanField($options=array())
@@ -343,8 +387,11 @@ class BooleanField extends Field
 
 
 /**
-* Retezcove pole (CharField), ktere musi splnit regexp podminku.
-*/
+ * Field for strings that must suit to regular expressions.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class RegexField extends CharField
 {
     function RegexField($regex, $options=array())
@@ -378,10 +425,12 @@ class RegexField extends CharField
     }
 }
 
-
 /**
-* Pole pro zadani emailu.
-*/
+ * Field for email values.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class EmailField extends RegexField
 {
     function EmailField($options=array())
@@ -422,8 +471,11 @@ class EmailField extends RegexField
 
 
 /**
-* Pole voleb.
-*/
+ * Field for choices.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class ChoiceField extends Field
 {
     var $choices = array();
@@ -495,6 +547,12 @@ class ChoiceField extends Field
     }
 }
 
+/**
+ * Field for date validations.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class DateField extends CharField
 {
     function DateField($options=array())
@@ -533,6 +591,12 @@ class DateField extends CharField
     }
 }
 
+/**
+ * Field for datetime validations.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class DateTimeField extends DateField
 {
     function DateTimeField($options=array())
@@ -546,6 +610,12 @@ class DateTimeField extends DateField
     }
 }
 
+/**
+ * Field for validation of datetime with seconds.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class DateTimeWithSecondsField extends DateField
 {
     function DateTimeWithSecondsField($options=array())
@@ -561,13 +631,14 @@ class DateTimeWithSecondsField extends DateField
 
 
 /**
-* Moznost volby nekolika polozek.
-*
-* NOTE: tohle asi v PHP nebude fachat, protoze pokud se ve formulari objevi vice
-* poli sdilejici stejny nazev, v $_POST se objevi pouze jeden z nich (posledni)
-*
-* NOTE: v PHP to funguje, pokude se parametr ve formulare nazve takto: <select name="choices[]" multiple="multiple">... (yarri)
-*/
+ * Field with multiple choices.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ *
+ * @internal NOTE: tohle asi v PHP nebude fachat, protoze pokud se ve formulari objevi vice poli sdilejici stejny nazev, v $_POST se objevi pouze jeden z nich (posledni)
+ * @internal NOTE: v PHP to funguje, pokude se parametr ve formulare nazve takto: <select name="choices[]" multiple="multiple">... (yarri)
+ */
 class MultipleChoiceField extends ChoiceField
 {
     function MultipleChoiceField($options=array())
@@ -619,6 +690,14 @@ class MultipleChoiceField extends ChoiceField
     }
 }
 
+/**
+ * Field for validation of IP address
+ *
+ * Extends {@link RegexField}
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class IPAddressField extends RegexField
 {
     function IPAddressField($options = array()){
@@ -643,8 +722,13 @@ class IPAddressField extends RegexField
 }
 
 /**
-* Toto pole vraci instanci tridy HTTPUploadedFile.
-*/
+ * Provides access to uploaded file.
+ *
+ * Uploaded file is accessible as {@link HTTPUploadedFile}
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class FileField extends Field{
     function FileField($options = array()){
         $options = array_merge(array(
@@ -659,6 +743,12 @@ class FileField extends Field{
     }
 }
 
+/**
+ * Provides access to uploaded image
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class ImageField extends FileField{
     function ImageField($options = array()){
         $options = array_merge(array(

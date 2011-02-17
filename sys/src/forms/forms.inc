@@ -1,14 +1,23 @@
 <?php
 /**
-* Formulare.
-*/
+ * Formulare.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ *
+ */
 
-require_once(dirname(__FILE__).'/fields.php');
-//require_once(dirname(__FILE__).'/../functions.inc');
-
-
+/**
+ * Some constant definition
+ *
+ * @todo Write better explanation
+ */
 define('NON_FIELD_ERRORS', '__all__');
 
+/**
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class JsFormValidator{
     function JsFormValidator(&$form){
         $this->validators = array();
@@ -44,8 +53,11 @@ class JsFormValidator{
 }
 
 /**
-* Converts 'first_name' to 'First name'.
-*/
+ * Converts 'first_name' to 'First name'.
+ *
+ * @param string $name
+ * @return string
+ */
 function pretty_name($name)
 {
     return str_replace('_', ' ', ucfirst($name));
@@ -98,9 +110,11 @@ function format_errors($errors)
 
 
 /**
-* Bound field je trida pro formularove pole (field), do ktereho 
-* jsou nalite data.
-*/
+ * Bound field je trida pro formularove pole (field), do ktereho jsou nalite data.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class BoundField
 {
     function BoundField($form, $field, $name)
@@ -316,11 +330,79 @@ class BoundField
 
 
 /**
-* Bazova formularova trida, ze ktere se odvozuji veskere formulare.
-*/
+ * Base forms class.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ *
+ */
 class Form
 {
+    /**
+     * @var string
+     * @access private
+     */
     var $prefix = null;
+
+    /**
+     * @var string
+     * @access private
+     */
+    var $label_suffix = "";
+
+    /**
+     * @var string
+     * @access private
+     */
+    var $auto_id = "";
+
+    /**
+     * @var bool
+     * @access private
+     */
+    var $is_bound;
+
+    /**
+     * Data submitted in the form.
+     *
+     * @var array
+     * @access private
+     */
+    var $data;
+
+
+    /**
+     * Cleaned data.
+     *
+     * Submitted data processed by {@link Field::clean()} method. The entry must be valid to appear in $cleaned_data.
+     *
+     * @var array
+     */
+    var $cleaned_data;
+
+    /**
+     * Initial values of the form.
+     *
+     * @var array
+     * @access private
+     */
+    var $initial = null;
+
+    /**
+     * Array of fields
+     *
+     * @var array
+     * @access private
+     */
+    var $fields = null;
+
+    /**
+     * Array with error messages.
+     *
+     * @var array
+     * @access private
+     */
+    var $errors = null;
 
     function Form($options=array())
     {
@@ -357,10 +439,13 @@ class Form
     }
 
     /**
-    * Metoda pres kterou instance definuji formularova pole
-    * (tj. instance tuto metodu musi pretizit).
-    * NOTE: muj vymysl
-    */
+     * Initialization method.
+     *
+     * This abstract method is used in descendants to setup an instance of a form and to define its fields.
+     *
+     * NOTE: muj vymysl
+     * @abstract
+     */
     function set_up()
     {
     }
@@ -374,18 +459,25 @@ class Form
     }
 
     /**
-    * Pomocna metoda pro definici jedne polozky formulare.
-    * NOTE: muj vymysl
-    */
+     * Adds a field to the form.
+     *
+     * @param string $name
+     * @param Field $field
+     *
+     * @internal muj vymysl
+     */
     function add_field($name, $field)
     {
         $this->fields[$name] = $field;
     }
 
     /**
-    * Vrati zadanou formularovou polozku nebo null.
-    * NOTE: Michaluv vymysl
-    */
+     * Returns a field object by its name.
+     *
+     * @param string $name name of a field
+     * @return Field
+     * {@internal Michaluv vymysl}}
+     */
     function get_field($name)
     {
         if (isset($this->fields[$name])) {
@@ -397,9 +489,12 @@ class Form
     }
 
     /**
-    * Vrati jmena formularovych poli.
-    * NOTE: Michaluv vymysl
-    */
+     * Returns names of form fields
+     *
+     * @return array
+     *
+     * {@internal NOTE: Michaluv vymysl}}
+     */
     function get_field_keys()
     {
         return array_keys($this->fields);
@@ -415,8 +510,11 @@ class Form
     }
 
     /**
-    * Vrati initial hodnotu pole daneho jmena.
-    */
+     * Returns initial value of a field.
+     *
+     * @param string $name
+     * @return mixed
+     */
     function get_initial($name)
     {
         if(isset($this->initial[$name])){ return $this->initial[$name]; }
@@ -424,9 +522,11 @@ class Form
     }
 
     /**
-    * Vrati pole s error hlaskami pro cely formular.
-    * NOTE: muj vymysl, Django to ma zrealizovane pres property
-    */
+     * Returns array with form error messages.
+     *
+     * @return array
+     * @internal NOTE: muj vymysl, Django to ma zrealizovane pres property
+     */
     function get_errors()
     {
         if (is_null($this->errors)) {
@@ -436,8 +536,11 @@ class Form
     }
 
     /**
-    * Vrati true pokud formular neobsahuje zadnou chybu, jinak false.
-    */
+     * Checks for form validity.
+     *
+     * Returns true when the form is valid, otherwise returns false.
+     * @return bool
+     */
     function is_valid()
     {
         $errors = $this->get_errors();
@@ -445,11 +548,19 @@ class Form
     }
 
     /**
-    * Vrati true, pokud je na danem poli chyba.
-    * if($form->error_on("email")){
-    *   echo "mate chybu na policku E-mail";
-    * }
-    */
+     * Checks for error on a field.
+     *
+     * Returns true when there is an error on specified field.
+     *
+     * <code>
+     * if($form->error_on("email")){
+     *   echo "mate chybu na policku E-mail";
+     * }
+     * </code>
+     *
+     * @param string $name
+     * @return bool true if there is an error on specified field.
+     */
     function error_on($field_name)
     {
         $errors = $this->get_errors();
@@ -470,13 +581,19 @@ class Form
     }
 
     /**
-    * Disabluje pole podle seznamu.
-    *
-    * $form->disable_fields(array(
-    *   "firstname",
-    *   "lastname"
-    * ));
-    */
+     * Disables specified fields.
+     *
+     * Sets $disabled flag of specified fields.
+     *
+     * <code>
+     * $form->disable_fields(array(
+     *   "firstname",
+     *   "lastname"
+     * ));
+     * </code>
+     *
+     * @param array $names
+     */
     function disable_fields($names){
         foreach($names as $name){
             $this->fields[$name]->disabled = true;
@@ -484,8 +601,11 @@ class Form
     }
 
     /**
-    * Pomocna funkce, ktera generuje HTML podobu formulare.
-    */
+     * Helper method that generates form as HTML.
+     *
+     * @access private
+     * @return string
+     */
     function _html_output($normal_row, $error_row, $row_ender, $help_text_html, $errors_on_separate_row)
     {
         $top_errors = $this->non_field_errors();
@@ -567,8 +687,10 @@ class Form
     }
 
     /**
-    * Generuje formular jako HTML tabulku.
-    */
+     * Renders the form as HTML table.
+     *
+     * @return string The form presented as HTML code.
+     */
     function as_table()
     {
         return $this->_html_output(
@@ -581,8 +703,12 @@ class Form
     }
 
     /**
-    * Generuje formular jako HTML <ul><li> seznam.
-    */
+     * Renders the form in <li> tags.
+     *
+     * Renders the form so that each field is enclosed in <li></li> tags. All the fields are then wrapped with <ul></ul> tags.
+     *
+     * @return string The form presented as HTML code.
+     */
     function as_ul()
     {
         return $this->_html_output(
@@ -595,8 +721,12 @@ class Form
     }
 
     /**
-    * Generuje formular jako HTML odstavce <p>.
-    */
+     * Renders the form in <p> tags.
+     *
+     * Renders the form so that each field is enclosed in <p></p> tags.
+     *
+     * @return string The form presented as HTML code.
+     */
     function as_p()
     {
         return $this->_html_output(
@@ -609,9 +739,12 @@ class Form
     }
 
     /**
-    * Vrati chyby, ktere nejsou primo spojene s nejakym konkretnim polickem, 
-    * ale s formularem jako celkem.
-    */
+     * Returns errors bound with the form.
+     *
+     * Errors that are bound to fields are omitted.
+     *
+     * @return array
+     */
     function non_field_errors()
     {
         $errors = $this->get_errors();
@@ -687,12 +820,16 @@ class Form
     }
 
     /**
-    * Kontrola kompletniho formulare. Vola se az potom, co se zavolala metoda clean
-    * pro kazde policko formulare.
-    * Toto je hook pro situace, kdy je treba proverit formular jako celek.
-    *
-    * Vola se i v pripade, kdy jsou nektera pole invalidni.
-    */
+     *
+     * Checks validity of the whole form.
+     *
+     * It is called after clean() on all fields was called.
+     * This is a hook method for situations when it is needed to check the form as a whole.
+     *
+     * Is called even when some fields are invalid.
+     *
+     * @return array
+     */
     function clean()
     {
         return array(null, $this->cleaned_data);
