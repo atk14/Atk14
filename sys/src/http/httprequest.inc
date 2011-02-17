@@ -1,7 +1,7 @@
 <?
 /**
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  *
  *
  *
@@ -32,7 +32,7 @@ if (get_magic_quotes_gpc()) {
  * Instance of the class is available in any {@link Atk14Controller} descendant as $request variable.
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  *
  */
 class HTTPRequest{

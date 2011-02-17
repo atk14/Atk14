@@ -3,7 +3,7 @@
  * Class provides operations on files uploaded via asynchronous requests
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  * @author Jaromir Tomek
  */
 
@@ -11,7 +11,7 @@
  * Class provides operations on files uploaded via asynchronous requests
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  * @author Jaromir Tomek
  */
 class HTTPXFile extends HTTPUploadedFile{

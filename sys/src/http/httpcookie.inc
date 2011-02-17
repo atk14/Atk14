@@ -3,7 +3,7 @@
  * Class provides operations on cookies.
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  *
  * @author Jaromir Tomek
  */
@@ -19,7 +19,7 @@
  * </code>
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  *
  * @author Jaromir Tomek
  */

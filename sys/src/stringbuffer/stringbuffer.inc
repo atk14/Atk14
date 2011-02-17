@@ -3,7 +3,7 @@
  * Class provides operations with strings.
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  */
 
 /**
@@ -12,7 +12,7 @@
  * Internally the class holds its content in array of strings as they were added.
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  */
 class StringBuffer{
 

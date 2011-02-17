@@ -3,7 +3,7 @@
  * Implementation of dictionary to store key => value pairs
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  */
 /**
  * Implementation of dictionary to store key => value pairs
@@ -25,7 +25,7 @@
  * </code>
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  */
 class Dictionary{
 

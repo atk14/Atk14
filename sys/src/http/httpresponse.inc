@@ -1,7 +1,7 @@
 <?
 /**
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  */
 
 /**
@@ -10,7 +10,7 @@
  * Instance of the class is available in any {@link Atk14Controller} descendant as $response variable.
  *
  * @package Atk14
- * @subpackage Internals
+ * @subpackage InternalLibraries
  */
 class HTTPResponse{
 
