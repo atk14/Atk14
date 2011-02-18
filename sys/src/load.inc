@@ -40,6 +40,7 @@ require_once(dirname(__FILE__)."/packer/packer.inc");
 require_once(dirname(__FILE__)."/sendmail/sendmail.inc");
 require_once(dirname(__FILE__)."/forms/load.inc");
 require_once(dirname(__FILE__)."/atk14/load.inc");
+require_once(dirname(__FILE__)."/functions.inc");
 
 // ...and load basic application`s objects
 if(file_exists(dirname(__FILE__)."/../../app/forms/application_form.inc")){
@@ -132,19 +133,4 @@ function atk14_initialize_locale(&$lang){
 	bindtextdomain("messages",dirname(__FILE__)."/../../locale/");
 	bind_textdomain_codeset("messages", "UTF-8");
 	textdomain("messages");
-}
-
-function EasyReplace($str,$replaces){
-  settype($replaces,"array");
-  $_replaces_keys = array();
-  $_replaces_values = array();
-  reset($replaces);
-  while(list($key,) = each($replaces)){
-    $_replaces_keys[] = $key;
-    $_replaces_values[] = $replaces[$key];
-  }   
-  if(sizeof($_replaces_keys)==0){
-    return $str;
-  }   
-  return str_replace($_replaces_keys,$_replaces_values,$str);
 }

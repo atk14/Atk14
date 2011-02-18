@@ -1,12 +1,14 @@
 <?
 /**
-* Vyhledava a nahrazuje ve stringu.
+* Searches and replaces in a string.
 *
-* echo EasyReplace("ahoj %koho%, jak se %co%?",array("%koho%" => "Valdo", "%co%" => "vejde"));
+*	<code>
+* 	echo EasyReplace("Hi %who%, how it's %what%?",array("%who%" => "Valda", "%what%" => "going"));
+* </code>
 *
-*	@param string		$str			vstupni string
-*	@param array		$replaces	asociativni pole
-*	@return	string						nahrazeny vstupni string
+*	@param string		$str
+*	@param array		$replaces	associative array
+*	@return	strig
 */
 function EasyReplace($str,$replaces){
 	settype($str,"string");
@@ -23,4 +25,3 @@ function EasyReplace($str,$replaces){
   }   
   return str_replace($_replaces_keys,$_replaces_values,$str);
 }
-?>

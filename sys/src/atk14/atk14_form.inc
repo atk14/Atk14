@@ -160,7 +160,7 @@ class Atk14Form extends Form
 
         $this->controller = $controller;
 
-        $this->atk14_error_title = _("Formular obsahuje chyby, proto nemuze byt zpracovan.");
+        $this->atk14_error_title = _("The form contains errors, therefor it cannot be processed.");
 
         $options["call_set_up"] && $this->set_up();
     }
