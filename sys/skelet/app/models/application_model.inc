@@ -5,5 +5,16 @@
 * Otherwise there's no need to care :)
 */
 class ApplicationModel extends inobj_TableRecord{
-
+	
+	function toXml(){
+		$class_name = new String(get_class($this));
+		$root = $class_name->underscore();
+		$out = array();
+		$out[] = "<$root>";
+		foreach($this->toArray() as $k => $v){
+			$out[] = "<$k>".XMole::ToXml($v)."</$k>";
+		}
+		$out[] = "</$root>";
+		return join("\n",$out);
+	}
 }

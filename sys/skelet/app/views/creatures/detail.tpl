@@ -22,3 +22,8 @@
 		</tr>
 	</tbody>
 </table>
+
+<ul>
+<li>{a action=detail id=$creature format=json}Get the creature in JSON{/a}</li>
+<li>{a action=detail id=$creature format=xml}Get the creature in XML{/a}</li>
+</ul>

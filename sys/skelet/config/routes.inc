@@ -18,7 +18,7 @@
 *
 * And then add SEF route definition:
 *
-*			"creature-detail-<id>" =>	array(
+*			"creature-<id>" =>	array(
 *															 	"__path__" => "creatures/detail",
 *															 	"id" => "/[0-9]+/",
 *															 	"lang" => "en"
@@ -26,30 +26,49 @@
 *
 * Previous link will change automatically to the following one
 *
-*			/creature-detail-123/
+*			/creature-123/
 *
 * And even more when a visitor visits previous link directly (i.e. from a bookmarks),
 * he will be transparently redicted to the new one.
 */
 $ATK14_GLOBAL->setValue("routes",array(
 
-	// here is a SEF URI sample
-	// compressed notation for 2 languages is used
+	// Here are SEF URI samples.
+	// Compressed notation for 2 languages is used.
+
+	// http://myapp.localhost/creature-8.json
+	// http://myapp.localhost/creature-8.xml
 	"
-	en:creature-detail-<id>
-	cs:detail-prisery-<id>
+	en:creature-<id>.<format>
+	cs:prisera-<id>.<format>
+	" =>																			array(
+																						"__path__" => "creatures/detail",
+																						"__omit_trailing_slash__" => true,
+																						"id" => "/[0-9]+/", // note that /^[0-9]+$/ doesn't work here
+																																// but actually the pattern /[0-9]+/ acts here precisely like /^[0-9]+$/
+																						"format" => "/(json|xml)/",
+																						),
+	
+	// http://myapp.localhost/creature-8/
+	"
+	en:creature-<id>
+	cs:prisera-<id>
 	" =>																			array(
 																						"__path__" => "creatures/detail",
 																						"id" => "/[0-9]+/", // note that /^[0-9]+$/ doesn't work here
+																																// but actually the pattern /[0-9]+/ acts here precisely like /^[0-9]+$/
 																						),
 
-	// generic routes follow...
-	// keep them on the end of the list
+	// Generic routes follow.
+	// Keep them on the end of the list.
+
+	// This is the front page route.
+	// The front page will be served in the default language.
  	"" => 																		array(
 																						"lang" => $ATK14_GLOBAL->getDefaultLang(),
 																						"__path__" => "main/index",
-																						"__page_title__" => "My Application",
-																						"__page_description__" => "my beautiful application",
+																						"__page_title__" => _("My Application"),
+																						"__page_description__" => _("my beautiful application"),
 																						),
 
 	"<lang>" =>																array(

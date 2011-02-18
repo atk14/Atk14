@@ -1,3 +1,6 @@
+# Here is the list of languages used in your application.
+# The first one is the default language. The front page is beeing served in the default language.
+
 en:
   LANG: en_US.UTF-8
 
