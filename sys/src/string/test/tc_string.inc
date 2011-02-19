@@ -21,6 +21,13 @@ class tc_string extends tc_base{
 
 		$this->assertEquals("$string","$stringer");
 		$this->assertEquals(11,strlen($stringer));
+
+		// String::ToObject()
+		$string = String::ToObject("Hello World");
+		$this->assertTrue(is_object($string));
+		$string2 = String::ToObject($string); 
+		$this->assertTrue(is_object($string2));
+		
 	}
 
 	function test_replace(){
@@ -62,13 +69,18 @@ class tc_string extends tc_base{
 			$str = new String($str);
 			$this->assertEquals($result,(string)$str->camelize());
 		}
+
+		$str = String::ToObject("hello_world");
+		$this->assertEquals("helloWorld",(string)$str->camelize(array("lower" => true)));
+		$this->assertEquals("HelloWorld",(string)$str->camelize());
 	}
 
 	function test_underscore(){
 		foreach(array(
 			"HelloWorld" => "hello_world",
 			"ABCD" => "abcd",
-			"Hello123" => "hello123"
+			"Hello123" => "hello123",
+			"123Hello" => "123_hello",
 		) as $str => $result){
 			$str = new String($str);
 			$this->assertEquals($result,(string)$str->underscore());

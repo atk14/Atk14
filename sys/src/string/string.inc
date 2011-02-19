@@ -1,16 +1,34 @@
 <?
 /**
-* Useful tools for string manipulation.
+* Useful class for string manipulation.
+*
+* Here is an inspiration:
+* http://api.rubyonrails.org/classes/String.html
 */
 class String{
 
 	/**
+	* <code>
 	* $str = new String();
 	* $str = new String("Hello");
 	* $str2 = new String($str);
+	* </code>
 	*/
 	function String($string = ""){
 		$this->_String = "$string";
+	}
+
+	/**
+	* <code>
+	* $str = String::ToObject("Hello");
+	* $str = String::ToObject($str);
+	* </code>
+	*/
+	function ToObject($string){
+		if(is_object($string) && strtolower(get_class($string))=="string"){
+			return $string;
+		}
+		return new String($string);
 	}
 
 	function RandomString($length = 32){
@@ -136,17 +154,36 @@ class String{
 		return $this->_copy(substr($this->_String,$start,$length));
 	}
 
-	function camelize(){
+	/**
+	* <code>
+	* $camel_case = $string->camelize(); // "hello_world" -> "HelloWorld"
+	* $camel_case = $string->camelize(array("lower" => true)); // "hello_world" -> "helloWorld"
+	* </code>
+	*
+	* @return String
+	*/
+	function camelize($options = array()){
+		$options = array_merge(array(
+			"lower" => false,
+		),$options);
 		$out = $this->_copy();
 		$s = &$out->_String;
 		$s = preg_replace("/_([a-z0-9])/ie","strtoupper('\\1')",$this->_String);
-		if(isset($s[0])){ $s[0] = strtoupper($s[0]); }
+		if(isset($s[0])){
+			$s[0] = $options["lower"] ? strtolower($s[0]) : strtoupper($s[0]);
+		}
+			
 		return $out;
 	}
 
+	/**
+	* <code>
+	* $underscore = $camel_case->underscore(); // "HelloWorld" -> "hello_world"
+	* </code>
+	*/
 	function underscore(){
 		$out = $this->_copy();
-		$out->_String = strtolower(preg_replace("/([a-z])([A-Z])/","\\1_\\2",$this->_String));
+		$out->_String = strtolower(preg_replace("/([a-z0-9])([A-Z])/","\\1_\\2",$this->_String));
 		return $out;
 	}
 
