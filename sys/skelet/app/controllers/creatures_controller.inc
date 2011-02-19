@@ -43,14 +43,15 @@ class CreaturesController extends ApplicationController{
 		$this->page_title = sprintf(_("Detail of the creature #%s"),$this->creature->getId());
 
 		if($this->params->getString("format")=="json"){
-			$this->response->setContentType("text/plain");
 			$this->render_template = false;
-			$this->response->write(json_encode($this->creature->toArray()));
+			$this->response->setContentType("text/plain");
+			$this->response->write($this->creature->toJson());
 		}
 		if($this->params->getString("format")=="xml"){
 			$this->render_template = false;
-			$this->response->write($this->creature->toXml());
 			$this->response->setContentType("text/xml");
+			$this->response->writeln('<?xml version="1.0" encoding="UTF-8"?>');
+			$this->response->write($this->creature->toXml());
 		}
 	}
 

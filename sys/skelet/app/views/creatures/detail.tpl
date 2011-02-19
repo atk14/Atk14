@@ -24,6 +24,6 @@
 </table>
 
 <ul>
-<li>{a action=detail id=$creature format=json}Get the creature in JSON{/a}</li>
-<li>{a action=detail id=$creature format=xml}Get the creature in XML{/a}</li>
+<li>{a action=detail id=$creature format=json}{t}Get the creature as JSON{/t}{/a}</li>
+<li>{a action=detail id=$creature format=xml}{t}Get the creature as XML{/t}{/a}</li>
 </ul>
