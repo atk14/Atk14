@@ -1,5 +1,11 @@
 <?
 class tc_string extends tc_base{
+	function test_get_id(){
+		$s = new String("Hi");
+		$this->assertTrue(is_string($s->getId()));
+		$this->assertEquals("Hi",$s->getId());
+	}
+
 	function test_random_string(){
 		$s1 = String::RandomString();
 		$s2 = String::RandomString();

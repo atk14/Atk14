@@ -101,6 +101,14 @@ class String{
 		return new String($password);
 	}
 
+	/**
+	* ATK14 sometimes converts objects into their scalar representation automatically by calling getId() method.
+	* Due to it we need this silly looking method here.
+	* 
+	* @return string
+	*/
+	function getId(){ return $this->_String; }
+
 	function length(){ return strlen($this->_String); }
 	
 	/**
