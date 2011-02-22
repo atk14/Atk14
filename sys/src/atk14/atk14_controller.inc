@@ -343,7 +343,9 @@ class Atk14Controller{
 
 		if($this->render_template && strlen($this->response->getLocation())==0){
 			$this->_before_render();
+		}
 
+		if($this->render_template && strlen($this->response->getLocation())==0){
 			$controller_name = $this->controller;
 
 			$layout_template = $this->layout_name;
