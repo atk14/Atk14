@@ -20,21 +20,43 @@
 require_once(dirname(__FILE__)."/load.inc");
 
 $src_dirs = array();
+$switches = array();
 
-if (isset($argv)) {
-	foreach($argv as $arg) {
+// ignored files
+$ignores = array(
+	"test/tc_*.inc",
+	"load.inc",
+	"initialize.inc"
+);
+
+// framework is documented by default
+$_args = array_merge($argv, array("-f"));
+
+if (isset($_args)) {
+	foreach($_args as $arg) {
 		switch($arg) {
 		case "-a":
 		case "-app":
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath();
+			// when we generate documentation for application use its name as packagename
+			// TODO: chtelo by to odnekud prevzit jmeno aplikace
+			$switches["--defaultpackagename"] = "ApplicationDoc";
+			// output only applications package
+			$switches["--packageoutput"] = "ApplicationDoc";
+			break;
+		case "-f":
+		case "-framework":
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/atk14";
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/dbmole";
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/dictionary";
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/forms";
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/http";
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/stringbuffer";
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/inobj_tablerecord";
+			break;
 		}
 	}
 }
-$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/atk14";
-$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/dictionary";
-$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/forms";
-$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/http";
-$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/stringbuffer";
 
 $output_dir = $ATK14_GLOBAL->getApplicationPath()."../tmp/documentation";
 
@@ -43,7 +65,24 @@ if (!file_exists($output_dir)) {
 }
 
 $src_dir = join(",", $src_dirs);
-$command = "phpdoc -o HTML:frames:DOM/phpdoc.de -d $src_dir -t $output_dir -i tc_*.inc,load.inc,initialize.inc";
+
+
+// --ignore switch
+if (sizeof($ignores)>0) {
+	$switches["--ignore"] = implode(",", $ignores);
+}
+
+// --directory switch
+if (sizeof($src_dirs)>0) {
+	$switches["--directory"] = implode(",", $src_dirs);
+}
+
+$prms = "";
+foreach($switches as $sw => $val) {
+	$prms .= " $sw $val";
+}
+
+$command = sprintf("phpdoc -o HTML:frames:DOM/phpdoc.de %s -t $output_dir", $prms);
 
 $val = system($command, $ret);
 
