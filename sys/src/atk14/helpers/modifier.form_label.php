@@ -10,4 +10,3 @@ function smarty_modifier_form_label($form, $field)
 {
     return smarty_modifier_label($form,$field);
 }
-?>
