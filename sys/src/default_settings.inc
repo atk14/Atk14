@@ -7,6 +7,7 @@ __defaults__(array(
 ));
 
 __defaults__(array(
+	"ATK14_APPLICATION_NAME" => "Our Website",
 	"ATK14_DOCUMENT_ROOT" => dirname(__FILE__)."/../../", // where is the folder containing app/, config/ dispatcher.php...
 	"ATK14_BASE_HREF" => "/",
 	"ATK14_HTTP_HOST" => "", // 
