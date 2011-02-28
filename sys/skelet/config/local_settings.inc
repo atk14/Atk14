@@ -13,7 +13,9 @@ define("SECRET_TOKEN","put_some_random_string_here");
 define("ATK14_DOCUMENT_ROOT",dirname(__FILE__)."/../");
 define("ATK14_BASE_HREF","/");
 
+define("ATK14_APPLICATION_NAME","Our Colourful Website");
 define("ATK14_HTTP_HOST",PRODUCTION ? "www.myapp.com" : "myapp.localhost");
+define("ATK14_ADMIN_EMAIL","your@email");
 
 if(DEVELOPMENT){
 	// place for development environment settings

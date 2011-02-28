@@ -6,6 +6,35 @@ body.loading, body.loading button, body.loading input, body.loading a, body.load
 }
 
 /*
+ * Blueprint has built-in classes notice, error and success.
+ * Here is an another one. I`ve found it missing.
+ */
+.warning {
+	border:2px solid red;
+	margin-bottom:1em;
+	padding:0.8em;
+}
+
+.warning {
+	background:none repeat scroll 0 0 orange;
+	border-color:red;
+	color:black;
+}
+
+span.notice, span.error, span.success, span.warning,
+em.notice, em.error, em.success, em.warning,
+strong.notice, strong.error, strong.success, strong.warning,
+a.notice, a.error, a.success, a.warning
+{
+	padding: 0.2em;
+	border: none;
+}
+
+span.notice{
+	background-color: #FFD324; /* this is the colour of div.notice`s border, TODO: change likewise the background color on span.error and span.error */
+}
+
+/*
  * Styling form elements.
  *
  * see shared templates

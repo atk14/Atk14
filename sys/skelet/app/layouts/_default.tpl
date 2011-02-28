@@ -7,7 +7,7 @@
 
 		{render partial=shared/layout/meta_headers}
 
-		<title>{$page_title|h} | {t}ATK14 Powered Website{/t}</title>
+		<title>{$page_title|h} | {"ATK14_APPLICATION_NAME"|dump_constant}</title>
 		<meta name="description" content="{$page_description|h}" />
 
 		{stylesheet_link_tag file="blueprint/screen.css" media="screen, projection"}
