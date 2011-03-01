@@ -1,4 +1,4 @@
-<?
+<?php
 class MultipleBeforeFiltersController extends ApplicationController{
 
 	function _initialize(){

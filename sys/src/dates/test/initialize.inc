@@ -1,2 +1,2 @@
-<?
+<?php
 require("../load.inc");

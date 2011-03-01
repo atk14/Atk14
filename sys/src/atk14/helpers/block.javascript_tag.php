@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Smarty plugin for inserting javascript code.
  *

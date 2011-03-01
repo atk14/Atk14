@@ -1,4 +1,4 @@
-<?
+<?php
 $ATK14_GLOBAL->setValue("routes",array(
 	"
 	cs:clanky/feed.rss

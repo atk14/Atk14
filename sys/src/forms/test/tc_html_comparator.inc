@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_html_comparator extends tc_base{
 	function test(){
 		$this->assertTrue($this->_compare_html('<input type="text" name="login" />','<input type="text" name="login" />'));

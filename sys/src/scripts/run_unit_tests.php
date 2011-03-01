@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?
+<?php
 /*
 * V pracovnim adresari vyhleda soubory tc_*.inc. Ty postupne nainkluduje a spusti v nich testy.
 *

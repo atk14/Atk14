@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * class_autoload(dirname(__FILE__));
 *

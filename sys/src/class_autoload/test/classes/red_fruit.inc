@@ -1,1 +1,1 @@
-<?  class RedFruit{ }
+<?php  class RedFruit{ }

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * POZOR!!! soubor je v kodovani UTF-8
 */

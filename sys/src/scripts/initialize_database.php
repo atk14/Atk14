@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?
+<?php
 /**
 * Initializes database! :)
 * Creates all necessaries in there.

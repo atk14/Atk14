@@ -1,4 +1,4 @@
-<?
+<?php
 class MultipleAfterFiltersController extends ApplicationController{
 
 	function _initialize(){

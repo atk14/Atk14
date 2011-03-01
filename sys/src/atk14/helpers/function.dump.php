@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * {dump var=$basket->getTotalPrice()}
 */

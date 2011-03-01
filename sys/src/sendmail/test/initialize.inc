@@ -1,4 +1,4 @@
-<?
+<?php
 error_reporting(255);
 define("SENDMAIL_DO_NOT_SEND_MAILS",true);
 define("SENDMAIL_DEFAULT_FROM","info@somewhere.com");

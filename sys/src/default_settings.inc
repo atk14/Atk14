@@ -1,4 +1,4 @@
-<?
+<?php
 $__CONFIG_CONSTANTS__ = array();
 
 __defaults__(array(

@@ -1,4 +1,4 @@
-<?
+<?php
 function smarty_function_to_sentence($params,&$smarty){
 	$params = array_merge(array(
 		"var" => array(),

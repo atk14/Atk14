@@ -1,4 +1,4 @@
-<?
+<?php
 if(!defined("SENDMAIL_DEFAULT_FROM")){
 	define("SENDMAIL_DEFAULT_FROM","sendmail");
 }

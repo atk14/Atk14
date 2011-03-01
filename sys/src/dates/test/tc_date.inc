@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_date extends tc_base{
 	
 	function test_date(){

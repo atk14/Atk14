@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_atk14_utils extends tc_base{
 	function test_response_produced(){
 		$c = new Atk14Controller();

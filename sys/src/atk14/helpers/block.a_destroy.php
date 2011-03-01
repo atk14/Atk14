@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Smarty plugin that generates link for destroy action.
  *

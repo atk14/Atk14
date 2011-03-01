@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Useful class for string manipulation.
 *

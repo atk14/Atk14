@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * {link_to controller=login action=login _ssl=true _with_hostname=true}
 */

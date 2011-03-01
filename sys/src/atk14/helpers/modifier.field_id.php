@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Zjisti id policka.
  * <label for="{$form|field_id:"usename"}">....</label>

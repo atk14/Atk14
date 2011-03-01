@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Trida poskytuje staticke funkce pro praci se soubory.
 *

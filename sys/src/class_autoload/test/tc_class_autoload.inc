@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_class_autoload extends tc_base{
 	function test(){
 		$this->assertFalse(class_exists("RedFruit"));

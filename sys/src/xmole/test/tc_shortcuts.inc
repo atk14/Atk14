@@ -1,4 +1,4 @@
-<?
+<?php
 // otestuje funkcnost zkracenych nazvu metod...
 $src = files::get_file_content("tc_xmole.inc",$err,$err_str);
 $src = strtr($src,array(

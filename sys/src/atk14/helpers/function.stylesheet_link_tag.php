@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Vygeneruje link na stylesheet soubor.
 * Link doplni hodnotou modify time souboru, takze odpadne problem s cachovanim css souboru.

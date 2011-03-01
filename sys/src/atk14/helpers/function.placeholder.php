@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Smarty {placeholder} tag to place stored content.
  *

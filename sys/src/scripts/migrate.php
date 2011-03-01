@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?
+<?php
 /**
 * Do pending migrations.
 * Load and process *.sql or *.inc files from the migration folder (db/migrations/).

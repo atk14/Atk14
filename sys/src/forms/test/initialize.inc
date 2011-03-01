@@ -1,4 +1,4 @@
-<?
+<?php
 require_once("../../atk14/atk14_locale.inc");
 require_once("../../date.inc");
 require_once("../../dates.inc");

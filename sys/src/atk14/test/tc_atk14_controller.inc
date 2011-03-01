@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_atk14_controller extends tc_base{
 	function test_multiple_before_filters(){
 		$c = new MultipleBeforeFiltersController();

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Smarty {paginator} tag to make paging records simpler.
  *

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Trida nabizi metody pro jednotne logovani udalosti.
 *

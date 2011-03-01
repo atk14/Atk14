@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_dbmole extends tc_base{
 	function test_uses_sequencies(){
 		$m = &$this->_get_moles();

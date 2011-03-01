@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_dates extends tc_base{
 	function test_add_months(){
 		$this->assertFalse(dates::add_months("2007-02-29",1)); // neplatne datum

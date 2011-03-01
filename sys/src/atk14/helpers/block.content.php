@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Smarty {content}{/content} block tag.
  *

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * {render partial="search_box"}
 *	toto povede k natazeni sablonky _search_box.tpl

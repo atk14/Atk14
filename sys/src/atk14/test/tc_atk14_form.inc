@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_atk14_form extends tc_base{
 	function test_validation_with_disabled_fields(){
 		$form = new TestForm();

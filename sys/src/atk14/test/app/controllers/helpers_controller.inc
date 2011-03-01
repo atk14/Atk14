@@ -1,4 +1,4 @@
-<?
+<?php
 class HelpersController extends ApplicationController{
 	function javascript_script_tag(){ }
 	function sortable(){

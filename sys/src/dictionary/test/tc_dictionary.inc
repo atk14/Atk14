@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_dictionary extends tc_base{
 	function test(){
 		$dict = new Dictionary(array(

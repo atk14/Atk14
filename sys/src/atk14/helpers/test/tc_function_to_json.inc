@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_function_to_json extends tc_base{
 	function test(){
 		$smarty = null;

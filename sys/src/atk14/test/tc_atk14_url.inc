@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_atk14_url extends tc_base{
 	function test(){
 		global $_GET;

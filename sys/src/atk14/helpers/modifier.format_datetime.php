@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * {$iso_datetime|format_datetime} -> 22.1.2008 13:44
 */

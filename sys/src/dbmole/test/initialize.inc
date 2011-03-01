@@ -1,4 +1,4 @@
-<?
+<?php
 require("../dbmole.inc");
 require("../pgmole.inc");
 require("../oraclemole.inc");

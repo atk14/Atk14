@@ -1,1 +1,1 @@
-<? class RedBar{ }
+<?php class RedBar{ }

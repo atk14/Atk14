@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Dumps contant value.
 *

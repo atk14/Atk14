@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * There are a few components needs to be loaded.
 * Atk14 connects these components to the right order.

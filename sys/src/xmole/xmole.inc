@@ -1,4 +1,4 @@
-<?
+<?php
 if(!defined("XMOLE_AUTO_TRIM_ALL_DATA")){
 	/**
 	* Definuje defaultni chovani - trimovani dat

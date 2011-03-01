@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_miniyaml extends tc_base{
 	function test_read_hash_array(){
 		$data = "

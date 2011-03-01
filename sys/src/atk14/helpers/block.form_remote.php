@@ -1,4 +1,4 @@
-<?
+<?php
 function smarty_block_form_remote($params, $content, &$smarty, &$repeat)
 {
 	$params = array_merge(array(

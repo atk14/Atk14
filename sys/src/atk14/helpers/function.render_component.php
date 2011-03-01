@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * 
 * {render_component controller=menu action=menu}

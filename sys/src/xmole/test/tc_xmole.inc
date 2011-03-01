@@ -1,4 +1,4 @@
-<?
+<?php
 // vim: set et:
 class tc_xmole extends tc_base{
 	var $_test_xml = '

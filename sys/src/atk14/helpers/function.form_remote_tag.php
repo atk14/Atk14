@@ -1,4 +1,4 @@
-<?
+<?php
 function smarty_function_form_remote_tag($params,&$smarty){
 	$url = Atk14Utils::BuildLink($params,$smarty);
 

@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_string extends tc_base{
 	function test_get_id(){
 		$s = new String("Hi");

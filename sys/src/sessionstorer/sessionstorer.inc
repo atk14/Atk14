@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Pocet vterin, po niz, pokud nebylo k session pristoupeno, dojde k jejimu smazani.
 */

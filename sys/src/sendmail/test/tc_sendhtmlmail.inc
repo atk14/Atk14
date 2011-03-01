@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_sendhtmlmail extends tc_base{
 	function test(){
 		$ar = sendhtmlmail(array(

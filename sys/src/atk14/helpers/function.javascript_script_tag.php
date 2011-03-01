@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Vlozi do vystupu tag <script> pro dany javascriptovy soubor.
 * Soubory vyhledava v adresari ./public/javascripts/

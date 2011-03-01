@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_sendmail extends tc_base{
 	function test(){
 

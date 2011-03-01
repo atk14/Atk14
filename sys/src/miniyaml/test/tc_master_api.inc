@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_master_api extends tc_base{
 	function test_credit_info(){
 		$data = "

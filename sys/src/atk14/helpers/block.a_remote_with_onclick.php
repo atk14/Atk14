@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Like block helpek remote_link, but in this case an uglu onclick event is rendered directly into <a> tag.
 */

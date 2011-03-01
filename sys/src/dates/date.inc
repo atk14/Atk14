@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * $d = new Date("2008-01-01"); // v pripade, ze bude zadan naplatny datum, muze dojit k nepredvidatelnym vecem!!!
 * $d = Date::ByDate("2008-01-01"); // preferovany zpusob; vrati null, pokud nebude zadan validni datum

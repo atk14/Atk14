@@ -1,4 +1,4 @@
-<?
+<?php
 if(!function_exists('json_encode'))
 {
 	require_once(dirname(__FILE__)."/json.inc");

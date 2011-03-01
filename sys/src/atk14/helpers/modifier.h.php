@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Smarty modifier for safe output
  *

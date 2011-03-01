@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Smarty block tag for safe output of strings in HTML.
  *

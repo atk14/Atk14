@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Searches and replaces in a string.
 *

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Tato trida je urcena pro konverzi znakove sady textoveho vstupu
 * do jine znakove sady.

@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_files extends tc_base{
 	function test_get_file_content(){
 		$content = files::get_file_content("test.txt",$err,$err_str);
