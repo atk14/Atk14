@@ -9,6 +9,7 @@ error_reporting(255);
 // we need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
 // HTTP* classes give us right advices about environment & configuration
 require_once(dirname(__FILE__)."/stringbuffer/stringbuffer.inc");
+require_once(dirname(__FILE__)."/files/files.inc");
 require_once(dirname(__FILE__)."/http/load.inc");
 require_once(dirname(__FILE__)."/atk14/atk14_utils.inc");
 Atk14Utils::DetermineEnvironment();
@@ -22,7 +23,6 @@ require_once(dirname(__FILE__)."/string/string.inc");
 require_once(dirname(__FILE__)."/translate/translate.inc");
 require_once(dirname(__FILE__)."/dictionary/dictionary.inc");
 require_once(dirname(__FILE__)."/miniyaml/miniyaml.inc");
-require_once(dirname(__FILE__)."/files/files.inc");
 require_once(dirname(__FILE__)."/dates/load.inc");
 require_once(dirname(__FILE__)."/xmole/xmole.inc");
 require_once(dirname(__FILE__)."/stopwatch/stopwatch.inc");
