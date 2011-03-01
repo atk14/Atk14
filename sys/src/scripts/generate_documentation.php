@@ -24,7 +24,7 @@ $switches = array();
 
 // ignored files
 $ignores = array(
-	"test/tc_*.inc",
+	"*/test/tc_*.inc",
 	"load.inc",
 	"initialize.inc"
 );
@@ -46,6 +46,7 @@ if (isset($_args)) {
 			break;
 		case "-f":
 		case "-framework":
+			$switches["--packageoutput"] = "Atk14";
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/atk14";
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/dbmole";
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/dictionary";
