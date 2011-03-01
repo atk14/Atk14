@@ -1,20 +1,43 @@
-<?
+<?php
 /**
-* Zachytavani chyb:
-*		DbMole::RegisterErrorHandler("dbmole_error_handler");
-*		function dbmole_error_handler($dbmole){
-*			echo "drahy uzivateli, bohuzel doslo k chybe";
-*			$dbmole->sendErrorReportToEmail("admin@test.cz");
-*			$dbmole->logErrorReport();
-*			exit;
-*		}
-*
-* Statistika:
-*
-*		define("DBMOLE_COLLECT_STATICTICS",true);
-*		$dbmole = &OracleMole::GetInstance();
-*		echo $dbmole->getStatistics();
-*/
+ * Provides basic functionality with databases.
+ *
+ * This class provides methods that are independent on the database type.
+ * Database dependent methods are overridden in descendants
+ *
+ *
+ *
+ *
+ * Error handling
+ * <code>
+ *	DbMole::RegisterErrorHandler("dbmole_error_handler");
+ *	function dbmole_error_handler($dbmole){
+ *		echo "drahy uzivateli, bohuzel doslo k chybe";
+ *		$dbmole->sendErrorReportToEmail("admin@test.cz");
+ *		$dbmole->logErrorReport();
+ *		exit;
+ *	}
+ * </code>
+ *
+ * Statistics:
+ * <code>
+ *	define("DBMOLE_COLLECT_STATICTICS",true);
+ *	$dbmole = &OracleMole::GetInstance();
+ *	echo $dbmole->getStatistics();
+ * </code>
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @abstract
+ * @filesource
+ */
+
+/**
+ * Basic database functionality.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @abstract
+ */
 class DbMole{
 	var $_ConfigurationName = "";
 	var $_DbConnect = null;
@@ -30,14 +53,24 @@ class DbMole{
 	var $_CacheDir = null;
 
 	/**
-	* Vrati instanci objektu pro danou konfiguraci.
-	* Vraci vzdy stejny objekt pro stejnou konfiguraci.
-	*
-	* $dbmole = &DbMole::GetInstance("default","OracleMole");
-	*
-	* Ale lepsi je volat primo tridu dedice:
-	* $dbmole = &OracleMole::GetInstance("default");
-	*/
+	 * Returns an instance of DB connector.
+	 *
+	 * Returns an instance of DB connector for given configuration. The object is always the same for given configuration.
+	 *
+	 * Basic call:
+	 * <code>
+	 * $dbmole = &DbMole::GetInstance("default","OracleMole");
+	 * </code>
+	 *
+	 * This call using a descendant is better:
+	 * <code>
+	 * $dbmole = &OracleMole::GetInstance("default");
+	 * </code>
+	 *
+	 * @param string $configuration_name
+	 * @param string $class_name
+	 * @return DbMole
+	 */
 	function &GetInstance($configuration_name,$class_name){
 		static $instance_store_ar;
 

@@ -1,10 +1,10 @@
-<?
+<?php
 /**
  * Class for storing of application globals.
  *
  * @package Atk14
  * @subpackage Core
- *
+ * @filesource
  */
 
 /**

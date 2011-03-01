@@ -1,10 +1,11 @@
-<?
+<?php
 /**
  * Class for managing sessions.
  *
  * @package Atk14
  * @subpackage Core
  * @author Jaromir Tomek
+ * @filesource
  */
 
 /**

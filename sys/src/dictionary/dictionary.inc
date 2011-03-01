@@ -1,9 +1,10 @@
-<?
+<?php
 /**
  * Implementation of dictionary to store key => value pairs
  *
  * @package Atk14
  * @subpackage InternalLibraries
+ * @filesource
  */
 /**
  * Implementation of dictionary to store key => value pairs

@@ -1,11 +1,11 @@
-<?
+<?php
 /**
  * Class provides operations on uploaded file.
  *
  * @package Atk14
  * @subpackage InternalLibraries
  * @author Jaromir Tomek
- *
+ * @filesource
  */
 
 /**

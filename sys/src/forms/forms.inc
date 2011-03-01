@@ -4,6 +4,7 @@
  *
  * @package Atk14
  * @subpackage InternalLibraries
+ * @filesource
  *
  */
 
@@ -15,6 +16,10 @@
 define('NON_FIELD_ERRORS', '__all__');
 
 /**
+ * Basic class for managing forms.
+ *
+ * You should use the class {@link Atk14Form} instead of this class in an application.
+ *
  * @package Atk14
  * @subpackage InternalLibraries
  */
@@ -64,8 +69,8 @@ function pretty_name($name)
 }
 
 /**
-* Funkce pro escapovani html.
-*/
+ * Escapes html.
+ */
 function forms_htmlspecialchars($string)
 {
     return htmlspecialchars($string, ENT_COMPAT);

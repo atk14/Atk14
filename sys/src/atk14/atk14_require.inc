@@ -1,11 +1,11 @@
-<?
+<?php
 /**
  * Class for simple including of files.
  *
  * @package Atk14
  * @subpackage Core
  * @author Jaromir Tomek
- *
+ * @filesource
  */
 
 /**

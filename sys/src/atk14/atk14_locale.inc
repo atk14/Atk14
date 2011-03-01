@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Class for managing locale based resources.
  *
@@ -6,7 +6,7 @@
  *
  * @package Atk14
  * @subpackage Core
- *
+ * @filesource
  */
 
 /**

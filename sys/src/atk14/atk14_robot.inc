@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Empty class.
  *
@@ -6,6 +6,7 @@
  *
  * @package Atk14
  * @subpackage Core
+ * @filesource
  */
 
 /**

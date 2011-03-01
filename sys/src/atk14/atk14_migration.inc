@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Class for managing database migrations.
  *
@@ -6,6 +6,7 @@
  * @package Atk14
  * @subpackage Core
  * @author Jaromir Tomek
+ * @filesource
  */
 
 /**

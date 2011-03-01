@@ -1,4 +1,4 @@
-<?
+<?php
 $__PATH__ = dirname(__FILE__);
 require_once("$__PATH__/httpcookie.inc");
 require_once("$__PATH__/httprequest.inc");

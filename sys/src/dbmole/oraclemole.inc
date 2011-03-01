@@ -1,5 +1,7 @@
-<?
+<?php
 /**
+ *
+ *
 * Pouziti:
 *
 *		DbMole::RegisterErrorHandler("_oracle_mole_error_handler"); //registrace error handleru pro tridu OracleMole
@@ -36,7 +38,18 @@
 *		);
 *		// A zde uz si nabindovani :body udelat pekne rucne!
 *		OCIFreeStatement($stmt);
-*/
+*
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
+ *
+ */
+
+/**
+ * @package Atk14
+ * @subpackage InternalLibraries
+ *
+ */
 class OracleMole extends DbMole{
 	var $_LastOracleStatement = null;
 
@@ -45,7 +58,7 @@ class OracleMole extends DbMole{
 	* Vraci vzdy stejny objekt pro stejnou konfiguraci.
 	*
 	* @static
-	* @access public.
+	* @access public
 	* @param string $configuration_name		"default" nebo "ov"
 	* @return DbMole									nebo null
 	*/

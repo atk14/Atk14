@@ -1,10 +1,10 @@
-<?
+<?php
 /**
  * Class for working with Urls.
  *
  * @package Atk14
  * @subpackage Core
- *
+ * @filesource
  */
 
 /**
@@ -158,7 +158,20 @@ class Atk14Url{
 	 * Generates a URL
 	 *
 	 * @param array $params
+	 * <ul>
+	 * 	<li><b>namespace</b></li>
+	 * 	<li><b>controller</b></li>
+	 * 	<li><b>action</b></li>
+	 * 	<li><b>lang</b></li>
+	 * </ul>
 	 * @param array $options
+	 * <ul>
+	 * 	<li><b>port</b></li>
+	 * 	<li><b>ssl</b></li>
+	 * 	<li><b>with_hostname</b></li>
+	 * 	<li><b>anchor</b></li>
+	 * 	<li><b>connector</b></li>
+	 * </ul>
 	 * @return string generated URL
 	 * @static
 	 *

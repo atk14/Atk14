@@ -1,4 +1,16 @@
-<?
+<?php
+/**
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
+ */
+
+/**
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class inobj_TableRecord extends inobj_TableRecord_Base{
 
 	function inobj_TableRecord($table_name,$options = array()){
@@ -6,33 +18,40 @@ class inobj_TableRecord extends inobj_TableRecord_Base{
 	}
 
 	/**
-	* Vytvori objekt dane tridy a nacte do nej hodnoty podle daneho $id.
-	* 
-	* Tuto metodu pouzije potomek v implementaci metody GetInstanceById().
-	* Pouzije ji nasledujicim zpusobem:
-	*		class inobj_Article extends inobj_TableRecord{
-	*			//...
-	*			function GetInstanceById($id,$options = array()){
-	*				return inobj_TableRecord::_GetInstanceById("inobj_Article",$id,$options);
-	*			}
-	*			//...
-	*		}
-	*  
-	* 
-	* @static
-	* @access private
-	* @param string $class_name				ie. "inobj_Article"
-	* @param mixed $id								identifikator zaznamu v tabulce; integer, string nebo pole
-	* @return inobj_TableRecord				resp. tridu, ktera je urcena v $class_name
-	*/
+	 * Creates an object of a class and reads in values from table.
+	 *
+	 * Method takes record $id, finds corresponding record and reads its values into newly created object.
+	 *
+	 * This method is used in a descendants {@link GetInstanceById()} method.
+	 * <code>
+	 * class inobj_Article extends inobj_TableRecord{
+	 *	//...
+	 *	function GetInstanceById($id,$options = array()){
+	 *		return inobj_TableRecord::_GetInstanceById("inobj_Article",$id,$options);
+	 *	}
+	 *	//...
+	 *	}
+	 * </code>
+	 *
+	 *
+	 * @static
+	 * @access protected
+	 * @param string $class_name	ie. "inobj_Article"
+	 * @param mixed $id						identifikator zaznamu v tabulce; integer, string nebo pole
+	 * @return inobj_TableRecord	resp. tridu, ktera je urcena v $class_name
+	 */
 	function _GetInstanceById($class_name,$id,$options = array()){
 		$out = new $class_name();
 		return $out->find($id,$options);
 	}
 
 	/**
-	*	Vytvori novy zaznam v databazi s danyma hodnotama a vrati vnitrni objekt dane tridy.
-	*
+	 * Creates a record in a table
+	 *
+	 * Method takes array of values and creates a record in a table.
+	 * Then returns an object of given class.
+	 *
+	 *
 	* Tuto metodu pouzije pouzije v implementaci metody CreateNewRecord().
 	* Pouzije ji nasledujicim zpusobem:
 	*		class inobj_Article extends inobj_TableRecord{
@@ -48,12 +67,17 @@ class inobj_TableRecord extends inobj_TableRecord_Base{
 	* @access private
 	* @param string $class_name					id. "inobj_Article"
 	* @param array $values							
+	* @return inobj_TableRecord
 	*/
 	function _CreateNewRecord($class_name,$values,$options = array()){
 		$out = new $class_name();
 		return $out->_insertRecord($values,$options);
 	}
 
+	/**
+	 *
+	 * @access private
+	 */
 	function _setRecordValues($row){
 		// pretypovani hodnot hodnot...
 		foreach($row as $_key => $_value){
@@ -83,10 +107,10 @@ class inobj_TableRecord extends inobj_TableRecord_Base{
 	}
 
 	/**
-	* Nacte struktury tabulky.
-	*
-	* @access private
-	*/
+	 * Reads table structure.
+	 *
+	 * @access private
+	 */
 	function _readTableStructure($options = array()){
 		static $STORE;
 

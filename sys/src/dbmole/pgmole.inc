@@ -1,4 +1,4 @@
-<?
+<?php
 class PgMole Extends DbMole{
 
 	/**
@@ -6,7 +6,7 @@ class PgMole Extends DbMole{
 	* Vraci vzdy stejny objekt pro stejnou konfiguraci.
 	*
 	* @static
-	* @access public.
+	* @access public
 	* @param string $configuration_name		"default"
 	* @return PgMole									nebo null
 	*/

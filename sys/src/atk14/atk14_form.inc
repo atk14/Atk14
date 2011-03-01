@@ -1,11 +1,10 @@
-<?
+<?php
 /**
  * Class for advanced operations with forms.
  * @package Atk14
  * @subpackage Core
- *
+ * @filesource
  * @author Jaromir Tomek
- *
  */
 
 /**

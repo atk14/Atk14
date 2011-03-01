@@ -1,10 +1,10 @@
-<?
+<?php
 /**
  * Class provides operations on cookies.
  *
  * @package Atk14
  * @subpackage InternalLibraries
- *
+ * @filesource
  * @author Jaromir Tomek
  */
 

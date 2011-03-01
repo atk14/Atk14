@@ -1,9 +1,10 @@
-<?
+<?php
 /**
  * Class provides operations with strings.
  *
  * @package Atk14
  * @subpackage InternalLibraries
+ * @filesource
  */
 
 /**

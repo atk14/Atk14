@@ -1,10 +1,11 @@
-<?
+<?php
 /**
  * Class for displaying messages
  *
  * @package Atk14
  * @subpackage Core
  * @author Jaromir Tomek
+ * @filesource
  */
 
 /**

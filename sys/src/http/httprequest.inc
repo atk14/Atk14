@@ -1,11 +1,8 @@
-<?
+<?php
 /**
  * @package Atk14
  * @subpackage InternalLibraries
- *
- *
- *
- *
+ * @filesource
  */
 
 if (get_magic_quotes_gpc()) {

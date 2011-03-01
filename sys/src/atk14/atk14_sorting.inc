@@ -1,10 +1,10 @@
-<?
+<?php
 /**
  * Class for sorting records
  *
  * @package Atk14
  * @subpackage Core
- *
+ * @filesource
  */
 
 /**

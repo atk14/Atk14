@@ -1,4 +1,4 @@
-<?
+<?php
 class MysqlMole extends DbMole{
 	function &GetInstance($configuration_name = "default"){
 		return parent::GetInstance($configuration_name,"MysqlMole");

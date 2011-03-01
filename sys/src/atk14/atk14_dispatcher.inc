@@ -1,8 +1,9 @@
-<?
+<?php
 /**
  * @package Atk14
  * @subpackage Core
  * @author Jaromir Tomek
+ * @filesource
  */
 
 /**
