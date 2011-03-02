@@ -56,6 +56,15 @@ class Atk14Controller{
 	var $action = "";
 
 	/**
+	 * Flag that controls whether template will be rendered.
+	 *
+	 * Default value is true and template {@link $template_name} will be rendered.
+	 *
+	 * @var boolean
+	 */
+	var $render_template = true;
+
+	/**
 	 * Name of template to render.
 	 *
 	 * By default it set to $action, but you can override it by setting it anytime in a controllers method.
