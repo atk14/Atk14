@@ -19,18 +19,21 @@
  *
  * Plugin also takes variables $total_amount and $max_amount from controller. This code is mostly enough:
  * <code>
- *	{paginator}
+ * {paginator}
  * </code>
  *
- * Zkopirovano z ATK14 a upraveno pro potreby GR.
- *
+ * @package Atk14
+ * @subpackage Helpers
+ * @author Jaromir Tomek
+ * @filesource
  */
 
 /**
  *
+ * Smarty function that generates set of links to other pages of a recordset.
+ *
  * @param array $params
  * @param array $content
- *
  */
 function smarty_function_paginator($params,&$smarty){
 	if(isset($params["finder"])){

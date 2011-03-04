@@ -249,6 +249,7 @@ class inobj_TableRecord_Base extends inobj{
 	function hasKey($key){ return in_array($key,array_keys($this->_RecordValues)); }
 
 	/**
+	 * getBelongsTo.
 	 *
 	 * <code>
 	 * $article = inobj_Article::GetInstanceById(111);

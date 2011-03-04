@@ -1,11 +1,28 @@
 <?php
 /**
-* Vlozi do vystupu tag <script> pro dany javascriptovy soubor.
-* Soubory vyhledava v adresari ./public/javascripts/
-*
-* Pouziti:
-*	{javascript_script_tag file="scripts.js"}
-*/
+ * Smarty tag for inserting html <script /> tag.
+ *
+ * Includes HTML tag <script /> to output.
+ * Generated file paths are relative to ./public/javascripts
+ *
+ * Example:
+ * <code>
+ * {javascript_script_tag file="scripts.js"}
+ * </code>
+ *
+ * <ul>
+ * 	<li><b>file</b> - name of file with javascript</li>
+ * </ul>
+ *
+ * @package Atk14
+ * @subpackage Helpers
+ * @author Jaromir Tomek
+ * @filesource
+ */
+
+/**
+ * Smarty function that outputs HTML <script /> tag.
+ */
 function smarty_function_javascript_script_tag($params,&$smarty){
 	global $ATK14_GLOBAL;
 	$src = $ATK14_GLOBAL->getPublicBaseHref()."javascripts/$params[file]";
