@@ -74,7 +74,7 @@ class Atk14Migration{
 		$this->dbmole->commit();
 
 		$this->dbmole->begin();
-		$this->dbmole->insertIntoTable("schema_magrations",array("version" => $this->version));
+		$this->dbmole->insertIntoTable("schema_migrations",array("version" => $this->version));
 		$this->dbmole->commit();
 
 		return true;

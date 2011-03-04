@@ -8,8 +8,8 @@
 * 	$ php migrate.php
 * 	$ ATK14_ENV=production php migrate.php
 *
-* Note: table schema_magrations needs to be created in the database.
-*		CREATE TABLE schema_magrations(
+* Note: table schema_migrations needs to be created in the database.
+*		CREATE TABLE schema_migrations(
 *			version VARCHAR(255) PRIMARY KEY
 *		);
 */
@@ -30,7 +30,7 @@ closedir($dir);
 asort($migrations);
 
 // getting list of done migrations
-$already_done_migrations = $dbmole->selectIntoArray("SELECT version FROM schema_magrations ORDER BY version");
+$already_done_migrations = $dbmole->selectIntoArray("SELECT version FROM schema_migrations ORDER BY version");
 
 $counter = 0;
 foreach($migrations as $m){
