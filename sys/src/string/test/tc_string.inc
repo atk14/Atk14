@@ -66,6 +66,18 @@ class tc_string extends tc_base{
 		$this->assertEquals("",(string)$str->at(10));
 	}
 
+	function test_contains(){
+		$str = new String("Hello");
+		$this->assertTrue($str->contains("ll"));
+		$this->assertTrue($str->contains("lo"));
+		$this->assertTrue($str->contains("He"));
+		$this->assertTrue($str->contains("Hello"));
+		$this->assertFalse($str->contains("HELLO"));
+
+		$this->assertFalse($str->contains(new String("HELLO")));
+		$this->assertTrue($str->contains(new String("Hello")));
+	}
+
 	function test_camelize(){
 		foreach(array(
 			"hello_world" => "HelloWorld",

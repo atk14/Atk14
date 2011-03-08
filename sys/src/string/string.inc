@@ -163,6 +163,13 @@ class String{
 	}
 
 	/**
+	* @return bool
+	*/
+	function contains($needle){
+		return !is_bool(strpos($this->_String,(string)$needle));
+	}
+
+	/**
 	* <code>
 	* $camel_case = $string->camelize(); // "hello_world" -> "HelloWorld"
 	* $camel_case = $string->camelize(array("lower" => true)); // "hello_world" -> "helloWorld"
