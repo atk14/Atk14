@@ -49,7 +49,11 @@ function smarty_block_a_remote($params, $content, &$smarty, &$repeat)
 
 	$attrs = array("data-remote" => "true");
 
-	if(isset($params["_confirm"])){ $attrs["data-confirm"] = $params["_confirm"]; }
+	if(isset($params["_confirm"])){
+		$attrs["data-confirm"] = $params["_confirm"];
+		// automaticky pridame tridu confirm pro zachovani zpetne kompatibility
+		$params["_class"] = isset($params["_class"]) ? trim("confirm ".$params["_class"]) : "confirm";
+	}
 	unset($params["_confirm"]);
 
 	if($method!="get"){ $attrs["data-method"] = $method; }

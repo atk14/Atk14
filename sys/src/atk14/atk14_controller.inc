@@ -411,20 +411,31 @@ class Atk14Controller{
 	}
 
 	/**
-	* Umoznuje vyrenderovat parcialni sablonku v metode kontroleru.
-	* To se muze hodit napr. pri generovani HTML snippetu ve formatu json.
-	* 
-	* Upozornuji, ze pred volanim _render() nedochazi k volani _before_render().
-	* 
-	* $content = $this->_render("article_item");
-	*
-	* $content = $this->_render("article_item",array("from" => $articles));
-	*
-	* $content = $this->_render(array(
-	*		"partial" => "article_item",
-	*		"from" => $articles
-	*	));
-	*/
+	 * Allows to render a partial template from an action method.
+	 * The rendered output is returned. So it's pretty usable for producing JSONs with HTML snippets.
+	 * 
+	 * Note that during _render() call the method _before_render() will not be executed.
+	 *
+	 *		<code> 
+	 *			$content = $this->_render("article_item");
+	 *
+	 *			$content = $this->_render("article_item",array("from" => $articles));
+	 *
+	 *			$content = $this->_render(array(
+	 *				"partial" => "article_item",
+	 *				"from" => $articles
+	 *			));
+	 *	 	</code>
+	 *
+	 *
+	 * Also allows to render a text output to the response.
+	 * 
+	 *		<code>
+	 *			$this->_render(array("text" => "alert('The record has been deleted!');"));
+	 *		</code>
+	 * 
+	 * Note that no template will be rendered after a text rendering.
+	 */
 	function _render($params_or_partial,$params = array()){
 		if(is_string($params_or_partial)){
 			$params["partial"] = $params_or_partial;
@@ -432,9 +443,19 @@ class Atk14Controller{
 			$params = $params_or_partial;
 		}
 
-		$smarty = $this->_get_smarty();
-		Atk14Require::Helper("function.render",$smarty);
-		return smarty_function_render($params,$smarty);
+		// rendering a partial template
+		if(isset($params["partial"])){
+			$smarty = $this->_get_smarty();
+			Atk14Require::Helper("function.render",$smarty);
+			return smarty_function_render($params,$smarty);
+		}
+
+		// rendering text to the response
+		if(isset($params["text"])){
+			$this->render_template = false;
+			$this->response->write($params["text"]);
+			return;
+		}
 	}
 
 	function _get_smarty(){
