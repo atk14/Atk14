@@ -5,7 +5,8 @@ class tc_atk14_helpers extends tc_base{
 		$mtime = filemtime("public/javascripts/site.js");
 		$this->assertEquals('<script src="/public/javascripts/site.js?'.$mtime.'" type="text/javascript"></script>
 <script src="/public/javascripts/site.js?'.$mtime.'" type="text/javascript" media="screen"></script>
-<!-- javascript file not found: '.PATH_ATK14_APPLICATION.'/../public/javascripts/nonexisting.js -->',$out);
+<!-- javascript file not found: '.ATK14_DOCUMENT_ROOT.'public/javascripts/nonexisting.js -->',$out);
+
 	}
 
 	function test_sortable(){

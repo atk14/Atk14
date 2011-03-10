@@ -933,11 +933,31 @@ class Atk14Controller{
 
 }
 
-function atk14_smarty_prefilter($tpl_source, &$smarty){
+/**
+* In a template in an ATK14 project one can escape curly bracets:
+*
+* <code>
+*		function js_alert(message)\{ alert($message); return false; \}
+* </code>
+* 
+* one can define a data-* attribute in a link
+*
+* <code>
+*		{a_remote action=detail id=$product _class=detail _data-type=json}Detail{/a_remote}
+* </code>
+*
+* Such things are not possible in Smarty template engine.
+* 
+* This function changes a template source in some ways to make this possible.
+* Smarty calls it automatically before a template compilation.
+*/
+function atk14_smarty_prefilter($tpl_source, &$smarty = null){
 	$tpl_source = strtr($tpl_source,array(
 		"\\{" => "{literal}{{/literal}",
 		"\\}" => "{literal}}{/literal}",
 	));
+	
+	$tpl_source = preg_replace("/({(a|a_remote|a_destroy|form|form_remote)\\s+[^}]*\\b_data)-/","\\1___",$tpl_source);
 	/*
 	if(preg_match("/^([^\s]+)\*\s*Smarty\s*\*([^\s]+)/",$tpl_source,$matches)){
 		 $smarty->left_delimiter = $matches[1];

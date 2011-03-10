@@ -14,6 +14,15 @@
  *
  * @param array $params Uses same parameters as {@link smarty_block_a}. Here is description of additional parameters:
  *
+ * Usage:
+ * <code>
+ * 		{a_remote action=detail id=$product}Product detail{/a_remote}
+ *
+ * 		{a_remote action=detail id=$product _data-type=json}Product detail{/a_remote}
+ * 
+ *    {a_remote action=destroy id=$product _method=delete _confirm="Are you sure to delete the product?"}Delete product{/a_remote}
+ * </code>
+ *
  * <ul>
  * 	<li><b>_method</b> - method for sending the request. Defaults to GET
  * </ul>
@@ -26,6 +35,7 @@ function smarty_block_a_remote($params, $content, &$smarty, &$repeat)
 
 	$params = array_merge(array(
 		"_method" => "get",
+		"_confirm" => null, // an confirmation message ('Are you sure?')
 		"__be_pretty_ugly__" => false // internal parameter, don't use it outside
 	),$params);
 
@@ -37,7 +47,14 @@ function smarty_block_a_remote($params, $content, &$smarty, &$repeat)
 
 	$url = Atk14Utils::BuildLink($params,$smarty);
 
-	$attrs = Atk14Utils::ExtractAttributes($params);
+	$attrs = array("data-remote" => "true");
+
+	if(isset($params["_confirm"])){ $attrs["data-confirm"] = $params["_confirm"]; }
+	unset($params["_confirm"]);
+
+	if($method!="get"){ $attrs["data-method"] = $method; }
+
+	Atk14Utils::ExtractAttributes($params,$attrs);
 	$attrs["href"] = $url;
 	if($be_pretty_ugly){
 		// TODO: doesn't check existance of the JS function before_remote_link()
@@ -56,11 +73,5 @@ function smarty_block_a_remote($params, $content, &$smarty, &$repeat)
 
 	$attrs = Atk14Utils::JoinAttributes($attrs);
 
-	//$attributes[] = " onclick=\"JavaScript: jQuery.getScript($(this).attr('href')); return false;\"";
-	//$attributes[] = " onclick=\"JavaScript: document.body.style.cursor='wait'; $.ajax({type: 'GET', url: $(this).attr('href'), dataType: 'script', complete: function(){ document.body.style.cursor='default'; } }); return false;\"";
-
-	// prepne cursor na wait; provede ajax request; zmeni cursor na default
-
 	return "<a$attrs>$content</a>";
 }
-?>

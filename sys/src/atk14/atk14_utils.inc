@@ -42,7 +42,7 @@ class Atk14Utils{
 			define("DEVELOPMENT",false);
 			define("TEST",false);
 
-		// No environment constant was defined? Checking out the ATK14_ENV environment variable...
+		// No environment constant was defined? Checkatk14_smarty_prefiltering out the ATK14_ENV environment variable...
 		}elseif(strtoupper(getenv("ATK14_ENV"))=="TEST"){
 			define("TEST",true);
 			define("DEVELOPMENT",false);
@@ -179,6 +179,10 @@ class Atk14Utils{
 	 * <code>
 	 * $params = array("id" => "20", "_class" => "red", "_id" => "red_link");
 	 * $attrs = Atk14Utils::ExtractAttributes($params);
+	 *
+	 * // or
+	 * $attrs = array("data-message" => "Hello guys!");
+	 * Atk14Utils::ExtractAttributes($params,$attrs); // the attribute data-message will be preserved
 	 * </code>
 	 *
 	 * $attrs will contain array("class" => "red","id" => "red_link").
@@ -186,15 +190,17 @@ class Atk14Utils{
 	 * $params will contain array("id" => "20").
 	 *
 	 * @param array &$params
+	 * @param array &$attributes
 	 * @return array
 	 * @static
 	 */
-	function ExtractAttributes(&$params){
-		$attributes = array();
+	function ExtractAttributes(&$params,&$attributes = array()){
 		reset($params);
 		while(list($_key,$_value) = each($params)){
 			if(preg_match("/^_(.+)/",$_key,$matches)){
-				$attributes[$matches[1]] = $_value;
+				$_attr = $matches[1];
+				$_attr = str_replace("___","-",$_attr); // this is a hack: "data___type" -> "data-type" (see atk14_smarty_prefilter() function)
+				$attributes[$_attr] = $_value;
 				unset($params[$_key]);
 			}
 		}
@@ -356,4 +362,3 @@ class Atk14Utils{
 		return $out;
 	}
 }
-?>
