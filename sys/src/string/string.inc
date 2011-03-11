@@ -1,6 +1,6 @@
 <?php
 /**
-* Useful class for string manipulation.
+* Class for headaches free string manipulation.
 *
 * Here is an inspiration:
 * http://api.rubyonrails.org/classes/String.html
@@ -8,22 +8,22 @@
 class String{
 
 	/**
-	* <code>
-	* $str = new String();
-	* $str = new String("Hello");
-	* $str2 = new String($str);
-	* </code>
-	*/
+	 * <code>
+	 * $str = new String();
+	 * $str = new String("Hello");
+	 * $str2 = new String($str);
+	 * </code>
+	 */
 	function String($string = ""){
 		$this->_String = "$string";
 	}
 
 	/**
-	* <code>
-	* $str = String::ToObject("Hello");
-	* $str = String::ToObject($str);
-	* </code>
-	*/
+	 * <code>
+	 * $str = String::ToObject("Hello");
+	 * $str = String::ToObject($str);
+	 * </code>
+	 */
 	function ToObject($string){
 		if(is_object($string) && strtolower(get_class($string))=="string"){
 			return $string;
@@ -31,22 +31,45 @@ class String{
 		return new String($string);
 	}
 
-	function RandomString($length = 32){
-		settype($length,"integer");
+	/**
+	 *	Builds an random string consists of [A-Za-z0-9].
+	 * Special chars could be passed in $options.
+	 *
+	 * echo String::RandomString();
+	 * echo String::RandomString(8);
+	 * echo String::RandomString(array("length" => 8));
+	 * echo String::RandomString(array("length" => 8, "extra_chars" => "#$!%^")); 
+	 */
+	function RandomString($length = 32,$options = array()){
+		if(is_array($length)){
+			$options = $length;
+			$length = 32;
+		}
+
+		$options = array_merge(array(
+			"extra_chars" => "",
+			"length" => $length,
+		),$options);
+
 		srand ((double) microtime() * 1000000);
 		$temp = array("a","i","o","s","t","u","v","3","4","5","8","B","C","D","E","F","7","G","H","I","J","K","L","M","N","O","j","k","l","6","P","Q","W","b","c","d","e","f","g","h","p","q","r","x","y","z","0","1","S","T","U","w","2","9","A","R","V","m","n");
-		$rand = array_rand($temp,$length);
+		foreach(preg_split("//",$options["extra_chars"]) as $ch){
+			strlen($ch) && ($temp[] = $ch);
+		}
+		shuffle($temp);
+
+		$rand = array_rand($temp,$options["length"]);
 		$out = '';
 		for($i=0;$i<sizeof($rand);$i++){
 			$out .= $temp[$rand[$i]];
 		}
-		return new String($out);
+		return $out;
 	}
 
 	/**
-	* Some characters are not suitable for passwords, because they cause mistakes.
-	* Like zero and capital O: 0 versus O.
-	*/
+	 * Some characters are not suitable for passwords, because they cause mistakes.
+	 * Like zero and capital O: 0 versus O.
+	 */
 	function RandomPassword($length = 10){
 		settype($length,"integer");
 		$numeric_versus_alpha_total = 10;
@@ -102,26 +125,29 @@ class String{
 	}
 
 	/**
-	* ATK14 sometimes converts objects into their scalar representation automatically by calling getId() method.
-	* Due to it we need this silly looking method here.
-	* 
-	* @return string
-	*/
+	 * ATK14 sometimes converts objects into their scalar representation automatically by calling getId() method.
+	 * Due to it we need this silly looking method here.
+	 * 
+	 * @return string
+	 */
 	function getId(){ return $this->_String; }
 
 	function length(){ return strlen($this->_String); }
 	
 	/**
-	* <code>
-	* $str = new String("Hello World");
-	* echo $str->replace("World","Guys");
-	*
-	* echo $str->replace(array(
-	* 	"Hello" => "Hi",
-	* 	"World" => "Guys",
-	* ));
-	* </code>
-	*/
+	 * <code>
+	 * $str = new String("Hello World");
+	 *
+	 * $str->replace("World","Guys");
+	 *	// or
+	 * $str->replace(array(
+	 * 	"Hello" => "Hi",
+	 * 	"World" => "Guys",
+	 * ));
+	 * </code>
+	 *
+	 * !! Changes the object state
+	 */
 	function replace($search,$replace = null){
 		if(is_array($search)){
 			$_replaces_keys = array();
@@ -132,11 +158,13 @@ class String{
 				$_replaces_values[] = $search[$key];
 			}   
 			if(sizeof($_replaces_keys)==0){
-				return $this->_copy();
+				return $this;
 			}   
-			return $this->_copy(str_replace($_replaces_keys,$_replaces_values,$this->_String));
+			$this->_String = str_replace($_replaces_keys,$_replaces_values,$this->_String);
+			return $this;
 		}
-		return $this->_copy(str_replace($search,$replace,$this->_String));
+		$this->_String = str_replace($search,$replace,$this->_String);
+		return $this;
 	}
 
 	function match($pattern,&$matches = null){
@@ -144,16 +172,16 @@ class String{
 	}
 
 	/**
-	* Returns char at given position.
-	* Position starts from 0.
-	*
-	*	<code>
-	* $str = new String("Hello");
-	* $str->at(2); // 'e'
-	*	</code>
-	*
-	* @return Str
-	*/
+	 * Returns char at given position.
+	 * Position starts from 0.
+	 *
+	 *	<code>
+	 * $str = new String("Hello");
+	 * $str->at(2); // 'e'
+	 *	</code>
+	 *
+	 * @return Str
+	 */
 	function at($position){
 		return $this->_copy($this->substr($position,1));
 	}
@@ -163,20 +191,22 @@ class String{
 	}
 
 	/**
-	* @return bool
-	*/
+	 * @return bool
+	 */
 	function contains($needle){
 		return !is_bool(strpos($this->_String,(string)$needle));
 	}
 
 	/**
-	* <code>
-	* $camel_case = $string->camelize(); // "hello_world" -> "HelloWorld"
-	* $camel_case = $string->camelize(array("lower" => true)); // "hello_world" -> "helloWorld"
-	* </code>
-	*
-	* @return String
-	*/
+	 * Converts string into CamelCase format.
+	 *
+	 * <code>
+	 * $camel_case = $string->camelize(); // "hello_world" -> "HelloWorld"
+	 * $camel_case = $string->camelize(array("lower" => true)); // "hello_world" -> "helloWorld"
+	 * </code>
+	 *
+	 * @return String
+	 */
 	function camelize($options = array()){
 		$options = array_merge(array(
 			"lower" => false,
@@ -192,16 +222,21 @@ class String{
 	}
 
 	/**
-	* <code>
-	* $underscore = $camel_case->underscore(); // "HelloWorld" -> "hello_world"
-	* </code>
-	*/
+	 * Converts string into underscore format.
+	 * 
+	 * <code>
+	 * $underscore = $camel_case->underscore(); // "HelloWorld" -> "hello_world"
+	 * </code>
+	 * 
+	 * @return String
+	 */
 	function underscore(){
 		$out = $this->_copy();
 		$out->_String = strtolower(preg_replace("/([a-z0-9])([A-Z])/","\\1_\\2",$this->_String));
 		return $out;
 	}
 
+	function copy(){ return $this->_copy(); }
 	function _copy($string = null){
 		if(!isset($string)){ $string = $this->_String; }
 		return new String($string);

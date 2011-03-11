@@ -36,15 +36,29 @@ class tc_string extends tc_base{
 		
 	}
 
+	function test_clone_and_copy(){
+		$orig = new String("Hello World");
+		$clone = clone $orig;
+		$copy = $orig->copy();
+
+		$orig->replace("Hello","Hi");
+
+		$this->assertEquals("Hi World",(string)$orig);
+		$this->assertEquals("Hello World",(string)$clone);
+		$this->assertEquals("Hello World",(string)$copy);
+	}
+
 	function test_replace(){
 		$str = new String("Hello World");
 		$this->assertEquals("Hello Guys",(string)$str->replace("World","Guys"));
 
+		$str = new String("Hello World");
 		$this->assertEquals("Hi Guys",(string)$str->replace(array(
 			"Hello" => "Hi",
 			"World" => "Guys",
 		)));
 
+		$str = new String("Hello World");
 		$this->assertEquals("Hello World",(string)$str->replace(array()));
 	}
 
