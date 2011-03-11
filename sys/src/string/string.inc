@@ -167,6 +167,28 @@ class String{
 		return $this;
 	}
 
+	/**
+	* <code>
+	* $string = new String("World");
+	* $string->prepend("Hello "); // Hello World
+	* </code>
+	*/
+	function prepend($content){
+		$this->_String = "$content".$this->_String;
+		return $this;
+	}
+
+	/**
+	* <code>
+	* $string = new String("Hello");
+	* $string->append(" World"); // Hello World
+	* </code>
+	*/
+	function append($content){
+		$this->_String .= "$content";
+		return $this;
+	}
+
 	function match($pattern,&$matches = null){
 		return preg_match($pattern,$this,$matches);
 	}

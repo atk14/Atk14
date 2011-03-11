@@ -62,6 +62,16 @@ class tc_string extends tc_base{
 		$this->assertEquals("Hello World",(string)$str->replace(array()));
 	}
 
+	function test_prepend_and_append(){
+		$string = new String("World");
+		$this->assertEquals("Hello World",(string)$string->prepend("Hello "));
+		$this->assertEquals("Hello World",(string)$string);
+
+		$string = new String("Hi");
+		$this->assertEquals("Hi World",(string)$string->append(" World"));
+		$this->assertEquals("Hi World",(string)$string);
+	}
+
 	function test_match(){
 		$domain = new String("domain.cz");
 		$this->assertEquals(true,(bool)$domain->match("/.*\\.cz$/"));
