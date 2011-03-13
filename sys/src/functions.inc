@@ -25,3 +25,8 @@ function EasyReplace($str,$replaces){
   }   
   return str_replace($_replaces_keys,$_replaces_values,$str);
 }
+
+/**
+* Alias for htmlspecialchars(). 
+*/
+function h($string){ return htmlspecialchars($string); }
