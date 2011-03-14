@@ -128,4 +128,25 @@ class tc_string extends tc_base{
 			$this->assertEquals($result,(string)$str->underscore());
 		}	
 	}
+
+	function test_pluralize_and_singularize(){
+		foreach(array(
+			"apple" => "apples",
+			"Apple" => "Apples",
+			"rotten apple" => "rotten apples",
+			"Rotten Apple" => "Rotten Apples",
+			"RottenApple" => "RottenApples",
+			"rotten_apple" => "rotten_apples",
+
+			"sheep" => "sheep",
+			"man" => "men",
+			"virus" => "viruses",
+		) as $singular => $plural){
+			$str = new String($singular);
+			$this->assertEquals($plural,(string)$str->pluralize());
+
+			$str = new String($plural);
+			$this->assertEquals($singular,(string)$str->singularize());
+		}
+	}
 }

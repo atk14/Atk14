@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__FILE__)."/_inflect.inc");
 /**
 * Class for headaches free string manipulation.
 *
@@ -190,7 +191,13 @@ class String{
 	}
 
 	function match($pattern,&$matches = null){
-		return preg_match($pattern,$this,$matches);
+		$out = preg_match($pattern,$this,$matches);
+		if(is_array($matches)){
+			foreach($matches as &$m){
+				$m = new String($m);
+			}
+		}
+		return $out;
 	}
 
 	/**
@@ -241,6 +248,14 @@ class String{
 		}
 			
 		return $out;
+	}
+
+	function pluralize(){
+		return $this->_copy(_Inflect::pluralize((string)$this));
+	}
+
+	function singularize(){
+		return $this->_copy(_Inflect::singularize((string)$this));
 	}
 
 	/**
