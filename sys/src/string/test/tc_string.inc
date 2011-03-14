@@ -129,6 +129,18 @@ class tc_string extends tc_base{
 		}	
 	}
 
+	function test_tableize(){
+		foreach(array(
+			"Book" => "books",
+			"BlogPost" => "blog_posts",
+			"Sheep" => "sheep",
+			"Person" => "people",
+		) as $class_name => $table_name){
+			$str = new String($class_name);
+			$this->assertEquals($table_name,(string)$str->tableize());
+		}	
+	}
+
 	function test_pluralize_and_singularize(){
 		foreach(array(
 			"apple" => "apples",

@@ -105,8 +105,7 @@ class inobj_TableRecord_Base extends inobj{
 
 		if(!isset($table_name)){
 			$table_name = new String(get_class($this));
-			$table_name = $table_name->pluralize();
-			$table_name = $table_name->underscore();
+			$table_name = $table_name->tableize();
 		}
 
 		$this->_TableName = (string)$table_name;

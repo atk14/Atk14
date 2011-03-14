@@ -250,10 +250,36 @@ class String{
 		return $out;
 	}
 
+	/**
+	* Returns corresponding table name for a given ClassName.
+	* 
+	* <code>
+	*		$class = new String("Book");
+	*		echo $class->tableize(); // "books"
+	*	</code>
+	*/
+	function tableize(){
+		$table_name = $this->pluralize();
+		$table_name = $table_name->underscore();
+		return $table_name;
+	}
+
+	/**
+	* <code>
+	* 	$apple = new String("apple");
+	* 	echo $apple->pluralize(); // "apples"
+	* </code>
+	*/
 	function pluralize(){
 		return $this->_copy(_Inflect::pluralize((string)$this));
 	}
 
+	/**
+	* <code>
+	* 	$apples = new String("Rotten Apples");
+	*		echo $apples->singularize(); // "Rotten Apple"
+	* </code>
+	*/
 	function singularize(){
 		return $this->_copy(_Inflect::singularize((string)$this));
 	}
