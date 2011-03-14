@@ -24,5 +24,25 @@ class tc_atk14_controller extends tc_base{
 		$c->atk14__runAfterFilters();
 		$this->assertEquals(array("afilter1","afilter2","after_filter","afilter3","afilter4"),$c->after_filters);
 	}
+
+	function test_redirect_to(){
+		$c = new ApplicationController();
+		$c->atk14__initialize();
+		$c->lang = "en";
+		$c->controller = "books";
+		$c->namespace = "";
+
+		foreach(array(
+			array("overview","/en/books/overview/"),
+			array("users/create_new" , "/en/users/create_new/"),
+			array("/public/pricelist.html" , "/public/pricelist.html"),
+			array("http://www.domenka.cz/" , "http://www.domenka.cz/"),
+			array(array("controller" => "books", "action" => "detail") , "/en/books/detail/"),
+			array(array("controller" => "books", "action" => "detail", "id" => "123") , "/en/books/detail/?id=123"),
+		) as $i){
+			list($params,$result) = $i;
+			$c->_redirect_to($params);
+			$this->assertEquals($result,$c->response->getLocation());
+		}
+	}
 }
-?>

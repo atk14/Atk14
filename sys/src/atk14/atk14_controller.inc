@@ -708,8 +708,12 @@ class Atk14Controller{
 	 *
 	 * Common usage of the method:
 	 * <code>
-	 *	$this->_redirect_to("http://www.domenka.cz/");
+	 *	$this->_redirect_to("http://www.domenka.cz/pricelist.html"); // redirects to a given domain and URI
+	 *  $this->_redirect_to("/en/books/"); // redirects to a given URI
+	 *
 	 *	$this->_redirect_to(array("action" => "overview"));
+	 *	$this->_redirect_to("index"); // same like $this->_redirect_to(array("action" => "index"));
+	 *	$this->_redirect_to("main/index"); // same like $this->_redirect_to(array("controller" => "main", "action" => "index"));
 	 * </code>
 	 *
 	 * This call redirects to the same URL
@@ -719,12 +723,12 @@ class Atk14Controller{
 	 *
 	 * Moving permanently
 	 * <code>
-	 * 	$this->_redirect_to(array("action" => "overview",array("moved_permanently" => true)));
+	 * 	$this->_redirect_to(array("action" => "overview"),array("moved_permanently" => true));
 	 * </code>
 	 *
 	 * or
 	 * <code>
-	 * 	$this->_redirect_to(array("action" => "overview",array("status" => 301)));
+	 * 	$this->_redirect_to(array("action" => "overview"),array("status" => 301));
 	 * </code>
 	 * 
 	 * 
@@ -739,6 +743,18 @@ class Atk14Controller{
 	 */
 	function _redirect_to($params = array(),$options = array()){
 		if(is_string($params)){
+			if(preg_match("/^[a-z0-9_]+$/",$params)){
+				return $this->_redirect_to(array(
+						"action" => $params, 
+				),$options);
+			}
+			if(preg_match("/^([a-z0-9_]+)\\/([a-z0-9_]+)$/",$params,$matches)){
+				return $this->_redirect_to(array(
+						"controller" => $matches[1],
+						"action" => $matches[2], 
+				),$options);
+			}
+
 			$url = $params;
 		}else{
 			$url = $this->_link_to($params,array("connector" => "&"));
