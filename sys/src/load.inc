@@ -19,7 +19,7 @@ require_once(dirname(__FILE__)."/../../config/local_settings.inc");
 require_once(dirname(__FILE__)."/default_settings.inc");
 
 // load the rest...
-require_once(dirname(__FILE__)."/string/string.inc");
+require_once(dirname(__FILE__)."/string/load.inc");
 require_once(dirname(__FILE__)."/translate/translate.inc");
 require_once(dirname(__FILE__)."/dictionary/dictionary.inc");
 require_once(dirname(__FILE__)."/miniyaml/miniyaml.inc");

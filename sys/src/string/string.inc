@@ -1,5 +1,4 @@
 <?php
-require_once(dirname(__FILE__)."/_inflect.inc");
 /**
 * Class for headaches free string manipulation.
 *
