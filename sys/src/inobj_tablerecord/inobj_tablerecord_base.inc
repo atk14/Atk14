@@ -100,8 +100,14 @@ class inobj_TableRecord_Base extends inobj{
 	 * 	<li><b>sequence_name</b> - </li>
 	 * </ul>
 	 */
-	function inobj_TableRecord_Base($table_name,$options = array()){
+	function inobj_TableRecord_Base($table_name = null,$options = array()){
 		inobj::inobj();
+
+		if(!isset($table_name)){
+			$table_name = new String(get_class($this));
+			$table_name = $table_name->pluralize();
+			$table_name = $table_name->underscore();
+		}
 
 		$this->_TableName = (string)$table_name;
 
@@ -1121,5 +1127,19 @@ class inobj_TableRecord_Base extends inobj{
 	function __toString(){
 		return sprintf("[%s #%s]",get_class($this),$this->getId());
 	}
+
+	/**
+	* Magic method changes calling to an nonexistent method like this:
+	* 
+	* $object->getEmailAddress() -> $object->g("email_address");
+	*/
+	function __call($name,$arguments){
+		$name = new String($name);
+		if($name->match("/^get(.+)/",$matches)){
+			return $this->g($matches[1]->underscore());
+		}
+
+		die("inobj_TableRecord::__call(): unknown method $name");
+	}
+
 }
-?>

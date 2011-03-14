@@ -13,7 +13,7 @@
  */
 class inobj_TableRecord extends inobj_TableRecord_Base{
 
-	function inobj_TableRecord($table_name,$options = array()){
+	function inobj_TableRecord($table_name = null,$options = array()){
 		inobj_TableRecord_Base::inobj_TableRecord_Base($table_name,$options);
 	}
 
@@ -166,4 +166,3 @@ class inobj_TableRecord extends inobj_TableRecord_Base{
 	}
 	*/
 }
-?>
