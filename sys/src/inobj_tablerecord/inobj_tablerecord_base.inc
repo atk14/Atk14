@@ -251,7 +251,7 @@ class inobj_TableRecord_Base extends inobj{
 	 * @param string $key
 	 * @return bool
 	 */
-	function hasKey($key){ return in_array($key,array_keys($this->_RecordValues)); }
+	function hasKey($key){ return in_array((string)$key,array_keys($this->_RecordValues)); }
 
 	/**
 	 * getBelongsTo.
@@ -1128,17 +1128,27 @@ class inobj_TableRecord_Base extends inobj{
 	}
 
 	/**
-	* Magic method changes calling to an nonexistent method like this:
+	* Magic method changes calling to an nonexistent method in this way:
 	* 
 	* $object->getEmailAddress() -> $object->g("email_address");
+	*
+	* $object->getUserId() -> $object->g("user_id");
+	* $object->getUser() -> User::GetInstanceById($object->g("user_id"));
 	*/
 	function __call($name,$arguments){
 		$name = new String($name);
 		if($name->match("/^get(.+)/",$matches)){
-			return $this->g($matches[1]->underscore());
+			$field = $matches[1]->underscore();
+			if($this->hasKey($field)){
+				return $this->g($field->underscore());
+			}
+			if($this->hasKey("{$field}_id") && class_exists($c = $field->camelize())){
+				$c = "$c";
+				return $c::GetInstanceById($this->g("{$field}_id"));
+			}
 		}
 
-		die("inobj_TableRecord::__call(): unknown method $name");
+		die("inobj_TableRecord::__call(): unknown method ".get_class($this)."::$name()");
 	}
 
 }

@@ -1,14 +1,16 @@
 <?
 /**
-* Cache::Prepare("inobj_Article",10023);
-* Cache::Prepare("inobj_Article",10024);
-* Cache::Prepare("inobj_Article",array(10025,10026));
-* Cache::Get("inobj_Article",10023); // nacte vsechny clanky 10023, 10024, 10025 i 10026; vrati instanci 10023
-* Cache::Clear(); // smaze cache
+* Cache::Prepare("Article",10023);
+* Cache::Prepare("Article",10024);
+* Cache::Prepare("Article",array(10025,10026));
+* Cache::Get("Article",10023); // reads all the previous declared articles (10023, 10024, 10025 and 10026); returns the 10023
+* Cache::Clear(); // cleares all stored data in the cache
+* Cache::Clear("Article",10023); // cleares only Article#10023 from the cache
 */
 class Cache{
 	var $_Prepare = array();
 	var $_Cache = array();
+
 	function &GetInstance(){
 		static $instance;
 		if(!isset($instance)){
@@ -46,8 +48,13 @@ class Cache{
 		return $out;
 	}
 
-	function Clear(){
+	function Clear($class = null,$id = null){
 		$c = &Cache::GetInstance();
+		if(isset($class)){
+			$class = strtolower($class);
+			unset($this->_Cache[$class][$id]);
+			return;
+		}
 		$c->_Cache = array();
 	}
 
