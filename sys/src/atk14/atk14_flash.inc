@@ -9,12 +9,15 @@
  */
 
 /**
- * Class for displaying messages.
+ * Class for displaying flash messages.
  *
  * The message is available in current session to the next request and then it is deleted automatically.
  * It is used inside a controller using instance variable $flash.
  *
- * Uses three types of messages: notice, success, error
+ * Uses three types of messages, each of them having appropriate method to set:
+ * - notice
+ * - success
+ * - error
  *
  * <code>
  * class MyController extends ApplicationController {
