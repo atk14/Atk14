@@ -755,6 +755,8 @@ class ImageField extends FileField{
         $options = array_merge(array(
             "max_width" => null,
             "max_height" => null,
+            "min_width" => null,
+            "min_height" => null,
         ),$options);
         parent::FileField($options);
 
@@ -762,15 +764,21 @@ class ImageField extends FileField{
             'not_image' => _('Ensure this file is image.'),
             'max_width' => _('Ensure this image is at most %max% pixels wide (it is %width%).'),
             'max_height' => _('Ensure this value is at most %max% pixels high (it is %height%).'),
+            'min_width' => _('Ensure this image is at least %min% pixels wide (it is %width%).'),
+            'min_height' => _('Ensure this value is at least %min% pixels high (it is %height%).'),
         ));
         $this->max_width = $options["max_width"];
         $this->max_height = $options["max_height"];
+        $this->min_width = $options["min_width"];
+        $this->min_height = $options["min_height"];
     }
     function clean($value){
         list($err,$value) = parent::clean($value);
         if(isset($err)){ return array($err,null); }
         if(!isset($value)){ return array(null,null); }
         if(!$value->isImage()){ return array($this->messages['not_image'],null); }
+
+        // TODO: add here image size checks
 
         return array(null,$value);
     }
