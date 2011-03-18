@@ -111,6 +111,7 @@ class Atk14Require{
 	 * Alias of {@link _Files()} method.
 	 * <code>
 	 * Atk14Require::Load("controllers/application_mailer.inc");
+	 * Atk14Require::Load("controllers/*.inc");
 	 * </code>
 	 *
 	 * @param string $pattern
@@ -134,8 +135,7 @@ class Atk14Require{
 
 		$out = array();
 
-		$ar = glob($ATK14_GLOBAL->getApplicationPath()."$pattern");
-
+		if(!$ar = glob($ATK14_GLOBAL->getApplicationPath()."$pattern")){ return $out; }
 
 		reset($ar);
 		while(list(,$filename) = each($ar)){
