@@ -410,8 +410,9 @@ class HTTPRequest{
 	 * @return string    napr. "text/plain"; null when content-type is not set
 	 */
 	function getContentType(){
-		if(isset($GLOBALS["HTTP_SERVER_VARS"]["CONTENT_TYPE"])){
-			$_content_type = $GLOBALS["HTTP_SERVER_VARS"]["CONTENT_TYPE"];	
+		global $_SERVER;
+		if(isset($_SERVER["CONTENT_TYPE"])){
+			$_content_type = $_SERVER["CONTENT_TYPE"];
 			if(preg_match("/^([^;]+);/",$_content_type,$matches)){
 				$_content_type = trim($matches[1]);
 			}
@@ -426,8 +427,9 @@ class HTTPRequest{
 	 * @return string	charset	specification or null when charset is not set
 	 */
 	function getContentCharset(){
-		if(isset($GLOBALS["HTTP_SERVER_VARS"]["CONTENT_TYPE"])){
-			$_content_type = $GLOBALS["HTTP_SERVER_VARS"]["CONTENT_TYPE"];	
+		global $_SERVER;
+		if(isset($_SERVER["CONTENT_TYPE"])){
+			$_content_type = $_SERVER["CONTENT_TYPE"];	
 			$_charset = null;
 			if(preg_match("/^.*;\\s*charset\\s*=\\s*([^;]+)/",$_content_type,$matches)){
 				$_charset = trim($matches[1]);
