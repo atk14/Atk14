@@ -121,6 +121,19 @@ class Atk14MigrationBySqlFile extends Atk14Migration{
 			return $this->_fail("can't read $filename: $err_str");
 		}
 		
-		$this->dbmole->doQuery($content);
+		if($this->dbmole->getDatabaseType()=='oracle'){
+
+			// This is sick.
+			// Oracle is unable to execute script with several sql commands at once.
+			// So... look at the very provisional workaround.
+
+			foreach(explode(";",$content) as $q){
+				$q = trim($q); if(!$q){ continue; }
+				$this->dbmole->doQuery($q);
+			}
+
+		}else{
+			$this->dbmole->doQuery($content);
+		}
 	}
 }
