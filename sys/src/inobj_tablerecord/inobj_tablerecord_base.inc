@@ -1142,9 +1142,8 @@ class inobj_TableRecord_Base extends inobj{
 			if($this->hasKey($field)){
 				return $this->g($field->underscore());
 			}
-			if($this->hasKey("{$field}_id") && class_exists($c = $field->camelize())){
-				$c = "$c";
-				return $c::GetInstanceById($this->g("{$field}_id"));
+			if($this->hasKey("{$field}_id") && class_exists($c = (string)$field->camelize())){
+				return call_user_func_array(array($c,"GetInstanceById"),array($this->g("{$field}_id")));
 			}
 		}
 
