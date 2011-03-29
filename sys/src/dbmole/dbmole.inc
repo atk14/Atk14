@@ -100,6 +100,19 @@ class DbMole{
 	}
 
 	/**
+	* Returns the database name.
+	*
+	* If a descendant doesn't know how to determine the database name,
+	* the configuration name will be returned instead.
+	*/
+	function getDatabaseName(){
+		if($dbname = $this->_getDatabaseName()){ return (string)$dbname; }
+		return $this->_ConfigurationName;
+	}
+
+	function _getDatabaseName(){ }
+
+	/**
 	* Registrace nazvu funkce, ktera ma byt volana, dojde-li k chybe pri vykonavani SQL dotazu.
 	* Jako parametr bude treto funkci predan object (resp. dedic) tridy DbMole.
 	* 
@@ -840,4 +853,3 @@ class DbMole{
 	}
 
 }
-?>

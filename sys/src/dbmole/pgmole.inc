@@ -101,5 +101,10 @@ class PgMole Extends DbMole{
 	function _runQuery($query){
 		return pg_query($this->_DbConnect,$query);	
 	}
+
+	function _getDatabaseName(){
+		$this->_connectToDatabase();
+		return pg_dbname($this->_DbConnect);
+	}
+
 }
-?>
