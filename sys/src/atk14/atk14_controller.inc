@@ -143,6 +143,23 @@ class Atk14Controller{
 	var $tpl_data = array();
 
 	/**
+	 * Data get from multistep forms.
+	 *
+	 * Data are filled in particular form steps and sorted in an array indexed as stated in {@link _walk()} method.
+	 *
+	 * Data contained might look like this:
+	 * <code>
+	 * array(
+	 * 	"get_user_data" = array("login" => "terminator", "name" => "T1000"),
+	 * 	"get_user_info" => array("description" => "Came from future", "special_skills" => "unbreakable"),
+	 * 	)
+	 * </code>
+	 * @var array
+	 *
+	 */
+	var $returned_by = array();
+
+	/**
 	 * @access private
 	 */
 	function atk14__initialize($options = array()){
@@ -895,24 +912,32 @@ class Atk14Controller{
 	}
 
 	/**
-	 * Transparentne prejde (aniz by byl uzivatel presmerovan na dalsi krok).
-	 * Ulozi stav do session.
-	 * !!! Ve step metodach je nutne volat timto zpusobem:
-	 * 	<code>
-	 * 	return $this->_next_step();
-	 * 	</code>
+	 * Transparently passes over to next step.
 	 *
-	 *	!!! Pouziti return je zde dulezite.
+	 * Current step is executed and then the action proceeds to the next step without user being noticed.
+	 * The procedure is done without http redirection.
+	 * Status is saved to session.
 	 *
-	 * Jako parametr je mozne dat to, co vraci aktualni krok.
+	 * <code>
+	 * return $this->_next_step();
+	 * </code>
+	 * Use of return is important!!
 	 *
-	 * @return string vystup z dalsiho kroku
+	 * Custom parameters can be passed, for example values returned from current step.
+	 *
+	 * @param mixed $current_step_returns
+	 * @return mixed vystup z dalsiho kroku
 	 */
 	function _next_step($current_step_returns = true){
 		$this->_save_walking_state($current_step_returns);
 		return $this->_execute_current_step();
 	}
 
+	/**
+	 * Saves state of current step.
+	 *
+	 * @access private
+	 */
 	function _save_walking_state($current_step_returns){
 		$state = &$this->walking_state;
 		$step_index = $state["current_step_index"];
