@@ -33,6 +33,12 @@ class Atk14Controller{
 	var $response = null;
 
 	/**
+	 *
+	 * @var Logger
+	 */
+	var $logger = null;
+
+	/**
 	 * Instance of {@link Atk14Mailer} class.
 	 *
 	 * The $mailer variable can be used to execute mailer actions in a similar way to common controller actions

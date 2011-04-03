@@ -3,7 +3,7 @@
 * Trida nabizi metody pro jednotne logovani udalosti.
 *
 *	// novy styl pouziti
-* $logger = new logger("poznavaci_znacka_procesu");
+* $logger = new Logger("poznavaci_znacka_procesu");
 * $logger->start();
 *	// potom v aplikace
 * $logger->info("a message");
@@ -14,10 +14,10 @@
 * $logger->stop();
 *
 * // v pripade, ze se necheme, aby se ve vystupu objevovaly znacky STAR a STOP, vytvorime instanci takto
-* $logger = new logger("poznavaci_znacka_procesu",array("disable_start_and_stop_marks" => true));
+* $logger = new Logger("poznavaci_znacka_procesu",array("disable_start_and_stop_marks" => true));
 *
 *	// stary styl pouziti
-* $logger = new logger();
+* $logger = new Logger();
 * $logger->set_prefix("poznavaci_znacka_procesu");
 * $logger->set_silent_mode(); //zapne tichy rezim - nic se nebude tisknout na stdout (nepouzije se echo)
 *															//defaultne tiskne pri volani prepared_log("start") a prepared_log("stop") na stdout
@@ -31,7 +31,7 @@
 *	define("LOGGER_DEFAULT_LOG_FILE","/home/yarri/www/gr/sys/log/log");
 */
 
-class logger{
+class Logger{
 	var $_prefix = "";
 	var $_log_file;
 	var $_log_store = array();
@@ -64,7 +64,7 @@ class logger{
 		"6" => "security++",
 	);
 
-	function logger($prefix = "",$options = array()){
+	function Logger($prefix = "",$options = array()){
 		$options = array_merge(array(
 			"disable_start_and_stop_marks" => false,
 			"log_to_stdout" => false,
