@@ -115,6 +115,27 @@ class Atk14Global{
 		return $this->getBaseHref()."public/";
 	}
 
+	/**
+	 * Returns someting like
+	 * array(
+	 *	"database" => "dbname",
+	 *  "host" => "127.0.0.1",
+	 *  "username" => "user",
+	 *  "password" => "funny_boy", 
+	 * )
+	 */
+	function getDatabaseConfig(){
+		$database_ar = $this->getValue("database");
+		if(DEVELOPMENT){
+			$d = $database_ar["development"];
+		}elseif(TEST){
+			$d = $database_ar["test"];
+		}else{
+			$d = $database_ar["production"];
+		}
+		return $d;
+	}
+
 	function _getRoot(){
 		global $_SERVER;
 		$out = "";

@@ -67,14 +67,7 @@ function &dbmole_connection(&$dbmole){
 
 	$out = null;
 
-	$database_ar = $ATK14_GLOBAL->getValue("database");
-	if(DEVELOPMENT){
-		$d = $database_ar["development"];
-	}elseif(TEST){
-		$d = $database_ar["test"];
-	}else{
-		$d = $database_ar["production"];
-	}
+	$d = $ATK14_GLOBAL->getDatabaseConfig();
 
 	switch($dbmole->getDatabaseType()){
 		case "mysql":
