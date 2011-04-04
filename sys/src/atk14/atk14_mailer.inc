@@ -242,6 +242,8 @@ class Atk14Mailer{
 
 	/**
 	 * Removes all attachments
+	 *
+	 * Should be usefull when several messages with different attachments are sent through a single instance.
 	 */
 	function clear_attachments(){ $this->_attachments = array(); }
 
@@ -278,7 +280,7 @@ class Atk14Mailer{
 		));
 		if(DEVELOPMENT){
 			// logging e-mail data as we are developing
-			$this->logger->info("Sending an e-mail (perhaps not for sure in DEVELOPMENT):\n".print_r($email_ar,true));
+			$this->logger->info("Sending an e-mail (not really in DEVELOPMENT)\n---------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n$email_ar[body]");
 		}
 		return $email_ar;
 	}
