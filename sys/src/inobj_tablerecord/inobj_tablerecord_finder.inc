@@ -110,6 +110,7 @@ class inobj_TableRecord_Finder{
 	 * @return bool true when no records were found otherwise false
 	 */
 	function isEmpty(){ return $this->getTotalAmount()==0; }
+	function notEmpty(){ return !$this->isEmpty(); }
 
 	/**
 	 *
