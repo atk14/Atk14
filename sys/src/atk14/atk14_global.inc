@@ -133,6 +133,7 @@ class Atk14Global{
 		}else{
 			$d = $database_ar["production"];
 		}
+		$d["port"] = isset($d["port"]) ? $d["port"] : "5432";
 		return $d;
 	}
 

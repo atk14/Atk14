@@ -6,9 +6,9 @@
 * V souboru tc_inobj_currency.inc se ocekava trida tc_inobj_currency.
 *
 * Na prikazove radce mozno definovat seznam testu, ktere se maji provest:
-*		$ run_unit_tests.php tc_inobj_account tc_inobj_cznicdomain_create_pending
+*		$ run_unit_tests tc_inobj_account tc_inobj_cznicdomain_create_pending
 *		pripadne i s priponou .inc
-*		$ run_unit_tests.php tc_inobj_account.inc tc_inobj_cznicdomain_create_pending.inc
+*		$ run_unit_tests tc_inobj_account.inc tc_inobj_cznicdomain_create_pending.inc
 *
 * Nebezpecne testy
 * ----------------
@@ -16,8 +16,8 @@
 * Takove testy umistime do souboru zacinajici vykricnikem, napr. !tc_domain_registration.inc
 *
 * Test nebude automaticky spusten, pokud nebude implicitne uveden na prikazove radce:
-*		$ run_unit_tests.php
-*		$ run_unit_tests.php	\!tc_domain_registration.inc
+*		$ run_unit_tests
+*		$ run_unit_tests \!tc_domain_registration.inc
 */
 
 error_reporting(255);

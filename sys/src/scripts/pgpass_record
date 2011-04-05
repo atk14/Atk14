@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Displays a line intended to be added to the ~/.pgpass file.
+ *
+ * If you don't want to be requested for a password in order to access the database console,
+ * follow the instructions:
+ *
+ *	$ touch ~/.pgpass
+ *	$ chmod 600 ~/.pgpass
+ *  $ ./scripts/pgpass_record  >> ~/.pgpass
+ *  $ ATK14_ENV=TEST ./scripts/pgpass_record  >> ~/.pgpass
+ */
+
+require_once(dirname(__FILE__)."/load.inc");
+
+$d = $ATK14_GLOBAL->getDatabaseConfig();
+echo "$d[host]:$d[port]:$d[database]:$d[username]:$d[password]\n";
