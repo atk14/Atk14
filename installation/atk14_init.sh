@@ -91,11 +91,11 @@ sed -i "s/password: p/password: $PG_PASSWORD/" config/database.yml
 sed -i "s/atk14_devel/$DBNAME_DEVEL/" config/database.yml
 sed -i "s/atk14_test/$DBNAME_TEST/" config/database.yml
 
-ATK14_ENV=DEVELOPMENT ./scripts/initialize_database.php
-ATK14_ENV=TEST        ./scripts/initialize_database.php
+ATK14_ENV=DEVELOPMENT ./scripts/initialize_database
+ATK14_ENV=TEST        ./scripts/initialize_database
 
-ATK14_ENV=DEVELOPMENT ./scripts/migrate.php
-ATK14_ENV=TEST        ./scripts/migrate.php
+ATK14_ENV=DEVELOPMENT ./scripts/migrate
+ATK14_ENV=TEST        ./scripts/migrate
 
 sed -i "s/put_some_random_string_here/$SECRET_TOKEN/" config/local_settings.inc
 sed -i "s/myapp.localhost/$APPNAME.localhost/" config/local_settings.inc
@@ -120,5 +120,14 @@ EOF"
 sudo ln -s /etc/apache2/sites-available/$APPNAME.localhost /etc/apache2/sites-enabled/
 sudo /etc/init.d/apache2 restart
 
+echo 
+echo "You are advised to add these lines to ~/.pgpass"
+ATK14_ENV=DEVELOPMENT ./scripts/pgpass_record
+ATK14_ENV=TEST ./scripts/pgpass_record
+
+echo 
 echo "Now try this address in your browser:"
 echo "http://$APPNAME.localhost/"
+
+echo
+echo "Happy coding"
