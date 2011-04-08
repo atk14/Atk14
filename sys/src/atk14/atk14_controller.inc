@@ -341,9 +341,17 @@ class Atk14Controller{
 		$cache = null;
 		$this->_atk14_read_action_cache($cache);
 
+		// If this is an ArticlesController for instance and there is a file ./app/forms/articles/articles_form.inc, it will be included.
+		// The class ArticlesForm is ment to be the base class for forms used by the controller.
+		if(file_exists($base_form_filename = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/$this->controller/{$this->controller}_form.inc")){
+			require_once($base_form_filename);
+		}
+
 		// pokud nenajdeme formular urceny presne pro tuto akci, pokusime se najit ApplicationForm a nakonec Atk14Form
-		if(!isset($this->form)){ // pokud uz mame form z _before_filter, tak ho prece nezahodime - TODO: jsem zarazeny z toho, ze se _before_filter() pouzsti drive
-			($this->form = Atk14Form::GetInstanceByController($this)) || ($this->form = Atk14Form::GetDefaultForm($this));
+		if(!isset($this->form)){ // pokud uz mame form z _before_filter, tak ho prece nezahodime - TODO: jsem zarazeny z toho, ze se _before_filter() pousti drive
+			($this->form = $this->_get_form()) ||
+			($this->form = Atk14Form::GetInstanceByController($this)) ||
+			($this->form = Atk14Form::GetDefaultForm($this));
 		}
 
 		$this->mailer = Atk14Mailer::GetInstanceByController($this);
@@ -432,6 +440,19 @@ class Atk14Controller{
 			return $this->_after_render();
 		}
 	}
+
+	/**
+	* Creates a form instance if the given class exists.
+	* 
+	* $form = $this->_get_form("CreateNewForm");
+	*/
+	function _get_form($class_name = null){
+		if(!isset($class_name)){
+			$class_name = new String("{$this->action}_form");
+			$class_name = $class_name->camelize();
+		}
+		return Atk14Form::GetForm($class_name,$this);
+	}		
 
 	/**
 	 * Allows to render a partial template from an action method.
