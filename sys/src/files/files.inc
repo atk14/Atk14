@@ -27,7 +27,7 @@ class files{
 	* @param string	 &$error_str 		popis chyby
 	* @return int										pocet adresaru, ktere byly vytvoreny
 	*/
-	function mkdir($dirname,&$error,&$error_str){
+	function mkdir($dirname,&$error = null,&$error_str = null){
 		$out = 0;
 		$error = false;
 		$error_str = "";
@@ -68,7 +68,7 @@ class files{
 	* @param string 	&$error_str 		popis chyby
 	* @return int											pocet zkopirovanych bytu
 	*/
-	function copy_file($from_file,$to_file,&$error,&$error_str){
+	function copy_file($from_file,$to_file,&$error = null,&$error_str = null){
 		$bytes = 0;
 		$error = false;
 		$error_str = "";
@@ -133,7 +133,7 @@ class files{
 	* @param string 	&$error_str 		popis chyby
 	* @return int											pocet zkopirovanych bytu
 	*/
-	function write_to_file($file,$content,&$error,&$error_str){
+	function write_to_file($file,$content,&$error = null,&$error_str = null){
 		$bytes = 0;
 		$error = false;
 		$error_str = "";
@@ -229,7 +229,7 @@ class files{
 	* @return int											pocet presunutych souboru; tedy v pripade uspechu bude vracena 1
 	* @see files::unlink()
 	*/
-	function move_file($from_file,$to_file,&$error,&$error_str){
+	function move_file($from_file,$to_file,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -276,7 +276,7 @@ class files{
 	* @param string 	&$error_str 		popis chyby
 	* @return int											pocet smazanych souboru; v pripade uspechun bude vraceno vraci 0 nebo 1, jinak 0
 	*/
-	function unlink($file,&$error,&$error_str){
+	function unlink($file,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -307,7 +307,7 @@ class files{
 	* @param string 	&$error_str 		popis chyby
 	* @return int											pocet smazanych souboru a adresaru
 	*/
-	function recursive_unlink_dir($dir,&$error,&$error_str){
+	function recursive_unlink_dir($dir,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 		settype($dir,"string");
@@ -394,7 +394,7 @@ class files{
 	* @return string									obsah souboru
 	* @see file::recursive_unlink_dir()
 	*/
-	function get_file_content($filename,&$error,&$error_str){
+	function get_file_content($filename,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -433,7 +433,7 @@ class files{
 	* @param string 	&$error_str 		popis chyby
 	* @return int											0 => neni; 1 => je
 	*/
-	function is_readable_and_writable($filename,&$error,&$error_str){
+	function is_readable_and_writable($filename,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -462,7 +462,7 @@ class files{
 	* 
 	* list($width,$height) = files::get_image_size($image_content,$err,$err_str);
 	*/
-	function get_image_size($image_content,&$error,&$error_str){
+	function get_image_size($image_content,&$error = null,&$error_str = null){
 		$temp = defined("TEMP") ? TEMP : "/tmp";
 		$filename = $temp."/get_image_filename_".posix_getpid();
 		if(!files::write_to_file($filename,$image_content,$error,$error_str)){ return null; }
@@ -472,4 +472,3 @@ class files{
 		return $out;
 	}
 }
-?>

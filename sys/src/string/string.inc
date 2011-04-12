@@ -226,6 +226,24 @@ class String{
 	}
 
 	/**
+	 * Does contains at least one of the given strings?
+	 *
+	 * <code>
+	 * 		if($breakfast->containsOneOf(array("orange","lemon","apple"))){
+	 *			// sort of vitamin stuff
+	 *		}
+	 * </code>
+	 *
+	 * @return bool
+	 */
+	function containsOneOf($needles){
+		foreach($needles as $needle){
+			if($this->contains($needle)){ return true; }
+		}
+		return false;
+	}
+
+	/**
 	 * Converts string into CamelCase format.
 	 *
 	 * <code>
