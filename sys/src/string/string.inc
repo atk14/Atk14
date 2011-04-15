@@ -219,9 +219,21 @@ class String{
 	}
 
 	/**
+	 * <code>
+	 * 	$str = new String("Hello World");
+	 *	$str->contains("Hello"); // true
+	 *  $str->contains(array("Hello","World")); // true
+	 * </code>
+	 * 
 	 * @return bool
 	 */
 	function contains($needle){
+		if(is_array($needle)){
+			foreach($needle as $n){
+				if(!$this->contains($n)){ return false; }
+			}
+			return true;
+		}
 		return !is_bool(strpos($this->_String,(string)$needle));
 	}
 

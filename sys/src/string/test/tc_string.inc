@@ -100,6 +100,15 @@ class tc_string extends tc_base{
 
 		$this->assertFalse($str->contains(new String("HELLO")));
 		$this->assertTrue($str->contains(new String("Hello")));
+
+		// passing an array...
+		// all the elements must be contained when expecting a positive result
+		$this->assertTrue($str->contains(array("Hel","llo")));
+		$this->assertFalse($str->contains(array("ello","Belle")));
+
+		// containsOneOf
+		$this->assertTrue($str->containsOneOf(array("ello","Belle")));
+		$this->assertFalse($str->containsOneOf(array("Nello","Belle")));
 	}
 
 	function test_camelize(){

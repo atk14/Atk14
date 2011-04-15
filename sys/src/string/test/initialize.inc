@@ -1,2 +1,2 @@
 <?php
-require("../string.inc");
+require("../load.inc");
