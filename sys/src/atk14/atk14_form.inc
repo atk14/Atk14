@@ -161,8 +161,16 @@ class Atk14Form extends Form
 
         $this->atk14_error_title = _("The form contains errors, therefor it cannot be processed.");
 
+        $this->_initialize();
+
         $options["call_set_up"] && $this->set_up();
     }
+
+    /**
+     * Will be called before set_up().
+     * Just do inside anything you would like to.
+     */
+    function _initialize(){ }
 
 		/**
 		 * Creates instance of Atk14Form by filename.

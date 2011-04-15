@@ -269,6 +269,18 @@ class PasswordInput extends Input
 }
 
 /**
+ * <code>
+ *  <input type="email" />    
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
+class EmailInput extends TextInput{
+    var $input_type = 'email';
+}
+
+/**
  * Widget for hidden input field.
  *
  * Outputs field of this type:
