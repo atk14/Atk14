@@ -148,9 +148,14 @@ class Atk14Form extends Form
     {
         global $HTTP_REQUEST;
 
+        $class_name = new String(get_class($this));
+
         $options = array_merge(array(
             "call_set_up" => true,
+            "attrs" => array(),
         ),$options);
+
+        $this->atk14_attrs = $options["attrs"];
 
         $this->atk14_constructor_options = $options;
 
@@ -202,7 +207,7 @@ class Atk14Form extends Form
 		 *
 		 * @static
 		 */
-    function GetInstanceByFilename($filename,$controller_obj = null)
+    function GetInstanceByFilename($filename,$controller_obj = null,$options = array())
     {
         global $ATK14_GLOBAL;
         if(!preg_match("/\\.inc$/",$filename)){ $filename .= ".inc"; }
@@ -233,7 +238,7 @@ class Atk14Form extends Form
             return null;
         }
 	    require_once($filename);
-        $form = new $classname(array(),$controller_obj);
+        $form = new $classname($options,$controller_obj);
         return $form;
     }
 
@@ -251,10 +256,10 @@ class Atk14Form extends Form
 		 * @static
 		 *
 		 */
-    function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null)
+    function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null,$options = array())
     {
-        ($form = Atk14Form::GetInstanceByFilename("$controller/{$controller}_{$action}_form.inc",$controller_obj)) || 
-        ($form = Atk14Form::GetInstanceByFilename("$controller/{$action}_form.inc",$controller_obj));
+        ($form = Atk14Form::GetInstanceByFilename("$controller/{$controller}_{$action}_form.inc",$controller_obj,$options)) || 
+        ($form = Atk14Form::GetInstanceByFilename("$controller/{$action}_form.inc",$controller_obj,$options));
         return $form;
     }
 
@@ -269,8 +274,8 @@ class Atk14Form extends Form
 		 * @uses GetInstanceByControllerAndAction
 		 * @static
 		 */
-    function GetInstanceByController($controller){
-        return Atk14Form::GetInstanceByControllerAndAction($controller->controller,$controller->action,$controller);
+    function GetInstanceByController($controller,$options = array()){
+        return Atk14Form::GetInstanceByControllerAndAction($controller->controller,$controller->action,$controller,$options);
     }
 
 		/**
@@ -288,7 +293,7 @@ class Atk14Form extends Form
 		 * @return Atk14Form
 		 * @static
 		 */
-    function GetForm($class_name,$controller = null){
+    function GetForm($class_name,$controller = null,$options = array()){
         global $ATK14_GLOBAL;
         // preved z camelcase na underscore
         $filename = $class_name;
@@ -299,8 +304,8 @@ class Atk14Form extends Form
         //echo $ATK14_GLOBAL->getValue("controller")."/$filename.inc"; exit;
 
         // zde se pokusime najit formik v adresari podle kontroleru a pokud nebude nalezen, zkusime o adresar vyse
-        if(!$form = Atk14Form::GetInstanceByFilename($ATK14_GLOBAL->getValue("controller")."/$filename.inc",$controller)){
-            $form = Atk14Form::GetInstanceByFilename("$filename.inc",$controller);
+        if(!$form = Atk14Form::GetInstanceByFilename($ATK14_GLOBAL->getValue("controller")."/$filename.inc",$controller,$options)){
+            $form = Atk14Form::GetInstanceByFilename("$filename.inc",$controller,$options);
         }
         return $form;
     }

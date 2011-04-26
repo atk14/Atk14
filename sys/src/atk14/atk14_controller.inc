@@ -446,12 +446,24 @@ class Atk14Controller{
 	* 
 	* $form = $this->_get_form("CreateNewForm");
 	*/
-	function _get_form($class_name = null){
+	function _get_form($class_name = null,$options = array()){
+		$options = array_merge(array(
+			"attrs" => array(),
+		),$options);
 		if(!isset($class_name)){
 			$class_name = new String("{$this->action}_form");
 			$class_name = $class_name->camelize();
+		}else{
+			$class_name = new String($class_name);
 		}
-		return Atk14Form::GetForm($class_name,$this);
+
+		$id = "form_".$this->controller."_".$class_name->underscore();
+		$id = preg_replace("/_form$/","",$id);
+
+		$options["attrs"] = array_merge(array(
+			"id" => $id,
+		),$options["attrs"]);
+		return Atk14Form::GetForm($class_name,$this,$options);
 	}		
 
 	/**
