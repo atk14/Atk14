@@ -477,11 +477,39 @@ class DbMole{
 	}
 
 	/**
-	* Zkratka pro vycteni integeru.
-	*/
-	function selectInt($query,$bind_ar = array(), $options = array()){
+	 * Shortcut to getting an integer.
+	 */
+	function selectInt($query,$bind_ar = array(),$options = array()){
 		$options["type"] = "integer";
 		return $this->selectSingleValue($query,$bind_ar,$options);
+	}
+
+	/**
+	 * Shortcut to getting an string.
+	 */
+	function selectString($query,$bind_ar = array(),$options = array()){
+		$options["type"] = "string";
+		return $this->selectSingleValue($query,$bind_ar,$options);
+	}
+
+	/**
+	 * Shortcut to getting an float.
+	 */
+	function selectFloat($query,$bind_ar = array(),$options = array()){
+		$options["type"] = "float";
+		return $this->selectSingleValue($query,$bind_ar,$options);
+	}
+
+	/**
+	 * Shortcut to getting an boolean.
+	 * Values considered as the true are: 'y', 'yes', 't', 'true', '1'...
+	 */
+	function selectBool($query,$bind_ar = array(),$options = array()){
+		$value = $this->selectString($query,$bind_ar,$options);
+		if(!isset($value)){ return null; }
+		return
+			in_array(strtoupper($value),array("Y","YES","YUP","T","TRUE","1","ON","E","ENABLE","ENABLED")) ||
+			(is_numeric($value) && $value>0);
 	}
 
 	/**

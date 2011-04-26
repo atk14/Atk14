@@ -176,5 +176,23 @@ class tc_dictionary extends tc_base{
 		$this->assertNull($d->getString("ii"));
 		$this->assertNull($d->getArray("ii"));
 	}
+
+	function test_get_bool(){
+		$data = array("true","TRUE","Y","y","1","enable","ENABLE","on","123","yup");
+		$this->_check_bool($data,true);
+
+		$data = array("","0","-11","no","nope","F","false","nope");
+		$this->_check_bool($data,false);
+	}
+
+	function _check_bool($data,$expected){
+		$d_data = array();
+		foreach($data as $v){
+			$d_data[$v] = $v;
+		}
+		$d = new Dictionary($d_data);
+		foreach($data as $k){
+			$this->assertEquals($expected,$d->getBool($k));
+		}
+	}
 }
-?>

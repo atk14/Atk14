@@ -102,6 +102,14 @@ class Dictionary{
 	 * @uses getValue()
 	 */
 	function getInt($key){ return $this->g($key,"integer"); }
+	function getFloat($key){ return $this->g($key,"float"); }
+	function getBool($key){
+		$value = $this->g($key);
+		if(!isset($value)){ return null; }
+		return
+			in_array(strtoupper($value),array("Y","YES","YUP","T","TRUE","1","ON","E","ENABLE","ENABLED")) ||
+			(is_numeric($value) && $value>0);
+	}
 	
 	/**
 	 * Shortcut to method getValue().
