@@ -1142,7 +1142,9 @@ class inobj_TableRecord_Base extends inobj{
 			if($this->hasKey($field)){
 				return $this->g($field->underscore());
 			}
-			if($this->hasKey("{$field}_id") && class_exists($c = (string)$field->camelize())){
+
+			// Looking for ClassName or inobj_ClassName. The prefix inobj_ (which means internal object) exists on my legacy classes.
+			if($this->hasKey("{$field}_id") && (class_exists($c = (string)$field->camelize()) || class_exists($c = "inobj_$c"))){
 				return call_user_func_array(array($c,"GetInstanceById"),array($this->g("{$field}_id")));
 			}
 		}
