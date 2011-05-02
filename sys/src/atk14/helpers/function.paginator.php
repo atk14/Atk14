@@ -5,6 +5,19 @@
  * Given number of records the tag generates links to access other pages of the record listing.
  *
  * Basic form of the tag is as follows:
+ *
+ * <code>
+ * {paginator finder=$finder} 
+ * </code>
+ *
+ * You don't have to forward a finder when you have one in the $finder variable.
+ *
+ * <code>
+ * {paginator} 
+ * </code>
+ *
+ * If you don't have an finder then...
+ *
  * <code>
  * {paginator total_amount=100 max_amount=10 from=search_from}  // zde definujeme nazev parametru, kterym se posunujeme ve vysledcich
  * </code>
@@ -54,6 +67,11 @@ function smarty_function_paginator($params,&$smarty){
 	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
 
 	$par = $smarty->_tpl_vars["params"]->toArray();
+	// There is a possibility to change action, controller, lang and namespace variables.
+	// It is usefull when you display first page of some list on the frontpage and links from the paginator must point to an another controller/action.
+	foreach(array("action","controller","lang","namespace") as $_k){
+		if(isset($params[$_k])){ $par[$_k] = $params["action"]; }
+	}
 
 	
 	$from = isset($par["$from_name"]) ? (int)$par["$from_name"] : 0;
