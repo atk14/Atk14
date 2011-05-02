@@ -258,6 +258,13 @@ class Atk14Form extends Form
 		 */
     function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null,$options = array())
     {
+        $options = array_merge(array(
+            "attrs" => array(),
+        ),$options);
+        $options["attrs"] = array_merge(array(
+            "id" => "form_{$controller}_{$action}",
+        ),$options["attrs"]);
+
         ($form = Atk14Form::GetInstanceByFilename("$controller/{$controller}_{$action}_form.inc",$controller_obj,$options)) || 
         ($form = Atk14Form::GetInstanceByFilename("$controller/{$action}_form.inc",$controller_obj,$options));
         return $form;
