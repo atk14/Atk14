@@ -680,10 +680,10 @@ class inobj_TableRecord_Base extends inobj{
 
 		$i = 0;
 		reset($ids);
-		while(list($_key,$_value) = each($ids)){
-			if(!isset($_value)){ continue; } // v poli se muze klidne nachazet nejaky null
-			settype($ids[$_key],$this->_IdFieldType);
-			$id = $ids[$_key];
+		while(list($_key,$id) = each($ids)){
+			if(is_object($id)){ $id = $id->getId(); }
+			if(!isset($id)){ continue; } // v poli se muze klidne nachazet nejaky null
+			settype($id,$this->_IdFieldType);
 			$bind_ar[":id$i"] = $id;
 			$i++;
 		}
