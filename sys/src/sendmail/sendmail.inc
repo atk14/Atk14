@@ -24,11 +24,7 @@ if(!defined("SENDMAIL_TESTING_ADDRESS_TO")){
 }
 
 if(!defined("SENDMAIL_DO_NOT_SEND_MAILS")){
-	if(defined("DEVELOPMENT") && DEVELOPMENT){
-		define("SENDMAIL_DO_NOT_SEND_MAILS",true);
-	}else{
-		define("SENDMAIL_DO_NOT_SEND_MAILS",false);
-	}
+	define("SENDMAIL_DO_NOT_SEND_MAILS",((defined("DEVELOPMENT") && DEVELOPMENT) || (defined("TEST") && TEST)));
 }
 
 if(!defined("SENDMAIL_EMPTY_TO_REPLACE")){
@@ -41,7 +37,22 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 
 
 /**
-* Odesle e-mail.
+* Sends an e-mail.
+*
+* <code>
+*		// An typical usage
+*		sendmail(array(
+*			"from" => "info@example.org",
+*			"to" => "user@gmailer.com",
+*			"subject" => "An Subject",
+*			"body" => "Hi!",
+*		));
+*	</code>
+*
+* Note that there is an another function sendhtmlmail()
+* intended for sending well formatted HTML e-mails.
+*
+* There are a couple of parameters and constants which affect formatting and sending.
 *
 *	Parametry jsou predany v poli $params.
 * Mozne klice:
@@ -52,10 +63,8 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 *			"subject" => "",
 *			"body" => "",
 *			"to" => "",
-*			"body_mime_type" => "",
-*			"body_charset" => "",
-*			"customer_id" => "", //nepouziva se
-*			"email_type" => "", //nepouziva se
+*			"mime_type" => "",
+*			"charset" => "",
 *			"attachments" => 
 *				array(
 *					array(
@@ -72,8 +81,6 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 * Pokud je nstavena konstanta SENDMAIL_USE_TESTING_ADDRESS_TO na true,
 *	zprava je odeslana pouze na adresu uvedenou v konstante
 *	SENDMAIL_TESTING_ADDRESS_TO.
-*
-* TODO: Dodelat subject_charset a kodovat subjekt, pokud to bude treba.
 *
 *	@param array			$params				pole parametru
 *
@@ -95,6 +102,8 @@ function sendmail($params = array()){
 		"attachments" => array(),
 		"attachment" => null,
 		"build_message_only" => false,
+
+		"headers" => null, // pozor! pokud bude toto nastaveno, probiha odesilani jinak, viz nize
 	),$params);
 
 	// toto jsou zastarale parametry...
@@ -130,6 +139,38 @@ function sendmail($params = array()){
 		$CC = "";
 		$BCC = "";
 	}
+
+	// pokud mame v parametrech headers, jedna se o predem pripraveny e-mail....
+	// TODO: dodelat - je to zatim neciste reseni...
+	if(isset($params["headers"])){
+		$BODY = $params["body"];
+		$HEADERS = $params["headers"];
+
+		$out = array(
+			"to" => $TO,
+			"subject" => $SUBJECT,
+			"body" => $BODY,
+			"headers" => $HEADERS,
+		);
+
+		if($params["build_message_only"]){
+			return $out;
+		}
+
+		if(function_exists("sendmail_hook_send")){
+			return sendmail_hook_send($out,$orig_params);
+		}
+
+		if(SENDMAIL_DO_NOT_SEND_MAILS==false){
+			if(preg_match("/([^@<>\"']+)@([^@<>\"']+)/",$RETURN_PATH,$matches)){
+				putenv("QMAILUSER=$matches[1]");
+				putenv("QMAILHOST=$matches[2]");
+			}
+			mail($TO,$SUBJECT,$BODY,$HEADERS);
+		}
+		return $out;
+	}
+
 	$BODY_MIME_TYPE = $params["mime_type"];
 	$BODY_CHARSET = $params["charset"];
 
