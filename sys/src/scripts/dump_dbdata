@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Dumps database data.
+# May be useful for backuping.
+#
+#  $ ./scripts/dump_data
+#  $ ATK14_ENV=PRODUCTION ./scripts/dump_data
+
+cd `dirname $0`
+cmd=`./_dump_dbdata_command`
+exec $cmd

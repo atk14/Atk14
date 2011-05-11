@@ -3,7 +3,7 @@
 # Starts a database console.
 #
 #  $ ./scripts/dbconsole
-#  $ ATK14_ENV=TEST ./scripts/dbconsole
+#  $ ATK14_ENV=PRODUCTION ./scripts/dbconsole
 
 cd `dirname $0`
 cmd=`./_dbconsole_command`

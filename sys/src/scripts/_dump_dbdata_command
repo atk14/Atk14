@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+
+require_once(dirname(__FILE__)."/load.inc");
+
+$d = $ATK14_GLOBAL->getDatabaseConfig();
+
+$cmd = "pg_dump --data-only -U $d[username] $d[database] -h $d[host] -p $d[port]";
+
+echo $cmd;
+echo "\n";

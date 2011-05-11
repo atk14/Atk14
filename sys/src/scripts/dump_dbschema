@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Dumps database schema.
+#
+#  $ ./scripts/dump_schema
+#  $ ATK14_ENV=PRODUCTION ./scripts/dump_schema
+
+cd `dirname $0`
+cmd=`./_dump_dbschema_command`
+exec $cmd
