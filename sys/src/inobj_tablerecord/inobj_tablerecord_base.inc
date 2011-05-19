@@ -287,6 +287,15 @@ class inobj_TableRecord_Base extends inobj{
 	}
 
 	/**
+	 * $lister = $article->getLister("Authors");
+	 * $lister->append($author);
+	 * $authors = $lister->getRecords(); // Author[]
+	 */
+	function getLister($subjects,$options = array()){
+		return new inobj_TableRecord_Lister($this,$subjects,$options);
+	}
+
+	/**
 	 * Automatically guess sequence name by the name of a table.
 	 *
 	 * Toto je vychozi nastaveni, ktere funguje v GR.
