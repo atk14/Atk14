@@ -1,0 +1,4 @@
+Tests work on Postgresql only.
+
+Create a database test accessible with user test identified with password test.
+Create there Postgresql`s structures from the file testing_structures.sql
