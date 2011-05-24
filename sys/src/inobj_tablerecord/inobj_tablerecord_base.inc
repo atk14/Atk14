@@ -1133,7 +1133,7 @@ class inobj_TableRecord_Base extends inobj{
 	}
 
 	function __toString(){
-		return sprintf("[%s #%s]",get_class($this),$this->getId());
+		return sprintf("%s#%s",get_class($this),$this->getId());
 	}
 
 	/**
