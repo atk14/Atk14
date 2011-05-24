@@ -1,57 +1,151 @@
 <?php
 /**
-* Trida nabizi metody pro jednotne logovani udalosti.
-*
-*	// novy styl pouziti
-* $logger = new Logger("poznavaci_znacka_procesu");
-* $logger->start();
-*	// potom v aplikace
-* $logger->info("a message");
-* $logger->debug("a message");
-* $logger->warn("a message");
-* $logger->error("a message");
-*	// ukonceni logovani
-* $logger->stop();
-*
-* // v pripade, ze se necheme, aby se ve vystupu objevovaly znacky STAR a STOP, vytvorime instanci takto
-* $logger = new Logger("poznavaci_znacka_procesu",array("disable_start_and_stop_marks" => true));
-*
-*	// stary styl pouziti
-* $logger = new Logger();
-* $logger->set_prefix("poznavaci_znacka_procesu");
-* $logger->set_silent_mode(); //zapne tichy rezim - nic se nebude tisknout na stdout (nepouzije se echo)
-*															//defaultne tiskne pri volani prepared_log("start") a prepared_log("stop") na stdout
-* $logger->prepared_log("start");
-* ...
-* $logger->put_log("popis nejake cinnosti nebo chyby",0);
-* ...
-* $logger->prepared_log("stop");
-* $logger->flush_all();
- 
-*	define("LOGGER_DEFAULT_LOG_FILE","/home/yarri/www/gr/sys/log/log");
-*/
+ * Class for events logging.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 
-class Logger{
+/**
+ * Class for events logging.
+ *
+ * New way of usage
+ * <code>
+ * $logger = new logger("application_mark");
+ * $logger->start();
+ * </code>
+ *
+ *
+ * Then in application code
+ * <code>
+ * $logger->info("a message");
+ * $logger->debug("a message");
+ * $logger->warn("a message");
+ * $logger->error("a message");
+ * </code>
+ *
+ * Finish logging
+ * <code>
+ * $logger->stop();
+ * </code>
+ *
+ * In case we don't need START and STOP marks to show in the output, we create the logger instance this way:
+ * <code>
+ * $logger = new logger("application_mark",array("disable_start_and_stop_marks" => true));
+ * </code>
+ *
+ *
+ * Older way of usage
+ * <code>
+ * $logger = new logger();
+ * $logger->set_prefix("application_mark");
+ *
+ * // by default calls prepared_log("start") and prepared_log("stop") output to stdout
+ * // sets silent mode - nothing is output to stdout (nepouzije se echo)
+ * $logger->set_silent_mode();
+ * $logger->prepared_log("start");
+ * </code>
+ *
+ * Then in application:
+ * <code>
+ * $logger->put_log("some important application message",0);
+ * </code>
+ *
+ * Closing and flushing log
+ * <code>
+ * $logger->prepared_log("stop");
+ * $logger->flush_all();
+ * </code>
+ *
+ * The file where events are logged is defined by constant LOGGER_DEFAULT_LOG_FILE
+ * <code>
+ * define("LOGGER_DEFAULT_LOG_FILE","/home/yarri/www/gr/sys/log/log");
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
+ */
+
+class logger{
+	/**
+	 * Application mark
+	 *
+	 * @access private
+	 * @var string
+	 */
 	var $_prefix = "";
+
+	/**
+	 * Name of output file
+	 *
+	 * @access private
+	 * @var string
+	 */
 	var $_log_file;
+
+	/**
+	 * Internal events storage.
+	 *
+	 * @access private
+	 * @var array
+	 */
 	var $_log_store = array();
+
+	/**
+	 * @access private
+	 */
 	var $_log_store_whole = array();
+	
+	/**
+	 * @access private
+	 */
 	var $_silent_mode = true;
+
+	/**
+	 * @access private
+	 */
 	var $_disable_start_and_stop_marks = false;
 
+	/**
+	 * Events with $_no_log_level priority and lower are not sent to output.
+	 *
+	 * @access private
+	 */
 	var $_no_log_level;
+
+	/**
+	 * @access private
+	 */
 	var $_notify_level;
+
+	/**
+	 * @access private
+	 */
 	var $_notify_email;
+
+	/**
+	 * @access private
+	 */
 	var $_notify_level_reached = false;
 
+	/**
+	 * @access private
+	 */
 	var $_my_pid;
 
 	/**
-	* Cas zahajeni logovani.
-	* Bude nastaveno behem volani metody prepared_log("start")
-	*/
+	 * Timestamp of logging start
+	 *
+	 * Value is set during {@link prepared_log("start")} call
+	 *
+	 * @access private
+	 */
 	var $_started_at_time = null;	
 
+	/**
+	 * @access private
+	 */
 	var $_levels = array(
 		"-2" => "debug++",
 		"-1" => "debug",
@@ -64,7 +158,17 @@ class Logger{
 		"6" => "security++",
 	);
 
-	function Logger($prefix = "",$options = array()){
+	/**
+	 * Constructor.
+	 *
+	 * @param string $prefix application_mark
+	 * @param array $options
+	 * <ul>
+	 * <li>disable_start_and_stop_marks (false) - whether start and stop marks show up in output</li>
+	 * <li>log_to_stdout (false) - if true output to stdout</li>
+	 * </ul>
+	 */
+	function logger($prefix = "",$options = array()){
 		$options = array_merge(array(
 			"disable_start_and_stop_marks" => false,
 			"log_to_stdout" => false,
@@ -78,15 +182,24 @@ class Logger{
 		$this->_disable_start_and_stop_marks = $options["disable_start_and_stop_marks"];
 	}
 
+	/**
+	 * Returns output filename.
+	 *
+	 * @return string
+	 */
 	function get_log_file(){ return $this->_log_file; }
+
+	
 	function get_no_log_level(){ return $this->_no_log_level; }
 	function get_notify_level(){ return $this->_notify_level; }
 	function get_notify_email(){ return $this->_notify_email; }
 
 	/**
-	* Nastaveni prefixu.
-	* Zde se rovnez nastavi atributy _notify_level, _notify_email, _no_log_level a _log_file
-	*/
+	 * Prefix setup
+	 *
+	 * @internal This method also initializes $_notify_level, $_notify_email, $_no_log_level and $_log_file
+	 * @param string $prefix application_mark
+	 */
 	function set_prefix($prefix){
 		global $LOGGER_CONFIGURATION;
 		settype($prefix,"string");
@@ -95,6 +208,9 @@ class Logger{
 		$this->_determin_configuration();
 	}
 
+	/**
+	 * @access private
+	 */
 	function _determin_configuration(){
 		$this->_reset_configuration();
 		for($i=0;$i<=strlen($this->_prefix);$i++){
@@ -104,8 +220,8 @@ class Logger{
 	}
 
 	/**
-	* 
-	*/
+	 * @access private
+	 */
 	function _find_configuration($prefix){
 		global $LOGGER_CONFIGURATION;
 
@@ -125,8 +241,10 @@ class Logger{
 	}
 
 	/**
-	* Resetuje konfuguraci na vychozi hodnoty.
-	*/
+	 * Resets configuration to default values.
+	 *
+	 * @access private
+	 */
 	function _reset_configuration(){
 		$this->_no_log_level = -30;
 		$this->_notify_level = 30;
@@ -135,10 +253,17 @@ class Logger{
 	}
 
 	/**
-	* $l_int = $logger->level_to_int("warn"); // vrati 2
-	* $l_int = $logger->level_to_int(2); // vrati 2
-	* $l_int = $logger->level_to_int(30); // (neznamy level) vrati 30
-	*/
+	 * Returns specified log level as integer
+	 *
+	 * <code>
+	 * $l_int = $logger->level_to_int("warn"); // returns 2
+	 * $l_int = $logger->level_to_int(2); // returns 2
+	 * $l_int = $logger->level_to_int(30); // (unknown level) returns 30
+	 * </code>
+	 *
+	 * @param string $level
+	 * @return int integer representation of log level
+	 */
 	function level_to_int($level){
 		foreach($this->_levels as $key => $value){
 			if(strcmp("$level",$key)==0 || strcmp("$level",$value)==0){ return (int)$key; }
@@ -147,10 +272,17 @@ class Logger{
 	}
 
 	/**
-	* $l_str = $logger->level_to_str("info"); // vrati "info"
-	* $l_str = $logger->level_to_str(2); // vrati "warn"
-	* $l_str = $logger->level_to_str("unknown"); // (neznamy level) level "unknown"
-	*/
+	 * Returns specified log level as its name
+	 *
+	 * <code>
+	 * $l_str = $logger->level_to_str("info"); // returns "info"
+	 * $l_str = $logger->level_to_str(2); // returns "warn"
+	 * $l_str = $logger->level_to_str("unknown"); // (unknown level) returns "unknown"
+	 * </code>
+	 *
+	 * @param string|int $level
+	 * @return string name of log level
+	 */
 	function level_to_str($level){
 		foreach($this->_levels as $key => $value){
 			if(strcmp("$level",$key)==0 || strcmp("$level",$value)==0){ return $value; }
@@ -160,14 +292,14 @@ class Logger{
 
 
 	/**
-	* Nastavi silent mode, nebude se nic vypisovat na stdout.
-	*
-	* Volitelnym parametrem $mode, lze nastavit "hlasity" rezim.
-	*	
-	*	@access public
-	* @param boolean $mode
-	*	@return 0
-	*/
+	 * Sets silent mode.
+	 *
+	 * In silent mode nothing is output to stdout.
+	 * Can be set to "loud" by passing false as a parameter.
+	 *
+	 * @param boolean $mode false => loud mode, default value is true
+	 * @return int 0
+	 */
 	function set_silent_mode($mode = true){
 		settype($mode,"boolean");
 		$this->_silent_mode = $mode;
@@ -175,13 +307,13 @@ class Logger{
 	}
 
 
-	/******************************************
-		@function flush
-
-		@return 0
-
-		@access public
-	******************************************/
+	/**
+	 * Flushes all logged events to output
+	 *
+	 * Events are stored in internal array. Call this method in case you want to see them in output.
+	 *
+	 * @return int 0
+	 */
 	function flush(){
 		if(sizeof($this->_log_store)==0){ return 0; }
 
@@ -226,6 +358,12 @@ class Logger{
 		return 0;
 	}
 
+	/**
+	 * Flushes events to output and also to notify email.
+	 *
+	 * @return int 0
+	 * @todo some more info about notify emails
+	 */
 	function flush_all(){
 		$this->flush();
 		if($this->_notify_level_reached && $this->_notify_email!=""){
@@ -235,16 +373,43 @@ class Logger{
 		return 0;
 	}
 
+	/**
+	 * Alias method for outputing message to specified level.
+	 *
+	 * @param string $log message to output
+	 */
 	function debug($log){ $this->put_log($log,-1); }
+
+	/**
+	 * Alias method for outputing message to specified level.
+	 *
+	 * @param string $log message to output
+	 */
 	function info($log){ $this->put_log($log,0); }
+	
+	/**
+	 * Alias method for outputing message to specified level.
+	 *
+	 * @param string $log message to output
+	 */
 	function warn($log){ $this->put_log($log,2); }
+
+	/**
+	 * Alias method for outputing message to specified level.
+	 *
+	 * @param string $log message to output
+	 */
 	function error($log){ $this->put_log($log,4); }
 
 	/**
-	*	Zapise zpravu do logovaciho souboru.
-  *
-	*	Radeji pouzivejme $logger->error(), $logger->warn(), $logger->info() a $logger->debug().
-	*/
+	 * Logs a message to a given level.
+	 *
+	 * It is recommended to use methods {@link error()}, {@link warn()}, {@link info()}, {@link debug()}
+	 *
+	 * @param string $log logged message
+	 * @param int $log_level level at which the message is logged
+	 * @return int 0
+	 */
 	function put_log($log,$log_level = 0){
 		settype($log,"string");
 		$log_level = $this->level_to_int($log_level);
@@ -261,9 +426,12 @@ class Logger{
 	
 
 	/**
-	* Zacatek logovani.
-	* Mozno definovat prefix.
-	*/
+	 * Starts logging.
+	 *
+	 * Prefix/application_mark can be defined
+	 *
+	 * @param string $prefix application_mark
+	 */
 	function start($prefix = ""){
 		settype($prefix,"string");
 		if(strlen($prefix)>0){ $this->set_prefix($prefix); }
@@ -273,8 +441,10 @@ class Logger{
 	}
 
 	/**
-	* Ukonceni logovani.
-	*/
+	 * Stops logging
+	 *
+	 * Also flushes all event to output
+	 */
 	function stop(){
 		if(!$this->_disable_start_and_stop_marks){
 			$this->prepared_log("stop");
@@ -283,13 +453,12 @@ class Logger{
 	}
 
 	/**
-	* $logger->prepared_log("start");
-	* $logger->prepared_log("stop");
-	* 
-	* lepe vsak volat:
-	* $logger->start();
-	* $logger->stop();
-	*/
+	 * Method for starting and stopping logger.
+	 *
+	 * Preferred methods to call are {@link start()} and {@link stop()}
+	 *
+	 * @return int 0
+	 */
 	function prepared_log($style){
 		settype($style,"string");
 		switch(strtolower($style)){
@@ -319,6 +488,9 @@ class Logger{
 		return 0;
 	}
 
+	/**
+	 * @access private
+	 */
 	function _notify_email(){
 		if($this->_notify_email==""){ return;}
 
@@ -336,6 +508,9 @@ class Logger{
 		mail($this->_notify_email,"log report: $this->_prefix, ".date("Y-m-d H:i:s"),$output);
 	}
 
+	/**
+	 * @access private
+	 */
 	function _get_microtime(){
     list($usec, $sec) = explode(" ", microtime());
     return ((float)$usec + (float)$sec);
