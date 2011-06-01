@@ -8,6 +8,7 @@ function smarty_function_form_remote_tag($params,&$smarty){
 	//$attrs["onsubmit"] = "return remote_form(this);";
 	if(!isset($attrs["class"])){ $attrs["class"] = ""; }
 	$attrs["class"] = trim("$attrs[class] remote_form");
+	$attrs["data-remote"] = "true";
 	$attrs = Atk14Utils::JoinAttributes($attrs);
 
   return "<form$attrs>";
