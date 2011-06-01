@@ -1068,3 +1068,35 @@ function atk14_smarty_prefilter($tpl_source, &$smarty = null){
 	*/
 	return $tpl_source;
 }
+
+/**
+ * Handles some of Smarty errors.
+ */
+function atk14_error_handler($errno, $errstr, $errfile, $errline){
+	global $HTTP_RESPONSE;
+
+	// catching Smarty syntax error
+	if($errno==E_USER_ERROR && preg_match("/^Smarty/",$errstr)){
+		if(DEVELOPMENT){
+			echo "$errstr";
+		}else{
+			$HTTP_RESPONSE->internalServerError();
+			$HTTP_RESPONSE->flushAll();
+		}
+		error_log($errstr);
+	}
+
+	// catching Smarty template missing error
+	if($errno==512 && preg_match("/^Smarty/",$errstr)){
+		if(DEVELOPMENT){
+			echo "$errstr";
+		}
+		error_log($errstr);
+	}
+
+	//echo "$errno: $errstr\n";
+
+	return false;
+}
+
+set_error_handler("atk14_error_handler");

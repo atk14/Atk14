@@ -287,7 +287,8 @@ class Atk14Utils{
 			}
 
 			if(!files::is_readable_and_writable($smarty->compile_dir,$err,$err_str)){
-				die("$smarty->compile_dir is not writable!!!");
+				//die("$smarty->compile_dir is not writable!!!");
+				// this should by handled by atk14_error_handler()
 			}
 		}
 	

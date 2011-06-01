@@ -69,6 +69,9 @@ function &dbmole_connection(&$dbmole){
 
 	$d = $ATK14_GLOBAL->getDatabaseConfig();
 
+	// there is a configuration name in $dbmole->getConfigurationName()
+	// it's useful when there is a need to connect to more databases
+
 	switch($dbmole->getDatabaseType()){
 		case "mysql":
 			//TODO
@@ -125,33 +128,3 @@ function atk14_initialize_locale(&$lang){
 	bind_textdomain_codeset("messages", "UTF-8");
 	textdomain("messages");
 }
-
-function atk14_error_handler($errno, $errstr, $errfile, $errline){
-	global $HTTP_RESPONSE;
-
-	// catching Smarty syntax error
-	if($errno==E_USER_ERROR){
-		if(DEVELOPMENT){
-			echo "$errstr";
-		}else{
-			$HTTP_RESPONSE->internalServerError();
-			$HTTP_RESPONSE->flushAll();
-		}
-		error_log($errstr);
-	}
-
-	// catching Smarty template missing error
-	if($errno==512){
-		if(DEVELOPMENT){
-			echo "$errstr";
-		}
-		error_log($errstr);
-	}
-
-	//echo "$errno: $errstr\n";
-
-	return false;
-}
-
-set_error_handler("atk14_error_handler");
-
