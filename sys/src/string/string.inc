@@ -208,6 +208,16 @@ class String{
 	}
 
 	/**
+	 * <code>
+	 *	$string = new String("Hello World");
+	 * 	$string = $string->gsub("/l/","x"); // Hexxo Worxd
+	 * </code>
+	 */
+	function gsub($pattern,$replace){
+		return $this->_copy(preg_replace($pattern,$replace,$this->_String));
+	}
+
+	/**
 	 * Prepends a string to the object.
 	 *
 	 * <code>
@@ -239,6 +249,21 @@ class String{
 	}
 
 	/**
+	 * Removes all whitespace.
+	 */
+	function trim(){
+		return $this->_copy(trim($this->_String));
+	}
+
+	/**
+	 * First removes all whitespace on both ends of the string, and then changes remaining consecutive whitespace groups into one space each.
+	 */
+	function squish(){
+		$out = $this->trim();
+		return $out->gsub('/\s+/',' ');
+	}
+
+	/**
 	 * Returns the number of times pattern matches the string..
 	 *
 	 * When the pattern matches the string it returns these matches in $matches array as if it was returned by preg_match
@@ -265,8 +290,8 @@ class String{
 	 * Position starts from 0.
 	 *
 	 *	<code>
-	 * $str = new String("Hello");
-	 * $str->at(2); // 'e'
+	 *	 $str = new String("Hello");
+	 *	 $str->at(1); // 'e'
 	 *	</code>
 	 *
 	 * @param integer position in string starting from 0
@@ -283,6 +308,14 @@ class String{
 	 */
 	function substr($start,$length = null){
 		return $this->_copy(substr($this->_String,$start,$length));
+	}
+
+	/**
+	 * Returns the first character of the string or the first limit characters.
+	 * 
+	 */
+	function first($limit = 1){
+		return $this->substr(0,$limit);
 	}
 
 	/**
@@ -405,6 +438,36 @@ class String{
 		$out = $this->_copy();
 		$out->_String = strtolower(preg_replace("/([a-z0-9])([A-Z])/","\\1_\\2",$this->_String));
 		return $out;
+	}
+
+	function truncate($length,$options = array()){
+		$options = array_merge(array(
+			"omission" => "...",
+			"separator" => "",
+		),$options);
+
+		$text = $this->_copy();
+		$omission = new String($options["omission"]);
+
+		$length_with_room_for_omission = $length - $omission->length();
+
+		$stop = $length_with_room_for_omission;
+
+		if($text->length()>$length){
+			$text = $text->substr(0,$stop);
+			if($options["separator"]){
+				$_text = $text->copy();
+				while($_text->length()>0){
+					$ch = $_text->at($_text->length() - 1);
+					$_text = $_text->substr(0,$_text->length() - 1);
+					if((string)$ch==(string)$options["separator"]){ break; }
+				}
+				if($_text->length()>0){ $text = $_text; }
+			}
+			$text->append($omission);
+		}
+
+		return $text;
 	}
 
 	/**

@@ -62,6 +62,12 @@ class tc_string extends tc_base{
 		$this->assertEquals("Hello World",(string)$str->replace(array()));
 	}
 
+	function test_sub(){
+		$str = new String("hello");
+
+		$this->assertEquals("hexxo",(string)$str->gsub("/l/","x"));
+	}
+
 	function test_prepend_and_append(){
 		$string = new String("World");
 		$this->assertEquals("Hello World",(string)$string->prepend("Hello "));
@@ -70,6 +76,12 @@ class tc_string extends tc_base{
 		$string = new String("Hi");
 		$this->assertEquals("Hi World",(string)$string->append(" World"));
 		$this->assertEquals("Hi World",(string)$string);
+	}
+
+	function test_trim_and_squish(){
+		$string = new String("  Hello\n World \n\r ");
+		$this->assertEquals("Hello\n World",(string)$string->trim());
+		$this->assertEquals("Hello World",(string)$string->squish());
 	}
 
 	function test_match(){
@@ -86,8 +98,17 @@ class tc_string extends tc_base{
 		$this->assertEquals("H",(string)$str->at(0));
 		$this->assertEquals("e",(string)$str->at(1));
 		$this->assertEquals("o",(string)$str->at(-1));
+		$this->assertEquals("l",(string)$str->at(-2));
 
 		$this->assertEquals("",(string)$str->at(10));
+	}
+
+	function test_first(){
+		$str = new String("hello");
+		$this->assertEquals("h",(string)$str->first());
+		$this->assertEquals("h",(string)$str->first(1));
+		$this->assertEquals("he",(string)$str->first(2));
+		$this->assertEquals("hello",(string)$str->first(10));
 	}
 
 	function test_contains(){
@@ -170,4 +191,26 @@ class tc_string extends tc_base{
 			$this->assertEquals($singular,(string)$str->singularize());
 		}
 	}
+
+	function test_truncate(){
+		$s = new String("Once upon a time in a world far far away");
+		$this->assertEquals("Once upon a time in a wo...",(string)$s->truncate(27));
+		$this->assertEquals("Once upon a time in a...",(string)$s->truncate(27, array("separator" => " ")));
+
+		$s = new String("Once_upon_a_time_in_a_world_far_far_away");
+		$this->assertEquals("Once_upon_a_time_in_a_wo...",(string)$s->truncate(27));
+		$this->assertEquals("Once_upon_a_time_in_a_wo...",(string)$s->truncate(27, array("separator" => " "))); // pokud v retezci mezera neni, zafunguje to strejne jako v predchozim pripade
+
+		$s = new String("And they found that many people were sleeping better.");
+		$this->assertEquals("And they f... (continued)",(string)$s->truncate(25, array("omission" => "... (continued)")));
+		$this->assertEquals("And they... (continued)",(string)$s->truncate(25, array("omission" => "... (continued)", "separator" => " ")));
+	}
+
+	/*
+	function test_to_array(){
+		$s = new String("abcd");
+		var_dump($s->toArray());
+		$this->assertEquals(array("a","b","c","d"),$s->toArray());
+	}
+	*/
 }
