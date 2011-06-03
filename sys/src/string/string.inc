@@ -1,13 +1,24 @@
 <?php
 /**
-* Class for headaches free string manipulation.
-*
-* Here is an inspiration:
-* http://api.rubyonrails.org/classes/String.html
-*/
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
+ */
+
+/**
+ * Class for headaches free string manipulation.
+ *
+ * Here is an inspiration:
+ * http://api.rubyonrails.org/classes/String.html
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ */
 class String{
 
 	/**
+	 * Constructor
+	 *
 	 * <code>
 	 * $str = new String();
 	 * $str = new String("Hello");
@@ -23,6 +34,9 @@ class String{
 	 * $str = String::ToObject("Hello");
 	 * $str = String::ToObject($str);
 	 * </code>
+	 *
+	 * @param string $string
+	 * @return String
 	 */
 	function ToObject($string){
 		if(is_object($string) && strtolower(get_class($string))=="string"){
@@ -32,13 +46,25 @@ class String{
 	}
 
 	/**
-	 *	Builds an random string consists of [A-Za-z0-9].
-	 * Special chars could be passed in $options.
+	 * Generates a random string.
 	 *
+	 * Generates a random string that contains only alfanumeric characters ([A-Za-z0-9]).
+	 * Special chars can be passed in $options.
+	 *
+	 * <code>
 	 * echo String::RandomString();
 	 * echo String::RandomString(8);
 	 * echo String::RandomString(array("length" => 8));
 	 * echo String::RandomString(array("length" => 8, "extra_chars" => "#$!%^")); 
+	 * </code>
+	 *
+	 * @param int $length
+	 * @param array $options
+	 * <ul>
+	 * <li>length - </li>
+	 * <li>extra_chars - </li>
+	 * </ul>
+	 * @return String
 	 */
 	function RandomString($length = 32,$options = array()){
 		if(is_array($length)){
@@ -69,6 +95,9 @@ class String{
 	/**
 	 * Some characters are not suitable for passwords, because they cause mistakes.
 	 * Like zero and capital O: 0 versus O.
+	 *
+	 * @param integer $length
+	 * @return String
 	 */
 	function RandomPassword($length = 10){
 		settype($length,"integer");
@@ -132,9 +161,16 @@ class String{
 	 */
 	function getId(){ return $this->_String; }
 
+	/**
+	 * Returns length of string.
+	 *
+	 * @return integer length of the string
+	 */
 	function length(){ return strlen($this->_String); }
 	
 	/**
+	 * Replaces string(s) with another string(s).
+	 *
 	 * <code>
 	 * $str = new String("Hello World");
 	 *
@@ -147,6 +183,10 @@ class String{
 	 * </code>
 	 *
 	 * !! Changes the object state
+	 *
+	 * @param string|array $search
+	 * @param string|array $replace
+	 * @return String 
 	 */
 	function replace($search,$replace = null){
 		if(is_array($search)){
@@ -168,27 +208,47 @@ class String{
 	}
 
 	/**
-	* <code>
-	* $string = new String("World");
-	* $string->prepend("Hello "); // Hello World
-	* </code>
-	*/
+	 * Prepends a string to the object.
+	 *
+	 * <code>
+	 * $string = new String("World");
+	 * $string->prepend("Hello "); // Hello World
+	 * </code>
+	 *
+	 * @param $content
+	 * @return String
+	 */
 	function prepend($content){
 		$this->_String = "$content".$this->_String;
 		return $this;
 	}
 
 	/**
-	* <code>
-	* $string = new String("Hello");
-	* $string->append(" World"); // Hello World
-	* </code>
-	*/
+	 * Appends a string to the string.
+	 *
+	 * <code>
+	 * $string = new String("Hello");
+	 * $string->append(" World"); // Hello World
+	 * </code>
+	 *
+	 * @return String
+	 */
 	function append($content){
 		$this->_String .= "$content";
 		return $this;
 	}
 
+	/**
+	 * Returns the number of times pattern matches the string..
+	 *
+	 * When the pattern matches the string it returns these matches in $matches array as if it was returned by preg_match
+	 * but strings are instantiated to String objects.
+	 *
+	 * @param string $pattern Regular expression
+	 * @param $matches
+	 * @return integer|bool number of matches or false if an error occurs
+	 * @uses preg_match
+	 */
 	function match($pattern,&$matches = null){
 		$out = preg_match($pattern,$this,$matches);
 		if(is_array($matches)){
@@ -201,6 +261,7 @@ class String{
 
 	/**
 	 * Returns char at given position.
+	 *
 	 * Position starts from 0.
 	 *
 	 *	<code>
@@ -208,23 +269,31 @@ class String{
 	 * $str->at(2); // 'e'
 	 *	</code>
 	 *
-	 * @return Str
+	 * @param integer position in string starting from 0
+	 * @return String
 	 */
 	function at($position){
 		return $this->_copy($this->substr($position,1));
 	}
 
+	/**
+	 * @param integer $start
+	 * @param integer $length
+	 * @return String
+	 */
 	function substr($start,$length = null){
 		return $this->_copy(substr($this->_String,$start,$length));
 	}
 
 	/**
+	 * Checks if the string contains another string.
 	 * <code>
-	 * 	$str = new String("Hello World");
-	 *	$str->contains("Hello"); // true
-	 *  $str->contains(array("Hello","World")); // true
+	 * $str = new String("Hello World");
+	 * $str->contains("Hello"); // true
+	 * $str->contains(array("Hello","World")); // true
 	 * </code>
 	 * 
+	 * @param string|array $needle
 	 * @return bool
 	 */
 	function contains($needle){
@@ -241,11 +310,12 @@ class String{
 	 * Does contains at least one of the given strings?
 	 *
 	 * <code>
-	 * 		if($breakfast->containsOneOf(array("orange","lemon","apple"))){
-	 *			// sort of vitamin stuff
-	 *		}
+	 * if($breakfast->containsOneOf(array("orange","lemon","apple"))){
+	 * 	// sort of vitamin stuff
+	 * }
 	 * </code>
 	 *
+	 * @param array $needles array of string
 	 * @return bool
 	 */
 	function containsOneOf($needles){
@@ -280,13 +350,15 @@ class String{
 	}
 
 	/**
-	* Returns corresponding table name for a given ClassName.
-	* 
-	* <code>
-	*		$class = new String("Book");
-	*		echo $class->tableize(); // "books"
-	*	</code>
-	*/
+	 * Returns corresponding table name for a given ClassName.
+	 *
+	 * <code>
+	 * $class = new String("Book");
+	 * echo $class->tableize(); // "books"
+	 * </code>
+	 *
+	 * @return String
+	 */
 	function tableize(){
 		$table_name = $this->pluralize();
 		$table_name = $table_name->underscore();
@@ -294,21 +366,28 @@ class String{
 	}
 
 	/**
-	* <code>
-	* 	$apple = new String("apple");
-	* 	echo $apple->pluralize(); // "apples"
-	* </code>
-	*/
+	 * Makes plural form of a word.
+	 *
+	 * <code>
+	 * 	$apple = new String("apple");
+	 * 	echo $apple->pluralize(); // "apples"
+	 * </code>
+	 *
+	 * @return String
+	 */
 	function pluralize(){
 		return $this->_copy(_Inflect::pluralize((string)$this));
 	}
 
 	/**
-	* <code>
-	* 	$apples = new String("Rotten Apples");
-	*		echo $apples->singularize(); // "Rotten Apple"
-	* </code>
-	*/
+	 * Makes singular form of a word.
+	 *
+	 * <code>
+	 * $apples = new String("Rotten Apples");
+	 * echo $apples->singularize(); // "Rotten Apple"
+	 * </code>
+	 * @return String
+	 */
 	function singularize(){
 		return $this->_copy(_Inflect::singularize((string)$this));
 	}
@@ -328,12 +407,23 @@ class String{
 		return $out;
 	}
 
+	/**
+	 * @return String
+	 */
 	function copy(){ return $this->_copy(); }
+
+	/**
+	 *
+	 * @access private
+	 */
 	function _copy($string = null){
 		if(!isset($string)){ $string = $this->_String; }
 		return new String($string);
 	}
 	
+	/**
+	 * @access private
+	 */
 	function __toString(){
 		return $this->_String;
 	}
