@@ -1145,11 +1145,29 @@ class inobj_TableRecord_Base extends inobj{
 	* $object->getUser() -> User::GetInstanceById($object->g("user_id"));
 	*/
 	function __call($name,$arguments){
+		static $CACHES;
+
+		$class_name = get_class($this);
+
+		if(!isset($CACHES)){ $CACHES = array(); }
+		if(!isset($CACHES[$class_name])){
+			$CACHES[$class_name] = array(
+				"fields" => array(),
+			);
+		}
+
+		$CACHE = &$CACHES[$class_name];
+
+		if(isset($CACHE["fields"][$name])){
+			return $this->g($CACHE["fields"][$name]);
+		}
+
 		$name = new String($name);
 		if($name->match("/^get(.+)/",$matches)){
 			$field = $matches[1]->underscore();
 			if($this->hasKey($field)){
-				return $this->g($field->underscore());
+				$CACHE["fields"][(string)$name] = (string)$field;
+				return $this->g($field);
 			}
 
 			// Looking for ClassName or inobj_ClassName. The prefix inobj_ (which means internal object) exists on my legacy classes.
