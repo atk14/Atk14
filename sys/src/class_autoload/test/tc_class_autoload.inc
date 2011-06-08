@@ -1,6 +1,8 @@
 <?php
 class tc_class_autoload extends tc_base{
 	function test(){
+		class_autoload("./no_classes_here/");
+
 		$this->assertFalse(class_exists("RedFruit"));
 		$this->assertFalse(class_exists("RedDwarf"));
 		$this->assertFalse(class_exists("RedColor"));

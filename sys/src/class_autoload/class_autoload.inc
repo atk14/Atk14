@@ -22,15 +22,24 @@ function class_autoload($params){
 }
 
 function __class_autoload__($options_or_class_name){
-	static $store_filenames, $directories, $spl_autoload_registered;
-	if(!isset($store_filenames)){ $store_filenames = array(); }
-	if(!isset($directories)){ $directories = array(); }
-	if(!isset($spl_autoload_registered)){ $spl_autoload_registered = false; }
+	static $store_filenames, $directories, $spl_autoload_registered, $already_checked_classes;
 
+	if(!isset($store_filenames)){
+		$store_filenames = array();
+		$directories = array();
+		$spl_autoload_registered = false;
+		$already_checked_classes = array();
+	}
 
 	if(is_string($options_or_class_name)){
 		$class_name = $options_or_class_name;
-		if(isset($store_filenames[strtolower($class_name)])){ require_once($store_filenames[strtolower($class_name)]); }
+
+		$_key = strtolower($class_name);
+		if(in_array($_key,$already_checked_classes)){ return; }
+		$already_checked_classes[] = $_key;
+
+
+		if(isset($store_filenames[$_key])){ require_once($store_filenames[strtolower($class_name)]); }
 		foreach($directories as $d){
 			$_filenames = array(
 				$class_name,
@@ -64,7 +73,10 @@ function __class_autoload__($options_or_class_name){
 	foreach($options["filenames_by_class"] as $c_name => $f_name){
 		$store_filenames[strtolower($c_name)] = $f_name;
 	}
-	if(isset($options["directory"])){ $directories[] = $options["directory"]; }
+	if(isset($options["directory"])){
+		$directories[] = $options["directory"];
+		$already_checked_classes = array();
+	}
 
 	if(!$spl_autoload_registered){
 		spl_autoload_register("__class_autoload__");
