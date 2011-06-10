@@ -6,8 +6,6 @@
  * Database dependent methods are overridden in descendants
  *
  *
- *
- *
  * Error handling
  * <code>
  *	DbMole::RegisterErrorHandler("dbmole_error_handler");
@@ -37,19 +35,57 @@
  * @package Atk14
  * @subpackage InternalLibraries
  * @abstract
+ * @filesource
  */
 class DbMole{
+	/**
+	 * @access private
+	 */
 	var $_ConfigurationName = "";
+
+	/**
+	 * @access private
+	 */
 	var $_DbConnect = null;
 
+
+	/**
+	 * @access private
+	 */
 	var $_ErrorMessage = null;
+
+	/**
+	 * @access private
+	 * @internal Is this attribute really used?
+	 * @todo check var usage
+	 */
 	var $_ErrorHangler = null;
 
+
+	/**
+	 * @access private
+	 */
 	var $_Query = "";
+
+	/**
+	 * @access private
+	 */
 	var $_BindAr = array();
+
+	/**
+	 * @access private
+	 */
 	var $_Options = array();
+
+	/**
+	 * @access private
+	 */
 	var $_QueriesExecuted = 0;
 
+
+	/**
+	 * @access private
+	 */
 	var $_CacheDir = null;
 
 	/**
@@ -104,28 +140,43 @@ class DbMole{
 	*
 	* If a descendant doesn't know how to determine the database name,
 	* the configuration name will be returned instead.
+	*
+	* @return string
 	*/
 	function getDatabaseName(){
 		if($dbname = $this->_getDatabaseName()){ return (string)$dbname; }
 		return $this->_ConfigurationName;
 	}
 
+	/**
+	 * @access private
+	 */
 	function _getDatabaseName(){ }
 
 	/**
-	* Registrace nazvu funkce, ktera ma byt volana, dojde-li k chybe pri vykonavani SQL dotazu.
-	* Jako parametr bude treto funkci predan object (resp. dedic) tridy DbMole.
-	* 
-	* Vraci nazev error handleru zaregistrovaneho predchozim volanim.
-	*
-	*	DbMole::RegisterErrorHandler("dbmole_error_handler");
-	*	function dbmole_error_handler($dbmole){
-	*		echo "drahy uzivateli, bohuzel doslo k chybe";
-	*		$dbmole->sendErrorReportToEmail("admin@test.cz");
-	*		$dbmole->logErrorReport();
-	*		exit;
-	*	}	
-	*/
+	 * Registers name of function that will be called whenever execution of SQL command fails.
+	 * Instance of a DbMole object (or its descendant) will be passed to the function as parameter.
+	 *
+	 * Returns name of error handler registered with the last call of this method.
+	 *
+	 * Registration of an error handler
+	 * <code>
+	 * DbMole::RegisterErrorHandler("dbmole_error_handler");
+	 * </code>
+	 *
+	 * Common handler example
+	 * <code>
+	 * function dbmole_error_handler($dbmole){
+	 *   echo "drahy uzivateli, bohuzel doslo k chybe";
+	 *	 $dbmole->sendErrorReportToEmail("admin@test.cz");
+	 *	 $dbmole->logErrorReport();
+	 *	 exit;
+	 * }	
+	 * </code>
+	 *
+	 * @param string $function_name
+	 * @return string name of previously registered error handler
+	 */
 	function RegisterErrorHandler($function_name){
 		return DbMole::_GetSetErrorHandlerFunction($function_name,true);
 	}
@@ -183,6 +234,9 @@ class DbMole{
 		return join("\n",$out);
 	}
 
+	/**
+	 * @access private
+	 */
 	function _formatSeconds($sec){
 		return number_format($sec,3,".","");
 	}
@@ -215,14 +269,15 @@ class DbMole{
 	}
 
 	/**
-	* Napoji se do databaze.
-	*
-	* Musi byt prekryto!
-	*
-	* @access private
-	* @return bool					true -> uspesne napojeno
-	*												false -> doslo k chybe
-	*/
+	 * Connects the database.
+	 *
+	 * This method is abstract.
+	 * Musi byt prekryto!
+	 *
+	 * @access private
+	 * @abstract
+	 * @return bool true -> uspesne napojeno, false -> doslo k chybe
+	 */
 	function _connectToDatabase(){
 		if(isset($this->_DbConnect)){ return true; }
 
@@ -234,6 +289,9 @@ class DbMole{
 		return true;
 	}
 
+	/**
+	 * @access private
+	 */
 	function _selectRows($query,&$bind_ar, $options = array()){
 		$options = array_merge(array(
 			"cache" => 0,
@@ -262,34 +320,46 @@ class DbMole{
 	}
 
 	/**
-	* Zjiteni, zda doslo k chybe.
-	* 
-	* Z nekterych metod je mozne primo z navr. hodnoty zjistit,
-	* zda doslo k chybe (commit(), rollback(), selectRows()).
-	*
-	* Z navratovych hodnot jinych fci to poznat nelze (selectSingleValue(),
-	* selectFirstRow())
-	*
-	* Nicmene, pokud je zaregistrovana takova error handler funkce,
-	* ktera ukonci beh skriptu (exit), neni treba v normalnim kodu
-	* nic zjistovat.
-	*
-	* @access public
-	* @return bool				true -> doslo k chybe
-	*											false -> nedoslo k chybe
-	*/
+	 * Checks if an error occured on last query.
+	 *
+	 * Some methods return values say that error occured (commit(), rollback(), selectRows(), ...).
+	 * From return values of other methods it is impossible to recognize an error (selectSingleValue(), selectFirstRow(), ...).
+	 *
+	 * When you register an error handler that interrupts the script (with exit) then it is not needed to check for an error.
+	 *
+	 * @return bool true -> error occured, false -> no error
+	 */
 	function errorOccurred(){ return isset($this->_ErrorMessage); }
 
 	/**
 	* Gettery vhodne pro error_handler funkci.
 	*/
 	function getErrorMessage(){ return $this->_ErrorMessage; }
+	/**
+	 * @return string
+	 */
 	function getQuery(){ return $this->_Query; }
+
+	/**
+	 * @return array
+	 */
 	function getBindAr(){ return $this->_BindAr; }
+
+	/**
+	 * @return array
+	 */
 	function getOptions(){ return $this->_Options; }
+
 	function getQueriesExecuted(){ return $this->_QueriesExecuted; }
+
+	/**
+	 * @return string
+	 */
 	function getConfigurationName(){ return $this->_ConfigurationName; }
 
+	/**
+	 * @return string
+	 */
 	function getErrorReport(){
 		$out = array();
 
@@ -341,17 +411,22 @@ class DbMole{
 	}
 
 
+	/**
+	 * @access private
+	 */
 	function _initializeBeforeDoingSQL(){
 		$this->_reset();
 		$this->_connectToDatabase();
 	}
 
 	/**
-	* Vyresetuje nektere stavy objektu.
-	* Vola se pred provedenim SQL prikazu.
-	* 
-	* @access private
-	*/
+	 * Resets some states of objects.
+	 *
+	 * Is called before execution of a SQL command.
+	 *
+	 * @access private
+	 *
+	 */
 	function _reset(){
 		$this->_ErrorMessage = null;
 		$this->_Query = "";
@@ -369,13 +444,12 @@ class DbMole{
 	}
 
 	/**
-	* Je volano v pripade, ze dojde k chybe.
-	*
-	* 
-	* 
-	* @access private
-	* @param string $message_prefix				ie. "OCIParse failed"
-	*/
+	 * This method is called in case of error.
+	 *
+	 * @access private
+	 * @param string $message_prefix				ie. "OCIParse failed"
+	 *
+	 */
 	function _raiseDBError($message){
     $this->_ErrorMessage = "$message";
 
@@ -395,15 +469,14 @@ class DbMole{
 	}
 
 	/**
-	* Provede spusteni SQL query.
-	* 
-	* @access public
-	* @param string $query
-	* @param array $bind_ar
-	* @param array $options
-	* @return bool									true -> v poradku porvedeno
-	*																false -> chyba
-	*/
+	 * Executes SQL query.
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return bool			true -> query executed with success
+	 *									false -> error
+	 */
 	function doQuery($query,$bind_ar = array(), $options = array()){
 		$result = $this->executeQuery($query,$bind_ar,$options);
 		if(!$result){ return false; }
@@ -412,15 +485,15 @@ class DbMole{
 	}
 
 	/**
-	* Vrati asociativni pole prvniho nalezeneho zaznamu.
-	* Nebo vrati null, pokud result neobsahuje ani jeden zaznam (nebo doslo k chybe).
-	*
-	* @access public
-	* @param string $query
-	* @param array $bind_ar
-	* @param array $options
-	* @return array							asociativni pole
-	*/
+	 * Returns first record as associative array.
+	 *
+	 * Returns null when result doesn't contain any record or an error occurs.
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return array associative array
+	 */
 	function selectFirstRow($query,$bind_ar = array(), $options = array()){
 		$records = $this->_selectRows($query,$bind_ar,$options);
 		if(!isset($records) || sizeof($records)==0){
@@ -430,26 +503,40 @@ class DbMole{
 	}
 	
 	/**
-	* Vrati prvni hodnotu z prvniho nalezeneho radku.
-	* Velmi vhodne pro dotazy typu "SELECT COUNT(*) AS count FROM articles WHERE source_date>SYSDATE"
-	*
-	* Pokud bude hodnota NULL, bude vracen null.
-	*
-	* V $options lze nastavit typ vracene hodnoty: $options = array("type" => "integer").
-	* Protoze toto je bude pouzivane asi hodne, tak je mozne definovat $options primo jako string "integer".
-	* Pak je preveden na pole array("type" => $options)
-	*
-	* Pouziti:
-	*		$mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<:id",array(":id" => 3000),array("type" => "integer"));	// takto to bylo vsechno zamysleno
-	*		$mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<:id",array(":id" => 3000),"integer");									// takto lze typ zkratit
-	*		$mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<3000","integer");																			// a pokud se nic nebinduje, je to mozne jeste vice zkratit
-	*
-	* @access public
-	* @param string $query
-	* @param array $bind_ar			muze byt string (prevedeno bude na $options["type"])
-	* @param array $options			muze byt string (prevedeno bude na $options["type"])
-	* @return mixed						
-	*/
+	 * Returns first value from the first record.
+	 *
+	 * Useful method for queries that count something like this:
+	 * 'SELECT COUNT(*) AS count FROM articles WHERE source_date>SYSDATE'
+	 *
+	 * When the value is NULL this method returns null
+	 *
+	 *
+	 * Options can specify type of returned value. Just use 'type' => "integer" option.
+	 *
+	 * As this is used a lot, this option can be passed directly without the 'type' keyword.
+	 * It is internally converted to array.
+	 *
+	 *
+	 * Basic usage
+	 * <code>
+	 * $mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<:id",array(":id" => 3000),array("type" => "integer"));	// takto to bylo vsechno zamysleno
+	 * </code>
+	 *
+	 * can be shortened:
+	 * <code>
+	 * $mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<:id",array(":id" => 3000),"integer");
+	 * </code>
+	 *
+	 * and can be even more shortened when no bind_ar is passed
+	 * <code>
+	 * $mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<3000","integer");
+	 * </code>
+	 *
+	 * @param string $query
+	 * @param array $bind_ar			muze byt string (prevedeno bude na $options["type"])
+	 * @param array $options			muze byt string (prevedeno bude na $options["type"])
+	 * @return mixed						
+	 */
 	function selectSingleValue($query,$bind_ar = array(), $options = array()){
 		if(is_string($bind_ar)){
 			$options = array("type" => $bind_ar);
@@ -501,7 +588,7 @@ class DbMole{
 	}
 
 	/**
-	 * Shortcut to getting an boolean.
+	 * Shortcut to getting a boolean.
 	 * Values considered as the true are: 'y', 'yes', 't', 'true', '1'...
 	 */
 	function selectBool($query,$bind_ar = array(),$options = array()){
@@ -513,23 +600,26 @@ class DbMole{
 	}
 
 	/**
-	* Provede SQL dostaz a seradi vsechny hodnoty ze vsech radku do indexoveho pole.
-	*
-	* $article_ids = $dbmole->selectIntoArray("SELECT id FROM articles WHERE source_id=100010");
-	* $article_ids -> array("233221","233222","233225"...)
-	*
-	* Uvedenim $options["type"] = "integer" lze docilit toho, ze vsechny existujici hodnoty budou
-	* pretypovany na integer.
-	*
-	* $arr = $dbmole->selectIntoArray("SELECT id,name FROM articles WHERE ...");
-	* $ar -> array("233221","nazev prvniho clanku","233222","nazev druheho clanku"...)
-	* 
-	* @access public
-	* @param string $query
-	* @param array $bind_ar				muze byt string (prevedeno bude na $options["type"])
-	* @param array $options				muze byt string (prevedeno bude na $options["type"])
-	* @return array 
-	*/
+	 * Executes a SQL query and packs all values from all records to an array.
+	 *
+	 * Setting option type to 'integer' causes that all returned values are converted to integers.
+	 *
+	 * <code>
+	 * $article_ids = $dbmole->selectIntoArray("SELECT id FROM articles WHERE source_id=100010");
+	 * </code>
+	 * returned array $article_ids can be array("233221","233222","233225"...)
+	 *
+	 * <code>
+	 * $arr = $dbmole->selectIntoArray("SELECT id,name FROM articles WHERE ...");
+	 * </code>
+	 * returns array $ar like this
+	 * array("233221","nazev prvniho clanku","233222","nazev druheho clanku"...)
+	 *
+	 * @param string $query
+	 * @param array $bind_ar				muze byt string (prevedeno bude na $options["type"])
+	 * @param array $options				muze byt string (prevedeno bude na $options["type"])
+	 * @return array 
+	 */
 	function selectIntoArray($query,$bind_ar = array(),$options = array()){
 		if(is_string($bind_ar)){
 			$options = array("type" => $bind_ar);
@@ -558,23 +648,36 @@ class DbMole{
 	}
 
 	/**
-	* // v sql jsou 2 pole
-	* $articles = $dbmole->selectIntoAssociativeArray("SELECT id,name FROM articles WHERE source_id=100010");
-	*		array(
-	*			"12" => "Nazev 1",
-	*			"3342" => "Nazev 2",
-	*			"2311" => "Nazev 3",
-	*			...
-	*		)
-	*
-	*	// v sql je jiny pocet nez 2
-	* $articles = $dbmole->selectIntoAssociativeArray("SELECT id,name,author FROM articles WHERE source_id=100010");
-	*		array(
-	*			"12" => array("name" => "Nazev 1", "author" => "Jan Tuna"),
-	*			"3342" => array("name" => "Nazev 2", "author" => "Dr. Kanal"),
-	*			...
-	*		)
-	*/
+	 * Returns records as associative arrays with the first attributes value as key.
+	 *
+	 * sql specifies 2 fields:
+	 * <code>
+	 * $articles = $dbmole->selectIntoAssociativeArray("SELECT id,name FROM articles WHERE source_id=100010");
+	 * </code>
+	 * can return for example
+	 *	array(
+	 *		"12" => "Nazev 1",
+	 *		"3342" => "Nazev 2",
+	 *		"2311" => "Nazev 3",
+	 *		...
+	 *	)
+	 *
+	 * sql specifies more fields and this call
+	 * <code>
+	 * $articles = $dbmole->selectIntoAssociativeArray("SELECT id,name,author FROM articles WHERE source_id=100010");
+	 * </code>
+	 * can return this
+	 *	array(
+	 *		"12" => array("name" => "Nazev 1", "author" => "Jan Tuna"),
+	 *		"3342" => array("name" => "Nazev 2", "author" => "Dr. Kanal"),
+	 *		...
+	 *	)
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return array
+	 */
 	function selectIntoAssociativeArray($query,$bind_ar = array(), $options = array()){
 		$out = array();
 		$rows = $this->selectRows($query,$bind_ar,$options);
@@ -591,31 +694,50 @@ class DbMole{
 		return $out;
 	}
 
+	/**
+	 * Starts a database transaction.
+	 *
+	 * @return bool
+	 */
 	function begin(){
 		return $this->doQuery("BEGIN");
 	}
 
+	/**
+	 * Ends a database transaction.
+	 *
+	 * @return bool
+	 */
 	function commit(){
 		return $this->doQuery("COMMIT");
 	}
 
+	/**
+	 * Rollbacks all database operations.
+	 * @return bool
+	 */
 	function rollback(){
 		return $this->doQuery("ROLLBACK");
 	}
 
 	/**
-	* $dbmole->insertIntoTable("comments",array(
-	*		"title" => "Titulek",
-	*		"author" => "Yarri",
-	*		"body" => "text prispevku"
-	*	));
-	*
-	* @access public
-	* @param string $table_name
-	* @param array $values					asociativni pole
-	* @param array $options					asociativni pole
-	* @return bool
-	*/
+	 * Inserts a record into database table.
+	 *
+	 * Takes an associative array of column => value pairs and creates a new record with those values in given table.
+	 *
+	 * <code>
+	 * $dbmole->insertIntoTable("comments",array(
+	 *		"title" => "Titulek",
+	 *		"author" => "Yarri",
+	 *		"body" => "text prispevku"
+	 *	));
+	 * </code>
+	 *
+	 * @param string $table_name
+	 * @param array $values		associative array
+	 * @param array $options	associative array
+	 * @return bool
+	 */
 	function insertIntoTable($table_name,$values,$options = array()){
 		settype($table_name,"string");
 		settype($values,"array");
@@ -641,21 +763,25 @@ class DbMole{
 	}
 
 	/**
-	* Vlozi do tabulky zaznam, pokud jeste neexistuje. Pokud vsak existuje, bude tento zaznam updatovan.
-	* 
-	*		$dbmole->insertOrUpdateRecord("persons",
-	*			array(
-	*				"id" => 1000,
-	*				"firstname" => "John",
-	*				"surname" => "Blbec",
-	*				"updated" => "NOW()"
-	*			),
-	*			array(
-	*				"id_field" => "id",
-	*				"do_not_escape" => array("updated")
-	*			)
-	*		);
-	*/
+	 * Inserts a record into a table or updates a record if it already exists.
+	 *
+	 * <code>
+	 *	$dbmole->insertOrUpdateRecord("persons",
+	 *		array(
+	 *			"id" => 1000,
+	 *			"firstname" => "John",
+	 *			"surname" => "Blbec",
+	 *			"updated" => "NOW()"
+	 *		),
+	 *		array(
+	 *			"id_field" => "id",
+	 *			"do_not_escape" => array("updated")
+	 *		)
+	 *	);
+	 * </code>
+	 *
+	 * @return bool
+	 */
 	function insertOrUpdateRecord($table_name,$values,$options = array()){
 		settype($table_name,"string");
 		settype($values,"array");
@@ -701,6 +827,9 @@ class DbMole{
 		}
 	}
 
+	/**
+	 * Disconnects database
+	 */
 	function closeConnection(){
 		if(!isset($this->_DbConnect)){ return; }
 		$this->_disconnectFromDatabase();
@@ -712,13 +841,33 @@ class DbMole{
 	function usesSequencies(){ return true; }
 
 	/**
-	* $dbmole->executeQuery("SELECT * FROM articles WHERE id=:id",array(":id" => 123));
-	*
-	* // bindovat lze i pole
-	* $dbmole->executeQuery("SELECT * FROM articles WHERE id IN :ids",array(":ids" => array(123,124,125)));
-	* // toto bude prevedeno automaticky prevedeno na:
-	* // $dbmole->executeQuery("SELECT * FROM articles WHERE id IN (:ids_0, :ids_1, :ids_2)",array(":ids_0" => 123, ":ids_1" => 124, ":ids_2" => 125));
-	*/
+	 * Executes a query.
+	 *
+	 * To prevent against a SQL attack you should not write conditions directly to query string but you should use the form with $bind_ar to sanitize the input data.
+	 *
+	 * <code>
+	 * $dbmole->executeQuery("SELECT * FROM articles WHERE id=:id",array(":id" => 123));
+	 * </code>
+	 *
+	 * Also arrays can be used as bind_ar
+	 * <code>
+	 * $dbmole->executeQuery("SELECT * FROM articles WHERE id IN :ids",array(":ids" => array(123,124,125)));
+	 * </code>
+	 * which will be internally transformed into this
+	 * <code>
+	 * $dbmole->executeQuery("SELECT * FROM articles WHERE id IN (:ids_0, :ids_1, :ids_2)",array(":ids_0" => 123, ":ids_1" => 124, ":ids_2" => 125));
+	 * </code>
+	 *
+	 * In $options array the execution mode can be set:
+	 *		$options["mode"] = OCI_DEFAULT
+	 *		$options["mode"] = OCI_COMMIT_ON_SUCCESS
+	 * Default mode is OCI_DEFAULT.
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return statement or null on error
+	 */
 	function executeQuery($query,$bind_ar = array(),$options = array()){
 		settype($query,"string");
 		settype($bind_ar,"array");
@@ -757,28 +906,27 @@ class DbMole{
 		return $out;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	function escapeFloat4Sql($f){
 		return (string)$f;
 	}
 
+	/**
+	 * @return string
+	 */
 	function escapeTableName4Sql($t){
 		return $t;
 	}
 
 	/**
-	* Realizuje spusteni query.
-	* Vrati statement.
-	* 
-	* V poli $options lze nastavit mod spusteni prikazu:
-	*		$options["mode"] = OCI_DEFAULT
-	*		$options["mode"] = OCI_COMMIT_ON_SUCCESS
-	* Defaultni je OCI_DEFAULT.
-	*
-	* @access public
-	* @param string $query
-	* @param string $options
-	* @return statement						nebo null v pripade
-	*/
+	 * Realizes the query execution.
+	 *
+	 * @access private
+	 * @return statement or null on error
+	 */
 	function _executeQuery(){
 		$query = &$this->_Query;
 		$bind_ar = &$this->_BindAr;
@@ -810,9 +958,16 @@ class DbMole{
 
 
 	
-	// chybova zprava zavisla na typu databaze
+	/**
+	 * error message dependent on database type
+	 *
+	 * @access private
+	 */
 	function _getDbLastErrorMessage(){ return ""; }
 
+	/**
+	 * @access private
+	 */
 	function _hookBeforeQueryExecution(){
 		if(defined("DBMOLE_COLLECT_STATICTICS") && DBMOLE_COLLECT_STATICTICS){
 			list($usec, $sec) = explode(" ", microtime());
@@ -820,6 +975,9 @@ class DbMole{
 		}
 	}
 
+	/**
+	 * @access private
+	 */
 	function _hookAfterQueryExecution(){
 		global $__DMOLE_STATISTICS__;
 
@@ -849,6 +1007,9 @@ class DbMole{
 		//echo "<br>";
 	}
 
+	/**
+	 * @access private
+	 */
 	function _readCache($seconds,$query,$bind_ar,$options){
 		$filename = $this->_getCacheFilename($query,$bind_ar,$options);
 		if(!file_exists($filename) || filemtime($filename)<(time()-$seconds)){
@@ -862,6 +1023,9 @@ class DbMole{
 		return $rows;
 	}
 
+	/**
+	 * @access private
+	 */
 	function _writeCache(&$rows,$query,$bind_ar,$options){
 		$cache = serialize($rows);
 		$filename = $this->_getCacheFilename($query,$bind_ar,$options);
@@ -871,6 +1035,9 @@ class DbMole{
 		return true;
 	}
 
+	/**
+	 * @access private
+	 */
 	function _getCacheFilename($query,$bind_ar,$options){
 		return $this->_CacheDir."/".md5($query)."/".md5(
 			serialize(array(
