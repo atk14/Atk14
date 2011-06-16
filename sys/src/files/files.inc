@@ -1,32 +1,40 @@
 <?php
 /**
-* Trida poskytuje staticke funkce pro praci se soubory.
-*
-* @changelog
-*		2005-10-21: oprava v metode _recursive_unlink_dir() 
-*
-* @package  extra_classes
-* @author		Tomek
-* @access   public
-* @version 	20050215
-*/
+ * Class for basic file management.
+ *
+ * Provides static methods for operations on files.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
+ * @author Jaromir Tomek
+ */
+/**
+ * Class for basic file management.
+ *
+ * Provides static methods for operations on files.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
+ *
+ */
 class files{
 
 	/**
-	* Vytvori adresar.
-	*
-	*	Vytvori rovnez vsechny nadadresare, pokud neexistuji.
-	* Vrati pocet takto vytvorenych adresaru.
-	* Pokud adresar jiz existuje, je vracen int 0.
-	* Adresare jsou vytvoreny s pravy 0777.
-	*
-	* @access public
-	* @static
-	* @param string $dirname				jmeno adresare
-	* @param boolean &$error 				priznak chyby
-	* @param string	 &$error_str 		popis chyby
-	* @return int										pocet adresaru, ktere byly vytvoreny
-	*/
+	 * Creates a directory.
+	 *
+	 * Also creates parent directories when they don't exist.
+	 * Return number of created directories.
+	 * When the requested directory exists method returns 0.
+	 * Newly created directories have permissions set to 0777.
+	 *
+	 * @static
+	 * @param string $dirname	Name of directory to be created.
+	 * @param boolean &$error Error flag
+	 * @param string	 &$error_str Error description
+	 * @return int Number of directories created
+	 */
 	function mkdir($dirname,&$error = null,&$error_str = null){
 		$out = 0;
 		$error = false;
@@ -56,18 +64,18 @@ class files{
 	}
 
 	/**
-	* Zkopiruje soubor.
-	*
-	* V pripade, ze je cilovy soubor nove vytvaren, je vytvoren s pravy 0666.
-	*
-	* @access public
-	* @static
-	* @param string 	$from_file			zdrojovy soubor
-	* @param string 	$to_file				cilovy soubor
-	* @param boolean 	&$error 				priznak chyby
-	* @param string 	&$error_str 		popis chyby
-	* @return int											pocet zkopirovanych bytu
-	*/
+	 * Creates a copy of a file.
+	 *
+	 * When the target file does not exist, it is created with permissions 0666.
+	 *
+	 * @static
+	 * @param string 	$from_file Source file
+	 * @param string 	$to_file Target file
+	 * @param boolean 	&$error Error flag
+	 * @param string 	&$error_str Error message
+	 * @return int Number of copied bytes
+	 *
+	 */
 	function copy_file($from_file,$to_file,&$error = null,&$error_str = null){
 		$bytes = 0;
 		$error = false;
@@ -121,18 +129,17 @@ class files{
 	}
 
 	/**
-	* Zapise obsah retezce do souboru.
-	*
-	* V pripade, ze je cilovy soubor nove vytvaren, je vytvoren s pravy 0666.
-	*
-	* @access public
-	* @static
-	* @param string 	$file						jmeno souboru
-	* @param string 	$content				retezec, ktery ma byt zapsan
-	* @param boolean 	&$error 				priznak chyby
-	* @param string 	&$error_str 		popis chyby
-	* @return int											pocet zkopirovanych bytu
-	*/
+	 * Writes a string to a file.
+	 *
+	 * When the target file does not exist it is created with permissions 0666.
+	 *
+	 * @static
+	 * @param string 	$file	Name of a file
+	 * @param string 	$content String to write
+	 * @param boolean 	&$error Error flag
+	 * @param string 	&$error_str Error description
+	 * @return int Number of written bytes
+	 */
 	function write_to_file($file,$content,&$error = null,&$error_str = null){
 		$bytes = 0;
 		$error = false;
@@ -186,13 +193,13 @@ class files{
 	}
 
 	/**
-	* Zjisti, zda je soubor uploadnut.
-	*
-	* @access public
-	* @static
-	* @param string 	$filename				jmeno souboru
-	* @return bool										true => soubor je bezpecne uploadnut; false => soubor neni uploadnut
-	*/
+	 * Checks if a file was uploaded.
+	 *
+	 * @static
+	 * @param string 	$filename Name of a file
+	 * @return bool	true => file was securely uploaded; false => file was not uploaded
+	 *
+	 */
 	function is_uploaded_file($filename){
 		settype($filename,"string");
 		if(!file_exists($filename)){
@@ -216,19 +223,19 @@ class files{
 	}
 
 	/**
-	* Presune soubor. 
-	*
-	* Ve skutecnosti to provadi prekopirovani a pak smazani zdrojoveho souboru.
-	*
-	* @access public
-	* @static
-	* @param string 	$from_file			zdrojovy soubor
-	* @param string 	$to_file				cilovy soubor
-	* @param boolean 	&$error 				priznak chyby
-	* @param string 	&$error_str 		popis chyby
-	* @return int											pocet presunutych souboru; tedy v pripade uspechu bude vracena 1
-	* @see files::unlink()
-	*/
+	 * Moves a file
+	 *
+	 * In fact the method copies the file first and then removes the source file.
+	 *
+	 *
+	 * @static
+	 * @param string 	$from_file Source file
+	 * @param string 	$to_file Target file
+	 * @param boolean 	&$error Error flag
+	 * @param string 	&$error_str Error description
+	 * @return int	Number of moved files; ie. on success return 1
+	 * @see files::unlink()
+	 */
 	function move_file($from_file,$to_file,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
@@ -267,15 +274,14 @@ class files{
 	}
 
 	/**
-	* Smaze soubor. 
-	*
-	* @access public
-	* @static
-	* @param string 	$file						jmeno souboru
-	* @param boolean 	&$error 				priznak chyby
-	* @param string 	&$error_str 		popis chyby
-	* @return int											pocet smazanych souboru; v pripade uspechun bude vraceno vraci 0 nebo 1, jinak 0
-	*/
+	 * Removes a file from filesystem.
+	 *
+	 * @static
+	 * @param string $file Name of a file
+	 * @param boolean &$error Error flag
+	 * @param string 	&$error_str Error description
+	 * @return int Number of deleted files; on success returns 1; otherwise 0
+	 */
 	function unlink($file,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
@@ -296,17 +302,16 @@ class files{
 	}
 
 	/**
-	* Smaze rekursivne adresar.
-	*
-	* Smaze dany adresar vcetne jeho obsahu - obsah je mazan rekursivne.
-	*
-	* @access public
-	* @static
-	* @param string 	$dir						jmeno adresare
-	* @param boolean 	&$error 				priznak chyby
-	* @param string 	&$error_str 		popis chyby
-	* @return int											pocet smazanych souboru a adresaru
-	*/
+	 * Removes a directory recursively.
+	 *
+	 * Removes a directory with its content.
+	 *
+	 * @static
+	 * @param string 	$dir Directory name
+	 * @param boolean 	&$error Error flag
+	 * @param string 	&$error_str Error description
+	 * @return int Number of deleted directories and files
+	 */
 	function recursive_unlink_dir($dir,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
@@ -315,18 +320,19 @@ class files{
 	}
 
 	/**
-	* Smaze rekursivne adresar.
-	*
-	* Metoda je urcena pro vnitrni rekursivni volani.
-	*
-	* @access private
-	* @static
-	* @param string 	$dir						jmeno adresare
-	* @param boolean 	&$error 				priznak chyby
-	* @param string 	&$error_str 		popis chyby
-	* @return int											pocet smazanych souboru a adresaru
-	* @see file::recursive_unlink_dir()
-	*/
+	 * Smaze rekursivne adresar.
+	 *
+	 * Metoda je urcena pro vnitrni rekursivni volani.
+	 *
+	 * @access private
+	 * @static
+	 * @param string 	$dir						jmeno adresare
+	 * @param boolean 	&$error 				priznak chyby
+	 * @param string 	&$error_str 		popis chyby
+	 * @return int											pocet smazanych souboru a adresaru
+	 * @see file::recursive_unlink_dir()
+	 *
+	 */
 	function _recursive_unlink_dir($dir,&$error,&$error_str){
 		settype($dir,"string");
 		
@@ -384,16 +390,14 @@ class files{
 	}
 
 	/**
-	* Nacte obsah souboru.
-	*
-	* @access public
-	* @static
-	* @param string 	$filename				jmeno souboru
-	* @param boolean 	&$error 				priznak chyby
-	* @param string 	&$error_str 		popis chyby
-	* @return string									obsah souboru
-	* @see file::recursive_unlink_dir()
-	*/
+	 * Reads content of a file.
+	 *
+	 * @static
+	 * @param string 	$filename Name of a file
+	 * @param boolean 	&$error Error flag
+	 * @param string 	&$error_str Error description
+	 * @return string Content of a file
+	 */
 	function get_file_content($filename,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
@@ -424,15 +428,14 @@ class files{
 	}
 
 	/**
-	* Zjisti, zda je soubor ke cteni a zapisu.
-	*
-	* @access public
-	* @static
-	* @param string 	$filename				jmeno souboru
-	* @param boolean 	&$error 				priznak chyby
-	* @param string 	&$error_str 		popis chyby
-	* @return int											0 => neni; 1 => je
-	*/
+	 * Checks if a file is both readable and writable.
+	 *
+	 * @static
+	 * @param string 	$filename Name of a file
+	 * @param boolean 	&$error Error flag
+	 * @param string 	&$error_str Error description
+	 * @return int	1 - is readable and writable; 0 - is not
+	 */
 	function is_readable_and_writable($filename,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
@@ -458,10 +461,18 @@ class files{
 	}
 
 	/**
-	* Urci velikost obrazu z obsahu v parametru.
-	* 
-	* list($width,$height) = files::get_image_size($image_content,$err,$err_str);
-	*/
+	 * Determines width and height of an image in parameter.
+	 *
+	 * <code>
+	 * list($width,$height) = files::get_image_size($image_content,$err,$err_str);
+	 * </code>
+	 * 
+	 * @param string $image_content Binary image data
+	 * @param boolean $error Error flag
+	 * @param string $error_str Error description
+	 * @return array Image dimensions
+	 *
+	 */
 	function get_image_size($image_content,&$error = null,&$error_str = null){
 		$temp = defined("TEMP") ? TEMP : "/tmp";
 		$filename = $temp."/get_image_filename_".posix_getpid();
