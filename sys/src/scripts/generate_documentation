@@ -50,8 +50,11 @@ if (isset($_args)) {
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/atk14";
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/dbmole";
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/dictionary";
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/files";
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/forms";
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/http";
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/logger";
+			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/string";
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/stringbuffer";
 			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../sys/src/inobj_tablerecord";
 			break;
