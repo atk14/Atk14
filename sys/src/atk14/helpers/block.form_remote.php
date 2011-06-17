@@ -40,6 +40,7 @@ function smarty_block_form_remote($params, $content, &$smarty, &$repeat)
 	}
 
 	$form->set_attr("class","remote_form");
+	$form->set_attr("data-remote","true");
 
 	$out = array();
 	$out[] = $form->begin();
@@ -47,4 +48,3 @@ function smarty_block_form_remote($params, $content, &$smarty, &$repeat)
 	$out[] = $form->end();
 	return join("\n",$out);
 }
-?>
