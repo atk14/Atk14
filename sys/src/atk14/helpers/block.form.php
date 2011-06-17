@@ -33,11 +33,7 @@ function smarty_block_form($params, $content, &$smarty, &$repeat)
 
 	$form = $params["form"];
 
-	foreach($params as $k => $v){
-		if(preg_match("/^_(.+)/",$k,$matches)){
-			$form->set_attr($matches[1],$v);
-		}
-	}
+	$form->set_attr(Atk14Utils::ExtractAttributes($params));
 
 	$out = array();
 	$out[] = $form->begin();
