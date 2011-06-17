@@ -29,8 +29,9 @@
 /**
  * Smarty function that generates url.
  *
- * @param array $params
- * @param array $content
+ * @package Atk14
+ * @subpackage Helpers
+ * @author Jaromir Tomek
  */
 function smarty_function_link_to($params,&$smarty){
 	$options = array(
