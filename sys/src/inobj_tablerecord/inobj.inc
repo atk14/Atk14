@@ -52,4 +52,3 @@ class inobj{
 	 */
 	function RegisterErrorCallback($function_name){ }
 }
-?>

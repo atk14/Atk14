@@ -10,11 +10,14 @@
  * $items = $lister->getItems();
  * $items[0]->getRecord(); // $author1
  * $items[1]->getRecord(); // $author2
+ *
  * $items[0]->getRank(); // 0
  * $items[1]->setRank(0); //
  * $items[0]->getRank(); // 1
+ *
+ * $lister->setRecordRank($author2,0);
  */
-class inobj_TableRecord_Lister{
+class inobj_TableRecord_Lister extends inobj{
 	/**
 	 * $authors_lister = new inobj_TableRecord_Lister($article,"Authors",array(
 	 *	
@@ -97,6 +100,19 @@ class inobj_TableRecord_Lister{
 		return $out;
 	}
 
+	/**
+	 * $lister->setRecordRank($author,0); // moves the given author to begin
+	 */
+	function setRecordRank($record,$rank){
+		$record = $this->_objToId($record);
+		foreach($this->getItems() as $item){
+			if($item->getRecordId()==$record){
+				$item->setRank($rank);
+				break;
+			}
+		}
+	}
+
 	function _correctRanking(){
 		$o = $this->_options;
 		$rows = $this->_dbmole->selectRows("
@@ -109,18 +125,16 @@ class inobj_TableRecord_Lister{
 			":owner" => $this->_owner
 		));
 		$expected_rank = 0;
-		$something_updated = false;
 		foreach($rows as $row){
 			if($row["rank"]!=$expected_rank){
 				$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=:expected_rank WHERE $o[id_field_name]=:id",array(
 					":expected_rank" => $expected_rank,
 					":id" => $row["id"],
 				));
-				$something_updated = true;
 			}
 			$expected_rank++;
 		}
-		if($something_updated){ unset($this->_items); }
+		unset($this->_items);
 	}
 
 	function _readItems(){
@@ -160,16 +174,30 @@ class inobj_TableRecord_ListerItem{
 		return (int)$this->_g("rank");
 	}
 
+	function getId(){
+		return (int)$this->_g("id");
+	}
+
 	function setRank($rank){
 		$o = $this->_options;
 		settype($rank,"integer");
-		$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=$o[rank_field_name]+1 WHERE $o[rank_field_name]>=:rank AND $o[owner_field_name]=:owner",array(
-			":rank" => $rank,
-			":owner" => $this->_owner,
-		));
+		if($rank==$this->getRank()){ return; }
+		if($rank>$this->getRank()){
+			$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=$o[rank_field_name]-1 WHERE $o[rank_field_name]<=:rank AND $o[owner_field_name]=:owner AND $o[id_field_name]!=:id",array(
+				":rank" => $rank,
+				":owner" => $this->_owner,
+				":id" => $this,
+			));
+		}else{
+			$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=$o[rank_field_name]+1 WHERE $o[rank_field_name]>=:rank AND $o[owner_field_name]=:owner AND $o[id_field_name]!=:id",array(
+				":rank" => $rank,
+				":owner" => $this->_owner,
+				":id" => $this,
+			));
+		}
 		$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=:rank WHERE $o[id_field_name]=:id",array(
 			":rank" => $rank,
-			":id" => $this->_g("id"),
+			":id" => $this,
 		));
 		$this->_lister->_correctRanking();
 		$this->_s("rank",$rank);
