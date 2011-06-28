@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+
+require_once(dirname(__FILE__)."/load.inc");
+
+$d = $ATK14_GLOBAL->getDatabaseConfig();
+
+echo $d["username"];
+echo "\n";

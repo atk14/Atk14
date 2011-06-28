@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+
+require_once(dirname(__FILE__)."/load.inc");
+
+if(DEVELOPMENT){ echo "DEVELOPMENT"; }
+if(PRODUCTION){ echo "PRODUCTION"; }
+if(TEST){ echo "TEST"; }
+echo "\n";

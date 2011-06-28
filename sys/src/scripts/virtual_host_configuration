@@ -1,0 +1,25 @@
+#!/bin/bash
+
+cd `dirname $0` # /home/joe/webapps/scripts
+cd ..       # /home/joe/webapps/myapp
+
+PWD=`pwd`                                 # /home/joe/webapps/myapp
+APPNAME=`basename "$PWD"`                 # myapp
+
+echo "
+# This is Apache virtual host configuration for http://$APPNAME.localhost/
+# You should follow the instructions bellow to be happy
+#
+#   $ sudo $0 > /etc/apache2/sites-available/$APPNAME.localhost
+#   $ sudo a2ensite $APPNAME.localhost
+#   $ sudo echo '127.0.0.1 $APPNAME.localhost' >> /etc/hosts
+#   $ sudo /etc/init.d/apache2 reload
+
+<VirtualHost *:80>
+  DocumentRoot $PWD
+  ServerName $APPNAME.localhost
+  Options FollowSymLinks
+  <Directory $PWD>
+  AllowOverride All
+  </Directory>
+</VirtualHost>"

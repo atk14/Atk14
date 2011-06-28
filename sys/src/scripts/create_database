@@ -1,0 +1,29 @@
+#!/bin/bash
+
+cd `dirname $0`;
+
+PG_USER=postgres                          # Postgresql's service account name
+DBNAME=`./_database_username`
+DBPASSWORD=`./_database_password`
+ENVIRONMENT=`./_atk14_env`
+
+
+sql=$( cat <<EOF
+-- creating database for $ENVIRONMENT
+CREATE DATABASE $DBNAME;
+CREATE USER $DBNAME WITH ENCRYPTED PASSWORD '$DBPASSWORD';
+EOF
+)
+
+echo "Gonna execute the following SQL as user $PG_USER in database template1:"
+echo ""
+echo "$sql"
+echo ""
+echo "Your system password may be requested due to sudo usage"
+echo -n "Are you happy with that? (press y if so) "
+read confirm
+if [ "$confirm" != "y" ]; then
+  exit 1
+fi
+
+sudo -u $PG_USER -s "echo \"$sql\" | psql template1"
