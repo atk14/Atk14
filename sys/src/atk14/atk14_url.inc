@@ -328,6 +328,39 @@ class Atk14Url{
 	}
 
 	/**
+	 * 
+	 * Atk14Url::AddRouter(new ProductsRouter());
+	 * Atk14Url::AddRouter("",new ProductsRouter());
+	 * Atk14Url::AddRouter("admin",new ProductsRouter());
+	 * Atk14Url::AddRouter("*",new ProductsRouter()); // TODO
+	 */
+	function AddRouter($namespace_or_router,$router = null){
+		if(!isset($router)){
+			$router = $namespace_or_router;
+			$namespace = "";
+		}else{
+			$namespace = $namespace_or_router;
+		}
+	}
+
+	function _SetRouter_GetRouters($namespace,$router = null){
+		static $ROUTERS;
+		if(!isset($ROUTERS)){ $ROUTERS = array(); }
+		if(!isset($ROUTERS["*"])){ $ROUTERS["*"] = array(); }	
+		if(!isset($ROUTERS[$namespace])){ $ROUTERS[$namespace] = $ROUTERS["*"]; }
+
+		if(isset($router)){
+			if($namespace=="*"){
+				foreach($ROUTERS as &$rs){ $rs[] = $router; }
+			}else{
+				$ROUTERS[$namespace][] = $router;
+			}
+		}else{
+			return $ROUTERS[$namespace];
+		}
+	}
+	
+	/**
 	 * @access private
 	 *
 	 */

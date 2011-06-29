@@ -5,6 +5,7 @@ require_once("$__PATH__/atk14_controller.inc");
 require_once("$__PATH__/atk14_dispatcher.inc");
 require_once("$__PATH__/atk14_locale.inc");
 require_once("$__PATH__/atk14_global.inc");
+require_once("$__PATH__/atk14_router.inc");
 require_once("$__PATH__/atk14_url.inc");
 require_once("$__PATH__/atk14_session.inc");
 require_once("$__PATH__/atk14_flash.inc");
