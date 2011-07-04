@@ -1029,9 +1029,8 @@ class Atk14Controller{
 	* The returned value will be accessible through $this->returned_by["%step_name%"].
 	*/
 	function _before_walking(){
-		
-	}
 
+	}
 }
 
 /**

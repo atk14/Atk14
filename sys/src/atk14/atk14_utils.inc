@@ -80,6 +80,10 @@ class Atk14Utils{
 			$path = $ATK14_GLOBAL->getApplicationPath()."conf/";
 		}
 
+		if(file_exists("$path/routers/")){
+			class_autoload("$path/routers/");
+		}
+
 		if(file_exists($_f = $path."database.yml")){
 			$ATK14_GLOBAL->setValue("database",miniYAML::Load(files::get_file_content($_f,$e,$e_s)));
 		}

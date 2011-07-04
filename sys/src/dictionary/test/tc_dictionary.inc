@@ -58,6 +58,12 @@ class tc_dictionary extends tc_base{
 
 		$dict->s("key4","value4");
 		$this->assertEquals("value4",$dict->g("key4"));
+
+		$dict->add("key5","value5");
+		$this->assertEquals("value5",$dict->g("key5"));
+
+		$dict->del("key5");
+		$this->assertNull($dict->g("key5"));
 	}
 
 	function test_type_definition(){

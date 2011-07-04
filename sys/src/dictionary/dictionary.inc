@@ -151,6 +151,13 @@ class Dictionary{
 	function s($key,$value){ return $this->setValue($key,$value); }
 
 	/**
+	 * Alias for setValue()
+	 *
+	 * @uses setValue()
+	 */
+	function add($key,$value){ return $this->setValue($key,$value); }
+
+	/**
 	 * Unsets value in the dictionary.
 	 *
 	 * Unsets / removes a value from the dictionary specified by $key.
@@ -203,9 +210,9 @@ class Dictionary{
 	 *
 	 * @param string $key
 	 */
-	function delete($key){
-		unset($this->_Values[$key]);
-	}
+	function delete($key){ return $this->unsetValue($key); }
+
+	function del($key){ return $this->unsetValue($key); }
 
 	/**
 	 * Checks size of Dictionary.

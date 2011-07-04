@@ -46,8 +46,10 @@ class Atk14Url{
 		// /domain-examination/plovarna.cz/?small=1 --> domain-examination/plovarna.cz
 		// /domain-examination/plovarna.cz?small=1 --> domain-examination/plovarna.cz
 		$uri = $requested_uri;
-		$uri = preg_replace("/\\?.*/","",$uri);
-		$uri = preg_replace("/\\/$/","",$uri); // odstraneni lomitka na konci
+		$uri = preg_replace('/\?.*/','',$uri);
+		$_uri = $uri;
+		$uri = preg_replace('/\/$/','',$uri); // odstraneni lomitka na konci
+		$trailing_slash = $_uri!=$uri;
 		if(strlen($uri)>strlen($ATK14_GLOBAL->getBaseHref())){
 			$uri = substr($uri,-(strlen($uri) - strlen($ATK14_GLOBAL->getBaseHref())));
 		}else{
@@ -63,6 +65,30 @@ class Atk14Url{
 				$uri = preg_replace("/^\\//","",$uri);
 			}
 		}
+
+		$_uri = $uri;
+		if($trailing_slash){ $_uri .= "/"; }
+		if(!preg_match('/^\//',$_uri)){ $_uri = "/$_uri"; }
+		$_uri = new String($_uri);
+		$_params = new Dictionary($_GET);
+		foreach(Atk14Url::GetRouters($namespace) as $router){
+			$router->namespace = $namespace;
+			$router->params = $_params;
+			$router->recognize($_uri,$_params,$namespace);
+			if($router->controller && $router->action){
+				return array(
+					"namespace" => $namespace,
+					"controller" => $router->controller,
+					"action" => $router->action,
+					"lang" => $router->lang,
+					"page_title" => $router->page_title,
+					"page_description" => $router->page_description,
+					"get_params" => $router->params,
+					"force_redirect" => null
+				);
+			}
+		}
+
 
 		$routes = $ATK14_GLOBAL->getPreparedRoutes($namespace);
 		//echo "<pre>"; var_dump($routes); echo "<pre>"; 
@@ -185,7 +211,7 @@ class Atk14Url{
 			"action" => $ATK14_GLOBAL->getValue("action"),
 			"lang" => $ATK14_GLOBAL->getValue("lang")
 		),$params);
-		//echo "<pre>"; var_dump($params); echo "</pre>";
+		//echo "<pre>"; var_dump($params); echo "</pre>"; exit;
 		$options = array_merge(array(
 			"connector" => "&amp;",
 			"anchor" => null,
@@ -203,87 +229,96 @@ class Atk14Url{
 			$options["with_hostname"] = true;
 		}
 
-		$routes = $ATK14_GLOBAL->getPreparedRoutes($params["namespace"],array("path" => "$params[lang]/$params[controller]/$params[action]"));
+		$out = null;
 		$get_params = array();
 
-		$_params = $params;
-		unset($_params["namespace"]);
-		unset($_params["controller"]);
-		unset($_params["action"]);
-		unset($_params["lang"]);
-
-		$out = "";
-		foreach($routes as $pattern => $rules){	
-			//var_dump($pattern);
-			if(!(
-				Atk14Url::_ParamMatches($rules["controller"],$params["controller"]) &&
-				Atk14Url::_ParamMatches($rules["action"],$params["action"]) &&
-				Atk14Url::_ParamMatches($rules["lang"],$params["lang"])
-			)){
-				continue;
-			}
-
-			$_pattern_params = $rules;
-			$omit_trailing_slash = isset($rules["__omit_trailing_slash__"]) ? (bool)$rules["__omit_trailing_slash__"] : false;
-			unset($_pattern_params["controller"]);
-			unset($_pattern_params["action"]);
-			unset($_pattern_params["lang"]);
-			unset($_pattern_params["__page_title__"]);
-			unset($_pattern_params["__page_description__"]);
-			unset($_pattern_params["__omit_trailing_slash__"]);
-
-			$_matched = true;
-			reset($_pattern_params);
-			while(list($_p_key,$_p_value) = each($_pattern_params)){
-				if(!isset($_params[$_p_key])){
-					$_matched = false;
-					break;
+		foreach(Atk14Url::GetRouters($params["namespace"]) as $router){
+			if($out = $router->build($params)){
+				foreach($router->params->toArray() as $k => $v){
+					$get_params[] = Atk14Url::_EncodeUrlParam($k,$v);
 				}
-				if(is_object($_params[$_p_key])){ $_params[$_p_key] = $_params[$_p_key]->getId(); }
-				if(!Atk14Url::_ParamMatches($_p_value,$_params[$_p_key])){
-					$_matched = false;
-					break;
-				}
-			}
-			if(!$_matched){ continue; }
 
-			$out = $pattern;
-			
-			break;
+				break;
+			}
 		}
 
-		// nahrazeni <controller>/<action>... -> domain/examination....
-		reset($params);
-		while(list($_key,$_value) = each($params)){
-			if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
-			if($_key=="namespace"){ continue; } // namespace se umistuje vzdy do URL; neprenasi se v GET parametrech
-			if(isset($rules[$_key]["regexp"]) && !preg_match("/^\\/.*\\//",$rules[$_key]["value"])){ continue; }
-			if(is_int(strpos($out,"<$_key>"))){
-				$out = str_replace("<$_key>",urlencode($_value),$out);
-				continue;
-			}
-			if($_key=="controller" && isset($rules["controller"])){ continue; }
-			if($_key=="action" && isset($rules["action"])){ continue; }
-			if($_key=="lang" && isset($rules["lang"])){ continue; }
-			if(strpos($out,"<$_key>")===false){
-				if(is_array($_value)){
-					// zatim se tu uvazuje pouze s jednorozmernym indexovanym polem
-					// TODO: doplnit hashe a vicerozmerna pole
-					foreach($_value as $_a_key => $_a_value){
-						$get_params[] = urlencode($_key."[]")."=".urlencode($_a_value);
-					}
+		if($out){
+			$out = preg_replace('/^\//','',$out);
+		}else{
+
+			$routes = $ATK14_GLOBAL->getPreparedRoutes($params["namespace"],array("path" => "$params[lang]/$params[controller]/$params[action]"));
+			$get_params = array();
+
+			$_params = $params;
+			unset($_params["namespace"]);
+			unset($_params["controller"]);
+			unset($_params["action"]);
+			unset($_params["lang"]);
+
+			$out = "";
+			foreach($routes as $pattern => $rules){	
+				//var_dump($pattern);
+				if(!(
+					Atk14Url::_ParamMatches($rules["controller"],$params["controller"]) &&
+					Atk14Url::_ParamMatches($rules["action"],$params["action"]) &&
+					Atk14Url::_ParamMatches($rules["lang"],$params["lang"])
+				)){
 					continue;
 				}
-				$get_params[] = urlencode($_key)."=".urlencode($_value);
-				continue;
+
+				$_pattern_params = $rules;
+				$omit_trailing_slash = isset($rules["__omit_trailing_slash__"]) ? (bool)$rules["__omit_trailing_slash__"] : false;
+				unset($_pattern_params["controller"]);
+				unset($_pattern_params["action"]);
+				unset($_pattern_params["lang"]);
+				unset($_pattern_params["__page_title__"]);
+				unset($_pattern_params["__page_description__"]);
+				unset($_pattern_params["__omit_trailing_slash__"]);
+
+				$_matched = true;
+				reset($_pattern_params);
+				while(list($_p_key,$_p_value) = each($_pattern_params)){
+					if(!isset($_params[$_p_key])){
+						$_matched = false;
+						break;
+					}
+					if(is_object($_params[$_p_key])){ $_params[$_p_key] = $_params[$_p_key]->getId(); }
+					if(!Atk14Url::_ParamMatches($_p_value,$_params[$_p_key])){
+						$_matched = false;
+						break;
+					}
+				}
+				if(!$_matched){ continue; }
+
+				$out = $pattern;
+				
+				break;
 			}
+
+			// nahrazeni <controller>/<action>... -> domain/examination....
+			reset($params);
+			while(list($_key,$_value) = each($params)){
+				if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
+				if($_key=="namespace"){ continue; } // namespace se umistuje vzdy do URL; neprenasi se v GET parametrech
+				if(isset($rules[$_key]["regexp"]) && !preg_match("/^\\/.*\\//",$rules[$_key]["value"])){ continue; }
+				if(is_int(strpos($out,"<$_key>"))){
+					$out = str_replace("<$_key>",urlencode($_value),$out);
+					continue;
+				}
+				if($_key=="controller" && isset($rules["controller"])){ continue; }
+				if($_key=="action" && isset($rules["action"])){ continue; }
+				if($_key=="lang" && isset($rules["lang"])){ continue; }
+				if(strpos($out,"<$_key>")===false){
+					$get_params[] = Atk14Url::_EncodeUrlParam($_key,$_value);
+					continue;
+				}
+			}
+			if(strlen($out)>0 && !$omit_trailing_slash){ $out .= "/"; }
 		}
 
-		$_lomitko = "";
-		if(strlen($out)>0 && !$omit_trailing_slash){ $_lomitko = "/"; }
 		$_namespace = "";
 		if(strlen($params["namespace"])>0){ $_namespace = "$params[namespace]/"; }
-		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out.$_lomitko;
+		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out;
 		if(sizeof($get_params)>0){ $out .= "?".join($options["connector"],$get_params); }
 		if(strlen($options["anchor"])>0){ $out .= "#$options[anchor]"; }
 
@@ -327,12 +362,27 @@ class Atk14Url{
 		return $out;
 	}
 
+	function _EncodeUrlParam($_key,$_value){
+		if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
+		if(is_array($_value)){
+			// zatim se tu uvazuje pouze s jednorozmernym indexovanym polem
+			// TODO: doplnit hashe a vicerozmerna pole
+			foreach($_value as $_a_key => $_a_value){
+				$get_params[] = urlencode($_key."[]")."=".urlencode($_a_value);
+			}
+			continue;
+		}
+		return urlencode($_key)."=".urlencode($_value);
+	}
+
 	/**
 	 * 
 	 * Atk14Url::AddRouter(new ProductsRouter());
-	 * Atk14Url::AddRouter("",new ProductsRouter());
-	 * Atk14Url::AddRouter("admin",new ProductsRouter());
-	 * Atk14Url::AddRouter("*",new ProductsRouter()); // TODO
+	 * Atk14Url::AddRouter("ProductsRouter");
+	 *
+	 * Atk14Url::AddRouter("","ProductsRouter");
+	 * Atk14Url::AddRouter("admin","ProductsRouter");
+	 * Atk14Url::AddRouter("*","ProductsRouter");
 	 */
 	function AddRouter($namespace_or_router,$router = null){
 		if(!isset($router)){
@@ -341,6 +391,17 @@ class Atk14Url{
 		}else{
 			$namespace = $namespace_or_router;
 		}
+
+		if(is_string($router)){ $router = new $router(); } // "ProductsRouter" -> ProductsRouter
+
+		Atk14Url::_SetRouter_GetRouters($namespace,$router);
+	}
+
+	/**
+	 *
+	 */
+	function GetRouters($namespace = ""){
+		return Atk14Url::_SetRouter_GetRouters($namespace);
 	}
 
 	function _SetRouter_GetRouters($namespace,$router = null){
