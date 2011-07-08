@@ -69,12 +69,11 @@ class Atk14Url{
 		$_uri = $uri;
 		if($trailing_slash){ $_uri .= "/"; }
 		if(!preg_match('/^\//',$_uri)){ $_uri = "/$_uri"; }
-		$_uri = new String($_uri);
 		$_params = new Dictionary($_GET);
 		foreach(Atk14Url::GetRouters($namespace) as $router){
 			$router->namespace = $namespace;
 			$router->params = $_params;
-			$router->recognize($_uri,$_params,$namespace);
+			$router->recognizeUri($_uri,$_params,$namespace);
 			if($router->controller && $router->action){
 				return array(
 					"namespace" => $namespace,
@@ -84,7 +83,7 @@ class Atk14Url{
 					"page_title" => $router->page_title,
 					"page_description" => $router->page_description,
 					"get_params" => $router->params,
-					"force_redirect" => null
+					"force_redirect" => $router->redirected_to,
 				);
 			}
 		}
@@ -233,7 +232,7 @@ class Atk14Url{
 		$get_params = array();
 
 		foreach(Atk14Url::GetRouters($params["namespace"]) as $router){
-			if($out = $router->build($params)){
+			if($out = $router->buildLink($params)){
 				foreach($router->params->toArray() as $k => $v){
 					$get_params[] = Atk14Url::_EncodeUrlParam($k,$v);
 				}
@@ -373,6 +372,22 @@ class Atk14Url{
 			continue;
 		}
 		return urlencode($_key)."=".urlencode($_value);
+	}
+
+	function EncodeParams($params, $options = array()){
+		$options = array_merge(array(
+			"connector" => "&",
+		),$options);
+
+		if(is_object($params)){ $params = $params->toArray(); }
+		if(!sizeof($params)){ return ""; }
+
+		$out = array();
+		foreach($params as $k => $v){
+			$out[] = Atk14Url::_EncodeUrlParam($k,$v);
+		}
+
+		return "?".join($options["connector"],$out);
 	}
 
 	/**

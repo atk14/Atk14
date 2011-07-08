@@ -177,6 +177,10 @@ class Dictionary{
 	function defined($key){
 		return isset($this->_Values[$key]);
 	}
+
+	function keys(){
+		return array_keys($this->_Values);
+	}
 	
 	/**
 	 * Alias to method defined().
@@ -268,4 +272,3 @@ class Dictionary{
 		return new Dictionary($this->toArray());
 	}
 }
-?>

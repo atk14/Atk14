@@ -440,6 +440,10 @@ class String{
 		return $out;
 	}
 
+	function downcase(){
+		return $this->_copy(strtolower($this->_String));
+	}
+
 	function truncate($length,$options = array()){
 		$options = array_merge(array(
 			"omission" => "...",
