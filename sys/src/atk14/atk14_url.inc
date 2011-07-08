@@ -75,19 +75,18 @@ class Atk14Url{
 			$router->params = $_params;
 			$router->recognizeUri($_uri,$_params,$namespace);
 			if($router->controller && $router->action){
-				return array(
+				return Atk14Url::_FindForceRedirect(array(
 					"namespace" => $namespace,
 					"controller" => $router->controller,
 					"action" => $router->action,
 					"lang" => $router->lang,
 					"page_title" => $router->page_title,
 					"page_description" => $router->page_description,
-					"get_params" => $router->params,
+					"get_params" => $router->params->toArray(),
 					"force_redirect" => $router->redirected_to,
-				);
+				),$requested_uri);
 			}
 		}
-
 
 		$routes = $ATK14_GLOBAL->getPreparedRoutes($namespace);
 		//echo "<pre>"; var_dump($routes); echo "<pre>"; 
@@ -150,9 +149,9 @@ class Atk14Url{
 		}
 
 		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
-		$_get_params = array_merge($_GET,$get_params);
+		$get_params = array_merge($_GET,$get_params);
 		$expected_link = Atk14Url::BuildLink(array_merge(
-			$_get_params,
+			$get_params,
 			array(
 				"controller" => $out["controller"],
 				"action" => $out["action"],
@@ -164,7 +163,7 @@ class Atk14Url{
 			$_force_redirect = $expected_link;
 		}
 
-		return array(
+		return Atk14Url::_FindForceRedirect(array(
 			"namespace" => $namespace,
 			"controller" => $out["controller"],
 			"action" => $out["action"],
@@ -176,7 +175,26 @@ class Atk14Url{
 
 			"get_params" => $get_params,
 			"force_redirect" => $_force_redirect
-		);
+		),$requested_uri);
+	}
+
+	function _FindForceRedirect($out,$requested_uri){
+		if($out["force_redirect"]){ return $out; }
+
+		$expected_link = Atk14Url::BuildLink(array_merge(
+			$out["get_params"],
+			array(
+				"controller" => $out["controller"],
+				"action" => $out["action"],
+				"lang" => $out["lang"],
+				"namespace" => $out["namespace"],
+			)
+		),array("connector" => "&"));
+		if($expected_link!=$requested_uri){
+			$out["force_redirect"] = $expected_link;
+		}
+
+		return $out;
 	}
 
 	/**
@@ -233,10 +251,7 @@ class Atk14Url{
 
 		foreach(Atk14Url::GetRouters($params["namespace"]) as $router){
 			if($out = $router->buildLink($params)){
-				foreach($router->params->toArray() as $k => $v){
-					$get_params[] = Atk14Url::_EncodeUrlParam($k,$v);
-				}
-
+				$get_params = $router->params->toArray();
 				break;
 			}
 		}
@@ -308,7 +323,7 @@ class Atk14Url{
 				if($_key=="action" && isset($rules["action"])){ continue; }
 				if($_key=="lang" && isset($rules["lang"])){ continue; }
 				if(strpos($out,"<$_key>")===false){
-					$get_params[] = Atk14Url::_EncodeUrlParam($_key,$_value);
+					$get_params[$_key] = $_value;
 					continue;
 				}
 			}
@@ -317,8 +332,7 @@ class Atk14Url{
 
 		$_namespace = "";
 		if(strlen($params["namespace"])>0){ $_namespace = "$params[namespace]/"; }
-		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out;
-		if(sizeof($get_params)>0){ $out .= "?".join($options["connector"],$get_params); }
+		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out.Atk14Url::EncodeParams($get_params);
 		if(strlen($options["anchor"])>0){ $out .= "#$options[anchor]"; }
 
 		if($options["with_hostname"]){

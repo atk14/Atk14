@@ -20,9 +20,8 @@ class Atk14Router{
 	}
 
 	function recognizeUri($uri,$params,$namespace){
-		global $ATK14_GLOBAL;
 		$this->action = $this->controller = null;
-		$this->lang = $ATK14_GLOBAL->getDefaultLang();
+		$this->lang = $this->default_lang;
 		$this->namespace = $namespace;
 		$this->redirected_to = null;
 
@@ -34,24 +33,6 @@ class Atk14Router{
 			}
 		}
 		return $out;
-	}
-
-	/**
-	 * Consider an URI like this:
-	 * 	/bookstore/admin/book/123-hobbit?print=true
-	 * where "bookstore" is base href and "admin" is namespace.
-	 * 
-	 * Then the $uri will be
-	 * 	/book/123-hobbit
-	 * 
-	 * It means no base href nor namespace nor params (the part after question mark; params are accessible through $this->params)
-	 *
-	 * When the $uri is beeing recognized, attributes $this->controller and $this->action must be set - otherwise leave them untouched.
-	 *
-	 * @abstract
-	 */
-	function recognize($uri){
-		// must be covered by the descendent...
 	}
 
 	function buildLink($params){
@@ -68,15 +49,41 @@ class Atk14Router{
 	}
 
 	/**
+	 * Consider an URI like this:
+	 * 	/bookstore/admin/book/123-hobbit?print=true
+	 * where "bookstore" is base href and "admin" is namespace.
+	 * 
+	 * Then the $uri will be
+	 * 	/book/123-hobbit
+	 * 
+	 * It means there's no base href, namespace nor params (the part after question mark; params are accessible through $this->params)
+	 *
+	 * When the $uri is beeing recognized, attributes $this->controller and $this->action must be set - otherwise leave them untouched.
+	 *
+	 * @abstract
+	 */
+	function recognize($uri){
+		// must be covered by the descendent...
+	}
+
+
+	/**
 	 * 
 	 * 
 	 * @abstract
 	 */
 	function build(){
-
+		// must be covered by the descendent...
 	}
 
 	/**
+	 * Give a new URI on which you want to redirect.
+	 *  
+	 * Do not mention base href, namespace nor parameters.
+	 * 
+	 * <code>
+	 *	$this->_redirect_to("/book/123-hobbit-or-there-and-back-again"); // redirecting from the previous title "/book/123-hobbit"
+	 * </code>
 	 * 
 	 */
 	function _redirect_to($new_uri){
@@ -90,6 +97,16 @@ class Atk14Router{
 		$this->redirected_to = $base_href.$namespace.$new_uri.Atk14Url::EncodeParams($this->params,array("connector" => "&"));
 	}
 
+	/**
+	 * Useful within the recognize() method in case when you expect something and you don't find it.
+	 *
+	 * <code>
+	 *  if(!$book = Book::GetInstanceById($this->params->getInt("id"))){
+	 *		$this->_not_found();
+	 *		return;
+	 *	}
+	 *	</code>
+	 */
 	function _not_found(){
 		$this->controller = "application";
 		$this->action = "error404";
