@@ -150,6 +150,8 @@ class Atk14Url{
 
 		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
 		$get_params = array_merge($_GET,$get_params);
+
+		/*
 		$expected_link = Atk14Url::BuildLink(array_merge(
 			$get_params,
 			array(
@@ -162,6 +164,7 @@ class Atk14Url{
 		if($expected_link!=$requested_uri){
 			$_force_redirect = $expected_link;
 		}
+		*/
 
 		return Atk14Url::_FindForceRedirect(array(
 			"namespace" => $namespace,
@@ -174,12 +177,20 @@ class Atk14Url{
 			"page_description" => strlen($out["__page_description__"]) ? _($out["__page_description__"]) : "",
 
 			"get_params" => $get_params,
-			"force_redirect" => $_force_redirect
+			"force_redirect" => null
 		),$requested_uri);
 	}
 
 	function _FindForceRedirect($out,$requested_uri){
+		// zde muze byt dojit ke zmene $out["lang"]
+		if(function_exists("atk14_initialize_locale")){
+			atk14_initialize_locale($out["lang"]);
+		}else{
+			i18n::init_translation($out["lang"]); // 
+		}
+
 		if($out["force_redirect"]){ return $out; }
+		if($out["controller"]=="application" && $out["action"]=="error404"){ return $out; }
 
 		$expected_link = Atk14Url::BuildLink(array_merge(
 			$out["get_params"],
