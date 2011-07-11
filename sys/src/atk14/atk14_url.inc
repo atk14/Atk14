@@ -386,15 +386,16 @@ class Atk14Url{
 		return $out;
 	}
 
-	function _EncodeUrlParam($_key,$_value){
+	function _EncodeUrlParam($_key,$_value,$options = array()){
 		if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
 		if(is_array($_value)){
 			// zatim se tu uvazuje pouze s jednorozmernym indexovanym polem
 			// TODO: doplnit hashe a vicerozmerna pole
+			$out = array();
 			foreach($_value as $_a_key => $_a_value){
-				$get_params[] = urlencode($_key."[]")."=".urlencode($_a_value);
+				$out[] = Atk14Url::_EncodeUrlParam($_key."[]",$_a_value,$options);
 			}
-			continue;
+			return join($options["connector"],$out);
 		}
 		return urlencode($_key)."=".urlencode($_value);
 	}
@@ -409,7 +410,7 @@ class Atk14Url{
 
 		$out = array();
 		foreach($params as $k => $v){
-			$out[] = Atk14Url::_EncodeUrlParam($k,$v);
+			$out[] = Atk14Url::_EncodeUrlParam($k,$v,$options);
 		}
 
 		return "?".join($options["connector"],$out);
