@@ -426,7 +426,9 @@ class Atk14Controller{
 				$smarty->atk14_contents = $action_content;
 				$layout_content = $smarty->fetch($ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$layout_template.tpl");
 				foreach($smarty->atk14_contents as $c_key => $c){
-					$layout_content = str_replace("<%atk14_content[$c_key]%>",$c,$layout_content);
+					// TODO: toto nahrazeni uz provadim rovnou v helperu placeholder...
+					// facha to? vyhodime to?
+					//$layout_content = str_replace("<%atk14_content[$c_key]%>",$c,$layout_content);
 				}
 				$this->response->write($layout_content);
 			}else{
