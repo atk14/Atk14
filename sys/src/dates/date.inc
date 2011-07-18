@@ -57,6 +57,7 @@ class Date{
 	
 	function getDate(){ return $this->_Date; }
 	function toString($format = "Y-m-d"){ return date($format,$this->getUnixTimestamp()); }
+	function getId(){ return $this->toString(); }
 
 	function format($format_string){ return date($format_string,$this->getUnixTimestamp()); }
 
@@ -266,4 +267,3 @@ class Date{
 	// magic method
 	function __toString(){ return $this->toString(); }
 }
-?>
