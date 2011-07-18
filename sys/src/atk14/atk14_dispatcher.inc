@@ -45,12 +45,30 @@ class Atk14Dispatcher{
 		$ATK14_LOGGER->start();
 
 		Atk14Timer::Start("Atk14Url::RecognizeRoute");
-		$route_ar = Atk14Url::RecognizeRoute($request->getRequestURI());
+		$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestURI());
 		$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
 		$_GET = array_merge($_GET,$route_ar["get_params"]);
 		Atk14Timer::Stop("Atk14Url::RecognizeRoute");
 
-		if(1 && $request->get() && strlen($route_ar["force_redirect"])>0 && !$request->xhr()){
+		if(strlen($uri)==strlen($route_ar["force_redirect"])){
+			// Here solving PHP's dot to underscore conversion.
+			// If the uri contains a parametr with dot in it's name, PHP silently converts it to underscore.
+			// Thus such URL:
+			// 		http://www.myapp.com/en/books/detail/?id=1&in.format=xml
+			// should not be redirected to
+			// 		http://www.myapp.com/en/books/detail/?id=1&in_format=xml
+			$_meaningful_redirect = false;
+			for($i=0;$i<strlen($uri);$i++){
+				if($uri[$i]==$route_ar["force_redirect"][$i]){ continue; }
+				if($uri[$i]=="." && $route_ar["force_redirect"][$i]=="_"){ continue; }
+				$_meaningful_redirect = true;
+				break;
+			}
+			if(!$_meaningful_redirect){ $route_ar["force_redirect"] = null; }
+		}
+
+
+		if($request->get() && strlen($route_ar["force_redirect"])>0 && !$request->xhr()){
 			$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
 			$options["display_response"] && $HTTP_RESPONSE->flushAll();
 			return $HTTP_RESPONSE;
