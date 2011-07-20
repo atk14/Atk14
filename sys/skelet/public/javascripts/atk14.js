@@ -31,6 +31,13 @@ var ATK14 = (function( $ ) {
 		dataType: "conscript"
 	});
 
+	// Triggers an event on an element and returns the event result
+	function fire( obj, name, data ) {
+		var event = new $.Event( name );
+		obj.trigger( event, data );
+		return event.result !== false;
+	};
+
 
 	return {
 
@@ -58,8 +65,8 @@ var ATK14 = (function( $ ) {
 				type: method || 'GET',
 				data: data,
 				dataType: dataType,
-				beforeSend: function(xhr, settings) {
-					//return fire(element, 'ajax:beforeSend', [ xhr, settings ]);
+				beforeSend: function( xhr, settings ) {
+					return fire( $element, "ajax:beforeSend", [ xhr, settings ] );
 				},
 				success: function( data, status, xhr ) {
 					$element.trigger( "ajax:success", [ data, status, xhr ] );
