@@ -343,8 +343,14 @@ class Atk14Controller{
 
 		// If this is an ArticlesController for instance and there is a file ./app/forms/articles/articles_form.inc, it will be included.
 		// The class ArticlesForm is ment to be the base class for forms used by the controller.
-		if(file_exists($base_form_filename = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/$this->controller/{$this->controller}_form.inc")){
-			require_once($base_form_filename);
+		// TODO: predelat to na volani class_autoload() (?)
+		$_base_forms = array();
+		if($this->namespace!=""){ $_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/{$this->namespace}_form.inc"; } // ./app/forms/admin/admin_form.inc
+		$_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/$this->controller/{$this->controller}_form.inc"; // ./app/forms/admin/articles/articles_form.inc
+		foreach($_base_forms as $_base_form){
+			if(file_exists($_base_form)){
+				require_once($_base_form);
+			}
 		}
 
 		// pokud nenajdeme formular urceny presne pro tuto akci, pokusime se najit ApplicationForm a nakonec Atk14Form
