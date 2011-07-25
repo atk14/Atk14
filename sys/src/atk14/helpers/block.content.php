@@ -36,4 +36,3 @@ function smarty_block_content($params,$content,&$smarty,&$repeat){
 
 	return "";
 }
-?>

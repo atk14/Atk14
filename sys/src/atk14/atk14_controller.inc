@@ -434,7 +434,7 @@ class Atk14Controller{
 				foreach($smarty->atk14_contents as $c_key => $c){
 					// TODO: toto nahrazeni uz provadim rovnou v helperu placeholder...
 					// facha to? vyhodime to?
-					//$layout_content = str_replace("<%atk14_content[$c_key]%>",$c,$layout_content);
+					$layout_content = str_replace("<%atk14_content[$c_key]%>",$c,$layout_content);
 				}
 				$this->response->write($layout_content);
 			}else{
