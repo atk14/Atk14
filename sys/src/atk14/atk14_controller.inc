@@ -403,8 +403,12 @@ class Atk14Controller{
 					$layout_template = "_default";
 				}
 			}
-			if(strlen($layout_template)>0 && !file_exists($ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$layout_template.tpl")){
-				Atk14Utils::ErrorLog("Hey Dude,  missing layout template: layouts/$this->namespace/$layout_template.tpl",$this->response);
+			if(
+				strlen($layout_template)>0 &&
+				!file_exists($_layout_template = $ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$layout_template.tpl") &&
+				!file_exists($_layout_template = $ATK14_GLOBAL->getApplicationPath()."layouts/$layout_template.tpl")
+			){
+				Atk14Utils::ErrorLog("Hey Dude,  missing layout template: layouts/$this->namespace/$layout_template.tpl or layouts/$layout_template.tpl",$this->response);
 				return $this->response;
 			}
 
@@ -430,7 +434,7 @@ class Atk14Controller{
 
 			if($this->render_layout){
 				$smarty->atk14_contents = $action_content;
-				$layout_content = $smarty->fetch($ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$layout_template.tpl");
+				$layout_content = $smarty->fetch($_layout_template);
 				foreach($smarty->atk14_contents as $c_key => $c){
 					// TODO: toto nahrazeni uz provadim rovnou v helperu placeholder...
 					// facha to? vyhodime to?
