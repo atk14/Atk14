@@ -819,6 +819,21 @@ class Atk14Form extends Form
         $this->_call_super_constructor();
         return parent::get_field($name);
     }
+
+    /**
+    * Turns on ssl on 
+    */
+    function enable_ssl(){
+        global $HTTP_REQUEST;
+
+        if(!$HTTP_REQUEST->ssl()){
+            if(preg_match('/^http:/',$this->atk14_action)){
+                $this->atk14_action = preg_replace('/^http:/','https:',$this->atk14_action);
+            }elseif(preg_match('/^\//',$this->atk14_action)){
+                $this->atk14_action = "https://".$HTTP_REQUEST->getServerName().$this->atk14_action;
+            } // TODO is there an another possibility?
+        }
+    }
 }
 // vim: set et ts=4 sw=4 enc=utf-8 fenc=utf-8 si: 
 ?>
