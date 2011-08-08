@@ -50,6 +50,9 @@ class inobj_TableRecord_Lister extends inobj{
 		$this->_options = $options;
 	}
 
+	/**
+	 * Adds an record at the end of the list.
+	 */
 	function append($record){
 		$o = $this->_options;
 		$rank = $this->_dbmole->selectSingleValue("SELECT MAX($o[rank_field_name]) FROM $o[table_name] WHERE $o[owner_field_name]=:owner",array(":owner" => $this->_owner));
@@ -57,9 +60,32 @@ class inobj_TableRecord_Lister extends inobj{
 
 		$this->_add($record,$rank);
 	}
+	
+	/**
+	 * Alias for inobj_TableRecord_Lister::append().
+	 */
+	function add($record){ return $this->append($record); }
 
-	function prepend($record){
-		$this->_add($record,-1);
+	/**
+	 * Pepends a record at the beginning of the list.
+	 */
+	function prepend($record){ $this->_add($record,-1); }
+
+	/**
+	 * Alias for inobj_TableRecord_Lister::prepend()
+	 */	
+	function unshift($record){ return $this->prepend($record); }
+
+	/**
+	 * Shift an record off the beginning of the list.
+	 */
+	function shift(){
+		$items = $this->getItems();
+		if(isset($items[0])){
+			$record = $items[0]->getRecord();
+			$this->remove($record);
+			return $record;
+		}
 	}
 
 	function _add($record,$rank){
@@ -85,9 +111,31 @@ class inobj_TableRecord_Lister extends inobj{
 		unset($this->_items);
 	}
 
-	function contains($record){
-
+	/**
+	 * Removes all items in the list.
+	 */
+	function clear(){
+		$o = $this->_options;
+		$this->_dbmole->doQuery("DELETE FROM $o[table_name] WHERE
+			$o[owner_field_name]=:owner
+		",array(":owner" => $this->_owner));
+		unset($this->_items);
 	}
+
+	/**
+	 * Does the list contain given record?
+	 */
+	function contains($record){
+		if(is_object($record)){ $record = $record->getId(); }
+		foreach($this->getItems() as $item){
+			if($item->getRecordId()==$record){ return true; }
+		}
+		return false;
+	}
+
+	function size(){ return sizeof($this->getItems()); }
+
+	function isEmpty(){ return $this->size()==0; }
 
 	function getItems(){
 		$this->_readItems();
