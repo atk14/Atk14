@@ -10,10 +10,10 @@
 		<title>{$page_title|h} | {"ATK14_APPLICATION_NAME"|dump_constant}</title>
 		<meta name="description" content="{$page_description|h}" />
 
-		{stylesheet_link_tag file="blueprint/screen.css" media="screen, projection"}
-		{stylesheet_link_tag file="blueprint/print.css" media="print"}
+		{stylesheet_link_tag file="lib/blueprint-css/blueprint/screen.css" media="screen, projection"}
+		{stylesheet_link_tag file="lib/blueprint-css/blueprint/print.css" media="print"}
 		<!--[if IE]>
-		{stylesheet_link_tag file="blueprint/ie.css" media="screen, projection"}
+		{stylesheet_link_tag file="lib/blueprint-css/blueprint/ie.css" media="screen, projection"}
 		<![endif]-->
 		{stylesheet_link_tag file="styles.css" media="screen, projection"}
 
