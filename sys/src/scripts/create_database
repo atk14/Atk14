@@ -27,3 +27,8 @@ if [ "$confirm" != "y" ]; then
 fi
 
 sudo -u $PG_USER -s "echo \"$sql\" | psql template1"
+
+echo ""
+echo "Now you may want to run"
+echo "  $ ./scripts/initialize_database"
+echo "  $ ./scripts/migrate"
