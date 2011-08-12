@@ -343,7 +343,7 @@ class Atk14Url{
 
 		$_namespace = "";
 		if(strlen($params["namespace"])>0){ $_namespace = "$params[namespace]/"; }
-		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out.Atk14Url::EncodeParams($get_params);
+		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out.Atk14Url::EncodeParams($get_params,array("connector" => $options["connector"]));
 		if(strlen($options["anchor"])>0){ $out .= "#$options[anchor]"; }
 
 		if($options["with_hostname"]){

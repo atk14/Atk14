@@ -71,7 +71,7 @@ function smarty_block_sortable($params, $content, &$smarty, &$repeat){
 		$_key = "$key-desc";
 	}
 	$_params->s("order",$_key);
-	$href = Atk14Url::BuildLink($_params->toArray());
+	$href = Atk14Url::BuildLink($_params->toArray(),array("connector" => "&amp;"));
 	$_active = "";
 	$_arrow = "";
 	if($sorting->getActiveKey()=="$key-asc"){
