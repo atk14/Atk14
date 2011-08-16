@@ -1,5 +1,5 @@
-a PHP Framework for fearless guys
----------------------------------
+ATK14 is a PHP Framework for fearless guys
+------------------------------------------
 
 ATK14 is a framework helping to build websites of any kind. If one dares to dip into ATK14, she or he gains:
 

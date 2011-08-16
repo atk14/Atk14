@@ -76,10 +76,10 @@ sudo -u $PG_USER -s "echo \"$sql\" | psql template1"
 
 echo "Gonna copy ATK14 from repository";
 
-svn --quiet export http://atk14.googlecode.com/svn/trunk/sys/ &&
-mv sys/skelet/.htaccess ./ &&\
-mv sys/skelet/* ./ &&\
-rmdir sys/skelet
+git clone --recursive git://github.com/yarri/Atk14.git ./atk14 &&
+mv atk14/skelet/.htaccess ./ &&\
+mv atk14/skelet/* ./ &&\
+rmdir atk14/skelet
 
 chmod -R 777 ./tmp
 touch ./log/application.log

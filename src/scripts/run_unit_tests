@@ -35,13 +35,30 @@ if(preg_match("/^5/",phpversion())){
 }
 
 if(PHP4){
-	require_once 'PHPUnit.php';
+	include_once 'PHPUnit.php';
+	if(!class_exists("PHPUnit_TestCase")){
+		echo "Missing dependency: class PHPUnit2_Framework_TestCase\n";
+		echo "The following command may help you\n";
+		echo "\n";
+		echo " $ sudo pear install PHPUnit\n";
+		echo "\n";
+		exit(1);
+	}
 }
 if(PHP5){
-	require_once 'PHPUnit2/Framework/TestSuite.php';
-	require_once 'PHPUnit2/Framework/TestCase.php';
-	require_once 'PHPUnit2/TextUI/ResultPrinter.php';
-	require_once 'Benchmark/Timer.php';
+	include_once 'PHPUnit2/Framework/TestSuite.php';
+	include_once 'PHPUnit2/Framework/TestCase.php';
+	include_once 'PHPUnit2/TextUI/ResultPrinter.php';
+	include_once 'Benchmark/Timer.php';
+
+	if(!class_exists("PHPUnit2_Framework_TestCase")){
+		echo "Missing dependency: class PHPUnit2_Framework_TestCase\n";
+		echo "The following command may help you\n";
+		echo "\n";
+		echo " $ sudo pear install --alldeps PHPUnit2\n";
+		echo "\n";
+		exit(1);
+	}
 }
 
 isset($argv) || $argv = array();
