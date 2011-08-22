@@ -81,6 +81,10 @@ mv atk14/skelet/.htaccess ./ &&\
 mv atk14/skelet/* ./ &&\
 rmdir atk14/skelet
 
+# removing git's working files and dirs
+find ./ -name '.git*' -type f -exec rm {} \;
+find ./ -name '.git' -type d -exec rm -rf {} \;
+
 chmod -R 777 ./tmp
 touch ./log/application.log
 chmod 666 ./log/application.log
