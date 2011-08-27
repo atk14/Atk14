@@ -188,6 +188,9 @@ class tc_date extends tc_base{
 
 		$this->assertEquals("2005-03-01",$d3->toString());
 		$this->assertNull($d4);
+
+		$d5 = Date::ByDate($d1);
+		$this->assertEquals($d1->toString(),$d5->toString());
 	}
 
 	function test_by_date_with_time(){
