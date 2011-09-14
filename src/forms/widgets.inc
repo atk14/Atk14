@@ -711,9 +711,8 @@ class FileInput extends Input{
     }
     function value_from_datadict($data, $name)
     {
-        global $_FILES;
-        if(!isset($_FILES[$name])){ return null; }
-        return HTTPUploadedFile::GetInstance($_FILES[$name],$name);
+        global $HTTP_REQUEST;
+        return $HTTP_REQUEST->getUploadedFile($name);
     }
 }
 
