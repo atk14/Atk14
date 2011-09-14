@@ -369,8 +369,10 @@ class BooleanField extends Field
 {
     function BooleanField($options=array())
     {
+        $options = array_merge(array(
+            "widget" => new CheckboxInput(),
+        ),$options);
         parent::Field($options);
-        $this->widget = new CheckboxInput();
     }
 
     function clean($value)
@@ -379,7 +381,8 @@ class BooleanField extends Field
         if (!is_null($error)) {
             return array($error, $value);
         }
-        if ($value === 'false') {
+        if (is_string($value)){ $value = strtolower($value); }
+        if (is_string($value) && in_array($value,array('false','off','no','n','f'))) {
             return array(null, false);
         }
         return array(null, (bool)$value);

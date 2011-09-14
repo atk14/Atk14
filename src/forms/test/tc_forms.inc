@@ -3,9 +3,6 @@
 * Testy formularu.
 */
 
-
-require_once('../forms.php');
-
 /**
 * Definice demonstracnich formularu pro potreby testu.
 */
@@ -919,7 +916,7 @@ class tc_forms extends tc_base
         $form = new SignupForm(array('auto_id'=>false));
         $field = $form->get_field('email');
         $this->assertEquals(
-            '<input type="text" name="email" class="text" />',
+            '<input type="email" name="email" class="text" />',
             $field->as_widget()
         );
         $field = $form->get_field('get_spam');
@@ -935,7 +932,7 @@ class tc_forms extends tc_base
         $form = new SignupForm(array('data'=>$data, 'auto_id'=>false));
         $field = $form->get_field('email');
         $this->assertEquals(
-            '<input type="text" name="email" class="text" value="test@example.com" />',
+            '<input type="email" name="email" class="text" value="test@example.com" />',
             $field->as_widget()
         );
         $field = $form->get_field('get_spam');

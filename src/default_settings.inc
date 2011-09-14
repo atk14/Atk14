@@ -7,11 +7,15 @@ __defaults__(array(
 ));
 
 __defaults__(array(
+	"DEFAULT_EMAIL" => "info@example.com",
+));
+
+__defaults__(array(
 	"ATK14_APPLICATION_NAME" => "Our Website",
 	"ATK14_DOCUMENT_ROOT" => dirname(__FILE__)."/../../", // where is the folder containing app/, config/ dispatcher.php...
 	"ATK14_BASE_HREF" => "/",
 	"ATK14_HTTP_HOST" => "", // 
-	"ATK14_ADMIN_EMAIL" => "",
+	"ATK14_ADMIN_EMAIL" => DEFAULT_EMAIL,
 ));
 
 __defaults__(array(
@@ -38,7 +42,7 @@ __defaults__(array(
 ));
 
 __defaults__(array(
-	"SENDMAIL_DEFAULT_FROM" => "sendmail",
+	"SENDMAIL_DEFAULT_FROM" => DEFAULT_EMAIL,
 	"SENDMAIL_DEFAULT_BODY_CHARSET" => "UTF-8",
 	"SENDMAIL_DEFAULT_BODY_MIME_TYPE" => "text/plain",
 	"SENDMAIL_BODY_AUTO_PREFIX" => "", // given text will be prepend to every message

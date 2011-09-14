@@ -4,8 +4,6 @@
 */
 
 
-require_once('../widgets.php');
-
 /**
 * Funkce, ktera je volana z CheckboxInput. Slouzi k vyhodnoceni 
 * $value a vraci true/false.

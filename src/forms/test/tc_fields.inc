@@ -4,9 +4,6 @@
 */
 
 
-require_once('../fields.php');
-
-
 class tc_fields extends tc_base
 {
     // provereni funkcnosti HTML kompraratu
@@ -481,6 +478,51 @@ class tc_fields extends tc_base
     */
     function test_booleanfield()
     {
+
+        $params = array(
+             array(
+                 'clean'=>'', 'error'=>'This field is required.', 'result'=>null
+             ),
+             array(
+                 'clean'=>null, 'error'=>'This field is required.', 'result'=>null
+             ),
+        );
+
+        $DATA = array(
+            array(
+                'field' => new BooleanField(array('required' => true)),
+                'params' => $params,
+            ),
+        );
+
+        $this->_check($DATA);
+        // ---
+
+        $params = array();
+        $TRUES = array('on','ON','1','true','TRUE',true,1,'ATK14 rocks','yes','y','t');
+        $FALSES = array('off','OFF','0','false','FALSE',0,false,'','no','n','f',null);
+
+        foreach($TRUES as $t){
+            $params[] = array('clean'=>$t, 'error'=>null, 'result'=>true, 'required' => false);
+        }
+        foreach($FALSES as $t){
+            $params[] = array('clean'=>$t, 'error'=>null, 'result'=>false, 'required' => false);
+        }
+
+        $DATA = array(
+            array(
+                'field' => new BooleanField(array("required" => false)),
+                'params' => $params,
+            ),
+        );
+        $this->_check($DATA);
+    }
+
+    /**
+    * Kontrola BooleanField.
+    */
+    function _test_booleanfield()
+    {
         $DATA = array(
             array(
                 'field' => new BooleanField(),
@@ -511,6 +553,12 @@ class tc_fields extends tc_base
                     ),
                     array(
                         'clean'=>'false', 'error'=>null, 'result'=>false
+                    ),
+                    array(
+                        'clean'=>'on', 'error'=>null, 'result'=>true
+                    ),
+                    array(
+                        'clean'=>'off', 'error'=>null, 'result'=>false
                     ),
                 )
             ),
