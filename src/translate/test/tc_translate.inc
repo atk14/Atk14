@@ -152,5 +152,10 @@ class tc_translate extends tc_base{
 		$this->assertNull($ar["parent"]["null"]);
 		
 	}
+
+	function test_utf8_to_ascii(){
+		$str = "Hello".chr(0xC2).chr(0xA0)."world";
+		$this->assertEquals("Hello world",translate::trans($str,"UTF-8","ASCII"));
+	}
+
 }
-?>
