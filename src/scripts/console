@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# An interactive ATK14 console.
+# Acts like an Ruby on Rail console.
+
+echo "**************************************************************************"
+echo "**                                                                      **"
+echo "** This sucks! There is no autoload capability in the interactive mode. **"
+echo "**          Thus an interactive ATK14 console wont work.                **"
+echo "**                                                                      **"
+echo "**************************************************************************"
+
+dir=`dirname $0`
+ATK14_DOCUMENT_ROOT=`$dir/dump_settings ATK14_DOCUMENT_ROOT`
+cd $ATK14_DOCUMENT_ROOT
+
+php -a --php-ini "./scripts/_console/php.ini"
