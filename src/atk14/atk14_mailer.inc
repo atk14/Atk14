@@ -164,7 +164,7 @@ class Atk14Mailer{
 	 * @return ApplicationMailer
 	 * @static
 	 */
-	function GetInstanceByController($controller){
+	static function GetInstanceByController($controller){
 		$out = null;
 		if(Atk14Require::Load("controllers/$controller->namespace/application_mailer.inc")){
 			$out = new ApplicationMailer();

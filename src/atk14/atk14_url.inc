@@ -39,7 +39,7 @@ class Atk14Url{
 	 *
 	 * @static
 	 */
-	function RecognizeRoute($requested_uri){
+	static function RecognizeRoute($requested_uri){
 		global $ATK14_GLOBAL,$_GET;
 		settype($uri,"string");
 
@@ -181,7 +181,7 @@ class Atk14Url{
 		),$requested_uri);
 	}
 
-	function _FindForceRedirect($out,$requested_uri){
+	static function _FindForceRedirect($out,$requested_uri){
 		// zde muze byt dojit ke zmene $out["lang"]
 		if(function_exists("atk14_initialize_locale")){
 			atk14_initialize_locale($out["lang"]);
@@ -230,7 +230,7 @@ class Atk14Url{
 	 * @static
 	 *
 	 */
-	function BuildLink($params,$options = array()){
+	static function BuildLink($params,$options = array()){
 		global $ATK14_GLOBAL,$HTTP_REQUEST;
 		Atk14Timer::Start("Atk14Url::BuildLink");
 		$params = array_merge(array(
@@ -386,7 +386,7 @@ class Atk14Url{
 		return $out;
 	}
 
-	function _EncodeUrlParam($_key,$_value,$options = array()){
+	static function _EncodeUrlParam($_key,$_value,$options = array()){
 		if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
 		if(is_array($_value)){
 			// zatim se tu uvazuje pouze s jednorozmernym indexovanym polem
@@ -400,7 +400,7 @@ class Atk14Url{
 		return urlencode($_key)."=".urlencode($_value);
 	}
 
-	function EncodeParams($params, $options = array()){
+	static function EncodeParams($params, $options = array()){
 		$options = array_merge(array(
 			"connector" => "&",
 		),$options);
@@ -425,7 +425,7 @@ class Atk14Url{
 	 * Atk14Url::AddRouter("admin","ProductsRouter");
 	 * Atk14Url::AddRouter("*","ProductsRouter");
 	 */
-	function AddRouter($namespace_or_router,$router = null){
+	static function AddRouter($namespace_or_router,$router = null){
 		if(!isset($router)){
 			$router = $namespace_or_router;
 			$namespace = "";
@@ -441,11 +441,11 @@ class Atk14Url{
 	/**
 	 *
 	 */
-	function GetRouters($namespace = ""){
+	static function GetRouters($namespace = ""){
 		return Atk14Url::_SetRouter_GetRouters($namespace);
 	}
 
-	function _SetRouter_GetRouters($namespace,$router = null){
+	static function _SetRouter_GetRouters($namespace,$router = null){
 		static $ROUTERS;
 		if(!isset($ROUTERS)){ $ROUTERS = array(); }
 		if(!isset($ROUTERS["*"])){ $ROUTERS["*"] = array(); }	
@@ -466,7 +466,7 @@ class Atk14Url{
 	 * @access private
 	 *
 	 */
-	function _ParamMatches($rule,&$param){
+	static function _ParamMatches($rule,&$param){
 		return
 			isset($param) &&
 			(

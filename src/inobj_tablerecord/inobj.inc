@@ -50,5 +50,5 @@ class inobj{
 	 *
 	 * does nothing
 	 */
-	function RegisterErrorCallback($function_name){ }
+	static function RegisterErrorCallback($function_name){ }
 }

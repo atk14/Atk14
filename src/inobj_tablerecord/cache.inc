@@ -11,7 +11,7 @@ class Cache{
 	var $_Prepare = array();
 	var $_Cache = array();
 
-	function &GetInstance(){
+	static function &GetInstance(){
 		static $instance;
 		if(!isset($instance)){
 			$instance = new Cache();
@@ -19,7 +19,7 @@ class Cache{
 		return $instance;
 	}
 
-	function Prepare($class,$ids){
+	static function Prepare($class,$ids){
 		$class = strtolower($class);
 		$c = &Cache::GetInstance();
 		!is_array($ids) && ($ids = array($ids));
@@ -32,7 +32,7 @@ class Cache{
 		}
 	}
 
-	function Get($class,$ids){
+	static function Get($class,$ids){
 		$class = strtolower($class);
 		Cache::Prepare($class,$ids);
 		$c = &Cache::GetInstance();
@@ -48,11 +48,11 @@ class Cache{
 		return $out;
 	}
 
-	function Clear($class = null,$id = null){
+	static function Clear($class = null,$id = null){
 		$c = &Cache::GetInstance();
 		if(isset($class)){
 			$class = strtolower($class);
-			unset($this->_Cache[$class][$id]);
+			unset($c->_Cache[$class][$id]);
 			return;
 		}
 		$c->_Cache = array();

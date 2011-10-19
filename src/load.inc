@@ -15,7 +15,11 @@ require_once(dirname(__FILE__)."/atk14/atk14_utils.inc");
 Atk14Utils::DetermineEnvironment();
 
 // now we are gonna to set up config constants
-require_once(dirname(__FILE__)."/../../config/local_settings.inc");
+if(defined("ATK14_DOCUMENT_ROOT")){
+	require_once(ATK14_DOCUMENT_ROOT."/config/local_settings.inc");
+}else{
+	require_once(dirname(__FILE__)."/../../config/local_settings.inc");
+}
 require_once(dirname(__FILE__)."/default_settings.inc");
 
 // load the rest...
@@ -41,20 +45,20 @@ require_once(dirname(__FILE__)."/atk14/load.inc");
 require_once(dirname(__FILE__)."/functions.inc");
 
 // ...and load basic application`s objects
-if(file_exists(dirname(__FILE__)."/../../app/forms/application_form.inc")){
-	require_once(dirname(__FILE__)."/../../app/forms/application_form.inc");
+if(file_exists(ATK14_DOCUMENT_ROOT."/app/forms/application_form.inc")){
+	require_once(ATK14_DOCUMENT_ROOT."/app/forms/application_form.inc");
 }
-if(file_exists(dirname(__FILE__)."/../../app/forms/form.inc")){
-	require_once(dirname(__FILE__)."/../../app/forms/form.inc");
+if(file_exists(ATK14_DOCUMENT_ROOT."/app/forms/form.inc")){
+	require_once(ATK14_DOCUMENT_ROOT."/app/forms/form.inc");
 }
 
 // Loading model classes, field (and widget) classes and external (3rd party) libs.
 // In every directory class_autoload() is applied. I believe it can do a lot.
 // But everywhere the load file is optional.
 foreach(array("app/models","app/fields","lib") as $_d_){
-	class_autoload(dirname(__FILE__)."/../../$_d_/");
-	if(file_exists(dirname(__FILE__)."/../../$_d_/load.inc")){
-		require_once(dirname(__FILE__)."/../../$_d_/load.inc");
+	class_autoload(ATK14_DOCUMENT_ROOT."/$_d_/");
+	if(file_exists(ATK14_DOCUMENT_ROOT."/$_d_/load.inc")){
+		require_once(ATK14_DOCUMENT_ROOT."/$_d_/load.inc");
 	}
 }
 

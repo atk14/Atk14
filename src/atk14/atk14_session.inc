@@ -67,7 +67,7 @@ class Atk14Session{
 	 * @return Atk14Session
 	 * @static
 	 */
-	function &GetInstance($session_key = "atk14"){
+	static function &GetInstance($session_key = "atk14"){
 		static $instances;
 		if(!isset($instances)){ $instances = array(); }
 		if(!isset($instances[$session_key])){

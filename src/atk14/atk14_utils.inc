@@ -28,7 +28,7 @@ class Atk14Utils{
 	 *
 	 * @static
 	 */
-	function DetermineEnvironment(){
+	static function DetermineEnvironment(){
 		global $HTTP_REQUEST;
 		// Determining environment constants (i.e. DEVELOPMENT, TEST, PRODUCTION).
 		// An existing constant has the strongest importance.
@@ -74,7 +74,7 @@ class Atk14Utils{
 	 *
 	 * @static
 	 */
-	function LoadConfig(){
+	static function LoadConfig(){
 		global $ATK14_GLOBAL;
 		if(!file_exists($path = $ATK14_GLOBAL->getApplicationPath()."../config/")){
 			$path = $ATK14_GLOBAL->getApplicationPath()."conf/";
@@ -116,7 +116,7 @@ class Atk14Utils{
 	 * @param string $controller_name name of controller
 	 *
 	 */
-	function LoadControllers($controller_name){
+	static function LoadControllers($controller_name){
 		Atk14Require::Controller("ApplicationController");
 		Atk14Require::Controller("_*");
 		Atk14Require::Controller($controller_name);
@@ -129,7 +129,7 @@ class Atk14Utils{
 	 * @return string escaped string
 	 * @static
 	 */
-	function EscapeForJavascript($content){
+	static function EscapeForJavascript($content){
 		return EasyReplace($content,array("\\" => "\\\\", "\n" => "\\n","\r" => "\\r","\t" => "\\t","\"" => "\\\"", "<script" => '<scr" + "ipt', "</script>" => '</scr" + "ipt>'));
 	}
 
@@ -147,7 +147,7 @@ class Atk14Utils{
 	*
 	* @static
 	*/
-	function BuildLink(&$params,&$smarty,$options = array()){
+	static function BuildLink(&$params,&$smarty,$options = array()){
 		$options = array_merge(array(
 			"connector" => "&",
 			"anchor" => null,
@@ -198,7 +198,7 @@ class Atk14Utils{
 	 * @return array
 	 * @static
 	 */
-	function ExtractAttributes(&$params,&$attributes = array()){
+	static function ExtractAttributes(&$params,&$attributes = array()){
 		reset($params);
 		while(list($_key,$_value) = each($params)){
 			if(preg_match("/^_(.+)/",$_key,$matches)){
@@ -224,7 +224,7 @@ class Atk14Utils{
 	 * @return string joined attributes
 	 * @static
 	 */
-	function JoinAttributes($attributes){
+	static function JoinAttributes($attributes){
 		reset($attributes);
 		$out = array();
 		while(list($key,$value) = each($attributes)){
@@ -246,7 +246,7 @@ class Atk14Utils{
 	 * @return Smarty instance of Smarty
 	 * @static
 	 */
-	function GetSmarty($template_dir = null, $options = array()){
+	static function GetSmarty($template_dir = null, $options = array()){
 		global $ATK14_GLOBAL;
 
 		$options = array_merge(array(
@@ -318,7 +318,7 @@ class Atk14Utils{
 	 * @param HTTPResponse
 	 * @static
 	 */
-	function ErrorLog($message,&$response){
+	static function ErrorLog($message,&$response){
 		$message = "AK14 error: $message";
 		error_log($message);
 		if(defined("DEVELOPMENT") && DEVELOPMENT){
@@ -337,7 +337,7 @@ class Atk14Utils{
 	 * @return boolean true - output produced, false - nothing produced
 	 * @static
 	 */
-	function ResponseProduced(&$controller){
+	static function ResponseProduced(&$controller){
 		return !(
 			strlen($controller->response->getLocation())==0 &&
 			!$controller->action_executed &&
@@ -354,7 +354,7 @@ class Atk14Utils{
 	 * @return array joined arrays
 	 * @static
 	 */
-	function JoinArrays(){
+	static function JoinArrays(){
 		$out = array();
 		$arguments = func_get_args();
 		foreach($arguments as $arg){

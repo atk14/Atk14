@@ -29,7 +29,7 @@ class Atk14Require{
 	 * @param string $pattern
 	 * @return array
 	 */
-	function Forms($pattern){
+	static function Forms($pattern){
 		global $ATK14_GLOBAL;
 		return Atk14Require::_Files("forms/".$ATK14_GLOBAL->getValue("namespace")."/$pattern");
 	}
@@ -63,7 +63,7 @@ class Atk14Require{
 	 * @param string $controller_name 
 	 * @return array
 	 */
-	function Controller($controller_name){
+	static function Controller($controller_name){
 		global $ATK14_GLOBAL;
 		$filename = "";
 		if($controller_name == "ApplicationController"){
@@ -94,7 +94,7 @@ class Atk14Require{
 	 * @param string $filename name of helper. extension doesn't have to be specified, it will be added automatically
 	 * @return array
 	 */
-	function Helper($filename,&$smarty){
+	static function Helper($filename,&$smarty){
 		!preg_match("/\\.php$/",$filename) && ($filename .= ".php");
 		$plugins_dir = $smarty->plugins_dir;
 		foreach($plugins_dir as $dir){
@@ -119,7 +119,7 @@ class Atk14Require{
 	 * @uses _Files()
 	 * @static
 	 */
-	function Load($pattern){
+	static function Load($pattern){
 		return Atk14Require::_Files($pattern);
 	}
 
@@ -130,7 +130,7 @@ class Atk14Require{
 	 * @static
 	 *
 	 */
-	function _Files($pattern){
+	static function _Files($pattern){
 		global $ATK14_GLOBAL;
 
 		$out = array();

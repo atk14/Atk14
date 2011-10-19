@@ -20,7 +20,7 @@ class HTTPXFile extends HTTPUploadedFile{
 	 * @param array $options
 	 * @return HTTPXFile
 	 */
-	function GetInstance($options = array()){
+	static function GetInstance($options = array()){
 		global $HTTP_REQUEST;
 
 		$options = array_merge(array(

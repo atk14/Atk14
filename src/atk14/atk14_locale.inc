@@ -31,7 +31,7 @@ class Atk14Locale{
 	 * @return string date in localized format
 	 * @static
 	 */
-	function FormatDate($iso_date){
+	static function FormatDate($iso_date){
 		if(strlen($iso_date)==0){ return ""; }
 
 		$pattern = _("atk14.date_format");
@@ -52,7 +52,7 @@ class Atk14Locale{
 	 * @static
 	 *
 	 */
-	function ParseDate($localized_date){
+	static function ParseDate($localized_date){
 		$pattern = _("atk14.parse_date_pattern");
 		if($pattern == "atk14.parse_date_pattern"){ $pattern = "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4})$/"; }
 
@@ -84,7 +84,7 @@ class Atk14Locale{
 	 * @return string datetime in localized format
 	 * @static
 	 */
-	function FormatDateTime($iso_datetime){
+	static function FormatDateTime($iso_datetime){
 		if(strlen($iso_datetime)==0){ return ""; }
 
 		$pattern = _("atk14.datetime_format");
@@ -99,7 +99,7 @@ class Atk14Locale{
 	* Atk14Locale::ParseDateTime("31.12.2010 12:30"); // "2010-12-31 12:30:00"
 	* Atk14Locale::ParseDateTime("31.12.2010"); // "2010-12-31 00:00:00"
 	*/
-	function ParseDateTime($localized_datetime){
+	static function ParseDateTime($localized_datetime){
 		$pattern = _("atk14.parse_datetime_pattern");
 		if($pattern == "atk14.parse_datetime_pattern"){ $pattern = "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"; }
 
@@ -110,7 +110,7 @@ class Atk14Locale{
 		return $out;
 	}
 
-	function FormatDateTimeWithSeconds($iso_datetime){
+	static function FormatDateTimeWithSeconds($iso_datetime){
 		if(strlen($iso_datetime)==0){ return ""; }
 
 		$pattern = _("atk14.datetime_with_seconds_format");
@@ -124,7 +124,7 @@ class Atk14Locale{
 	* Atk14Locale::ParseDateTimeWithSeconds("31.12.2010 12:30"); // "2010-12-31 12:30:00"
 	* Atk14Locale::ParseDateTimeWithSeconds("31.12.2010"); // "2010-12-31 00:00:00"
 	*/
-	function ParseDateTimeWithSeconds($localized_datetime){
+	static function ParseDateTimeWithSeconds($localized_datetime){
 		$pattern = _("atk14.parse_datetime_with_seconds_pattern");
 		if($pattern == "atk14.parse_datetime_with_seconds_pattern"){ $pattern = "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})$/"; }
 
@@ -134,7 +134,7 @@ class Atk14Locale{
 		return $out;
 	}
 
-	function _ParseDateTime($localized_datetime,$pattern){
+	static function _ParseDateTime($localized_datetime,$pattern){
 		if(
 			preg_match($pattern,$localized_datetime,$matches) &&
 			($date = Date::ByDate(array(
@@ -150,7 +150,7 @@ class Atk14Locale{
 		return null;
 	}
 
-	function _ExtractTime($matches){
+	static function _ExtractTime($matches){
 		$hours = (int)$matches["hours"];
 		$minutes = (int)$matches["minutes"];
 		$seconds = isset($matches["seconds"]) ? (int)$matches["seconds"] : 0;

@@ -27,7 +27,7 @@ class Atk14Global{
 	 * @return Atk14Global
 	 * @static
 	 */
-	function &GetInstance(){
+	static function &GetInstance(){
 		static $instance;
 		if(!isset($instance)){
 			$instance = new Atk14Global();

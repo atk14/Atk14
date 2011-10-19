@@ -35,7 +35,7 @@ class files{
 	 * @param string	 &$error_str Error description
 	 * @return int Number of directories created
 	 */
-	function mkdir($dirname,&$error = null,&$error_str = null){
+	static function mkdir($dirname,&$error = null,&$error_str = null){
 		$out = 0;
 		$error = false;
 		$error_str = "";
@@ -76,7 +76,7 @@ class files{
 	 * @return int Number of copied bytes
 	 *
 	 */
-	function copy_file($from_file,$to_file,&$error = null,&$error_str = null){
+	static function copy_file($from_file,$to_file,&$error = null,&$error_str = null){
 		$bytes = 0;
 		$error = false;
 		$error_str = "";
@@ -140,7 +140,7 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return int Number of written bytes
 	 */
-	function write_to_file($file,$content,&$error = null,&$error_str = null){
+	static function write_to_file($file,$content,&$error = null,&$error_str = null){
 		$bytes = 0;
 		$error = false;
 		$error_str = "";
@@ -200,7 +200,7 @@ class files{
 	 * @return bool	true => file was securely uploaded; false => file was not uploaded
 	 *
 	 */
-	function is_uploaded_file($filename){
+	static function is_uploaded_file($filename){
 		settype($filename,"string");
 		if(!file_exists($filename)){
 			return false;
@@ -236,7 +236,7 @@ class files{
 	 * @return int	Number of moved files; ie. on success return 1
 	 * @see files::unlink()
 	 */
-	function move_file($from_file,$to_file,&$error = null,&$error_str = null){
+	static function move_file($from_file,$to_file,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -282,7 +282,7 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return int Number of deleted files; on success returns 1; otherwise 0
 	 */
-	function unlink($file,&$error = null,&$error_str = null){
+	static function unlink($file,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -312,7 +312,7 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return int Number of deleted directories and files
 	 */
-	function recursive_unlink_dir($dir,&$error = null,&$error_str = null){
+	static function recursive_unlink_dir($dir,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 		settype($dir,"string");
@@ -333,7 +333,7 @@ class files{
 	 * @see file::recursive_unlink_dir()
 	 *
 	 */
-	function _recursive_unlink_dir($dir,&$error,&$error_str){
+	static function _recursive_unlink_dir($dir,&$error,&$error_str){
 		settype($dir,"string");
 		
 		$out = 0;
@@ -398,7 +398,7 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return string Content of a file
 	 */
-	function get_file_content($filename,&$error = null,&$error_str = null){
+	static function get_file_content($filename,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -436,7 +436,7 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return int	1 - is readable and writable; 0 - is not
 	 */
-	function is_readable_and_writable($filename,&$error = null,&$error_str = null){
+	static function is_readable_and_writable($filename,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -473,7 +473,7 @@ class files{
 	 * @return array Image dimensions
 	 *
 	 */
-	function get_image_size($image_content,&$error = null,&$error_str = null){
+	static function get_image_size($image_content,&$error = null,&$error_str = null){
 		$temp = defined("TEMP") ? TEMP : "/tmp";
 		$filename = $temp."/get_image_filename_".posix_getpid();
 		if(!files::write_to_file($filename,$image_content,$error,$error_str)){ return null; }

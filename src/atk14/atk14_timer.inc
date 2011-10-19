@@ -20,7 +20,7 @@ class Atk14Timer {
 	/**
 	 * @static
 	 */
-	function Start($mark= ""){
+	static function Start($mark= ""){
 		$timer = &Atk14Timer::_GetTimer();
 		return $timer->start($mark);
 	}
@@ -28,12 +28,12 @@ class Atk14Timer {
 	/**
 	 * @static
 	 */
-	function Stop($mark = ""){
+	static function Stop($mark = ""){
 		$timer = &Atk14Timer::_GetTimer();
 		return $timer->stop($mark);	
 	}
 
-	function GetResult($options = array()){
+	static function GetResult($options = array()){
 		$options = array_merge(array(
 			"total_results_only" => true
 		),$options);
@@ -46,11 +46,10 @@ class Atk14Timer {
 	 * @static
 	 * @access private
 	 */
-	function &_GetTimer(){
+	static function &_GetTimer(){
 		static $timer;
 
 		if(!isset($timer)){ $timer = new StopWatch(); }
 		return $timer;
 	}
 }
-?>

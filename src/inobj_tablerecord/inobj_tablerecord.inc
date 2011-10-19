@@ -40,7 +40,7 @@ class inobj_TableRecord extends inobj_TableRecord_Base{
 	 * @param mixed $id						identifikator zaznamu v tabulce; integer, string nebo pole
 	 * @return inobj_TableRecord	resp. tridu, ktera je urcena v $class_name
 	 */
-	function _GetInstanceById($class_name,$id,$options = array()){
+	static function _GetInstanceById($class_name,$id,$options = array()){
 		$out = new $class_name();
 		return $out->find($id,$options);
 	}

@@ -50,7 +50,7 @@ class HTTPUploadedFile{
 	 */
 	var $_MimeType = null;
 
-	function GetInstances($options = array()){
+	static function GetInstances($options = array()){
 		global $_FILES;
 
 		$out = array();
@@ -80,8 +80,8 @@ class HTTPUploadedFile{
 	 *
 	 * @return HTTPUploadedFile
 	 * @static
-	*/
-	function GetInstance($FILE,$name,$options = array()){
+	 */
+	static function GetInstance($FILE,$name,$options = array()){
 		$options = array_merge(array(
 			"testing_mode" => false
 		),$options);

@@ -37,16 +37,16 @@ class Date{
 	}
 	function copy(){ return new Date($this->getDate()); }
 
-	function Today(){ $out = new Date(dates::now()); return $out; }
-	function Yesterday(){ $out = Date::Today(); return $out->minusDay(); }
-	function Tomorrow(){ $out = Date::Today(); return $out->plusDay(); }
+	static function Today(){ $out = new Date(dates::now()); return $out; }
+	static function Yesterday(){ $out = Date::Today(); return $out->minusDay(); }
+	static function Tomorrow(){ $out = Date::Today(); return $out->plusDay(); }
 
 	/**
 	* $date = Date::ByDate("2001-01-31");
 	* $date = Date::ByDate(array("year" => 2001,"month" => 1, "day" => 31));
 	* $date = Date::ByDate("2001-01-31 12:30:00"); // cas bude automaticky odseknut
 	*/
-	function ByDate($date){
+	static function ByDate($date){
 		if(is_array($date)){
 			$date = sprintf("%d-%02d-%02d",$date["year"],$date["month"],$date["day"]);
 		}

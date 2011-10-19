@@ -207,7 +207,7 @@ class Atk14Form extends Form
 		 *
 		 * @static
 		 */
-    function GetInstanceByFilename($filename,$controller_obj = null,$options = array())
+    static function GetInstanceByFilename($filename,$controller_obj = null,$options = array())
     {
         global $ATK14_GLOBAL;
         if(!preg_match("/\\.inc$/",$filename)){ $filename .= ".inc"; }
@@ -256,7 +256,7 @@ class Atk14Form extends Form
 		 * @static
 		 *
 		 */
-    function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null,$options = array())
+    static function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null,$options = array())
     {
         $options = array_merge(array(
             "attrs" => array(),
@@ -281,7 +281,7 @@ class Atk14Form extends Form
 		 * @uses GetInstanceByControllerAndAction
 		 * @static
 		 */
-    function GetInstanceByController($controller,$options = array()){
+    static function GetInstanceByController($controller,$options = array()){
         return Atk14Form::GetInstanceByControllerAndAction($controller->controller,$controller->action,$controller,$options);
     }
 
@@ -300,7 +300,7 @@ class Atk14Form extends Form
 		 * @return Atk14Form
 		 * @static
 		 */
-    function GetForm($class_name,$controller = null,$options = array()){
+    static function GetForm($class_name,$controller = null,$options = array()){
         global $ATK14_GLOBAL;
         // preved z camelcase na underscore
         $filename = $class_name;
@@ -327,7 +327,7 @@ class Atk14Form extends Form
 		 * @param Atk14Controller $controller
 		 * @return Atk14Form
 		 */
-    function GetDefaultForm($controller = null){
+    static function GetDefaultForm($controller = null){
       ($form = Atk14Form::GetForm("ApplicationForm",$controller)) || ($form = new Atk14Form(array(),$controller));
       return $form;
     }

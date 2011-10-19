@@ -26,7 +26,7 @@ class Atk14Dispatcher{
 	 * @param array $options
 	 * @return HTTPReponse
 	 */
-	function Dispatch($options = array()){
+	static function Dispatch($options = array()){
 		global $HTTP_RESPONSE,$HTTP_REQUEST,$ATK14_LOGGER, $ATK14_GLOBAL, $_GET;
 
 		$options = array_merge(array(
@@ -112,7 +112,7 @@ class Atk14Dispatcher{
 	 * @param array $options
 	 * @return HTTPReponse
 	 */
-	function ExecuteAction($controller_name,$action,$options = array()){
+	static function ExecuteAction($controller_name,$action,$options = array()){
 		global $ATK14_GLOBAL;
 		$namespace = $ATK14_GLOBAL->getValue("namespace");
 

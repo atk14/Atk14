@@ -107,7 +107,7 @@ class DbMole{
 	 * @param string $class_name
 	 * @return DbMole
 	 */
-	function &GetInstance($configuration_name,$class_name){
+	static function &GetInstance($configuration_name,$class_name){
 		static $instance_store_ar;
 
 		settype($configuration_name,"string");
@@ -177,7 +177,7 @@ class DbMole{
 	 * @param string $function_name
 	 * @return string name of previously registered error handler
 	 */
-	function RegisterErrorHandler($function_name){
+	static function RegisterErrorHandler($function_name){
 		return DbMole::_GetSetErrorHandlerFunction($function_name,true);
 	}
 
@@ -250,7 +250,7 @@ class DbMole{
 	* @return string										aktualni jmeno (nebo predchozi pri nastavavovani) error handler funkce 
 	*																		pokud je vracen prazdny string "", nema se nic volat
 	*/
-	function _GetSetErrorHandlerFunction($function_name = "",$set = false){
+	static function _GetSetErrorHandlerFunction($function_name = "",$set = false){
 		static $_FUNCTION_NAME_;
 
 		settype($set,"bool");

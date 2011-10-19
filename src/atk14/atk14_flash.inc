@@ -61,7 +61,7 @@ class Atk14Flash{
 	 *
 	 */
 
-	function &GetInstance(){
+	static function &GetInstance(){
 		static $instance;
 		if(!isset($instance)){
 			$instance = new Atk14Flash();
