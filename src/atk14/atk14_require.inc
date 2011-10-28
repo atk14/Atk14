@@ -67,11 +67,11 @@ class Atk14Require{
 		global $ATK14_GLOBAL;
 		$filename = "";
 		if($controller_name == "ApplicationController"){
-			$filename = "application.inc";
+			$filename = "application.*";
 		}elseif(preg_match("/^([A-Z].*)Controller$/",$controller_name,$matches)){
-			$filename = strtolower($matches[1])."_controller.inc";
+			$filename = strtolower($matches[1])."_controller.*";
 		}elseif(preg_match("/_controller/",$controller_name)){
-			$filename = "$controller_name.inc";
+			$filename = "$controller_name.*";
 		}
 
 		$pattern = "controllers/".$ATK14_GLOBAL->getValue("namespace")."/";
@@ -142,11 +142,10 @@ class Atk14Require{
 			$basename = basename($filename);
 			if(!preg_match("/^[a-z0-9_].*\\.(inc|php)$/",$basename)){ continue; }
 			$out[] = $filename;
-			require_once($filename);
+			atk14_require_once($filename);
 		}
 
 		return $out;
 	}
 
 }	
-?>

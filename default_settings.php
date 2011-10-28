@@ -3,7 +3,7 @@ $__CONFIG_CONSTANTS__ = array();
 
 __defaults__(array(
 	"SECRET_TOKEN" => "make_sure_you_define_strong_secret_phrase_in_SECRET_TOKEN_constant",
-	"TEMP" => TEST ? dirname(__FILE__)."/../../tmp/test/" : dirname(__FILE__)."/../../tmp/",
+	"TEMP" => TEST ? dirname(__FILE__)."/../tmp/test/" : dirname(__FILE__)."/../tmp/",
 ));
 
 __defaults__(array(
@@ -12,7 +12,7 @@ __defaults__(array(
 
 __defaults__(array(
 	"ATK14_APPLICATION_NAME" => "Our Website",
-	"ATK14_DOCUMENT_ROOT" => dirname(__FILE__)."/../../", // where is the folder containing app/, config/ dispatcher.php...
+	"ATK14_DOCUMENT_ROOT" => dirname(__FILE__)."/../", // where is the folder containing app/, config/ dispatcher.php...
 	"ATK14_BASE_HREF" => "/",
 	"ATK14_HTTP_HOST" => "", // 
 	"ATK14_ADMIN_EMAIL" => DEFAULT_EMAIL,
@@ -25,7 +25,7 @@ __defaults__(array(
 ));
 
 __defaults__(array(
-	"LOGGER_DEFAULT_LOG_FILE" => TEST ? dirname(__FILE__)."/../../log/test.log" : dirname(__FILE__)."/../../log/application.log",
+	"LOGGER_DEFAULT_LOG_FILE" => TEST ? dirname(__FILE__)."/../log/test.log" : dirname(__FILE__)."/../log/application.log",
 ));
 
 __defaults__(array(

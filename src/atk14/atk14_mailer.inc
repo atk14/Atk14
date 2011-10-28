@@ -156,7 +156,7 @@ class Atk14Mailer{
 	/**
 	 * Creates instance of Atk14Mailer depending on a controller.
 	 *
-	 * The returned class ApplicationMailer must be defined by application in controllers/_namespace_/application_mailer.inc
+	 * The returned class ApplicationMailer must be defined by application in controllers/_namespace_/application_mailer.(inc|php)
 	 *
 	 * Returns null when the ApplicationMailer class is not defined.
 	 *
@@ -166,7 +166,7 @@ class Atk14Mailer{
 	 */
 	static function GetInstanceByController($controller){
 		$out = null;
-		if(Atk14Require::Load("controllers/$controller->namespace/application_mailer.inc")){
+		if(Atk14Require::Load("controllers/$controller->namespace/application_mailer.*")){
 			$out = new ApplicationMailer();
 			$out->namespace = $controller->namespace;
 			$out->logger = &$controller->logger;

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * This file helps you to load all your libraries and 3rd party software.
 *

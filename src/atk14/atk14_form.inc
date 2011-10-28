@@ -210,7 +210,7 @@ class Atk14Form extends Form
     static function GetInstanceByFilename($filename,$controller_obj = null,$options = array())
     {
         global $ATK14_GLOBAL;
-        if(!preg_match("/\\.inc$/",$filename)){ $filename .= ".inc"; }
+        $filename = preg_replace('/\.(inc|php)$/','',$filename); // nechceme tam koncovku
 
         $controller = $ATK14_GLOBAL->getValue("controller");
         $namespace = $ATK14_GLOBAL->getValue("namespace");
@@ -224,13 +224,15 @@ class Atk14Form extends Form
            "$filename",
         );
         foreach($files as $_file){
-            if(file_exists($_file)){
-                $filename = $_file;
-                break;
+            foreach(array("php","inc") as $suffix){
+                if(file_exists("$_file.$suffix")){
+                    $filename = "$_file.$suffix";
+                    break;
+                }
             }
         }
         $classname = "";
-        if(preg_match("/([^\\/]+)_form\\.inc$/",$filename,$matches)){
+        if(preg_match('/([^\\/]+)_form\.(inc|php)$/',$filename,$matches)){
             $classname = "{$matches[1]}Form";
             $classname = str_replace("_","",$classname);
         }

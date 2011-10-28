@@ -22,7 +22,7 @@ $logger = &Atk14Migration::GetLogger();
 $migrations = array();
 $dir = opendir($ATK14_GLOBAL->getMigrationsPath());
 while($item = readdir($dir)){
-	if(preg_match("/(.+)\\.(sql|inc)$/",$item,$matches)){
+	if(preg_match("/(.+)\\.(sql|inc|php)$/",$item,$matches)){
 		$migrations[] = $item;
 	}
 }
@@ -38,7 +38,7 @@ foreach($migrations as $m){
 
 	$logger->info("about to start migration $m"); $logger->flush();
 	
-	if(preg_match("/^[0-9]+_(.*)\\.inc$/",$m,$matches)){
+	if(preg_match("/^[0-9]+_(.*)\\.(inc|php)$/",$m,$matches)){
 		require_once($ATK14_GLOBAL->getMigrationsPath().$m);
 		$class_name = preg_replace("/_/","",$matches[1]);
 		$migr = new $class_name($m);

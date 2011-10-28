@@ -22,10 +22,5 @@ $ATK14_GLOBAL = &Atk14Global::GetInstance();
 
 Atk14Utils::LoadConfig();
 
-if(file_exists($ATK14_GLOBAL->getApplicationPath()."forms/fields.inc")){
-	require_once($ATK14_GLOBAL->getApplicationPath()."forms/fields.inc");
-}
-
-if(file_exists($ATK14_GLOBAL->getApplicationPath()."forms/widgets.inc")){
-	require_once($ATK14_GLOBAL->getApplicationPath()."forms/widgets.inc");
-}
+atk14_require_once_if_exists($ATK14_GLOBAL->getApplicationPath()."forms/fields.inc");
+atk14_require_once_if_exists($ATK14_GLOBAL->getApplicationPath()."forms/widgets.inc");

@@ -15,7 +15,7 @@
  * Common migration scripts are written in PHP.
  * If you want to use an SQL in a migration step look at the {@link Atk14MigrationBySqlFile} class.
  *
- * Example of migration file(db/migrations/0001_content_for_creatures.inc):
+ * Example of migration file(db/migrations/0001_content_for_creatures.php):
  * <code>
  * class ContentForCreatures extends Atk14Migration{
  * 	function up(){

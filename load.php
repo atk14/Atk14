@@ -3,63 +3,56 @@
 * There are a few components needs to be loaded.
 * Atk14 connects these components to the right order.
 */
-
 error_reporting(255);
 
 // we need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
 // HTTP* classes give us right advices about environment & configuration
-require_once(dirname(__FILE__)."/stringbuffer/stringbuffer.inc");
-require_once(dirname(__FILE__)."/files/files.inc");
-require_once(dirname(__FILE__)."/http/load.inc");
-require_once(dirname(__FILE__)."/atk14/atk14_utils.inc");
+require_once(dirname(__FILE__)."/src/stringbuffer/stringbuffer.inc");
+require_once(dirname(__FILE__)."/src/files/files.inc");
+require_once(dirname(__FILE__)."/src/http/load.inc");
+require_once(dirname(__FILE__)."/src/atk14/atk14_utils.inc");
 Atk14Utils::DetermineEnvironment();
 
 // now we are gonna to set up config constants
 if(defined("ATK14_DOCUMENT_ROOT")){
-	require_once(ATK14_DOCUMENT_ROOT."/config/local_settings.inc");
+	atk14_require_once(ATK14_DOCUMENT_ROOT."/config/local_settings.inc");
 }else{
-	require_once(dirname(__FILE__)."/../../config/local_settings.inc");
+	atk14_require_once(dirname(__FILE__)."/../config/local_settings.inc");
 }
-require_once(dirname(__FILE__)."/default_settings.inc");
+require_once(dirname(__FILE__)."/default_settings.php");
 
 // load the rest...
-require_once(dirname(__FILE__)."/string/load.inc");
-require_once(dirname(__FILE__)."/translate/translate.inc");
-require_once(dirname(__FILE__)."/dictionary/dictionary.inc");
-require_once(dirname(__FILE__)."/miniyaml/miniyaml.inc");
-require_once(dirname(__FILE__)."/dates/load.inc");
-require_once(dirname(__FILE__)."/xmole/xmole.inc");
-require_once(dirname(__FILE__)."/stopwatch/stopwatch.inc");
-require_once(dirname(__FILE__)."/logger/logger.inc");
-require_once(dirname(__FILE__)."/json/load.inc");
-require_once(dirname(__FILE__)."/smarty/libs/Smarty.class.php");
-require_once(dirname(__FILE__)."/class_autoload/class_autoload.inc");
-require_once(dirname(__FILE__)."/dbmole/dbmole.inc");
-require_once(dirname(__FILE__)."/dbmole/pgmole.inc");
-require_once(dirname(__FILE__)."/inobj_tablerecord/load.inc");
-require_once(dirname(__FILE__)."/sessionstorer/sessionstorer.inc");
-require_once(dirname(__FILE__)."/packer/packer.inc");
-require_once(dirname(__FILE__)."/sendmail/sendmail.inc");
-require_once(dirname(__FILE__)."/forms/load.inc");
-require_once(dirname(__FILE__)."/atk14/load.inc");
-require_once(dirname(__FILE__)."/functions.inc");
+require_once(dirname(__FILE__)."/src/string/load.inc");
+require_once(dirname(__FILE__)."/src/translate/translate.inc");
+require_once(dirname(__FILE__)."/src/dictionary/dictionary.inc");
+require_once(dirname(__FILE__)."/src/miniyaml/miniyaml.inc");
+require_once(dirname(__FILE__)."/src/dates/load.inc");
+require_once(dirname(__FILE__)."/src/xmole/xmole.inc");
+require_once(dirname(__FILE__)."/src/stopwatch/stopwatch.inc");
+require_once(dirname(__FILE__)."/src/logger/logger.inc");
+require_once(dirname(__FILE__)."/src/json/load.inc");
+require_once(dirname(__FILE__)."/src/smarty/libs/Smarty.class.php");
+require_once(dirname(__FILE__)."/src/class_autoload/class_autoload.inc");
+require_once(dirname(__FILE__)."/src/dbmole/dbmole.inc");
+require_once(dirname(__FILE__)."/src/dbmole/pgmole.inc");
+require_once(dirname(__FILE__)."/src/inobj_tablerecord/load.inc");
+require_once(dirname(__FILE__)."/src/sessionstorer/sessionstorer.inc");
+require_once(dirname(__FILE__)."/src/packer/packer.inc");
+require_once(dirname(__FILE__)."/src/sendmail/sendmail.inc");
+require_once(dirname(__FILE__)."/src/forms/load.inc");
+require_once(dirname(__FILE__)."/src/atk14/load.inc");
+require_once(dirname(__FILE__)."/src/functions.inc");
 
 // ...and load basic application`s objects
-if(file_exists(ATK14_DOCUMENT_ROOT."/app/forms/application_form.inc")){
-	require_once(ATK14_DOCUMENT_ROOT."/app/forms/application_form.inc");
-}
-if(file_exists(ATK14_DOCUMENT_ROOT."/app/forms/form.inc")){
-	require_once(ATK14_DOCUMENT_ROOT."/app/forms/form.inc");
-}
+atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/app/forms/application_form.php");
+atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/app/forms/form.php");
 
 // Loading model classes, field (and widget) classes and external (3rd party) libs.
 // In every directory class_autoload() is applied. I believe it can do a lot.
 // But everywhere the load file is optional.
 foreach(array("app/models","app/fields","lib") as $_d_){
 	class_autoload(ATK14_DOCUMENT_ROOT."/$_d_/");
-	if(file_exists(ATK14_DOCUMENT_ROOT."/$_d_/load.inc")){
-		require_once(ATK14_DOCUMENT_ROOT."/$_d_/load.inc");
-	}
+	atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/$_d_/load.php");
 }
 
 // global variable $dbmole holds database connection
@@ -128,7 +121,7 @@ function atk14_initialize_locale(&$lang){
 	putenv("LANG=$l");
 	setlocale(LC_MESSAGES,$l);
 	setlocale(LC_ALL,$l);
-	bindtextdomain("messages",dirname(__FILE__)."/../../locale/");
+	bindtextdomain("messages",dirname(__FILE__)."/../locale/");
 	bind_textdomain_codeset("messages", "UTF-8");
 	textdomain("messages");
 }

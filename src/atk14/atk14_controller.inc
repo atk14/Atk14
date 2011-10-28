@@ -348,9 +348,7 @@ class Atk14Controller{
 		if($this->namespace!=""){ $_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/{$this->namespace}_form.inc"; } // ./app/forms/admin/admin_form.inc
 		$_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/$this->controller/{$this->controller}_form.inc"; // ./app/forms/admin/articles/articles_form.inc
 		foreach($_base_forms as $_base_form){
-			if(file_exists($_base_form)){
-				require_once($_base_form);
-			}
+			atk14_require_once_if_exists($_base_form);
 		}
 
 		// pokud nenajdeme formular urceny presne pro tuto akci, pokusime se najit ApplicationForm a nakonec Atk14Form
@@ -1012,7 +1010,7 @@ class Atk14Controller{
 
 		// pokud najdeme formular pro tento step, pouzijeme ho;
 		// jinak pouzijeme defaultni formik
-		($this->form = Atk14Form::GetInstanceByFilename("$this->controller/{$this->action}/{$step}_form.inc",$this)) || ($this->form = Atk14Form::GetDefaultForm($this));
+		($this->form = Atk14Form::GetInstanceByFilename("$this->controller/{$this->action}/{$step}_form",$this)) || ($this->form = Atk14Form::GetDefaultForm($this));
 
 		if(isset($this->form)){
 			$this->form->set_hidden_field("step_id",$this->step_id);
