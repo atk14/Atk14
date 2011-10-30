@@ -1,4 +1,4 @@
-{capture var=confirm_message}{t id=$creature->getId()}Are you sure to destroy the creature #%1?{/t}{/capture}
+{capture assign=confirm_message}{t id=$creature->getId()}Are you sure to destroy the creature #%1?{/t}{/capture}
 <tr>
 	<td>{$creature->getId()}</td>
 	<td>{$creature->getName()|h}</td>

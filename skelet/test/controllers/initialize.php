@@ -1,3 +1,3 @@
 <?
 define("TEST",true);
-require(dirname(__FILE__)."/../../sys/src/load.inc");
+require(dirname(__FILE__)."/../../atk14/load.php");
