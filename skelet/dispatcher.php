@@ -1,3 +1,3 @@
-<?
-require(dirname(__FILE__)."/sys/src/load.inc");
+<?php
+require(dirname(__FILE__)."/atk14/load.php");
 Atk14Dispatcher::Dispatch();

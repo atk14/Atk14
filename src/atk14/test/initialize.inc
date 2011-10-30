@@ -8,7 +8,7 @@ define("ATK14_DOCUMENT_ROOT",dirname(__FILE__)."/");
 $GLOBALS["_SERVER"]["HTTP_HOST"] = "www.testing.cz";
 $_GET = array();
 
-require("../../load.inc");
+require("../../../load.php");
 
 require(dirname(__FILE__)."/app/forms/test_form.inc");
 require("app/controllers/application.inc");

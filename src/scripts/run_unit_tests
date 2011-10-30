@@ -69,23 +69,23 @@ for($i=1;$i<sizeof($argv);$i++){
 }
 
 if(PHP4){
-	if(file_exists("tc_base.inc")){
+	if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
 		eval("class tc_super_base extends PHPUnit_TestCase{ }");
-		require_once("tc_base.inc");
+		require_once($_f);
 	}else{
 		eval("class tc_base extends PHPUnit_TestCase{ }");
 	}
 }
 if(PHP5){
-	if(file_exists("tc_base.inc")){
+	if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
 		eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
-		require_once("tc_base.inc");
+		require_once("$_f");
 	}else{
 		eval("class tc_base extends PHPUnit2_Framework_TestCase{ }");
 	}
 }
 
-if(file_exists("initialize.inc")){ require_once("initialize.inc"); }
+if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
 
 if(class_exists("pgmole")){	
 	$dbmole = &PgMole::GetInstance();
@@ -105,11 +105,11 @@ $tests_to_execute = array();
 
 $dir = opendir("./");
 while($file = readdir($dir)){
-	if(in_array($file,array(".","..","initialize.inc","state.inc","tc_base.inc"))){ continue; } // tyto souboryu ignorujeme
+	if(in_array($file,array(".","..","initialize.inc","initialize.php","state.inc","state.php","tc_base.inc","tc_base.php"))){ continue; } // tyto souboryu ignorujeme
 
-	if(preg_match("/^(tc_.*)\\.inc$/",$file,$matches)){
+	if(preg_match("/^(tc_.*)\\.(inc|php)$/",$file,$matches)){
 		$ALLOWED_TESTS[$file] = $matches[1];
-	}elseif(preg_match("/^!(tc_.*)\\.inc$/",$file,$matches)){
+	}elseif(preg_match("/^!(tc_.*)\\.(inc|php)$/",$file,$matches)){
 		$ALLOWED_DANGEROUS_TESTS[$file] = $matches[1];
 	}
 }
