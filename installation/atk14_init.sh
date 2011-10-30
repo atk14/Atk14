@@ -85,7 +85,9 @@ rmdir atk14/skelet
 find ./ -name '.git*' -type f -exec rm {} \;
 find ./ -name '.git' -type d -exec rm -rf {} \;
 
+mkdir ./tmp
 chmod -R 777 ./tmp
+mkdir ./log
 touch ./log/application.log
 chmod 666 ./log/application.log
 touch ./log/test.log

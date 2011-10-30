@@ -77,6 +77,7 @@ class CreaturesController extends ApplicationController{
 	*/
 	function destroy(){
 		if(!$this->request->post()){ return $this->_execute_action("error404"); }
+		$this->creature->destroy();
 	}
 
 	/**
