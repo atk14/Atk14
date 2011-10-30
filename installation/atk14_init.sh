@@ -101,9 +101,9 @@ ATK14_ENV=TEST        ./scripts/initialize_database
 ATK14_ENV=DEVELOPMENT ./scripts/migrate
 ATK14_ENV=TEST        ./scripts/migrate
 
-sed -i "s/put_some_random_string_here/$SECRET_TOKEN/" config/local_settings.inc
-sed -i "s/myapp.localhost/$APPNAME.localhost/" config/local_settings.inc
-sed -i "s/www.myapp.com/www.$APPNAME.com/" config/local_settings.inc
+sed -i "s/put_some_random_string_here/$SECRET_TOKEN/" config/local_settings.php
+sed -i "s/myapp.localhost/$APPNAME.localhost/" config/local_settings.php
+sed -i "s/www.myapp.com/www.$APPNAME.com/" config/local_settings.php
 
 # adding server name in /etc/hosts
 sudo -s "echo '' >> /etc/hosts"
