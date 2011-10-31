@@ -11,10 +11,10 @@
  * @package Atk14
  * @subpackage InternalLibraries
  */
-class inobj_TableRecord extends inobj_TableRecord_Base{
+class TableRecord extends TableRecord_Base{
 
-	function inobj_TableRecord($table_name = null,$options = array()){
-		inobj_TableRecord_Base::inobj_TableRecord_Base($table_name,$options);
+	function TableRecord($table_name = null,$options = array()){
+		parent::TableRecord_Base($table_name,$options);
 	}
 
 	/**
@@ -24,10 +24,10 @@ class inobj_TableRecord extends inobj_TableRecord_Base{
 	 *
 	 * This method is used in a descendants {@link GetInstanceById()} method.
 	 * <code>
-	 * class inobj_Article extends inobj_TableRecord{
+	 * class inobj_Article extends TableRecord{
 	 *	//...
 	 *	function GetInstanceById($id,$options = array()){
-	 *		return inobj_TableRecord::_GetInstanceById("inobj_Article",$id,$options);
+	 *		return TableRecord::_GetInstanceById("inobj_Article",$id,$options);
 	 *	}
 	 *	//...
 	 *	}
@@ -38,7 +38,7 @@ class inobj_TableRecord extends inobj_TableRecord_Base{
 	 * @access protected
 	 * @param string $class_name	ie. "inobj_Article"
 	 * @param mixed $id						identifikator zaznamu v tabulce; integer, string nebo pole
-	 * @return inobj_TableRecord	resp. tridu, ktera je urcena v $class_name
+	 * @return TableRecord	resp. tridu, ktera je urcena v $class_name
 	 */
 	static function _GetInstanceById($class_name,$id,$options = array()){
 		$out = new $class_name();
@@ -54,10 +54,10 @@ class inobj_TableRecord extends inobj_TableRecord_Base{
 	 *
 	* Tuto metodu pouzije pouzije v implementaci metody CreateNewRecord().
 	* Pouzije ji nasledujicim zpusobem:
-	*		class inobj_Article extends inobj_TableRecord{
+	*		class inobj_Article extends TableRecord{
 	*			//...
 	*			function CreateNewRecord($values,$options = array()){
-	*				return inobj_TableRecord::_CreateNewRecord("inobj_Article",$values,$options);
+	*				return TableRecord::_CreateNewRecord("inobj_Article",$values,$options);
 	*			}
 	*			//...
 	*		}
@@ -67,7 +67,7 @@ class inobj_TableRecord extends inobj_TableRecord_Base{
 	* @access private
 	* @param string $class_name					id. "inobj_Article"
 	* @param array $values							
-	* @return inobj_TableRecord
+	* @return TableRecord
 	*/
 	function _CreateNewRecord($class_name,$values,$options = array()){
 		$out = new $class_name();

@@ -12,7 +12,7 @@
  *
  * Initialization of Finder:
  * <code>
- * $finder = inobj_TableRecord::Finder(array(
+ * $finder = TableRecord::Finder(array(
  *		"class_name" => "Books",
  *		"conditions" => array("title LIKE :title"),
  *		"bind_ar" => array(":title" => "%British%"),
@@ -36,7 +36,7 @@
  * @subpackage InternalLibraries
  *
  */
-class inobj_TableRecord_Finder{
+class TableRecord_Finder{
 
 	/**
 	 *
@@ -52,7 +52,7 @@ class inobj_TableRecord_Finder{
 	 * @param DbMole $dbmole
 	 *
 	 */
-	function inobj_TableRecord_Finder($options,&$dbmole){
+	function TableRecord_Finder($options,&$dbmole){
 		$this->_Query = $options["query"];
 		$this->_QueryCount = $options["query_count"];
 		$this->_BindAr = $options["bind_ar"];

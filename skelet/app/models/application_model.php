@@ -4,7 +4,7 @@
 * Do you have any common methods or attributes for all your models? Put them right here.
 * Otherwise there's no need to care :)
 */
-class ApplicationModel extends inobj_TableRecord{
+class ApplicationModel extends TableRecord{
 
 	function __construct($table_name = null,$options = array()){
 		parent::__construct($table_name,$options);

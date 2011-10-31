@@ -1,5 +1,5 @@
 <?php
-class Article extends inobj_TableRecord{
+class Article extends TableRecord{
 	function getAuthorsLister(){
 		return $this->getLister("Authors");
 	}

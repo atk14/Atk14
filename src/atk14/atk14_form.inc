@@ -534,7 +534,7 @@ class Atk14Form extends Form
 		 * $this->set_initial($this->params);
 		 * </code>
 		 * </li>
-		 * <li>object of class inobj_TableRecord
+		 * <li>object of class TableRecord
 		 * <code>
 		 * $this->set_initial($user);
 		 * </code>

@@ -35,7 +35,7 @@ class inobj{
 	}
 
 	/**
-	 * Converts inobj_TableRecord object to its id.
+	 * Converts TableRecord object to its id.
 	 *
 	 * @access private
 	 * @return mixed

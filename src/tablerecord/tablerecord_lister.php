@@ -17,14 +17,14 @@
  *
  * $lister->setRecordRank($author2,0);
  */
-class inobj_TableRecord_Lister extends inobj{
+class TableRecord_Lister extends inobj{
 	/**
-	 * $authors_lister = new inobj_TableRecord_Lister($article,"Authors",array(
+	 * $authors_lister = new TableRecord_Lister($article,"Authors",array(
 	 *	
 	 * ));
 	 *
 	 */
-	function inobj_TableRecord_Lister($owner,$subjects,$options = array()){
+	function TableRecord_Lister($owner,$subjects,$options = array()){
 		$owner_class = new String(get_class($owner));
 		$owner_class_us = $owner_class->underscore();
 		$subjects = new String($subjects);
@@ -62,7 +62,7 @@ class inobj_TableRecord_Lister extends inobj{
 	}
 	
 	/**
-	 * Alias for inobj_TableRecord_Lister::append().
+	 * Alias for TableRecord_Lister::append().
 	 */
 	function add($record){ return $this->append($record); }
 
@@ -72,7 +72,7 @@ class inobj_TableRecord_Lister extends inobj{
 	function prepend($record){ $this->_add($record,-1); }
 
 	/**
-	 * Alias for inobj_TableRecord_Lister::prepend()
+	 * Alias for TableRecord_Lister::prepend()
 	 */	
 	function unshift($record){ return $this->prepend($record); }
 
@@ -200,17 +200,17 @@ class inobj_TableRecord_Lister extends inobj{
 		));
 		$this->_items = array();
 		foreach($rows as $row){
-			$this->_items[] = new inobj_TableRecord_ListerItem($this,$row);
+			$this->_items[] = new TableRecord_ListerItem($this,$row);
 		}
 	}
 }
 
-class inobj_TableRecord_ListerItem{
+class TableRecord_ListerItem{
 
 	/**
 	 * @access private
 	 */
-	function inobj_TableRecord_ListerItem(&$lister,$row_data){
+	function TableRecord_ListerItem(&$lister,$row_data){
 		$this->_lister = &$lister;
 		$this->_options = $lister->_options;
 		$this->_row_data = $row_data;

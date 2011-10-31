@@ -4,7 +4,7 @@ require("../../dbmole/dbmole.inc");
 require("../../dbmole/pgmole.inc");
 require("../../string/load.inc");
 
-require("../load.inc");
+require("../load.php");
 require("./inobj_testtable.inc");
 require("./article.inc");
 require("./author.inc");

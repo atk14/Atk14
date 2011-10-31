@@ -354,89 +354,89 @@ class tc_inobj_table_record extends tc_base{
 
 		// nekolik zpusobu zapisu conditions...
 		// ... napred nenajdeme nic
-		$this->assertEquals(array(),inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title='Monday'")));
-		$this->assertEquals(array(),inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title=:title", "bind_ar" => array(":title" => "Monday"))));
-		$this->assertEquals(array(),inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Monday'"))));
-		$this->assertEquals(array(),inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Monday'"), "bind_ar" => array(":title" => "Monday"))));
-		$this->assertEquals(array(),inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => "Monday"))));
-		$this->assertEquals(array(),inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => array("Monday","Tuesday")))));
+		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title='Monday'")));
+		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title=:title", "bind_ar" => array(":title" => "Monday"))));
+		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Monday'"))));
+		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Monday'"), "bind_ar" => array(":title" => "Monday"))));
+		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => "Monday"))));
+		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => array("Monday","Tuesday")))));
 
 		// .. pak budeme nalezat Fall
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title='Fall'"));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title='Fall'"));
 		$this->_test_fall($recs);
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title=:title", "bind_ar" => array(":title" => "Fall")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title=:title", "bind_ar" => array(":title" => "Fall")));
 		$this->_test_fall($recs);
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Fall'")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Fall'")));
 		$this->_test_fall($recs);
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title=:title"), "bind_ar" => array(":title" => "Fall")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title=:title"), "bind_ar" => array(":title" => "Fall")));
 		$this->_test_fall($recs);
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => "Fall")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => "Fall")));
 		$this->_test_fall($recs);
 
 		// testovani order_by
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title!='Fall'", "order_by" => "title"));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title!='Fall'", "order_by" => "title"));
 		$this->assertEquals("SpringSummerWinter",$recs[0]->getTitle().$recs[1]->getTitle().$recs[2]->getTitle());
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title!='Fall'", "order_by" => "title DESC"));
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title='Spring' OR title='Summer' OR title='Winter'", "order_by" => "title DESC"));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title!='Fall'", "order_by" => "title DESC"));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title='Spring' OR title='Summer' OR title='Winter'", "order_by" => "title DESC"));
 		$this->assertEquals("WinterSummerSpring",$recs[0]->getTitle().$recs[1]->getTitle().$recs[2]->getTitle());
 
 		// vyhledavani null hodnoty...
 		// ... napred title s null hodnotou nemame
-		$this->assertEquals(array(),inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title IS NULL")));
-		$this->assertEquals(array(),inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title IS NULL"))));
-		$this->assertEquals(array(),inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => null))));
+		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title IS NULL")));
+		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title IS NULL"))));
+		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => null))));
 		
 		// ... ted jej vytvorime
 		$null = $this->_vytvor_testovaci_zaznam(array("title" => null));
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title IS NULL"));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => "title IS NULL"));
 		$this->_test_null($recs);
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title IS NULL")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title IS NULL")));
 		$this->_test_null($recs);
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => null)));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => null)));
 		$this->_test_null($recs);
 
 		// 
 		$century = $this->_vytvor_testovaci_zaznam(array("title" => "Century", "text" => null));
 		$century2 = $this->_vytvor_testovaci_zaznam(array("title" => "Century", "text" => "No code"));
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => "Century")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => "Century")));
 		$this->assertEquals(2,sizeof($recs));
 		// defaultni trideni je podle id
 		$this->assertEquals($century->getId(),$recs[0]->getId());
 		$this->assertEquals($century2->getId(),$recs[1]->getId());
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => "Century", "text" => null)));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => "Century", "text" => null)));
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals($century->getId(),$recs[0]->getId());
 
 		$century3 = $this->_vytvor_testovaci_zaznam(array("title" => "Another Century","text" => "Uknown"));
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'")));
 		$this->assertEquals(3,sizeof($recs));
 
 		// vyhledavani pomoci `field_name` IN (values)
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => array("Century","Another Century"))));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title" => array("Century","Another Century"))));
 		$this->assertEquals(3,sizeof($recs));
 
 		// ted testujeme to, ze poskladane query musi mit na prisl. mistech zavorky:
 		// ... WHERE (title='Century' OR title='Another Century') AND (text IS NULL)
 		// napred spatny dotaz
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century' AND text IS NULL")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century' AND text IS NULL")));
 		$this->assertTrue(sizeof($recs)!=1);
 		// ted spravny dotaz
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NULL")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NULL")));
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals($century->getId(),$recs[0]->getId());
 
-		$recs = inobj_TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NOT NULL")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NOT NULL")));
 		$this->assertEquals(2,sizeof($recs));
 		$this->assertEquals($century2->getId(),$recs[0]->getId());
 		$this->assertEquals($century3->getId(),$recs[1]->getId());

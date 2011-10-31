@@ -13,8 +13,8 @@
  * @package Atk14
  * @subpackage InternalLibraries
  */
-class inobj_TableRecord_EmptyFinder extends inobj_TableRecord_Finder{
-	function inobj_TableRecord_EmptyFinder(){
+class TableRecord_EmptyFinder extends TableRecord_Finder{
+	function TableRecord_EmptyFinder(){
 		
 	}
 

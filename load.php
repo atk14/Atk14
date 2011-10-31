@@ -35,7 +35,7 @@ require_once(dirname(__FILE__)."/src/smarty/libs/Smarty.class.php");
 require_once(dirname(__FILE__)."/src/class_autoload/class_autoload.inc");
 require_once(dirname(__FILE__)."/src/dbmole/dbmole.inc");
 require_once(dirname(__FILE__)."/src/dbmole/pgmole.inc");
-require_once(dirname(__FILE__)."/src/inobj_tablerecord/load.inc");
+require_once(dirname(__FILE__)."/src/tablerecord/load.php");
 require_once(dirname(__FILE__)."/src/sessionstorer/sessionstorer.inc");
 require_once(dirname(__FILE__)."/src/packer/packer.inc");
 require_once(dirname(__FILE__)."/src/sendmail/sendmail.inc");

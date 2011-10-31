@@ -1,17 +1,17 @@
 <?php
 /**
-* Testovaci trida urcena pro testovani inobj_TableRecord()
+* Testovaci trida urcena pro testovani TableRecord()
 * SQL struktura zde: https://svn.ntvage.cz:446/sources/trunk/dbmole/test/testing_structures.sql
 */
-class inobj_TestTable extends inobj_TableRecord{
+class inobj_TestTable extends TableRecord{
 
 	function inobj_TestTable(){
-		inobj_TableRecord::inobj_TableRecord("test_table",array("sequence_name" => "test_table_id_seq"));
+		TableRecord::TableRecord("test_table",array("sequence_name" => "test_table_id_seq"));
 	}
 
 	/*
 	static function GetInstanceById($id){
-		return inobj_TableRecord::_GetInstanceById("inobj_TestTable",$id);
+		return TableRecord::_GetInstanceById("inobj_TestTable",$id);
 	}
 
 	static function CreateNewRecord($values,$options = array()){

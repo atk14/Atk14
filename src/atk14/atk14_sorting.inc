@@ -22,7 +22,7 @@
  *	$sorting->add("created",array("reverse" => true));
  *	$sorting->add("rank",array("ascending_ordering" => "rank DESC, id ASC", "descending_ordering" => "rank ASC, id DESC"));
  *
- *	$finder = inobj_TableRecord::Finder(array(
+ *	$finder = TableRecord::Finder(array(
  *		"class_name" => "Book",
  *		"order" => $sorting->getOrder(),
  *	));

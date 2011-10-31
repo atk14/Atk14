@@ -17,7 +17,7 @@
  * @package Atk14
  * @subpackage InternalLibraries
  */
-class inobj_TableRecord_Base extends inobj{
+class TableRecord_Base extends inobj{
 	/**
 	 * Name of database table.
 	 *
@@ -100,7 +100,7 @@ class inobj_TableRecord_Base extends inobj{
 	 * 	<li><b>sequence_name</b> - </li>
 	 * </ul>
 	 */
-	function inobj_TableRecord_Base($table_name = null,$options = array()){
+	function TableRecord_Base($table_name = null,$options = array()){
 		inobj::inobj();
 
 		if(!isset($table_name)){
@@ -145,10 +145,10 @@ class inobj_TableRecord_Base extends inobj{
 	 *
 	 * @param mixed $id record ID
 	 * @param array $options
-	 * @return inobj_TableRecord
+	 * @return TableRecord
 	 */
 	static function GetInstanceById($id,$options = array()){
-		return inobj_TableRecord::_GetInstanceById(get_called_class(),$id,$options);
+		return TableRecord::_GetInstanceById(get_called_class(),$id,$options);
 	}
 
 	/**
@@ -166,10 +166,10 @@ class inobj_TableRecord_Base extends inobj{
 	 * @todo Revise options
 	 * @param array $id
 	 * @param array $options
-	 * @return inobj_TableRecord
+	 * @return TableRecord
 	 */
 	static function CreateNewRecord($id,$options = array()){
-		return inobj_TableRecord::_CreateNewRecord(get_called_class(),$id,$options);
+		return TableRecord::_CreateNewRecord(get_called_class(),$id,$options);
 	}
 
 	function &GetDbmole(){
@@ -188,13 +188,13 @@ class inobj_TableRecord_Base extends inobj{
 	 *
 	 * <code>
 	 * $article = inobj_Article:GetInstanceById(123);
-	 * $id = inobj_TableRecord::ObjToId($article); // returns 123
-	 * $id = inobj_TableRecord::ObjToId(123); // returns 123
-	 * $id = inobj_TableRecord::ObjToId(null); // returns null
+	 * $id = TableRecord::ObjToId($article); // returns 123
+	 * $id = TableRecord::ObjToId(123); // returns 123
+	 * $id = TableRecord::ObjToId(null); // returns null
 	 * </code>
 	 *
 	 * @static
-	 * @param inobj_TableRecord $object
+	 * @param TableRecord $object
 	 * @return mixed id of the record from db
 	 */
 	function ObjToId($object){
@@ -205,16 +205,16 @@ class inobj_TableRecord_Base extends inobj{
 	 * Converts an $id (integer) to instance of a $class_name.
 	 *
 	 * <code>
-	 * $article = inobj_TableRecord::IdToObj(123,"inobj_Article");
-	 * $article = inobj_TableRecord::IdToObj(null,"inobj_Article"); // returns null
+	 * $article = TableRecord::IdToObj(123,"inobj_Article");
+	 * $article = TableRecord::IdToObj(null,"inobj_Article"); // returns null
 	 * $article = inobj_Article:GetInstanceById(123);
-	 * $article = inobj_TableRecord::IdToObj($article,"inobj_Article"); // returns $article untouched
+	 * $article = TableRecord::IdToObj($article,"inobj_Article"); // returns $article untouched
 	 * </code>
 	 *
 	 * @static
 	 * @param integer $id
 	 * @param string $class_name
-	 * @return inobj_TableRecord
+	 * @return TableRecord
 	 *
 	 */
 	function IdToObj($id,$class_name){
@@ -270,7 +270,7 @@ class inobj_TableRecord_Base extends inobj{
 	 *
 	 * @param string $object
 	 * @param array $options
-	 * @return inobj_TableRecord
+	 * @return TableRecord
 	 * @todo add comment
 	 */
 	function getBelongsTo($object,$options = array()){
@@ -292,7 +292,7 @@ class inobj_TableRecord_Base extends inobj{
 	 * $authors = $lister->getRecords(); // Author[]
 	 */
 	function getLister($subjects,$options = array()){
-		return new inobj_TableRecord_Lister($this,$subjects,$options);
+		return new TableRecord_Lister($this,$subjects,$options);
 	}
 
 	/**
@@ -310,8 +310,8 @@ class inobj_TableRecord_Base extends inobj{
 	 * Finds a record by id.
 	 *
 	 * @param mixed $id	integer, string, objekt, pole
-	 * @return inobj_TableRecord|array	returns null, when record with given id does not exist or error occured.
-	 * When $id is array method returns array of inobj_TableRecord
+	 * @return TableRecord|array	returns null, when record with given id does not exist or error occured.
+	 * When $id is array method returns array of TableRecord
 	 */
 	function find($id,$options = array()){
 		if(!isset($id)){ return null; }
@@ -335,7 +335,7 @@ class inobj_TableRecord_Base extends inobj{
 	 * Record finder.
 	 *
 	 * <code>
-	 * $finder = inobj_TableRecord::Finder(array(
+	 * $finder = TableRecord::Finder(array(
 	 *		"class_name" => "Book",
 	 *		"conditions" => array("title LIKE :q"),
 	 *		"bind_ar" => array(":q" => "%Prague%"),
@@ -349,7 +349,7 @@ class inobj_TableRecord_Base extends inobj{
 	 *
 	 * It is possible to define custom SQL query. Then the counting SQL query should be also specified in "query_count" option.
 	 * <code>
-	 * $finder = inobj_TableRecord::Finder(array(
+	 * $finder = TableRecord::Finder(array(
 	 *		"class_name" => "Book",
 	 *		"query" => "SELECT books.id FROM books,book_authors WHERE ...",
 	 *		"query_count" => "SELECT COUNT(*) FROM ...",
@@ -361,7 +361,7 @@ class inobj_TableRecord_Base extends inobj{
 	 *
 	 * Conditions can be passed as an associative array:
 	 * <code>
-	 *	$finder = inobj_TableRecord::Finder(array(
+	 *	$finder = TableRecord::Finder(array(
 	 *		"class_name" => "Book",
 	 *		"conditions" => array(
 	 *			"author_id" => 123,
@@ -418,7 +418,7 @@ class inobj_TableRecord_Base extends inobj{
 		if(is_string($conditions)){ $conditions = array($conditions); }
 		$bind_ar = $options["bind_ar"];
 
-		inobj_TableRecord_Base::_NormalizeConditions($conditions,$bind_ar);
+		TableRecord_Base::_NormalizeConditions($conditions,$bind_ar);
 
 		if(isset($options["query"])){
 			$query = $options["query"];
@@ -450,7 +450,7 @@ class inobj_TableRecord_Base extends inobj{
 		unset($options["query"]);
 		unset($options["query_count"]);
 
-		$finder = new inobj_TableRecord_Finder(array(
+		$finder = new TableRecord_Finder(array(
 			"class_name" => get_class($this),
 			"query" => $query,
 			"query_count" => $query_count,
@@ -470,13 +470,13 @@ class inobj_TableRecord_Base extends inobj{
 	 * For example when error occurs in searching form.
 	 *
 	 * <code>
-	 * $finder = inobj_TableRecord::EmptyFinder();
+	 * $finder = TableRecord::EmptyFinder();
 	 * </code>
 	 *
-	 * @return inobj_TableRecord_EmptyFinder
+	 * @return TableRecord_EmptyFinder
 	 */
 	function EmptyFinder(){
-		return new inobj_TableRecord_EmptyFinder();
+		return new TableRecord_EmptyFinder();
 	}
 
 
@@ -484,7 +484,7 @@ class inobj_TableRecord_Base extends inobj{
 	 * Finds records with conditions.
 	 *
 	 * <code>
-	 * $articles = inobj_TableRecord::FindAll(array(
+	 * $articles = TableRecord::FindAll(array(
 	 *		"class_name" => "inobj_Article",
 	 *		"conditions" => array("deleted='N'","published='Y'"),
 	 *		"order" => "create_date",
@@ -503,7 +503,7 @@ class inobj_TableRecord_Base extends inobj{
 	 * ));
 	 * </code>
 	 *
-	 * @todo obsah metody predelat jako implementaci volani inobj_TableRecord::Finder()
+	 * @todo obsah metody predelat jako implementaci volani TableRecord::Finder()
 	 * @param array $options
 	 * @return array
 	 */
@@ -543,7 +543,7 @@ class inobj_TableRecord_Base extends inobj{
 		if(is_string($conditions)){ $conditions = array($conditions); }
 		$bind_ar = $options["bind_ar"];
 
-		inobj_TableRecord_Base::_NormalizeConditions($conditions,$bind_ar);
+		TableRecord_Base::_NormalizeConditions($conditions,$bind_ar);
 
 		$query = "SELECT $this->_IdFieldName FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName);
 		if(sizeof($conditions)>0){
@@ -564,7 +564,7 @@ class inobj_TableRecord_Base extends inobj{
 	 * Method behaves similar to {@link FindAll()} but returns only the first found record.
 	 *
 	 * <code>
-	 * $article = inobj_TableRecord::FindFirst(array(
+	 * $article = TableRecord::FindFirst(array(
 	 *		"class_name" => "Article",
 	 *		"conditions" => array(
 	 *			"created_at" => "2011-02-01" 
@@ -582,7 +582,7 @@ class inobj_TableRecord_Base extends inobj{
 	 * </code>
 	 *
 	 * @param array $options
-	 * @return inobj_TableRecord
+	 * @return TableRecord
 	 */
 	static function FindFirst($options = array()){
 		if(isset($options["class_name"])){
@@ -597,7 +597,7 @@ class inobj_TableRecord_Base extends inobj{
 
 	/**
 	 * @access private
-	 * @return inobj_TableRecord
+	 * @return TableRecord
 	 */
 	function _findFirst($options = array()){
 		$options["limit"] = 1;
@@ -1026,7 +1026,7 @@ class inobj_TableRecord_Base extends inobj{
 
 	/**
 	 * 
-	 * @see inobj_TableRecord::_CreateNewRecord()
+	 * @see TableRecord::_CreateNewRecord()
 	 * @access private
 	 */
 	function _insertRecord($values,$options = array()){
@@ -1068,7 +1068,7 @@ class inobj_TableRecord_Base extends inobj{
 			$id = $this->_dbmole->selectInsertId();
 		}
 		
-		$out = inobj_TableRecord::_GetInstanceById(get_class($this),$id);
+		$out = TableRecord::_GetInstanceById(get_class($this),$id);
 		$out->_Hook_afterCreateNewRecord();
 		return $out;
 	}
@@ -1176,7 +1176,7 @@ class inobj_TableRecord_Base extends inobj{
 			}
 		}
 
-		error_log($msg = "inobj_TableRecord::__call(): unknown method ".get_class($this)."::$name()");
+		error_log($msg = "TableRecord::__call(): unknown method ".get_class($this)."::$name()");
 		if(defined("DEVELOPMENT") && DEVELOPMENT){ die($msg); }
 		die();
 	}
