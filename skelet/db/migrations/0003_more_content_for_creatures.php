@@ -1,4 +1,4 @@
-<?
+<?php
 class MoreContentForCreatures extends Atk14Migration{
 	function up(){
 		$data_ar = array(

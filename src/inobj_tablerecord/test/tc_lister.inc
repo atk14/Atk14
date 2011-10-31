@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_lister extends tc_base{
 	function test(){
 		global $dbmole;

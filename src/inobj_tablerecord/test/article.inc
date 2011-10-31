@@ -1,4 +1,4 @@
-<?
+<?php
 class Article extends inobj_TableRecord{
 	function getAuthorsLister(){
 		return $this->getLister("Authors");

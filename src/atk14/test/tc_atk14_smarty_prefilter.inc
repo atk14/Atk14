@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_atk14_smarty_prefilter extends tc_base{
 	function test(){
 		$this->assertEquals("Hello",atk14_smarty_prefilter("Hello"));

@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_application extends tc_base{
 
 	/**

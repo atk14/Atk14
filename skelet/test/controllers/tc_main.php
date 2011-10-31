@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_main extends tc_base{
 	function test_index(){
 		$client = new Atk14Client();

@@ -1,4 +1,4 @@
-<?
+<?php
 class CreateNewForm extends ApplicationForm{
 	function set_up(){
 		$this->add_field("name", new CharField(array(

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Either some parts of ATK14 system (i.e. mailing subsystem) or some third party libs
 * could be configured by constants or variables.

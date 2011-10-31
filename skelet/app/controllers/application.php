@@ -1,4 +1,4 @@
-<?
+<?php
 class ApplicationController extends Atk14Controller{
 	function index(){
 		$this->_execute_action("error404");

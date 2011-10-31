@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_inobj_table_record extends tc_base{
 
 	function test_vytvareni_zaznamu(){

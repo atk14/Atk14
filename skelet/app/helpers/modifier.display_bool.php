@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Displays bool value.
 *

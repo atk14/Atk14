@@ -1,4 +1,4 @@
-<?
+<?php
 /** 
  * $article = Article::GetInstanceById(1);
  * $lister = $article->getLister("Authors");

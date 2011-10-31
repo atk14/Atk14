@@ -1,4 +1,4 @@
-<?
+<?php
 // nacte obsah souboru tc_inobj_table_record.inc
 $content = file_get_contents(dirname(__FILE__)."/tc_inobj_table_record.inc");
 
@@ -11,7 +11,5 @@ $content = str_replace("setValue(","s(",$content);
 $content = str_replace("setValues(","s(",$content);
 
 // provede eval
-$content = str_replace("<?","",$content);
-$content = str_replace("?>","",$content);
+$content = str_replace('<?php',"",$content);
 eval($content);
-?>

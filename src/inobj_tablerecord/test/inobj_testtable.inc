@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Testovaci trida urcena pro testovani inobj_TableRecord()
 * SQL struktura zde: https://svn.ntvage.cz:446/sources/trunk/dbmole/test/testing_structures.sql

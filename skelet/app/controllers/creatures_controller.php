@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Sample controller.
 * You can find there all the typical actions which a typical controller has.
@@ -50,7 +50,7 @@ class CreaturesController extends ApplicationController{
 		if($this->params->getString("format")=="xml"){
 			$this->render_template = false;
 			$this->response->setContentType("text/xml");
-			$this->response->writeln('<?xml version="1.0" encoding="UTF-8"?>');
+			$this->response->writeln('<'.'?xml version="1.0" encoding="UTF-8"?'.'>');
 			$this->response->write($this->creature->toXml());
 		}
 	}

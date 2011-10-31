@@ -1,4 +1,4 @@
-<?
+<?php
 class Creature extends ApplicationModel{
 	function __construct(){
 		parent::__construct("creatures");

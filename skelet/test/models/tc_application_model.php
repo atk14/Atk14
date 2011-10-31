@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Put here tests for model`s base class when needed.
 */

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Cache::Prepare("Article",10023);
 * Cache::Prepare("Article",10024);

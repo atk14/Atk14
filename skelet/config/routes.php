@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Here is the list of routes (URIs) to controllers and their actions. Routes are
 * considered in order - first matching route will be used.

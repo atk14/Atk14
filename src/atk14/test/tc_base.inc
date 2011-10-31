@@ -11,7 +11,7 @@ class tc_base extends tc_super_base{
 	*/
 	function _html2xmole($html_output){
 		$xm = new XMole();
-		$xml = '<?xml version="1.0" encoding="UTF-8"?><html>'.$html_output.'</html>';
+		$xml = '<'.'?xml version="1.0" encoding="UTF-8"?'.'><html>'.$html_output.'</html>';
 
 		// nahrazeni pojmenovanych HTML entit za jejich ciselne ekvivalenty
 		// xml parser totiz havaroval na chybe "Undeclared entity error"
