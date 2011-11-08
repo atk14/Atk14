@@ -135,6 +135,8 @@ class Atk14Form extends Form
 	 */
 	var $atk14_method = "post";
 
+	var $atk14_csfr_protection_enabled = false;
+
 	/**
 	 * @param array $options valid options:
 	 * <ul>
@@ -375,11 +377,24 @@ class Atk14Form extends Form
 		 */
 	function is_valid($data = null)
 	{
+		global $HTTP_REQUEST;
+
 		isset($data) && $this->set_data($data);
 
 		$this->_call_super_constructor();
 		
-		return parent::is_valid();
+		$out = parent::is_valid();
+
+		if(
+			$out &&
+			$this->atk14_csfr_protection_enabled &&
+			!in_array((string)$HTTP_REQUEST->getVar("csfr_token","PG"),Atk14Form::GetValidCsfrTokens())
+		){
+			$this->set_error(_("Please, send the form again"));
+			$out = false;
+		}
+
+		return $out;
 	}
 
 	/**
@@ -468,9 +483,17 @@ class Atk14Form extends Form
 	 *
 	 * @param string $method  request method
 	 */
-	function set_method($method)
-	{
+	function set_method($method){
 		$this->atk14_method = (string)$method;
+	}
+
+	function get_method(){
+		return $this->atk14_method;
+	}
+
+	function enable_csfr_protection(){
+		$this->atk14_csfr_protection_enabled = true;
+		$this->set_hidden_field("csfr_token",Atk14Form::GetCsfrToken());
 	}
 
 	/**
@@ -835,5 +858,23 @@ class Atk14Form extends Form
 				$this->atk14_action = "https://".$HTTP_REQUEST->getServerName().$this->atk14_action;
 			} // TODO is there an another possibility?
 		}
+	}
+
+	static function GetCsfrToken(){
+		$tokens = Atk14Form::GetValidCsfrTokens();
+		return $tokens[0];
+	}
+
+	static function GetValidCsfrTokens(){
+		$out = array();
+
+		$t = floor(time()/(60 * 5));
+
+		for($i=0;$i<=2;$i++){
+			$_t = $t - $i;
+			$out[] = sha1($_t.SECRET_TOKEN); // TODO: add remote addr and session
+		}
+
+		return $out;
 	}
 }
