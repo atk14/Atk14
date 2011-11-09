@@ -1176,9 +1176,7 @@ class TableRecord_Base extends inobj{
 			}
 		}
 
-		error_log($msg = "TableRecord::__call(): unknown method ".get_class($this)."::$name()");
-		if(defined("DEVELOPMENT") && DEVELOPMENT){ die($msg); }
-		die();
+		throw new Exception("inobj_TableRecord::__call(): unknown method ".get_class($this)."::$name()");
 	}
 
 }
