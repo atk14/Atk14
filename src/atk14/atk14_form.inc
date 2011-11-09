@@ -388,7 +388,7 @@ class Atk14Form extends Form
 		if(
 			$out &&
 			$this->atk14_csfr_protection_enabled &&
-			!in_array((string)$HTTP_REQUEST->getVar("_token_","PG"),$this->get_valid_csfr_tokens())
+			!in_array((string)$HTTP_REQUEST->getVar("_token","PG"),$this->get_valid_csfr_tokens())
 		){
 			$this->set_error(_("Please, submit the form again"));
 			$out = false;
@@ -493,7 +493,7 @@ class Atk14Form extends Form
 
 	function enable_csfr_protection(){
 		$this->atk14_csfr_protection_enabled = true;
-		$this->set_hidden_field("_token_",$this->get_csfr_token());
+		$this->set_hidden_field("_token",$this->get_csfr_token());
 	}
 
 	/**

@@ -18,9 +18,10 @@ class tc_atk14_form extends tc_base{
 	}
 
 	function test_csfr_tokens(){
-		$current_token = Atk14Form::GetCsfrToken();
+		$form = new Atk14Form();
+		$current_token = $form->get_csfr_token();
 
-		$tokens = Atk14Form::GetValidCsfrTokens();
+		$tokens = $form->get_valid_csfr_tokens();
 
 		$this->assertEquals($current_token,$tokens[0]);
 		$this->assertTrue(sizeof($tokens)>1);
