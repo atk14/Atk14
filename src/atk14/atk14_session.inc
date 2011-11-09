@@ -159,5 +159,8 @@ class Atk14Session{
 	function cookiesEnabled(){
 		return $this->_SessionStorrer->cookiesEnabled();
 	}
+
+	function getSecretToken(){
+		return $this->_SessionStorrer->getSecretToken();
+	}
 }
-?>

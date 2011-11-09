@@ -353,28 +353,28 @@ class Atk14Form extends Form
 	}
 
 	/**
-		 * Tests validity of form data.
-		 *
-		 * You can specify data to be checked in methods variable or you can check them in two steps. 
-		 *
-		 * <code>
-		 * if($request->Post() && $form->is_valid($_POST)){
-		 * ...
-		 * }
-		 * </code>
-		 *
-		 * This also works. First set data by set_data() method and then use is_valid() method.
-		 * <code>
-		 * if($request->Post() && $form->set_data($_POST) && $form->is_valid()){
-		 * ...
-		 * }
-		 * </code>
-		 *
-		 * @param array|Dictionary $data data from user to be checked
-		 * @return bool true if data is valid, otherwise returns false
-		 * @uses Form::is_valid()
-		 *
-		 */
+	 * Tests validity of form data.
+	 *
+	 * You can specify data to be checked in methods variable or you can check them in two steps. 
+	 *
+	 * <code>
+	 * if($request->Post() && $form->is_valid($_POST)){
+	 * ...
+	 * }
+	 * </code>
+	 *
+	 * This also works. First set data by set_data() method and then use is_valid() method.
+	 * <code>
+	 * if($request->Post() && $form->set_data($_POST) && $form->is_valid()){
+	 * ...
+	 * }
+	 * </code>
+	 *
+	 * @param array|Dictionary $data data from user to be checked
+	 * @return bool true if data is valid, otherwise returns false
+	 * @uses Form::is_valid()
+	 *
+	 */
 	function is_valid($data = null)
 	{
 		global $HTTP_REQUEST;
@@ -388,9 +388,9 @@ class Atk14Form extends Form
 		if(
 			$out &&
 			$this->atk14_csfr_protection_enabled &&
-			!in_array((string)$HTTP_REQUEST->getVar("csfr_token","PG"),Atk14Form::GetValidCsfrTokens())
+			!in_array((string)$HTTP_REQUEST->getVar("_token_","PG"),$this->get_valid_csfr_tokens())
 		){
-			$this->set_error(_("Please, send the form again"));
+			$this->set_error(_("Please, submit the form again"));
 			$out = false;
 		}
 
@@ -493,7 +493,7 @@ class Atk14Form extends Form
 
 	function enable_csfr_protection(){
 		$this->atk14_csfr_protection_enabled = true;
-		$this->set_hidden_field("csfr_token",Atk14Form::GetCsfrToken());
+		$this->set_hidden_field("_token_",$this->get_csfr_token());
 	}
 
 	/**
@@ -860,19 +860,32 @@ class Atk14Form extends Form
 		}
 	}
 
-	static function GetCsfrToken(){
-		$tokens = Atk14Form::GetValidCsfrTokens();
+	/**
+	 * Returns current CSFR token.
+	 * 
+	 * @return string
+	 */
+	function get_csfr_token(){
+		$tokens = $this->get_valid_csfr_tokens();
 		return $tokens[0];
 	}
 
-	static function GetValidCsfrTokens(){
+	/**
+	 * Returns all CSFR tokens which are considered as valid.
+	 * 
+	 * @return string[]
+	 */
+	function get_valid_csfr_tokens(){
+		global $HTTP_REQUEST;
+		$session = &Atk14Session::GetInstance();
+
 		$out = array();
 
 		$t = floor(time()/(60 * 5));
 
-		for($i=0;$i<=2;$i++){
+		for($i=0;$i<=1;$i++){
 			$_t = $t - $i;
-			$out[] = sha1($_t.SECRET_TOKEN); // TODO: add remote addr and session
+			$out[] = sha1($_t.SECRET_TOKEN.get_class($this).$HTTP_REQUEST->getRemoteAddr().$session->getSecretToken());
 		}
 
 		return $out;

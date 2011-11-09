@@ -28,9 +28,9 @@ if(!defined("SESSION_STORER_COOKIE_NAME_CHECK")){
 *		if(!$session->cookiesEnabled()){
 *			echo "CHYBA: aktivujte si prosim cookies";
 *		}
-*		$session->WriteValue("heslo_overeno",true);
+*		$session->writeValue("heslo_overeno",true);
 *		//...
-*		if($session->ReadValue("heslo_overeno") === true){
+*		if($session->readValue("heslo_overeno") === true){
 *			//...
 *		}
 *
@@ -109,7 +109,16 @@ class SessionStorer{
 		}elseif(class_exists("OracleMole")){
 			$this->_dbmole = &OracleMole::GetInstance();
 		}
-		setcookie(SESSION_STORER_COOKIE_NAME_CHECK,"1",time()+60*60*24*365*5,$this->_getWebDocumentRoot());
+	
+		$this->_setCheckCookieWhenNeeded();
+	}
+
+	function _setCheckCookieWhenNeeded(){
+		global $HTTP_REQUEST;
+		
+		if(!isset($HTTP_REQUEST) || !$HTTP_REQUEST->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C")){
+			setcookie(SESSION_STORER_COOKIE_NAME_CHECK,"1",time()+60*60*24*365*5,$this->_getWebDocumentRoot());
+		}
 	}
 
 	/**
@@ -236,15 +245,7 @@ class SessionStorer{
 	}
 
 	function _RandomString($length = 32){
-		settype($length,"integer");
-		srand ((double) microtime() * 1000000);
-		$temp = array("a","i","o","s","t","u","v","3","4","5","8","B","C","D","E","F","7","G","H","I","J","K","L","M","N","O","j","k","l","6","P","Q","W","b","c","d","e","f","g","h","p","q","r","x","y","z","0","1","S","T","U","w","2","9","A","R","V","m","n");
-		$rand = array_rand($temp,$length);
-		$out = '';
-		for($i=0;$i<sizeof($rand);$i++){
-			$out .= $temp[$rand[$i]];
-		}
-		return $out;
+		return (string)String::RandomString(32);
 	}
 
 	/**
@@ -254,7 +255,7 @@ class SessionStorer{
 	*/
 	function _SetSessionCookie(){
 		$_expire_time = 0; // session cookie se nastavi do zavreni prohlizece
-		$_cokie_value = "$this->_SessionId.$this->_SessionSecurity";
+		$_cokie_value = $this->getSecretToken();
 		setcookie(SESSION_STORER_COOKIE_NAME_SESSION,$_cokie_value,$_expire_time,$this->_getWebDocumentRoot());
 	}
 
@@ -327,7 +328,6 @@ class SessionStorer{
 		));
 	}
 
-
 	/**
 	* Zjisti, zda ma klient aktivni cookies.
 	* Jen pokud jsou aktivni cookies, budou session hodnoty ulozeny do databaze.
@@ -349,7 +349,7 @@ class SessionStorer{
 	* @return mixed								bude vraceno ten typ promenne, ktery byl ulozen
 	*															null v pripade, ze hodnota neni ulozena
 	*/
-	function ReadValue($key){
+	function readValue($key){
 		settype($key,"string");
 
 		$this->_initialize();
@@ -368,7 +368,7 @@ class SessionStorer{
 	* @param mixed $value					muze byt string, pole, int...
 	* @param int $expiration			pocet vterin, po kterou ma hodnota platit
 	*/
-	function WriteValue($key,$value,$expiration = null){
+	function writeValue($key,$value,$expiration = null){
 		settype($key,"string");
 		if(isset($expiration)){
 			settype($expiration,"integer");
@@ -446,9 +446,14 @@ class SessionStorer{
 	*/
 	function clear(){
 		$this->_initialize();
-		foreach($this->_ValuesStore as $k => $v){ $this->WriteValue($k,null); }
+		foreach($this->_ValuesStore as $k => $v){ $this->writeValue($k,null); }
 	}
 
+	function getSecretToken(){
+		if(isset($this->_SessionId) && isset($this->_SessionSecurity)){
+			return $this->_SessionId.".".$this->_SessionSecurity;
+		}
+	}
 
 	/**
 	* Sbali hodnotu do stringu.
@@ -505,4 +510,3 @@ class SessionStorer{
 		return "/";
 	}
 }
-?>
