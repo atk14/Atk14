@@ -1,8 +1,6 @@
 <?php
 class tc_sendmail extends tc_base{
 	function test(){
-
-
 		$ar = sendmail(array(
 			"to" => "me@mydomain.com",
 			"from" => "test@file",
@@ -54,6 +52,36 @@ class tc_sendmail extends tc_base{
 			"mime_type" => "text/html"
 		));
 		$this->assertTrue((bool)preg_match("/Content-Type: text\\/html\\n/",$ar["headers"]));
+	}
+
+	function test_from_name(){
+		$ar = sendmail($params = array(
+			"from" => "john.doe@example.com",
+			"from_name" => "John Doe",
+		));
+		$this->assertEquals("john.doe@example.com",$ar["from"]);
+		$this->assertTrue((bool)preg_match('/From: John Doe <john.doe@example.com>/',$ar["headers"]));
+
+		$ar = sendmail($params = array(
+			"from" => "John Doe <john.doe@example.com>",
+		));
+		$this->assertEquals("john.doe@example.com",$ar["from"]);
+		$this->assertTrue((bool)preg_match('/From: John Doe <john.doe@example.com>/',$ar["headers"]));
+
+		$ar = sendmail(array(
+			"from" => "vesela-prochazka@example.com",
+			"from_name" => "Veselá Procházka",
+			"charset" => "UTF-8",
+		));
+		$this->assertEquals("vesela-prochazka@example.com",$ar["from"]);
+		$this->assertTrue((bool)preg_match('/From: =\?UTF-8\?Q\?Vesel=C3=A1_Proch=C3=A1zka\?= <vesela-prochazka@example.com>/',$ar["headers"]));
+
+		$ar = sendmail(array(
+			"from" => '"Veselá Procházka" <vesela-prochazka@example.com>',
+			"charset" => "UTF-8",
+		));
+		$this->assertEquals("vesela-prochazka@example.com",$ar["from"]);
+		$this->assertTrue((bool)preg_match('/From: =\?UTF-8\?Q\?Vesel=C3=A1_Proch=C3=A1zka\?= <vesela-prochazka@example.com>/',$ar["headers"]));
 	}
 
 	function test_to_as_array(){

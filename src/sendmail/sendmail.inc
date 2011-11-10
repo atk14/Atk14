@@ -40,12 +40,23 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 * Sends an e-mail.
 *
 * <code>
-*		// An typical usage
+*		// a typical usage
 *		sendmail(array(
 *			"from" => "info@example.org",
 *			"to" => "user@gmailer.com",
 *			"subject" => "An Subject",
 *			"body" => "Hi!",
+*		));
+*
+*		sendmail(array(
+*			"from" => "info@example.org",
+*			"from_name" => "Our Big Company",
+*			// ...
+*		));
+*
+*		sendmail(array(
+*			"from" => "Our Big Company <info@example.org>",
+*			// ...
 *		));
 *	</code>
 *
@@ -89,7 +100,8 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 function sendmail($params = array()){
 	$orig_params = $params;
 	$params = array_merge(array(
-		"from" => SENDMAIL_DEFAULT_FROM,
+		"from" => SENDMAIL_DEFAULT_FROM, // john.doe@example.com
+		"from_name" => null, // "John Doe"
 		"to" => SENDMAIL_EMPTY_TO_REPLACE,
 		"cc" => null,
 		"bcc" => null,
@@ -116,7 +128,15 @@ function sendmail($params = array()){
 	//if(is_array($params["cc"])){ $params["cc"] = join(", ",array_unique($params["cc"])); }
 	//if(is_array($params["bcc"])){ $params["bcc"] = join(", ",array_unique($params["bcc"])); }
 
-	$FROM = $params['from'];
+	$FROM = trim($params['from']);
+	$FROM_NAME = $params['from_name'];
+	
+	// "John Doe <john.doe@example.com>" -> "John Doe", "john.doe@example.com"
+	if(preg_match('/^[\'"]?(.+?)[\'"]?\s+<([^@<>"\']+@[^@<>"\']+)>$/',$FROM,$matches)){
+		$FROM = $matches[2];
+		$FROM_NAME = $matches[1];
+	}
+
 	$BCC = array();
 	if(isset($params['bcc'])){ $BCC[] = _sendmail_correct_address($params['bcc']);}
 	if(defined("SENDMAIL_BCC_TO") && SENDMAIL_BCC_TO!=""){
@@ -187,7 +207,8 @@ function sendmail($params = array()){
 	
 	$HEADERS = "";
 	if(sizeof($ATTACHMENTS)==0){
-		$HEADERS .= "From: $FROM\n";
+		$_from = $FROM_NAME ? _sendmail_escape_subject($FROM_NAME,$BODY_CHARSET)." <$FROM>" : $FROM;
+		$HEADERS .= "From: $_from\n";
 		$HEADERS .= "Reply-To: $FROM\n";
 		if($BCC!=""){
 			$HEADERS .= "bcc: $BCC\n";
