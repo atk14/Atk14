@@ -135,7 +135,7 @@ class Atk14Form extends Form
 	 */
 	var $atk14_method = "post";
 
-	var $atk14_csfr_protection_enabled = false;
+	var $atk14_csrf_protection_enabled = false;
 
 	/**
 	 * @param array $options valid options:
@@ -387,8 +387,8 @@ class Atk14Form extends Form
 
 		if(
 			$out &&
-			$this->atk14_csfr_protection_enabled &&
-			!in_array((string)$HTTP_REQUEST->getVar("_token","PG"),$this->get_valid_csfr_tokens())
+			$this->atk14_csrf_protection_enabled &&
+			!in_array((string)$HTTP_REQUEST->getVar("_token","PG"),$this->get_valid_csrf_tokens())
 		){
 			$this->set_error(_("Please, submit the form again"));
 			$out = false;
@@ -491,9 +491,9 @@ class Atk14Form extends Form
 		return $this->atk14_method;
 	}
 
-	function enable_csfr_protection(){
-		$this->atk14_csfr_protection_enabled = true;
-		$this->set_hidden_field("_token",$this->get_csfr_token());
+	function enable_csrf_protection(){
+		$this->atk14_csrf_protection_enabled = true;
+		$this->set_hidden_field("_token",$this->get_csrf_token());
 	}
 
 	/**
@@ -865,8 +865,8 @@ class Atk14Form extends Form
 	 * 
 	 * @return string
 	 */
-	function get_csfr_token(){
-		$tokens = $this->get_valid_csfr_tokens();
+	function get_csrf_token(){
+		$tokens = $this->get_valid_csrf_tokens();
 		return $tokens[0];
 	}
 
@@ -875,7 +875,7 @@ class Atk14Form extends Form
 	 * 
 	 * @return string[]
 	 */
-	function get_valid_csfr_tokens(){
+	function get_valid_csrf_tokens(){
 		global $HTTP_REQUEST;
 		$session = &Atk14Session::GetInstance();
 

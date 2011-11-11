@@ -17,11 +17,11 @@ class tc_atk14_form extends tc_base{
 		$this->assertEquals("jumper",$d["nickname"]);
 	}
 
-	function test_csfr_tokens(){
+	function test_csrf_tokens(){
 		$form = new Atk14Form();
-		$current_token = $form->get_csfr_token();
+		$current_token = $form->get_csrf_token();
 
-		$tokens = $form->get_valid_csfr_tokens();
+		$tokens = $form->get_valid_csrf_tokens();
 
 		$this->assertEquals($current_token,$tokens[0]);
 		$this->assertTrue(sizeof($tokens)>1);
