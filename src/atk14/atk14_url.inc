@@ -121,17 +121,10 @@ class Atk14Url{
 			}
 		}
 
-		if(!isset($out)){
-			return array(
-				"namespace" => $namespace,
-				"controller" => "application",
-				"action" => "error404",
-				"lang" => $ATK14_GLOBAL->getDefaultLang(),
-				"page_title" => "",
-				"page_description" => "",
-				"get_params" => array(),
-				"force_redirect" => null
-			);
+		// kontrollery "application" a "atk14" neni mozne zvenku linkovat primo,
+		// stejne tak akce "error404", "error403" a "error500" neni mozne linkovat primo.
+		if(!isset($out) || in_array($out["controller"],array("application","atk14")) || in_array($out["action"],array("error404","error403","error500"))){
+			return  Atk14Url::_NotFound($namespace);
 		}
 
 		$get_params = array();
@@ -151,21 +144,6 @@ class Atk14Url{
 		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
 		$get_params = array_merge($_GET,$get_params);
 
-		/*
-		$expected_link = Atk14Url::BuildLink(array_merge(
-			$get_params,
-			array(
-				"controller" => $out["controller"],
-				"action" => $out["action"],
-				"lang" => $out["lang"],
-			)
-		),array("connector" => "&"));
-		$_force_redirect = null;
-		if($expected_link!=$requested_uri){
-			$_force_redirect = $expected_link;
-		}
-		*/
-
 		return Atk14Url::_FindForceRedirect(array(
 			"namespace" => $namespace,
 			"controller" => $out["controller"],
@@ -181,6 +159,11 @@ class Atk14Url{
 		),$requested_uri);
 	}
 
+	/**
+	 * Zjisti, zda dane REQUEST URI by nahodou nemelo byt v novejsi variante.
+	 * Pokud ano, vyplni se force_redirect a dalsi mechanismy pak zajisti
+	 * presmerovani uzivatele na toto nove URL.
+	 */
 	static function _FindForceRedirect($out,$requested_uri){
 		// zde muze byt dojit ke zmene $out["lang"]
 		if(function_exists("atk14_initialize_locale")){
@@ -206,6 +189,20 @@ class Atk14Url{
 		}
 
 		return $out;
+	}
+
+	static function _NotFound($namespace){
+		global $ATK14_GLOBAL;
+		return array(
+			"namespace" => $namespace,
+			"controller" => "application",
+			"action" => "error404",
+			"lang" => $ATK14_GLOBAL->getDefaultLang(),
+			"page_title" => "",
+			"page_description" => "",
+			"get_params" => array(),
+			"force_redirect" => null
+		);
 	}
 
 	/**

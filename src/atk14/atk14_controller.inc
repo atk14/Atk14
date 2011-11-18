@@ -272,8 +272,7 @@ class Atk14Controller{
 	}
 
 	function index(){
-		Atk14Utils::ErrorLog("Atk14Controller::index(): Hey Dude, cover me!",$this->response);
-		$this->render_template = false;
+		$this->_execute_action("error404");
 	}
 
 	/**
