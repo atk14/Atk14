@@ -16,6 +16,8 @@ __defaults__(array(
 	"ATK14_BASE_HREF" => "/",
 	"ATK14_HTTP_HOST" => "", // 
 	"ATK14_ADMIN_EMAIL" => DEFAULT_EMAIL,
+
+	"ATK14_PAGINATOR_OFFSET_PARAM_NAME" => "offset", // you may want to use "from" or something else
 ));
 
 __defaults__(array(

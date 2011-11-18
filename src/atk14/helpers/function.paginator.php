@@ -62,7 +62,9 @@ function smarty_function_paginator($params,&$smarty){
 		$total_amount = isset($params["total_amount"]) ? (int)$params["total_amount"] : (int)$smarty->_tpl_vars["total_amount"];
 		$max_amount = isset($params["max_amount"]) ? (int)$params["max_amount"] : (int)$smarty->_tpl_vars["max_amount"];
 	}
-	$from_name = isset($params["from"]) ? $params["from"] : "from";
+
+	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? ATK14_PAGINATOR_OFFSET_PARAM_NAME : "from";
+	$from_name = isset($params["$_from"]) ? $params["$_from"] : "$_from";
 
 	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
 
