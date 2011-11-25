@@ -1,14 +1,17 @@
 var ATK14 = (function( $ ) {
 
-	$( "a[data-remote]" ).live( "click", function() {
-		var $link = $( this ),
-			confirmMessage = $link.data( "confirm" );
+	$( "a[data-remote], a[data-method]" ).live( "click", function() {
+		var $link = $( this );
 
-		if ( !confirmMessage || confirm( confirmMessage ) ) {
+		if ( !allowAction( $link ) ) return false;
+
+		if ( $link.data( "remote" ) ) {
 			ATK14.handleRemote( this );
+			return false;
+		} else if ( $link.data( "method" ) ) {
+			handleMethod( $link );
+			return false;
 		}
-
-		return false;
 	});
 
 	$( "form[data-remote]" ).live( "submit", function() {
@@ -31,12 +34,26 @@ var ATK14 = (function( $ ) {
 		dataType: "conscript"
 	});
 
-	// Triggers an event on an element and returns the event result
 	function fire( obj, name, data ) {
 		var event = new $.Event( name );
 		obj.trigger( event, data );
 		return event.result !== false;
 	};
+
+	function allowAction( $element ) {
+		var message = $element.data( "confirm" );
+		return !message || ( fire( $element, "confirm" ) && confirm( message ) );
+	}
+
+	function handleMethod( $link ) {
+		var href = $link.attr( "href" ),
+			method = $link.data( "method" ),
+			$form = $( "<form method='post' action='" + href + "'></form>" ),
+			metadata_input = "<input name='_method' value='" + method + "' type='hidden' />";
+
+		$form.hide().append( metadata_input ).appendTo( "body" );
+		$form.submit();
+	}
 
 
 	return {
