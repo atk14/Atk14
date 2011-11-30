@@ -4,7 +4,6 @@ class tc_lister extends tc_base{
 		global $dbmole;
 
 		$dbmole->begin();
-	
 
 		$this->article = Article::CreateNewRecord(array(
 			"title" => "Christ's Sheep",
@@ -29,9 +28,15 @@ class tc_lister extends tc_base{
 
 		$lister->append($john);
 		$this->_test_authors(array($john));
+		$this->assertTrue($lister->contains($john));
+		$this->assertTrue($lister->contains($john->getId()));
+		$this->assertFalse($lister->contains($peter));
+		$this->assertFalse($lister->contains(null));
 
 		$lister->append($peter);
 		$this->_test_authors(array($john,$peter));
+		$this->assertTrue($lister->contains($john));
+		$this->assertTrue($lister->contains($peter));
 
 		$lister->prepend($paul);
 		$this->_test_authors(array($paul,$john,$peter));
@@ -72,5 +77,17 @@ class tc_lister extends tc_base{
 			$this->assertEquals($i,$items[$i]->getRank());
 			$this->assertEquals($expected_authors[$i]->getId(),$items[$i]->getRecordId());
 		}
+
+		// getRecords(), getRecordIds()
+		$records = $lister->getRecords();
+		$record_ids = $lister->getRecordIds();
+
+		$this->assertEquals(sizeof($records),sizeof($record_ids));
+
+		for($i=0;$i<sizeof($expected_authors);$i++){
+			$this->assertEquals($expected_authors[$i]->getId(),$records[$i]->getId());
+			$this->assertEquals($expected_authors[$i]->getId(),$record_ids[$i]);
+		}
+		
 	}
 }

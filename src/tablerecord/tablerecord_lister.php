@@ -1,21 +1,23 @@
 <?php
-/** 
- * $article = Article::GetInstanceById(1);
- * $lister = $article->getLister("Authors");
- * $lister->append($author1);
- * $lister->append($author2);
- * $lister->getRecords(); // array($author1,$author2);
- * $lister->contains($author1); // true
- * $lister->contains($author3); // false
- * $items = $lister->getItems();
- * $items[0]->getRecord(); // $author1
- * $items[1]->getRecord(); // $author2
+/**
+ * <code>
+ *	 $article = Article::GetInstanceById(1);
+ *	 $lister = $article->getLister("Authors");
+ *	 $lister->append($author1);
+ *	 $lister->append($author2);
+ *	 $lister->getRecords(); // array($author1,$author2);
+ *	 $lister->contains($author1); // true
+ *	 $lister->contains($author3); // false
+ *	 $items = $lister->getItems();
+ *	 $items[0]->getRecord(); // $author1
+ *	 $items[1]->getRecord(); // $author2
  *
- * $items[0]->getRank(); // 0
- * $items[1]->setRank(0); //
- * $items[0]->getRank(); // 1
+ *	 $items[0]->getRank(); // 0
+ *	 $items[1]->setRank(0); //
+ *	 $items[0]->getRank(); // 1
  *
- * $lister->setRecordRank($author2,0);
+ *	 $lister->setRecordRank($author2,0);
+ * </code>
  */
 class TableRecord_Lister extends inobj{
 	/**
@@ -67,7 +69,7 @@ class TableRecord_Lister extends inobj{
 	function add($record){ return $this->append($record); }
 
 	/**
-	 * Pepends a record at the beginning of the list.
+	 * Prepends a record at the beginning of the list.
 	 */
 	function prepend($record){ $this->_add($record,-1); }
 
@@ -142,6 +144,12 @@ class TableRecord_Lister extends inobj{
 		return $this->_items;
 	}
 
+	function getRecordIds(){
+		$out = array();
+		foreach($this->getItems() as $item){ $out[] = $item->getRecordId(); }
+		return $out;
+	}
+
 	function getRecords(){
 		$out = array();
 		foreach($this->getItems() as $item){ $out[] = $item->getRecord(); }
@@ -205,6 +213,9 @@ class TableRecord_Lister extends inobj{
 	}
 }
 
+/**
+ * Here is a item in a lister.
+ */
 class TableRecord_ListerItem{
 
 	/**
