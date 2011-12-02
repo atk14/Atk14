@@ -4,38 +4,6 @@
  *
  * Smarty block tag {a}{/a} generates html <a /> tag
  *
- * <code>
- * {a controller="domain" action="examination" lang="cs" domain_name="plovarna.cz"}Text odkazu{/a}
- * </code>
- *
- * tento zapis
- * <code>
- * {a controller="domain" action="examination" lang="cs" domain_name="plovarna.cz" _anchor="detail"}Prohlizeni domeny plovarna.cz{/a}
- * </code>
- * 
- * vyprodukuje
- * <a href="/prohlizeni-domeny/plovarna.cz/#detail">Prohlizeni domeny plovarna.cz</a>
- *
- *
- * 
- * tento zapis
- * <code>
- * {a controller="domain" action="examination" lang="cs" domain_name="plovarna.cz" _with_hostname=true}Prohlizeni domeny plovarna.cz{/a}
- * </code>
- * 
- * vyprodukuje
- * <a href="http://www.domainmaster.cz/prohlizeni-domeny/plovarna.cz/">Prohlizeni domeny plovarna.cz</a>
- *
- *
- * 
- * tento zapis
- * <code>
- * {a controller="domain" action="examination" lang="cs" domain_name="plovarna.cz" _anchor="detail" _class="detail" _id="detail"}Prohlizeni domeny plovarna.cz{/a}
- * </code>
- * 
- * vyprodukuje
- * <a href="/prohlizeni-domeny/plovarna.cz/#detail" class="detail" id="detail">Prohlizeni domeny plovarna.cz</a>
- *
  * @package Atk14
  * @subpackage Helpers
  */
@@ -51,30 +19,50 @@
  * 	<li><b>domain_name</b> - Generated url will contain this domain_name when used with _with_hostname=true</li>
  * 	<li><b>_with_hostname</b> - see domain_name parameter</li>
  * 	<li><b>_anchor</b> - generates anchor</li>
+ *	<li><b>_method</b></li>
+ *	<li><b>_confirm</b></li>
  * </ul>
  *
  * You can also define attributes of the tag. Simply add them to the helper with underscore at the beginning. For example parameter <b>_class=heading</b> will generate <a /> tag with attribute class="heading"
  * <code>
- * {a controller="domain" action="examination" _class="heading"}Prohlizeni domeny plovarna.cz{/a}
+ * 	{a controller="articles" action="detail" id=$article _class="heading"}Read the article{/a}
+ * </code>
+ *
+ * Sometimes you may want to access an URL with method POST.
+ * <code>
+ *	{a controller="articles" action="destroy" id=$action _method="post" _confirm="Are you sure to delete the article?"}Destroy the article{/a}
  * </code>
  *
  * More query parameters can be added by adding them to the helper. They will appear in the URL with the name you give them in helper.
  * @param string $content content of the Smarty {a} block tag
- *
- * 
  */
 function smarty_block_a($params, $content, &$smarty, &$repeat)
 {
+	$params = array_merge(array(
+		"_method" => "get",
+		"_confirm" => null,
+	),$params);
+
+
 	Atk14Timer::Start("helper block.a");
-	$attributes = array();
+	$attrs = array();
+	if($params["_method"]!="get"){
+		$attrs["data-method"] = $params["_method"];
+	}
+	if($params["_confirm"]){
+		$attrs["data-confirm"] = $params["_confirm"];
+	}
+
+	unset($params["_method"]);
+	unset($params["_confirm"]);
 
 	$url = Atk14Utils::BuildLink($params,$smarty);
 
-	$attrs = Atk14Utils::ExtractAttributes($params);
+	Atk14Utils::ExtractAttributes($params,$attrs);
 	$attrs["href"] = $url;
+
 	$attrs = Atk14Utils::JoinAttributes($attrs);
 
 	Atk14Timer::Stop("helper block.a");
 	return "<a$attrs>$content</a>";
 }
-?>
