@@ -1,0 +1,106 @@
+<?
+class tc_url_fetcher extends tc_base{
+	function test(){
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/dungeon-master.png");
+		$this->assertTrue($f->fetchContent());
+		$this->assertFalse($f->errorOccurred());
+		$this->assertTrue($f->found());
+		$this->assertEquals(11462,strlen($f->getContent()));
+		$this->assertEquals("c4f99bdb6a4feb3b41b1bcd56a4d7aa3",md5($f->getContent()));
+		$this->assertEquals("image/png",$f->getContentType());
+		$this->assertEquals(200,$f->getStatusCode());
+		$this->assertEquals("dungeon-master.png",$f->getFilename());
+
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/dungeon-master.png?not_important_parameter=1");
+		$this->assertTrue($f->found());
+		$this->assertEquals("dungeon-master.png",$f->getFilename());
+
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/non-existing");
+		//$this->assertFalse($f->fetchContent()); // nemusi byt volano!
+		$this->assertFalse($f->found());
+		$this->assertTrue($f->errorOccurred());
+		$this->assertEquals(404,$f->getStatusCode()); // Not Found
+
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/zeroes.dat");
+		$this->assertEquals(4,strlen($f->getContent()));
+		$this->assertEquals(chr(0).chr(0).chr(0).chr(0),$f->getContent());
+
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/zero_data_zero.dat");
+		$this->assertEquals(6,strlen($f->getContent()));
+		$this->assertEquals(chr(0)."data".chr(0),$f->getContent());
+	}
+
+	function test_authorization(){
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/private/");
+		//$this->assertFalse($f->fetchContent());
+		$this->assertFalse($f->found());
+		$this->assertTrue($f->errorOccurred());
+		$this->assertEquals(401,$f->getStatusCode()); // Authorization Required
+
+		$f = new UrlFetcher("http://test:wrong_password@jarek.plovarna.cz/unit-testing/private/");
+		//$this->assertFalse($f->fetchContent());
+		$this->assertFalse($f->found());
+		$this->assertTrue($f->errorOccurred());
+		$this->assertEquals(401,$f->getStatusCode()); // Authorization Required
+
+		$f = new UrlFetcher("http://test:UNIT@jarek.plovarna.cz/unit-testing/private/");
+		//$this->assertTrue($f->fetchContent());
+		$this->assertTrue($f->found());
+		$this->assertTrue((bool)preg_match("/Welcome in private area!/",$f->getContent()));
+
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/private/");
+		$f->setAuthorization("test","UNIT");
+		//$this->assertTrue($f->fetchContent());
+		$this->assertTrue($f->found());
+		$this->assertTrue((bool)preg_match("/Welcome in private area!/",$f->getContent()));
+	}
+
+	function test_ssl(){
+		$f = new UrlFetcher("https://admin.plovarna.cz/unit-testing.php");
+		$this->assertTrue($f->found());
+		$this->assertTrue((bool)preg_match("/You are on the ssl/",$f->getContent()));
+		$this->assertTrue((bool)preg_match("/Request method is GET/",$f->getContent()));
+	}
+
+	function test_post(){
+		$this->_test_post("foo=bar&foo_2=bar_too");
+		$this->_test_post(array(
+			"foo" => "bar",
+			"foo_2" => "bar_too"
+		));
+	}
+
+	function test_additiona_headers(){
+		$f = new UrlFetcher("http://jarek.plovarna.cz/",array(	
+			"additional_headers" => array(
+				"X-App-Version: 1.2",
+			)
+		));
+		$this->assertTrue($f->found());
+		$this->assertTrue((bool)preg_match("/X-App-Version/",$f->getContent()));
+	}
+
+	function _test_post($data){
+		$f = new UrlFetcher("https://admin.plovarna.cz/unit-testing.php");
+		$this->assertTrue($f->post($data));
+		$this->assertTrue((bool)preg_match("/You are on the ssl/",$f->getContent()));
+		$this->assertTrue((bool)preg_match("/Request method is POST/",$f->getContent()));
+
+		$headers = $f->getRequestHeaders();
+		$this->assertTrue((bool)preg_match("/Content-Length: 21/",$headers));
+		$this->assertTrue((bool)preg_match("/Content-Type: application\\/x-www-form-urlencoded/",$headers));
+	}
+
+	function test_get_content_charset(){
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/latin2.php");
+		$this->assertTrue($f->found());
+		$this->assertEquals("text/html",$f->getContentType());
+		$this->assertEquals("iso-8859-2",$f->getContentCharset());
+
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/no_charset.php");
+		$this->assertTrue($f->found());
+		$this->assertEquals("text/html",$f->getContentType());
+		$this->assertEquals(null,$f->getContentCharset());
+	}
+}
+?>

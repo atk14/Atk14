@@ -1,0 +1,5 @@
+AuthType Basic 
+AuthName "Restricted Area"
+AuthUserFile /home/yarri/www/plovarna.cz/jarek/unit-testing/private/.htpasswd
+require valid-user
+satisfy all
