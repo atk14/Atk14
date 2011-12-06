@@ -14,7 +14,7 @@ __defaults__(array(
 	"ATK14_APPLICATION_NAME" => "Our Website",
 	"ATK14_DOCUMENT_ROOT" => dirname(__FILE__)."/../", // where is the folder containing app/, config/ dispatcher.php...
 	"ATK14_BASE_HREF" => "/",
-	"ATK14_HTTP_HOST" => "", // 
+	"ATK14_HTTP_HOST" => "www.our-awesome-website.com", // 
 	"ATK14_ADMIN_EMAIL" => DEFAULT_EMAIL,
 
 	"ATK14_PAGINATOR_OFFSET_PARAM_NAME" => "offset", // you may want to use "from" or something else

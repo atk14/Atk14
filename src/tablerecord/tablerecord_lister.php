@@ -214,7 +214,7 @@ class TableRecord_Lister extends inobj{
 }
 
 /**
- * Here is a item in a lister.
+ * Here is a item from a lister.
  */
 class TableRecord_ListerItem{
 
