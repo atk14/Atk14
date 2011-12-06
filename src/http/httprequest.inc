@@ -444,7 +444,11 @@ class HTTPRequest{
 	 *
 	 * @return string
 	 */
-	function getUserAgent(){ return $GLOBALS["_SERVER"]["HTTP_USER_AGENT"]; }
+	function getUserAgent(){
+		if(isset($this->_ForceUserAgent)){ return $this->_ForceUserAgent; }
+		return $GLOBALS["_SERVER"]["HTTP_USER_AGENT"];
+	}
+	function setUserAgent($agent){ $this->_ForceUserAgent = $agent; }
 
 	/**
 	 * Return raw post data.
@@ -913,13 +917,19 @@ class HTTPRequest{
 	 */
 	function mobileDevice(){
 		global $_SERVER;
+		$user_agent = $this->getUserAgent();
 
 		// check if the user agent value claims to be windows but not windows mobile
-		if(isset($_SERVER['HTTP_USER_AGENT']) && stristr($_SERVER['HTTP_USER_AGENT'],'windows') && !stristr($_SERVER['HTTP_USER_AGENT'],'windows ce')){
+		if(isset($user_agent) && stristr($user_agent,'windows') && !stristr($user_agent,'windows ce')){
 			return false;
 		}
+
+		if(preg_match('/iPad;/',$user_agent)){
+			return false;
+		}
+
 		// check if the user agent gives away any tell tale signs it's a mobile browser
-		if(isset($_SERVER['HTTP_USER_AGENT']) && eregi('up.browser|up.link|windows ce|iemobile|mini|mmp|symbian|midp|wap|phone|pocket|mobile|pda|psp',$_SERVER['HTTP_USER_AGENT'])){
+		if(isset($user_agent) && eregi('up.browser|up.link|windows ce|iemobile|mini|mmp|symbian|midp|wap|phone|pocket|mobile|pda|psp|iPhone;|iPod;',$user_agent)){
 			return true;
 		}
 		// check the http accept header to see if wap.wml or wap.xhtml support is claimed
@@ -1023,9 +1033,11 @@ class HTTPRequest{
 											'xda-'=>'xda-'
 										);
 		// check if the first four characters of the current user agent are set as a key in the array
-		if(isset($_SERVER['HTTP_USER_AGENT']) && isset($a[substr($_SERVER['HTTP_USER_AGENT'],0,4)])){
+		if(isset($user_agent) && isset($a[substr($user_agent,0,4)])){
 			return true;
 		}	
+
+		return false;
 	}
 
 	/**
@@ -1034,7 +1046,7 @@ class HTTPRequest{
 	 * @return bool
 	 */
 	function iphone(){
-		return preg_match('/iphone/',$this->getUserAgent()) || preg_match('/ipod/',$this->getUserAgent());
+		return preg_match('/iPhone;/',$this->getUserAgent()) || preg_match('/iPod;/',$this->getUserAgent());
 	}
 
 	/**
