@@ -457,10 +457,17 @@ class HTTPRequest{
 	 * @return string null when no raw data exist
 	 */
 	function getRawPostData(){
+		if(isset($this->_ForceRawPostData)){
+			return $this->_ForceRawPostData;
+		}
 		if(isset($GLOBALS["HTTP_RAW_POST_DATA"])){
 			return $GLOBALS["HTTP_RAW_POST_DATA"];
 		}
 		return null;
+	}
+
+	function setRawPostData($data){
+		$this->_ForceRawPostData = $data;
 	}
 
 	/**

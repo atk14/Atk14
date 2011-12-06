@@ -285,6 +285,21 @@ class tc_http_request extends tc_base{
 		}
 	}
 
+	function test_raw_post_data(){
+		global $HTTP_RAW_POST_DATA;
+
+		$HTTP_RAW_POST_DATA = null;
+
+		$request = new HTTPRequest();
+		$this->assertEquals(null,$request->getRawPostData());
+
+		$HTTP_RAW_POST_DATA = "Real_Raw_Content";
+		$this->assertEquals("Real_Raw_Content",$request->getRawPostData());
+
+		$request->setRawPostData("Forced_Raw_Content");
+		$this->assertEquals("Forced_Raw_Content",$request->getRawPostData());
+	}
+
 	function _check_request_method($req,$type){
 		$this->assertEquals($type,$req->getRequestMethod());
 

@@ -242,6 +242,12 @@ class HTTPUploadedFile{
 	}
 
 	/**
+	 * Is this a chunked file upload?
+	 * 
+	 */
+	function chunkedUpload(){ return false; }
+
+	/**
 	 * @access private
 	 * @return string
 	 */

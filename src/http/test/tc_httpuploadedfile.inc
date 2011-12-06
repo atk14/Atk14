@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_httpuploadedfile extends tc_base{
 	function test(){
 		global $_FILES,$HTTP_RAW_POST_DATA,$HTTP_REQUEST;
@@ -20,6 +20,7 @@ class tc_httpuploadedfile extends tc_base{
 
 		$hlava = $files[0];
 		$this->assertTrue($hlava->isImage());
+		$this->assertFalse($hlava->chunkedUpload());
 	}
 
 	function test_image_processing(){

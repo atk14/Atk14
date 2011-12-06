@@ -1,11 +1,11 @@
-<?
+<?php
 class tc_base extends tc_super_base{
 
 	function _init_FILES(){
 		global $_FILES;
 
-		files::copy_file("hlava.jpg",TEMP."/temp_hlava.jpg",$err,$err_str);
-		files::copy_file("dousi.pdf",TEMP."/temp_dousi.pdf",$err,$err_str);
+		files::copy_file("hlava.jpg",TEMP."/temp_hlava.jpg");
+		files::copy_file("dousi.pdf",TEMP."/temp_dousi.pdf");
 
 		$_FILES = array(
 			"hlava" => array(
@@ -19,4 +19,3 @@ class tc_base extends tc_super_base{
 		);
 	}
 }
-?>

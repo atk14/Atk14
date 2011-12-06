@@ -1,7 +1,9 @@
 <?
 class tc_httpxfile extends tc_base{
 	function test(){
-		global $HTTP_REQUEST;
+		global $HTTP_REQUEST,$_FILES;
+
+		$_FILES = null;
 
 		$HTTP_REQUEST->setMethod("post");
 		$HTTP_REQUEST->_HTTPRequest_headers = array("X-File-Name" => "hlava.jpg");
@@ -12,6 +14,7 @@ class tc_httpxfile extends tc_base{
 
 		$xfile = HTTPXFile::GetInstance(array("name" => "file.jpg"));
 		$this->assertTrue(is_object($xfile));
+		$this->assertFalse($xfile->chunkedUpload());
 		$xfile->cleanUp();
 
 		$file = $HTTP_REQUEST->getUploadedFile("file");
@@ -33,5 +36,6 @@ class tc_httpxfile extends tc_base{
 		$HTTP_REQUEST->setMethod("get");
 		$HTTP_RAW_POST_DATA = null;
 		$HTTP_REQUEST->_HTTPRequest_headers = array();
+		$this->assertNull(HTTPXFile::GetInstance(array("name" => "file.jpg")));
 	}
 }
