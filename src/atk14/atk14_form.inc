@@ -638,13 +638,17 @@ class Atk14Form extends Form
 
 	/**
 	 * Sets enctype attribute of form to value "multipart/form-data".
-	 *
-	 * @uses set_attr()
 	 */
 	function allow_file_upload()
 	{
+		$this->set_method("post");
 		$this->set_attr("enctype","multipart/form-data");
 	}
+
+	/**
+	 * Alias for allow_file_upload()
+	 */
+	function enable_file_upload(){ return $this->allow_file_upload(); }
 
 	/**
 	 * Render start of form tag.
