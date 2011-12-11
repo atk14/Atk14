@@ -5,4 +5,3 @@ class tc_php5 extends tc_base{
 		$this->assertEquals("instance of XMole","$x");
 	}
 }
-?>

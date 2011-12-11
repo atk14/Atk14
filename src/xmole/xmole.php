@@ -749,4 +749,3 @@ class XMole{
 
 	function __toString(){ return "instance of ".get_class($this); }
 }
-?>
