@@ -268,5 +268,38 @@ class tc_xmole extends tc_base{
      $p = $xmole->get_next_child();
      $this->assertEquals("Jamis",$p->get_data("name"));
   }
+
+  function test_errors(){
+    $xmole = new XMole();
+
+    $this->assertEquals(false,$xmole->parse('<xml><a>FAIL</b></xml>',$err_code,$err_message));
+    $this->assertEquals(76,$err_code);
+    $this->assertEquals('XML parser error (76): Mismatched tag on line 1',$err_message);
+
+    $this->assertEquals(false,$xmole->parse('',$err_code,$err_message));
+    $this->assertEquals(null,$err_code);
+    $this->assertEquals('empty XML data',$err_message);
+
+    $this->assertEquals(false,$xmole->parse('<xml><a>FAIL</a>',$err_code,$err_message));
+    $this->assertEquals(null,$err_code);
+    $this->assertEquals('missing the end of the document',$err_message);
+  }
+
+  function test_set_encoding(){
+    $xmole = new XMole();
+    $this->assertEquals(null,$xmole->get_input_encoding());
+    $this->assertEquals(null,$xmole->get_output_encoding());
+
+    $xmole->set_encoding("ISO-8859-2");
+    $this->assertEquals("ISO-8859-2",$xmole->get_input_encoding());
+    $this->assertEquals("ISO-8859-2",$xmole->get_output_encoding());
+
+    $xmole->set_input_encoding("UTF-8");
+    $this->assertEquals("UTF-8",$xmole->get_input_encoding());
+    $this->assertEquals("ISO-8859-2",$xmole->get_output_encoding());
+
+    $xmole->set_output_encoding("WINDOWS-1250");
+    $this->assertEquals("UTF-8",$xmole->get_input_encoding());
+    $this->assertEquals("WINDOWS-1250",$xmole->get_output_encoding());
+  }
 }
-?>

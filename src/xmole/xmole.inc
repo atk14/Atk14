@@ -135,7 +135,10 @@ class XMole{
 	* @param string $xml_data 	XML data
 	* @return boolean 					true v pripade uspechu, false v pripade neuspechu
 	*/
-	function parse($xml_data){
+	function parse($xml_data,&$err_code = null,&$err_message = null){
+		$err_code = null;
+		$err_message = null;
+
 		$xml_data = trim($xml_data);
 
 		$this->_error = false;
@@ -143,7 +146,7 @@ class XMole{
 
 		if($xml_data==""){
 			$this->_error = true;
-			$this->_error_msg = "empty XML data";
+			$this->_error_msg = $err_message = "empty XML data";
 			return false;
 		}
 
@@ -187,12 +190,21 @@ class XMole{
 		$stat = xml_parse($this->_parser,$this->_data);
 		if(!$stat){
 			$this->_error = true;
-			$this->_error_msg = "XML parser error (".(xml_get_error_code($this->_parser))."): ".xml_error_string(xml_get_error_code($this->_parser))." on line ".xml_get_current_line_number($this->_parser);
+			$err_code = xml_get_error_code($this->_parser);
+			$this->_error_msg = $err_message = "XML parser error ($err_code): ".xml_error_string($err_code)." on line ".xml_get_current_line_number($this->_parser);
 			xml_parser_free($this->_parser);
 			return false;
 		}
 
 		xml_parser_free($this->_parser);
+
+		if(sizeof($this->_tree_references)){
+			// neco chybi do konce dokumentu...
+			// toto muze nastat napr. u <xml><tag>DATA</tag>
+			$this->_error = true;
+			$this->_error_msg = $err_message = "missing the end of the document";
+			return false;
+		}
 
 		return true;
 	}
@@ -202,6 +214,11 @@ class XMole{
 	}
 
 	function trim_data(){ return $this->_trim_data; }
+
+	function set_encoding($encoding){
+		$this->set_input_encoding($encoding);
+		$this->set_output_encoding($encoding);
+	}
 
 	/**
 	* Nastavuje znakove kodovani vstupnich dat.
