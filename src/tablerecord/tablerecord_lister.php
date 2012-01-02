@@ -1,23 +1,50 @@
 <?php
 /**
+ * Class for managing sortable records.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
+ *
+ *
+ */
+
+/**
+ * Class for managing sortable records.
+ *
+ * This class is intended for use on tables with association table (M:N model association).
+ *
+ * items == records from association table.
+ * Item (TableRecord_ListerItem) contains info about the position of a TableRecord object in the list.
+ * Position is defined by default in field 'rank'. Its name can be changed by option 'rank_field_name'.
+ * Each item points to associated TableRecord record.
+ *
  * <code>
- *	 $article = Article::GetInstanceById(1);
- *	 $lister = $article->getLister("Authors");
- *	 $lister->append($author1);
- *	 $lister->append($author2);
- *	 $lister->getRecords(); // array($author1,$author2);
- *	 $lister->contains($author1); // true
- *	 $lister->contains($author3); // false
- *	 $items = $lister->getItems();
- *	 $items[0]->getRecord(); // $author1
- *	 $items[1]->getRecord(); // $author2
+ * $article = Article::GetInstanceById(1);
+ * $lister = $article->getLister("Authors");
+ * $lister->append($author1);
+ * $lister->append($author2);
+ * $lister->getRecords(); // array($author1,$author2);
+ * $lister->contains($author1); // true
+ * $lister->contains($author3); // false
+ * $items = $lister->getItems();
+ * $items[0]->getRecord(); // $author1
+ * $items[1]->getRecord(); // $author2
  *
- *	 $items[0]->getRank(); // 0
- *	 $items[1]->setRank(0); //
- *	 $items[0]->getRank(); // 1
+ * $items[0]->getRank(); // 0
+ * $items[1]->setRank(0); //
+ * $items[0]->getRank(); // 1
  *
- *	 $lister->setRecordRank($author2,0);
+ * $lister->setRecordRank($author2,0);
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
  * </code>
+ *
+ * @param TableRecord $owner
+ * @param String $subjects
+ * @param array $options
  */
 class TableRecord_Lister extends inobj{
 	/**
@@ -54,6 +81,8 @@ class TableRecord_Lister extends inobj{
 
 	/**
 	 * Adds an record at the end of the list.
+	 *
+	 * @param TableRecord $record
 	 */
 	function append($record){
 		$o = $this->_options;
@@ -65,21 +94,29 @@ class TableRecord_Lister extends inobj{
 	
 	/**
 	 * Alias for TableRecord_Lister::append().
+	 *
+	 * @param TableRecord $record
 	 */
 	function add($record){ return $this->append($record); }
 
 	/**
 	 * Prepends a record at the beginning of the list.
+	 *
+	 * @param TableRecord $record
 	 */
 	function prepend($record){ $this->_add($record,-1); }
 
 	/**
 	 * Alias for TableRecord_Lister::prepend()
+	 *
+	 * @param TableRecord $record
 	 */	
 	function unshift($record){ return $this->prepend($record); }
 
 	/**
 	 * Shift an record off the beginning of the list.
+	 *
+	 * @returns TableRecord $record
 	 */
 	function shift(){
 		$items = $this->getItems();
@@ -90,6 +127,9 @@ class TableRecord_Lister extends inobj{
 		}
 	}
 
+	/**
+	 * @access private
+	 */
 	function _add($record,$rank){
 		$o = $this->_options;
 		$this->_dbmole->insertIntoTable($o["table_name"],array(
@@ -103,6 +143,11 @@ class TableRecord_Lister extends inobj{
 		unset($this->_items);
 	}
 
+	/**
+	 * Removes a record from the list.
+	 *
+	 * @param TableRecord $record
+	 */
 	function remove($record){
 		$o = $this->_options;
 		$this->_dbmole->doQuery("DELETE FROM $o[table_name] WHERE
@@ -126,6 +171,9 @@ class TableRecord_Lister extends inobj{
 
 	/**
 	 * Does the list contain given record?
+	 *
+	 * @param TableRecord $record
+	 * @returns bool
 	 */
 	function contains($record){
 		if(is_object($record)){ $record = $record->getId(); }
@@ -135,21 +183,38 @@ class TableRecord_Lister extends inobj{
 		return false;
 	}
 
+	/**
+	 * Returns number of items in the lister
+	 *
+	 * @returns int
+	 */
 	function size(){ return sizeof($this->getItems()); }
 
+	/**
+	 * @returns bool
+	 */
 	function isEmpty(){ return $this->size()==0; }
 
+	/**
+	 * @returns array
+	 */
 	function getItems(){
 		$this->_readItems();
 		return $this->_items;
 	}
 
+	/**
+	 * @returns array
+	 */
 	function getRecordIds(){
 		$out = array();
 		foreach($this->getItems() as $item){ $out[] = $item->getRecordId(); }
 		return $out;
 	}
 
+	/**
+	 * @returns array
+	 */
 	function getRecords(){
 		$out = array();
 		foreach($this->getItems() as $item){ $out[] = $item->getRecord(); }
@@ -157,7 +222,14 @@ class TableRecord_Lister extends inobj{
 	}
 
 	/**
+	 * Sets position of a record in the list.
+	 *
+	 * <code>
 	 * $lister->setRecordRank($author,0); // moves the given author to begin
+	 * </code>
+	 *
+	 * @param TableRecord $record
+	 * @param integer $rank
 	 */
 	function setRecordRank($record,$rank){
 		$record = $this->_objToId($record);
@@ -169,6 +241,9 @@ class TableRecord_Lister extends inobj{
 		}
 	}
 
+	/**
+	 * @access private
+	 */
 	function _correctRanking(){
 		$o = $this->_options;
 		$rows = $this->_dbmole->selectRows("
@@ -193,6 +268,10 @@ class TableRecord_Lister extends inobj{
 		unset($this->_items);
 	}
 
+	/**
+	 * @returns array
+	 * @access private
+	 */
 	function _readItems(){
 		$o = $this->_options;
 		if(isset($this->_items)){ return; }
