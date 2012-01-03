@@ -446,7 +446,7 @@ class HTTPRequest{
 	 */
 	function getUserAgent(){
 		if(isset($this->_ForceUserAgent)){ return $this->_ForceUserAgent; }
-		return $GLOBALS["_SERVER"]["HTTP_USER_AGENT"];
+		return isset($GLOBALS["_SERVER"]["HTTP_USER_AGENT"]) ? (string)$GLOBALS["_SERVER"]["HTTP_USER_AGENT"] : null;
 	}
 	function setUserAgent($agent){ $this->_ForceUserAgent = $agent; }
 
