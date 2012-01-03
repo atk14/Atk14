@@ -248,11 +248,15 @@ class tc_http_request extends tc_base{
 
 	function test_get_user_agent(){
 		global $_SERVER;
-		$_SERVER["HTTP_USER_AGENT"] = "Real_User_Agent"; 
 
 		$request = new HTTPRequest();
 
+		unset($_SERVER["HTTP_USER_AGENT"]);
+		$this->assertEquals(null,$request->getUserAgent());
+
+		$_SERVER["HTTP_USER_AGENT"] = "Real_User_Agent"; 
 		$this->assertEquals("Real_User_Agent",$request->getUserAgent());
+
 
 		$request->setUserAgent("Forced_User_Agent");
 
