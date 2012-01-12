@@ -1,12 +1,15 @@
 #!/usr/bin/env php
 <?php
 /**
- * Generates Atk14 documentation
+ * Generates Atk14 framework documentation.
  *
  * Just run ./generate_documentation.php
  *
- * Add -a or -app flag to also generate documentation of application
+ * By default the script generates only framework documentation
+ * but can also document an application using Atk14.
  *
+ * Add -a or -app flag to also generate documentation of application.
+ * Flag -nf or --noframework disables the framework documentation generation.
  *
  * Requires PhpDocumentor
  *
@@ -20,13 +23,36 @@
 require_once(dirname(__FILE__)."/load.inc");
 
 $src_dirs = array();
-$switches = array();
+$options = array(
+	"generate_fw_doc" => true,
+	"generate_app_doc" => false,
+);
+$switches = array(
+	"--packageoutput" => array(
+		"Atk14",
+	),
+	"--defaultpackagename" => "Atk14",
 
-// ignored files
-$ignores = array(
-	"*/test/tc_*.inc",
-	"load.inc",
-	"initialize.inc"
+	"--title" => "'Atk14 Documentation'",
+
+	// ignored files
+	"--ignore" => array(
+		"*/test/*.inc",
+		"load.inc",
+		"initialize.inc"
+	),
+	"--directory" => array(
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/atk14",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/dbmole",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/dictionary",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/files",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/forms",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/http",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/logger",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/string",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/stringbuffer",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/tablerecord",
+	),
 );
 
 // framework is documented by default
@@ -37,29 +63,25 @@ if (isset($_args)) {
 		switch($arg) {
 		case "-a":
 		case "-app":
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath();
-			// when we generate documentation for application use its name as packagename
-			// TODO: chtelo by to odnekud prevzit jmeno aplikace
-			$switches["--defaultpackagename"] = "ApplicationDoc";
-			// output only applications package
-			$switches["--packageoutput"] = "ApplicationDoc";
+			$options["generate_app_doc"] = true;
 			break;
-		case "-f":
-		case "-framework":
-			$switches["--packageoutput"] = "Atk14";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/atk14";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/dbmole";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/dictionary";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/files";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/forms";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/http";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/logger";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/string";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/stringbuffer";
-			$src_dirs[] = $ATK14_GLOBAL->getApplicationPath()."../atk14/src/tablerecord";
+		case "-nf":
+		case "-noframework":
+			$options["generate_fw_doc"] = false;
 			break;
 		}
 	}
+}
+
+if (!$options["generate_fw_doc"]) {
+	$switches["--directory"] = array();
+}
+
+if ($options["generate_app_doc"]) {
+	$switches["--directory"][] = $ATK14_GLOBAL->getApplicationPath()."/models";
+	$switches["--packageoutput"][] = "ApplicationDoc";
+	$switches["--defaultpackagename"] = "ApplicationDoc";
+	$switches["--title"] = "'Application Documentation'";
 }
 
 $output_dir = $ATK14_GLOBAL->getApplicationPath()."../tmp/documentation";
@@ -70,20 +92,14 @@ if (!file_exists($output_dir)) {
 
 $src_dir = join(",", $src_dirs);
 
-
-// --ignore switch
-if (sizeof($ignores)>0) {
-	$switches["--ignore"] = implode(",", $ignores);
-}
-
-// --directory switch
-if (sizeof($src_dirs)>0) {
-	$switches["--directory"] = implode(",", $src_dirs);
-}
-
 $prms = "";
 foreach($switches as $sw => $val) {
-	$prms .= " $sw $val";
+	if (is_array($val)) {
+		$val = implode(",", $val);
+	}
+	if (strlen(trim($val))>0) {
+		$prms .= " $sw $val";
+	}
 }
 
 $command = sprintf("phpdoc -o HTML:frames:DOM/phpdoc.de %s -t $output_dir", $prms);
