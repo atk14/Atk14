@@ -10,6 +10,8 @@ class CreaturesController extends ApplicationController{
 	* Has a "fulltext" capability :)
 	*/
 	function index(){
+		$this->page_title = _("Listing creatures");
+
 		($d = $this->form->validate($this->params)) || ($d = $this->form->get_initial());
 
 		$conditions = array();
@@ -29,6 +31,8 @@ class CreaturesController extends ApplicationController{
 	* Creates a new creature.
 	*/
 	function create_new(){
+		$this->page_title = _("Creating new creature");
+
 		if($this->request->post() && ($d = $this->form->validate($this->params))){
 			Creature::CreateNewRecord($d);
 			$this->flash->success(_("A new creature has been successfuly created"));
@@ -42,16 +46,22 @@ class CreaturesController extends ApplicationController{
 	function detail(){
 		$this->page_title = sprintf(_("Detail of the creature #%s"),$this->creature->getId());
 
-		if($this->params->getString("format")=="json"){
-			$this->render_template = false;
-			$this->response->setContentType("text/plain");
-			$this->response->write($this->creature->toJson());
-		}
-		if($this->params->getString("format")=="xml"){
-			$this->render_template = false;
-			$this->response->setContentType("text/xml");
-			$this->response->writeln('<'.'?xml version="1.0" encoding="UTF-8"?'.'>');
-			$this->response->write($this->creature->toXml());
+		if($format = $this->params->getString("format")){
+			switch($format){
+				case "json":
+					$this->render_template = false;
+					$this->response->setContentType("text/plain");
+					$this->response->write($this->creature->toJson());
+					break;
+				case "xml":
+					$this->render_template = false;
+					$this->response->setContentType("text/xml");
+					$this->response->writeln('<'.'?xml version="1.0" encoding="UTF-8"?'.'>');
+					$this->response->write($this->creature->toXml());
+					break;
+				default:
+					$this->_execute_action("error404");
+			}
 		}
 	}
 

@@ -22,7 +22,11 @@
 
 		<div class="container">
 			<header>
-				<h1>{t}ATK14 Powered Website{/t}</h1>
+				{if $controller=="main" && $action=="index"}
+					<h1>{"ATK14_APPLICATION_NAME"|dump_constant}</h1>
+				{else}
+					<h1>{a controller=main action=index}{"ATK14_APPLICATION_NAME"|dump_constant}{/a}</h1>
+				{/if}
 			</header>
 
 			<div class="main" role="main">

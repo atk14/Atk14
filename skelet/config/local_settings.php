@@ -15,7 +15,7 @@ define("ATK14_BASE_HREF","/");
 
 define("DEFAULT_EMAIL","your@email");
 
-define("ATK14_APPLICATION_NAME","Our Colourful Website");
+define("ATK14_APPLICATION_NAME","ATK14 Project");
 define("ATK14_HTTP_HOST",PRODUCTION ? "www.myapp.com" : "myapp.localhost");
 
 if(DEVELOPMENT){
