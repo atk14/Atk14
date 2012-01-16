@@ -1,4 +1,4 @@
-<h2>{t}Listing creatures{/t}</h2>
+<h2>{$page_title}</h2>
 
 {form}
 	<fieldset>
@@ -14,7 +14,7 @@
 
 {if $finder}
 	{if $finder->isEmpty()}
-		<p>{t}Nothing was found.{/t}</p>
+		<p>{t}No creature was found.{/t}</p>
 	{else}
 
 		<table>
