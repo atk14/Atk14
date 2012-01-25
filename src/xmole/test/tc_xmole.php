@@ -302,4 +302,11 @@ class tc_xmole extends tc_base{
     $this->assertEquals("UTF-8",$xmole->get_input_encoding());
     $this->assertEquals("WINDOWS-1250",$xmole->get_output_encoding());
   }
+
+  function test_encode_special_characters() {
+    $this->assertEquals("&lt;", XMole::ToXML("<"));
+    $this->assertEquals("&gt;", XMole::ToXML(">"));
+    $this->assertEquals("&amp;", XMole::ToXML("&"));
+    $this->assertEquals("", XMole::ToXML("\x07"));
+  }
 }
