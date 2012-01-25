@@ -10,6 +10,9 @@ class tc_main extends tc_base{
 	function test_error404(){
 		$client = new Atk14Client();
 
+		$controller = $client->get("main/not_existing_method");
+		$this->assertEquals(404,$controller->response->getStatusCode());
+
 		$controller = $client->get("main/error404");
 		$this->assertEquals(404,$controller->response->getStatusCode());
 	}

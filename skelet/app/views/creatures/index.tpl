@@ -1,4 +1,4 @@
-<h2>{t}Listing creatures{/t}</h2>
+<h2>{$page_title}</h2>
 
 {form}
 	<fieldset>
@@ -14,7 +14,7 @@
 
 {if $finder}
 	{if $finder->isEmpty()}
-		<p>{t}Nothing was found.{/t}</p>
+		<p>{t}No creature was found.{/t}</p>
 	{else}
 
 		<table>
@@ -34,3 +34,21 @@
 
 	{/if}
 {/if}
+
+<hr />
+<p>
+	{t escape=no}<em>The Creature Show</em> gives you a opportunity to inspect functional ATK14 code.{/t}<br />
+	{t}For a beginner there is a lot of things to study. Inspect following files and direcories.{/t}
+</p>
+
+<pre><code>db/migrations/0001_table_creatures.sql
+db/migrations/0002_content_for_creatures.sql
+db/migrations/0003_more_content_for_creatures.php
+app/models/creature.php
+app/controllers/creatures_controller.php
+app/views/creatures/*
+app/forms/creatures/*
+test/models/tc_creature.php
+test/controllers/tc_creatures.php</code></pre>
+
+

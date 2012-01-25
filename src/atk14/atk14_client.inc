@@ -92,6 +92,11 @@ class Atk14Client{
 
 		$this->flash->reset();
 
+		// converting objects to scalars
+		foreach($params as &$v){
+			if(is_object($v)){ $v = $v->getId(); }
+		}
+
 		$path_ar = split("/",$path);
 
 		$namespace = null;
@@ -140,6 +145,10 @@ class Atk14Client{
 		return $this->controller->response->buffer->toString();
 	}
 
+	function getContentType(){
+		return $this->controller->response->getContentType();
+	}
+
 	/**
 	 * Gets status code of server response.
 	 *
@@ -149,4 +158,3 @@ class Atk14Client{
 		return $this->controller->response->getStatusCode();
 	}
 }
-?>

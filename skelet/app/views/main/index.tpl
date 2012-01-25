@@ -1,6 +1,8 @@
-<h2>{t}Welcome!{/t}</h2>
+<h2>{t}It's working!{/t}</h2>
 
-<p>{t}Nice to see you.{/t}</p>
+<p>{t}Hi there, it's nice to see you!{/t}</p>
+
+<p>{t}What you see is a freshly installed ATK14 application.{/t}</p>
 
 <p>{t}This HTTP request is handled by the MainController and the index() action.{/t}</p>
 
@@ -13,5 +15,16 @@
 
 	{capture assign=url_en}{link_to lang=en}{/capture}
 	{capture assign=url_cs}{link_to lang=cs}{/capture}
-	<li>{t escape=no url_en=$url_en url_cs=$url_cs}switch the language: <a href="%1">english</a> or <a href="%2">czech</a>{/t}</li>
+	<li>
+		{t escape=no url_en=$url_en url_cs=$url_cs}switch the language: <a href="%1">english</a> or <a href="%2">czech</a>{/t}<br />
+		{t}gettext dictionaries are placed in locale/ directory{/t}
+	</li>
+</ul>
+
+<h3>{t}External links{/t}</h3>
+<ul>
+	<li><a href="http://www.atk14.net/">{t}ATK14 project website{/t}</a></li>
+	<li><a href="http://book.atk14.net/">{t}The ATK14 Book{/t}</a></li>
+	<li><a href="http://api.atk14.net/">{t}The API reference{/t}</a></li>
+	<li><a href="https://github.com/yarri/Atk14">{t}ATK14 project page on Github{/t}</a></li>
 </ul>

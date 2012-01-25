@@ -37,7 +37,12 @@
 		{render partial=shared/form_field field=$field fields=null}
 	{/foreach}
 {else}
-	{if is_string($field)}{assign var=field value=$form->get_field($field)}{/if}
+	{if is_string($field)}
+		{if !$form->has_field($field)}
+			{error_log}The form doesn't contain field {$field}{/error_log}
+		{/if}
+		{assign var=field value=$form->get_field($field)}
+	{/if}
 
 	<div{if $field->required || $field->errors() || $class} class="{trim}{if $field->required}required{/if}{if $field->errors()} error{/if}{if $class} {$class}{/if}{/trim}"{/if}>
 		{if $reverse}{$field->as_widget()}{/if}
