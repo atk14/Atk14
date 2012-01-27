@@ -38,6 +38,7 @@ $switches = array(
 	// ignored files
 	"--ignore" => array(
 		"*/test/*.inc",
+		"*/test/*.php",
 		"load.inc",
 		"initialize.inc"
 	),
@@ -52,6 +53,7 @@ $switches = array(
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/string",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/stringbuffer",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/tablerecord",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/xmole",
 	),
 );
 

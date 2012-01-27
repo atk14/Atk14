@@ -1,4 +1,13 @@
 <?php
+/**
+ * Simple XML parser.
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
+ *
+ */
+
 if(!defined("XMOLE_AUTO_TRIM_ALL_DATA")){
 	/**
 	* Definuje defaultni chovani - trimovani dat
@@ -8,112 +17,145 @@ if(!defined("XMOLE_AUTO_TRIM_ALL_DATA")){
 }
 
 /**
-* Jednoduchy XML parser
-*
-* Parsuje XML do strukturovaneho pole.
-*	Uzel pole je:
-*		array(
-*			"element" => "jmeno_elementu",
-*			"attribs" => array("jmeno_atributu" => "hodnota_atributu",...),
-*			"data" => "data_elementu",
-*			"children" => array(),
-*			"xml_source" => "" //usek z XML textu
-*		);
-*	kde children obsahuje children elementy
-*
-*	//pokud se nastavuje rozdilne encoding, je nutna i trida translate.
-*	$XMole = new XMole();
-*	$XMole->set_input_encoding("utf8");
-*	$XMole->set_output_encoding("windows-1250");
-*	$_stat = $XMole->parse($DATA);
-*	if(!$_stat){
-*		echo $XMole->get_error_message();
-*	}
-*	$TREE = $XMole->get_xml_tree();
-*	unset($XMole);
-*
-* 
-* Vyhledavani elementu podle cesty:
-* $username_tree = $XMole->get_first_matching_branch("Login/Username");
-* $user_data = $XMole->get_data("Login/Username");
-* $attribute_value = $XMole->get_attribute("Login/Username","case_sensitive");
-* $branches = $XMole->get_all_matching_branches("kniha/nazev");
-*/
-
+ * Simple XML parser.
+ *
+ * Outputs parsed XML into structured array.
+ *
+ * Uzel pole je:
+ * <code>
+ *		array(
+ *			"element" => "jmeno_elementu",
+ *			"attribs" => array("jmeno_atributu" => "hodnota_atributu",...),
+ *			"data" => "data_elementu",
+ *			"children" => array(),
+ *			"xml_source" => "" //usek z XML textu
+ *		);
+ * </code>
+ * where children field contains children elements.
+ *
+ * <code>
+ * // When different encodings are set class translate is also required.
+ * $XMole = new XMole();
+ * $XMole->set_input_encoding("utf8");
+ * $XMole->set_output_encoding("windows-1250");
+ * $_stat = $XMole->parse($DATA);
+ * if(!$_stat){
+ *   echo $XMole->get_error_message();
+ * }
+ * $TREE = $XMole->get_xml_tree();
+ * unset($XMole);
+ * </code>
+ *
+ * Find element by path:
+ * <code>
+ * $username_tree = $XMole->get_first_matching_branch("Login/Username");
+ * $user_data = $XMole->get_data("Login/Username");
+ * $attribute_value = $XMole->get_attribute("Login/Username","case_sensitive");
+ * $branches = $XMole->get_all_matching_branches("kniha/nazev");
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage InternalLibraries
+ * @filesource
+ */
 class XMole{
 	
 		/**
-		* Objekt vraceny fci xml_parser_create
-		* @access private
-		* @var xml_parser
-		*/
+		 * Object returned by {@link xml_parser_create}
+		 *
+		 * @access private
+		 * @var xml_parser
+		 */
 		var $_parser = null;
 		
 		/**
-		* Vstupni XML data
-		* Nastavuje se parametrem metody parse().
-		* @access private
-		* @var string
-		* @see XMole::parse()
-		*/
-
+		 * Input XML data.
+		 *
+		 * Is set by {@link parse()} method.
+		 *
+		 * @access private
+		 * @var string
+		 * @see XMole::parse()
+		 *
+		 */
 		var $_data = null;
 
 		/**
-		* Priznak chyby
-		* Bude true v pripade, ze nastala chyba ve zpracovani.
-		* @access private
-		* @var boolean
-		*/
-
+		 * Error flag.
+		 *
+		 * True when error occurs during processing XML data.
+		 *
+		 * @access private
+		 * @var boolean
+		 */
 		var $_error = false;
 		
 		/**
-		* Popis chyby
-		* Bude obsahovat popis chyby v pripade, ze nastala chyba ve zpracovani.
-		* @access private
-		* @var string
-		* @see XMole::get_error_message()
-		*/
+		 * Error description.
+		 *
+		 * Contains error description in case error occurs during processing XML data.
+		 *
+		 * @access private
+		 * @var string
+		 * @see XMole::get_error_message()
+		 */
 		var $_error_msg = null;
 
+		/**
+		 * @access private
+		 */
 		var $_element_store = array();
 		
+		/**
+		 * @access private
+		 */
 		var $_attrib_store = array();
 
+		/**
+		 * @access private
+		 */
 		var $_data_store = array();
 
+		/**
+		 * @access private
+		 */
 		var $_xml_source_store = array();
 
 		/**
-		* Vstupni kodovani.
-		* Je zjistovano automaticky nebo je mozne jej nastavit volanim metody XMole::set_input_encoding().
-		* @access private
-		* @var string
-		* @see XMole::set_input_encoding()
-		*/
+		 * Input encoding
+		 *
+		 * Encoding is detected automatically or can be set by {@link set_input_encoding()} method.
+		 *
+		 * @access private
+		 * @var string
+		 * @see XMole::set_input_encoding()
+		 */
 		var $_input_encoding = null;
 
 		/**
-		* Vystupni kodovani.
-		* Je nastaveno automaticky podle vstupniho kodovani nebo je mozne jej nastavit volanim metody XMole::set_output_encoding().
-		* @access private
-		* @var string
-		* @see XMole::set_output_encoding()
-		*/
+		 * Output encoding
+		 *
+		 * Encoding is set automatically by input encoding or can be set by {@link set_output_encoding()} method.
+		 *
+		 * @access private
+		 * @var string
+		 * @see XMole::set_output_encoding()
+		 */
 		var $_output_encoding = null;
 
+		/**
+		 * @access private
+		 */
 		var $_tree = array();
 
+		/**
+		 * @access private
+		 */
 		var $_tree_references = array();
 
 	/**
-	* Konstruktor tridy
-	*
-	* @access public
-	* @changelist
-	*		2005-11-17: $this->_parser se vytvari v metode XMole::parse()
-	*/
+	 * Constructor
+	 */
 	function XMole($xml_data = null,$options = array()){
 		$options = array_merge(array(
 			"trim_data" => XMOLE_AUTO_TRIM_ALL_DATA
@@ -126,15 +168,22 @@ class XMole{
 		}
 	}
 
-	function error(){ return $this->_error; }
+
 
 	/**
-	* Parsuje XML data
-	*
-	* @access public
-	* @param string $xml_data 	XML data
-	* @return boolean 					true v pripade uspechu, false v pripade neuspechu
-	*/
+	 * Gets status of error flag.
+	 *
+	 * @return string
+	 */
+	function error(){ return $this->_error; }
+
+
+	/**
+	 * Parses XML data.
+	 *
+	 * @param string $xml_data 	XML data
+	 * @return boolean true on success, false on error
+	 */
 	function parse($xml_data,&$err_code = null,&$err_message = null){
 		$err_code = null;
 		$err_message = null;
@@ -221,81 +270,77 @@ class XMole{
 	}
 
 	/**
-	* Nastavuje znakove kodovani vstupnich dat.
-	*
-	* Nutno volat pred volanim metody parse(). Pokud volano nebude,
-	* bude urceno vstupni kodovani automaticky ve chvili volani parse().
-	*
-	* @param string $encoding jmeno kodovani
-	* @access public
-	*/
+	 * Sets input character encoding of data.
+	 *
+	 * Must be called before {@link parse()}.
+	 * When set_input_encoding() is not called input encoding will be detected automatically.
+	 *
+	 * @param string $encoding jmeno kodovani
+	 */
 	function set_input_encoding($encoding){
 		settype($encoding,"string");
 		$this->_input_encoding = $encoding;
 	}
 
 	/**
-	* Vrati vstupni kodovani.
-	*
-	* Vrati to, co bylo nastaveno behem volani metody set_input_encoding,
-	* nebo to, co bylo zjisteno automaticky v metode parse().
-	*
-	* @access public
-	*/
+	 * Get input encoding.
+	 *
+	 * Returns value that was set by {@link set_input_encoding()} or detected in {@link parse()}.
+	 *
+	 * @return string input character encoding
+	 */
 	function get_input_encoding(){
 		return $this->_input_encoding;
 	}
 
 	/**
-	* Nastavuje znakove kodovani vystupnich dat.
-	*
-	* Nutno volat pred metodou parse().
-	* Nebude-li volano pred metodou parse(), bude nastaveno na hodnotu vstupniho kodovani.
-	*
-	* @param string $encoding jmeno kodovani
-	* @access public
-	*/
+	 * Sets encoding for output data.
+	 *
+	 * Must be called before {@link parse()}
+	 * When set_output_encoding() is not called before parse() output encoding will be set the same as input encoding.
+	 *
+	 * @param string $encoding character encoding
+	 */
 	function set_output_encoding($encoding){
 		settype($encoding,"string");
 		$this->_output_encoding = $encoding;
 	}
 
 	/**
-	* Vrati vystupni kodovani.
-	*
-	* @access public
-	*/
+	 * Get output encoding.
+	 *
+	 * @return string output encoding
+	 */
 	function get_output_encoding(){
 		return $this->_output_encoding;
 	}
 
 	/**
-	* Vrati chybovou zpravu.
-	* 
-	* @access public
-	*/
+	 * Get error message.
+	 *
+	 * @return string String with error message
+	 */
 	function get_error_message(){
 		return $this->_error_msg;
 	}
 
 	/**
-	* Vrati XML strom.
-	*
-	* @access public
-	* @return array XML strom
-	*/
+	 * Returns XML tree.
+	 *
+	 * @return array XML tree
+	 */
 	function get_xml_tree(){
 		return $this->_tree;
 	}
 
 	/**
-	* Vrati prvni nalezenou vetev z celeho XML stromu,
-	* kde jmeno tagu odpovida ceste $path
-	*
-	* @access public
-	* @param string $path		napr:. "/DistributedSearchXML/Login/UserName" nebo "Login/UserName"
-	* @return array 				vetev XML stromu nebo null, pokud vetev nebyla nalezena
-	*/
+	 * Get first matching branch of while XML tree.
+	 *
+	 * Tag name is specified by $path.
+	 *
+	 * @param string $path		example:. "/DistributedSearchXML/Login/UserName" nebo "Login/UserName"
+	 * @return array 	branch of XML tree or null when path is not found
+	 */
 	function get_first_matching_branch($path){
 		settype($path,"string");
 
@@ -311,12 +356,11 @@ class XMole{
 	}
 
 	/**
-	* Vrati novou instanci tridy XMole pro dany usek urceny cestou.
-	*
-	* @access public
-	* @param string $path
-	* @return XMole				nebo null, pokud vetev neexistuje nebo dojde k chybe v XML parsovani - to by nemelo...
-	*/
+	 * Get new XMole instance for a branch specified by path.
+	 *
+	 * @param string $path
+	 * @return XMole	null when branch does not exist or when error occurs (which shouldn't).
+	 */
 	function get_xmole_by_first_matching_branch($path){
 		if(!($element_data = $this->get_first_matching_branch($path))){
 			return null;	
@@ -330,6 +374,9 @@ class XMole{
 		return $xmole;
 	}
 
+	/**
+	 * @return array
+	 */
 	function get_all_matching_branches($path){
 		settype($path,"string");
 
@@ -343,9 +390,17 @@ class XMole{
 
 		return $this->_search_branches_by_path($path,$current_path,$this->_tree);
 	}
-	// zkratka
+
+	/**
+	 * Shortcut to get_xmole_by_first_matching_branch method.
+	 *
+	 * @return XMole
+	 */
 	function get_xmole($path){ return $this->get_xmole_by_first_matching_branch($path); }
 
+	/**
+	 * @return array
+	 */
 	function get_xmoles_by_all_matching_branches($path){
 		$branches = $this->get_all_matching_branches($path);
 		$out = array();
@@ -358,12 +413,21 @@ class XMole{
 		}
 		return $out;
 	}
-	// zkratka
+
+	/**
+	 * Alias to get_xmoles_by_all_matching_branches method.
+	 *
+	 * @return array
+	 */
 	function get_xmoles($path){ return $this->get_xmoles_by_all_matching_branches($path); }
 
 	/**
-	* vrati instanci XMole pro child element podle indexu (pocitano od nuly).
-	*/
+	 * Get XMole instance of first child element.
+	 *
+	 * Child elements are indexed starting from 0.
+	 *
+	 * @return XMole
+	 */
 	function get_child($index = 0){
 		if(isset($this->_tree[0]["children"][$index])){
 			$xmole = $this->_new_instance();
@@ -372,6 +436,12 @@ class XMole{
 			}
 		}
 	}
+
+	/**
+	 * Get XMole instance of next child.
+	 *
+	 * @return XMole
+	 */
 	function get_next_child(){
 		if(!isset($this->_next_child_index)){ $this->_next_child_index = -1; }
 		$this->_next_child_index++;
@@ -389,7 +459,6 @@ class XMole{
 	* Vrati data element urceneho podle cesty.
 	* Vracena jsou data prvniho elementu, ktery vyhovuje ceste.
 	* 
-	* @access public
 	* @param string $path		napr:. "/DistributedSearchXML/Login/UserName" nebo "Login/UserName"
 	* @return string 				data elementu nebo null, pokud element neni nalezen
 	*/
@@ -398,7 +467,12 @@ class XMole{
 			return isset($_tree[0]["data"]) ? $_tree[0]["data"] : $_tree["data"];
 		}
 	}
-	// zkratka
+
+	/**
+	 * Alias to get_element_data method.
+	 *
+	 * @return string
+	 */
 	function get_data($path = "/"){ return $this->get_element_data($path); }
 
 	/**
@@ -422,9 +496,21 @@ class XMole{
 			return $attrs[$attribute_name];
 		}
 	}
-	// zkratka
+	/**
+	 * Alias to get_attribute_value method.
+	 * 
+	 * @return string
+	 */
 	function get_attribute($element_path,$attribute_name = null){ return $this->get_attribute_value($element_path,$attribute_name); }
 
+	/**
+	 * Get attributes of an element
+	 *
+	 * Element is specified by $path.
+	 *
+	 * @param string $element_path
+	 * @return array
+	 */
 	function get_attributes($element_path = "/"){
 		settype($element_path,"string");
 
@@ -434,32 +520,39 @@ class XMole{
 	}
 
 	/**
-	* Porovna, zda XML rozparsovane v teto instanci je stejne jako XML z jine instance.
-	* Roli nehraje poradi atributu. Tyto XML struktury budou vyhodnoceny jako stejne.
-	* 
-	* $xml_1 = '
-	*		<lide>
-	*		 <kluk vek="12" vyska="163" />
-	*		</lide>
-	* ';
-	* $xml_2 = '
-	*		<lide>
-	*		 <kluk vyska="163" vek="12" />
-	*		</lide>
-	* ';
-	*
-	* $xm1 = new XMole($xml_1);
-	* $xm2 = new XMole($xml_2);
-	* if($xm1->is_same_like($xm2)){
-	*		// stejne
-	* }
-	* // nebo
-	* if($xm1->is_same_like($xml_2)){
-	*		// stejne
-	* }
-	* 
-	* 
-	*/
+	 * Compares this instance XML with XML from another instance.
+	 *
+	 * Order of attributes is not important.
+	 * XMLs with different order of attributes will be evaluated as same.
+	 * 
+	 * <code>
+	 * $xml_1 = '
+	 *		<lide>
+	 *		 <kluk vek="12" vyska="163" />
+	 *		</lide>
+	 * ';
+	 *
+	 * $xml_2 = '
+	 *		<lide>
+	 *		 <kluk vyska="163" vek="12" />
+	 *		</lide>
+	 * ';
+	 *
+	 *
+	 * $xm1 = new XMole($xml_1);
+	 * $xm2 = new XMole($xml_2);
+	 * if($xm1->is_same_like($xm2)){
+	 *		// stejne
+	 * }
+	 * // nebo
+	 * if($xm1->is_same_like($xml_2)){
+	 *		// stejne
+	 * }
+	 * </code>
+	 * 
+	 * @param XMole $xmole
+	 * @return boolean
+	 */
 	function is_same_like($xmole){
 		if(is_string($xmole)){ $xmole = new XMole($xmole); }
 		if($xmole->error() || $this->error()){ return null; }
@@ -476,6 +569,9 @@ class XMole{
 		return true;
 	}
 
+	/**
+	 * @access private
+	 */
 	function _compare_xml_branch($that_branch,$this_branch){
 		if(!(
 			$that_branch["element"]==$this_branch["element"] &&
@@ -491,9 +587,16 @@ class XMole{
 	}
 
 	/**
-	* Zjisti, zda jsou 2 XML stejna.
-	* Parametry mohou byl stringy obsahujici XML nebo instance XMole.
-	*/
+	 * Compares two xml data.
+	 *
+	 * Checks if two XML data are the same.
+	 * Compared data can be strings or XMole instances.
+	 *
+	 * @static
+	 * @param string|XMole @xmole1
+	 * @param string|XMole @xmole2
+	 * @return boolean
+	 */
 	function AreSame($xmole1,$xmole2){
 		if(is_string($xmole1)){ $xmole1 = new XMole($xmole1); } 
 		if(is_string($xmole2)){ $xmole2 = new XMole($xmole2); } 
@@ -599,10 +702,10 @@ class XMole{
 	}
 	
 	/**
-	* Handle funkce pro xml_parser.
-	*
-	* @access private
-	*/
+	 * Handler of a function used by xml_parser.
+	 *
+	 * @access private
+	 */
 	function _startElement($parser,$name,$attribs){
 		if(isset($this->_output_encoding) && strlen($this->_output_encoding)>0 && isset($this->_input_encoding) && strlen($this->_input_encoding)>0 && $this->_input_encoding!=$this->_output_encoding){
 			$name = translate::trans($name,$this->_input_encoding,$this->_output_encoding);
@@ -649,10 +752,10 @@ class XMole{
 	}
 
 	/**
-	* Handle funkce pro xml_parser.
-	*
-	* @access private
-	*/
+	 * Handler of a function used by xml_parser.
+	 *
+	 * @access private
+	 */
 	function _endElement($_parser,$name){
 		$element = array_pop($this->_element_store);
 		$attribs = array_pop($this->_attrib_store);
@@ -685,10 +788,10 @@ class XMole{
 	}
 
 	/**
-	* Handle funkce pro xml_parser.
-	*
-	* @access private
-	*/
+	 * Handler of a function used by xml_parser.
+	 *
+	 * @access private
+	 */
 	function _characterData($_parser,$data){
 		//pridavani do posledniho _data_store
 		$this->_data_store[sizeof($this->_data_store)-1] .= $data;
@@ -698,22 +801,55 @@ class XMole{
 	}
 
 	/**
-	* Bezpecne zakoduje nebezpecne znaky vstupniho textu do XML entit 
-	*
-	* Vystup je mozno pouzit mezi tagy XML textu. Mozno volat staticky.
-	*
-	* $xml = "<data>".XMole::ToXML($value)."</data>";
-	*/
+	 * Safely encodes illegal input characters to XML entities.
+	 *
+	 * Output can be used in XML text.
+	 * Can be called statically
+	 *
+	 * Control characters from C0 group are not allowed in XML 1.0 (characters with code x00-x1f,x7f).
+	 * with three exceptions (TAB, new line and return characters)
+	 * Control characters from C1 group are discouraged to use.
+	 * {@link http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character}
+	 *
+	 * <code>
+	 * $xml = "<data>".XMole::ToXML($value)."</data>";
+	 * </code>
+	 *
+	 * @param string $str
+	 * @return string
+	 */
 	function ToXML($str){
 		settype($str,"string");
-		return strtr($str,
-			array(
-				"<" => "&lt;",
-				">" => "&gt;",
-				"&" => "&amp;",
-				"\x07" => "",
-			)
-		);	
+		$illegal_chars = array(
+			'/&/',
+			'/</',
+			'/>/',
+			'/\"/',
+			'/\'/',
+			# Control characters from C0 group
+			'/[\x00-\x08,\x0b,\x0c,\x0e-\x1f,\x7f]/',
+			'/\x09/',
+			'/\x0a/',
+			'/\x0d/',
+			# Control characters from C1 group are discouraged
+			'/[\x80-\x84,\x86-\x9f]/',
+			# the only allowed control character from C1 group (x80-x9f)
+			'/\x85/',
+		);
+		$replaces = array(
+			"&amp;",
+			"&lt;",
+			"&gt;",
+			"&quot;",
+			"&apos;",
+			"",
+			"&#x09;",
+			"&#x0A;",
+			"&#x0D;",
+			"",
+			"&#x85;",
+		);
+		return preg_replace($illegal_chars, $replaces, $str);
 	}
 
 	/**
@@ -738,8 +874,10 @@ class XMole{
 	}
 
 	/**
-	* Vytvori novou instanci XMole a zkopiruje do nej nektere vlastnosti.
-	*/
+	 * Creates new instance of XMole and copies some attributes to it.
+	 *
+	 * @access private
+	 */
 	function _new_instance(){
 		$x = new XMole();
 		$x->_trim_data = $this->_trim_data;
@@ -748,5 +886,8 @@ class XMole{
 		return $x;
 	}
 
+	/**
+	 * @method toString()
+	 */
 	function __toString(){ return "instance of ".get_class($this); }
 }
