@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-16 14:31+0100\n"
+"POT-Creation-Date: 2012-01-30 11:10+0100\n"
 "PO-Revision-Date: 2011-02-16 15:06+0100\n"
 "Last-Translator: Yarri <yarri@listonos.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -174,7 +174,7 @@ msgid "Welcome!"
 msgstr ""
 
 #: ../app/controllers/creatures_controller.php:13
-msgid "Listing creatures"
+msgid "The Creature Show"
 msgstr ""
 
 #: ../app/controllers/creatures_controller.php:34
@@ -215,13 +215,13 @@ msgstr ""
 
 #: ../app/forms/creatures/create_new_form.php:5
 #: ../atk14/skelet/app/forms/creatures/create_new_form.php:5 smarty.c:14
-#: smarty.c:32 smarty.c:131 smarty.c:149
+#: smarty.c:38 smarty.c:146 smarty.c:170
 msgid "Name"
 msgstr ""
 
 #: ../app/forms/creatures/create_new_form.php:10
-#: ../atk14/skelet/app/forms/creatures/create_new_form.php:10 smarty.c:35
-#: smarty.c:152
+#: ../atk14/skelet/app/forms/creatures/create_new_form.php:10 smarty.c:41
+#: smarty.c:173
 msgid "Description"
 msgstr ""
 
@@ -261,150 +261,174 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: smarty.c:2 smarty.c:119
+#: smarty.c:2 smarty.c:134
 msgid "Search"
 msgstr ""
 
-#: smarty.c:5 smarty.c:122
+#: smarty.c:5 smarty.c:137
 msgid "Create a new creature"
 msgstr ""
 
-#: smarty.c:8 smarty.c:125
+#: smarty.c:8 smarty.c:140
 msgid "No creature was found."
 msgstr ""
 
-#: smarty.c:11 smarty.c:128
+#: smarty.c:11 smarty.c:143
 msgid "Id"
 msgstr ""
 
-#: smarty.c:17 smarty.c:134
+#: smarty.c:17 smarty.c:149
+msgid ""
+"<em>The Creature Show</em> gives you a opportunity to inspect a functional "
+"ATK14 code immediatelly after a new web-app installation."
+msgstr ""
+
+#: smarty.c:20 smarty.c:152
+msgid ""
+"For a beginner there is a lot of things to study. Inspect following files "
+"and direcories."
+msgstr ""
+
+#: smarty.c:23 smarty.c:155
 msgid "Update creature"
 msgstr ""
 
-#: smarty.c:20 smarty.c:137
+#: smarty.c:26 smarty.c:158
 msgid "Are you sure to destroy the creature #%1?"
 msgstr ""
 
-#: smarty.c:23 smarty.c:140
+#: smarty.c:29 smarty.c:161
 msgid "detail"
 msgstr ""
 
-#: smarty.c:26 smarty.c:143
+#: smarty.c:32 smarty.c:164
 msgid "edit"
 msgstr ""
 
-#: smarty.c:29 smarty.c:146
+#: smarty.c:35 smarty.c:167
 msgid "destroy"
 msgstr ""
 
-#: smarty.c:38 smarty.c:155
+#: smarty.c:44 smarty.c:176
 msgid "Image"
 msgstr ""
 
-#: smarty.c:41 smarty.c:158
+#: smarty.c:47 smarty.c:179
 msgid "An image of the creature"
 msgstr ""
 
-#: smarty.c:44 smarty.c:161
+#: smarty.c:50 smarty.c:182
 msgid "Get the creature as JSON"
 msgstr ""
 
-#: smarty.c:47 smarty.c:164
+#: smarty.c:53 smarty.c:185
 msgid "Get the creature as XML"
 msgstr ""
 
-#: smarty.c:50 smarty.c:167
+#: smarty.c:56 smarty.c:188
 msgid "Create new creature"
 msgstr ""
 
-#: smarty.c:53 smarty.c:170
+#: smarty.c:59 smarty.c:191
 msgid "Error 404: Page not found"
 msgstr ""
 
-#: smarty.c:56 smarty.c:173
+#: smarty.c:62 smarty.c:194
 msgid "We are deeply sorry, but the page on the URI <em>%1</em> wasn't found."
 msgstr ""
 
-#: smarty.c:59 smarty.c:176
+#: smarty.c:65 smarty.c:197
 msgid "Please, write us to %1 if you think this is our mistake."
 msgstr ""
 
-#: smarty.c:62 smarty.c:179
+#: smarty.c:68 smarty.c:200
 msgid "This is app/views/application/error404.tpl template"
 msgstr ""
 
-#: smarty.c:65 smarty.c:182
+#: smarty.c:71 smarty.c:203
 msgid "Go to the homepage"
 msgstr ""
 
-#: smarty.c:68 smarty.c:185
+#: smarty.c:74 smarty.c:206
 msgid "required"
 msgstr ""
 
-#: smarty.c:71 smarty.c:188
+#: smarty.c:77 smarty.c:209
 msgid "Example:"
 msgstr ""
 
-#: smarty.c:74 smarty.c:191
+#: smarty.c:80 smarty.c:212
 msgid "Save"
 msgstr ""
 
-#: smarty.c:77 smarty.c:194
+#: smarty.c:83 smarty.c:215
 msgid "The following difficulties have occurred during the form processing:"
 msgstr ""
 
-#: smarty.c:80 smarty.c:197
+#: smarty.c:86 smarty.c:218
 msgid ""
 "Some of the items were filled incorrectly. Please, check the form and "
 "correct the errors."
 msgstr ""
 
-#: smarty.c:83 smarty.c:200
+#: smarty.c:89 smarty.c:221
 msgid "It's working!"
 msgstr ""
 
-#: smarty.c:86 smarty.c:203
+#: smarty.c:92 smarty.c:224
 msgid "Hi there, it's nice to see you!"
 msgstr ""
 
-#: smarty.c:89 smarty.c:206
+#: smarty.c:95 smarty.c:227
+msgid "What you see is a freshly installed ATK14 application."
+msgstr ""
+
+#: smarty.c:98 smarty.c:230
 msgid ""
 "This HTTP request is handled by the MainController and the index() action."
 msgstr ""
 
-#: smarty.c:92 smarty.c:209
+#: smarty.c:101 smarty.c:233
 msgid "This is app/views/main/index.tpl template."
 msgstr ""
 
-#: smarty.c:95 smarty.c:212
+#: smarty.c:104 smarty.c:236
 msgid "Where to go?"
 msgstr ""
 
-#: smarty.c:98 smarty.c:215
+#: smarty.c:107 smarty.c:239
 msgid "visit the Creatures show"
 msgstr ""
 
-#: smarty.c:101 smarty.c:218
+#: smarty.c:110 smarty.c:242
 msgid "check out 404 error page"
 msgstr ""
 
-#: smarty.c:104 smarty.c:221
+#: smarty.c:113 smarty.c:245
 msgid ""
 "switch the language: <a href=\"%1\">english</a> or <a href=\"%2\">czech</a>"
 msgstr ""
 
-#: smarty.c:107 smarty.c:224
+#: smarty.c:116 smarty.c:248
+msgid "gettext dictionaries are placed in locale/ directory"
+msgstr ""
+
+#: smarty.c:119 smarty.c:251
 msgid "External links"
 msgstr ""
 
-#: smarty.c:110 smarty.c:227
+#: smarty.c:122 smarty.c:254
 msgid "ATK14 project website"
 msgstr ""
 
-#: smarty.c:113 smarty.c:230
+#: smarty.c:125 smarty.c:257
 msgid "The ATK14 Book"
 msgstr ""
 
-#: smarty.c:116 smarty.c:233
+#: smarty.c:128 smarty.c:260
 msgid "The API reference"
+msgstr ""
+
+#: smarty.c:131 smarty.c:263
+msgid "ATK14 project page on Github"
 msgstr ""
