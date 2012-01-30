@@ -37,7 +37,7 @@
 
 <hr />
 <p>
-	{t escape=no}<em>The Creature Show</em> gives you a opportunity to inspect functional ATK14 code.{/t}<br />
+	{t escape=no}<em>The Creature Show</em> gives you a opportunity to inspect a functional ATK14 code immediatelly after a new web-app installation.{/t}<br />
 	{t}For a beginner there is a lot of things to study. Inspect following files and direcories.{/t}
 </p>
 
@@ -50,5 +50,3 @@ app/views/creatures/*
 app/forms/creatures/*
 test/models/tc_creature.php
 test/controllers/tc_creatures.php</code></pre>
-
-

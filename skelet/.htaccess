@@ -1,5 +1,13 @@
 RewriteEngine On
 
+# silent redirecting /crossdomain.xml -> /public/crossdomain.xml; control file for flash player, acrobat reader and other adobe`s products
+RewriteCond %{REQUEST_URI} ^\/crossdomain.xml(|\?.*)$
+RewriteRule (.*) public/crossdomain.xml [L]
+
+# silent redirecting /favicon.ico -> /public/favicon.ico
+RewriteCond %{REQUEST_URI} ^\/favicon.ico(|\?.*)$
+RewriteRule (.*) public/favicon.ico [L]
+
 RewriteCond %{REQUEST_URI} ^\/
 RewriteCond %{REQUEST_URI} !^\/public\/
 RewriteCond %{REQUEST_URI} !^\/server-status\/
