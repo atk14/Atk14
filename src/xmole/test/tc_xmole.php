@@ -307,6 +307,6 @@ class tc_xmole extends tc_base{
     $this->assertEquals("&lt;", XMole::ToXML("<"));
     $this->assertEquals("&gt;", XMole::ToXML(">"));
     $this->assertEquals("&amp;", XMole::ToXML("&"));
-    $this->assertEquals("nejaky textik&#x0A;dalsi textik &amp; more", XMole::ToXML("nejaky textik\x07\x0adalsi textik & more\x1e"));
+    $this->assertEquals("nejaky textik\ndalsi\ttextik &amp; more", XMole::ToXML("nejaky textik\x07\x0adalsi\x09textik & more\x1e"));
   }
 }
