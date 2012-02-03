@@ -55,6 +55,22 @@ class Atk14Global{
 	}
 
 	/**
+	 * <code>
+	 * $routes = &$ATK14_GLOBAL->getValue("routes");
+	 * $routes = &$ATK14_GLOBAL->getValue("routes",array());
+	 * </code>
+	 * 
+	 * @param $name name of global variable
+	 * @return reference to global variable
+	 */
+	function &getValueRef($name,$initial = null){
+		if(!isset($this->_Store[$name])){
+			$this->_Store[$name] = $initial;
+		}
+		return $this->_Store[$name];
+	}
+
+	/**
 	 * Adresar v url, ve kterem je aplikace umistena.
 	 * 
 	 * Toto je dulezite pro sestavovani URL. Kazda URL bude timto zacinat.

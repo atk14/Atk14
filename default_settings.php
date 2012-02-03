@@ -1,4 +1,9 @@
 <?php
+/**
+ * Here are listed all application setting constants and their default values.
+ * Values should be redefined in ./config/local_settings.php
+ */
+
 $__CONFIG_CONSTANTS__ = array();
 
 __defaults__(array(
@@ -62,5 +67,3 @@ function __defaults__($defaults){
 		$__CONFIG_CONSTANTS__["$key"] = constant($key);
 	}
 }
-
-
