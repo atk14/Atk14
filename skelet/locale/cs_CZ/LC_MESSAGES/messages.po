@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-30 11:10+0100\n"
-"PO-Revision-Date: 2012-01-30 11:16+0100\n"
+"POT-Creation-Date: 2012-02-02 11:24+0100\n"
+"PO-Revision-Date: 2012-02-02 12:26+0100\n"
 "Last-Translator: Yarri <do-not-write-me@ever.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -72,7 +72,7 @@ msgstr ""
 
 #: ../atk14/src/forms/fields.inc:194
 msgid "Ensure this value has at most %max% characters."
-msgstr ""
+msgstr "Tato hodnota "
 
 #: ../atk14/src/forms/fields.inc:195
 msgid "Ensure this value has at least %min% characters."
@@ -80,7 +80,7 @@ msgstr ""
 
 #: ../atk14/src/forms/fields.inc:196
 msgid "Ensure this value has between %min% and %max% characters."
-msgstr ""
+msgstr "Délka řetězce musí být mezi %min% a %max% znaky."
 
 #: ../atk14/src/forms/fields.inc:276
 msgid "Enter a whole number."
@@ -162,11 +162,11 @@ msgstr ""
 
 #: ../atk14/src/forms/fields.inc:777
 msgid "Ensure this image is at least %min% pixels wide (it is %width%)."
-msgstr ""
+msgstr "Obrázek musí mít alespoň %min% bodů na šířku (nyní má %height%). "
 
 #: ../atk14/src/forms/fields.inc:778
 msgid "Ensure this image is at least %min% pixels high (it is %height%)."
-msgstr ""
+msgstr "Obrázek musí mít alespoň %min% bodů na výšku (nyní má %height%). "
 
 #: ../app/controllers/main_controller.php:4
 #: ../atk14/skelet/app/controllers/main_controller.php:4
@@ -243,6 +243,10 @@ msgstr "Hledat výraz"
 #: ../atk14/skelet/config/routes.php:71
 msgid "my beautiful application"
 msgstr "moje nádherná aplikace"
+
+#: ../config/local_settings.php:24
+msgid "ATK14 Project"
+msgstr "ATK14 Projekt"
 
 #: ../atk14/src/atk14/helpers/function.paginator.php:87
 #: ../atk14/src/atk14/helpers/function.paginator.php:150
