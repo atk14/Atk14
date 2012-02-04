@@ -13,6 +13,9 @@ class Atk14StaticRouter extends Atk14Router{
 
 	}
 
+	function recognize(){ }
+	function build(){ }
+
 	/**
 	 *	$this->addRoute("/",array("path" => "main/index"));
 	 *	$this->addRoute("/","main/index");
@@ -89,14 +92,6 @@ class Atk14StaticRouter extends Atk14Router{
 		$recipe["__omit_trailing_slash__"] = !preg_match('/\/$/',$uri);
 		$uri = preg_replace('/^\/?(.*?)\/?$/','\1',$uri); // "/books/" -> "books"; "/" -> ""
 
-		//var_dump($uri);
-		//var_dump($recipe);
-
 		$routes[$uri] = $recipe;
-
-		//var_dump($routes);
-
-		//var_dump($ATK14_GLOBAL->getValue("routes"));
-		//exit;
 	}
 }
