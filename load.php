@@ -46,6 +46,7 @@ require_once(dirname(__FILE__)."/src/functions.inc");
 // ...and load basic application`s objects
 atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/app/forms/application_form.php");
 atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/app/forms/form.php");
+atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/config/routers/load.php");
 
 // Loading model classes, field (and widget) classes and external (3rd party) libs.
 // In every directory class_autoload() is applied. I believe it can do a lot.
@@ -121,6 +122,8 @@ function atk14_initialize_locale(&$lang){
 	putenv("LANG=$l");
 	setlocale(LC_MESSAGES,$l);
 	setlocale(LC_ALL,$l);
+	setlocale(LC_CTYPE,$l);
+	setlocale(LC_COLLATE,$l);
 	bindtextdomain("messages",dirname(__FILE__)."/../locale/");
 	bind_textdomain_codeset("messages", "UTF-8");
 	textdomain("messages");
