@@ -10,21 +10,17 @@
 * 
 * In your templates build links always this way
 *	
-*		{a controller=creatures action=detail id=$creature}Detail of the creature{/a}
+*		{a controller=creatures action=detail id=$creature}Details of the creature{/a}
 *
 * According the matching generic route, link will look like
 *
 *			/en/creatures/detail/?id=123
 *
-* And then add SEF route definition:
+* When there is a SEF route before the generic form...
 *
-*			"creature-<id>" =>	array(
-*															 	"__path__" => "creatures/detail",
-*															 	"id" => "/[0-9]+/",
-*															 	"lang" => "en"
-*															 	)
+* 	$this->addRoute("/creature-<id>/","creatures/detail",array("id" => "/[0-9]+/"));
 *
-* Previous link will change automatically to the following one
+* previous link will be changed automatically to the following one
 *
 *			/creature-123/
 *
@@ -32,6 +28,8 @@
 * he will be transparently redicted to the new one.
 */
 class DefaultRouter extends Atk14StaticRouter{
+
+	// all the below listed routes are considered to be used in the default namespace ""
 	var $namespace = "";
 
 	function setUp(){
@@ -49,8 +47,11 @@ class DefaultRouter extends Atk14StaticRouter{
 			"cs" => "/prisera-<id>.<format>",
 		) as $lang => $uri){
 			$this->addRoute($uri,"$lang/creatures/detail",
+											// note that the following regular expressions fill in the URI like:
+											//		/\/creature-[0-9]+\.(json|xml)/
+											// so /^[0-9]+$/ or /^(json|xml)$/ will not work here
 											array(
-												"id" => "/[0-9]+/", // note that /^[0-9]+$/ doesn't work here, but actually the pattern /[0-9]+/ acts here precisely like /^[0-9]+$/
+												"id" => "/[0-9]+/", 
 												"format" => "/(json|xml)/"
 											)
 			);
