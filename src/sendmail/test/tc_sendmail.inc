@@ -175,6 +175,45 @@ class tc_sendmail extends tc_base{
 		$this->assertTrue((bool)preg_match("/Content-disposition: attachment; filename=\"fck.gif\"\\n/",$ar["body"]));
 	}
 
+	function test_send_attachments(){
+		$ar = sendmail(array(
+			"subject" => "I am sending you my picture and some info",
+
+			"to" => array("friend@mydomain.com","friend@mydomain.com",""),
+			"from" => "me@mydomain.com",
+			"cc" => array("his.father@mydomain.com",""),
+			"bcc" => array("myself@localhost"),
+
+			"body" => "<p>sending attachment</p>",
+			"body_mime_type" => "text/html",
+			"body_charset" => "us-ascii",
+
+			"attachments" => array(
+				array(
+					"body" => files::get_file_content("fck.gif",$err,$err_str),
+					"filename" => "fck.gif",
+					"mime_type" => "image/gif"
+				),
+				array(
+					"body" => "Some little info about me! Actually, there's nothing to write about :)",
+					"filename" => "fck.txt",
+					"mime_type" => "text/plain"
+				),
+			)
+		));
+		//echo $ar["headers"]."\n".$ar["body"]; exit;
+		$this->assertTrue((bool)preg_match("/cc: his.father@mydomain.com\\n/",$ar["headers"]));
+		$this->assertTrue((bool)preg_match("/bcc: myself@localhost, big.brother@somewhere.com\\n/",$ar["headers"]));
+		$this->assertTrue((bool)preg_match("/From: me@mydomain.com\\n/",$ar["headers"]));
+
+		$this->assertTrue(strlen($ar["body"])>1000);
+		$this->assertTrue((bool)preg_match("/Content-Type: text\\/html; charset=\"us-ascii\"\\n/",$ar["body"]));
+		$this->assertTrue((bool)preg_match("/<p>sending attachment<\\/p>/",$ar["body"]));
+		$this->assertTrue((bool)preg_match("/Content-type: image\\/gif; name=\"fck.gif\";\\n/",$ar["body"]));
+		$this->assertTrue((bool)preg_match("/Content-disposition: attachment; filename=\"fck.gif\"\\n/",$ar["body"]));
+		$this->assertTrue((bool)preg_match("/Content-disposition: attachment; filename=\"fck.txt\"\\n/",$ar["body"]));
+	}
+
 	function test_transfer_encoding(){
 		$ar_default = sendmail(array(
 			"to" => "me@mydomain.com",
@@ -297,8 +336,8 @@ PROCESSCONTROL|eudocrpe_11442|NA|
 	function test_get_boundary(){
 		$b1 = _sendmail_get_boundary();
 		$b2 = _sendmail_get_boundary();
-		$this->assertEquals(28,strlen($b1));
-		$this->assertEquals(28,strlen($b2));
+		$this->assertTrue(strlen($b1)>0);
+		$this->assertTrue(strlen($b2)>0);
 		$this->assertTrue($b1!=$b2);
 	}
 
@@ -340,4 +379,3 @@ PROCESSCONTROL|eudocrpe_11442|NA|
 		return $encoded;
 	}
 }
-?>

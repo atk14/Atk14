@@ -226,7 +226,7 @@ function sendmail($params = array()){
 		}
 
 	}else{
-		$mailfile = new CMailFile($ATTACHMENTS[0]["body"],array(
+		$mailfile = new _CMailFile($ATTACHMENTS[0]["body"],array(
 			"subject" => $SUBJECT,
 
 			"to" => $TO,
@@ -241,6 +241,12 @@ function sendmail($params = array()){
 			"mime_type" => $ATTACHMENTS[0]['mime_type'],
 			"filename" => $ATTACHMENTS[0]['filename'],
 		));
+
+		// pokud jsou, vlozime do e-mailu dalsi prilohy
+		for($i=1;$i<sizeof($ATTACHMENTS);$i++){
+			$mailfile->attach_file($ATTACHMENTS[$i]['filename'],$ATTACHMENTS[$i]['body'],$ATTACHMENTS[$i]['mime_type']);
+		}
+
 		$mail_ar = $mailfile->getfile();
 		$BODY = $mail_ar["body"];
 		$HEADERS = $mail_ar["headers"];
@@ -370,7 +376,7 @@ function _sendmail_get_boundary(){
 	static $counter;
 	if(!isset($counter)){ $counter = 0; }
 	$counter++;
-	return $counter."a".substr(md5(uniqid('').$counter),0,27-strlen($counter));
+	return "----=_".$counter."a".substr(md5(uniqid('').$counter),0,27-strlen($counter));
 }
 
 function _sendmail_correct_address($addr){
@@ -500,9 +506,10 @@ to chunk_split
 // simple class that encapsulates mail() with addition of mime file attachment.
 
 // usage - mimetype example "image/gif"
-// $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
+// $mailfile = new _CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
 // $mailfile->sendfile();
-class CMailFile {
+// TODO: zbavit se zavislosti na teto tride
+class _CMailFile {
 	var $subject;
 	var $addr_to;
 	var $text_body;
@@ -510,12 +517,13 @@ class CMailFile {
 	var $text_body_charset;
 	var $text_encoded;
 	var $mime_headers;
-	var $mime_boundary = "--==================_846811060==_";
+	var $mime_boundary;
 	var $smtp_headers;
 	
 	//2009-01-06: konstruktor byl predelan
 	//$subject,$to,$from,$cc,$bcc,$msg,$msg_mimetype,$msg_charset,$filename,&$file_content,$mimetype = "application/octet-stream", $mime_filename = false) 
-	function CMailFile(&$file_content,$options = array()){
+	function _CMailFile(&$file_content,$options = array()){
+		$this->mime_boundary = _sendmail_get_boundary();
 		$options = array_merge(array(
 			"subject" => "",
 
@@ -539,7 +547,8 @@ class CMailFile {
 		$this->addr_to = $options["to"];
 		$this->smtp_headers = $this->write_smtpheaders($options["from"],$options["cc"],$options["bcc"]);
 		$this->text_body = $this->write_body($options["body"]);
-		$this->text_encoded = $this->attach_file($options["filename"],$file_content,$options["mime_type"]);
+		$this->_first_attachment = true;
+		$this->text_encoded = $this->_attach_file($options["filename"],$file_content,$options["mime_type"]);
 		$this->mime_headers = $this->write_mimeheaders($options["filename"]);
 	}
 
@@ -557,14 +566,20 @@ class CMailFile {
 		}
 	}
 
-	function attach_file($filename,&$file_content,$mimetype) {
+	function attach_file($filename,&$file_content,$mimetype = "application/octet-strlen"){
+		$this->text_encoded .= $this->_attach_file($filename,$file_content,$mimetype);
+	}
+
+	function _attach_file($filename,&$file_content,$mimetype) {
 		$encoded = $this->encode_file($filename,$file_content);
-		$out = "--" . $this->mime_boundary . "\n";
+
+		$out = $this->_first_attachment ? "--$this->mime_boundary\n" : "\n";
 		$out = $out . "Content-type: " . $mimetype . "; name=\"$filename\";\n";		
 		$out = $out . "Content-Transfer-Encoding: base64\n";
 		$out = $out . "Content-disposition: attachment; filename=\"$filename\"\n\n";
 		$out = $out . $encoded . "\n";
-		$out = $out . "--" . $this->mime_boundary . "--" . "\n";
+		$out = $out . "--" . $this->mime_boundary;
+		$this->_first_attachment = false;
 		return $out; 
 // added -- to notify email client attachment is done
 	}
@@ -576,7 +591,7 @@ class CMailFile {
 
 	function getfile(){
 		$headers = $this->smtp_headers . $this->mime_headers;		
-		$message = $this->text_body . $this->text_encoded;	
+		$message = $this->text_body . $this->text_encoded. "--";
 		return array(
 			"to" => $this->addr_to,
 			"subject" => $this->subject,
@@ -604,7 +619,7 @@ class CMailFile {
 		$out = $out . "Content-Type: multipart/mixed; ";
 		$out = $out . "boundary=\"$this->mime_boundary\"\n";
 		$out = $out . "Content-Transfer-Encoding: 8bit\n";
-		$out = $out . "X-attachments: $filename;\n\n";
+		//$out = $out . "X-attachments: $filename;\n\n"; // TODO: tady muze byt vice priloh....
 		return $out;
 	}
 
@@ -643,4 +658,3 @@ class CMailFile {
 		return $out;
 	}
 }
-?>
