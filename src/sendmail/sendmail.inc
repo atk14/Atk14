@@ -252,6 +252,8 @@ function sendmail($params = array()){
 		$HEADERS = $mail_ar["headers"];
 	}
 
+	$HEADERS = trim($HEADERS); // na konci hlavicky byl prazdny radek, ve zprave tak byly hlavicky a telo oddeleny 2 radky
+
 	$out = array(
 		"to" => $TO,
 		"from" => $FROM,
