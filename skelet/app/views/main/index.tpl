@@ -4,9 +4,9 @@
 
 <p>{t}What you see is a freshly installed ATK14 application.{/t}</p>
 
-<p>{t}This HTTP request is handled by the MainController and the index() action.{/t}</p>
+<p>{t escape=no}This HTTP request is handled by the <code>app/controllers/main_controller.php</code> and the <code>index()</code> action.{/t}</p>
 
-<p>{t}This is app/views/main/index.tpl template.{/t}</p>
+<p>{t escape=no}This is <code>app/views/main/index.tpl</code> template.{/t}</p>
 
 <h3>{t}Where to go?{/t}</h3>
 <ul>
@@ -17,7 +17,7 @@
 	{capture assign=url_cs}{link_to lang=cs}{/capture}
 	<li>
 		{t escape=no url_en=$url_en url_cs=$url_cs}switch the language: <a href="%1">english</a> or <a href="%2">czech</a>{/t}<br />
-		{t}gettext dictionaries are placed in locale/ directory{/t}
+		{t escape=no}gettext dictionaries are placed in <code>locale/</code> directory{/t}
 	</li>
 </ul>
 

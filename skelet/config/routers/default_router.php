@@ -27,7 +27,7 @@
 * And even more when a visitor visits previous link directly (i.e. from a bookmarks),
 * he will be transparently redicted to the new one.
 */
-class DefaultRouter extends Atk14StaticRouter{
+class DefaultRouter extends Atk14Router{
 
 	// all the below listed routes are considered to be used in the default namespace ""
 	var $namespace = "";

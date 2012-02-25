@@ -688,7 +688,7 @@ class MultipleChoiceField extends ChoiceField
 
         foreach ($new_value as $val) {
             if (!in_array($val, $valid_values)) {
-                return array(EasyReplace($this->messages['invalid_choice'], array('%(value)s'=>$val)), null);
+                return array(EasyReplace($this->messages['invalid_choice'], array('%(value)s'=> h($val))), null);
             }
         }
         return array(null, $new_value);
