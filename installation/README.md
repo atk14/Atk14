@@ -15,7 +15,7 @@ You need one to be installed :)
 
 Mod Rewrite has to be enabled.
 
-    $ /etc/apache2/mods-enabled
+    $ cd /etc/apache2/mods-enabled
     $ sudo ln -s ../mods-available/rewrite.load ./
 
 #### Git
@@ -48,11 +48,13 @@ These lines say that administer (postgres) can connect to any database but only 
 
 Now restart the server.
 
-    $ /etc/init.d/postgresql-8.4 restart
+    $ sudo service postgresql restart
+		or
+    $ sudo /etc/init.d/postgresql restart
 
 #### Gettext
 
-Please, install it.
+If you are planning to develop a multilanguage application, you need Gettext to be installed.
 
     $ sudo apt-get install gettext php-gettext
 

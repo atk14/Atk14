@@ -1,0 +1,33 @@
+#!/bin/bash
+
+assert_command_exists () {
+	cmd=$1
+	echo -n "command $cmd exists... "
+	if [ "`which $cmd`" = "" ]; then
+		echo "fail"
+		exit 1
+	fi
+	echo "ok"
+}
+
+assert_php_function_exists () {
+	fn=$1
+	echo -n "php function $fn exists... "
+	src="echo function_exists('$fn') ? 'yes' : 'no';"
+	if [ `/usr/bin/env php -r "$src"` != "yes" ]; then
+		echo "fail"
+		exit 1
+	fi
+	echo "ok"
+}
+
+assert_command_exists 'env'
+assert_command_exists 'php'
+assert_command_exists 'psql'
+assert_command_exists 'git'
+
+assert_php_function_exists 'pg_connect'
+assert_php_function_exists 'gettext'
+assert_php_function_exists '_'
+
+# TODO: version of php
