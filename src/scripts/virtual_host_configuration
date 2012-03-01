@@ -13,6 +13,10 @@ echo "
 #   $ sudo bash -c \"$0 > /etc/apache2/sites-available/$APPNAME.localhost\"
 #   $ sudo a2ensite $APPNAME.localhost
 #   $ sudo bash -c \"echo '127.0.0.1 $APPNAME.localhost' >> /etc/hosts\"
+#
+# Now reload Apache
+#   $ sudo service apache2 reload
+#		or
 #   $ sudo /etc/init.d/apache2 reload
 
 <VirtualHost *:80>
