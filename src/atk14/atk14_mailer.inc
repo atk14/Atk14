@@ -64,7 +64,7 @@ class Atk14Mailer{
 	 *
 	 * @var string
 	 */
-	var $from = "atk14@mailer.cz";
+	var $from = DEFAULT_EMAIL;
 
 	/**
 	 * recipients email address
@@ -110,11 +110,11 @@ class Atk14Mailer{
 	var $content_type = "text/plain";
 
 	/**
-	 * Content charset. Defaults to 'UTF-8'
+	 * Content charset.
 	 *
 	 * @var string
 	 */
-	var $content_charset = "UTF-8";
+	var $content_charset = DEFAULT_CHARSET;
 
 	/**
 	 * Attachments

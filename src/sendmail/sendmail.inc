@@ -169,8 +169,8 @@ function sendmail($params = array()){
 		$out = array(
 			"to" => $TO,
 			"subject" => $SUBJECT,
-			"body" => $BODY,
 			"headers" => $HEADERS,
+			"body" => $BODY,
 		);
 
 		if($params["build_message_only"]){
@@ -261,8 +261,8 @@ function sendmail($params = array()){
 		"cc" => $CC,
 		"return_path" => $RETURN_PATH,
 		"subject" => $SUBJECT,
-		"body" => $BODY,
 		"headers" => $HEADERS,
+		"body" => $BODY,
 	);
 
 	// v $BODY nechceme sekvence \r\n, funguje to spatne
