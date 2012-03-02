@@ -13,6 +13,7 @@ __defaults__(array(
 
 __defaults__(array(
 	"DEFAULT_EMAIL" => "info@example.com",
+	"DEFAULT_CHARSET" => "UTF-8",
 ));
 
 __defaults__(array(
@@ -50,7 +51,7 @@ __defaults__(array(
 
 __defaults__(array(
 	"SENDMAIL_DEFAULT_FROM" => DEFAULT_EMAIL,
-	"SENDMAIL_DEFAULT_BODY_CHARSET" => "UTF-8",
+	"SENDMAIL_DEFAULT_BODY_CHARSET" => DEFAULT_CHARSET,
 	"SENDMAIL_DEFAULT_BODY_MIME_TYPE" => "text/plain",
 	"SENDMAIL_BODY_AUTO_PREFIX" => "", // given text will be prepend to every message
 	"SENDMAIL_USE_TESTING_ADDRESS_TO" => false,
