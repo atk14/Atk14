@@ -6,24 +6,114 @@ cd ..       # /home/joe/webapps/myapp
 PWD=`pwd`                                 # /home/joe/webapps/myapp
 APPNAME=`basename "$PWD"`                 # myapp
 
-echo "
-# This is Apache virtual host configuration for http://$APPNAME.localhost/
-# You should follow the instructions bellow to be happy
-#
-#   $ sudo bash -c \"$0 > /etc/apache2/sites-available/$APPNAME.localhost\"
-#   $ sudo a2ensite $APPNAME.localhost
-#   $ sudo bash -c \"echo '127.0.0.1 $APPNAME.localhost' >> /etc/hosts\"
-#
-# Now reload Apache
-#   $ sudo service apache2 reload
-#		or
-#   $ sudo /etc/init.d/apache2 reload
+#		echo "
+#		# This is Apache virtual host configuration for http://$APPNAME.localhost/
+#		# You should follow the instructions bellow to be happy
+#		#
+#		#   $ sudo bash -c \"$0 > /etc/apache2/sites-available/$APPNAME.localhost\"
+#		#   $ sudo a2ensite $APPNAME.localhost
+#		#   $ sudo bash -c \"echo '127.0.0.1 $APPNAME.localhost' >> /etc/hosts\"
+#		#
+#		# Now reload Apache
+#		#   $ sudo service apache2 reload
+#		#		or
+#		#   $ sudo /etc/init.d/apache2 reload
 
+while [ -n "$1" ] 
+do
+	case $1 in
+	  "-f") FORCE=1 ;;
+	  *) break      ;;
+        esac
+  	shift
+done
+
+APACHE_CONF_DIR=
+APACHE_CONF_FILENAME="$APPNAME.localhost.conf"
+for dir in /etc/apache2/sites-available /etc/apache2/vhosts.d ; do
+    if [ -e $dir ] ; then
+       APACHE_CONF_DIR="$dir"
+       break;
+    fi	    
+done
+confirm=
+
+# configuring apache
+if [ -z "$APACHE_CONF_DIR" ] ; then 
+	echo "WARNING!"
+	echo "Apache configuration not found, please configure apache manually!!!"
+else
+	APACHE_CONF_FILE="$APACHE_CONF_DIR/$APACHE_CONF_FILENAME"
+	APACHE_CONF=`cat <<EOF
 <VirtualHost *:80>
-  DocumentRoot $PWD
-  ServerName $APPNAME.localhost
+ DocumentRoot $PWD
+ ServerName $APPNAME.localhost
+ <Directory $PWD>
   Options FollowSymLinks
-  <Directory $PWD>
   AllowOverride All
-  </Directory>
-</VirtualHost>"
+  Order deny,allow
+  Allow from all
+ </Directory>
+</VirtualHost>
+EOF`
+	echo "Configures apache for new virtualhost $APPNAME.localhost in directory $PWD using config file $APACHE_CONF_FILE and restarts webserver."
+	echo "Virtual host configuration will be:"
+	echo "$APACHE_CONF"
+	if [ -n "$FORCE" -o ! -e  "$APACHE_CONF_FILE" ] ; then	
+  		if [ -z "$FORCE" ] ; then
+		   echo -n "Are you sure to do this (root password will be probably needed)? (y to continue)" 
+		   read confirm
+                   if [ $confirm != "y" ] ; then
+		        exit 1
+		   fi
+		fi
+		
+		echo "$APACHE_CONF" | sudo tee "$APACHE_CONF_FILE" > /dev/null
+
+	    	for dir in /etc/apache2/sites-enabled ; do
+		   if [ -e $dir ] ; then 
+			sudo ln -s $APACHE_CONF_FILE $dir/$APACHE_CONF_FILENAME
+			break 
+		   fi ;
+		done
+
+                grep -q '^\s*NameVirtualHost\s*\*\s*:\s*80' /etc/apache2/httpd.conf ||
+                        (
+                        echo " Add NamedVirtualHost directive to /etc/apache2/httpd.conf"
+                        echo " NameVirtualHost *:80" | sudo tee --append /etc/apache2/httpd.conf;> /dev/null
+                        )
+
+		RESTART=
+		for cmd in /etc/init.d/apache2 /usr/sbin/rcapache2 ; do
+		   if sudo [ -x "$cmd" ] && sudo "$cmd" restart ; then
+			RESTART=1
+			break	
+		   fi
+		done
+		if [ -z $RESTART ] ; then
+		        echo "WARNING: restarting command not found or failed, please restart apache manually!"     
+		fi;
+	else
+		echo "Old configuration found, it was let intact. Use -f option for silent overriding of old configuration."
+	fi
+fi
+
+
+fgrep -q "# $APPNAME added by atk14_init.sh" /etc/hosts  || (
+  echo "It adds 127.0.0.1 $APPNAME.localhost record to /etc/hosts"
+  if [ -z "$FORCE" -a -z "$confirm" ] ; then
+	  echo -n "Are you sure (root password will be probably needed)? (y to continue)"
+      read confirm
+      if [ $confirm != 'y' ] ; then
+	    exit 1;
+      fi
+  fi    
+  echo "
+# $APPNAME added by atk14_init.sh
+127.0.0.1 $APPNAME.localhost" | sudo tee --append  /etc/hosts > /dev/null
+) || exit 1
+
+if [ -n "$FORCE" -o -n "$confirm" ] ; then
+  echo "Now try this address in your browser:"
+  echo "http://$APPNAME.localhost/"
+fi
