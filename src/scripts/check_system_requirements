@@ -26,6 +26,8 @@ assert_command_exists 'wget'
 assert_command_exists 'php'
 assert_command_exists 'psql'
 assert_command_exists 'git'
+assert_command_exists 'fgrep'
+assert_command_exists 'tee'
 
 assert_php_function_exists 'pg_connect'
 assert_php_function_exists 'gettext'
