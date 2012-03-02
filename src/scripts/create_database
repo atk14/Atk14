@@ -26,7 +26,7 @@ if [ "$confirm" != "y" ]; then
   exit 1
 fi
 
-sudo -u $PG_USER -s "echo \"$sql\" | psql template1"
+echo "$sql" | sudo -u $PG_USER -s "psql template1"
 
 echo ""
 echo "Now you may want to run"
