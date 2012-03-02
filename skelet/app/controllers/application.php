@@ -1,6 +1,7 @@
 <?php
 class ApplicationController extends Atk14Controller{
 	function index(){
+		// acts like there's no index action by default
 		$this->_execute_action("error404");
 	}
 
@@ -24,7 +25,7 @@ class ApplicationController extends Atk14Controller{
 
 	function _application_before_filter(){
 		$this->response->setContentType("text/html");
-		$this->response->setContentCharset("UTF-8");
+		$this->response->setContentCharset(DEFAULT_CHARSET);
 
 		// following header helps to avoid clickjacking attacks
 		$this->response->setHeader("X-Frame-Options","SAMEORIGIN"); // SAMEORIGIN, DENY
