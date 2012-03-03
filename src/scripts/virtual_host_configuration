@@ -5,21 +5,8 @@ cd ..           # /home/joe/webapps/myapp
 
 PWD=`pwd`                                       # /home/joe/webapps/myapp
 APPNAME=`basename "$PWD" | tr "[A-Z]" "[a-z]"`  # myapp
-HOSTNAME="$APPNAME.localhost"
-confirm=
-
-#    echo "
-#    # This is Apache virtual host configuration for http://$HOSTNAME/
-#    # You should follow the instructions bellow to be happy
-#    #
-#    #   $ sudo bash -c \"$0 > /etc/apache2/sites-available/$HOSTNAME\"
-#    #   $ sudo a2ensite $HOSTNAME
-#    #   $ sudo bash -c \"echo '127.0.0.1 $APPNAME.localhost' >> /etc/hosts\"
-#    #
-#    # Now reload Apache
-#    #   $ sudo service apache2 reload
-#    #    or
-#    #   $ sudo /etc/init.d/apache2 reload
+HOSTNAME="$APPNAME.localhost"                   # myapp.localhost
+FORCE=
 
 while [ -n "$1" ] ; do
   case $1 in
@@ -45,13 +32,32 @@ APACHE_CONF=`cat <<EOF
   </VirtualHost>
 EOF`
 
-echo "There's need to configure a new virtual host in apache like this"
-echo "$APACHE_CONF"
-echo "and also add the following line into /etc/hosts"
-echo "127.0.0.1 $HOSTNAME"
-echo ""
-echo "Now do it by hand or let the script do it automatically..."
-echo ""
+if [ -z "$FORCE" ]; then
+  echo "\
+# This is apache virtual host configuration for http://$HOSTNAME/
+# You can let this script deploy the configuration automatically by typing the comman bellow.
+# Automatic deploy works great on Ubuntu.
+#
+#   $ $0 -f
+# 
+# or you can do it manually following the instructions bellow.
+#
+#   $ $0 | sudo tee /etc/apache2/sites-available/$HOSTNAME > /dev/null
+#   $ sudo a2ensite $HOSTNAME
+#   $ echo '127.0.0.1 $HOSTNAME' | sudo tee --append /etc/hosts > /dev/null
+#
+# now reload apache
+#   $ sudo service apache2 reload
+#    or
+#   $ sudo /etc/init.d/apache2 reload
+#
+
+$APACHE_CONF
+"
+  exit 0
+fi
+
+echo "Going to deploy apache configuration for $HOSTNAME"
 
 for dir in /etc/apache2/sites-available /etc/apache2/vhosts.d ; do
   if [ -e $dir ] ; then
@@ -60,28 +66,18 @@ for dir in /etc/apache2/sites-available /etc/apache2/vhosts.d ; do
   fi      
 done
 
-
 # configuring apache
+echo ""
 if [ -z "$APACHE_CONF_DIR" ] ; then 
-  echo "WARNING!"
-  echo "Apache configuration not found, please configure apache manually!!!"
+  echo "WARNING: Apache configuration not found, please configure apache manually!"
 else
   APACHE_CONF_FILE="$APACHE_CONF_DIR/$APACHE_CONF_FILENAME"
 
-  echo "Configures apache for new virtualhost $HOSTNAME"
-  echo "in directory $PWD"
-  echo "using config file $APACHE_CONF_FILE"
-  echo "and restarts webserver."
+  echo "About to configure apache for new virtualhost $HOSTNAME"
+  echo " in directory $PWD"
+  echo " using config file $APACHE_CONF_FILE"
 
-  if [ -n "$FORCE" -o ! -e  "$APACHE_CONF_FILE" ] ; then
-    if [ -z "$FORCE" ] ; then
-      echo -n "Are you sure to do this (root password will be probably needed)? (y to continue) " 
-      read confirm
-      if [ $confirm != "y" ] ; then
-        exit 1
-      fi
-    fi
-    
+  if [ ! -e  "$APACHE_CONF_FILE" ] ; then
     echo "$APACHE_CONF" | sudo tee "$APACHE_CONF_FILE" > /dev/null
 
     for dir in /etc/apache2/sites-enabled ; do
@@ -98,6 +94,8 @@ else
     #  echo " NameVirtualHost *:80" | sudo tee --append /etc/apache2/httpd.conf;> /dev/null
     # )
 
+    echo ""
+    echo "About to restart apache"
     RESTART=
     for cmd in /etc/init.d/apache2 /usr/sbin/rcapache2 ; do
       if sudo [ -x "$cmd" ] && sudo "$cmd" restart ; then
@@ -105,31 +103,22 @@ else
         break  
       fi
     done
-    if [ -z $RESTART ] ; then
-      echo "WARNING: restarting command not found or failed, please restart apache manually!"     
+    if [ -z "$RESTART" ] ; then
+      echo "WARNING: Restarting command not found or failed, please restart apache manually!"     
     fi;
   else
-    echo "Old configuration found, it was let intact."
-    echo "Use -f option for silent overriding of old configuration."
+    echo "WARNING: Old configuration file found, it was let intact."
   fi
 fi
 
 
-fgrep -q "# $HOSTNAME added by atk14_init.sh" /etc/hosts  || (
-  echo "It adds 127.0.0.1 $HOSTNAME record to /etc/hosts"
-  if [ -z "$FORCE" -a -z "$confirm" ] ; then
-    echo -n "Are you sure (root password will be probably needed)? (y to continue) "
-    read confirm
-    if [ $confirm != 'y' ] ; then
-      exit 1;
-    fi
-  fi
+egrep -q "^[^#]+\s$HOSTNAME" /etc/hosts  || (
+  echo ""
+  echo "About to add 127.0.0.1 $HOSTNAME record to /etc/hosts"
   echo "
 # $HOSTNAME added by atk14_init.sh
 127.0.0.1 $HOSTNAME" | sudo tee --append  /etc/hosts > /dev/null
 ) || exit 1
 
-if [ -n "$FORCE" -o -n "$confirm" ] ; then
-  echo "Now try this address in your browser:"
-  echo "http://$HOSTNAME/"
-fi
+echo ""
+echo "Now try http://$HOSTNAME/ in your browser"
