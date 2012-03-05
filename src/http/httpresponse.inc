@@ -21,6 +21,13 @@ class HTTPResponse{
 	 */
 	var $_StatusCode = 200;
 
+
+	/**
+	 * @access private
+	 * @var string
+	 */
+	var $_StatusMessage = null;
+
 	/**
 	 * @access private
 	 * @var string
@@ -108,13 +115,24 @@ class HTTPResponse{
 
 	/**
 	 * Sets status code of the response.
+	 * <code>
+	 *	 $response->setStatusCode(400);
+	 *	 $response->setStatusCode(404,"Not Found Dude");
+	 *	 $response->setStatusCode("200 Found");
+	 * </code>
 	 *
 	 * @param integer $code
 	 */
-	function setStatusCode($code){
+	function setStatusCode($code,$message = null){
+		if(preg_match('/^([0-9]{3}) (.+)/',$code,$matches)){
+			$code = $matches[1];
+			$message = $matches[2];
+		}
+
 		settype($code,"integer");
 		$this->_StatusCode_Redefined = true;
 		$this->_StatusCode = $code;
+		$this->_StatusMessage = $message;
 	}
 
 
@@ -127,57 +145,58 @@ class HTTPResponse{
 	 * @return string
 	 */
 	function getStatusMessage(){
-		$_status_message = "Unknown";
+		if($this->_StatusMessage){ return $this->_StatusMessage; }
+
 		//cerpano z
 		//http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-		switch($this->_StatusCode){
+		$status = array(
 			// Successful 2xx
-			case 200: $_status_message = "OK"; break;
-			case 201: $_status_message = "Created"; break;
-			case 202: $_status_message = "Accepted"; break;
-			case 203: $_status_message = "Non-Authoritative Information"; break;
-			case 204: $_status_message = "No Content"; break;
-			case 205: $_status_message = "Reset Content"; break;
-			case 206: $_status_message = "Partial Content"; break;
+			"200" => "OK",
+			"201" => "Created",
+			"202" => "Accepted",
+			"203" => "Non-Authoritative Information",
+			"204" => "No Content",
+			"205" => "Reset Content",
+			"206" => "Partial Content",
 			// Redirection 3xx
-			case 300: $_status_message = "Multiple Choices"; break;
-			case 301: $_status_message = "Moved Permanently"; break;
-			case 302: $_status_message = "Found"; break;
-			case 303: $_status_message = "See Other"; break;
-			case 304: $_status_message = "Not Modified"; break;
-			case 305: $_status_message = "Use Proxy"; break;
+			"300" => "Multiple Choices",
+			"301" => "Moved Permanently",
+			"302" => "Found",
+			"303" => "See Other",
+			"304" => "Not Modified",
+			"305" => "Use Proxy",
 			// (306 Unused)
-			case 307: $_status_message = "Temporary Redirect"; break;
+			"307" => "Temporary Redirect",
 			// Client Error 4xx
-			case 400: $_status_message = "Bad Request"; break;
-			case 401: $_status_message = "Unauthorized"; break;
-			case 402: $_status_message = "Payment Required"; break;
-			case 403: $_status_message = "Forbidden"; break;
-			case 404: $_status_message = "Not Found"; break;
-			case 405: $_status_message = "Method Not Allowed"; break;
-			case 406: $_status_message = "Not Acceptable"; break;
-			case 407: $_status_message = "Proxy Authentication Required"; break;
-			case 408: $_status_message = "Request Timeout"; break;
-			case 409: $_status_message = "Conflict"; break;
-			case 410: $_status_message = "Gone"; break;
-			case 411: $_status_message = "Length Required"; break;
-			case 412: $_status_message = "Precondition Failed"; break;
-			case 413: $_status_message = "Request Entity Too Large"; break;
-			case 414: $_status_message = "Request-URI Too Long"; break;
-			case 415: $_status_message = "Unsupported Media Type"; break;
-			case 416: $_status_message = "Requested Range Not Satisfiable"; break;
-			case 417: $_status_message = "Expectation Failed"; break;
+			"400" => "Bad Request",
+			"401" => "Unauthorized",
+			"402" => "Payment Required",
+			"403" => "Forbidden",
+			"404" => "Not Found",
+			"405" => "Method Not Allowed",
+			"406" => "Not Acceptable",
+			"407" => "Proxy Authentication Required",
+			"408" => "Request Timeout",
+			"409" => "Conflict",
+			"410" => "Gone",
+			"411" => "Length Required",
+			"412" => "Precondition Failed",
+			"413" => "Request Entity Too Large",
+			"414" => "Request-URI Too Long",
+			"415" => "Unsupported Media Type",
+			"416" => "Requested Range Not Satisfiable",
+			"417" => "Expectation Failed",
 			// Server Error 5xx
-			case 500: $_status_message = "Internal Server Error"; break;
-			case 501: $_status_message = "Not Implemented"; break;
-			case 502: $_status_message = "Bad Gateway"; break;
-			case 503: $_status_message = "Service Unavailable"; break;
-			case 504: $_status_message = "Gateway Timeout"; break;
-			case 505: $_status_message = "HTTP Version Not Supported"; break;
-			case 506: $_status_message = "Variant Also Negotiates"; break;
-			case 507: $_status_message = "Insufficient Storage"; break;
-		}
-		return $_status_message;
+			"500" => "Internal Server Error",
+			"501" => "Not Implemented",
+			"502" => "Bad Gateway",
+			"503" => "Service Unavailable",
+			"504" => "Gateway Timeout",
+			"505" => "HTTP Version Not Supported",
+			"506" => "Variant Also Negotiates",
+			"507" => "Insufficient Storage",
+		);
+		return isset($status["$this->_StatusCode"]) ? $status["$this->_StatusCode"] : "Unknown";
 	}
 	
 	/**
