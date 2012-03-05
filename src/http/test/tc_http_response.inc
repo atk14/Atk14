@@ -81,6 +81,21 @@ class tc_http_response extends tc_base{
 		$this->assertTrue($response->redirected());
 	}
 
+	function test_concatenate(){
+		$final_resp = new HTTPResponse();
+
+		$resp = new HTTPResponse();
+		$resp->setStatusCode("299 You Found a Treasure");
+
+		$this->assertEquals(200,$final_resp->getStatusCode());
+		$this->assertEquals("OK",$final_resp->getStatusMessage());
+
+		$final_resp->concatenate($resp);
+
+		$this->assertEquals(299,$final_resp->getStatusCode());
+		$this->assertEquals("You Found a Treasure",$final_resp->getStatusMessage());
+	}
+
 	function test_set_location(){
 		$resp = new HTTPResponse();
 		$resp->setLocation("/new-uri/");
