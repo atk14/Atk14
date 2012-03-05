@@ -115,6 +115,29 @@ class tc_http_response extends tc_base{
 		$this->assertEquals("concatenated",$f->getContent());
 	}
 
+	function test_status_message(){
+		$resp = new HTTPResponse();
+		$this->assertEquals("OK",$resp->getStatusMessage());
+
+		$resp->setStatusCode(404);
+		$this->assertEquals("Not Found",$resp->getStatusMessage());
+
+		$resp->setStatusCode(499);
+		$this->assertEquals("Unknown",$resp->getStatusMessage());
+
+		$resp->setStatusCode(499,"Custom Error Msg");
+		$this->assertEquals("Custom Error Msg",$resp->getStatusMessage());
+
+		$resp->setStatusCode(404);
+		$this->assertEquals("Not Found",$resp->getStatusMessage());
+
+		// setting code & message in a single parameter
+
+		$resp->setStatusCode("200 We Found It");
+		$this->assertEquals(200,$resp->getStatusCode());
+		$this->assertEquals("We Found It",$resp->getStatusMessage());
+	}
+
 	function _fetch_response($response){
 		$ser = serialize($response);
 		files::write_to_file("response.ser",$ser,$err,$err_str);
