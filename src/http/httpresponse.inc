@@ -569,7 +569,7 @@ class HTTPResponse{
 
 		//HTTP status code
 		if($http_response->_StatusCode_Redefined){
-			$this->setStatusCode($http_response->getStatusCode());
+			$this->setStatusCode($http_response->getStatusCode(),$http_response->_StatusMessage);
 		}
 
 		//Content-Type
@@ -590,4 +590,3 @@ class HTTPResponse{
 		}
 	}
 }
-?>

@@ -11,4 +11,3 @@ if(!isset($HTTP_RESPONSE)){
 	$HTTP_REQUEST = new HTTPRequest();
 	$HTTP_OUTPUT_BUFFER = &$HTTP_RESPONSE->getOutputBuffer();
 }
-?>
