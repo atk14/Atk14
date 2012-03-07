@@ -54,7 +54,7 @@ class Atk14Migration{
 	 * @static
 	 * @return logger
 	 */
-	function &GetLogger(){
+	static function &GetLogger(){
 		static $logger;
 		if(!isset($logger)){
 			$logger = new logger("migration",array(
