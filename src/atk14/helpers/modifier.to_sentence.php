@@ -5,6 +5,8 @@
  * {$singers|@to_sentence} -> George Michael, Boy George and Jimmy Somerville
  *
  * You should not to forget the @ symbol in front of the helper`s name.
+ * 
+ * There is also smarty`s function with the same name.
  */
 function smarty_modifier_to_sentence($ar,$connector = 'and'){
 	$out = '';

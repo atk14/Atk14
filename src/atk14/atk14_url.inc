@@ -227,16 +227,41 @@ class Atk14Url{
 	 * @static
 	 *
 	 */
-	static function BuildLink($params,$options = array()){
+	static function BuildLink($params,$options = array(),$__current_ary__ = array()){
 		global $ATK14_GLOBAL,$HTTP_REQUEST;
+
+		if(is_string($params)){
+			if(preg_match("/^[a-z0-9_]+$/",$params)){
+				return Atk14Url::BuildLink(array(
+						"action" => $params, 
+				),$options,$__current_ary__);
+			}
+			if(preg_match("/^([a-z0-9_]+)\\/([a-z0-9_]+)$/",$params,$matches)){
+				return Atk14Url::BuildLink(array(
+						"controller" => $matches[1],
+						"action" => $matches[2], 
+				),$options,$__current_ary__);
+			}
+
+			$url = $params;
+			return $url;
+		}
+
 		Atk14Timer::Start("Atk14Url::BuildLink");
-		$params = array_merge(array(
+
+		$__current_ary__ = array_merge(array(
 			"namespace" => $ATK14_GLOBAL->getValue("namespace"),
 			"controller" => $ATK14_GLOBAL->getValue("controller"),
 			"action" => $ATK14_GLOBAL->getValue("action"),
 			"lang" => $ATK14_GLOBAL->getValue("lang")
-		),$params);
-		//echo "<pre>"; var_dump($params); echo "</pre>"; exit;
+		),$__current_ary__);
+
+		if(!isset($params["namespace"])){ $params["namespace"] = $__current_ary__["namespace"]; }
+		if(!isset($params["action"]) && !isset($params["controller"])){ $params["action"] = $__current_ary__["action"]; }
+		if(!isset($params["controller"])){ $params["controller"] = $__current_ary__["controller"]; }
+		if(!isset($params["action"])){ $params["action"] = "index"; }
+		if(!isset($params["lang"])){ $params["lang"] = $__current_ary__["lang"]; }
+
 		$options = array_merge(array(
 			"connector" => "&amp;",
 			"anchor" => null,
@@ -354,7 +379,7 @@ class Atk14Url{
 				$_proto = "http";
 			}
 			$_port = "";
-			if($_server_port!=$_exp_port){
+			if($_server_port && $_server_port!=$_exp_port){
 				$_port = ":".$_server_port;
 			}
 

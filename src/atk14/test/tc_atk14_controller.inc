@@ -25,7 +25,7 @@ class tc_atk14_controller extends tc_base{
 		$this->assertEquals(array("afilter1","afilter2","after_filter","afilter3","afilter4"),$c->after_filters);
 	}
 
-	function test_redirect_to(){
+	function test_redirect_to_and_link_to(){
 		$c = new ApplicationController();
 		$c->atk14__initialize();
 		$c->lang = "en";
@@ -43,6 +43,45 @@ class tc_atk14_controller extends tc_base{
 			list($params,$result) = $i;
 			$c->_redirect_to($params);
 			$this->assertEquals($result,$c->response->getLocation());
+			$this->assertEquals(302,$c->response->getStatusCode()); // 302 Moved temporarily
+
+			$c->_redirect_to($params,array("moved_permanently" => true));
+			$this->assertEquals($result,$c->response->getLocation());
+			$this->assertEquals(301,$c->response->getStatusCode()); // 301 Moved permanently
+
+			$url = $c->_link_to($params);
+			$this->assertEquals($result,$url);
 		}
+
+		$params =	array("controller" => "books", "action" => "detail", "id" => "123", "format" => "xml");
+
+		$c->_redirect_to($params);
+		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->response->getLocation());
+
+		$this->assertEquals("/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params));
+
+		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("with_hostname" => true)));
+		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("with_hostname" => true, "ssl" => true)));
+
+		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("ssl" => true)));
+		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("ssl" => false)));
+	}
+
+	function test_link_to(){
+		global $ATK14_GLOBAL;
+		$c = new ApplicationController();
+		$c->atk14__initialize();
+		$c->lang = "en";
+		$c->controller = "books";
+		$c->action = "overview";
+		$c->namespace = "";
+
+		$this->assertEquals("/en/books/overview/",$c->_link_to());
+		$this->assertEquals("/en/articles/",$c->_link_to("articles/index"));
+
+		$c->namespace = "admin";
+
+		$this->assertEquals("/admin/en/books/overview/",$c->_link_to());
+		$this->assertEquals("/admin/en/articles/",$c->_link_to("articles/index"));
 	}
 }
