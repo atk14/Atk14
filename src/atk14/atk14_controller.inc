@@ -730,8 +730,10 @@ class Atk14Controller{
 	 *
 	 * <code>
 	 * $url = $this->_link_to(array("action" => "overview"));
-	 * $url = $this->_link_to(array("action" => "overview", "id" => 2045),array("connector" => "&")); // defaultni connector je "&amp;"
+	 * $url = $this->_link_to(array("action" => "detail", "id" => 2045, "format" => "xml"),array("connector" => "&")); // defaultni connector je "&amp;"
 	 * $url = $this->_link_to(); // link na akt controller, action a jazyk
+	 *
+	 * 
 	 * </code>
 	 *
 	 * @param array $params
@@ -774,7 +776,7 @@ class Atk14Controller{
 	 * Common usage of the method:
 	 * <code>
 	 *	$this->_redirect_to("http://www.domenka.cz/pricelist.html"); // redirects to a given domain and URI
-	 *  $this->_redirect_to("/en/books/"); // redirects to a given URI
+	 *  $this->_redirect_to("/en/books/"); // redirects to a given URI (param starts with '/')
 	 *
 	 *	$this->_redirect_to(array("action" => "overview"));
 	 *	$this->_redirect_to("index"); // same like $this->_redirect_to(array("action" => "index"));

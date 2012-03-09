@@ -76,12 +76,26 @@ class tc_atk14_controller extends tc_base{
 		$c->action = "overview";
 		$c->namespace = "";
 
-		$this->assertEquals("/en/books/overview/",$c->_link_to());
+		$this->assertEquals("/en/books/export/",$c->_link_to(array("action" => "export")));
+		$this->assertEquals("/en/books/export/",$c->_link_to("export"));
+
+		$this->assertEquals("/en/books/detail/?id=123&amp;format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml")));
+		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml"),array("connector" => "&")));
+
+		$this->assertEquals("/en/articles/",$c->_link_to(array("controller" => "articles")));
 		$this->assertEquals("/en/articles/",$c->_link_to("articles/index"));
+
+		$this->assertEquals("/admin/cs/articles/",$c->_link_to(array("controller" => "articles", "namespace" => "admin", "lang" => "cs")));
+
+		$this->assertEquals("/en/books/overview/",$c->_link_to());
 
 		$c->namespace = "admin";
 
 		$this->assertEquals("/admin/en/books/overview/",$c->_link_to());
+
+		$this->assertEquals("/admin/en/articles/",$c->_link_to(array("controller" => "articles")));
 		$this->assertEquals("/admin/en/articles/",$c->_link_to("articles/index"));
+
+		$this->assertEquals("/en/articles/",$c->_link_to(array("controller" => "articles", "namespace" => "")));
 	}
 }
