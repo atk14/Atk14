@@ -26,6 +26,12 @@ $ATK14_GLOBAL->setValue("routes",array(
 																															"id" => "/[1-9][0-9]*/",
 																															"slug" => "/[a-z0-9-]+/",
 																															),
+
+	"<lang>/<controller>" =>                           array(
+                                                              "__page_title__" => "",
+ 																															"__page_description__" => "",
+																															"action" => "index",
+                                                              ),
 	
 	"<lang>/<controller>/<action>" =>                           array(
                                                               "__page_title__" => "",

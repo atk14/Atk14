@@ -743,14 +743,14 @@ class Atk14Controller{
 	 *
 	 */
 	function _link_to($params = array(),$options = array()){
-		settype($params,"array");
+		$__current_ary__ = array(
+			"action" => $this->action,
+			"controller" => $this->controller,
+			"namespace" => $this->namespace,
+			"lang" => $this->lang
+		);
 
-		if(!isset($params["action"]) && !isset($params["controller"])){ $params["action"] = $this->action; }
-		if(!isset($params["controller"])){ $params["controller"] = $this->controller; }
-		if(!isset($params["action"])){ $params["action"] = "index"; }
-		if(!isset($params["lang"])){ $params["lang"] = $this->lang; }
-
-		return Atk14Url::BuildLink($params,$options);
+		return Atk14Url::BuildLink($params,$options,$__current_ary__);
 	}
 
 	/**
@@ -807,23 +807,11 @@ class Atk14Controller{
 	 *
 	 */
 	function _redirect_to($params = array(),$options = array()){
-		if(is_string($params)){
-			if(preg_match("/^[a-z0-9_]+$/",$params)){
-				return $this->_redirect_to(array(
-						"action" => $params, 
-				),$options);
-			}
-			if(preg_match("/^([a-z0-9_]+)\\/([a-z0-9_]+)$/",$params,$matches)){
-				return $this->_redirect_to(array(
-						"controller" => $matches[1],
-						"action" => $matches[2], 
-				),$options);
-			}
-
-			$url = $params;
-		}else{
-			$url = $this->_link_to($params,array("connector" => "&"));
-		}
+		$options = array_merge(array(
+			"connector" => "&",
+			"status" => null, // 301, 302...
+		),$options);
+		$url = $this->_link_to($params,$options);
 
 		// after a POST request the status 303 is automatically used
 		// http://en.wikipedia.org/wiki/HTTP_303
