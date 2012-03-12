@@ -8,4 +8,3 @@ define("SENDMAIL_BCC_TO","big.brother@somewhere.com");
 require("../../files/files.inc");
 require("../../translate/translate.inc");
 require("../sendmail.inc");
-?>
