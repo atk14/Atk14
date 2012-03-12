@@ -29,7 +29,7 @@ fi
 
 fi
 
-echo "$sql" | sudo -u $PG_USER -s "psql template1" || exit 1
+echo "$sql" | sudo -u $PG_USER -s psql template1 || exit 1
 
 if [ "$1" != '-f' ] ; then
 
