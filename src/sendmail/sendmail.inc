@@ -332,10 +332,10 @@ function sendhtmlmail($options){
 	$alt_boundary = _sendmail_get_boundary();
 
 	$body = array();
-	$body[] = "Content-Type: multipart/related; boundary=$rel_boundary";
+	$body[] = "Content-Type: multipart/related; boundary=\"$rel_boundary\"";
 	$body[] = "";
 	$body[] = "--$rel_boundary";
-	$body[] = "Content-Type: multipart/alternative; boundary=$alt_boundary";
+	$body[] = "Content-Type: multipart/alternative; boundary=\"$alt_boundary\"";
 	$body[] = "";
 	$body[] = "--$alt_boundary";
 	$body[] = "Content-Type: text/plain; charset=$options[charset]";
