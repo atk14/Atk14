@@ -16,8 +16,9 @@
 random_string () {
   MATRIX="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
   LENGTH=$1
-  
-  while [ "${n:=1}" -le "$LENGTH" ]
+
+  n=0 
+  while [ "$n" -lt "$LENGTH" ]
   do
     PASS="$PASS${MATRIX:$(($RANDOM%${#MATRIX})):1}"
     let n+=1
@@ -38,12 +39,17 @@ FORCE=
 
 while [ -n "$1" ] 
 do
-	case $1 in
-	  "-f") FORCE=-f ;;
-	  *) break      ;;
+  case $1 in
+    "-f") FORCE=-f ;;
+    *) break      ;;
         esac
-  	shift
+    shift
 done
+
+if [ "$PG_PASSWORD" = "" ]; then
+  echo "ERROR: unable to create a random string, kind of weird version of bash or something?"
+  exit 1
+fi
 
 echo "Your new ATK14 app will be >> $APPNAME <<"
 echo "Two new databases will be created in Postgresql: $DBNAME_DEVEL and $DBNAME_TEST"
@@ -61,11 +67,11 @@ if [ -z "$FORCE" ] ; then
   files_in_current_directory=`ls -a | wc -l`
   if [ $files_in_current_directory != "2" ]; then
         echo -n "Current working dir is not empty, really continue? (press c if so) "
-	read confirm
-	  if [ "$confirm" != "c" ]; then
-		      exit 2
-	  fi
-  fi	
+  read confirm
+    if [ "$confirm" != "c" ]; then
+        exit 2
+    fi
+  fi
 fi
 
 if [ ! -e atk14 ] ; then
@@ -74,7 +80,7 @@ if [ ! -e atk14 ] ; then
   mv atk14/skelet/* ./ &&\
   rmdir atk14/skelet
 
-# removing git's working files and dirs
+  # removing git's working files and dirs
   find ./ -name '.git*' -type f -exec rm {} \;
   find ./ -name '.git' -type d -exec rm -rf {} \;
 
@@ -95,29 +101,27 @@ sed -i "s/www.myapp.com/www.$APPNAME.com/" config/local_settings.php
 
 PGPASS=
 echo "Calling database scripts"
-echo "-----------------------"
+echo "------------------------"
 for environ in DEVELOPMENT TEST ; do
-   echo "Setting $environ environment"
-   export ATK14_ENV=$environ
-   for cmd in create_database initialize_database migrate ; do
-	echo "Calling $cmd"	
-	./scripts/$cmd $FORCE || (
-		echo 
-		echo "SCRIPT atk14/src/scripts/$x FAILED !!!"
-		exit 3
-		)
+  echo "Setting $environ environment"
+  for cmd in create_database initialize_database migrate ; do
+    echo "Calling $cmd"  
+    ATK14_ENV=$environ ./scripts/$cmd $FORCE || (
+      echo 
+      echo "SCRIPT atk14/src/scripts/$x FAILED !!!"
+      exit 3
+    )
    done
    PGPASS="$PGPASS`./scripts/pgpass_record`
 "
 done
 
 echo 
-./scripts/virtual_host_configuration $FORCE
+./scripts/virtual_host_configuration -f
 
 echo 
 echo "You are advised to add these lines to ~/.pgpass"
 echo "$PGPASS"
-
 
 echo
 echo "Happy coding"
