@@ -39,4 +39,3 @@ class MultipleBeforeFiltersController extends ApplicationController{
 		$this->before_filters[] = "filter4";
 	}
 }
-?>

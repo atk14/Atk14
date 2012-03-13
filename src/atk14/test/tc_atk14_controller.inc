@@ -98,4 +98,22 @@ class tc_atk14_controller extends tc_base{
 
 		$this->assertEquals("/en/articles/",$c->_link_to(array("controller" => "articles", "namespace" => "")));
 	}
+
+	function test_layout(){
+		$client = new Atk14Client();
+		$controller = $client->get("testing/default_layout");
+
+		$page = new String($controller->response->buffer->toString());
+		$this->assertEquals(true,$page->contains("This is a template"));
+		$this->assertEquals(true,$page->contains("<!-- default layout -->"));
+
+		$controller = $client->get("testing/custom_layout");
+		$page = new String($controller->response->buffer->toString());
+		$this->assertEquals(true,$page->contains("This is a template"));
+		$this->assertEquals(true,$page->contains("<!-- custom layout -->"));
+
+		$controller = $client->get("testing/no_layout");
+		$page = new String($controller->response->buffer->toString());
+		$this->assertEquals(true,(bool)$page->match("/^This is a template$/"));
+	}
 }

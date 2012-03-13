@@ -394,12 +394,24 @@ class Atk14Controller{
 
 			$layout_template = $this->layout_name;
 			if($this->render_layout && $layout_template==""){
-				if(file_exists($ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$controller_name.tpl")){
-					$layout_template = $controller_name;
-				}else{
-					$layout_template = "_default";
+				// default layout is expected in app/layouts/namespace/default.tpl
+				// prior it was app/layouts/namespace/_default.tpl
+				foreach(array(
+					"$this->namespace/$controller_name.tpl",
+					"$this->namespace/default.tpl",
+					"$this->namespace/_default.tpl",
+					"default.tpl",
+					"_default.tpl",
+				) as $_path){
+					if(file_exists($ATK14_GLOBAL->getApplicationPath()."layouts/$_path")){
+						preg_match('/([^\/.]+)\.tpl$/',$_path,$matches);
+						$layout_template = $matches[1];
+						break;
+					}
 				}
+				if(!$layout_template){ $layout_template = "default"; }
 			}
+
 			if(
 				strlen($layout_template)>0 &&
 				!file_exists($_layout_template = $ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$layout_template.tpl") &&
