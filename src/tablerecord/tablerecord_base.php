@@ -126,6 +126,10 @@ class TableRecord_Base extends inobj{
 		if(defined("DEVELOPMENT") && DEVELOPMENT){ $cache = 0; }
 		$this->_readTableStructure(array("cache" => $cache));
 
+		if(!$this->_TableStructure){
+			throw new Exception("There is not table $table_name in the database ".$this->_dbmole->getDatabaseName());
+		}
+
 		// vsechny hodnoty tohoto objektu nastavime na null
 		reset($this->_TableStructure);
 		while(list($_key,) = each($this->_TableStructure)){
