@@ -22,12 +22,21 @@ class inobj{
 	 * Database connection.
 	 *
 	 * @var DbMole
-	 * @access protected
+	 */
+	var $dbmole = null;
+
+	/**
+	 * Database connection.
+	 * For backward compatibility
+	 *
+	 * @var DbMole
+	 * @access private
 	 */
 	var $_dbmole = null;
 
 	function inobj(){
-		$this->_dbmole = &inobj::_GetDbmole();
+		$this->dbmole = &inobj::_GetDbmole();
+		$this->_dbmole = &$this->dbmole;
 	}
 
 	function &_GetDbmole(){
