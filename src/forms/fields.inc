@@ -413,6 +413,25 @@ class RegexField extends CharField
         $this->regex = $regex;
     }
 
+    /**
+    Can be used to postprocess the matched value using results from preg_match
+    @param string recieved value
+    @param array  array of matches from preg_match 
+    @return string modified result value
+    
+    E.g. add default protocol to url field if missing (check is performed by regex like /((?:http://)?)...../ 
+    
+    if($catches[$1]=='') 
+    		return "http://$value";
+    else
+    		return $value;		    
+    **/
+    
+    function processResult($value, $catches)
+    {
+    		return $value; 
+    }
+    
     function clean($value)
     {
         list($error, $value) = parent::clean($value);
@@ -422,9 +441,10 @@ class RegexField extends CharField
         if ($value == '') {
             return array(null, $value);
         }
-        if (!preg_match($this->regex, $value)) {
+        if (!preg_match($this->regex, $value, $catches)) {
             return array($this->messages['invalid'], null);
         }
+        $value=$this->processResult($value, $catches);
         return array(null, (string)$value);
     }
 }
