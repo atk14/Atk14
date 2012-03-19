@@ -414,17 +414,17 @@ class RegexField extends CharField
     }
 
     /**
-    Can be used to postprocess the matched value using results from preg_match
-    @param string recieved value
-    @param array  array of matches from preg_match 
-    @return string modified result value
-    
-    E.g. add default protocol to url field if missing (check is performed by regex like /((?:http://)?)...../ 
-    
-    if($catches[$1]=='') 
-    		return "http://$value";
-    else
-    		return $value;		    
+    * Can be used to postprocess the matched value using results from preg_match
+    * @param string recieved value
+    * @param array  array of matches from preg_match 
+    * @return string modified result value
+    *
+    * E.g. add default protocol to url field if missing (check is performed by regex like /((?:http://)?)...../ 
+    *
+    * if($catches[$1]=='') 
+    *		return "http://$value";
+    * else
+    *		return $value;		    
     **/
     
     function processResult($value, $catches)
