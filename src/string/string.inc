@@ -66,7 +66,7 @@ class String{
 	 * </ul>
 	 * @return String
 	 */
-	function RandomString($length = 32,$options = array()){
+	static function RandomString($length = 32,$options = array()){
 		if(is_array($length)){
 			$options = $length;
 			$length = 32;
