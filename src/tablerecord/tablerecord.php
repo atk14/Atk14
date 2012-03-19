@@ -69,7 +69,7 @@ class TableRecord extends TableRecord_Base{
 	* @param array $values							
 	* @return TableRecord
 	*/
-	function _CreateNewRecord($class_name,$values,$options = array()){
+	static function _CreateNewRecord($class_name,$values,$options = array()){
 		$out = new $class_name();
 		return $out->_insertRecord($values,$options);
 	}
