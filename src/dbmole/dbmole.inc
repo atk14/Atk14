@@ -1076,6 +1076,7 @@ class DbMole{
 	**/	
 	function parseBoolFromSql($value)
 	{
+			if($value===null) return null;
 			return (bool) $value;
 	}
 

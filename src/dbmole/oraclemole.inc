@@ -400,7 +400,7 @@ class OracleMole extends DbMole{
 	
 	function escapeBool4Sql($value)
 	{
-		return return $this->escapeString4Sql($value);
+		return $this->escapeString4Sql($value);
 	}
 }
 ?>
