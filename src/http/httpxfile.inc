@@ -37,7 +37,7 @@ class HTTPXFile extends HTTPUploadedFile{
 	}
 
 	function chunkedUpload(){
-		return !is_null($this->_getChunkOrder());
+		return !is_null($this->_getChunkOrder()) && !($this->firstChunk() && $this->lastChunk());
 	}
 
 	/**
@@ -92,7 +92,7 @@ class HTTPXFile extends HTTPUploadedFile{
 	 */
 	function getToken(){
 		global $HTTP_REQUEST;
-		return $HTTP_REQUEST->getHeader("X-File-Token");
+		return substr(preg_replace('/[^a-z0-9_-]/i','',$HTTP_REQUEST->getHeader("X-File-Token")),0,20); // little sanitization never harms
 	}
 
 	/**
