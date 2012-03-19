@@ -1,6 +1,6 @@
 <?php
 /**
- * Such a important field for nearly every web app and it is missing in the Form package...!?
+ * Such an important field for nearly every web app and it is missing in the Form package...!?
  * Actually there is a good oportunity to demostrate a new field creation. So take a look.
  * 
  * PasswordField preserves spaces at the begining or at the end. It's really notable because

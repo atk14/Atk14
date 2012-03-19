@@ -125,6 +125,25 @@ function atk14_initialize_locale(&$lang){
 	setlocale(LC_CTYPE,$l);
 	setlocale(LC_COLLATE,$l);
 	bindtextdomain("messages",dirname(__FILE__)."/../locale/");
-	bind_textdomain_codeset("messages", "UTF-8");
+	bind_textdomain_codeset("messages", DEFAULT_CHARSET);
 	textdomain("messages");
+}
+
+
+// on non-UTF-8 apps following hack converts UTF-8 params to DEFAULT_CHARSET
+function __to_default_charset__(&$params){
+	reset($params);
+	while(list($key,$value) = each($params)){
+		if(is_string($value)){
+			translate::check_encoding($params[$key],"UTF-8") && ($params[$key] = translate::trans($params[$key],"UTF-8",DEFAULT_CHARSET));
+			continue;
+		}
+		if(is_array($value)){
+			__to_default_charset__($params[$key]);
+		}
+	}
+}
+if(DEFAULT_CHARSET!="UTF-8"){
+	if($HTTP_REQUEST->xhr() && isset($_POST) && is_array($_POST)){ __to_default_charset__($_POST); }
+	if($HTTP_REQUEST->xhr() && isset($_GET) && is_array($_GET)){ __to_default_charset__($_GET); }
 }

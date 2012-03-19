@@ -58,6 +58,9 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 *			"from" => "Our Big Company <info@example.org>",
 *			// ...
 *		));
+*
+*		PHP`s mail() compatible usage
+* 	sendmail("user@gmailer.com","Hello","Hello dear user...");
 *	</code>
 *
 * Note that there is an another function sendhtmlmail()
@@ -97,17 +100,22 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 *
 *	@return	void
 */
-function sendmail($params = array()){
+function sendmail($params = array(),$subject = "",$message = "",$additional_headers = null){
+	$to = SENDMAIL_EMPTY_TO_REPLACE;
+	if(is_string($params)){
+		$to = $params;
+		$params = array();
+	}
 	$orig_params = $params;
 	$params = array_merge(array(
 		"from" => SENDMAIL_DEFAULT_FROM, // john.doe@example.com
 		"from_name" => null, // "John Doe"
-		"to" => SENDMAIL_EMPTY_TO_REPLACE,
+		"to" => $to,
 		"cc" => null,
 		"bcc" => null,
 		"return_path" => null,
-		"subject" => "",
-		"body" => "",
+		"subject" => $subject,
+		"body" => $message,
 		"transfer_encoding" => SENDMAIL_DEFAULT_TRANSFER_ENCODING, // zpusob kodovani body (nikoli prilohy): "8bit" nebo "quoted-printable"
 		"charset" => SENDMAIL_DEFAULT_BODY_CHARSET,
 		"mime_type" => SENDMAIL_DEFAULT_BODY_MIME_TYPE,
@@ -115,7 +123,7 @@ function sendmail($params = array()){
 		"attachment" => null,
 		"build_message_only" => false,
 
-		"headers" => null, // pozor! pokud bude toto nastaveno, probiha odesilani jinak, viz nize
+		"headers" => $additional_headers, // pozor! pokud bude toto nastaveno, probiha odesilani jinak, viz nize
 	),$params);
 
 	// toto jsou zastarale parametry...
@@ -324,10 +332,10 @@ function sendhtmlmail($options){
 	$alt_boundary = _sendmail_get_boundary();
 
 	$body = array();
-	$body[] = "Content-Type: multipart/related; boundary=$rel_boundary";
+	$body[] = "Content-Type: multipart/related; boundary=\"$rel_boundary\"";
 	$body[] = "";
 	$body[] = "--$rel_boundary";
-	$body[] = "Content-Type: multipart/alternative; boundary=$alt_boundary";
+	$body[] = "Content-Type: multipart/alternative; boundary=\"$alt_boundary\"";
 	$body[] = "";
 	$body[] = "--$alt_boundary";
 	$body[] = "Content-Type: text/plain; charset=$options[charset]";

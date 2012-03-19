@@ -403,7 +403,12 @@ class DbMole{
 			return;
 		}
 
-		mail($email_address,"DbMole: error report",$this->getErrorReport());
+		sendmail(array(
+			"to" => $email_address,
+			"subject" => "DbMole: error report",
+			"body" => $this->getErrorReport(),
+			"mime_type" => "text/plain",
+		));
 	}
 
 	function logErrorReport(){

@@ -81,6 +81,21 @@ class tc_http_response extends tc_base{
 		$this->assertTrue($response->redirected());
 	}
 
+	function test_concatenate(){
+		$final_resp = new HTTPResponse();
+
+		$resp = new HTTPResponse();
+		$resp->setStatusCode("299 You Found a Treasure");
+
+		$this->assertEquals(200,$final_resp->getStatusCode());
+		$this->assertEquals("OK",$final_resp->getStatusMessage());
+
+		$final_resp->concatenate($resp);
+
+		$this->assertEquals(299,$final_resp->getStatusCode());
+		$this->assertEquals("You Found a Treasure",$final_resp->getStatusMessage());
+	}
+
 	function test_set_location(){
 		$resp = new HTTPResponse();
 		$resp->setLocation("/new-uri/");
@@ -113,6 +128,29 @@ class tc_http_response extends tc_base{
 		$this->assertEquals(301,$f->getStatusCode());
 		$this->assertEquals("/new-perma-uri-concat/",$f->getHeaderValue("Location"));
 		$this->assertEquals("concatenated",$f->getContent());
+	}
+
+	function test_status_message(){
+		$resp = new HTTPResponse();
+		$this->assertEquals("OK",$resp->getStatusMessage());
+
+		$resp->setStatusCode(404);
+		$this->assertEquals("Not Found",$resp->getStatusMessage());
+
+		$resp->setStatusCode(499);
+		$this->assertEquals("Unknown",$resp->getStatusMessage());
+
+		$resp->setStatusCode(499,"Custom Error Msg");
+		$this->assertEquals("Custom Error Msg",$resp->getStatusMessage());
+
+		$resp->setStatusCode(404);
+		$this->assertEquals("Not Found",$resp->getStatusMessage());
+
+		// setting code & message in a single parameter
+
+		$resp->setStatusCode("200 We Found It");
+		$this->assertEquals(200,$resp->getStatusCode());
+		$this->assertEquals("We Found It",$resp->getStatusMessage());
 	}
 
 	function _fetch_response($response){

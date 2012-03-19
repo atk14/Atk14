@@ -99,7 +99,7 @@ class String{
 	 * @param integer $length
 	 * @return String
 	 */
-	function RandomPassword($length = 10){
+	static function RandomPassword($length = 10){
 		settype($length,"integer");
 		$numeric_versus_alpha_total = 10;
 		$numeric_versus_alpha_numeric = 2;

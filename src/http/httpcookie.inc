@@ -155,4 +155,3 @@ class HTTPCookie{
 	 */
 	function isSecure(){ return $this->_Secure; }
 }
-?>
