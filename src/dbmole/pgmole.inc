@@ -98,6 +98,16 @@ class PgMole Extends DbMole{
 		return "'".pg_escape_string($s)."'";
 	}
 
+	
+	function escapeBool4Sql($s){
+		return $s?'TRUE':'FALSE';
+	}
+
+	function parseBoolFromSql($s)
+	{
+			return $s==='t';
+	}
+	
 	function _runQuery($query){
 		return pg_query($this->_DbConnect,$query);	
 	}

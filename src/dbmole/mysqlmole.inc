@@ -67,5 +67,10 @@ class MysqlMole extends DbMole{
 	function _disconnectFromDatabase(){
 		mysql_close($this->_DbConnect);
 	}
+	
+	function escapeBool4Sql($value)
+	{
+		return $value?'TRUE':'FALSE';
+	}
 }
 ?>
