@@ -14,7 +14,8 @@ CREATE TABLE test_table (
     binary_data bytea,
     binary_data2 bytea,
     create_date date,
-    create_time timestamp without time zone DEFAULT now()
+    create_time timestamp without time zone DEFAULT now(),
+		flag boolean
 );
 
 CREATE SEQUENCE seq_articles;
