@@ -15,9 +15,9 @@ Atk14Utils::DetermineEnvironment();
 
 // now we are gonna to set up config constants
 if(defined("ATK14_DOCUMENT_ROOT")){
-	atk14_require_once(ATK14_DOCUMENT_ROOT."/config/local_settings.inc");
+	require_once(ATK14_DOCUMENT_ROOT."/config/settings.php");
 }else{
-	atk14_require_once(dirname(__FILE__)."/../config/local_settings.inc");
+	require_once(dirname(__FILE__)."/../config/settings.php");
 }
 require_once(dirname(__FILE__)."/default_settings.php");
 
