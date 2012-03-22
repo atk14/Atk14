@@ -1,7 +1,7 @@
 <?php
 /**
  * Here are listed all application setting constants and their default values.
- * Values should be redefined in ./config/local_settings.php
+ * Values should be redefined in ./config/settings.php
  */
 
 $__CONFIG_CONSTANTS__ = array();

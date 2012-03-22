@@ -74,11 +74,15 @@ if [ -z "$FORCE" ] ; then
   fi
 fi
 
+echo ""
+echo "About to download ATK14 source code"
+echo "-----------------------------------"
 if [ ! -e atk14 ] ; then
   git clone --recursive git://github.com/yarri/Atk14.git ./atk14 &&
   mv atk14/skelet/.htaccess ./ &&\
   mv atk14/skelet/* ./ &&\
   rmdir atk14/skelet
+	echo "This is README for ${APPNAME}" > ./README.md
 
   # removing git's working files and dirs
   find ./ -name '.git*' -type f -exec rm {} \;
@@ -95,28 +99,32 @@ sed -i "s/password: p/password: $PG_PASSWORD/" config/database.yml
 sed -i "s/atk14_devel/$DBNAME_DEVEL/" config/database.yml
 sed -i "s/atk14_test/$DBNAME_TEST/" config/database.yml
 
-sed -i "s/put_some_random_string_here/$SECRET_TOKEN/" config/local_settings.php
-sed -i "s/myapp.localhost/$APPNAME.localhost/" config/local_settings.php
-sed -i "s/www.myapp.com/www.$APPNAME.com/" config/local_settings.php
+sed -i "s/put_some_random_string_here/$SECRET_TOKEN/" config/settings.php
+sed -i "s/myapp.localhost/$APPNAME.localhost/" config/settings.php
+sed -i "s/www.myapp.com/www.$APPNAME.com/" config/settings.php
 
+echo ""
+echo "About to create & initialize database"
+echo "-------------------------------------"
 PGPASS=
-echo "Calling database scripts"
-echo "------------------------"
 for environ in DEVELOPMENT TEST ; do
   echo "Setting $environ environment"
   for cmd in create_database initialize_database migrate ; do
     echo "Calling $cmd"  
     ATK14_ENV=$environ ./scripts/$cmd $FORCE || (
       echo 
-      echo "SCRIPT atk14/src/scripts/$x FAILED !!!"
+      echo "SCRIPT atk14/src/scripts/$cmd FAILED !!!"
       exit 3
     )
    done
-   PGPASS="$PGPASS`./scripts/pgpass_record`
+   PGPASS="$PGPASS`ATK14_ENV=$environ ./scripts/pgpass_record`
 "
 done
 
-echo 
+echo
+echo "About to configure apache"
+echo "-------------------------"
+
 ./scripts/virtual_host_configuration -f
 
 echo 
@@ -125,3 +133,5 @@ echo "$PGPASS"
 
 echo
 echo "Happy coding"
+
+exit 0
