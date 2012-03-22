@@ -24,6 +24,29 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals("'o''neil \"da hacker\"'",$m["pg"]->escapeString4Sql("o'neil \"da hacker\""));
 	}
 
+	function test_escape_bool_4_sql(){
+		$m = &$this->_get_moles();
+
+		$this->assertEquals('TRUE',$m["pg"]->escapeBool4Sql(true));
+		$this->assertEquals('FALSE',$m["pg"]->escapeBool4Sql(false));
+
+		$this->assertEquals('TRUE',$m["my"]->escapeBool4Sql(true));
+		$this->assertEquals('FALSE',$m["my"]->escapeBool4Sql(false));
+
+		$this->assertEquals("Y",$m["ora"]->escapeBool4Sql(true));
+		$this->assertEquals("N",$m["ora"]->escapeBool4Sql(false));
+	}
+
+	function test_parse_bool_from_sql(){
+		$m = &$this->_get_moles();
+
+		$this->assertEquals(true,$m["pg"]->parseBoolFromSql("t"));
+		$this->assertEquals(false,$m["pg"]->parseBoolFromSql("f"));
+
+		$this->assertEquals(true,$m["my"]->parseBoolFromSql("1"));
+		$this->assertEquals(false,$m["my"]->parseBoolFromSql("0"));
+	}
+
 	function test_common_behaviour(){
 		$m = &$this->_get_moles();
 
@@ -269,7 +292,4 @@ class tc_dbmole extends tc_base{
 	function _lorem_ipsum(){
 		return 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.';
 	}
-
-	
 }
-?>

@@ -2,43 +2,43 @@
 /**
  *
  *
-* Pouziti:
-*
-*		DbMole::RegisterErrorHandler("_oracle_mole_error_handler"); //registrace error handleru pro tridu OracleMole
-*
-* 	$mole = &OracleMole::GetInstance();
-*		$mole_ov = &OracleMole::GetInstance("ov");
-*
-* 	$mole->doQuery("BEGIN active_users(); END;");
-*		$mole->commit();
-*
-*		// nacteni jedine hodnoty
-*		echo "celk. pocet clanku: ";
-*		echo $mole->selectSingleValue("SELECT COUNT(*) FROM articles","integer");
-*
-*		// nacteni jednoho radku
-* 	$row = $mole->selectFirstRow("SELECT * FROM articles WHERE id=:id",array(":id" => 2223445));
-*		echo $row["name"];
-*
-*		// nacteni vice radku
-* 	$rows = $mole->selectRows("SELECT * FROM articles WHERE source_id=:source_id",array(":source_id" => 112233"),array("limit" => 20,"offset" => 40));
-*		while(list(,$row) = each($rows)){
-*			echo "$row[id]: $row[name]\n";
-*			echo "body:\n";
-*			echo $row["body"];	// obsah CLOBu a BLOBu bude automaticky fetchnut
-*			echo "\n-------------------\n";
-*		}
-*
-* 	// TODO: dodelat moznost bindovat descriptoru pro large objecty
-* 	// Nyni lze pouzit nesledujici:
-*		$stmt = $mole->executeQuery(
-*			"UPDATE articles SET bode=EMPTY_CLOB() WHERE id=:id RETURNING body INTO :body",
-*			array(":id" => 3443),
-*			array("execute_statement" => false)
-*		);
-*		// A zde uz si nabindovani :body udelat pekne rucne!
-*		OCIFreeStatement($stmt);
-*
+ * Pouziti:
+ *
+ *		DbMole::RegisterErrorHandler("_oracle_mole_error_handler"); //registrace error handleru pro tridu OracleMole
+ *
+ * 	$mole = &OracleMole::GetInstance();
+ *		$mole_ov = &OracleMole::GetInstance("ov");
+ *
+ * 	$mole->doQuery("BEGIN active_users(); END;");
+ *		$mole->commit();
+ *
+ *		// nacteni jedine hodnoty
+ *		echo "celk. pocet clanku: ";
+ *		echo $mole->selectSingleValue("SELECT COUNT(*) FROM articles","integer");
+ *
+ *		// nacteni jednoho radku
+ * 	$row = $mole->selectFirstRow("SELECT * FROM articles WHERE id=:id",array(":id" => 2223445));
+ *		echo $row["name"];
+ *
+ *		// nacteni vice radku
+ * 	$rows = $mole->selectRows("SELECT * FROM articles WHERE source_id=:source_id",array(":source_id" => 112233"),array("limit" => 20,"offset" => 40));
+ *		while(list(,$row) = each($rows)){
+ *			echo "$row[id]: $row[name]\n";
+ *			echo "body:\n";
+ *			echo $row["body"];	// obsah CLOBu a BLOBu bude automaticky fetchnut
+ *			echo "\n-------------------\n";
+ *		}
+ *
+ * 	// TODO: dodelat moznost bindovat descriptoru pro large objecty
+ * 	// Nyni lze pouzit nesledujici:
+ *		$stmt = $mole->executeQuery(
+ *			"UPDATE articles SET bode=EMPTY_CLOB() WHERE id=:id RETURNING body INTO :body",
+ *			array(":id" => 3443),
+ *			array("execute_statement" => false)
+ *		);
+ *		// A zde uz si nabindovani :body udelat pekne rucne!
+ *		OCIFreeStatement($stmt);
+ *
  * @package Atk14
  * @subpackage InternalLibraries
  * @filesource
@@ -397,5 +397,12 @@ class OracleMole extends DbMole{
 		}
 		return $out;
 	}
+
+	/**
+	 * $this->escapeBool4Sql(true); // returns Y
+	 * $this->escapeBool4Sql(false); // returns N
+	 */
+	function escapeBool4Sql($value){
+		return $value ? DBMOLE_ORACLE_TRUE : DBMOLE_ORACLE_FALSE;
+	}
 }
-?>
