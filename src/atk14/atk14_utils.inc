@@ -94,7 +94,7 @@ class Atk14Utils{
 
 		$dir = opendir($path);
 		while($file = readdir($dir)){
-			if(preg_match('/^local_settings\.(inc|php)$/',$file)){ continue; } // this is ugly hack :( i need to delay loading of ./config/local_settings.inc
+			if(preg_match('/^(local_|)settings\.(inc|php)$/',$file)){ continue; } // this is ugly hack :( i need to delay loading of ./config/settings.php
 			if(preg_match('/\.(inc|php)$/',$file) && is_file($path.$file)){
 				require_once($path.$file);
 			}
