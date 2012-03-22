@@ -17,7 +17,7 @@ random_string () {
   MATRIX="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
   LENGTH=$1
 
-  n=0 
+  n=0
   while [ "$n" -lt "$LENGTH" ]
   do
     PASS="$PASS${MATRIX:$(($RANDOM%${#MATRIX})):1}"
@@ -37,7 +37,7 @@ PG_PASSWORD=`random_string 6`
 SECRET_TOKEN=`random_string 64`
 FORCE=
 
-while [ -n "$1" ] 
+while [ -n "$1" ]
 do
   case $1 in
     "-f") FORCE=-f ;;
@@ -82,7 +82,7 @@ if [ ! -e atk14 ] ; then
   mv atk14/skelet/.htaccess ./ &&\
   mv atk14/skelet/* ./ &&\
   rmdir atk14/skelet
-	echo "This is README for ${APPNAME}" > ./README.md
+  echo "This is README for ${APPNAME}" > ./README.md
 
   # removing git's working files and dirs
   find ./ -name '.git*' -type f -exec rm {} \;
@@ -110,9 +110,9 @@ PGPASS=
 for environ in DEVELOPMENT TEST ; do
   echo "Setting $environ environment"
   for cmd in create_database initialize_database migrate ; do
-    echo "Calling $cmd"  
+    echo "Calling $cmd"
     ATK14_ENV=$environ ./scripts/$cmd $FORCE || (
-      echo 
+      echo
       echo "SCRIPT atk14/src/scripts/$cmd FAILED !!!"
       exit 3
     )
@@ -127,11 +127,11 @@ echo "-------------------------"
 
 ./scripts/virtual_host_configuration -f
 
-echo 
+echo
 echo "You are advised to add these lines to ~/.pgpass"
 echo "$PGPASS"
 
 echo
-echo "Happy coding"
+echo "Happy coding (would be nice to never see you in madhouse)"
 
 exit 0
