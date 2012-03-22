@@ -28,7 +28,7 @@
  * @package Atk14
  * @subpackage InternalLibraries
  */
-class Dictionary{
+class Dictionary implements ArrayAccess{
 
 	/**
 	 * Internal storage of values
@@ -271,4 +271,24 @@ class Dictionary{
 	function copy(){
 		return new Dictionary($this->toArray());
 	}
+	
+	
+	/*** functions implementing array like access ***/
+	function offsetGet($value)
+	{
+		return $this->getValue($value);	
+	}
+	function offsetSet($value, $name)
+	{
+		$this->setValue($name, $value);	
+	}
+	function offsetUnset($value)
+	{
+		$this->unsetValue($value);	
+	}
+	function offsetExists($value)
+	{
+		return $this->defined($value);	
+	}
+	
 }
