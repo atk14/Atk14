@@ -244,8 +244,8 @@ class SessionStorer{
 		return true;
 	}
 
-	function _RandomString($length = 32){
-		return (string)String::RandomString(32);
+	static function _RandomString($length = 32){
+		return (string)String::RandomString($length);
 	}
 
 	/**
