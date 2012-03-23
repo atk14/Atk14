@@ -44,16 +44,20 @@ require_once(dirname(__FILE__)."/src/atk14/load.inc");
 require_once(dirname(__FILE__)."/src/functions.inc");
 
 // ...and load basic application`s objects
-atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/app/forms/application_form.php");
-atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/app/forms/form.php");
-atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/config/routers/load.php");
+foreach(array(
+	ATK14_DOCUMENT_ROOT."/app/forms/application_form.php",
+	ATK14_DOCUMENT_ROOT."/app/forms/form.php",
+	ATK14_DOCUMENT_ROOT."/config/routers/load.php"
+) as $_f_){
+	($_f_ = atk14_find_file($_f_)) && require_once($_f_);
+}
 
 // Loading model classes, field (and widget) classes and external (3rd party) libs.
 // In every directory class_autoload() is applied. I believe it can do a lot.
-// But everywhere the load file is optional.
+// But everywhere the load.php file is optional.
 foreach(array("app/models","app/fields","app/widgets","lib") as $_d_){
 	class_autoload(ATK14_DOCUMENT_ROOT."/$_d_/");
-	atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/$_d_/load.php");
+	($_f_ = atk14_find_file(ATK14_DOCUMENT_ROOT."/$_d_/load.php")) && require_once($_f_);
 }
 
 // global variable $dbmole holds database connection
