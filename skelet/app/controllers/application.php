@@ -9,7 +9,7 @@ class ApplicationController extends Atk14Controller{
 		$this->page_title = "Page not found";
 		$this->response->setStatusCode(404);
 		$this->template_name = "application/error404";
-		if($this->xhr()){
+		if($this->request->xhr()){
 			// there's no need to render anything for XHR requests
 			$this->render_template = false;
 		}

@@ -36,7 +36,7 @@
  * @subpackage InternalLibraries
  *
  */
-class TableRecord_Finder{
+class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 
 	/**
 	 *
@@ -125,5 +125,53 @@ class TableRecord_Finder{
 	 */
 	function getOffset(){
 		return $this->_QueryOptions["offset"];
+	}
+	
+	
+	/*** functions implementing array like access ***/
+	function offsetGet($value)
+	{
+		$x=$this->getRecords();
+		return $x[$value];
+	}
+	
+	function offsetSet($value, $name)	{
+		$this->getRecords();
+		$this->_Records[$name]=$value;	
+	}
+	
+	function offsetUnset($value)	{
+		$this->getRecords();
+		unset($this->_Records[$name]);	
+	}
+	
+	function offsetExists($value) 	{
+		$this->getRecords();
+		return array_key_exists($name, $this->_Records);				
+	}
+	
+	/*** functions implementing iterator like access (foreach cycle)***/
+	public function current()		{
+		return current($this->_Records);
+	}
+		
+	public function key()	{
+		return key($this->_Records);
+	}
+	public function next() {
+		return next($this->_Records);
+	}
+  public function rewind() {
+   $this->getRecords();
+ 	 return reset($this->_Records);
+	} 
+	public function valid()	{
+		return isset($this->_Records) && current($this->_Records);
+	}
+	
+	public function count()
+	{
+		$this->GetRecords();
+		return count($this->_Records);
 	}
 }

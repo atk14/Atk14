@@ -28,7 +28,7 @@
  * @package Atk14
  * @subpackage InternalLibraries
  */
-class Dictionary{
+class Dictionary implements ArrayAccess, Iterator, Countable{
 
 	/**
 	 * Internal storage of values
@@ -271,4 +271,29 @@ class Dictionary{
 	function copy(){
 		return new Dictionary($this->toArray());
 	}
+	
+	
+	/*** functions implementing array like access ***/
+	function offsetGet($value){ return $this->getValue($value);	}
+
+	function offsetSet($value, $name){ $this->setValue($name, $value);	}
+
+	function offsetUnset($value){ $this->unsetValue($value);	}
+
+	function offsetExists($value){ return $this->defined($value);	}
+
+	function current(){ return current($this->_Values); }
+
+	function key(){ return key($this->_Values); }
+
+	function next(){ return next($this->_Values); }
+
+	function rewind(){ reset($this->_Values); }
+
+	function valid(){
+		$key = key($this->_Values);
+		return ($key !== null && $key !== false);
+	}
+
+	function count(){ return $this->size(); }
 }
