@@ -107,6 +107,7 @@ class tc_dbmole extends tc_base{
 			"price" => 33.3,
 			"text" => "\"O'neil has 2 sons.\"",
 			"create_date" => "2009-12-31",
+			"jsemhloupy" => true
 		)));
 
 		$this->_test_table_count($dbmole,1);
@@ -117,16 +118,28 @@ class tc_dbmole extends tc_base{
 			"price" => 15.8,
 			"text" => "\"O'neil has just 1 daughter.\"",
 			"create_date" => "2009-12-01",
+			"jsemhloupy" => false
 		)));
 
-		$this->_test_table_count($dbmole,2);
-
-		$rows = $dbmole->selectRows("SELECT title,an_integer,price,text,create_date FROM test_table ORDER BY an_integer");
+		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
+			"title" => "O'neil & daughter",
+			"an_integer" => 33,
+			"price" => 15.8,
+			"text" => "\"O'neil has just 1 daughter.\"",
+			"create_date" => "2009-12-01",
+			"jsemhloupy" => NULL,
+		)));
+		
+		$rows = $dbmole->selectRows("SELECT title,an_integer,price,text,create_date, jsemhloupy FROM test_table ORDER BY an_integer");
 		$rows[0]["create_date"] = preg_replace("/ .*$/","",$rows[0]["create_date"]);
 		$rows[1]["create_date"] = preg_replace("/ .*$/","",$rows[1]["create_date"]);
 		settype($rows[0]["price"],"float");
 		settype($rows[1]["price"],"float");
 
+		$rows[0]['jsemhloupy']=$dbmole->parseBoolFromSql($rows[0]['jsemhloupy']);
+		$rows[1]['jsemhloupy']=$dbmole->parseBoolFromSql($rows[1]['jsemhloupy']);
+		$rows[2]['jsemhloupy']=$dbmole->parseBoolFromSql($rows[2]['jsemhloupy']);
+		
 		$this->assertEquals(array(
 			array (
 				'title' => "O'neil & daughter",
@@ -134,6 +147,7 @@ class tc_dbmole extends tc_base{
 				'price' => 15.8,
 				'text' => '"O\'neil has just 1 daughter."',
 				'create_date' => '2009-12-01',
+				'jsemhloupy' => true
 			),
 			array (
 				'title' => "O'neil & sons",
@@ -141,6 +155,15 @@ class tc_dbmole extends tc_base{
 				'price' => 33.3,
 				'text' => '"O\'neil has 2 sons."',
 				'create_date' => '2009-12-31',
+				'jsemhloupy' => false,
+			),
+			array (
+				'title' => "O'neil & sons",
+				'an_integer' => '22',
+				'price' => 33.3,
+				'text' => '"O\'neil has 2 sons."',
+				'create_date' => '2009-12-31',
+				'jsemhloupy' => null,
 			),
 		),$rows);
 
@@ -152,7 +175,7 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals(
 			array (
 				'title' => "O'neil & sons",
-				'an_integer' => '22',
+				'an_integer' => '33',
 				'price' => 33.3,
 				'text' => '"O\'neil has 2 sons."',
 				'create_date' => '2009-12-31',
@@ -160,7 +183,7 @@ class tc_dbmole extends tc_base{
 		$row);
 
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array());
-		$this->assertEquals(array("11","22"),$ar);
+		$this->assertEquals(array("11","22","33"),$ar);
 
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1));
 		$this->assertEquals(array("11"),$ar);
@@ -172,36 +195,42 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals(array("22"),$ar);
 
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1, "offset" => 2));
+		$this->assertEquals(array("33"),$ar);
+
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1, "offset" => 3));
 		$this->assertEquals(array(),$ar);
 
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table WHERE an_integer=-an_integer");
 		$this->assertEquals(array(),$ar);
 
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 FROM test_table ORDER BY an_integer",array());
-		$this->assertEquals(array("11" => "12","22" => "23"),$ar);
+		$this->assertEquals(array("11" => "12","22" => "23","33" => "34"),$ar);
 
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 as f1, an_integer+2 as f2 FROM test_table ORDER BY an_integer",array());
 		$this->assertEquals(array(
 			"11" => array("f1" => "12", "f2" => "13"),
-			"22" => array("f1" => "23", "f2" => "24")
+			"22" => array("f1" => "23", "f2" => "24"),
+			"33" => array("f1" => "34", "f2" => "34")
 		),$ar);
 
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 as f1, an_integer+2 as f2, null as f3 FROM test_table ORDER BY an_integer",array());
 		$this->assertEquals(array(
 			"11" => array("f1" => "12", "f2" => "13", "f3" => null),
-			"22" => array("f1" => "23", "f2" => "24", "f3" => null)
+			"22" => array("f1" => "23", "f2" => "24", "f3" => null),
+			"33" => array("f1" => "34", "f2" => "35", "f3" => null)
 		),$ar);
 
 		// je docela dobry nesmysl vybirat do asociativniho pole jeden sloupec
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer FROM test_table ORDER BY an_integer",array());
 		$this->assertEquals(array(
 			"11" => array(),
-			"22" => array()
+			"22" => array(),
+			"33" => array(),
 		),$ar);
 
-		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=33 WHERE an_integer=22"));
+		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=44 WHERE an_integer=22"));
 
-		$this->assertEquals("33",$dbmole->selectSingleValue("SELECT MAX(an_integer) FROM test_table"));
+		$this->assertEquals("44",$dbmole->selectSingleValue("SELECT MAX(an_integer) FROM test_table"));
 
 		// do_not_escape
 		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
