@@ -968,7 +968,6 @@ class DbMole{
 		// bindovani promennych
 		// vyuzijeme zde schopnosti fce strtr
 		// pokud se napr. budou bindovat 2 hodnoty :domain a :domain_name, strtr si s tim poradi!
-		reset($bind_ar);
 		foreach($bind_ar as &$value){
 			$value=$this->escapeValue4sql($value);
 		}

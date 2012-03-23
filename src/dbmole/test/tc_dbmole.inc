@@ -102,68 +102,74 @@ class tc_dbmole extends tc_base{
 		$this->_test_table_count($dbmole,0);
 
 		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
-			"title" => "O'neil & sons",
-			"an_integer" => 22,
-			"price" => 33.3,
-			"text" => "\"O'neil has 2 sons.\"",
-			"create_date" => "2009-12-31",
-			"jsemhloupy" => true
+			"title" => "O'neil & daughter",
+			"an_integer" => 11,
+			"price" => 15.8,
+			"text" => "\"O'neil has just 1 daughter\"",
+			"create_date" => "2009-12-01",
+			"flag" => false
 		)));
 
 		$this->_test_table_count($dbmole,1);
 
 		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
-			"title" => "O'neil & daughter",
-			"an_integer" => 11,
-			"price" => 15.8,
-			"text" => "\"O'neil has just 1 daughter.\"",
-			"create_date" => "2009-12-01",
-			"jsemhloupy" => false
+			"title" => "O'neil & sons",
+			"an_integer" => 22,
+			"price" => 33.3,
+			"text" => "\"O'neil has 2 sons\"",
+			"create_date" => "2009-12-31",
+			"flag" => true
 		)));
+
+		$this->_test_table_count($dbmole,2);
 
 		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
 			"title" => "O'neil & daughter",
 			"an_integer" => 33,
 			"price" => 15.8,
-			"text" => "\"O'neil has just 1 daughter.\"",
-			"create_date" => "2009-12-01",
-			"jsemhloupy" => NULL,
+			"text" => "\"O'neil has just 1 daughter\"",
+			"create_date" => "2009-12-31",
+			"flag" => NULL,
 		)));
+
+		$this->_test_table_count($dbmole,3);
 		
-		$rows = $dbmole->selectRows("SELECT title,an_integer,price,text,create_date, jsemhloupy FROM test_table ORDER BY an_integer");
-		$rows[0]["create_date"] = preg_replace("/ .*$/","",$rows[0]["create_date"]);
+		$rows = $dbmole->selectRows("SELECT title,an_integer,price,text,create_date,flag FROM test_table ORDER BY an_integer");
+		$rows[0]["create_date"] = preg_replace("/ .*$/","",$rows[0]["create_date"]); // 2009-12-31 00:00:00 -> 2009-12-31
 		$rows[1]["create_date"] = preg_replace("/ .*$/","",$rows[1]["create_date"]);
+		$rows[2]["create_date"] = preg_replace("/ .*$/","",$rows[2]["create_date"]);
 		settype($rows[0]["price"],"float");
 		settype($rows[1]["price"],"float");
+		settype($rows[2]["price"],"float");
 
-		$rows[0]['jsemhloupy']=$dbmole->parseBoolFromSql($rows[0]['jsemhloupy']);
-		$rows[1]['jsemhloupy']=$dbmole->parseBoolFromSql($rows[1]['jsemhloupy']);
-		$rows[2]['jsemhloupy']=$dbmole->parseBoolFromSql($rows[2]['jsemhloupy']);
-		
+		$rows[0]['flag']=$dbmole->parseBoolFromSql($rows[0]['flag']);
+		$rows[1]['flag']=$dbmole->parseBoolFromSql($rows[1]['flag']);
+		$rows[2]['flag']=$dbmole->parseBoolFromSql($rows[2]['flag']);
+
 		$this->assertEquals(array(
 			array (
 				'title' => "O'neil & daughter",
 				'an_integer' => '11',
 				'price' => 15.8,
-				'text' => '"O\'neil has just 1 daughter."',
+				'text' => '"O\'neil has just 1 daughter"',
 				'create_date' => '2009-12-01',
-				'jsemhloupy' => true
+				'flag' => false
 			),
 			array (
 				'title' => "O'neil & sons",
 				'an_integer' => '22',
 				'price' => 33.3,
-				'text' => '"O\'neil has 2 sons."',
+				'text' => '"O\'neil has 2 sons"',
 				'create_date' => '2009-12-31',
-				'jsemhloupy' => false,
+				'flag' => true,
 			),
 			array (
-				'title' => "O'neil & sons",
-				'an_integer' => '22',
-				'price' => 33.3,
-				'text' => '"O\'neil has 2 sons."',
+				'title' => "O'neil & daughter",
+				'an_integer' => '33',
+				'price' => 15.8,
+				'text' => '"O\'neil has just 1 daughter"',
 				'create_date' => '2009-12-31',
-				'jsemhloupy' => null,
+				'flag' => null,
 			),
 		),$rows);
 
@@ -174,10 +180,10 @@ class tc_dbmole extends tc_base{
 		settype($row["price"],"float");
 		$this->assertEquals(
 			array (
-				'title' => "O'neil & sons",
+				'title' => "O'neil & daughter",
 				'an_integer' => '33',
-				'price' => 33.3,
-				'text' => '"O\'neil has 2 sons."',
+				'price' => 15.8,
+				'text' => '"O\'neil has just 1 daughter"',
 				'create_date' => '2009-12-31',
 			),
 		$row);
@@ -210,7 +216,7 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals(array(
 			"11" => array("f1" => "12", "f2" => "13"),
 			"22" => array("f1" => "23", "f2" => "24"),
-			"33" => array("f1" => "34", "f2" => "34")
+			"33" => array("f1" => "34", "f2" => "35")
 		),$ar);
 
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 as f1, an_integer+2 as f2, null as f3 FROM test_table ORDER BY an_integer",array());

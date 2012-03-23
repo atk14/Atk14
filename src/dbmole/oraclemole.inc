@@ -89,6 +89,15 @@ class OracleMole extends DbMole{
 		$bind_ar = &$this->_BindAr;
 		$options = &$this->_Options;
 
+		foreach($bind_ar as &$value){
+			if(is_object($value)){
+				$value = $value->getId();
+			}
+			if(is_bool($value)){
+				$value = $this->escapeBool4Sql($value);
+			}	
+		}
+
 		// toto odstranuje z SQL prikazu znak \r, ktery zpusobuje problemy
 		// na ihnedu toto resila fce remover...
 		$query = str_replace("\r"," ",$query);
@@ -145,7 +154,7 @@ class OracleMole extends DbMole{
 		if($options["bind_values"]){
 			reset($bind_ar);
 			while(list($key,) = each($bind_ar)){
-				if(is_object($bind_ar[$key])){ $bind_ar[$key] = $bind_ar[$key]->getId(); }
+				//if(is_object($bind_ar[$key])){ $bind_ar[$key] = $bind_ar[$key]->getId(); }
 				// bindovani large objektu
 				// v podmince je zamerne $_typ=, aby doslo k priprazeni spravneho typu
 				if((in_array($key,$options["blobs"]) && $_type=OCI_B_BLOB) || (in_array($key,$options["clobs"]) && $_type=OCI_B_CLOB)){

@@ -26,7 +26,7 @@ function &dbmole_connection(&$dbmole){
 			putenv("NLS_DATE_FORMAT=YYYY-MM-DD HH24:MI:SS");
 			putenv('PATH='.getenv("PATH").':'.getenv("ORACLE_HOME").'/bin');
 
-			$out = OCILogon("test","test","test");
+			$out = OCILogon("test","test","test"); // user, password, sid
 
 			break;
 	}
