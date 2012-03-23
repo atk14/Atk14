@@ -33,6 +33,7 @@ APPNAME=`basename "$PWD"`                 # myapp
 PG_USER=postgres                          # Postgresql's service account name
 DBNAME_DEVEL="${APPNAME}_devel"           # myapp_devel
 DBNAME_TEST="${APPNAME}_test"             # myapp_test
+DBNAME_PRODUCTION="${APPNAME}_production" # myapp_production
 PG_PASSWORD=`random_string 6`
 SECRET_TOKEN=`random_string 64`
 FORCE=
@@ -98,6 +99,8 @@ fi
 sed -i "s/password: p/password: $PG_PASSWORD/" config/database.yml
 sed -i "s/atk14_devel/$DBNAME_DEVEL/" config/database.yml
 sed -i "s/atk14_test/$DBNAME_TEST/" config/database.yml
+sed -i "s/atk14_production/$DBNAME_PRODUCTION/" config/database.yml
+sed -i "s/ATK14 Project/$APPNAME/" config/settings.php # defines ATK14_APPLICATION_NAME
 
 sed -i "s/put_some_random_string_here/$SECRET_TOKEN/" config/settings.php
 sed -i "s/myapp.localhost/$APPNAME.localhost/" config/settings.php
