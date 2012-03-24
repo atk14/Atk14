@@ -44,6 +44,25 @@ class inobj{
 	}
 
 	/**
+	* Metoda volana automaticky pred serializaci.
+	*/
+	function __sleep(){
+		$vars = get_object_vars($this);
+		unset($vars["_dbmole"]);
+		unset($vars["dbmole"]);
+		return array_keys($vars);
+	}
+	/**
+	* Metoda volana automaticky po unserializaci.
+	*/
+	function __wakeup(){
+		if(class_exists("PgMole")){
+			$this->_dbmole = PgMole::GetInstance();
+			$this->dbmole = &$this->_dbmole;
+		}
+	}
+
+	/**
 	 * Converts TableRecord object to its id.
 	 *
 	 * @access private

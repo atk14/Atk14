@@ -432,6 +432,20 @@ class tc_inobj_table_record extends tc_base{
 		$this->assertEquals($century3->getId(),$recs[1]->getId());
 	}
 
+	function test_serialize(){
+		$rec = inobj_TestTable::CreateNewRecord(array(
+			"title" => "Title",
+			"price" => 123,
+			"an_integer" => 2
+		));
+
+		$ser = serialize($rec);
+		$this->assertTrue(!preg_match('/dbmole/',$ser)); // see inobj::__sleep()
+
+		$rec2 = unserialize($ser);
+		$this->assertEquals($rec->toArray(),$rec2->toArray());
+	}
+
 	function _test_fall($recs){
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals("Fall",$recs[0]->getTitle());
