@@ -426,10 +426,33 @@ class tc_inobj_table_record extends tc_base{
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals($century->getId(),$recs[0]->getId());
 
-		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NOT NULL")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NOT NULL"),"order_by" => "title"));
 		$this->assertEquals(2,sizeof($recs));
-		$this->assertEquals($century2->getId(),$recs[0]->getId());
-		$this->assertEquals($century3->getId(),$recs[1]->getId());
+		$this->assertEquals($century3->getId(),$recs[0]->getId());
+		$this->assertEquals($century2->getId(),$recs[1]->getId());
+
+		// alternativni nazvy hodnot v $options
+		//	 class_name -> class
+		//	 conditions -> condition
+		//	 bind_ar -> bind
+		//	 order_by -> order
+		$recs = TableRecord::FindAll(array(
+			"class" => "inobj_TestTable",
+			"condition" => array("title=:title1 OR title=:title2","text IS NOT NULL"),
+			"bind" => array(":title1" => 'Century', ":title2" => "Another Century"),
+			"order" => "title",
+		));
+		$this->assertEquals(2,sizeof($recs));
+		$this->assertEquals($century3->getId(),$recs[0]->getId());
+		$this->assertEquals($century2->getId(),$recs[1]->getId());
+
+		$rec = TableRecord::FindFirst(array(
+			"class" => "inobj_TestTable",
+			"condition" => array("title=:title1 OR title=:title2","text IS NOT NULL"),
+			"bind" => array(":title1" => 'Century', ":title2" => "Another Century"),
+			"order" => "title",
+		));
+		$this->assertEquals($century3->getId(),$rec->getId());
 	}
 
 	function test_serialize(){
