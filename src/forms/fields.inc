@@ -113,6 +113,15 @@ class Field
         );
     }
 
+    /** 
+     * <code>
+     *     $field->update_messages("invalid","This doesn't look like a reasonable value...");
+     * </code>
+     */
+    function update_message($type,$message){
+        $this->update_messages(array($type => $message));
+    }
+
     /**
      * Field value validation.
      *

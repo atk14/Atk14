@@ -474,6 +474,7 @@ class Form
     function add_field($name, $field)
     {
         $this->fields[$name] = $field;
+        return $field;
     }
 
     /**
