@@ -25,7 +25,7 @@ class tc_atk14_controller extends tc_base{
 		$this->assertEquals(array("afilter1","afilter2","after_filter","afilter3","afilter4"),$c->after_filters);
 	}
 
-	function test_redirect_to(){
+	function test_redirect_to_and_link_to(){
 		$c = new ApplicationController();
 		$c->atk14__initialize();
 		$c->lang = "en";
@@ -43,6 +43,77 @@ class tc_atk14_controller extends tc_base{
 			list($params,$result) = $i;
 			$c->_redirect_to($params);
 			$this->assertEquals($result,$c->response->getLocation());
+			$this->assertEquals(302,$c->response->getStatusCode()); // 302 Moved temporarily
+
+			$c->_redirect_to($params,array("moved_permanently" => true));
+			$this->assertEquals($result,$c->response->getLocation());
+			$this->assertEquals(301,$c->response->getStatusCode()); // 301 Moved permanently
+
+			$url = $c->_link_to($params);
+			$this->assertEquals($result,$url);
 		}
+
+		$params =	array("controller" => "books", "action" => "detail", "id" => "123", "format" => "xml");
+
+		$c->_redirect_to($params);
+		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->response->getLocation());
+
+		$this->assertEquals("/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params));
+
+		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("with_hostname" => true)));
+		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("with_hostname" => true, "ssl" => true)));
+
+		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("ssl" => true)));
+		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("ssl" => false)));
+	}
+
+	function test_link_to(){
+		global $ATK14_GLOBAL;
+		$c = new ApplicationController();
+		$c->atk14__initialize();
+		$c->lang = "en";
+		$c->controller = "books";
+		$c->action = "overview";
+		$c->namespace = "";
+
+		$this->assertEquals("/en/books/export/",$c->_link_to(array("action" => "export")));
+		$this->assertEquals("/en/books/export/",$c->_link_to("export"));
+
+		$this->assertEquals("/en/books/detail/?id=123&amp;format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml")));
+		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml"),array("connector" => "&")));
+
+		$this->assertEquals("/en/articles/",$c->_link_to(array("controller" => "articles")));
+		$this->assertEquals("/en/articles/",$c->_link_to("articles/index"));
+
+		$this->assertEquals("/admin/cs/articles/",$c->_link_to(array("controller" => "articles", "namespace" => "admin", "lang" => "cs")));
+
+		$this->assertEquals("/en/books/overview/",$c->_link_to());
+
+		$c->namespace = "admin";
+
+		$this->assertEquals("/admin/en/books/overview/",$c->_link_to());
+
+		$this->assertEquals("/admin/en/articles/",$c->_link_to(array("controller" => "articles")));
+		$this->assertEquals("/admin/en/articles/",$c->_link_to("articles/index"));
+
+		$this->assertEquals("/en/articles/",$c->_link_to(array("controller" => "articles", "namespace" => "")));
+	}
+
+	function test_layout(){
+		$client = new Atk14Client();
+		$controller = $client->get("testing/default_layout");
+
+		$page = new String($controller->response->buffer->toString());
+		$this->assertEquals(true,$page->contains("This is a template"));
+		$this->assertEquals(true,$page->contains("<!-- default layout -->"));
+
+		$controller = $client->get("testing/custom_layout");
+		$page = new String($controller->response->buffer->toString());
+		$this->assertEquals(true,$page->contains("This is a template"));
+		$this->assertEquals(true,$page->contains("<!-- custom layout -->"));
+
+		$controller = $client->get("testing/no_layout");
+		$page = new String($controller->response->buffer->toString());
+		$this->assertEquals(true,(bool)$page->match("/^This is a template$/"));
 	}
 }

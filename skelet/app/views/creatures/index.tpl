@@ -49,4 +49,5 @@ app/controllers/creatures_controller.php
 app/views/creatures/*
 app/forms/creatures/*
 test/models/tc_creature.php
-test/controllers/tc_creatures.php</code></pre>
+test/controllers/tc_creatures.php
+config/routers/default_router.php</code></pre>

@@ -14,8 +14,8 @@
  * @subpackage InternalLibraries
  */
 class TableRecord_EmptyFinder extends TableRecord_Finder{
+ 	var $_Records = array();
 	function TableRecord_EmptyFinder(){
-		
 	}
 
 	/**

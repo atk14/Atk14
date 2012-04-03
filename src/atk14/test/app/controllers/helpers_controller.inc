@@ -10,4 +10,3 @@ class HelpersController extends ApplicationController{
 		$this->render_layout = false;
 	}
 }
-?>

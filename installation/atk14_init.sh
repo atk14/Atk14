@@ -17,7 +17,8 @@ random_string () {
   MATRIX="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
   LENGTH=$1
 
-  while [ "${n:=1}" -le "$LENGTH" ]
+  n=0
+  while [ "$n" -lt "$LENGTH" ]
   do
     PASS="$PASS${MATRIX:$(($RANDOM%${#MATRIX})):1}"
     let n+=1
@@ -26,21 +27,30 @@ random_string () {
   echo $PASS
 }
 
-# we need current working directory to be empty
-files_in_current_directory=`ls -a | wc -l`
-if [ $files_in_current_directory != "2" ]; then
-  echo "Current working dir is not empty!"
-  exit 1
-fi
-
 # setting up some initials
 PWD=`pwd`                                 # /home/joe/webapps/myapp
 APPNAME=`basename "$PWD"`                 # myapp
 PG_USER=postgres                          # Postgresql's service account name
 DBNAME_DEVEL="${APPNAME}_devel"           # myapp_devel
 DBNAME_TEST="${APPNAME}_test"             # myapp_test
+DBNAME_PRODUCTION="${APPNAME}_production" # myapp_production
 PG_PASSWORD=`random_string 6`
 SECRET_TOKEN=`random_string 64`
+FORCE=
+
+while [ -n "$1" ]
+do
+  case $1 in
+    "-f") FORCE=-f ;;
+    *) break      ;;
+        esac
+    shift
+done
+
+if [ "$PG_PASSWORD" = "" ]; then
+  echo "ERROR: unable to create a random string, kind of weird version of bash or something?"
+  exit 1
+fi
 
 echo "Your new ATK14 app will be >> $APPNAME <<"
 echo "Two new databases will be created in Postgresql: $DBNAME_DEVEL and $DBNAME_TEST"
@@ -48,90 +58,83 @@ echo "Two new users will be created in Postgresql: $DBNAME_DEVEL and $DBNAME_TES
 echo "New virtual host will be configured in Apache: $APPNAME.localhost"
 echo "New record will be added to /etc/hosts: 127.0.0.1 $APPNAME.localhost"
 echo "And even more you will be asked for your sudo password!"
-echo -n "Sounds good to you? (press y if so) "
-read confirm
-if [ "$confirm" != "y" ]; then
-  exit 1
+
+if [ -z "$FORCE" ] ; then
+  echo -n "Sounds good to you? (press y if so) "
+  read confirm
+  if [ "$confirm" != "y" ]; then
+    exit 1
+  fi
+  files_in_current_directory=`ls -a | wc -l`
+  if [ $files_in_current_directory != "2" ]; then
+        echo -n "Current working dir is not empty, really continue? (press c if so) "
+  read confirm
+    if [ "$confirm" != "c" ]; then
+        exit 2
+    fi
+  fi
 fi
 
-echo "Gonna create databases & users"
-echo "You may be asked for your password"
-
-sql=$( cat <<EOF
--- creating devel database & user
-CREATE DATABASE $DBNAME_DEVEL; 
-CREATE USER $DBNAME_DEVEL WITH ENCRYPTED PASSWORD '$PG_PASSWORD';
--- creating test database & user
-CREATE DATABASE $DBNAME_TEST;
-CREATE USER $DBNAME_TEST WITH ENCRYPTED PASSWORD '$PG_PASSWORD';
-EOF
-)
-
-echo "Gonna execute the following SQL as user $PG_USER in database template1:"
 echo ""
-echo "$sql"
-echo ""
+echo "About to download ATK14 source code"
+echo "-----------------------------------"
+if [ ! -e atk14 ] ; then
+  git clone --recursive git://github.com/yarri/Atk14.git ./atk14 &&
+  mv atk14/skelet/.htaccess ./ &&\
+  mv atk14/skelet/* ./ &&\
+  rmdir atk14/skelet
+  echo "This is README for ${APPNAME}" > ./README.md
 
-sudo -u $PG_USER -s "echo \"$sql\" | psql template1"
+  # removing git's working files and dirs
+  find ./ -name '.git*' -type f -exec rm {} \;
+  find ./ -name '.git' -type d -exec rm -rf {} \;
 
-echo "Gonna copy ATK14 from repository";
-
-git clone --recursive git://github.com/yarri/Atk14.git ./atk14 &&
-mv atk14/skelet/.htaccess ./ &&\
-mv atk14/skelet/* ./ &&\
-rmdir atk14/skelet
-
-# removing git's working files and dirs
-find ./ -name '.git*' -type f -exec rm {} \;
-find ./ -name '.git' -type d -exec rm -rf {} \;
-
-chmod -R 777 ./tmp
-touch ./log/application.log
-chmod 666 ./log/application.log
-touch ./log/test.log
-chmod 666 ./log/test.log
+  chmod -R 777 ./tmp
+  touch ./log/application.log
+  chmod 666 ./log/application.log
+  touch ./log/test.log
+  chmod 666 ./log/test.log
+fi
 
 sed -i "s/password: p/password: $PG_PASSWORD/" config/database.yml
 sed -i "s/atk14_devel/$DBNAME_DEVEL/" config/database.yml
 sed -i "s/atk14_test/$DBNAME_TEST/" config/database.yml
+sed -i "s/atk14_production/$DBNAME_PRODUCTION/" config/database.yml
+sed -i "s/ATK14 Project/$APPNAME/" config/settings.php # defines ATK14_APPLICATION_NAME
 
-ATK14_ENV=DEVELOPMENT ./scripts/initialize_database
-ATK14_ENV=TEST        ./scripts/initialize_database
+sed -i "s/put_some_random_string_here/$SECRET_TOKEN/" config/settings.php
+sed -i "s/myapp.localhost/$APPNAME.localhost/" config/settings.php
+sed -i "s/www.myapp.com/www.$APPNAME.com/" config/settings.php
 
-ATK14_ENV=DEVELOPMENT ./scripts/migrate
-ATK14_ENV=TEST        ./scripts/migrate
-
-sed -i "s/put_some_random_string_here/$SECRET_TOKEN/" config/local_settings.php
-sed -i "s/myapp.localhost/$APPNAME.localhost/" config/local_settings.php
-sed -i "s/www.myapp.com/www.$APPNAME.com/" config/local_settings.php
-
-# adding server name in /etc/hosts
-sudo -s "echo '' >> /etc/hosts"
-sudo -s "echo '# added by atk14_init.sh' >> /etc/hosts"
-sudo -s "echo '127.0.0.1 $APPNAME.localhost' >> /etc/hosts"
-
-# configuring apache
-sudo -s "cat <<EOF > /etc/apache2/sites-available/$APPNAME.localhost
-<VirtualHost *:80>
-  DocumentRoot $PWD
-  ServerName $APPNAME.localhost
-  Options FollowSymLinks
-  <Directory $PWD>
-  AllowOverride All
-  </Directory>
-</VirtualHost>
-EOF"
-sudo ln -s /etc/apache2/sites-available/$APPNAME.localhost /etc/apache2/sites-enabled/
-sudo /etc/init.d/apache2 restart
-
-echo 
-echo "You are advised to add these lines to ~/.pgpass"
-ATK14_ENV=DEVELOPMENT ./scripts/pgpass_record
-ATK14_ENV=TEST ./scripts/pgpass_record
-
-echo 
-echo "Now try this address in your browser:"
-echo "http://$APPNAME.localhost/"
+echo ""
+echo "About to create & initialize database"
+echo "-------------------------------------"
+PGPASS=
+for environ in DEVELOPMENT TEST ; do
+  echo "Setting $environ environment"
+  for cmd in create_database initialize_database migrate ; do
+    echo "Calling $cmd"
+    ATK14_ENV=$environ ./scripts/$cmd $FORCE || (
+      echo
+      echo "SCRIPT atk14/src/scripts/$cmd FAILED !!!"
+      exit 3
+    )
+   done
+   PGPASS="$PGPASS`ATK14_ENV=$environ ./scripts/pgpass_record`
+"
+done
 
 echo
-echo "Happy coding"
+echo "About to configure apache"
+echo "-------------------------"
+
+./scripts/virtual_host_configuration -f
+
+echo
+echo "You are advised to add these lines to ~/.pgpass"
+echo "$PGPASS"
+
+echo
+echo "Happy coding (would be nice to never see you in madhouse)"
+
+exit 0

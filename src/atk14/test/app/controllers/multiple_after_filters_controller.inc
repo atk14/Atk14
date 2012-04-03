@@ -30,5 +30,3 @@ class MultipleAfterFiltersController extends ApplicationController{
 		$this->after_filters[] = "afilter4";
 	}
 }
-
-?>

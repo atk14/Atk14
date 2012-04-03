@@ -114,9 +114,9 @@ class Field
     {
         // default data
         $options = forms_array_merge(array(
-                'required'       => true, 
-                'widget'         => null, 
-                'label'          => null, 
+                'required'       => true,
+                'widget'         => null,
+                'label'          => null,
                 'initial'        => null,
                 'help_text'      => '', // like "In this field you can write down your favourite numbers"
                 'hint'           => '', // value format hint, like "1,3,7"
@@ -136,7 +136,7 @@ class Field
             'required' => _('This field is required.'),
             'invalid' => _('Enter a valid value.'),
         ));
-        
+
         // inicializace podle parametru konstruktoru
         $this->required = $options['required'];
         $this->label = $options['label'];
@@ -155,7 +155,7 @@ class Field
         }
         $this->widget = $widget;
     }
-    
+
     /**
     * Prida do $this->messages dalsi error hlasky.
     * NOTE: muj vymysl
@@ -166,6 +166,15 @@ class Field
             $this->messages,
             $messages
         );
+    }
+
+    /** 
+     * <code>
+     *     $field->update_messages("invalid","This doesn't look like a reasonable value...");
+     * </code>
+     */
+    function update_message($type,$message){
+        $this->update_messages(array($type => $message));
     }
 
     /**
@@ -199,7 +208,7 @@ class Field
      * @return bool true if field contains empty value
      */
     function check_empty_value($value) {
-        return 
+        return
             is_null($value) ||
             (is_string($value) && $value=='') ||
             (is_array($value) && sizeof($value)==0);
@@ -472,6 +481,24 @@ class RegexField extends CharField
         $this->regex = $regex;
     }
 
+    /**
+     * Can be used to postprocess the matched value using results from preg_match
+     * @param string recieved value
+     * @param array  array of matches from preg_match
+     * @return string modified result value
+     *
+     * E.g. add default protocol to url field if missing (check is performed by regex like /((?:http://)?)...../
+     *
+     * if($catches[$1]=='')
+     *		return array(null, "http://$value");
+     * else
+     *		return array(null, $value);
+     */
+    function processResult($value, $catches)
+    {
+    		return array(null,$value);
+    }
+
     function clean($value)
     {
         list($error, $value) = parent::clean($value);
@@ -481,10 +508,10 @@ class RegexField extends CharField
         if ($value == '') {
             return array(null, $value);
         }
-        if (!preg_match($this->regex, $value)) {
+        if (!preg_match($this->regex, $value, $catches)) {
             return array($this->messages['invalid'], null);
         }
-        return array(null, (string)$value);
+        return $this->processResult((string)$value, $catches);
     }
 }
 
@@ -498,7 +525,7 @@ class EmailField extends RegexField
 {
     function EmailField($options=array())
     {
-        $options = array_merge(array(   
+        $options = array_merge(array(
             "null_empty_output" => true,
             "widget" => new EmailInput(),
         ),$options);
@@ -747,7 +774,7 @@ class MultipleChoiceField extends ChoiceField
 
         foreach ($new_value as $val) {
             if (!in_array($val, $valid_values)) {
-                return array(EasyReplace($this->messages['invalid_choice'], array('%(value)s'=>$val)), null);
+                return array(EasyReplace($this->messages['invalid_choice'], array('%(value)s'=> h($val))), null);
             }
         }
         return array(null, $new_value);
@@ -765,9 +792,9 @@ class MultipleChoiceField extends ChoiceField
 class IPAddressField extends RegexField
 {
     function IPAddressField($options = array()){
-        $options = array_merge(array(   
+        $options = array_merge(array(
             "null_empty_output" => true,
-            "ipv4_only" => false, 
+            "ipv4_only" => false,
             "ipv6_only" => false,
         ),$options);
         $re_ipv4 = '(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}';
@@ -796,7 +823,7 @@ class IPAddressField extends RegexField
 class FileField extends Field{
     function FileField($options = array()){
         $options = array_merge(array(
-            "widget" => new FileInput(), 
+            "widget" => new FileInput(),
         ),$options);
         parent::Field($options);
     }
@@ -901,5 +928,4 @@ class ImageField extends FileField{
     }
 }
 
-// vim: set et ts=4 sw=4 enc=utf-8 fenc=utf-8 si: 
-?>
+// vim: set et ts=4 sw=4 enc=utf-8 fenc=utf-8 si:

@@ -15,9 +15,9 @@ Atk14Utils::DetermineEnvironment();
 
 // now we are gonna to set up config constants
 if(defined("ATK14_DOCUMENT_ROOT")){
-	atk14_require_once(ATK14_DOCUMENT_ROOT."/config/local_settings.inc");
+	require_once(ATK14_DOCUMENT_ROOT."/config/settings.php");
 }else{
-	atk14_require_once(dirname(__FILE__)."/../config/local_settings.inc");
+	require_once(dirname(__FILE__)."/../config/settings.php");
 }
 require_once(dirname(__FILE__)."/default_settings.php");
 
@@ -44,15 +44,20 @@ require_once(dirname(__FILE__)."/src/atk14/load.inc");
 require_once(dirname(__FILE__)."/src/functions.inc");
 
 // ...and load basic application`s objects
-atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/app/forms/application_form.php");
-atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/app/forms/form.php");
+foreach(array(
+	ATK14_DOCUMENT_ROOT."/app/forms/application_form.php",
+	ATK14_DOCUMENT_ROOT."/app/forms/form.php",
+	ATK14_DOCUMENT_ROOT."/config/routers/load.php"
+) as $_f_){
+	($_f_ = atk14_find_file($_f_)) && require_once($_f_);
+}
 
 // Loading model classes, field (and widget) classes and external (3rd party) libs.
 // In every directory class_autoload() is applied. I believe it can do a lot.
-// But everywhere the load file is optional.
-foreach(array("app/models","app/fields","lib") as $_d_){
+// But everywhere the load.php file is optional.
+foreach(array("app/models","app/fields","app/widgets","lib") as $_d_){
 	class_autoload(ATK14_DOCUMENT_ROOT."/$_d_/");
-	atk14_require_once_if_exists(ATK14_DOCUMENT_ROOT."/$_d_/load.php");
+	($_f_ = atk14_find_file(ATK14_DOCUMENT_ROOT."/$_d_/load.php")) && require_once($_f_);
 }
 
 // global variable $dbmole holds database connection
@@ -121,7 +126,31 @@ function atk14_initialize_locale(&$lang){
 	putenv("LANG=$l");
 	setlocale(LC_MESSAGES,$l);
 	setlocale(LC_ALL,$l);
+	setlocale(LC_CTYPE,$l);
+	setlocale(LC_COLLATE,$l);
 	bindtextdomain("messages",dirname(__FILE__)."/../locale/");
-	bind_textdomain_codeset("messages", "UTF-8");
+	bind_textdomain_codeset("messages", DEFAULT_CHARSET);
 	textdomain("messages");
+}
+
+function_exists("iconv_set_encoding") && iconv_set_encoding('internal_encoding',DEFAULT_CHARSET);
+function_exists("mb_internal_encoding") && mb_internal_encoding(DEFAULT_CHARSET); 
+
+
+// on non-UTF-8 apps following hack converts UTF-8 params to DEFAULT_CHARSET
+function __to_default_charset__(&$params){
+	reset($params);
+	while(list($key,$value) = each($params)){
+		if(is_string($value)){
+			translate::check_encoding($params[$key],"UTF-8") && ($params[$key] = translate::trans($params[$key],"UTF-8",DEFAULT_CHARSET));
+			continue;
+		}
+		if(is_array($value)){
+			__to_default_charset__($params[$key]);
+		}
+	}
+}
+if(DEFAULT_CHARSET!="UTF-8"){
+	if($HTTP_REQUEST->xhr() && isset($_POST) && is_array($_POST)){ __to_default_charset__($_POST); }
+	if($HTTP_REQUEST->xhr() && isset($_GET) && is_array($_GET)){ __to_default_charset__($_GET); }
 }

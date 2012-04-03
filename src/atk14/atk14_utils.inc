@@ -94,7 +94,7 @@ class Atk14Utils{
 
 		$dir = opendir($path);
 		while($file = readdir($dir)){
-			if(preg_match('/^local_settings\.(inc|php)$/',$file)){ continue; } // this is ugly hack :( i need to delay loading of ./config/local_settings.inc
+			if(preg_match('/^(local_|)settings\.(inc|php)$/',$file)){ continue; } // this is ugly hack :( i need to delay loading of ./config/settings.php
 			if(preg_match('/\.(inc|php)$/',$file) && is_file($path.$file)){
 				require_once($path.$file);
 			}
@@ -367,21 +367,33 @@ class Atk14Utils{
 	}
 }
 
+/**
+ * When some/path/file.php is given,
+ * it loads some/path/file.php or some/path/file.inc
+ */ 
 function atk14_require_once($file){
-	if(file_exists($file)){
-		return require_once($file);
-	}
+	($_file = atk14_find_file($file)) || ($_file = $file);
+	return require_once($_file);
+}
+
+/**
+ * When some/path/file.php is given,
+ * finds out whether there is some/path/file.php or some/path/file.inc
+ */
+function atk14_find_file($file){
 	preg_match('/^(.*\.)(inc|php)$/',$file,$matches);
-	$file = $matches[1].($matches[2]=="inc" ? "php" : "inc");
-	require_once($file);
-	return true;
+	$fs = array();
+	$fs[] = $file;
+	$fs[] = $matches[1]."inc";
+	$fs[] = $matches[1]."php";
+	foreach($fs as $file){
+		if(file_exists($file)){ return $file; }
+	}
 }
 
 function atk14_require_once_if_exists($file){
-	preg_match('/^(.*\.)(inc|php)$/',$file,$matches);
-	$f1 = $matches[1]."inc";
-	$f2 = $matches[1]."php";
-	if(file_exists($f1)){ return atk14_require_once($f1); }
-	if(file_exists($f2)){ return atk14_require_once($f2); }
+	if($file = atk14_find_file($file)){
+		return atk14_require_once($file);
+	}
 	return false;
 }

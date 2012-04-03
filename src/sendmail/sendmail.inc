@@ -58,6 +58,9 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 *			"from" => "Our Big Company <info@example.org>",
 *			// ...
 *		));
+*
+*		PHP`s mail() compatible usage
+* 	sendmail("user@gmailer.com","Hello","Hello dear user...");
 *	</code>
 *
 * Note that there is an another function sendhtmlmail()
@@ -97,17 +100,22 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 *
 *	@return	void
 */
-function sendmail($params = array()){
+function sendmail($params = array(),$subject = "",$message = "",$additional_headers = null){
+	$to = SENDMAIL_EMPTY_TO_REPLACE;
+	if(is_string($params)){
+		$to = $params;
+		$params = array();
+	}
 	$orig_params = $params;
 	$params = array_merge(array(
 		"from" => SENDMAIL_DEFAULT_FROM, // john.doe@example.com
 		"from_name" => null, // "John Doe"
-		"to" => SENDMAIL_EMPTY_TO_REPLACE,
+		"to" => $to,
 		"cc" => null,
 		"bcc" => null,
 		"return_path" => null,
-		"subject" => "",
-		"body" => "",
+		"subject" => $subject,
+		"body" => $message,
 		"transfer_encoding" => SENDMAIL_DEFAULT_TRANSFER_ENCODING, // zpusob kodovani body (nikoli prilohy): "8bit" nebo "quoted-printable"
 		"charset" => SENDMAIL_DEFAULT_BODY_CHARSET,
 		"mime_type" => SENDMAIL_DEFAULT_BODY_MIME_TYPE,
@@ -115,7 +123,7 @@ function sendmail($params = array()){
 		"attachment" => null,
 		"build_message_only" => false,
 
-		"headers" => null, // pozor! pokud bude toto nastaveno, probiha odesilani jinak, viz nize
+		"headers" => $additional_headers, // pozor! pokud bude toto nastaveno, probiha odesilani jinak, viz nize
 	),$params);
 
 	// toto jsou zastarale parametry...
@@ -169,8 +177,8 @@ function sendmail($params = array()){
 		$out = array(
 			"to" => $TO,
 			"subject" => $SUBJECT,
-			"body" => $BODY,
 			"headers" => $HEADERS,
+			"body" => $BODY,
 		);
 
 		if($params["build_message_only"]){
@@ -226,7 +234,7 @@ function sendmail($params = array()){
 		}
 
 	}else{
-		$mailfile = new CMailFile($ATTACHMENTS[0]["body"],array(
+		$mailfile = new _CMailFile($ATTACHMENTS[0]["body"],array(
 			"subject" => $SUBJECT,
 
 			"to" => $TO,
@@ -241,10 +249,18 @@ function sendmail($params = array()){
 			"mime_type" => $ATTACHMENTS[0]['mime_type'],
 			"filename" => $ATTACHMENTS[0]['filename'],
 		));
+
+		// pokud jsou, vlozime do e-mailu dalsi prilohy
+		for($i=1;$i<sizeof($ATTACHMENTS);$i++){
+			$mailfile->attach_file($ATTACHMENTS[$i]['filename'],$ATTACHMENTS[$i]['body'],$ATTACHMENTS[$i]['mime_type']);
+		}
+
 		$mail_ar = $mailfile->getfile();
 		$BODY = $mail_ar["body"];
 		$HEADERS = $mail_ar["headers"];
 	}
+
+	$HEADERS = trim($HEADERS); // na konci hlavicky byl prazdny radek, ve zprave tak byly hlavicky a telo oddeleny 2 radky
 
 	$out = array(
 		"to" => $TO,
@@ -253,8 +269,8 @@ function sendmail($params = array()){
 		"cc" => $CC,
 		"return_path" => $RETURN_PATH,
 		"subject" => $SUBJECT,
-		"body" => $BODY,
 		"headers" => $HEADERS,
+		"body" => $BODY,
 	);
 
 	// v $BODY nechceme sekvence \r\n, funguje to spatne
@@ -316,10 +332,10 @@ function sendhtmlmail($options){
 	$alt_boundary = _sendmail_get_boundary();
 
 	$body = array();
-	$body[] = "Content-Type: multipart/related; boundary=$rel_boundary";
+	$body[] = "Content-Type: multipart/related; boundary=\"$rel_boundary\"";
 	$body[] = "";
 	$body[] = "--$rel_boundary";
-	$body[] = "Content-Type: multipart/alternative; boundary=$alt_boundary";
+	$body[] = "Content-Type: multipart/alternative; boundary=\"$alt_boundary\"";
 	$body[] = "";
 	$body[] = "--$alt_boundary";
 	$body[] = "Content-Type: text/plain; charset=$options[charset]";
@@ -370,7 +386,7 @@ function _sendmail_get_boundary(){
 	static $counter;
 	if(!isset($counter)){ $counter = 0; }
 	$counter++;
-	return $counter."a".substr(md5(uniqid('').$counter),0,27-strlen($counter));
+	return "----=_".$counter."a".substr(md5(uniqid('').$counter),0,27-strlen($counter));
 }
 
 function _sendmail_correct_address($addr){
@@ -500,9 +516,10 @@ to chunk_split
 // simple class that encapsulates mail() with addition of mime file attachment.
 
 // usage - mimetype example "image/gif"
-// $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
+// $mailfile = new _CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
 // $mailfile->sendfile();
-class CMailFile {
+// TODO: zbavit se zavislosti na teto tride
+class _CMailFile {
 	var $subject;
 	var $addr_to;
 	var $text_body;
@@ -510,12 +527,13 @@ class CMailFile {
 	var $text_body_charset;
 	var $text_encoded;
 	var $mime_headers;
-	var $mime_boundary = "--==================_846811060==_";
+	var $mime_boundary;
 	var $smtp_headers;
 	
 	//2009-01-06: konstruktor byl predelan
 	//$subject,$to,$from,$cc,$bcc,$msg,$msg_mimetype,$msg_charset,$filename,&$file_content,$mimetype = "application/octet-stream", $mime_filename = false) 
-	function CMailFile(&$file_content,$options = array()){
+	function _CMailFile(&$file_content,$options = array()){
+		$this->mime_boundary = _sendmail_get_boundary();
 		$options = array_merge(array(
 			"subject" => "",
 
@@ -539,7 +557,8 @@ class CMailFile {
 		$this->addr_to = $options["to"];
 		$this->smtp_headers = $this->write_smtpheaders($options["from"],$options["cc"],$options["bcc"]);
 		$this->text_body = $this->write_body($options["body"]);
-		$this->text_encoded = $this->attach_file($options["filename"],$file_content,$options["mime_type"]);
+		$this->_first_attachment = true;
+		$this->text_encoded = $this->_attach_file($options["filename"],$file_content,$options["mime_type"]);
 		$this->mime_headers = $this->write_mimeheaders($options["filename"]);
 	}
 
@@ -557,14 +576,20 @@ class CMailFile {
 		}
 	}
 
-	function attach_file($filename,&$file_content,$mimetype) {
+	function attach_file($filename,&$file_content,$mimetype = "application/octet-strlen"){
+		$this->text_encoded .= $this->_attach_file($filename,$file_content,$mimetype);
+	}
+
+	function _attach_file($filename,&$file_content,$mimetype) {
 		$encoded = $this->encode_file($filename,$file_content);
-		$out = "--" . $this->mime_boundary . "\n";
+
+		$out = $this->_first_attachment ? "--$this->mime_boundary\n" : "\n";
 		$out = $out . "Content-type: " . $mimetype . "; name=\"$filename\";\n";		
 		$out = $out . "Content-Transfer-Encoding: base64\n";
 		$out = $out . "Content-disposition: attachment; filename=\"$filename\"\n\n";
 		$out = $out . $encoded . "\n";
-		$out = $out . "--" . $this->mime_boundary . "--" . "\n";
+		$out = $out . "--" . $this->mime_boundary;
+		$this->_first_attachment = false;
 		return $out; 
 // added -- to notify email client attachment is done
 	}
@@ -576,7 +601,7 @@ class CMailFile {
 
 	function getfile(){
 		$headers = $this->smtp_headers . $this->mime_headers;		
-		$message = $this->text_body . $this->text_encoded;	
+		$message = $this->text_body . $this->text_encoded. "--";
 		return array(
 			"to" => $this->addr_to,
 			"subject" => $this->subject,
@@ -604,7 +629,7 @@ class CMailFile {
 		$out = $out . "Content-Type: multipart/mixed; ";
 		$out = $out . "boundary=\"$this->mime_boundary\"\n";
 		$out = $out . "Content-Transfer-Encoding: 8bit\n";
-		$out = $out . "X-attachments: $filename;\n\n";
+		//$out = $out . "X-attachments: $filename;\n\n"; // TODO: tady muze byt vice priloh....
 		return $out;
 	}
 
@@ -643,4 +668,3 @@ class CMailFile {
 		return $out;
 	}
 }
-?>

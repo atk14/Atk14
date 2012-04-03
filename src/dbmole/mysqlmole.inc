@@ -68,4 +68,3 @@ class MysqlMole extends DbMole{
 		mysql_close($this->_DbConnect);
 	}
 }
-?>

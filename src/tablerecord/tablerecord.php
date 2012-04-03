@@ -69,7 +69,7 @@ class TableRecord extends TableRecord_Base{
 	* @param array $values							
 	* @return TableRecord
 	*/
-	function _CreateNewRecord($class_name,$values,$options = array()){
+	static function _CreateNewRecord($class_name,$values,$options = array()){
 		$out = new $class_name();
 		return $out->_insertRecord($values,$options);
 	}
@@ -79,27 +79,32 @@ class TableRecord extends TableRecord_Base{
 	 * @access private
 	 */
 	function _setRecordValues($row){
+
 		// pretypovani hodnot hodnot...
 		foreach($row as $_key => $_value){
-			if(!isset($_value)){
+
+			if($_value===null){
 				// hodnota je NULL, nemusime nic typovat
-				$this->_RecordValues[$_key] = null;
-				continue;
-			}
-			if(preg_match("/^(numeric|double precision)/",$this->_TableStructure[$_key])){
+
+			}elseif(preg_match("/^(numeric|double precision)/",$this->_TableStructure[$_key])){
 				settype($_value,"float");
-			}
-			if(preg_match("/^integer/",$this->_TableStructure[$_key])){
+
+			}elseif(preg_match("/^integer/",$this->_TableStructure[$_key])){
 				$_real = $_value;
+				#in 32 system integer can overflow, but float can be sufficient 
 				settype($_real,"float");
 				settype($_value,"integer");
 				if($_value!=$_real){
 					$_value = $_real;
 				}
-			}
-			if(preg_match("/^timestamp/",$this->_TableStructure[$_key])){
+			}elseif(preg_match("/^timestamp/",$this->_TableStructure[$_key])){
 				$_value = substr($_value,0,19);
+
+			}elseif(preg_match("/^bool/",$this->_TableStructure[$_key])){
+				$_value=$this->_dbmole->parseBoolFromSql($_value);
+
 			}
+
 			$this->_RecordValues[$_key] = $_value;
 		}
 

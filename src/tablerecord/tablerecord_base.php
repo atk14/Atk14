@@ -126,6 +126,10 @@ class TableRecord_Base extends inobj{
 		if(defined("DEVELOPMENT") && DEVELOPMENT){ $cache = 0; }
 		$this->_readTableStructure(array("cache" => $cache));
 
+		if(!$this->_TableStructure){
+			throw new Exception("There is not table $table_name in the database ".$this->_dbmole->getDatabaseName());
+		}
+
 		// vsechny hodnoty tohoto objektu nastavime na null
 		reset($this->_TableStructure);
 		while(list($_key,) = each($this->_TableStructure)){
@@ -274,9 +278,11 @@ class TableRecord_Base extends inobj{
 	 * @todo add comment
 	 */
 	function getBelongsTo($object,$options = array()){
+		TableRecord::_NormalizeOptions($options);
 		$options = array_merge(array(
 			"class_name" => "inobj_".str_replace("_","",$object),
-			"attribute_name" => "{$object}_id"
+			"attribute_name" => "{$object}_id",
+			"order" => "order_by",
 		),$options);
 
 		$class_name = $options["class_name"];
@@ -379,6 +385,7 @@ class TableRecord_Base extends inobj{
 	 * @param array $options
 	 */
 	static function Finder($options){
+		TableRecord::_NormalizeOptions($options);
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
@@ -508,6 +515,7 @@ class TableRecord_Base extends inobj{
 	 * @return array
 	 */
 	static function FindAll($options = array()){
+		TableRecord::_NormalizeOptions($options);
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
@@ -585,6 +593,7 @@ class TableRecord_Base extends inobj{
 	 * @return TableRecord
 	 */
 	static function FindFirst($options = array()){
+		TableRecord::_NormalizeOptions($options);
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
@@ -612,7 +621,7 @@ class TableRecord_Base extends inobj{
 	 *
 	 * @access private
 	 */
-	function _NormalizeConditions(&$conditions,&$bind_ar){
+	static function _NormalizeConditions(&$conditions,&$bind_ar){
 		$_conditions = array();
 		foreach($conditions as $k => $v){
 			if(!is_numeric($k)){
@@ -630,6 +639,23 @@ class TableRecord_Base extends inobj{
 			}
 		}
 		$conditions = $_conditions;
+	}
+
+	/**
+	 * Renames some option`s names to others. Like class to class_name...
+	 */
+	static function _NormalizeOptions(&$options){
+		$keys = array_keys($options);
+		foreach(array(
+			"condition" => "conditions",
+			"class" => "class_name",
+			"bind" => "bind_ar",
+		) as $alt_key => $right_key){
+			if(in_array($alt_key,$keys)){	
+				$options[$right_key] = $options[$alt_key];
+				unset($options[$alt_key]);
+			}
+		}
 	}
 
 	/**

@@ -64,7 +64,7 @@ class Atk14Mailer{
 	 *
 	 * @var string
 	 */
-	var $from = "atk14@mailer.cz";
+	var $from = DEFAULT_EMAIL;
 
 	/**
 	 * recipients email address
@@ -110,11 +110,11 @@ class Atk14Mailer{
 	var $content_type = "text/plain";
 
 	/**
-	 * Content charset. Defaults to 'UTF-8'
+	 * Content charset.
 	 *
 	 * @var string
 	 */
-	var $content_charset = "UTF-8";
+	var $content_charset = DEFAULT_CHARSET;
 
 	/**
 	 * Attachments
@@ -280,7 +280,7 @@ class Atk14Mailer{
 		));
 		if(DEVELOPMENT){
 			// logging e-mail data as we are developing
-			$this->logger->info("Sending an e-mail (not really in DEVELOPMENT)\n---------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n$email_ar[body]");
+			$this->logger->info("Sending an e-mail (not really in DEVELOPMENT)\n---------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n\n$email_ar[body]");
 		}
 		return $email_ar;
 	}

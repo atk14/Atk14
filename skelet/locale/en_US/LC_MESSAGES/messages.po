@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-30 11:10+0100\n"
+"POT-Creation-Date: 2012-02-25 09:35+0100\n"
 "PO-Revision-Date: 2011-02-16 15:06+0100\n"
 "Last-Translator: Yarri <yarri@listonos.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -174,41 +174,43 @@ msgid "Welcome!"
 msgstr ""
 
 #: ../app/controllers/creatures_controller.php:13
+#: ../atk14/skelet/app/controllers/creatures_controller.php:13
 msgid "The Creature Show"
 msgstr ""
 
 #: ../app/controllers/creatures_controller.php:34
+#: ../atk14/skelet/app/controllers/creatures_controller.php:34
 msgid "Creating new creature"
 msgstr ""
 
 #: ../app/controllers/creatures_controller.php:38
-#: ../atk14/skelet/app/controllers/creatures_controller.php:34
+#: ../atk14/skelet/app/controllers/creatures_controller.php:38
 msgid "A new creature has been successfuly created"
 msgstr ""
 
 #: ../app/controllers/creatures_controller.php:47
-#: ../atk14/skelet/app/controllers/creatures_controller.php:43
+#: ../atk14/skelet/app/controllers/creatures_controller.php:47
 #, php-format
 msgid "Detail of the creature #%s"
 msgstr ""
 
 #: ../app/controllers/creatures_controller.php:72
-#: ../atk14/skelet/app/controllers/creatures_controller.php:62
+#: ../atk14/skelet/app/controllers/creatures_controller.php:72
 #, php-format
 msgid "Editing the creature #%s"
 msgstr ""
 
 #: ../app/controllers/creatures_controller.php:79
-#: ../atk14/skelet/app/controllers/creatures_controller.php:69
+#: ../atk14/skelet/app/controllers/creatures_controller.php:79
 msgid "The creature has been changed successfuly."
 msgstr ""
 
-#: ../app/helpers/modifier.display_bool.php:9
+#: ../app/helpers/modifier.display_bool.php:13
 #: ../atk14/skelet/app/helpers/modifier.display_bool.php:9
 msgid "Yes"
 msgstr ""
 
-#: ../app/helpers/modifier.display_bool.php:11
+#: ../app/helpers/modifier.display_bool.php:14
 #: ../atk14/skelet/app/helpers/modifier.display_bool.php:11
 msgid "No"
 msgstr ""
@@ -235,7 +237,8 @@ msgstr ""
 msgid "Search term"
 msgstr ""
 
-#: ../config/routes.php:71 ../atk14/skelet/config/routes.php:71
+#: ../config/routers/default_router.php:82
+#: ../atk14/skelet/config/routers/default_router.php:82
 msgid "my beautiful application"
 msgstr ""
 
@@ -385,11 +388,12 @@ msgstr ""
 
 #: smarty.c:98 smarty.c:230
 msgid ""
-"This HTTP request is handled by the MainController and the index() action."
+"This HTTP request is handled by the <code>app/controllers/main_controller."
+"php</code> and the <code>index()</code> action."
 msgstr ""
 
 #: smarty.c:101 smarty.c:233
-msgid "This is app/views/main/index.tpl template."
+msgid "This is <code>app/views/main/index.tpl</code> template."
 msgstr ""
 
 #: smarty.c:104 smarty.c:236
@@ -410,7 +414,7 @@ msgid ""
 msgstr ""
 
 #: smarty.c:116 smarty.c:248
-msgid "gettext dictionaries are placed in locale/ directory"
+msgid "gettext dictionaries are placed in <code>locale/</code> directory"
 msgstr ""
 
 #: smarty.c:119 smarty.c:251

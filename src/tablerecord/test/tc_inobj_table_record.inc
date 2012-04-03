@@ -1,10 +1,8 @@
 <?php
 class tc_inobj_table_record extends tc_base{
 
-	function test_vytvareni_zaznamu(){
+	function _test_vytvareni_zaznamu(){
 		global $dbmole;
-
-		$dbmole->begin();
 
 		$this->_vyprazdni_testovaci_tabulku();
 
@@ -25,14 +23,10 @@ class tc_inobj_table_record extends tc_base{
 		$this->assertEquals("test",$record->getValue("title"));
 		$this->assertNull($record->getValue("price"));
 		$this->assertEquals(10,$record->getValue("an_integer"));
-
-		$dbmole->rollback();
 	}
 
 	function test_inobj_test_table(){
 		global $dbmole;
-
-		$dbmole->begin();
 
 		$this->_vyprazdni_testovaci_tabulku();
 
@@ -44,7 +38,8 @@ class tc_inobj_table_record extends tc_base{
 				price,
 				text,
 				create_date,
-				create_time
+				create_time,
+				flag
 			) VALUES(
 				2,
 				'titulek',
@@ -52,10 +47,16 @@ class tc_inobj_table_record extends tc_base{
 				17.0,
 				'textik',
 				'2001-12-12 12:00:00',
-				'2001-12-12 12:00:00'	
+				'2001-12-12 12:00:00',
+				TRUE
 			)
 		");
+
+		//var_dump($dbmole->selectRows("SELECT * FROM test_table"));
+
 		$record = inobj_TestTable::GetInstanceById(2);
+
+		//var_dump($record->toArray()); exit;
 
 		$this->assertEquals(2,$record->getId());
 		$this->assertTrue(is_int($record->getId()));
@@ -102,14 +103,22 @@ class tc_inobj_table_record extends tc_base{
 		$record = inobj_TestTable::GetInstanceById(2);
 		$this->assertEquals("",$record->getValue("title"));
 
-		$dbmole->rollback();
+		// boolean
+		$this->assertEquals(true,$record->getValue("flag"));
+		$this->assertEquals('t',$dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
+
+		$record->setValue("flag",false);
+		$this->assertEquals(false,$record->getValue("flag"));
+		$this->assertEquals('f',$dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
+
+		$record->setValue("flag",null);
+		$this->assertEquals(null,$record->getValue("flag"));
+		$this->assertEquals(null,$dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
 	}
 
 	function test_validates_updating_of_fields(){
 		global $dbmole;
 
-		$dbmole->begin();
-		
 		// vsechno, co menime, bude meneno
 		$record = inobj_TestTable::CreateNewRecord(array(
 			"title" => "nazev",
@@ -177,14 +186,10 @@ class tc_inobj_table_record extends tc_base{
 		$this->assertEquals(null,$record->getValue("title"));
 		$this->assertEquals(100.0,$record->getValue("price"));
 		$this->assertEquals(null,$record->getValue("an_integer"));
-
-		$dbmole->rollback();
 	}
 
 	function test_validates_inserting_of_fields(){
 		global $dbmole;
-
-		$dbmole->begin();
 
 		$record = inobj_TestTable::CreateNewRecord(array(
 			"title" => "nazev",
@@ -232,14 +237,10 @@ class tc_inobj_table_record extends tc_base{
 			"validates_inserting_of_fields" => array("an_integer"),
 		));
 		$this->assertEquals(null,$record->getValue("text"));
-
-		$dbmole->Commit();
 	}
 
 	function test_do_not_escape(){
 		global $dbmole;
-
-		$dbmole->begin();
 
 		$now = $dbmole->SelectSingleValue("SELECT CAST(NOW() AS DATE)");
 		$before_2_days = $dbmole->SelectSingleValue("SELECT CAST((NOW() - INTERVAL '2 days') AS DATE)");
@@ -274,14 +275,10 @@ class tc_inobj_table_record extends tc_base{
 			"create_date" => "(NOW() - INTERVAL '2 days')"
 		),array("do_not_escape" => "create_date"));
 		$this->assertEquals($before_2_days,$record->getValue("create_date"));
-
-		$dbmole->rollback();
 	}
 
 	function test_vytvareni_vice_instanci_najednou(){
 		global $dbmole;
-
-		$dbmole->begin();
 
 		$this->_vyprazdni_testovaci_tabulku();
 
@@ -303,14 +300,10 @@ class tc_inobj_table_record extends tc_base{
 		$this->assertEquals($id1,$records[0]->getId());
 		$this->assertNull($records[1]);
 		$this->assertEquals($id2,$records[2]->getId());
-
-		$dbmole->rollback();
 	}
 
 	function test_get_keys(){
 		global $dbmole;
-
-		$dbmole->begin();
 
 		$this->_vyprazdni_testovaci_tabulku();
 
@@ -335,15 +328,12 @@ class tc_inobj_table_record extends tc_base{
 			"binary_data2",
 			"create_date",
 			"create_time",
+			"flag"
 		),$keys);
-
-		$dbmole->rollback();
 	}
 
 	function test_find_all(){
 		global $dbmole;
-
-		$dbmole->begin();
 
 		$this->_vyprazdni_testovaci_tabulku();
 
@@ -436,12 +426,47 @@ class tc_inobj_table_record extends tc_base{
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals($century->getId(),$recs[0]->getId());
 
-		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NOT NULL")));
+		$recs = TableRecord::FindAll(array("class_name" => "inobj_TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NOT NULL"),"order_by" => "title"));
 		$this->assertEquals(2,sizeof($recs));
-		$this->assertEquals($century2->getId(),$recs[0]->getId());
-		$this->assertEquals($century3->getId(),$recs[1]->getId());
-		
-		$dbmole->rollback();
+		$this->assertEquals($century3->getId(),$recs[0]->getId());
+		$this->assertEquals($century2->getId(),$recs[1]->getId());
+
+		// alternativni nazvy hodnot v $options
+		//	 class_name -> class
+		//	 conditions -> condition
+		//	 bind_ar -> bind
+		//	 order_by -> order
+		$recs = TableRecord::FindAll(array(
+			"class" => "inobj_TestTable",
+			"condition" => array("title=:title1 OR title=:title2","text IS NOT NULL"),
+			"bind" => array(":title1" => 'Century', ":title2" => "Another Century"),
+			"order" => "title",
+		));
+		$this->assertEquals(2,sizeof($recs));
+		$this->assertEquals($century3->getId(),$recs[0]->getId());
+		$this->assertEquals($century2->getId(),$recs[1]->getId());
+
+		$rec = TableRecord::FindFirst(array(
+			"class" => "inobj_TestTable",
+			"condition" => array("title=:title1 OR title=:title2","text IS NOT NULL"),
+			"bind" => array(":title1" => 'Century', ":title2" => "Another Century"),
+			"order" => "title",
+		));
+		$this->assertEquals($century3->getId(),$rec->getId());
+	}
+
+	function test_serialize(){
+		$rec = inobj_TestTable::CreateNewRecord(array(
+			"title" => "Title",
+			"price" => 123,
+			"an_integer" => 2
+		));
+
+		$ser = serialize($rec);
+		$this->assertTrue(!preg_match('/dbmole/',$ser)); // see inobj::__sleep()
+
+		$rec2 = unserialize($ser);
+		$this->assertEquals($rec->toArray(),$rec2->toArray());
 	}
 
 	function _test_fall($recs){

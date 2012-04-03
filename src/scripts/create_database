@@ -14,6 +14,7 @@ CREATE DATABASE $DBNAME;
 CREATE USER $DBNAME WITH ENCRYPTED PASSWORD '$DBPASSWORD';
 EOF
 )
+if [ "$1" != '-f' ] ; then
 
 echo "Gonna execute the following SQL as user $PG_USER in database template1:"
 echo ""
@@ -26,9 +27,15 @@ if [ "$confirm" != "y" ]; then
   exit 1
 fi
 
-sudo -u $PG_USER -s "echo \"$sql\" | psql template1"
+fi
+
+echo "$sql" | sudo -u $PG_USER -s psql template1 || exit 1
+
+if [ "$1" != '-f' ] ; then
 
 echo ""
 echo "Now you may want to run"
 echo "  $ ./scripts/initialize_database"
 echo "  $ ./scripts/migrate"
+
+fi

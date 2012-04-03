@@ -403,12 +403,24 @@ class Atk14Controller{
 
 			$layout_template = $this->layout_name;
 			if($this->render_layout && $layout_template==""){
-				if(file_exists($ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$controller_name.tpl")){
-					$layout_template = $controller_name;
-				}else{
-					$layout_template = "_default";
+				// default layout is expected in app/layouts/namespace/default.tpl
+				// prior it was app/layouts/namespace/_default.tpl
+				foreach(array(
+					"$this->namespace/$controller_name.tpl",
+					"$this->namespace/default.tpl",
+					"$this->namespace/_default.tpl",
+					"default.tpl",
+					"_default.tpl",
+				) as $_path){
+					if(file_exists($ATK14_GLOBAL->getApplicationPath()."layouts/$_path")){
+						preg_match('/([^\/.]+)\.tpl$/',$_path,$matches);
+						$layout_template = $matches[1];
+						break;
+					}
 				}
+				if(!$layout_template){ $layout_template = "default"; }
 			}
+
 			if(
 				strlen($layout_template)>0 &&
 				!file_exists($_layout_template = $ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$layout_template.tpl") &&
@@ -739,8 +751,10 @@ class Atk14Controller{
 	 *
 	 * <code>
 	 * $url = $this->_link_to(array("action" => "overview"));
-	 * $url = $this->_link_to(array("action" => "overview", "id" => 2045),array("connector" => "&")); // defaultni connector je "&amp;"
+	 * $url = $this->_link_to(array("action" => "detail", "id" => 2045, "format" => "xml"),array("connector" => "&")); // defaultni connector je "&amp;"
 	 * $url = $this->_link_to(); // link na akt controller, action a jazyk
+	 *
+	 * 
 	 * </code>
 	 *
 	 * @param array $params
@@ -752,14 +766,14 @@ class Atk14Controller{
 	 *
 	 */
 	function _link_to($params = array(),$options = array()){
-		settype($params,"array");
+		$__current_ary__ = array(
+			"action" => $this->action,
+			"controller" => $this->controller,
+			"namespace" => $this->namespace,
+			"lang" => $this->lang
+		);
 
-		if(!isset($params["action"]) && !isset($params["controller"])){ $params["action"] = $this->action; }
-		if(!isset($params["controller"])){ $params["controller"] = $this->controller; }
-		if(!isset($params["action"])){ $params["action"] = "index"; }
-		if(!isset($params["lang"])){ $params["lang"] = $this->lang; }
-
-		return Atk14Url::BuildLink($params,$options);
+		return Atk14Url::BuildLink($params,$options,$__current_ary__);
 	}
 
 	/**
@@ -783,7 +797,7 @@ class Atk14Controller{
 	 * Common usage of the method:
 	 * <code>
 	 *	$this->_redirect_to("http://www.domenka.cz/pricelist.html"); // redirects to a given domain and URI
-	 *  $this->_redirect_to("/en/books/"); // redirects to a given URI
+	 *  $this->_redirect_to("/en/books/"); // redirects to a given URI (param starts with '/')
 	 *
 	 *	$this->_redirect_to(array("action" => "overview"));
 	 *	$this->_redirect_to("index"); // same like $this->_redirect_to(array("action" => "index"));
@@ -816,23 +830,11 @@ class Atk14Controller{
 	 *
 	 */
 	function _redirect_to($params = array(),$options = array()){
-		if(is_string($params)){
-			if(preg_match("/^[a-z0-9_]+$/",$params)){
-				return $this->_redirect_to(array(
-						"action" => $params, 
-				),$options);
-			}
-			if(preg_match("/^([a-z0-9_]+)\\/([a-z0-9_]+)$/",$params,$matches)){
-				return $this->_redirect_to(array(
-						"controller" => $matches[1],
-						"action" => $matches[2], 
-				),$options);
-			}
-
-			$url = $params;
-		}else{
-			$url = $this->_link_to($params,array("connector" => "&"));
-		}
+		$options = array_merge(array(
+			"connector" => "&",
+			"status" => null, // 301, 302...
+		),$options);
+		$url = $this->_link_to($params,$options);
 
 		// after a POST request the status 303 is automatically used
 		// http://en.wikipedia.org/wiki/HTTP_303

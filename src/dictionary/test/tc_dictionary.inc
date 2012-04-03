@@ -191,6 +191,25 @@ class tc_dictionary extends tc_base{
 		$this->_check_bool($data,false);
 	}
 
+	function test_actc_as_array(){
+		$dict = new Dictionary(array("firstname" => "yarrino", "lastname" => "tomino"));
+		$this->assertEquals("yarrino",$dict["firstname"]);
+		$this->assertEquals("tomino",$dict["lastname"]);
+		$this->assertEquals(null,$dict["xxx"]);
+
+		$this->assertEquals(2,sizeof($dict));
+
+		$out = array();
+		foreach($dict as $key => $value){
+			$out[] = $key;
+			$out[] = $value;
+		}
+		$this->assertEquals("firstname,yarrino,lastname,tomino",join(",",$out));
+
+		$dict["very_lastname"] = "coder";
+		$this->assertEquals(3,sizeof($dict));
+	}
+
 	function _check_bool($data,$expected){
 		$d_data = array();
 		foreach($data as $v){

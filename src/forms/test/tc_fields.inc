@@ -690,6 +690,25 @@ class tc_fields extends tc_base
     }
 
     /**
+     * Testovani metody processResult() v RegexField
+     */
+    function test_process_result(){
+        $field = new UrlField();
+        foreach(array(
+            "http://www.ug.cz/" => "http://www.ug.cz/",
+            "www.ug.cz" => "http://www.ug.cz/",
+            "www.ug.cz/" => "http://www.ug.cz/",
+            "www.ug.cz/article?id=1" => "http://www.ug.cz/article?id=1",
+
+            // errors
+            "eee@eee.cz" => null,
+        ) as $input => $clean){
+            list($err,$cleaned) = $field->clean($input);
+            $this->assertEquals($clean,$cleaned);
+        }
+    }
+
+    /**
     * Kontrola EmailField.
     */
     function test_emailfield()

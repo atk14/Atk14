@@ -37,7 +37,7 @@ class tc_string extends tc_base{
 	}
 
 	function test_clone_and_copy(){
-		$orig = new String("Hello World");
+		$orig = new String("Hello World","latin1");
 		$clone = clone $orig;
 		$copy = $orig->copy();
 
@@ -46,6 +46,21 @@ class tc_string extends tc_base{
 		$this->assertEquals("Hi World",(string)$orig);
 		$this->assertEquals("Hello World",(string)$clone);
 		$this->assertEquals("Hello World",(string)$copy);
+
+		$this->assertEquals("latin1",$orig->getEncoding());
+		$this->assertEquals("latin1",$clone->getEncoding());
+		$this->assertEquals("latin1",$copy->getEncoding());
+
+	}
+
+	function test_length(){
+		$s1 = new String("pěšinka","utf-8");
+		$s2 = new String("pěšinka","ascii");
+		$s3 = new String("pěšinka"); // default is UTF-8, see initialize
+
+		$this->assertEquals(7,$s1->length());
+		$this->assertEquals(9,$s2->length());
+		$this->assertEquals(7,$s3->length());
 	}
 
 	function test_replace(){

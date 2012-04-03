@@ -470,7 +470,7 @@ class dates{
 
 	static function _to_ar($date){
 		settype($date,"string");
-		$ar = split("-",$date);
+		$ar = explode("-",$date);
 	
 		$_year = (int)$ar[0];
 		$_month = (int)$ar[1];

@@ -24,6 +24,29 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals("'o''neil \"da hacker\"'",$m["pg"]->escapeString4Sql("o'neil \"da hacker\""));
 	}
 
+	function test_escape_bool_4_sql(){
+		$m = &$this->_get_moles();
+
+		$this->assertEquals('TRUE',$m["pg"]->escapeBool4Sql(true));
+		$this->assertEquals('FALSE',$m["pg"]->escapeBool4Sql(false));
+
+		$this->assertEquals('TRUE',$m["my"]->escapeBool4Sql(true));
+		$this->assertEquals('FALSE',$m["my"]->escapeBool4Sql(false));
+
+		$this->assertEquals("Y",$m["ora"]->escapeBool4Sql(true));
+		$this->assertEquals("N",$m["ora"]->escapeBool4Sql(false));
+	}
+
+	function test_parse_bool_from_sql(){
+		$m = &$this->_get_moles();
+
+		$this->assertEquals(true,$m["pg"]->parseBoolFromSql("t"));
+		$this->assertEquals(false,$m["pg"]->parseBoolFromSql("f"));
+
+		$this->assertEquals(true,$m["my"]->parseBoolFromSql("1"));
+		$this->assertEquals(false,$m["my"]->parseBoolFromSql("0"));
+	}
+
 	function test_common_behaviour(){
 		$m = &$this->_get_moles();
 
@@ -79,45 +102,74 @@ class tc_dbmole extends tc_base{
 		$this->_test_table_count($dbmole,0);
 
 		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
-			"title" => "O'neil & sons",
-			"an_integer" => 22,
-			"price" => 33.3,
-			"text" => "\"O'neil has 2 sons.\"",
-			"create_date" => "2009-12-31",
+			"title" => "O'neil & daughter",
+			"an_integer" => 11,
+			"price" => 15.8,
+			"text" => "\"O'neil has just 1 daughter\"",
+			"create_date" => "2009-12-01",
+			"flag" => false
 		)));
 
 		$this->_test_table_count($dbmole,1);
 
 		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
-			"title" => "O'neil & daughter",
-			"an_integer" => 11,
-			"price" => 15.8,
-			"text" => "\"O'neil has just 1 daughter.\"",
-			"create_date" => "2009-12-01",
+			"title" => "O'neil & sons",
+			"an_integer" => 22,
+			"price" => 33.3,
+			"text" => "\"O'neil has 2 sons\"",
+			"create_date" => "2009-12-31",
+			"flag" => true
 		)));
 
 		$this->_test_table_count($dbmole,2);
 
-		$rows = $dbmole->selectRows("SELECT title,an_integer,price,text,create_date FROM test_table ORDER BY an_integer");
-		$rows[0]["create_date"] = preg_replace("/ .*$/","",$rows[0]["create_date"]);
+		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
+			"title" => "O'neil & daughter",
+			"an_integer" => 33,
+			"price" => 15.8,
+			"text" => "\"O'neil has just 1 daughter\"",
+			"create_date" => "2009-12-31",
+			"flag" => NULL,
+		)));
+
+		$this->_test_table_count($dbmole,3);
+		
+		$rows = $dbmole->selectRows("SELECT title,an_integer,price,text,create_date,flag FROM test_table ORDER BY an_integer");
+		$rows[0]["create_date"] = preg_replace("/ .*$/","",$rows[0]["create_date"]); // 2009-12-31 00:00:00 -> 2009-12-31
 		$rows[1]["create_date"] = preg_replace("/ .*$/","",$rows[1]["create_date"]);
+		$rows[2]["create_date"] = preg_replace("/ .*$/","",$rows[2]["create_date"]);
 		settype($rows[0]["price"],"float");
 		settype($rows[1]["price"],"float");
+		settype($rows[2]["price"],"float");
+
+		$rows[0]['flag']=$dbmole->parseBoolFromSql($rows[0]['flag']);
+		$rows[1]['flag']=$dbmole->parseBoolFromSql($rows[1]['flag']);
+		$rows[2]['flag']=$dbmole->parseBoolFromSql($rows[2]['flag']);
 
 		$this->assertEquals(array(
 			array (
 				'title' => "O'neil & daughter",
 				'an_integer' => '11',
 				'price' => 15.8,
-				'text' => '"O\'neil has just 1 daughter."',
+				'text' => '"O\'neil has just 1 daughter"',
 				'create_date' => '2009-12-01',
+				'flag' => false
 			),
 			array (
 				'title' => "O'neil & sons",
 				'an_integer' => '22',
 				'price' => 33.3,
-				'text' => '"O\'neil has 2 sons."',
+				'text' => '"O\'neil has 2 sons"',
 				'create_date' => '2009-12-31',
+				'flag' => true,
+			),
+			array (
+				'title' => "O'neil & daughter",
+				'an_integer' => '33',
+				'price' => 15.8,
+				'text' => '"O\'neil has just 1 daughter"',
+				'create_date' => '2009-12-31',
+				'flag' => null,
 			),
 		),$rows);
 
@@ -128,16 +180,16 @@ class tc_dbmole extends tc_base{
 		settype($row["price"],"float");
 		$this->assertEquals(
 			array (
-				'title' => "O'neil & sons",
-				'an_integer' => '22',
-				'price' => 33.3,
-				'text' => '"O\'neil has 2 sons."',
+				'title' => "O'neil & daughter",
+				'an_integer' => '33',
+				'price' => 15.8,
+				'text' => '"O\'neil has just 1 daughter"',
 				'create_date' => '2009-12-31',
 			),
 		$row);
 
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array());
-		$this->assertEquals(array("11","22"),$ar);
+		$this->assertEquals(array("11","22","33"),$ar);
 
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1));
 		$this->assertEquals(array("11"),$ar);
@@ -149,36 +201,42 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals(array("22"),$ar);
 
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1, "offset" => 2));
+		$this->assertEquals(array("33"),$ar);
+
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1, "offset" => 3));
 		$this->assertEquals(array(),$ar);
 
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table WHERE an_integer=-an_integer");
 		$this->assertEquals(array(),$ar);
 
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 FROM test_table ORDER BY an_integer",array());
-		$this->assertEquals(array("11" => "12","22" => "23"),$ar);
+		$this->assertEquals(array("11" => "12","22" => "23","33" => "34"),$ar);
 
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 as f1, an_integer+2 as f2 FROM test_table ORDER BY an_integer",array());
 		$this->assertEquals(array(
 			"11" => array("f1" => "12", "f2" => "13"),
-			"22" => array("f1" => "23", "f2" => "24")
+			"22" => array("f1" => "23", "f2" => "24"),
+			"33" => array("f1" => "34", "f2" => "35")
 		),$ar);
 
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 as f1, an_integer+2 as f2, null as f3 FROM test_table ORDER BY an_integer",array());
 		$this->assertEquals(array(
 			"11" => array("f1" => "12", "f2" => "13", "f3" => null),
-			"22" => array("f1" => "23", "f2" => "24", "f3" => null)
+			"22" => array("f1" => "23", "f2" => "24", "f3" => null),
+			"33" => array("f1" => "34", "f2" => "35", "f3" => null)
 		),$ar);
 
 		// je docela dobry nesmysl vybirat do asociativniho pole jeden sloupec
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer FROM test_table ORDER BY an_integer",array());
 		$this->assertEquals(array(
 			"11" => array(),
-			"22" => array()
+			"22" => array(),
+			"33" => array(),
 		),$ar);
 
-		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=33 WHERE an_integer=22"));
+		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=44 WHERE an_integer=22"));
 
-		$this->assertEquals("33",$dbmole->selectSingleValue("SELECT MAX(an_integer) FROM test_table"));
+		$this->assertEquals("44",$dbmole->selectSingleValue("SELECT MAX(an_integer) FROM test_table"));
 
 		// do_not_escape
 		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
@@ -269,7 +327,4 @@ class tc_dbmole extends tc_base{
 	function _lorem_ipsum(){
 		return 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.';
 	}
-
-	
 }
-?>

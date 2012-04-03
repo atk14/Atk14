@@ -1,3 +1,14 @@
+{*
+ * The page Layout template
+ * 
+ * Placeholders
+ * ------------
+ *	head						 	located whithin the <head> tag
+ *	main							the main (or default) one
+ *	js_script_tags		place for javascript script tags
+ *	js								place for javascript code
+ *	domready					place for domready javascript code
+ *}
 <!DOCTYPE html>
 <html lang="{$lang}">
 
@@ -16,6 +27,7 @@
 			{stylesheet_link_tag file="lib/blueprint-css/blueprint/ie.css" media="screen, projection"}
 		<![endif]-->
 		{stylesheet_link_tag file="styles.css" media="screen, projection"}
+		{placeholder for=head}
 	</head>
 
 	<body id="body_{$controller}_{$action}">
@@ -38,10 +50,17 @@
 			</footer>
 		</div>
 
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="{$root|h}public/javascripts/libs/jquery/jquery-1.6.2.min.js"><\/script>')</script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="{$public|h}javascripts/libs/jquery/jquery-1.7.1.min.js"><\/script>')</script>
 		{javascript_script_tag file="atk14.js"}
 		{javascript_script_tag file="application.js"}
+		{placeholder for=js_script_tags}
+		{javascript_tag}
+			{placeholder for=js}
+			$(function() \{
+				{placeholder for=domready}
+			\});
+		{/javascript_tag}
 
 		<!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
 			chromium.org/developers/how-tos/chrome-frame-getting-started -->

@@ -24,6 +24,8 @@ ATK14 consists of
 
 At the moment ATK14 runs on Postgresql only and requires PHP5.3
 
-A few life examples are at http://www.atk14.net/
+The ATK14 Project site is at http://www.atk14.net/
+
+The ATK14 Book is at http://book.atk14.net/
 
 The API reference is at http://api.atk14.net/ 

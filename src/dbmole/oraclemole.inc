@@ -2,43 +2,43 @@
 /**
  *
  *
-* Pouziti:
-*
-*		DbMole::RegisterErrorHandler("_oracle_mole_error_handler"); //registrace error handleru pro tridu OracleMole
-*
-* 	$mole = &OracleMole::GetInstance();
-*		$mole_ov = &OracleMole::GetInstance("ov");
-*
-* 	$mole->doQuery("BEGIN active_users(); END;");
-*		$mole->commit();
-*
-*		// nacteni jedine hodnoty
-*		echo "celk. pocet clanku: ";
-*		echo $mole->selectSingleValue("SELECT COUNT(*) FROM articles","integer");
-*
-*		// nacteni jednoho radku
-* 	$row = $mole->selectFirstRow("SELECT * FROM articles WHERE id=:id",array(":id" => 2223445));
-*		echo $row["name"];
-*
-*		// nacteni vice radku
-* 	$rows = $mole->selectRows("SELECT * FROM articles WHERE source_id=:source_id",array(":source_id" => 112233"),array("limit" => 20,"offset" => 40));
-*		while(list(,$row) = each($rows)){
-*			echo "$row[id]: $row[name]\n";
-*			echo "body:\n";
-*			echo $row["body"];	// obsah CLOBu a BLOBu bude automaticky fetchnut
-*			echo "\n-------------------\n";
-*		}
-*
-* 	// TODO: dodelat moznost bindovat descriptoru pro large objecty
-* 	// Nyni lze pouzit nesledujici:
-*		$stmt = $mole->executeQuery(
-*			"UPDATE articles SET bode=EMPTY_CLOB() WHERE id=:id RETURNING body INTO :body",
-*			array(":id" => 3443),
-*			array("execute_statement" => false)
-*		);
-*		// A zde uz si nabindovani :body udelat pekne rucne!
-*		OCIFreeStatement($stmt);
-*
+ * Pouziti:
+ *
+ *		DbMole::RegisterErrorHandler("_oracle_mole_error_handler"); //registrace error handleru pro tridu OracleMole
+ *
+ * 	$mole = &OracleMole::GetInstance();
+ *		$mole_ov = &OracleMole::GetInstance("ov");
+ *
+ * 	$mole->doQuery("BEGIN active_users(); END;");
+ *		$mole->commit();
+ *
+ *		// nacteni jedine hodnoty
+ *		echo "celk. pocet clanku: ";
+ *		echo $mole->selectSingleValue("SELECT COUNT(*) FROM articles","integer");
+ *
+ *		// nacteni jednoho radku
+ * 	$row = $mole->selectFirstRow("SELECT * FROM articles WHERE id=:id",array(":id" => 2223445));
+ *		echo $row["name"];
+ *
+ *		// nacteni vice radku
+ * 	$rows = $mole->selectRows("SELECT * FROM articles WHERE source_id=:source_id",array(":source_id" => 112233"),array("limit" => 20,"offset" => 40));
+ *		while(list(,$row) = each($rows)){
+ *			echo "$row[id]: $row[name]\n";
+ *			echo "body:\n";
+ *			echo $row["body"];	// obsah CLOBu a BLOBu bude automaticky fetchnut
+ *			echo "\n-------------------\n";
+ *		}
+ *
+ * 	// TODO: dodelat moznost bindovat descriptoru pro large objecty
+ * 	// Nyni lze pouzit nesledujici:
+ *		$stmt = $mole->executeQuery(
+ *			"UPDATE articles SET bode=EMPTY_CLOB() WHERE id=:id RETURNING body INTO :body",
+ *			array(":id" => 3443),
+ *			array("execute_statement" => false)
+ *		);
+ *		// A zde uz si nabindovani :body udelat pekne rucne!
+ *		OCIFreeStatement($stmt);
+ *
  * @package Atk14
  * @subpackage InternalLibraries
  * @filesource
@@ -88,6 +88,15 @@ class OracleMole extends DbMole{
 		$query = &$this->_Query;
 		$bind_ar = &$this->_BindAr;
 		$options = &$this->_Options;
+
+		foreach($bind_ar as &$value){
+			if(is_object($value)){
+				$value = $value->getId();
+			}
+			if(is_bool($value)){
+				$value = $this->escapeBool4Sql($value);
+			}	
+		}
 
 		// toto odstranuje z SQL prikazu znak \r, ktery zpusobuje problemy
 		// na ihnedu toto resila fce remover...
@@ -145,7 +154,7 @@ class OracleMole extends DbMole{
 		if($options["bind_values"]){
 			reset($bind_ar);
 			while(list($key,) = each($bind_ar)){
-				if(is_object($bind_ar[$key])){ $bind_ar[$key] = $bind_ar[$key]->getId(); }
+				//if(is_object($bind_ar[$key])){ $bind_ar[$key] = $bind_ar[$key]->getId(); }
 				// bindovani large objektu
 				// v podmince je zamerne $_typ=, aby doslo k priprazeni spravneho typu
 				if((in_array($key,$options["blobs"]) && $_type=OCI_B_BLOB) || (in_array($key,$options["clobs"]) && $_type=OCI_B_CLOB)){
@@ -397,5 +406,12 @@ class OracleMole extends DbMole{
 		}
 		return $out;
 	}
+
+	/**
+	 * $this->escapeBool4Sql(true); // returns Y
+	 * $this->escapeBool4Sql(false); // returns N
+	 */
+	function escapeBool4Sql($value){
+		return $value ? DBMOLE_ORACLE_TRUE : DBMOLE_ORACLE_FALSE;
+	}
 }
-?>

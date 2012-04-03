@@ -1,4 +1,7 @@
 <?php
+!defined("DBMOLE_ORACLE_TRUE") && define("DBMOLE_ORACLE_TRUE","Y");
+!defined("DBMOLE_ORACLE_FALSE") && define("DBMOLE_ORACLE_FALSE","N");
+
 /**
  * Provides basic functionality with databases.
  *
@@ -403,7 +406,12 @@ class DbMole{
 			return;
 		}
 
-		mail($email_address,"DbMole: error report",$this->getErrorReport());
+		sendmail(array(
+			"to" => $email_address,
+			"subject" => "DbMole: error report",
+			"body" => $this->getErrorReport(),
+			"mime_type" => "text/plain",
+		));
 	}
 
 	function logErrorReport(){
@@ -756,7 +764,8 @@ class DbMole{
 				continue;
 			}
 			$query_values[] = ":$_field_name";
-			$bind_ar[":$_field_name"] = is_object($_value) ? $_value->getId() : $_value;
+			//Matyas - test on object is performed in parameters bindings
+			$bind_ar[":$_field_name"] = $_value;
 		}
 
 		return $this->doQuery("INSERT INTO $table_name (".join(",",$query_fields).") VALUES(".join(",",$query_values).")",$bind_ar,$options);
@@ -811,9 +820,10 @@ class DbMole{
 			$bind_ar = array();
 			reset($values);
 			while(list($_key,$_value) = each($values)){
-				if(!isset($options["do_not_escape"]["$_key"])){
+				/*if(!isset($options["do_not_escape"]["$_key"])){
 					$bind_ar[":$_key"] = is_object($_value) ? $_value->getId() : $_value;
-				}
+				}*/
+				$bind_ar[":$_key"] = $_value;
 				if($_key == $id_field){ continue; }
 				if(!isset($options["do_not_escape"]["$_key"])){
 					$update_ar[] = "$_key=:$_key";	
@@ -921,6 +931,29 @@ class DbMole{
 		return $t;
 	}
 
+	function escapeBool4Sql($value){
+		return $value? 'TRUE' : 'FALSE';
+	}
+
+	/**
+	 * Realizes the query execution.
+	 * escape given value for using in sql string
+	 * @param mixed php value
+	 * @returns string SQL reprezentation of given value
+	 */
+	function escapeValue4sql($value){
+			if(is_object($value)){ $value = $value->getId(); }
+			if($value===null)
+					return 'NULL';
+			if(is_float($value))
+					return $this->escapeFloat4sql($value);
+			if(is_integer($value))
+					return $value;
+			if(is_bool($value))
+					return $this->escapeBool4sql($value);
+			return $this->escapeString4Sql($value);
+	}
+
 	/**
 	 * Realizes the query execution.
 	 *
@@ -935,14 +968,8 @@ class DbMole{
 		// bindovani promennych
 		// vyuzijeme zde schopnosti fce strtr
 		// pokud se napr. budou bindovat 2 hodnoty :domain a :domain_name, strtr si s tim poradi!
-		reset($bind_ar);
-		while(list($key,$value) = each($bind_ar)){
-			if(!isset($value)){ $bind_ar[$key] = "NULL"; continue; }
-			if(is_object($value)){ $value = $value->getId(); }
-			if(!is_integer($value) && !is_float($value)){
-				$value = $this->escapeString4Sql($value);
-			}
-			$bind_ar[$key] = $value;
+		foreach($bind_ar as &$value){
+			$value=$this->escapeValue4sql($value);
 		}
 		$query_to_execute = strtr($query,$bind_ar);
 
@@ -1047,4 +1074,15 @@ class DbMole{
 		);
 	}
 
+	/**
+	 * @params mixed boolean field returned from db layer (in form of string or integer or...)
+	 * @return bool  PHP boolean representation
+	 */
+	function parseBoolFromSql($value){
+		if(is_null($value)){return null; }
+		if(is_numeric($value)){
+			return (bool)$value;
+		}
+		return in_array(strtolower($value),array("t","true","y"));
+	}
 }

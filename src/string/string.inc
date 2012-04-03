@@ -25,8 +25,16 @@ class String{
 	 * $str2 = new String($str);
 	 * </code>
 	 */
-	function String($string = ""){
+	function String($string = "",$encoding = null){
+		if(!isset($encoding) && is_object($string) && method_exists($string,"getEncoding")){
+			$encoding = $string->getEncoding();
+		}
+		if(!isset($encoding)){
+			$encoding = defined("DEFAULT_CHARSET") ? DEFAULT_CHARSET : "UTF-8";
+		}
+
 		$this->_String = "$string";
+		$this->_Encoding = $encoding;
 	}
 
 	/**
@@ -38,11 +46,11 @@ class String{
 	 * @param string $string
 	 * @return String
 	 */
-	function ToObject($string){
+	function ToObject($string,$encoding = null){
 		if(is_object($string) && strtolower(get_class($string))=="string"){
 			return $string;
 		}
-		return new String($string);
+		return new String($string,$encoding);
 	}
 
 	/**
@@ -66,7 +74,7 @@ class String{
 	 * </ul>
 	 * @return String
 	 */
-	function RandomString($length = 32,$options = array()){
+	static function RandomString($length = 32,$options = array()){
 		if(is_array($length)){
 			$options = $length;
 			$length = 32;
@@ -99,7 +107,7 @@ class String{
 	 * @param integer $length
 	 * @return String
 	 */
-	function RandomPassword($length = 10){
+	static function RandomPassword($length = 10){
 		settype($length,"integer");
 		$numeric_versus_alpha_total = 10;
 		$numeric_versus_alpha_numeric = 2;
@@ -161,12 +169,17 @@ class String{
 	 */
 	function getId(){ return $this->_String; }
 
+	function getEncoding(){ return $this->_Encoding; }
+
 	/**
 	 * Returns length of string.
 	 *
 	 * @return integer length of the string
 	 */
-	function length(){ return strlen($this->_String); }
+	function length(){
+		//return strlen($this->_String);
+		return translate::length($this->_String,$this->getEncoding());
+	}
 	
 	/**
 	 * Replaces string(s) with another string(s).
@@ -485,11 +498,14 @@ class String{
 	 */
 	function _copy($string = null){
 		if(!isset($string)){ $string = $this->_String; }
-		return new String($string);
+		return new String($string,$this->_Encoding);
 	}
 	
 	/**
-	 * @access private
+	 * Magic method
+	 *
+	 * $s = new String("Hello");
+	 * echo "$s"; // prints Hello
 	 */
 	function __toString(){
 		return $this->_String;

@@ -11,6 +11,7 @@ CREATE TABLE test_table (
     cena2 double precision,
     text text,
     perex text,
+    flag boolean,
     binary_data bytea,
     binary_data2 bytea,
     create_date date,
@@ -31,6 +32,7 @@ CREATE TABLE test_table (
     cena2 float,
     text text,
     perex text,
+    flag boolean,
     binary_data binary,
     binary_data2 binary,
     create_date date,
@@ -50,6 +52,7 @@ CREATE TABLE test_table(
   perex CLOB,
   binary_data BLOB,
   binary_data2 BLOB,
+  flag CHAR(1),
   create_date DATE,
   create_time DATE DEFAULT SYSDATE,
   CONSTRAINT pk_test_table_id PRIMARY KEY (id) USING INDEX TABLESPACE tbs_eol_indexes

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-30 11:10+0100\n"
-"PO-Revision-Date: 2012-01-30 11:16+0100\n"
+"POT-Creation-Date: 2012-02-25 09:35+0100\n"
+"PO-Revision-Date: 2012-02-25 09:51+0100\n"
 "Last-Translator: Yarri <do-not-write-me@ever.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -63,24 +63,24 @@ msgstr "Vložta správnou hodnotu."
 #: ../atk14/src/forms/fields.inc:192
 #: ../atk14/src/forms/fields.inc:405
 msgid "Ensure this value has at most %max% characters (it has %length%)."
-msgstr ""
+msgstr "Hodnota musí být dlouhá nejvýše %max% znaků (teď má %length%)."
 
 #: ../atk14/src/forms/fields.inc:193
 #: ../atk14/src/forms/fields.inc:406
 msgid "Ensure this value has at least %min% characters (it has %length%)."
-msgstr ""
+msgstr "Hodnota musí mít alespoň %min% znaků (teď má %length%)."
 
 #: ../atk14/src/forms/fields.inc:194
 msgid "Ensure this value has at most %max% characters."
-msgstr ""
+msgstr "Tato hodnota "
 
 #: ../atk14/src/forms/fields.inc:195
 msgid "Ensure this value has at least %min% characters."
-msgstr ""
+msgstr "Hodnota musí mít alespoň %min% znaků."
 
 #: ../atk14/src/forms/fields.inc:196
 msgid "Ensure this value has between %min% and %max% characters."
-msgstr ""
+msgstr "Délka řetězce musí být mezi %min% a %max% znaky."
 
 #: ../atk14/src/forms/fields.inc:276
 msgid "Enter a whole number."
@@ -89,12 +89,12 @@ msgstr "Zadejte celé číslo."
 #: ../atk14/src/forms/fields.inc:277
 #: ../atk14/src/forms/fields.inc:330
 msgid "Ensure this value is less than or equal to %value%."
-msgstr ""
+msgstr "Hodnota musí být rovna nebo  menší než %value%."
 
 #: ../atk14/src/forms/fields.inc:278
 #: ../atk14/src/forms/fields.inc:331
 msgid "Ensure this value is greater than or equal to %value%."
-msgstr ""
+msgstr "Hodnota musí být rovna nebo větší než %value%."
 
 #: ../atk14/src/forms/fields.inc:329
 msgid "Enter a number."
@@ -106,7 +106,7 @@ msgstr "Zadejte platnou e-mailovou adresu."
 
 #: ../atk14/src/forms/fields.inc:495
 msgid "Select a valid choice. That choice is not one of the available choices."
-msgstr ""
+msgstr "Vyberte platnou hodnotu. Vybraná hodnota není ani jedna z nabízených hodnot."
 
 #: ../atk14/src/forms/fields.inc:496
 msgid "Please, choose the right option."
@@ -126,7 +126,7 @@ msgstr "Zadejte platné datum, hodiny, minuty a sekundy."
 
 #: ../atk14/src/forms/fields.inc:660
 msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
+msgstr "Vyberte platnou hodnotu. %(value) není jedna z nabízených možností."
 
 #: ../atk14/src/forms/fields.inc:661
 msgid "Enter a list of values."
@@ -162,11 +162,11 @@ msgstr ""
 
 #: ../atk14/src/forms/fields.inc:777
 msgid "Ensure this image is at least %min% pixels wide (it is %width%)."
-msgstr ""
+msgstr "Obrázek musí mít alespoň %min% bodů na šířku (nyní má %height%). "
 
 #: ../atk14/src/forms/fields.inc:778
 msgid "Ensure this image is at least %min% pixels high (it is %height%)."
-msgstr ""
+msgstr "Obrázek musí mít alespoň %min% bodů na výšku (nyní má %height%). "
 
 #: ../app/controllers/main_controller.php:4
 #: ../atk14/skelet/app/controllers/main_controller.php:4
@@ -174,41 +174,43 @@ msgid "Welcome!"
 msgstr "Vítejte"
 
 #: ../app/controllers/creatures_controller.php:13
+#: ../atk14/skelet/app/controllers/creatures_controller.php:13
 msgid "The Creature Show"
 msgstr "Přehlídka příšer"
 
 #: ../app/controllers/creatures_controller.php:34
+#: ../atk14/skelet/app/controllers/creatures_controller.php:34
 msgid "Creating new creature"
 msgstr "Vytvoření nové příšerky"
 
 #: ../app/controllers/creatures_controller.php:38
-#: ../atk14/skelet/app/controllers/creatures_controller.php:34
+#: ../atk14/skelet/app/controllers/creatures_controller.php:38
 msgid "A new creature has been successfuly created"
 msgstr "Nová příšerka byla vytvořena"
 
 #: ../app/controllers/creatures_controller.php:47
-#: ../atk14/skelet/app/controllers/creatures_controller.php:43
+#: ../atk14/skelet/app/controllers/creatures_controller.php:47
 #, php-format
 msgid "Detail of the creature #%s"
 msgstr "Podrobnosti o příšerce #%s"
 
 #: ../app/controllers/creatures_controller.php:72
-#: ../atk14/skelet/app/controllers/creatures_controller.php:62
+#: ../atk14/skelet/app/controllers/creatures_controller.php:72
 #, php-format
 msgid "Editing the creature #%s"
 msgstr "Editovat příšerku #%s"
 
 #: ../app/controllers/creatures_controller.php:79
-#: ../atk14/skelet/app/controllers/creatures_controller.php:69
+#: ../atk14/skelet/app/controllers/creatures_controller.php:79
 msgid "The creature has been changed successfuly."
 msgstr "Příšerka byla úspěšně změněna."
 
-#: ../app/helpers/modifier.display_bool.php:9
+#: ../app/helpers/modifier.display_bool.php:13
 #: ../atk14/skelet/app/helpers/modifier.display_bool.php:9
 msgid "Yes"
 msgstr "Ano"
 
-#: ../app/helpers/modifier.display_bool.php:11
+#: ../app/helpers/modifier.display_bool.php:14
 #: ../atk14/skelet/app/helpers/modifier.display_bool.php:11
 msgid "No"
 msgstr "Ne"
@@ -239,8 +241,8 @@ msgstr "URL obrázku"
 msgid "Search term"
 msgstr "Hledat výraz"
 
-#: ../config/routes.php:71
-#: ../atk14/skelet/config/routes.php:71
+#: ../config/routers/default_router.php:82
+#: ../atk14/skelet/config/routers/default_router.php:82
 msgid "my beautiful application"
 msgstr "moje nádherná aplikace"
 
@@ -413,13 +415,13 @@ msgstr "To, co vidíte, je čerstvě nainstalovaná ATK14 aplikace."
 
 #: smarty.c:98
 #: smarty.c:230
-msgid "This HTTP request is handled by the MainController and the index() action."
-msgstr "Tento HTTP požadavek je obsloužen kontrolerem MainController a jeho akcí index()."
+msgid "This HTTP request is handled by the <code>app/controllers/main_controller.php</code> and the <code>index()</code> action."
+msgstr "Tento HTTP požadavek je obsloužen kontrolerem <code>app/controllers/main_controller.php</code> a jeho akcí <code>index()</code>."
 
 #: smarty.c:101
 #: smarty.c:233
-msgid "This is app/views/main/index.tpl template."
-msgstr "Toto je šablona app/views/main/index.tpl."
+msgid "This is <code>app/views/main/index.tpl</code> template."
+msgstr "Toto je šablona <code>app/views/main/index.tpl</code>."
 
 #: smarty.c:104
 #: smarty.c:236
@@ -443,8 +445,8 @@ msgstr "Změnit jazyk: <a href=\"%1\">angličtina</a> nebo <a href=\"%2\">češt
 
 #: smarty.c:116
 #: smarty.c:248
-msgid "gettext dictionaries are placed in locale/ directory"
-msgstr "gettextove slovníky jsou umístěny v adresáři locale/"
+msgid "gettext dictionaries are placed in <code>locale/</code> directory"
+msgstr "gettextové slovníky jsou umístěny v adresáři <code>locale/</code>"
 
 #: smarty.c:119
 #: smarty.c:251
@@ -471,6 +473,17 @@ msgstr "API reference"
 msgid "ATK14 project page on Github"
 msgstr "stránky projektu ATK14 na Githubu"
 
+#~ msgid "ATK14 Project"
+#~ msgstr "ATK14 Projekt"
+#~ msgid ""
+#~ "This HTTP request is handled by the MainController and the index() action."
+#~ msgstr ""
+#~ "Tento HTTP požadavek je obsloužen kontrolerem MainController a jeho akcí "
+#~ "index()."
+#~ msgid "This is app/views/main/index.tpl template."
+#~ msgstr "Toto je šablona app/views/main/index.tpl."
+#~ msgid "gettext dictionaries are placed in locale/ directory"
+#~ msgstr "gettextove slovníky jsou umístěny v adresáři locale/"
 #~ msgid "Listing creatures"
 #~ msgstr "Seznam příšer"
 #~ msgid "ATK14 Powered Website"
