@@ -2,6 +2,33 @@
 /**
  * Input field classes.
  *
+ * Basic field types supported by Atk14.
+ *
+ * String based fields:
+ *
+ * - CharField
+ * - IntegerField
+ * - FloatField
+ * - RegexField
+ * - EmailField
+ * - IPAddressField
+ * - DateField
+ * - DateTimeField
+ * - DateTimeWithSecondsField
+ *
+ * Checkbox based fields:
+ * - BooleanField
+ *
+ * Select based fields:
+ *
+ * - ChoiceField
+ * - MultipleChoiceField
+ *
+ * File based fields:
+ *
+ * - FileField
+ * - ImageField
+ *
  * @package Atk14
  * @subpackage InternalLibraries
  * @filesource
@@ -33,10 +60,16 @@ class JsValidator{
 
 
 /**
- * Parent input field class.
+ * Parent class for validation of input fields.
  *
- * Base class for all fields.
- * This class shouldn't be used directly but through its descendant.
+ * This is the base class for all field types and shouldn't be used directly.
+ * It should be used through its descendants.
+ *
+ * When you develop a new validation class for new field type there are three basic methods available
+ * during a lifecycle of a Field:
+ * - {@link Field::Field() __constructor()} - declaration of input field. Provides information about field type and its attributes.
+ * - {@link Field::format_initial_data()} provides presentation of values
+ * - {@link Field::clean()} provides validation of values
  *
  * @package Atk14
  * @subpackage InternalLibraries
@@ -46,6 +79,7 @@ class Field
 {
 
     /**
+     *
      * Widget instance.
      *
      * Defines how the input field is rendered.
@@ -54,7 +88,28 @@ class Field
      */
     var $widget = null;
 
+    /**
+     * Several messages for various states.
+     *
+     * @var array
+     */
+    var $messages = array();
 
+    /**
+     * Constructor.
+     *
+     * @param array $options Possible options
+     * <ul>
+     * <li><b>required</b> - boolean</li>
+     * <li><b>widget</b> - {@see Widget}</li>
+     * <li><b>label</b> - </li>
+     * <li><b>initial</b> - </li>
+     * <li><b>help_text</b> - </li>
+     * <li><b>hint</b> - </li>
+     * <li><b>error_messages</b> - </li>
+     * <li><b>disabled boolean</b> - </li>
+     * </ul>
+     */
     function Field($options=array())
     {
         // default data
@@ -150,6 +205,10 @@ class Field
             (is_array($value) && sizeof($value)==0);
     }
 
+    /**
+     * This method provides value presentation.
+     *
+     */
     function format_initial_data($data){
         return $data;
     }
