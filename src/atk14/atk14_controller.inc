@@ -62,6 +62,15 @@ class Atk14Controller{
 	var $action = "";
 
 	/**
+	 * Flag that controls whether layout will be rendered.
+	 *
+	 * Template still can be rendered independently on this variable.
+	 * {@link $render_template}
+	 * @var boolean
+	 */
+	var $render_layout = true;
+
+	/**
 	 * Flag that controls whether template will be rendered.
 	 *
 	 * Default value is true and template {@link $template_name} will be rendered.
