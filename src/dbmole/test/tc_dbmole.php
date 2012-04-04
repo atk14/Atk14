@@ -1,70 +1,55 @@
 <?php
 class tc_dbmole extends tc_base{
 	function test_uses_sequencies(){
-		$m = &$this->_get_moles();
-
-		$this->assertFalse($m["my"]->usesSequencies());
-		$this->assertTrue($m["ora"]->usesSequencies());
-		$this->assertTrue($m["pg"]->usesSequencies());
+		$this->assertFalse($this->my->usesSequencies());
+		$this->assertTrue($this->ora->usesSequencies());
+		$this->assertTrue($this->pg->usesSequencies());
 	}
 
 	function test_get_database_type(){
-		$m = &$this->_get_moles();
-		
-		$this->assertEquals("mysql",$m["my"]->getDatabaseType());
-		$this->assertEquals("postgresql",$m["pg"]->getDatabaseType());
-		$this->assertEquals("oracle",$m["ora"]->getDatabaseType());
-		$this->assertEquals("unknown",$m["base"]->getDatabaseType());
+		$this->assertEquals("mysql",$this->my->getDatabaseType());
+		$this->assertEquals("postgresql",$this->pg->getDatabaseType());
+		$this->assertEquals("oracle",$this->ora->getDatabaseType());
+		$this->assertEquals("unknown",$this->base->getDatabaseType());
 	}
 
 	function test_escape_string_4_sql(){
-		$m = &$this->_get_moles();
-		
-		$this->assertEquals("'o\\'neil \\\"da hacker\\\"'",$m["my"]->escapeString4Sql("o'neil \"da hacker\""));
-		$this->assertEquals("'o''neil \"da hacker\"'",$m["pg"]->escapeString4Sql("o'neil \"da hacker\""));
+		$this->assertEquals("'o\\'neil \\\"da hacker\\\"'",$this->my->escapeString4Sql("o'neil \"da hacker\""));
+		$this->assertEquals("'o''neil \"da hacker\"'",$this->pg->escapeString4Sql("o'neil \"da hacker\""));
 	}
 
 	function test_escape_bool_4_sql(){
-		$m = &$this->_get_moles();
+		$this->assertEquals('TRUE',$this->pg->escapeBool4Sql(true));
+		$this->assertEquals('FALSE',$this->pg->escapeBool4Sql(false));
 
-		$this->assertEquals('TRUE',$m["pg"]->escapeBool4Sql(true));
-		$this->assertEquals('FALSE',$m["pg"]->escapeBool4Sql(false));
+		$this->assertEquals('TRUE',$this->my->escapeBool4Sql(true));
+		$this->assertEquals('FALSE',$this->my->escapeBool4Sql(false));
 
-		$this->assertEquals('TRUE',$m["my"]->escapeBool4Sql(true));
-		$this->assertEquals('FALSE',$m["my"]->escapeBool4Sql(false));
-
-		$this->assertEquals("Y",$m["ora"]->escapeBool4Sql(true));
-		$this->assertEquals("N",$m["ora"]->escapeBool4Sql(false));
+		$this->assertEquals("Y",$this->ora->escapeBool4Sql(true));
+		$this->assertEquals("N",$this->ora->escapeBool4Sql(false));
 	}
 
 	function test_parse_bool_from_sql(){
-		$m = &$this->_get_moles();
+		$this->assertEquals(true,$this->pg->parseBoolFromSql("t"));
+		$this->assertEquals(false,$this->pg->parseBoolFromSql("f"));
 
-		$this->assertEquals(true,$m["pg"]->parseBoolFromSql("t"));
-		$this->assertEquals(false,$m["pg"]->parseBoolFromSql("f"));
-
-		$this->assertEquals(true,$m["my"]->parseBoolFromSql("1"));
-		$this->assertEquals(false,$m["my"]->parseBoolFromSql("0"));
+		$this->assertEquals(true,$this->my->parseBoolFromSql("1"));
+		$this->assertEquals(false,$this->my->parseBoolFromSql("0"));
 	}
 
 	function test_common_behaviour(){
-		$m = &$this->_get_moles();
-
-		$this->_test_common_behaviour($m["my"]);
-		$this->_test_common_behaviour($m["pg"]);
-		$this->_test_common_behaviour($m["ora"]);
+		$this->_test_common_behaviour($this->my);
+		$this->_test_common_behaviour($this->pg);
+		$this->_test_common_behaviour($this->ora);
 	}
 
 	function test_pgmole(){
-		$m = &$this->_get_moles();
-		$dbmole = &$m["pg"];
-
+		$dbmole = &$this->pg;
 		$this->_test_select_sequence($dbmole);
 	}
 
 	function test_oraclemole(){
-		$m = &$this->_get_moles();
-		$dbmole = &$m["ora"];
+		$dbmole = &$this->ora;
 
 		$this->_test_select_sequence($dbmole);
 
@@ -305,15 +290,7 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals($expected_val,$i);
 	}
 
-	function &_get_moles(){
-		$out = array(
-			"base" => new DbMole(),
-		);	
-		$out["my"] = &MysqlMole::GetInstance();
-		$out["pg"] = &PgMole::GetInstance();
-		$out["ora"] = &OracleMole::GetInstance();
-		return $out;
-	}
+
 
 	function _binary_data($repeated = 1){
 		$out = array();
