@@ -7,6 +7,7 @@ require("../../string/load.inc");
 require("../load.php");
 require("./inobj_testtable.inc");
 require("./article.inc");
+require("./image.inc");
 require("./author.inc");
 
 function &dbmole_connection($dbmole){

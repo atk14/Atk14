@@ -261,12 +261,13 @@ class TableRecord_Base extends inobj{
 	 * getBelongsTo.
 	 *
 	 * <code>
-	 * $article = inobj_Article::GetInstanceById(111);
-	 * $author = $article->getBelongsTo("author");
+	 *	 $article = Article::GetInstanceById(111);
+	 *	 $author = $article->getBelongsTo("author");
+	 *	 $author = $article->getBelongsTo("Author");
 	 * </code>
 	 *
 	 * <code>
-	 * $author = $article->getBelongsTo("author",array(
+	 * 	$author = $article->getBelongsTo("author",array(
 	 *		"class_name" => "inobj_Author",
 	 *		"attribute_name" => "author_id"
 	 *	));
@@ -278,17 +279,26 @@ class TableRecord_Base extends inobj{
 	 * @todo add comment
 	 */
 	function getBelongsTo($object,$options = array()){
-		TableRecord::_NormalizeOptions($options);
+		TableRecord::_NormalizeOptions(array($options),$options);
+
+		$str = new String($object);
+
+		$guessed_class_name = str_replace("_","",$object);
+		if(class_exists("inobj_$guessed_class_name")){ $guessed_class_name = "inobj_$guessed_class_name"; }
+
 		$options = array_merge(array(
-			"class_name" => "inobj_".str_replace("_","",$object),
-			"attribute_name" => "{$object}_id",
-			"order" => "order_by",
+			"class_name" => $guessed_class_name,
+			"attribute_name" => $str->underscore()."_id",
 		),$options);
 
 		$class_name = $options["class_name"];
 		$attribute_name = $options["attribute_name"];
+
+		if(is_null($value = $this->getValue($options["attribute_name"]))){
+			return null;
+		}
 		
-		eval("\$out = $class_name::GetInstanceById(".$this->getValue($options["attribute_name"]).");");
+		eval("\$out = $class_name::GetInstanceById(\$value);");
 		return $out;
 	}
 
@@ -377,15 +387,23 @@ class TableRecord_Base extends inobj{
 	 *
 	 * Since PHP5.3 Finder can be used in context with a specific class. Then the "class_name" option is not needed.
 	 * <code>
-	 * $finder = Book::Finder(array(
+	 *	$finder = Book::Finder(array(
 	 *		"limit" => 20,
+	 *	));
+	 *	$finder = Book::Finder(array(
+	 *		"conditions" => array("title" => "Foo Bar"),
+	 *		"limit" => 20
+	 *	));
+	 *	$finder = Book::Finder("title","Foo Bar",array(
+	 *		"limit" => 20
 	 *	));
 	 * </code>
 	 *
 	 * @param array $options
 	 */
-	static function Finder($options){
-		TableRecord::_NormalizeOptions($options);
+	static function Finder(){
+		TableRecord::_NormalizeOptions(func_get_args(),$options);
+
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
@@ -514,8 +532,9 @@ class TableRecord_Base extends inobj{
 	 * @param array $options
 	 * @return array
 	 */
-	static function FindAll($options = array(),$bind_ar = array()){
-		TableRecord::_NormalizeOptions($options,$bind_ar);
+	static function FindAll(){
+		TableRecord::_NormalizeOptions(func_get_args(),$options);
+
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
@@ -587,13 +606,18 @@ class TableRecord_Base extends inobj{
 	 *			"created_at" => "2011-02-01" 
 	 *		),
 	 *	));
+	 * $article = Article::FindFirst("title=:title",array(":title" => "Foo Bar"));
+	 * $article = Article::FindFirst("title","Foo Bar");
+	 * $article = Article::FindFirst("title","Foo Bar",array("order_by" => "created_at DESC"));
+	 * $article = Article::FindFirst("title","Foo Bar","author_id",123,array("order_by" => "created_at DESC"));
 	 * </code>
 	 *
 	 * @param array $options
 	 * @return TableRecord
 	 */
-	static function FindFirst($options = array(),$bind_ar = array()){
-		TableRecord::_NormalizeOptions($options,$bind_ar);
+	static function FindFirst(){
+		TableRecord::_NormalizeOptions(func_get_args(),$options);
+
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
@@ -644,7 +668,44 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Renames some option`s names to others. Like class to class_name...
 	 */
-	static function _NormalizeOptions(&$options,$bind_ar = array()){
+	static function _NormalizeOptions($args,&$options){
+		if(!isset($args[0])){ $args[0] = array(); }
+		if(!isset($args[1])){ $args[1] = array(); }
+
+		$extra_options = null;
+
+		if(sizeof($args)==2){
+			$options = $args[0];
+			$bind_ar = isset($args[1]) ? $args[1] : array();
+			$args = array();
+		}elseif(sizeof($args)==3 && is_string($args[0])){
+			$options = $args[0];
+			$bind_ar =  isset($args[1]) ? $args[1] : array();
+			$extra_options = $args[2];
+		}else{
+			$options = array(
+				"conditions" => array(),
+				"bind_ar" => array(),
+			);
+			$bind_ar = array();
+			$conditions = array();
+
+			while(sizeof($args)>=2){
+				$field = array_shift($args);
+				$value = array_shift($args);
+				$conditions[] = "$field=:$field";
+				$bind_ar[":$field"] = $value;
+			}
+
+			// when one item left it should be $options containing "order_by", "limit"...
+			if(isset($args[0]) && is_array($args)){
+			 $extra_options = $args[0];
+			}
+
+			$options["conditions"] = array_merge($options["conditions"],$conditions);
+			$options["bind_ar"] = array_merge($options["bind_ar"],$bind_ar);
+
+		}
 
 		// Article::FindFirst("title","Foo Bar") -> Article::FindFirst(array("conditions" => array("title" => "Foo Bar")));
 		if(is_string($options) && !is_array($bind_ar)){
@@ -659,6 +720,11 @@ class TableRecord_Base extends inobj{
 				"bind_ar" => $bind_ar
 			);
 		}
+
+		if(isset($extra_options) && is_array($extra_options)){
+			$options = array_merge($options,$extra_options);
+		}
+
 		$keys = array_keys($options);
 		foreach(array(
 			"condition" => "conditions",

@@ -18,13 +18,23 @@ CREATE TABLE test_table (
     create_time timestamp without time zone DEFAULT now()
 );
 
+CREATE SEQUENCE seq_images;
+CREATE TABLE images (
+	id INTEGER DEFAULT NEXTVAL('seq_images') NOT NULL PRIMARY KEY,
+	url VARCHAR(255),
+	width INT,
+	height INT
+);
+
 CREATE SEQUENCE seq_articles;
 CREATE TABLE articles(
     id INTEGER DEFAULT NEXTVAL('seq_articles') NOT NULL PRIMARY KEY,
 		title VARCHAR(255),
 		body TEXT,
+		image_id INT,
 		created_at DATE,
-		updated_at DATE
+		updated_at DATE,
+		CONSTRAINT fk_articles_images FOREIGN KEY (image_id) REFERENCES images
 );
 
 CREATE SEQUENCE seq_authors;
