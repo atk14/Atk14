@@ -1282,7 +1282,20 @@ class TableRecord_Base extends inobj{
 			}
 		}
 
-		throw new Exception("inobj_TableRecord::__call(): unknown method ".get_class($this)."::$name()");
+		throw new Exception("TableRecord_Base::__call(): unknown method ".get_class($this)."::$name()");
+	}
+
+	static function __callStatic($name,$arguments){
+		$class_name = function_exists("get_called_class") ? get_called_class() : "unknown";
+
+		if(preg_match('/^Find(|First|All)By(.+)/',$name,$matches)){
+			$method = $matches[1]=="All" ? "FindAll" : "FindFirst";
+			$field = new String($matches[2]);
+			$field = $field->underscore();
+			return $class_name::$method("$field",$arguments[0],isset($arguments[1]) ? $arguments[1] : array());
+		}
+
+		throw new Exception("TableRecord_Base::__callStatic(): unknown static method $class_name::$name()");
 	}
 
 }
