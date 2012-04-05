@@ -514,8 +514,8 @@ class TableRecord_Base extends inobj{
 	 * @param array $options
 	 * @return array
 	 */
-	static function FindAll($options = array()){
-		TableRecord::_NormalizeOptions($options);
+	static function FindAll($options = array(),$bind_ar = array()){
+		TableRecord::_NormalizeOptions($options,$bind_ar);
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
@@ -592,8 +592,8 @@ class TableRecord_Base extends inobj{
 	 * @param array $options
 	 * @return TableRecord
 	 */
-	static function FindFirst($options = array()){
-		TableRecord::_NormalizeOptions($options);
+	static function FindFirst($options = array(),$bind_ar = array()){
+		TableRecord::_NormalizeOptions($options,$bind_ar);
 		if(isset($options["class_name"])){
 			$class_name = $options["class_name"];
 			unset($options["class_name"]);
@@ -644,7 +644,21 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Renames some option`s names to others. Like class to class_name...
 	 */
-	static function _NormalizeOptions(&$options){
+	static function _NormalizeOptions(&$options,$bind_ar = array()){
+
+		// Article::FindFirst("title","Foo Bar") -> Article::FindFirst(array("conditions" => array("title" => "Foo Bar")));
+		if(is_string($options) && !is_array($bind_ar)){
+			$options = array(
+				"conditions" => array("$options" => $bind_ar)
+			);
+		}
+
+		if(is_string($options)){
+			$options = array(
+				"conditions" => $options,
+				"bind_ar" => $bind_ar
+			);
+		}
 		$keys = array_keys($options);
 		foreach(array(
 			"condition" => "conditions",

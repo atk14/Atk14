@@ -11,11 +11,11 @@ CREATE TABLE test_table (
     cena2 double precision,
     text text,
     perex text,
+		flag boolean,
     binary_data bytea,
     binary_data2 bytea,
     create_date date,
-    create_time timestamp without time zone DEFAULT now(),
-		flag boolean
+    create_time timestamp without time zone DEFAULT now()
 );
 
 CREATE SEQUENCE seq_articles;

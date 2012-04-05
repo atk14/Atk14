@@ -313,6 +313,8 @@ class tc_inobj_table_record extends tc_base{
 		// overime, zde alespone jedno pole mame null...
 		// protoze i nazev takoveho pole musi byt vracen...
 		$this->assertTrue(is_null($record->getValue("cena")));
+
+		//var_dump($keys); exit;
 	
 		$this->assertEquals(array(
 			"id",
@@ -324,11 +326,11 @@ class tc_inobj_table_record extends tc_base{
 			"cena2",
 			"text",
 			"perex",
+			"flag",
 			"binary_data",
 			"binary_data2",
 			"create_date",
 			"create_time",
-			"flag"
 		),$keys);
 	}
 
