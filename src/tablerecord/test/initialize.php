@@ -5,10 +5,10 @@ require("../../dbmole/pgmole.inc");
 require("../../string/load.inc");
 
 require("../load.php");
-require("./inobj_testtable.inc");
-require("./article.inc");
-require("./image.inc");
-require("./author.inc");
+require("./inobj_testtable.php");
+require("./article.php");
+require("./image.php");
+require("./author.php");
 
 function &dbmole_connection($dbmole){
 	static $connection;
