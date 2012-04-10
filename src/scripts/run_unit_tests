@@ -3,21 +3,21 @@
 /*
 * V pracovnim adresari vyhleda soubory tc_*.inc. Ty postupne nainkluduje a spusti v nich testy.
 *
-* V souboru tc_inobj_currency.inc se ocekava trida tc_inobj_currency.
+* V souboru tc_currency.inc se ocekava trida TcCurrency, prip. tc_currency.
 *
 * Na prikazove radce mozno definovat seznam testu, ktere se maji provest:
-*		$ run_unit_tests tc_inobj_account tc_inobj_cznicdomain_create_pending
-*		pripadne i s priponou .inc
-*		$ run_unit_tests tc_inobj_account.inc tc_inobj_cznicdomain_create_pending.inc
+*		$ run_unit_tests tc_account tc_bank_transfer
+*		pripadne i s priponou .php
+*		$ run_unit_tests tc_account.php tc_bank_transfer.php
 *
 * Nebezpecne testy
 * ----------------
 * Jsou to takove testy, ktere zmeni/nastavi neco, co muze mit nejake nasledky. Napriklad testy pro registraci domeny.
-* Takove testy umistime do souboru zacinajici vykricnikem, napr. !tc_domain_registration.inc
+* Takove testy umistime do souboru zacinajici vykricnikem, napr. !tc_domain_registration.php
 *
 * Test nebude automaticky spusten, pokud nebude implicitne uveden na prikazove radce:
 *		$ run_unit_tests
-*		$ run_unit_tests \!tc_domain_registration.inc
+*		$ run_unit_tests \!tc_domain_registration.php
 */
 
 error_reporting(255);
@@ -71,17 +71,21 @@ for($i=1;$i<sizeof($argv);$i++){
 if(PHP4){
 	if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
 		eval("class tc_super_base extends PHPUnit_TestCase{ }");
+		eval("class TcSuperBase extends PHPUnit_TestCase{ }");
 		require_once($_f);
 	}else{
 		eval("class tc_base extends PHPUnit_TestCase{ }");
+		eval("class TcBase extends PHPUnit_TestCase{ }");
 	}
 }
 if(PHP5){
 	if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
 		eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
+		eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
 		require_once("$_f");
 	}else{
 		eval("class tc_base extends PHPUnit2_Framework_TestCase{ }");
+		eval("class TcBase extends PHPUnit2_Framework_TestCase{ }");
 	}
 }
 
@@ -171,10 +175,13 @@ function _test_inobj_error_handler($values){
 }
 
 function _test_runner($filename){
-	$classname = preg_replace("/\\.[^.]*$/","",$filename);
-	$classname = preg_replace("/^!/","",$classname);
+	$classname = preg_replace('/\.[^.]*$/',"",$filename);
+	$classname = preg_replace('/^!/',"",$classname);
+	$alt_classname = preg_replace('/_/',"",$classname);
 
 	require($filename);
+
+	if(class_exists($alt_classname)){ $classname = $alt_classname; }
 
 	if(!class_exists($classname)){
 		echo "--- $filename\n";
@@ -204,4 +211,3 @@ function _test_runner($filename){
 		$printer->printResult($result, $timer->timeElapsed());
 	}
 }
-?>

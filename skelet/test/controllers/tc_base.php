@@ -1,5 +1,5 @@
-<?
-class tc_base extends tc_super_base{
+<?php
+class TcBase extends TcSuperBase{
 	function setUp(){
 		$GLOBALS["dbmole"]->begin();
 	}

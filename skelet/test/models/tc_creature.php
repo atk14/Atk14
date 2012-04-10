@@ -2,7 +2,7 @@
 /**
  * Tests for Creature class.
  */
-class tc_creature extends tc_base{
+class TcCreature extends TcBase{
 
 	function test_has_image(){
 		$creature = Creature::CreateNewRecord(array(

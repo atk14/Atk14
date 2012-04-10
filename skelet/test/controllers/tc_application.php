@@ -1,5 +1,5 @@
 <?php
-class tc_application extends tc_base{
+class TcApplication extends TcBase{
 
 	/**
 	* Usually the meaningful index action is provided by a inheritor.
