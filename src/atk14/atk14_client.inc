@@ -35,6 +35,8 @@ class Atk14Client{
 	 */
 	var $controller = null;
 
+	var $_userAgent = "Atk14 Testing Client";
+
 	/**
 	 *
 	 */
@@ -89,6 +91,7 @@ class Atk14Client{
 	 */
 	function _doRequest($method,$path,$params){
 		$request = new HTTPRequest();
+		$request->setUserAgent($this->_userAgent);
 
 		$this->flash->reset();
 
@@ -156,5 +159,9 @@ class Atk14Client{
 	 */
 	function getStatusCode(){
 		return $this->controller->response->getStatusCode();
+	}
+
+	function setUserAgent($user_agent){
+		return $this->_userAgent = $user_agent;
 	}
 }
