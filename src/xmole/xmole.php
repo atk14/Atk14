@@ -827,9 +827,9 @@ class XMole{
 			'/\"/',
 			'/\'/',
 			# Control characters from C0 group
-			'/[\x00-\x08,\x0b,\x0c,\x0e-\x1f,\x7f]/',
+			'/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/',
 			# Control characters from C1 group are discouraged
-			'/[\x80-\x84,\x86-\x9f]/',
+			'/[\x80-\x84\x86-\x9f]/',
 			# the only allowed control character from C1 group (x80-x9f)
 			'/\x85/',
 		);
