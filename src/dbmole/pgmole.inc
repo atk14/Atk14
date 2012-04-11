@@ -86,6 +86,10 @@ class PgMole Extends DbMole{
 		return $this->selectSingleValue("SELECT CURRVAL(".$this->escapeString4Sql($sequence_name).")");
 	}
 
+	function _getAffectedRows(){
+		return $this->_AffectedRows;
+	}
+
 	function _getDbLastErrorMessage(){
 		return "pg_last_error: ".pg_last_error($this->_DbConnect);
 	}
@@ -99,7 +103,9 @@ class PgMole Extends DbMole{
 	}
 
 	function _runQuery($query){
-		return pg_query($this->_DbConnect,$query);	
+		$result = pg_query($this->_DbConnect,$query);
+		$this->_AffectedRows = pg_affected_rows($result);
+		return $result;
 	}
 
 	function _getDatabaseName(){

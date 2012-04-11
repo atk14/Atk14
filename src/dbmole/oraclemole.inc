@@ -202,6 +202,7 @@ class OracleMole extends DbMole{
 				}
 			}
 
+			$this->_AffectedRows = oci_num_rows($stmt);
 		}
 
 		return $stmt;
@@ -413,5 +414,9 @@ class OracleMole extends DbMole{
 	 */
 	function escapeBool4Sql($value){
 		return $value ? DBMOLE_ORACLE_TRUE : DBMOLE_ORACLE_FALSE;
+	}
+
+	function _getAffectedRows(){
+		return $this->_AffectedRows;
 	}
 }

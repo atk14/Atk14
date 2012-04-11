@@ -3,6 +3,7 @@ require("../dbmole.inc");
 require("../pgmole.inc");
 require("../oraclemole.inc");
 require("../mysqlmole.inc");
+require("../../stopwatch/stopwatch.inc");
 
 function &dbmole_connection(&$dbmole){
 	$out = null;

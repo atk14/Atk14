@@ -13,7 +13,7 @@
  * <code>
  *	DbMole::RegisterErrorHandler("dbmole_error_handler");
  *	function dbmole_error_handler($dbmole){
- *		echo "drahy uzivateli, bohuzel doslo k chybe";
+ *		echo "Dear visitor, unfortunately an error has occurred";
  *		$dbmole->sendErrorReportToEmail("admin@test.cz");
  *		$dbmole->logErrorReport();
  *		exit;
@@ -493,9 +493,28 @@ class DbMole{
 	}
 
 	/**
+	 * Returns the amount of rows affected during the last sql execution.
+	 * 
+	 * <code>
+	 *	$dbmole->doQuery("UPDATE articles SET author_id=22 WHERE author_id=11");
+	 *	echo $dbmole->getAffectedRows(); // amount of records updated
+	 * </code>
+	 */
+	function getAffectedRows(){
+		return $this->_getAffectedRows();
+	}
+
+	function _getAffectedRows(){ return null; }
+
+	/**
 	 * Returns first record as associative array.
 	 *
 	 * Returns null when result doesn't contain any record or an error occurs.
+	 *
+	 * <code>
+	 *	$row = $dbmole->selectFirstRow("SELECT * FROM articles WHERE id=:id",array(":id" => $id));
+	 *	$row = $dbmole->selectFirstRow("SELECT * FROM articles",array(),array("order" => "create_date DESC", "limit" => 1));
+	 * </code>
 	 *
 	 * @param string $query
 	 * @param array $bind_ar
@@ -508,6 +527,13 @@ class DbMole{
 			return null;
 		}
 		return $records[0];
+	}
+
+	/**
+	 * Alias for selectFirstRow().
+	 */
+	function selectRow($query,$bind_ar = array(),$options = array()){
+		return $this->selectFirstRow($query,$bind_ar,$options);
 	}
 	
 	/**
@@ -569,6 +595,13 @@ class DbMole{
 		}
 
 		return $out;
+	}
+
+	/**
+	 * 
+	 */
+	function selectValue($query,$bind_ar = array(), $options = array()){
+		return $this->selectSingleValue($query,$bind_ar,$options);
 	}
 
 	/**
