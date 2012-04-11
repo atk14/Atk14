@@ -363,7 +363,7 @@ class XMole{
 	 */
 	function get_xmole_by_first_matching_branch($path){
 		if(!($element_data = $this->get_first_matching_branch($path))){
-			return null;	
+			return null;
 		}
 		$xmole = $this->_new_instance();
 

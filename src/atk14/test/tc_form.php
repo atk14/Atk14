@@ -1,5 +1,5 @@
 <?php
-class tc_atk14_form extends tc_base{
+class TcForm extends TcBase{
 	function test_validation_with_disabled_fields(){
 		$form = new TestForm();
 		$form->set_initial(array(

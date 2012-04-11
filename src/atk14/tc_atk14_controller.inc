@@ -3,7 +3,7 @@ if(!class_exists("TcSuperBase")){
 	class TcSuperBase{ }
 }
 
-class TcController extends TcSuperBase{
+class TcAtk14Controller extends TcSuperBase{
 	var $namespace = null;
 	var $dbmole = null;
 	var $client = null;

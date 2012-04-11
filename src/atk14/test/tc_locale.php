@@ -1,5 +1,5 @@
 <?php
-class tc_atk14_locale extends tc_base{
+class TcLocale extends TcBase{
 	function test_extract_time(){
 		$this->assertEquals("12:30:45",Atk14Locale::_ExtractTime(array("hours" => "12", "minutes" => "30", "seconds" => "45")));
 	}

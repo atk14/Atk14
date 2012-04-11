@@ -1,5 +1,5 @@
 <?php
-class tc_base extends tc_super_base{
+class TcBase extends TcSuperBase{
 	function _run_action($path,$options = array()){
 		list($controller,$action) = explode("/",$path);
 		$response = Atk14Dispatcher::ExecuteAction($controller,$action);
@@ -7,16 +7,14 @@ class tc_base extends tc_super_base{
 	}
 
 	/**
-	* Converts an HTML snippet to instance of XMole.
-	*/
+	 * Converts an HTML snippet to instance of XMole.
+	 */
 	function _html2xmole($html_output){
 		$xm = new XMole();
 		$xml = '<'.'?xml version="1.0" encoding="UTF-8"?'.'><html>'.$html_output.'</html>';
 
-		// nahrazeni pojmenovanych HTML entit za jejich ciselne ekvivalenty
-		// xml parser totiz havaroval na chybe "Undeclared entity error"
 		$xml = strtr($xml,array(
-			"&uArr;" => "&#8593;",
+			"&" => "&amp;",
 		));
 
 		$stat = $xm->parse($xml);
