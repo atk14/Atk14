@@ -18,6 +18,9 @@ require_once("$__PATH__/atk14_client.inc");
 require_once("$__PATH__/atk14_migration.inc");
 require_once("$__PATH__/atk14_robot.inc");
 
+require_once("$__PATH__/tc_controller.inc");
+require_once("$__PATH__/tc_model.inc");
+
 $ATK14_GLOBAL = &Atk14Global::GetInstance();
 
 Atk14Utils::LoadConfig();

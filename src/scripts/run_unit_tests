@@ -69,24 +69,20 @@ for($i=1;$i<sizeof($argv);$i++){
 }
 
 if(PHP4){
-	if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
-		eval("class tc_super_base extends PHPUnit_TestCase{ }");
-		eval("class TcSuperBase extends PHPUnit_TestCase{ }");
-		require_once($_f);
-	}else{
-		eval("class tc_base extends PHPUnit_TestCase{ }");
-		eval("class TcBase extends PHPUnit_TestCase{ }");
-	}
+	eval("class tc_super_base extends PHPUnit_TestCase{ }");
+	eval("class TcSuperBase extends PHPUnit_TestCase{ }");
+
 }
 if(PHP5){
-	if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
-		eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
-		eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
-		require_once("$_f");
-	}else{
-		eval("class tc_base extends PHPUnit2_Framework_TestCase{ }");
-		eval("class TcBase extends PHPUnit2_Framework_TestCase{ }");
-	}
+	eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
+	eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
+}
+
+if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
+	require_once($_f);
+}else{
+	eval("class tc_base extends tc_super_base{ }");
+	eval("class TcBase extends TcSuperBase{ }");
 }
 
 if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
