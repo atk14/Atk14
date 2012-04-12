@@ -177,6 +177,11 @@ function _test_runner($filename){
 
 	require($filename);
 
+	// global variable $_TEST may be useful in some special cases
+	$GLOBALS["_TEST"] = array(
+		"FILENAME" => getcwd()."/$filename"
+	);
+
 	if(class_exists($alt_classname)){ $classname = $alt_classname; }
 
 	if(!class_exists($classname)){
