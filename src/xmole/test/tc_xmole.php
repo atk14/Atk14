@@ -51,6 +51,21 @@ class tc_xmole extends tc_base{
     $this->assertNull($earth->get_attribute("/earth/","non_existing"));
   }
 
+  function test_to_string(){
+    $xm = new XMole();
+    $this->assertEquals("[empty XMole]","$xm");
+
+    $xm = new XMole("<xml><error></xml>");
+    $this->assertEquals("[XMole with invalid document: XML parser error (76): Mismatched tag on line 1]","$xm");
+
+    $xm = new XMole($_src = trim('
+    <planets system="Solar">
+     <earth order="3rd">We love it</earth>
+    </planets>
+    '));
+    $this->assertEquals($_src,"$xm");
+  }
+
   function test_get_xmole_by_first_matching_branch(){
     $xmole = new XMole();
 

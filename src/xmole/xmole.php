@@ -871,5 +871,13 @@ class XMole{
 	/**
 	 * @method toString()
 	 */
-	function __toString(){ return "instance of ".get_class($this); }
+	function __toString(){
+		if(!isset($this->_tree[0])){
+			return "[empty ".get_class($this)."]";
+		}
+		if($this->error()){
+			return "[".get_class($this)." with invalid document: ".$this->get_error_message()."]";
+		}
+		return $this->_tree[0]["xml_source"];
+	}
 }
