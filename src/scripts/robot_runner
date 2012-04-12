@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+/**
+ * $ ./scripts/robot_runner import_articles
+ * $ ./scripts/robot_runner import_articles_robot
+ * $ ./scripts/robot_runner ImportArticles
+ * $ ./scripts/robot_runner ImportArticlesRobot
+ */
+
+require_once(dirname(__FILE__)."/load.inc");
+
+$robots_dir = $ATK14_GLOBAL->getApplicationPath()."/../robots";
+
+require_once("$robots_dir/application_robot.php");
+
+$robot_name = String::ToObject($argv[1])->underscore()->gsub('/_robot$/','');
+
+require_once("$robots_dir/{$robot_name}_robot.php");
+
+$class_name = $robot_name->camelize()."Robot";
+$robot = new $class_name();

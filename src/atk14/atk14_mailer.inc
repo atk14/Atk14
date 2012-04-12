@@ -165,13 +165,27 @@ class Atk14Mailer{
 	 * @static
 	 */
 	static function GetInstanceByController($controller){
-		$out = null;
-		if(Atk14Require::Load("controllers/$controller->namespace/application_mailer.*")){
-			$out = new ApplicationMailer();
-			$out->namespace = $controller->namespace;
-			$out->logger = &$controller->logger;
-		}
+		return Atk14Mailer::GetInstance(array(
+			"namespace" => $controller->namespace,
+			"logger" => $controller->logger
+		));
+	}
 
+	static function GetInstance($options = array()){
+		$options = array_merge(array(
+			"namespace" => "",
+			"logger" => null
+		),$options);
+
+		$namespace = $options["namespace"];
+		$logger = isset($options["logger"]) ? $options["logger"] : $GLOBALS["ATK14_LOGGER"];
+
+		$out = null;
+		if(Atk14Require::Load("controllers/$namespace/application_mailer.*")){
+			$out = new ApplicationMailer();
+			$out->namespace = $namespace;
+			$out->logger = $logger;
+		}
 		return $out;
 	}
 
