@@ -806,11 +806,6 @@ class XMole{
 	 * Output can be used in XML text.
 	 * Can be called statically
 	 *
-	 * Control characters from C0 group are not allowed in XML 1.0 (characters with code x00-x1f,x7f).
-	 * with three exceptions (TAB, new line and return characters)
-	 * Control characters from C1 group are discouraged to use.
-	 * {@link http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character}
-	 *
 	 * <code>
 	 * $xml = "<data>".XMole::ToXML($value)."</data>";
 	 * </code>
@@ -826,12 +821,7 @@ class XMole{
 			'/>/',
 			'/\"/',
 			'/\'/',
-			# Control characters from C0 group
-			'/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/',
-			# Control characters from C1 group are discouraged
-			'/[\x80-\x84\x86-\x9f]/',
-			# the only allowed control character from C1 group (x80-x9f)
-			'/\x85/',
+			'/[\x00-\x08]/', // see http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character
 		);
 		$replaces = array(
 			"&amp;",
@@ -840,8 +830,6 @@ class XMole{
 			"&quot;",
 			"&apos;",
 			"",
-			"",
-			"&#x85;",
 		);
 		return preg_replace($illegal_chars, $replaces, $str);
 	}
