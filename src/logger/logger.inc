@@ -67,7 +67,7 @@
  * @filesource
  */
 
-class logger{
+class Logger{
 	/**
 	 * Application mark
 	 *
@@ -83,6 +83,11 @@ class logger{
 	 * @var string
 	 */
 	var $_log_file;
+
+	/**
+	 *
+	 */
+	var $_default_log_file;
 
 	/**
 	 * Internal events storage.
@@ -172,7 +177,10 @@ class logger{
 		$options = array_merge(array(
 			"disable_start_and_stop_marks" => false,
 			"log_to_stdout" => false,
+			"default_log_file" => LOGGER_DEFAULT_LOG_FILE
 		),$options);
+
+		$this->_default_log_file = $options["default_log_file"];
 
 		$this->_reset_configuration();
 		$this->_my_pid = posix_getpid();
@@ -249,7 +257,7 @@ class logger{
 		$this->_no_log_level = -30;
 		$this->_notify_level = 30;
 		$this->_notify_email = "";
-		$this->_log_file = LOGGER_DEFAULT_LOG_FILE;
+		$this->_log_file = $this->_default_log_file;
 	}
 
 	/**
@@ -372,6 +380,8 @@ class logger{
 		$this->_log_store_whole = array();
 		return 0;
 	}
+
+	function flushAll(){ return $this->flush_all(); }
 
 	/**
 	 * Alias method for outputing message to specified level.
@@ -516,4 +526,3 @@ class logger{
     return ((float)$usec + (float)$sec);
 	}
 }
-?>
