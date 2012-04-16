@@ -1,6 +1,6 @@
 <?php
 /**
- * Class for storing of application globals.
+ * Class for storing of application globals & settings.
  *
  * @package Atk14
  * @subpackage Core
@@ -99,6 +99,13 @@ class Atk14Global{
 		if(isset($HTTP_REQUEST)){ $out = $HTTP_REQUEST->getHttpHost(); }
 		if(defined("ATK14_HTTP_HOST") && ATK14_HTTP_HOST){ $out = ATK14_HTTP_HOST; }
 		return $out;
+	}
+
+	function getLang(){
+		if(!is_null($lang = $this->getValue("lang"))){
+			return $lang;
+		}
+		return $this->getDefaultLang();	
 	}
 
 	/**
