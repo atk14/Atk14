@@ -500,6 +500,10 @@ class String{
 		if(!isset($string)){ $string = $this->_String; }
 		return new String($string,$this->_Encoding);
 	}
+
+	function toString(){
+		return $this->_String;
+	}
 	
 	/**
 	 * Magic method
@@ -508,6 +512,6 @@ class String{
 	 * echo "$s"; // prints Hello
 	 */
 	function __toString(){
-		return $this->_String;
+		return $this->toString();
 	}
 }

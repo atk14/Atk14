@@ -27,4 +27,14 @@ class TcForm extends TcBase{
 		$this->assertTrue(sizeof($tokens)>1);
 		$this->assertTrue($tokens[0]!=$tokens[1]);
 	}
+
+	function test_camelcase_aliasses(){
+		$form = new TestForm();
+		$form->setInitial(array("nickname" => "Hammer"));
+		$this->assertEquals(array(
+			"firstname" => null,
+			"lastname" => "Smith",
+			"nickname" => "Hammer",
+		),$form->getInitial());
+	}
 }

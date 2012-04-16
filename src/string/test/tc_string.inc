@@ -26,6 +26,7 @@ class tc_string extends tc_base{
 		$this->assertFalse(is_object($string));
 
 		$this->assertEquals("$string","$stringer");
+		$this->assertEquals("$string",$stringer->toString());
 		$this->assertEquals(11,strlen($stringer));
 
 		// String::ToObject()
