@@ -45,7 +45,7 @@ class Atk14Robot{
 		$this->logger->flush_all();
 	}
 
-	function before_run(){
+	function beforeRun(){
 
 	}
 
@@ -53,7 +53,7 @@ class Atk14Robot{
 		
 	}
 
-	function after_run(){
+	function afterRun(){
 
 	}
 
