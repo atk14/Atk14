@@ -103,7 +103,7 @@ class Atk14Client{
 			if(is_object($v)){ $v = $v->getId(); }
 		}
 
-		$path_ar = split("/",$path);
+		$path_ar = explode("/",$path);
 
 		$namespace = null;
 		if(sizeof($path_ar)==2){

@@ -121,7 +121,7 @@ class Atk14Router{
 		//
 		if(isset($options["path"])){
 			$options["path"] = preg_replace('/^\/?(.*?)\/?$/','\1',$options["path"]); // "/main/index/" -> "main/index"
-			$ar = split('/',$options["path"]);
+			$ar = explode('/',$options["path"]);
 			switch(sizeof($ar)){
 				case "4":
 					$options["namespace"] = array_shift($ar);
