@@ -46,7 +46,7 @@ class String{
 	 * @param string $string
 	 * @return String
 	 */
-	function ToObject($string,$encoding = null){
+	static function ToObject($string,$encoding = null){
 		if(is_object($string) && strtolower(get_class($string))=="string"){
 			return $string;
 		}
