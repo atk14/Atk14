@@ -37,9 +37,9 @@ class Atk14Robot{
 
 		$this->logger->start();
 
-		$this->before_run();
+		$this->beforeRun();
 		$this->run();
-		$this->after_run();
+		$this->afterRun();
 
 		$this->logger->stop();
 		$this->logger->flush_all();
