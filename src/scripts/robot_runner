@@ -13,7 +13,7 @@ $robots_dir = $ATK14_GLOBAL->getApplicationPath()."/../robots";
 
 require_once("$robots_dir/application_robot.php");
 
-$robot_name = String::ToObject($argv[1])->underscore()->gsub('/_robot$/','');
+$robot_name = String::ToObject($argv[1])->underscore()->gsub('/_robot(\.php|\.inc|)$/','')->gsub('/^.+\/([^\/]+)$/','\1');
 
 require_once("$robots_dir/{$robot_name}_robot.php");
 
