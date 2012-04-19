@@ -28,13 +28,13 @@
  * 	function set_up(){
  * 		$this->add_field("login",new CharField(array(
  * 		"label" => _("Login"),
- * 		"help_text" => _("Identifikator platce, dealera nebo kontaktu"),
+ * 		"help_text" => _("client identification"),
  * 		"min_length" => 1,
  * 		"max_length" => 64
  * 	)));
  *
  *	$this->add_field("password",new CharField(array(
- *		"label" => _("Heslo"),
+ *		"label" => _("Password"),
  *		"min_length" => 1,
  *		"max_length" => 64
  *	)));
@@ -42,20 +42,37 @@
  *  }
  *
  * $form = new LoginForm();
- * $form->set_initial("login","prihlasovaci.jmeno");
- * $form->set_hidden_field("action","prihlaseni");
+ * $form->set_initial("login","user.name");
+ * $form->set_hidden_field("action","login");
  * if($request->Post() && $form->is_valid($this->params)){
  *     // data jsou ok
  *     $data = $form->cleaned_data;
  * }
  * </code>
  *
- * Usage in template:
+ * Basically you can print a form by using helper {form} in a template:
  * <code>
- * {$form->get_error_report()} // vytiskne sumarizaci chyb
- * {$form->begin()} // vytisken element <form> 
- * {$form->end()} // vytiskne vsechny hidden prvky pridane volanim $form->set_hidden_field() a konec elementu </form>
+ * {form}
+ * {render partial=shared/form_field field=last_name}
+ * {/form}
  * </code>
+ *
+ * which you can replace with this code (this actually uses {form} helper}:
+ * <code>
+ * {$form->begin()}
+ * </code>
+ * prints out beginning of a <form> element
+ *
+ * <code>
+ * {$form->end()}
+ * </code>
+ * prints out closing tag of <form> element
+ * with all hidden fields inside added by $form->set_hidden_field() method inside.
+ *
+ * <code>
+ * {$form->get_error_report()}
+ * </code>
+ * prints out error summary.
  *
  * @package Atk14
  * @subpackage Core
@@ -135,6 +152,9 @@ class Atk14Form extends Form
 	 */
 	var $atk14_method = "post";
 
+	/**
+	 * @var bool
+	 */
 	var $atk14_csrf_protection_enabled = false;
 
 	/**
@@ -487,6 +507,11 @@ class Atk14Form extends Form
 		$this->atk14_method = (string)$method;
 	}
 
+	/**
+	 * Returns forms submit method.
+	 *
+	 * @return string
+	 */
 	function get_method(){
 		return $this->atk14_method;
 	}
@@ -638,6 +663,8 @@ class Atk14Form extends Form
 
 	/**
 	 * Sets enctype attribute of form to value "multipart/form-data".
+	 *
+	 * Setting this attribute to "multipart/form-data" allows uploading data in the form.
 	 */
 	function allow_file_upload()
 	{
@@ -872,7 +899,7 @@ class Atk14Form extends Form
 	}
 
 	/**
-	 * Returns current CSFR token.
+	 * Returns current CSRF token.
 	 * 
 	 * @return string
 	 */
@@ -882,7 +909,7 @@ class Atk14Form extends Form
 	}
 
 	/**
-	 * Returns all CSFR tokens which are considered as valid.
+	 * Returns all CSRF tokens which are considered as valid.
 	 * 
 	 * @return string[]
 	 */
