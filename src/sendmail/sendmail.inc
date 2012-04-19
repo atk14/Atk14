@@ -16,11 +16,7 @@ if(!defined("SENDMAIL_BODY_AUTO_PREFIX")){
 }
 
 if(!defined("SENDMAIL_USE_TESTING_ADDRESS_TO")){
-	define("SENDMAIL_USE_TESTING_ADDRESS_TO",false);
-}
-
-if(!defined("SENDMAIL_TESTING_ADDRESS_TO")){
-	define("SENDMAIL_TESTING_ADDRESS_TO","");
+	define("SENDMAIL_USE_TESTING_ADDRESS_TO","");
 }
 
 if(!defined("SENDMAIL_DO_NOT_SEND_MAILS")){
@@ -92,9 +88,8 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 *	Takto odeslany e-mail je vzdycky odeslan i na adresu BCC_EMAIL,
 *	pokud tato konstanta nastavena.
 *
-* Pokud je nstavena konstanta SENDMAIL_USE_TESTING_ADDRESS_TO na true,
-*	zprava je odeslana pouze na adresu uvedenou v konstante
-*	SENDMAIL_TESTING_ADDRESS_TO.
+* Pokud je nstavena konstanta SENDMAIL_USE_TESTING_ADDRESS_TO na nejaky e-mail,
+*	zprava je odeslana pouze na adresu uvedenou v teto konstante.
 *
 *	@param array			$params				pole parametru
 *
@@ -161,9 +156,9 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		$BODY = SENDMAIL_BODY_AUTO_PREFIX.$BODY;
 	}
 	$TO = _sendmail_correct_address($params['to']);
-	if(SENDMAIL_USE_TESTING_ADDRESS_TO==true){
-		$BODY = "PUVODNI ADRESAT: $TO\nPUVODNI CC: $CC\nPUVODNI BCC: $BCC\n\n$BODY";
-		$TO = SENDMAIL_TESTING_ADDRESS_TO;
+	if(strlen(SENDMAIL_USE_TESTING_ADDRESS_TO)>0){
+		$BODY = "PUVODNI ADRESAT: $TO\nPUVODNI CC: $CC\nPUVODNI BCC: $BCC\n\n$BODY"; // TODO: put this information into messages header
+		$TO = SENDMAIL_USE_TESTING_ADDRESS_TO;
 		$CC = "";
 		$BCC = "";
 	}
