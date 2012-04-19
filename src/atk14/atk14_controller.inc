@@ -71,6 +71,13 @@ class Atk14Controller{
 	var $render_layout = true;
 
 	/**
+	 * Name of layout template used to generate output.
+	 *
+	 * @var string
+	 */
+	var $layout_name = "";
+
+	/**
 	 * Flag that controls whether template will be rendered.
 	 *
 	 * Default value is true and template {@link $template_name} will be rendered.
@@ -111,6 +118,19 @@ class Atk14Controller{
 	 * @var Atk14Session
 	 */
 	var $session = null;
+
+
+	/**
+	 * Flash messages
+	 *
+	 * @var Atk14Flash
+	 */
+	var $flash = null;
+
+	/**
+	 * @var boolean
+	 */
+	var $cookies_enabled;
 
 	/**
 	 * Instance of {@link Atk14Form} used in current controllers action.
@@ -173,6 +193,13 @@ class Atk14Controller{
 	 *
 	 */
 	var $returned_by = array();
+
+	/**
+	 * Database engine.
+	 *
+	 * @var DbMole
+	 */
+	var $dbmole = null;
 
 	/**
 	 * @access private

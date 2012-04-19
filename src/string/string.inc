@@ -38,6 +38,8 @@ class String{
 	}
 
 	/**
+	 * Converts a string to a String class object.
+	 *
 	 * <code>
 	 * $str = String::ToObject("Hello");
 	 * $str = String::ToObject($str);
@@ -221,10 +223,18 @@ class String{
 	}
 
 	/**
+	 * Does string substitutions.
+	 *
+	 * Part of a string that should be replaced is specified by a regexp patterr.
+	 *
 	 * <code>
 	 *	$string = new String("Hello World");
 	 * 	$string = $string->gsub("/l/","x"); // Hexxo Worxd
 	 * </code>
+	 *
+	 * @param string $pattern regexp string
+	 * @param string $replace string replacement
+	 * @return String Object of String class with replaced content
 	 */
 	function gsub($pattern,$replace){
 		return $this->_copy(preg_replace($pattern,$replace,$this->_String));
