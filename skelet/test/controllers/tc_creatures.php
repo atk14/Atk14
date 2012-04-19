@@ -1,8 +1,8 @@
 <?php
-class tc_creatures extends tc_base{
+class TcCreatures extends TcBase{
 
 	function test_formats(){
-		$client = new Atk14Client();
+		$client = $this->client;
 
 		$creature = Creature::CreateNewRecord(array(
 			"name" => "Brand NewCreature",

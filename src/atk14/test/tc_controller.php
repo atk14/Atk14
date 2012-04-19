@@ -1,5 +1,5 @@
 <?php
-class tc_atk14_controller extends tc_base{
+class TcController extends TcBase{
 	function test_multiple_before_filters(){
 		$c = new MultipleBeforeFiltersController();
 		$c->atk14__initialize(array());

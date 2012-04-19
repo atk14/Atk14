@@ -157,6 +157,56 @@ class tc_finding_records extends tc_base{
 		$this->assertEquals($hacker->getId(),$i->getId());
 	}
 
+	function test_find_by(){
+		$green = Article::CreateNewRecord(array("title" => "Green"));
+		$red = Article::CreateNewRecord(array("title" => "Red"));
+
+		$a = Article::FindByTitle("Green");
+		$this->assertEquals($green->getId(),$a->getId());
+
+		$a = Article::FindByTitle("Red");
+		$this->assertEquals($red->getId(),$a->getId());
+
+		$this->assertNull(Article::FindByTitle("Orange"));
+
+		// --
+
+		$a = Article::FindFirstByTitle("Green");
+		$this->assertEquals($green->getId(),$a->getId());
+
+		$a = Article::FindFirstByTitle("Red");
+		$this->assertEquals($red->getId(),$a->getId());
+
+		$this->assertNull(Article::FindFirstByTitle("Orange"));
+
+		// --
+
+		$yello_first = Article::CreateNewRecord(array("title" => "Yellow", "created_at" => "2001-01-01"));
+		$yello_middle = Article::CreateNewRecord(array("title" => "Yellow", "created_at" => "2001-01-02"));
+		$yello_last = Article::CreateNewRecord(array("title" => "Yellow", "created_at" => "2001-01-03"));
+
+		$a = Article::FindByTitle("Yellow",array("order_by" => "created_at"));
+		$this->assertEquals($yello_first->getId(),$a->getId());
+
+		$a = Article::FindByTitle("Yellow",array("order_by" => "created_at DESC"));
+		$this->assertEquals($yello_last->getId(),$a->getId());
+
+		$a = Article::FindByTitle("Yellow",array("order_by" => "created_at DESC", "offset" => 1));
+		$this->assertEquals($yello_middle->getId(),$a->getId());
+
+		// --
+
+		$ary = Article::FindAllByTitle("Yellow",array("order_by" => "created_at"));
+		$this->assertEquals(3,sizeof($ary));
+		$this->assertEquals($yello_first->getId(),$ary[0]->getId());
+		$this->assertEquals($yello_middle->getId(),$ary[1]->getId());
+		$this->assertEquals($yello_last->getId(),$ary[2]->getId());
+
+		$ary = Article::FindAllByTitle("Yellow",array("order_by" => "created_at DESC", "limit" => 1));
+		$this->assertEquals(1,sizeof($ary));
+		$this->assertEquals($yello_last->getId(),$ary[0]->getId());
+	}
+
 	function _find_first($params,$options = array()){
 		$article = Article::CreateNewRecord(array(
 			"title" => "Creepy Green Light"

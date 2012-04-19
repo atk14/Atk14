@@ -296,5 +296,9 @@ class tc_date extends tc_base{
 		$this->assertEquals("2008-01-31",$date->toString());
 		$this->assertEquals("2007-12-31",$date2->toString());
 	}
+
+	function test_to_gmdate(){
+		$date = Date::ByDate("2008-02-29");
+		$this->assertEquals(gmdate('D, d M Y H:i:s \G\M\T',$date->getUnixTimestamp()),$date->toGmdate());
+	}
 }	
-?>

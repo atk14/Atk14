@@ -1,5 +1,5 @@
 <?php
-class tc_atk14_url extends tc_base{
+class TcUrl extends TcBase{
 	function test(){
 		global $_GET;
 

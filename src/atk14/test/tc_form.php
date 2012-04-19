@@ -1,5 +1,5 @@
 <?php
-class tc_atk14_form extends tc_base{
+class TcForm extends TcBase{
 	function test_validation_with_disabled_fields(){
 		$form = new TestForm();
 		$form->set_initial(array(
@@ -26,5 +26,15 @@ class tc_atk14_form extends tc_base{
 		$this->assertEquals($current_token,$tokens[0]);
 		$this->assertTrue(sizeof($tokens)>1);
 		$this->assertTrue($tokens[0]!=$tokens[1]);
+	}
+
+	function test_camelcase_aliasses(){
+		$form = new TestForm();
+		$form->setInitial(array("nickname" => "Hammer"));
+		$this->assertEquals(array(
+			"firstname" => null,
+			"lastname" => "Smith",
+			"nickname" => "Hammer",
+		),$form->getInitial());
 	}
 }

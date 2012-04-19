@@ -51,6 +51,21 @@ class tc_xmole extends tc_base{
     $this->assertNull($earth->get_attribute("/earth/","non_existing"));
   }
 
+  function test_to_string(){
+    $xm = new XMole();
+    $this->assertEquals("[empty XMole]","$xm");
+
+    $xm = new XMole("<xml><error></xml>");
+    $this->assertEquals("[XMole with invalid document: XML parser error (76): Mismatched tag on line 1]","$xm");
+
+    $xm = new XMole($_src = trim('
+    <planets system="Solar">
+     <earth order="3rd">We love it</earth>
+    </planets>
+    '));
+    $this->assertEquals($_src,"$xm");
+  }
+
   function test_get_xmole_by_first_matching_branch(){
     $xmole = new XMole();
 
@@ -307,6 +322,10 @@ class tc_xmole extends tc_base{
     $this->assertEquals("&lt;", XMole::ToXML("<"));
     $this->assertEquals("&gt;", XMole::ToXML(">"));
     $this->assertEquals("&amp;", XMole::ToXML("&"));
-    $this->assertEquals("nejaky textik\ndalsi\ttextik &amp; more", XMole::ToXML("nejaky textik\x07\x0adalsi\x09textik & more\x1e"));
+    $this->assertEquals("nejaky textik\ndalsi\ttextik &amp; more", XMole::ToXML("nejaky textik\x07\x0adalsi\x09textik & more"));
+
+    $this->assertEquals("A,B", XMole::ToXML("A,B"));
+
+    $this->assertEquals("ěščřžýáíéůúĚŠČŘŽÝÁÍÉŮÚ", XMole::ToXML("ěščřžýáíéůúĚŠČŘŽÝÁÍÉŮÚ"));
   }
 }

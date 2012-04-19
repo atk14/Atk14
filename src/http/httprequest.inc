@@ -263,7 +263,12 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getRemoteAddr(){
+		if(isset($this->_ForceRemoteAddr)){ return $this->_ForceRemoteAddr; }
 		return isset($GLOBALS["_SERVER"]["REMOTE_ADDR"]) ? $GLOBALS["_SERVER"]["REMOTE_ADDR"] : null;
+	}
+
+	function setRemoteAddr($addr){
+		$this->_ForceRemoteAddr = $addr;
 	}
 
 	/**

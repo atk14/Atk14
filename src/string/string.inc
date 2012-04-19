@@ -48,7 +48,7 @@ class String{
 	 * @param string $string
 	 * @return String
 	 */
-	function ToObject($string,$encoding = null){
+	static function ToObject($string,$encoding = null){
 		if(is_object($string) && strtolower(get_class($string))=="string"){
 			return $string;
 		}
@@ -366,15 +366,27 @@ class String{
 	 * Does contains at least one of the given strings?
 	 *
 	 * <code>
-	 * if($breakfast->containsOneOf(array("orange","lemon","apple"))){
+	 * if($breakfast->containsOneOf("orange","lemon","apple"){
 	 * 	// sort of vitamin stuff
+	 * }
+	 *
+	 * if($breakfast->containsOneOf(array("orange","lemon","apple"))){
+	 * 	// just for sure...
 	 * }
 	 * </code>
 	 *
 	 * @param array $needles array of string
 	 * @return bool
 	 */
-	function containsOneOf($needles){
+	function containsOneOf(){
+		$needles = array();
+		foreach(func_get_args() as $arg){
+			if(is_array($arg)){
+				$needles = array_merge($arg,$needles);
+			}else{
+				$needles[] = $arg;
+			}
+		}
 		foreach($needles as $needle){
 			if($this->contains($needle)){ return true; }
 		}
@@ -510,6 +522,10 @@ class String{
 		if(!isset($string)){ $string = $this->_String; }
 		return new String($string,$this->_Encoding);
 	}
+
+	function toString(){
+		return $this->_String;
+	}
 	
 	/**
 	 * Magic method
@@ -518,6 +534,6 @@ class String{
 	 * echo "$s"; // prints Hello
 	 */
 	function __toString(){
-		return $this->_String;
+		return $this->toString();
 	}
 }

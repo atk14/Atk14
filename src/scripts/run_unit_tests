@@ -3,21 +3,21 @@
 /*
 * V pracovnim adresari vyhleda soubory tc_*.inc. Ty postupne nainkluduje a spusti v nich testy.
 *
-* V souboru tc_inobj_currency.inc se ocekava trida tc_inobj_currency.
+* V souboru tc_currency.inc se ocekava trida TcCurrency, prip. tc_currency.
 *
 * Na prikazove radce mozno definovat seznam testu, ktere se maji provest:
-*		$ run_unit_tests tc_inobj_account tc_inobj_cznicdomain_create_pending
-*		pripadne i s priponou .inc
-*		$ run_unit_tests tc_inobj_account.inc tc_inobj_cznicdomain_create_pending.inc
+*		$ run_unit_tests tc_account tc_bank_transfer
+*		pripadne i s priponou .php
+*		$ run_unit_tests tc_account.php tc_bank_transfer.php
 *
 * Nebezpecne testy
 * ----------------
 * Jsou to takove testy, ktere zmeni/nastavi neco, co muze mit nejake nasledky. Napriklad testy pro registraci domeny.
-* Takove testy umistime do souboru zacinajici vykricnikem, napr. !tc_domain_registration.inc
+* Takove testy umistime do souboru zacinajici vykricnikem, napr. !tc_domain_registration.php
 *
 * Test nebude automaticky spusten, pokud nebude implicitne uveden na prikazove radce:
 *		$ run_unit_tests
-*		$ run_unit_tests \!tc_domain_registration.inc
+*		$ run_unit_tests \!tc_domain_registration.php
 */
 
 error_reporting(255);
@@ -37,7 +37,7 @@ if(preg_match("/^5/",phpversion())){
 if(PHP4){
 	include_once 'PHPUnit.php';
 	if(!class_exists("PHPUnit_TestCase")){
-		echo "Missing dependency: class PHPUnit2_Framework_TestCase\n";
+		echo "Missing dependency: class PHPUnit_TestCase\n";
 		echo "The following command may help you\n";
 		echo "\n";
 		echo " $ sudo pear install PHPUnit\n";
@@ -52,40 +52,48 @@ if(PHP5){
 	include_once 'Benchmark/Timer.php';
 
 	if(!class_exists("PHPUnit2_Framework_TestCase")){
-		echo "Missing dependency: class PHPUnit2_Framework_TestCase\n";
-		echo "The following command may help you\n";
-		echo "\n";
-		echo " $ sudo pear install --alldeps PHPUnit2\n";
-		echo "\n";
+		echo "************************************************************\n";
+		echo "*  Missing dependency: class PHPUnit2_Framework_TestCase   *\n";
+		echo "*  The following command may help you                      *\n";
+		echo "*                                                          *\n";
+		echo "*  $ sudo pear install --alldeps PHPUnit2                  *\n";
+		echo "*                                                          *\n";
+		echo "************************************************************\n";
 		exit(1);
 	}
 }
 
-isset($argv) || $argv = array();
+isset($argv) || ($argv = array());
 
+$SCRIPT = array_shift($argv);
+$DIR = "";
 $RUN_TESTS_ONLY = array();
-for($i=1;$i<sizeof($argv);$i++){
-	$RUN_TESTS_ONLY[] = $argv[$i];
+while($_a = array_shift($argv)){
+	if(is_dir($_a)){ $DIR = $_a; continue; }
+	$RUN_TESTS_ONLY[] = $_a;
+}
+if($DIR){
+	$DIR = preg_replace('/([^\/])$/','\1/',$DIR);
+	chdir($DIR);
 }
 
 if(PHP4){
-	if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
-		eval("class tc_super_base extends PHPUnit_TestCase{ }");
-		require_once($_f);
-	}else{
-		eval("class tc_base extends PHPUnit_TestCase{ }");
-	}
+	eval("class tc_super_base extends PHPUnit_TestCase{ }");
+	eval("class TcSuperBase extends PHPUnit_TestCase{ }");
 }
 if(PHP5){
-	if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
-		eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
-		require_once("$_f");
-	}else{
-		eval("class tc_base extends PHPUnit2_Framework_TestCase{ }");
-	}
+	eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
+	eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
 }
 
 if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
+
+if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
+	require_once($_f);
+}else{
+	eval("class tc_base extends tc_super_base{ }");
+	eval("class TcBase extends TcSuperBase{ }");
+}
 
 if(class_exists("pgmole")){	
 	$dbmole = &PgMole::GetInstance();
@@ -138,16 +146,16 @@ while(list($filename,$classname) = each($ALLOWED_DANGEROUS_TESTS)){
 }
 
 if(sizeof($tests_to_execute)==1){
-	_test_runner($tests_to_execute[0]);
+	_test_runner($tests_to_execute[0],$DIR);
 	exit;
 }
 
 
 foreach($tests_to_execute as $_f){
-	$cmd = escapeshellcmd($argv[0])." ".escapeshellarg($_f)." 2>&1";
+	$cmd = escapeshellcmd($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
 	if(isset($_SERVER["_"])){
 		// v $_SERVER["_"] je interpret PHP: /usr/bin/php
-		$cmd = escapeshellcmd($_SERVER["_"])." ".escapeshellarg($argv[0])." ".escapeshellarg($_f)." 2>&1";
+		$cmd = escapeshellcmd($_SERVER["_"])." ".escapeshellarg($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
 	}
 	passthru($cmd);
 }
@@ -170,14 +178,22 @@ function _test_inobj_error_handler($values){
 	exit;
 }
 
-function _test_runner($filename){
-	$classname = preg_replace("/\\.[^.]*$/","",$filename);
-	$classname = preg_replace("/^!/","",$classname);
+function _test_runner($filename,$DIR){
+	$classname = preg_replace('/\.[^.]*$/',"",$filename);
+	$classname = preg_replace('/^!/',"",$classname);
+	$alt_classname = preg_replace('/_/',"",$classname);
 
 	require($filename);
 
+	// global variable $_TEST may be useful in some special cases
+	$GLOBALS["_TEST"] = array(
+		"FILENAME" => getcwd()."/$filename"
+	);
+
+	if(class_exists($alt_classname)){ $classname = $alt_classname; }
+
 	if(!class_exists($classname)){
-		echo "--- $filename\n";
+		echo "--- $DIR$filename\n";
 		echo "!!! class $classname doesn't exist\n";
 		return;
 	}
@@ -185,7 +201,7 @@ function _test_runner($filename){
 	if(PHP4){
 		$suite  = new PHPUnit_TestSuite($classname);
 		$result = PHPUnit::run($suite);
-		echo "--- $filename\n";
+		echo "--- $DIR$filename\n";
 		print $result->toString();
 	}
 	if(PHP5){
@@ -200,8 +216,7 @@ function _test_runner($filename){
 		$result = $suite->run();
 		$timer->stop();
 
-		echo "--- $filename\n";
+		echo "--- $DIR$filename\n";
 		$printer->printResult($result, $timer->timeElapsed());
 	}
 }
-?>

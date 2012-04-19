@@ -54,8 +54,7 @@ __defaults__(array(
 	"SENDMAIL_DEFAULT_BODY_CHARSET" => DEFAULT_CHARSET,
 	"SENDMAIL_DEFAULT_BODY_MIME_TYPE" => "text/plain",
 	"SENDMAIL_BODY_AUTO_PREFIX" => "", // given text will be prepend to every message
-	"SENDMAIL_USE_TESTING_ADDRESS_TO" => false,
-	"SENDMAIL_TESTING_ADDRESS_TO" => "", // all emails will be sent to this address; for testing purposes
+	"SENDMAIL_USE_TESTING_ADDRESS_TO" => "", // all emails will be sent to this address; for testing purposes
 	"SENDMAIL_DO_NOT_SEND_MAILS" => !PRODUCTION, // do not send emails in DEVELOPMENT or TESTing environment
 	"SENDMAIL_EMPTY_TO_REPLACE" => "", // empty to address replacement
 	"SENDMAIL_DEFAULT_TRANSFER_ENCODING" => "quoted-printable", // "8bit" or "quoted-printable"

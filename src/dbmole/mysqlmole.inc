@@ -67,4 +67,8 @@ class MysqlMole extends DbMole{
 	function _disconnectFromDatabase(){
 		mysql_close($this->_DbConnect);
 	}
+
+	function getAffectedRows(){
+		return mysql_affected_rows($this->_DbConnect);
+	}
 }

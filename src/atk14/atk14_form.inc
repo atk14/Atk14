@@ -928,4 +928,12 @@ class Atk14Form extends Form
 
 		return $out;
 	}
+
+	function __call($name,$arguments){
+		$underscore_name = String::ToObject($name)->underscore()->toString();
+		if(method_exists($this,$underscore_name)){
+			return call_user_func_array(array($this,$underscore_name),$arguments);
+		}
+		throw new Exception(get_class($this).": unknown method $name()");
+	}
 }

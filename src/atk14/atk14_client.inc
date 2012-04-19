@@ -35,6 +35,10 @@ class Atk14Client{
 	 */
 	var $controller = null;
 
+	var $_UserAgent = "Atk14 Testing Client";
+
+	var $_RemoteAddr = "0.0.0.0";
+
 	/**
 	 *
 	 */
@@ -43,8 +47,8 @@ class Atk14Client{
 		$this->flash = &Atk14Flash::GetInstance();
 
 		if(!isset($GLOBALS["_COOKIE"])){ $GLOBALS["_COOKIE"] = array(); }
-		$GLOBALS["_COOKIE"]["_chk_"] = "1";
 		$GLOBALS["_SERVER"]["REMOTE_ADDR"] = "0.0.0.0";
+		$GLOBALS["_COOKIE"][SESSION_STORER_COOKIE_NAME_CHECK] = "1";
 	}
 
 	/**
@@ -89,6 +93,8 @@ class Atk14Client{
 	 */
 	function _doRequest($method,$path,$params){
 		$request = new HTTPRequest();
+		$request->setUserAgent($this->_UserAgent);
+		$request->setRemoteAddr($this->_RemoteAddr);
 
 		$this->flash->reset();
 
@@ -97,7 +103,7 @@ class Atk14Client{
 			if(is_object($v)){ $v = $v->getId(); }
 		}
 
-		$path_ar = split("/",$path);
+		$path_ar = explode("/",$path);
 
 		$namespace = null;
 		if(sizeof($path_ar)==2){
@@ -156,5 +162,13 @@ class Atk14Client{
 	 */
 	function getStatusCode(){
 		return $this->controller->response->getStatusCode();
+	}
+
+	function setUserAgent($user_agent){
+		return $this->_UserAgent = $user_agent;
+	}
+
+	function setRemoteAddr($addr){
+		$this->_RemoteAddr = $addr;
 	}
 }

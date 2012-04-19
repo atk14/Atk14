@@ -5,6 +5,6 @@ To execute all test cases run
 
     $ ../../scripts/run_unit_tests
 
-To execute only test case for model Creature run
+To execute only test case for a certain model run
 
     $ ../../scripts/run_unit_tests tc_creature

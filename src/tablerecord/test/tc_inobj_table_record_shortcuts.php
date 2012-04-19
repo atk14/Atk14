@@ -1,6 +1,6 @@
 <?php
 // nacte obsah souboru tc_inobj_table_record.inc
-$content = file_get_contents(dirname(__FILE__)."/tc_inobj_table_record.inc");
+$content = file_get_contents(dirname(__FILE__)."/tc_inobj_table_record.php");
 
 // zmeni nazev tridy
 $content = str_replace("class tc_inobj_table_record","class tc_inobj_table_record_shortcuts",$content);

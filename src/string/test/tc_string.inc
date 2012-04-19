@@ -26,6 +26,7 @@ class tc_string extends tc_base{
 		$this->assertFalse(is_object($string));
 
 		$this->assertEquals("$string","$stringer");
+		$this->assertEquals("$string",$stringer->toString());
 		$this->assertEquals(11,strlen($stringer));
 
 		// String::ToObject()
@@ -144,7 +145,9 @@ class tc_string extends tc_base{
 
 		// containsOneOf
 		$this->assertTrue($str->containsOneOf(array("ello","Belle")));
+		$this->assertTrue($str->containsOneOf("ello","Belle"));
 		$this->assertFalse($str->containsOneOf(array("Nello","Belle")));
+		$this->assertFalse($str->containsOneOf("Nello","Belle"));
 	}
 
 	function test_camelize(){

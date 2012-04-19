@@ -58,6 +58,7 @@ class Date{
 	function getDate(){ return $this->_Date; }
 	function toString($format = "Y-m-d"){ return date($format,$this->getUnixTimestamp()); }
 	function getId(){ return $this->toString(); }
+	function toGmdate($format = 'D, d M Y H:i:s \G\M\T'){ return gmdate($format,$this->getUnixTimestamp()); }
 
 	function format($format_string){ return date($format_string,$this->getUnixTimestamp()); }
 
