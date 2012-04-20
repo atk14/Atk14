@@ -10,7 +10,7 @@
  */
 
 /**
- * Class for managing sortable records.
+ * Class for managing sortable *NON-UNIQUE* lists of records.
  *
  * This class is intended for use on tables with association table (M:N model association).
  *
@@ -221,6 +221,23 @@ class TableRecord_Lister extends inobj{
 		return $out;
 	}
 
+	function setRecords($records){
+		reset($records);
+		foreach($this->getItems() as $item){
+			if(!$rec = array_shift($records)){
+				$item->destroy(array("__auto_correct_ranking__" => false));
+				continue;
+			}
+			$rec = is_object($rec) ? $rec->getId() : $rec;
+			if($item->getRecordId()!=$rec){ $item->setRecordId($rec); }
+		}
+		while($rec = array_shift($records)){
+			$this->append($rec);
+		}
+
+		$this->_correctRanking();
+	}
+
 	/**
 	 * Sets position of a record in the list.
 	 *
@@ -347,8 +364,30 @@ class TableRecord_ListerItem{
 		return $id;
 	}
 
+	function setRecordId($record){
+		$o = $this->_options;
+		$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[subject_field_name]=:record WHERE $o[id_field_name]=:id",array(
+			":record" => $record,
+			":id" => $this,
+		));	
+	}
+
 	function getRecord(){
 		return Cache::Get($this->_options["class_name"],$this->getRecordId());
+	}
+
+	function destroy($options = array()){
+		$options = array_merge(array(
+			"__auto_correct_ranking__" => true,
+		),$options);
+		$o = $this->_options;
+		$this->_dbmole->doQuery("DELETE FROM $o[table_name] WHERE $o[id_field_name]=:id",array(
+			":id" => $this,
+		));
+
+		if($options["__auto_correct_ranking__"]){
+			$this->_lister->_correctRanking();
+		}
 	}
 
 	function _g($key){
