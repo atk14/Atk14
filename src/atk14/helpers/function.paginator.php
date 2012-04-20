@@ -97,7 +97,7 @@ function smarty_function_paginator($params,&$smarty){
 	$first_child = true;
 	if($from>0){
 		$par["$from_name"] = $from - $max_amount;
-		$url = Atk14Utils::BuildLink($par,$smarty,array("connector" => "&amp;"));
+		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
 		$out[] = "<li class=\"first-child prev\"><a href=\"$url\">"._("prev")."</a></li>";
 		$first_child = false;
 	}
@@ -108,7 +108,7 @@ function smarty_function_paginator($params,&$smarty){
 	$current_step = floor($from / $max_amount)+1; // pocitano od 1
 	while($cur_from < $total_amount){
 		$par["$from_name"] = $cur_from;
-		$url = Atk14Utils::BuildLink($par,$smarty,array("connector" => "&amp;"));
+		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
 		$_class = array();
 		$cur_from==$from && ($_class[] = "active");
 		$first_child && ($_class[] = "first-child") && ($first_child = false);
@@ -141,7 +141,7 @@ function smarty_function_paginator($params,&$smarty){
 
 	if(($from+$max_amount)<$total_amount){
 		$par["$from_name"] = $from + $max_amount;
-		$url = Atk14Utils::BuildLink($par,$smarty,array("connector" => "&amp;"));
+		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
 		$out[] = "<li class=\"last-child next\"><a href=\"$url\">"._("next")."</a></li>";
 	}
 
@@ -152,4 +152,11 @@ function smarty_function_paginator($params,&$smarty){
 
 	return join("\n",$out);
 }
-?>
+
+// removes from the $params offset when it equals to zero
+function _smarty_function_paginator_build_url($params,&$smarty,$from_name){
+	if(isset($params[$from_name]) && $params[$from_name]==0){
+		unset($params[$from_name]);
+	}
+	return Atk14Utils::BuildLink($params,$smarty,array("connector" => "&amp;"));
+}
