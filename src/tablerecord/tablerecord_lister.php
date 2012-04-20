@@ -213,6 +213,10 @@ class TableRecord_Lister extends inobj{
 	}
 
 	/**
+	 * <code>
+	 *	$lister = $article->getLister("Authors");
+	 *	$authors = $lister->getRecords(); // array of models 
+	 * </code>
 	 * @returns array
 	 */
 	function getRecords(){
@@ -221,6 +225,13 @@ class TableRecord_Lister extends inobj{
 		return $out;
 	}
 
+	/**
+	 * <code> 
+	 *  $lister = $article->getLister("Authors");
+	 *  $lister->setRecordRank(array(123,124,125));
+	 *  $lister->setRecordRank(array($obj1,$obj2,$obj3));
+	 * </code>
+	 */
 	function setRecords($records){
 		reset($records);
 		foreach($this->getItems() as $item){
@@ -242,7 +253,7 @@ class TableRecord_Lister extends inobj{
 	 * Sets position of a record in the list.
 	 *
 	 * <code>
-	 * $lister->setRecordRank($author,0); // moves the given author to begin
+	 * 	$lister->setRecordRank($author,0); // moves the given author to begin
 	 * </code>
 	 *
 	 * @param TableRecord $record
