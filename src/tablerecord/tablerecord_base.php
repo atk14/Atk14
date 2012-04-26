@@ -1238,8 +1238,17 @@ class TableRecord_Base extends inobj{
 
 	}
 
-	function __toString(){
+	function toString(){
 		return sprintf("%s#%s",get_class($this),$this->getId());
+	}
+
+	/**
+	 * Magic method:
+	 * 
+	 * echo "$object"; 
+	 */
+	function __toString(){
+		return $this->toString();
 	}
 
 	/**

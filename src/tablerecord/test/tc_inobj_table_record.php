@@ -60,6 +60,8 @@ class tc_inobj_table_record extends tc_base{
 
 		$this->assertEquals(2,$record->getId());
 		$this->assertTrue(is_int($record->getId()));
+		$this->assertEquals("inobj_TestTable#2",$record->toString());
+		$this->assertEquals("inobj_TestTable#2","$record");
 
 		$this->assertEquals("titulek",$record->getValue("title"));
 
