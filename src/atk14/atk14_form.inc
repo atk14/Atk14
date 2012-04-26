@@ -549,6 +549,10 @@ class Atk14Form extends Form
 		   return $out;
 		}
 
+		if(is_null($this->fields)){
+			return array();
+		}
+
 		$out = array();
 		$keys = array_keys($this->fields);
 		foreach($keys as $key){

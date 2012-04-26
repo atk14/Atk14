@@ -17,6 +17,20 @@ class TcForm extends TcBase{
 		$this->assertEquals("jumper",$d["nickname"]);
 	}
 
+	function test_get_initial(){
+		$form = new Atk14Form();
+		$this->assertEquals(array(),$form->get_initial());
+
+		$form->add_field("firstname",new CharField());
+		$form->add_field("lastname",new CharField(array("initial" => "Smith")));
+
+		$this->assertEquals(array("firstname" => null, "lastname" => "Smith"),$form->get_initial());
+
+		$form->set_initial("firstname","John");
+
+		$this->assertEquals(array("firstname" => "John", "lastname" => "Smith"),$form->get_initial());
+	}
+
 	function test_csrf_tokens(){
 		$form = new Atk14Form();
 		$current_token = $form->get_csrf_token();
