@@ -1,8 +1,9 @@
 <?php
 /**
+ * Class for finding records.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  * @filesource
  *
  */
@@ -33,12 +34,13 @@
  *
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  *
  */
 class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 
 	/**
+	 * Constructor
 	 *
 	 * @access private 
 	 * @param array $options
@@ -110,9 +112,18 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	 * @return bool true when no records were found otherwise false
 	 */
 	function isEmpty(){ return $this->getTotalAmount()==0; }
+
+	/**
+	 * Checks if the returned recordset was not empty.
+	 *
+	 * Returns negative value of method {@link isEmpty()}
+	 *
+	 * @return bool false when no records were found otherwise true
+	 */
 	function notEmpty(){ return !$this->isEmpty(); }
 
 	/**
+	 * Getter for limit option
 	 *
 	 * @return integer
 	 */
@@ -121,6 +132,8 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	}
 
 	/**
+	 * Getter for offset option.
+	 *
 	 * @return integer
 	 */
 	function getOffset(){

@@ -18,6 +18,7 @@
 class StringBuffer{
 
 	/**
+	 * Buffer for storing content.
 	 * @access private
 	 */
 	var $_Buffer = array();

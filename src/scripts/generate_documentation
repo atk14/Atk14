@@ -22,25 +22,29 @@
 
 require_once(dirname(__FILE__)."/load.inc");
 
+$output_dir = $ATK14_GLOBAL->getApplicationPath()."../tmp/documentation";
+
 $src_dirs = array();
 $options = array(
 	"generate_fw_doc" => true,
 	"generate_app_doc" => false,
 );
 $switches = array(
-	"--packageoutput" => array(
-		"Atk14",
-	),
 	"--defaultpackagename" => "Atk14",
 
 	"--title" => "'Atk14 Documentation'",
+	"--extensions" => "php,inc",
 
 	// ignored files
 	"--ignore" => array(
 		"*/test/*.inc",
 		"*/test/*.php",
-		"load.inc",
-		"initialize.inc"
+		"tc_*.php",
+		"tc_*.inc",
+		"*/load.inc",
+		"*/load.php",
+		"initialize.inc",
+		"*/demo/*",
 	),
 	"--directory" => array(
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/atk14",
@@ -55,6 +59,8 @@ $switches = array(
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/tablerecord",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/xmole",
 	),
+
+	"--target" => "$output_dir",
 );
 
 // framework is documented by default
@@ -86,7 +92,6 @@ if ($options["generate_app_doc"]) {
 	$switches["--title"] = "'Application Documentation'";
 }
 
-$output_dir = $ATK14_GLOBAL->getApplicationPath()."../tmp/documentation";
 
 if (!file_exists($output_dir)) {
 	files::mkdir($output_dir, &$err, &$err_str);
@@ -104,7 +109,7 @@ foreach($switches as $sw => $val) {
 	}
 }
 
-$command = sprintf("phpdoc -o HTML:frames:DOM/phpdoc.de %s -t $output_dir", $prms);
+$command = sprintf("phpdoc  %s", $prms);
 
 $val = system($command, $ret);
 

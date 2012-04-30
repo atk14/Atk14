@@ -4,7 +4,6 @@
  *
  * @package Atk14
  * @subpackage Core
- * @author Jaromir Tomek
  * @filesource
  */
 
@@ -29,36 +28,40 @@
  * }
  * </code>
  *
+ * Custom message types can be created using the method {@link setMessage()}
+ *
  * @package Atk14
  * @subpackage Core
- * @author Jaromir Tomek
  */
 class Atk14Flash{
 
 	/**
+	 * Flag indicating if a flash message was read.
+	 *
 	 * @access private
 	 * @var bool
 	 */
 	var $_FlashRead = false;
 
 	/**
-	* Constructor.
-	*
-	* Instance musi byt ziskavana volanim
-	* $flash = &Atk14Flash::GetInstance();
-	*
-	* @access private
-	*/
+	 * Constructor.
+	 *
+	 * Do not use it. Instance must be initialized by call {@link GetInstance()}
+	 *
+	 * <code>
+	 * $flash = &Atk14Flash::GetInstance();
+	 * </code>
+	 *
+	 * @access private
+	 */
 	function Atk14Flash(){
 		
 	}
 
 	/**
-	 * Staticka metoda pro ziskani jedinacka.
+	 * Static method for getting singleton.
 	 *
-	 * @static
 	 * @return Atk14Flash instance of class Atk14Flash
-	 *
 	 */
 
 	static function &GetInstance(){
@@ -129,6 +132,14 @@ class Atk14Flash{
 		return $this->getMessage("success");
 	}
 
+	/**
+	 * Method to set a message with other than one of default keys.
+	 *
+	 * If the $message param is omitted the $key is used as $param as <strong>notice</strong>.
+	 *
+	 * @param string $key
+	 * @param string $message
+	 */
 	function setMessage($key,$message = null){
 		$session = &Atk14Session::GetInstance();
 		if(!isset($message)){
@@ -144,6 +155,12 @@ class Atk14Flash{
 		$session->setValue("__flash__",$flash_ar);
 	}
 
+	/**
+	 * Getter for flash messages with other than one of default keys.
+	 *
+	 * @param string $key
+	 * @return string
+	 */
 	function getMessage($key = "notice"){
 		$session = &Atk14Session::GetInstance();
 
@@ -158,15 +175,25 @@ class Atk14Flash{
 		return $out;
 	}
 
+	/**
+	 * Clears all flash messages.
+	 */
 	function clearMessages(){
 		$session = &Atk14Session::GetInstance();
 		$session->clearValue("__flash__");
 	}
 
+	/**
+	 * Clears all flash messages unless the _FlashRead flag is true
+	 *
+	 */
 	function clearMessagesIfRead(){
 		if($this->_FlashRead){ $this->clearMessages(); }
 	}
 
+	/**
+	 * Clears all flash messages and sets $_FlashRead flag to true
+	 */
 	function reset(){
 		$this->clearMessages();
 		$this->_FlashRead = false;
