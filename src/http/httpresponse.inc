@@ -1,7 +1,9 @@
 <?php
 /**
+ * HTTPResponse class provides methods to control HTTP response.
+ *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Http
  * @filesource
  */
 
@@ -11,7 +13,7 @@
  * Instance of the class is available in any {@link Atk14Controller} descendant as $response variable.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Http
  */
 class HTTPResponse{
 

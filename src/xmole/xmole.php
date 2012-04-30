@@ -3,7 +3,7 @@
  * Simple XML parser.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage XMole
  * @filesource
  *
  */
@@ -55,7 +55,7 @@ if(!defined("XMOLE_AUTO_TRIM_ALL_DATA")){
  * </code>
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage XMole
  * @filesource
  */
 class XMole{
