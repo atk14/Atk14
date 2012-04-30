@@ -69,7 +69,7 @@ class miniYAML{
   * @param string $yaml      zapis struktury v YAML
   * @return array
   */
-  function Load($yaml,$options = array()){
+  static function Load($yaml,$options = array()){
 		$options = array_merge(array(
 			"interpret_php" => false,
 			"values" => array(),
@@ -91,7 +91,7 @@ class miniYAML{
   * @param array $ar
   * @return string
   */
-  function Dump($ar){
+  static function Dump($ar){
     $obj = new miniYAML();
     return "---\n".$obj->_dumpHashArray($ar,0)."\n";
   }
@@ -107,7 +107,7 @@ class miniYAML{
 	*		"password" => "magic"
 	*	));
 	*/
-	function InterpretPHP($__yaml,$__values = array()){
+	static function InterpretPHP($__yaml,$__values = array()){
 		foreach($__values as $__k => $__v){
 			eval("\$$__k = \$__v;");
 		}

@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_httpxfile extends tc_base{
 	function test(){
 		global $HTTP_REQUEST,$_FILES;

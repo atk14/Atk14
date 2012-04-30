@@ -19,4 +19,3 @@ if(!function_exists('json_encode'))
 		if(!isset($GLOBALS['JSON_OBJECT'])){ $GLOBALS['JSON_OBJECT'] = new Services_JSON(); }
 	}
 }
-?>

@@ -57,12 +57,12 @@ class DbMole{
 	 */
 	var $_ErrorMessage = null;
 
+
 	/**
+	 * Just an flag that the error handler has been called.
 	 * @access private
-	 * @internal Is this attribute really used?
-	 * @todo check var usage
 	 */
-	var $_ErrorHangler = null;
+	var $_ErrorRaised = false;
 
 
 	/**
@@ -464,6 +464,11 @@ class DbMole{
 		if(strlen($db_error = $this->_getDbLastErrorMessage())>0){
 			$this->_ErrorMessage .= " ".$db_error;
 		}
+
+		if($this->_ErrorRaised){
+			return null;
+		}
+		$this->_ErrorRaised = true;
 
 		$error_handler = DbMole::_GetSetErrorHandlerFunction();
 		if(strlen($error_handler)>0){

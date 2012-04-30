@@ -10,6 +10,11 @@ class tc_lister extends tc_base{
 			"body" => "'My sheep hear My voice'\nChrist did say, 'and I know them\nand they follow Me'",
 		));
 
+		$this->article2 = Article::CreateNewRecord(array(
+			"title" => "John 8:36",
+			"body" => "If the Son therefore shall make you free, ye shall be free indeed.",
+		));
+
 		$john = Author::CreateNewRecord(array(
 			"name" => "John",
 		));
@@ -21,6 +26,9 @@ class tc_lister extends tc_base{
 		$paul = Author::CreateNewRecord(array(
 			"name" => "Paul",
 		));
+
+		$lister2 = $this->article2->getAuthorsLister();
+		$lister2->append($john);
 
 		$lister = $this->article->getAuthorsLister();
 
@@ -61,6 +69,28 @@ class tc_lister extends tc_base{
 		$lister->remove($john);
 		$this->_test_authors(array($paul,$peter));
 
+		// non-unique behaviour
+		$lister->append($john);
+		$lister->append($john);
+
+		$this->_test_authors(array($paul,$peter,$john,$john));
+
+		// setRecords
+		$lister->setRecords(array($john,$peter));
+		$this->_test_authors(array($john,$peter));
+
+		$lister->setRecords(array());
+		$this->_test_authors(array());
+
+		$lister->setRecords(array($paul,$john));
+		$this->_test_authors(array($paul,$john));
+
+		$lister->setRecords(array($peter,$paul));
+		$this->_test_authors(array($peter,$paul));
+
+		$lister->setRecords(array($john,$peter,$paul));
+		$this->_test_authors(array($john,$peter,$paul));
+
 		$dbmole->rollback();
 	}
 
@@ -88,6 +118,11 @@ class tc_lister extends tc_base{
 			$this->assertEquals($expected_authors[$i]->getId(),$records[$i]->getId());
 			$this->assertEquals($expected_authors[$i]->getId(),$record_ids[$i]);
 		}
-		
+
+		//
+		 
+		$authors2 = $this->article2->getAuthors();
+		$this->assertEquals(1,sizeof($authors2));
+		$this->assertEquals("John",$authors2[0]->getName());
 	}
 }

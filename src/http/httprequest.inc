@@ -234,7 +234,7 @@ class HTTPRequest{
 		if(!$this->SSLActive() && $this->getServerPort()!=80){
 			$port = ":".$this->getServerPort();
 		}
-		$hostname = $this->getHTTPHost();
+		$hostname = $this->getHttpHost();
 		$uri = $this->getRequestUri();
 		return "$proto://$hostname$port$uri";
 	}
@@ -298,7 +298,7 @@ class HTTPRequest{
 	 *
 	 * @return string
 	 */
-	function getHTTPHost(){
+	function getHttpHost(){
 		return $this->_HTTPRequest_HTTPHost;
 	}
 

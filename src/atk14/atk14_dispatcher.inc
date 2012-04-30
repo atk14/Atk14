@@ -39,14 +39,15 @@ class Atk14Dispatcher{
 
 		// defaultni content-type a charset
 		$HTTP_RESPONSE->setContentType("text/html");
-		$HTTP_RESPONSE->setContentCharset("UTF-8");
+		$HTTP_RESPONSE->setContentCharset(DEFAULT_CHARSET);
 
 		$ATK14_LOGGER = new logger("atk14",array("disable_start_and_stop_marks" => true));
 		$ATK14_LOGGER->start();
 
 		Atk14Timer::Start("Atk14Url::RecognizeRoute");
-		$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestURI());
+		$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri());
 		$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
+		DEVELOPMENT && $route_ar["action"]=="error404" && $ATK14_LOGGER->error("no route has been found for ".$request->getRequestUri());
 		$_GET = array_merge($_GET,$route_ar["get_params"]);
 		Atk14Timer::Stop("Atk14Url::RecognizeRoute");
 
@@ -113,9 +114,8 @@ class Atk14Dispatcher{
 	 * @return HTTPReponse
 	 */
 	static function ExecuteAction($controller_name,$action,$options = array()){
-		global $ATK14_GLOBAL;
+		global $ATK14_GLOBAL, $ATK14_LOGGER;
 		$namespace = $ATK14_GLOBAL->getValue("namespace");
-
 
 		$options = array_merge(array(
 			"page_title" => "",
@@ -134,6 +134,7 @@ class Atk14Dispatcher{
 
 		$_class_name = str_replace("_","",$controller_name)."Controller";
 		if(!class_exists($_class_name) || preg_match("/__/",$controller_name)){
+			DEVELOPMENT && $ATK14_LOGGER->error("controller class $_class_name doesn't exist");
 			$controller_name = "application";
 			$_class_name = "ApplicationController";
 			$action = "error404";
@@ -143,6 +144,7 @@ class Atk14Dispatcher{
 		$methods = get_class_methods($controller);
 		// pokud se v nazvu akce objevi dve podtrzitka, nespustime ji, toto se nesmi 
 		if(preg_match("/__/",$action) || !in_array($action,$methods)){
+			DEVELOPMENT && $ATK14_LOGGER->error("there's no action method $_class_name::$action()");
 			// tady se meni controller na instance tridy ApplicationController
 			$controller = new ApplicationController();
 			$controller_name = "application";
@@ -193,4 +195,3 @@ class Atk14Dispatcher{
 		return $controller->response;
 	}
 }
-?>

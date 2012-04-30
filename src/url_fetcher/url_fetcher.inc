@@ -1,4 +1,4 @@
-<?
+<?php
 define("URL_FETCHER_VERSION","0.2");
 /**
 * $fetcher = new UrlFetcher();

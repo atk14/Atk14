@@ -28,4 +28,7 @@ The ATK14 Project site is at http://www.atk14.net/
 
 The ATK14 Book is at http://book.atk14.net/
 
-The API reference is at http://api.atk14.net/ 
+The API reference is at http://api.atk14.net/
+
+ATK14 is free software distributed under the terms of the MIT license
+http://www.opensource.org/licenses/mit-license

@@ -222,7 +222,7 @@ class SessionStorer{
 
 		$id = $this->_dbmole->SelectSequenceNextval("seq_sessions");
 
-		$this->_dbmole->doQuery("
+		$stat = $this->_dbmole->doQuery("
 			INSERT INTO sessions(
 				id,
 				security,
@@ -241,7 +241,7 @@ class SessionStorer{
 		$this->_SessionId = $id;
 		$this->_SessionSecurity = $security;
 
-		return true;
+		return !!$stat;
 	}
 
 	static function _RandomString($length = 32){

@@ -279,8 +279,10 @@ class Atk14Utils{
 
 			$_template_dir[] = $PATH_SMARTY."/../templates/";
 
+			$userid = posix_getuid();
+
 			$smarty->template_dir   =   $_template_dir;
-			$smarty->compile_dir    =   $PATH_SMARTY."/templates_c/";
+			$smarty->compile_dir    =   "$PATH_SMARTY/$userid/templates_c/"; // the uid of the user owning the current process is involved in the compile_dir, thus some file permission issues are solved
 			$smarty->config_dir     =   $PATH_SMARTY."/config/";
 			$smarty->cache_dir      =   $PATH_SMARTY."/cache/";
 			$smarty->plugins_dir[]  =   $PATH_SMARTY."/plugins/";
