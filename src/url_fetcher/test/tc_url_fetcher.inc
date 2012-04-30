@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_url_fetcher extends tc_base{
 	function test(){
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/dungeon-master.png");

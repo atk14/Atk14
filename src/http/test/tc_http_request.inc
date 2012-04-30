@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_http_request extends tc_base{
 	function test_get_remote_addr(){
 		global $_SERVER;

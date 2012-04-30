@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_finding_records extends tc_base{
 	function test_complex_magix_queries(){
 		$the_true_one = Article::CreateNewRecord(array(

@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_inobj_table_record_finder extends tc_base{
 	function test(){
 		$apples = inobj_TestTable::CreateNewRecord(array(

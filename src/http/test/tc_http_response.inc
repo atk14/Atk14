@@ -1,4 +1,4 @@
-<?
+<?php
 class tc_http_response extends tc_base{
 	function test_location(){
 		$response = new HTTPResponse();
