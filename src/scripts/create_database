@@ -1,11 +1,15 @@
 #!/bin/bash
 
-cd `dirname $0`;
+# create a database and an database user according to config/database.yml
+
+dirname=`dirname $0`;
+cd $dirname;
 
 PG_USER=postgres                          # Postgresql's service account name
 DBNAME=`./_database_username`
 DBPASSWORD=`./_database_password`
 ENVIRONMENT=`./_atk14_env`
+environment=`echo -n  $ENVIRONMENT | tr A-Z a-z`
 
 
 sql=$( cat <<EOF
@@ -35,7 +39,7 @@ if [ "$1" != '-f' ] ; then
 
 echo ""
 echo "Now you may want to run"
-echo "  $ ./scripts/initialize_database"
-echo "  $ ./scripts/migrate"
+echo "  $ ATK14_ENV=$environment $dirname/initialize_database"
+echo "  $ ATK14_ENV=$environment $dirname/migrate"
 
 fi
