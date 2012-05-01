@@ -155,6 +155,14 @@ class Atk14Client{
 		return $this->controller->response->getContentType();
 	}
 
+	function getLocation(){
+		return $this->controller->response->getLocation();
+	}
+
+	function redirected(){
+		return $this->controller->response->redirected();
+	}
+
 	/**
 	 * Gets status code of server response.
 	 *
