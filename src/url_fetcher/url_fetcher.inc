@@ -222,10 +222,22 @@ class UrlFetcher {
 	function getHeaders(){ return $this->getResponseHeaders($options = array()); }
 
 	function getContent(){ $this->fetchContent(); return $this->_Content; }
+
+	/**
+	 * Vrati hodnotu dane hlavicky...
+	 * 
+	 * $c_type = $uf->getHeaderValue("Content-Type"); // "text/xml"
+	 */ 
 	function getHeaderValue($header){
 		$header = strtolower($header);
 		$headers = $this->getResponseHeaders(array("as_hash" => true, "lowerize_keys" => true));
 		if(isset($headers["$header"])){ return $headers["$header"]; }
+	}
+	/** 
+   * Alias for UrlFetcher::getHeaderValue().
+	 */
+	function getHeader($name){
+		return $this->getHeaderValue($name);
 	}
 	function getContentType(){
 		$c_type = $this->getHeaderValue("content-type");

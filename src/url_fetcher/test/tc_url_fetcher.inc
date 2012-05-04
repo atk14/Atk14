@@ -8,6 +8,12 @@ class tc_url_fetcher extends tc_base{
 		$this->assertEquals(11462,strlen($f->getContent()));
 		$this->assertEquals("c4f99bdb6a4feb3b41b1bcd56a4d7aa3",md5($f->getContent()));
 		$this->assertEquals("image/png",$f->getContentType());
+		$this->assertEquals("image/png",$f->getHeaderValue("Content-Type"));
+		$this->assertEquals("image/png",$f->getHeaderValue("content-type"));
+		$this->assertEquals("image/png",$f->getHeaderValue("content-type"));
+		$this->assertEquals("image/png",$f->getHeader("content-type"));
+		$this->assertEquals(null,$f->getHeaderValue("content-type-xxx"));
+
 		$this->assertEquals(200,$f->getStatusCode());
 		$this->assertEquals("dungeon-master.png",$f->getFilename());
 
