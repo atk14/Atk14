@@ -341,6 +341,18 @@ class HTTPResponse{
 		$this->_Headers[$name] = $value;
 	}
 
+	/**
+	 * Cleares previusly set header.
+	 *
+	 * <code>
+	 * $response->setHeader("X-Frame-Option","SAMEORIGIN");
+	 * $response->Header("X-Frame-Option");
+	 * </code>
+	 */
+	function clearHeader($name){
+		return $this->setHeader($name,"");
+	}
+
 	function authorizationRequired($realm = "private area"){
 		$this->setStatusCode(401);
 		$this->clearOutputBuffer();
