@@ -39,7 +39,7 @@ class inobj{
 		$this->_dbmole = &$this->dbmole;
 	}
 
-	function &_GetDbmole(){
+	static function &_GetDbmole(){
 		return PgMole::GetInstance();
 	}
 
