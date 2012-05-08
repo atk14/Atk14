@@ -473,6 +473,16 @@ class tc_inobj_table_record extends tc_base{
 		$this->assertEquals($rec->toArray(),$rec2->toArray());
 	}
 
+	function test_GetSequenceNextval(){
+		$id1 = inobj_TestTable::GetSequenceNextval();
+		$id2 = inobj_TestTable::GetSequenceNextval();
+
+		$this->assertTrue(is_numeric($id1));
+		$this->assertTrue(is_numeric($id2));
+
+		$this->assertTrue($id2>$id1);
+	}
+
 	function _test_fall($recs){
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals("Fall",$recs[0]->getTitle());

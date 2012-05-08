@@ -228,6 +228,25 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
+	 * Returns a next value of the sequence related to the class.
+	 * It's useful when you need to know $id before creation of an object.
+	 * 
+	 * <code>
+	 * 	$id = User::GetSequenceNextval();
+	 * 	User::CreateNewRecord(array(
+	 *		"id" => $id,
+	 *		"password" => md5($password.$id),
+	 *	));
+	 * </code>
+	 */
+	static function GetSequenceNextval(){
+		$class_name = get_called_class();
+		$obj = new $class_name;
+		$dbmole = &TableRecord::GetDbmole();
+		return $dbmole->selectSequenceNextval($obj->getSequenceName());
+	}
+
+	/**
 	 * Returns name of table.
 	 *
 	 * @return string
