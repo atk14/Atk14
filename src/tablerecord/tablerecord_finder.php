@@ -79,6 +79,14 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	}
 
 	/**
+	 * Returns records count in the current result window specified by limit and offset.
+	 * 
+	 */
+	function getRecordsDisplayed(){
+		return sizeof($this->getRecords());
+	}
+
+	/**
 	 * Gets total amount of found records.
 	 *
 	 * @return integer

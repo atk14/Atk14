@@ -342,7 +342,7 @@ class HTTPResponse{
 	}
 
 	/**
-	 * Cleares previusly set header.
+	 * Cleares previously set header.
 	 *
 	 * <code>
 	 * $response->setHeader("X-Frame-Option","SAMEORIGIN");

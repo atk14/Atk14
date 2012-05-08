@@ -23,6 +23,7 @@ class tc_inobj_table_record_finder extends tc_base{
 
 		$records = $finder->getRecords();
 		$this->assertEquals(3,$finder->getTotalAmount());
+		$this->assertEquals(1,$finder->getRecordsDisplayed());
 		$this->assertEquals(1,sizeof($records));
 		$this->assertEquals(1,sizeof($finder));
 		$this->assertEquals("Apples",$finder[0]->getTitle());
@@ -37,6 +38,7 @@ class tc_inobj_table_record_finder extends tc_base{
 
 		$records = $finder->getRecords();
 		$this->assertEquals(3,$finder->getTotalAmount());
+		$this->assertEquals(2,$finder->getRecordsDisplayed());
 		$this->assertEquals(2,sizeof($records));
 		$this->assertEquals(2,sizeof($finder));
 
@@ -69,5 +71,6 @@ class tc_inobj_table_record_finder extends tc_base{
 		$this->assertEquals(0,sizeof($records));
 		$this->assertEquals(0,sizeof($finder));
 		$this->assertEquals(0,$finder->getTotalAmount());
+		$this->assertEquals(0,$finder->getRecordsDisplayed());
 	}
 }
