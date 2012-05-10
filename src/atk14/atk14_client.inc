@@ -35,6 +35,8 @@ class Atk14Client{
 	 */
 	var $controller = null;
 
+	var $namespace = "";
+
 	var $_UserAgent = "Atk14 Testing Client";
 
 	var $_RemoteAddr = "0.0.0.0";
@@ -105,7 +107,7 @@ class Atk14Client{
 
 		$path_ar = explode("/",$path);
 
-		$namespace = null;
+		$namespace = $this->namespace;
 		if(sizeof($path_ar)==2){
 			$lang = "en";
 			list($controller,$action) = $path_ar;
