@@ -94,6 +94,8 @@ class Atk14Client{
 	 * @access private
 	 */
 	function _doRequest($method,$path,$params){
+		global $ATK14_GLOBAL;
+
 		$request = new HTTPRequest();
 		$request->setUserAgent($this->_UserAgent);
 		$request->setRemoteAddr($this->_RemoteAddr);
@@ -105,11 +107,12 @@ class Atk14Client{
 			if(is_object($v)){ $v = $v->getId(); }
 		}
 
+		$namespace = $this->namespace;
+		$lang = $ATK14_GLOBAL->getDefaultLang();
+
 		$path_ar = explode("/",$path);
 
-		$namespace = $this->namespace;
 		if(sizeof($path_ar)==2){
-			$lang = "en";
 			list($controller,$action) = $path_ar;
 		}
 		if(sizeof($path_ar)==3){
