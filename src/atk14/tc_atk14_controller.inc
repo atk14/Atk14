@@ -19,8 +19,6 @@ class TcAtk14Controller extends TcSuperBase{
 			$this->namespace = $matches[1];
 		}
 
-		var_dump($this->namespace);
-		
 		$this->client->namespace = $this->namespace;
 	}	
 }
