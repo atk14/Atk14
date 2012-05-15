@@ -20,10 +20,16 @@
  *  - error
  * 
  * Pokud ma mit div dalsi tridu (tridy), je mozne predat parametr class: 
- * {render partial=shared/form_field field=$form->get_field("title") class="blue"}
+ * {render partial=shared/form_field field=title class="blue"}
  *
  * Dale mozno predat parametr hide_label=1, potom se tagu <label> prida trida access a tim se skryje:
- * {render partial=shared/form_field field=$form->get_field("title") hide_label=1}
+ * {render partial=shared/form_field field=title hide_label=1}
+ *
+ * Printing out more fields on a single line
+ * {render partial=shared/form_field fields=firstname,lastname,email}
+ *
+ * When all the fields are required, there`s no need to mark them as required
+ * {render partial=shared/form_field fields=firstname,lastname,email omit_required=1}
  *}
 
 {if is_string($fields) && strlen($fields)>0}
@@ -44,9 +50,14 @@
 		{assign var=field value=$form->get_field($field)}
 	{/if}
 
-	<div{if $field->required || $field->errors() || $class} class="{trim}{if $field->required}required{/if}{if $field->errors()} error{/if}{if $class} {$class}{/if}{/trim}"{/if}>
+	{assign var=required value=$field->required}
+	{if $omit_required}
+		{assign var=required value=0}
+	{/if}
+
+	<div{if $required || $field->errors() || $class} class="{trim}{if $required}required{/if}{if $field->errors()} error{/if}{if $class} {$class}{/if}{/trim}"{/if}>
 		{if $reverse}{$field->as_widget()}{/if}
-		<label for="{$field->id_for_label()}"{if $hide_label} class="access"{/if}>{$field->label}{if $field->required}<span> ({t}required{/t})</span>{/if}</label>
+		<label for="{$field->id_for_label()}"{if $hide_label} class="access"{/if}>{$field->label}{if $required}<span> ({t}required{/t})</span>{/if}</label>
 		{if !$reverse}{$field->as_widget()}{/if}
 
 		{if $field->help_text || $field->hint}
