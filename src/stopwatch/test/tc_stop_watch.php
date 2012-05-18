@@ -19,4 +19,38 @@ class TcStopWatch extends TcBase{
 		$this->assertTrue($time>=0.001);
 		$this->assertTrue($short_time<0.001);
 	}
+
+	function test_toString(){
+		$sw = new StopWatch();
+
+		$res1 = "$sw";
+
+		usleep(1000);
+		$res2 = "$sw";
+
+		$this->assertTrue($res1!=$res2);
+	}
+
+	function test_humanize(){
+		$sw = new StopWatch();
+
+		$data = array(
+			"0:00.000", 0,
+			"1:00.000", 60,
+			"0:10.000", 10,
+			"0:01.000", 1,
+			"1:23.523", 83.5225,
+		);
+
+		$i = 0;
+		while(isset($data[$i])){
+			$exp = $data[$i];
+			$epoch = $data[$i+1];
+			$i++;
+			$i++;
+			$this->assertEquals($exp,$sw->_humanize($epoch));
+		}
+
+		$this->assertEquals(sizeof($data),$i);
+	}
 }

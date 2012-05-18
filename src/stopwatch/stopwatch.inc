@@ -17,7 +17,7 @@ class StopWatch{
 	var $_ResultsStore = array();
 
 	function StopWatch(){
-
+		$this->start("_auto_start_");
 	}
 
 	/**
@@ -76,8 +76,9 @@ class StopWatch{
 		$out = null;
 		for($i=sizeof($this->_ResultsStore)-1;$i>=0;$i--){
 			if($this->_ResultsStore[$i]["mark"]==$mark){
-				if(isset($this->_ResultsStore[$i]["start"]) && isset($this->_ResultsStore[$i]["stop"])){
-					$out = $this->_ResultsStore[$i]["stop"] - $this->_ResultsStore[$i]["start"];
+				if(isset($this->_ResultsStore[$i]["start"])){
+					$stop = isset($this->_ResultsStore[$i]["stop"]) ? $this->_ResultsStore[$i]["stop"] : $this->_getMicroTime();
+					$out = $stop - $this->_ResultsStore[$i]["start"];
 				}
 				break;
 			}
@@ -128,5 +129,42 @@ class StopWatch{
 				$out[] = sprintf("%30s x %d: %9ss",$mark,$result["counter"],number_format($result["time"],4,".",""));
 		}
 		return join("\n",$out);
+	}
+
+	/**
+	 * Returns result in a human readable format.
+	 *
+	 * <code>
+	 * $sw = new StopWatch();
+	 * $sw->start("main");
+	 * // do something
+	 * $sw->stop("main");
+	 * echo $sw->toString("main");
+	 *
+	 * // or
+	 *
+	 * $sw = new StopWatch();
+	 * // do something
+	 * echo "$sw"; // see StopWatch::__toString()
+	 * </code>
+	 *
+	 */
+	function toString($mark = "_auto_start_"){
+		return $this->_humanize($this->getResult($mark));
+	}
+
+	function __toString(){
+		return $this->toString();
+	}
+
+	function _humanize($seconds){
+		$minutes = floor($seconds/60);
+		$seconds = $seconds - (60 * $minutes);
+		$seconds = number_format($seconds,3,".","");
+		if($seconds<10){
+			$seconds = "0$seconds";
+		}
+		
+		return "$minutes:$seconds";
 	}
 }
