@@ -299,7 +299,12 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getHttpHost(){
+		if(isset($this->_ForceHttpHost)){ return $this->_ForceHttpHost; }
 		return $this->_HTTPRequest_HTTPHost;
+	}
+
+	function setHttpHost($host){
+		$this->_ForceHttpHost = $host;
 	}
 
 	/**
