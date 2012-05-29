@@ -82,7 +82,7 @@ function smarty_function_paginator($params,&$smarty){
 	$out = array();
 
 	if($total_amount<=$max_amount){
-		if($total_amount>=4){
+		if($total_amount>=5){
 			$out[] = "<div class=\"paginator\">";
 			$out[] = "<p>".sprintf(_("%s items total"),$total_amount)."</p>";
 			$out[] = "</div>";
