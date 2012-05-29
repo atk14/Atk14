@@ -582,7 +582,14 @@ class Atk14Controller{
 		),array(
 			"controller_name" => $this->controller,
 		));
+
 		// nabindovani hodnot do smarty, ktere by volani action metody nemelo zmenit...
+
+		// environment constants
+		$smarty->assign("DEVELOPMENT",DEVELOPMENT);
+		$smarty->assign("PRODUCTION",PRODUCTION);
+		$smarty->assign("TEST",TEST);
+
 		$smarty->assign("namespace",$this->namespace);
 		$smarty->assign("controller",$this->controller);
 		$smarty->assign("action",$this->action);
