@@ -193,6 +193,20 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("PUT",$req->getMethod());
 	}
 
+	function test_http_host(){
+		global $_SERVER;
+
+		$_SERVER["HTTP_HOST"] = "www.test.cz";
+
+		$req = new HTTPRequest();
+
+		$this->assertEquals("www.test.cz",$req->getHttpHost());
+		
+		$req->setHttpHost("www.fake.cz");
+
+		$this->assertEquals("www.fake.cz",$req->getHttpHost());
+	}
+
 	function test_request_uri(){
 		global $_SERVER;
 
