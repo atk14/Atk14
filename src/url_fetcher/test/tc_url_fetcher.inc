@@ -26,6 +26,13 @@ class tc_url_fetcher extends tc_base{
 		$this->assertFalse($f->found());
 		$this->assertTrue($f->errorOccurred());
 		$this->assertEquals(404,$f->getStatusCode()); // Not Found
+		$this->assertContains('<title>404 Not Found</title>',$f->getContent());
+
+		// notice: connecting to port 8124 causes warning messages appearance 
+		$f = new UrlFetcher("http://127.0.0.1:8124/pretty-stupid-port");
+		$this->assertFalse($f->found());
+		$this->assertEquals(null,$f->getStatusCode());
+		$this->assertEquals(null,$f->getContent());
 
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/zeroes.dat");
 		$this->assertEquals(4,strlen($f->getContent()));
