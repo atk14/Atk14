@@ -689,17 +689,17 @@ class TableRecord_Base extends inobj{
 	 */
 	static function _NormalizeOptions($args,&$options){
 		if(!isset($args[0])){ $args[0] = array(); }
-		if(!isset($args[1])){ $args[1] = array(); }
+		if(sizeof($args)==1){ $args[1] = array(); }
 
 		$extra_options = null;
 
 		if(sizeof($args)==2){
 			$options = $args[0];
-			$bind_ar = isset($args[1]) ? $args[1] : array();
+			$bind_ar = $args[1];
 			$args = array();
 		}elseif(sizeof($args)==3 && is_string($args[0])){
 			$options = $args[0];
-			$bind_ar =  isset($args[1]) ? $args[1] : array();
+			$bind_ar =  $args[1];
 			$extra_options = $args[2];
 		}else{
 			$options = array(
@@ -712,8 +712,12 @@ class TableRecord_Base extends inobj{
 			while(sizeof($args)>=2){
 				$field = array_shift($args);
 				$value = array_shift($args);
-				$conditions[] = "$field=:$field";
-				$bind_ar[":$field"] = $value;
+				if(is_null($value)){
+					$conditions[] = "$field IS NULL";
+				}else{
+					$conditions[] = "$field=:$field";
+					$bind_ar[":$field"] = $value;
+				}
 			}
 
 			// when one item left it should be $options containing "order_by", "limit"...
@@ -727,6 +731,8 @@ class TableRecord_Base extends inobj{
 		}
 
 		// Article::FindFirst("title","Foo Bar") -> Article::FindFirst(array("conditions" => array("title" => "Foo Bar")));
+		// Article::FindFirst("id",123);
+		// Article::FindFirst("id",null);
 		if(is_string($options) && !is_array($bind_ar)){
 			$options = array(
 				"conditions" => array("$options" => $bind_ar)
@@ -753,6 +759,16 @@ class TableRecord_Base extends inobj{
 			if(in_array($alt_key,$keys)){	
 				$options[$right_key] = $options[$alt_key];
 				unset($options[$alt_key]);
+			}
+		}
+
+		// tady kontrolujeme, ze bind_ar obsahuje vsechny klice zacinajici dvojteckou (:key1, :key2...)
+		// TODO: presunout to nekam do dbmole?
+		if(isset($options["bind_ar"])){
+			foreach(array_keys($options["bind_ar"]) as $key){
+				if(!is_string($key) || strlen($key)<1 || $key[0]!=":"){
+					throw new Exception("Insecure bind value: $key");
+				}
 			}
 		}
 	}
