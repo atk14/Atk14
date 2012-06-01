@@ -111,12 +111,16 @@ class Atk14Global{
 	/**
 	 * Returns default language code.
 	 *
-	 * It's the first code in config/locale.yml
+	 * It's either the ATK14_DEFAULT_LANG constant or the first code in the config/locale.yml.
 	 *
 	 * @return string "en", "cs"...
 	 */
 	function getDefaultLang(){
 		global $ATK14_GLOBAL;
+
+		if(defined("ATK14_DEFAULT_LANG") && strtolower(ATK14_DEFAULT_LANG)!="auto"){
+			return ATK14_DEFAULT_LANG;
+		}
 
 		if(!is_null($locales = $ATK14_GLOBAL->getValue("locale"))){
 			$langs = array_keys($locales);
