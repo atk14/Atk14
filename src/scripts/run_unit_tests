@@ -97,11 +97,14 @@ if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
 
 if(class_exists("pgmole")){	
 	$dbmole = &PgMole::GetInstance();
-	DbMole::RegisterErrorHandler("_test_dbmole_error_handler");
 }
 if(class_exists("oraclemole")){
 	$dbmole = &OracleMole::GetInstance();
-	DbMole::RegisterErrorHandler("_test_dbmole_error_handler");
+}
+if(class_exists("dbmole")){
+	$_prev_error_handler = DbMole::RegisterErrorHandler("_test_dbmole_error_handler");
+	// pokud uz byl nejaky error_handler nastaven, vratime ho
+	if($_prev_error_handler){ DbMole::RegisterErrorHandler($_prev_error_handler); }
 }
 if(class_exists("inobj")){
 	inobj::RegisterErrorCallback("_test_inobj_error_handler");
