@@ -937,16 +937,16 @@ class DbMole{
 
 		$this->_initializeBeforeDoingSQL();
 
+		$this->_Query = $query;
+		$this->_BindAr = $bind_ar;
+		$this->_Options = $options;
+
 		foreach($bind_ar as $k => &$v){
 			if(!preg_match('/^:.*/',$k)){
 				$this->_raiseDBError("there is a suspicious key in bind_ar: \"$k\"");
 				return;
 			}
 		}
-
-		$this->_Query = $query;
-		$this->_BindAr = $bind_ar;
-		$this->_Options = $options;
 
 		$this->_hookBeforeQueryExecution();
 
