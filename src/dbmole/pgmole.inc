@@ -91,7 +91,9 @@ class PgMole Extends DbMole{
 	}
 
 	function _getDbLastErrorMessage(){
-		return "pg_last_error: ".pg_last_error($this->_DbConnect);
+		if($err = pg_last_error($this->_DbConnect)){
+			return "pg_last_error: $err";
+		}
 	}
 
 	function _freeResult(&$result){

@@ -27,10 +27,19 @@ function &dbmole_connection(&$dbmole){
 			putenv("NLS_DATE_FORMAT=YYYY-MM-DD HH24:MI:SS");
 			putenv('PATH='.getenv("PATH").':'.getenv("ORACLE_HOME").'/bin');
 
-			$out = OCILogon("test","test","test"); // user, password, sid
+			//$out = OCILogon("test","test","test"); // user, password, sid
+			$out = OCILogon("super","mlokovi","ihnedd"); // user, password, sid
 
 			break;
 	}
 
 	return $out;
 }
+ 
+function dbmole_error_handler(&$dbmole){
+	$dbmole->_ErrorRaised = false;
+
+	throw new Exception("DbMole error: ".$dbmole->getErrorMessage());
+}
+
+DbMole::RegisterErrorHandler("dbmole_error_handler");

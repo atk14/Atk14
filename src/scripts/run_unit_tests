@@ -37,10 +37,13 @@ if(preg_match("/^5/",phpversion())){
 if(PHP4){
 	include_once 'PHPUnit.php';
 	if(!class_exists("PHPUnit_TestCase")){
-		echo "Missing dependency: class PHPUnit_TestCase\n";
-		echo "The following command may help you\n";
-		echo "\n";
-		echo " $ sudo pear install PHPUnit\n";
+		echo "*************************************************\n";
+		echo "*  Missing dependency: class PHPUnit_TestCase   *\n";
+		echo "*  The following command may help you           *\n";
+		echo "*                                               *\n";
+		echo "*  $ sudo pear install PHPUnit                  *\n";
+		echo "*                                               *\n";
+		echo "*************************************************\n";
 		echo "\n";
 		exit(1);
 	}

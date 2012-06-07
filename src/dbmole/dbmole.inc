@@ -302,9 +302,7 @@ class DbMole{
 		$options["avoid_recursion"] = true; // protoze primo metoda selectRows() vola _selectRows() a naopak, mame tady tento ochranny parametr
 		$cache = (int)$options["cache"];
 
-		foreach($bind_ar as $k => $v){
-			if(is_object($v)){ $bind_ar[$k] = $v->getId(); }
-		}
+		$this->_normalizeBindAr($bind_ar);
 
 		if($cache>0){
 			$rows = $this->_readCache($cache,$query,$bind_ar,$options);
@@ -939,6 +937,13 @@ class DbMole{
 
 		$this->_initializeBeforeDoingSQL();
 
+		foreach($bind_ar as $k => &$v){
+			if(!preg_match('/^:.*/',$k)){
+				$this->_raiseDBError("there is a suspicious key in bind_ar: \"$k\"");
+				return;
+			}
+		}
+
 		$this->_Query = $query;
 		$this->_BindAr = $bind_ar;
 		$this->_Options = $options;
@@ -1003,12 +1008,12 @@ class DbMole{
 		$bind_ar = &$this->_BindAr;
 		$options = &$this->_Options;
 
-		// bindovani promennych
-		// vyuzijeme zde schopnosti fce strtr
-		// pokud se napr. budou bindovat 2 hodnoty :domain a :domain_name, strtr si s tim poradi!
+		$this->_normalizeBindAr($bind_ar);
+
 		foreach($bind_ar as &$value){
-			$value=$this->escapeValue4sql($value);
+			$value = $this->escapeValue4sql($value);
 		}
+
 		$query_to_execute = strtr($query,$bind_ar);
 
 		// 
@@ -1021,7 +1026,11 @@ class DbMole{
 		return $result;
 	}
 
-
+	function _normalizeBindAr(&$bind_ar){
+		foreach($bind_ar as $k => &$value){
+			if(is_object($value)){ $value = $value->getId(); }
+		}
+	}
 	
 	/**
 	 * error message dependent on database type

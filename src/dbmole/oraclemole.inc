@@ -394,7 +394,7 @@ class OracleMole extends DbMole{
 	}
 
 	function _getDbLastErrorMessage(){
-		$error = OCIError($this->_LastOracleStatement);
+		$error = isset($this->_LastOracleStatement) ? OCIError($this->_LastOracleStatement) : null;
 		if(is_array($error) && isset($error["message"]) && strlen($error["message"])>0){
 			return "OCIError[message]: $error[message]";
 		}
