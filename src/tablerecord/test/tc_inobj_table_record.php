@@ -481,6 +481,14 @@ class tc_inobj_table_record extends tc_base{
 		$this->assertTrue(is_numeric($id2));
 
 		$this->assertTrue($id2>$id1);
+
+		$id1 = inobj_TestTable::GetNextId();
+		$id2 = inobj_TestTable::GetNextId();
+
+		$this->assertTrue(is_numeric($id1));
+		$this->assertTrue(is_numeric($id2));
+
+		$this->assertTrue($id2>$id1);
 	}
 
 	function _test_fall($recs){

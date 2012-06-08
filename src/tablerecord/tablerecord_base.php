@@ -247,6 +247,14 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
+	 * An alias for GetSequenceNextval()
+	 */
+	static function GetNextId(){
+		$class_name = get_called_class();
+		return $class_name::GetSequenceNextval();
+	}
+
+	/**
 	 * Returns name of table.
 	 *
 	 * @return string

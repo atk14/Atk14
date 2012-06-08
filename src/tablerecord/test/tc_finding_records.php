@@ -38,13 +38,25 @@ class tc_finding_records extends tc_base{
 		$a = Article::FindFirst("body=:body",array(":body" => "True Foo Bar"));
 		$this->assertEquals($the_true_one->getId(),$a->getId());
 
-		$a = Article::FindFirst("body","True Foo Bar","body","True Foo Bar");
+		$a = Article::FindFirst(array("conditions" => array("body" => "True Foo Bar")));
+		$this->assertEquals($the_true_one->getId(),$a->getId());
+
+		$a = Article::FindFirst("body","True Foo Bar","title","Foo Bar");
+		$this->assertEquals($the_true_one->getId(),$a->getId());
+
+		$a = Article::FindFirst(array("conditions" => array(
+			"body" => "True Foo Bar",
+			"title" => "Foo Bar")
+		));
 		$this->assertEquals($the_true_one->getId(),$a->getId());
 
 		$a = Article::FindFirst("body","True Foo Bar","body","True Foo Bar [X]");
 		$this->assertEquals(null,$a);
 
 		$a = Article::FindFirst("body","Just an Imitation");
+		$this->assertEquals($an_imitation->getId(),$a->getId());
+
+		$a = Article::FindFirst(array("conditions" => array("body" => "Just an Imitation")));
 		$this->assertEquals($an_imitation->getId(),$a->getId());
 
 		//
