@@ -476,19 +476,17 @@ class tc_inobj_table_record extends tc_base{
 	function test_GetSequenceNextval(){
 		$id1 = inobj_TestTable::GetSequenceNextval();
 		$id2 = inobj_TestTable::GetSequenceNextval();
+		$id3 = inobj_TestTable::GetNextId();
+		$id4 = inobj_TestTable::GetNextId();
 
 		$this->assertTrue(is_numeric($id1));
 		$this->assertTrue(is_numeric($id2));
+		$this->assertTrue(is_numeric($id3));
+		$this->assertTrue(is_numeric($id4));
 
-		$this->assertTrue($id2>$id1);
-
-		$id1 = inobj_TestTable::GetNextId();
-		$id2 = inobj_TestTable::GetNextId();
-
-		$this->assertTrue(is_numeric($id1));
-		$this->assertTrue(is_numeric($id2));
-
-		$this->assertTrue($id2>$id1);
+		$this->assertEquals((int)$id2,$id1+1);
+		$this->assertEquals((int)$id3,$id2+1);
+		$this->assertEquals((int)$id4,$id3+1);
 	}
 
 	function _test_fall($recs){
