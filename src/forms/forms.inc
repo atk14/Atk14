@@ -602,6 +602,7 @@ class Form
      */
     function disable_fields($names){
         foreach($names as $name){
+            if(!isset($this->fields[$name])){ continue; }
             $this->fields[$name]->disabled = true;
         }
     }
