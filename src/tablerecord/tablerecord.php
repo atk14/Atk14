@@ -1,5 +1,7 @@
 <?php
 /**
+ * TableRecord layer for postgresql.
+ * TODO: to be rewritten as dependency injection
  *
  * @package Atk14
  * @subpackage InternalLibraries
@@ -24,10 +26,10 @@ class TableRecord extends TableRecord_Base{
 	 *
 	 * This method is used in a descendants {@link GetInstanceById()} method.
 	 * <code>
-	 * class inobj_Article extends TableRecord{
+	 * class Article extends TableRecord{
 	 *	//...
 	 *	function GetInstanceById($id,$options = array()){
-	 *		return TableRecord::_GetInstanceById("inobj_Article",$id,$options);
+	 *		return TableRecord::_GetInstanceById("Article",$id,$options);
 	 *	}
 	 *	//...
 	 *	}
@@ -36,7 +38,7 @@ class TableRecord extends TableRecord_Base{
 	 *
 	 * @static
 	 * @access protected
-	 * @param string $class_name	ie. "inobj_Article"
+	 * @param string $class_name	ie. "Article"
 	 * @param mixed $id						identifikator zaznamu v tabulce; integer, string nebo pole
 	 * @return TableRecord	resp. tridu, ktera je urcena v $class_name
 	 */
@@ -52,23 +54,24 @@ class TableRecord extends TableRecord_Base{
 	 * Then returns an object of given class.
 	 *
 	 *
-	* Tuto metodu pouzije pouzije v implementaci metody CreateNewRecord().
-	* Pouzije ji nasledujicim zpusobem:
-	*		class inobj_Article extends TableRecord{
-	*			//...
-	*			function CreateNewRecord($values,$options = array()){
-	*				return TableRecord::_CreateNewRecord("inobj_Article",$values,$options);
-	*			}
-	*			//...
-	*		}
-	*
-	*
-	* @static
-	* @access private
-	* @param string $class_name					id. "inobj_Article"
-	* @param array $values							
-	* @return TableRecord
-	*/
+	 * Tuto metodu pouzijte v implementaci metody CreateNewRecord().
+	 * Pozn. od PHP5.3 toto jiz neni treba (zde uz je k dispozici fce get_called_class()).
+	 * Pouzijte ji nasledujicim zpusobem:
+	 *		class Article extends TableRecord{
+	 *			//...
+	 *			function CreateNewRecord($values,$options = array()){
+	 *				return TableRecord::_CreateNewRecord("Article",$values,$options);
+	 *			}
+	 *			//...
+	 *		}
+	 *
+	 *
+	 * @static
+	 * @access private
+	 * @param string $class_name					id. "Article"
+	 * @param array $values							
+	 * @return TableRecord
+	 */
 	static function _CreateNewRecord($class_name,$values,$options = array()){
 		$out = new $class_name();
 		return $out->_insertRecord($values,$options);
@@ -131,43 +134,14 @@ class TableRecord extends TableRecord_Base{
 				pg_catalog.pg_attribute a ON (a.attrelid = c.oid)
 			WHERE
 				n.nspname = 'public' AND
-				c.relname = '".pg_escape_string($this->_TableName)."' AND
+				c.relname = :table_name AND
 				a.attisdropped = false AND
 				a.attnum > 0
 		";
-		$result = $this->_dbmole->selectRows($query,array(),$options);
+		$result = $this->_dbmole->selectRows($query,array(":table_name" => $this->_TableName),$options);
 		foreach($result as $row){
 			$this->_TableStructure[$row["attname"]] = $row["format"];
 		}
 		$STORE[$this->_TableName] = $this->_TableStructure;
 	}
-
-
-
-	/*
-	function _prepareValuesForSql($values,$skip_preparing_for = array()){
-		settype($values,"array");
-		settype($skip_preparing_for,"array");
-
-		$out = array();
-		while(list($field,$value) = each($values)){
-			settype($field,"string");
-
-			if(in_array($field,$skip_preparing_for)){
-				$out[$field] = $value;
-				continue;
-			}
-
-			if(!isset($value)){
-				$_value = "NULL";
-			}elseif(is_int($value) || is_float($value)){
-				$_value = $value;
-			}else{
-				$_value = "'".pg_escape_string($value)."'";
-			}
-			$out[$field] = $_value;
-		}
-		return $out; 
-	}
-	*/
 }
