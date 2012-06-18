@@ -22,7 +22,7 @@
  *
  *		// nacteni vice radku
  * 	$rows = $mole->selectRows("SELECT * FROM articles WHERE source_id=:source_id",array(":source_id" => 112233"),array("limit" => 20,"offset" => 40));
- *		while(list(,$row) = each($rows)){
+ *		foreach($rows as $row){
  *			echo "$row[id]: $row[name]\n";
  *			echo "body:\n";
  *			echo $row["body"];	// obsah CLOBu a BLOBu bude automaticky fetchnut
@@ -152,8 +152,7 @@ class OracleMole extends DbMole{
 		// bindovani promennych
 		$lobs = array();
 		if($options["bind_values"]){
-			reset($bind_ar);
-			while(list($key,) = each($bind_ar)){
+			foreach(array_keys($bind_ar) as $key){
 				//if(is_object($bind_ar[$key])){ $bind_ar[$key] = $bind_ar[$key]->getId(); }
 				// bindovani large objektu
 				// v podmince je zamerne $_typ=, aby doslo k priprazeni spravneho typu
@@ -188,8 +187,7 @@ class OracleMole extends DbMole{
 			}
 			
 			// ulozeni obsahu large objectu
-			reset($lobs);
-			while(list($key,) = each($lobs)){
+			foreach(array_keys($lobs) as $key){	
 				if(strlen($bind_ar[$key])>0){
 					$lob = &$lobs[$key];
 					// PHP4 nezna metody write();
@@ -239,8 +237,7 @@ class OracleMole extends DbMole{
 		while(OCIFetchInto($stmt,$row,OCI_ASSOC + OCI_RETURN_NULLS)){
 			unset($row["RNUM____"]); // vpripade, ze bylo pouzito omezeni vybery pomoci $options["limit"] nebo $options["offset"], je ve vysledu RNUM____
 			$_row = array();
-			reset($row);
-			while(list($_key,$_value) = each($row)){
+			foreach($row as $_key => $_value){
 				if(is_object($_value)){
 					$_value = $_value->load();
 					// toto je maly hack: pokud najdeme CLOB nebo BLOB o nulove delce, nastavime hodnotu na string
@@ -313,8 +310,7 @@ class OracleMole extends DbMole{
 		$lob_fields = array();
 		$lob_bind_keys = array();
 
-		reset($values);
-		while(list($field,$value) = each($values)){
+		foreach($values as $field => $value){	
 			$table_fields[] = $field;
 
 			if(in_array($field,$do_not_escape)){

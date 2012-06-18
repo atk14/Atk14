@@ -131,8 +131,7 @@ class TableRecord_Base extends inobj{
 		}
 
 		// vsechny hodnoty tohoto objektu nastavime na null
-		reset($this->_TableStructure);
-		while(list($_key,) = each($this->_TableStructure)){
+		foreach(array_keys($this->_TableStructure) as $_key){	
 			$this->_RecordValues[$_key] = null;
 		}
 	}
@@ -807,16 +806,14 @@ class TableRecord_Base extends inobj{
 
 			$part = array();
 			$counter = 0;
-			reset($ids);
-			while(list($key,$value) = each($ids)){
+			foreach($ids as $key => $value){	
 				$part[$key] = $value;
 				$counter ++;
 
 				if($counter == $MAX_ELEMENTS){
 					$_out = $this->_FindByArray($part,$options);
-					reset($_out);
-					while(list($_key,) = each($_out)){
-						$out[$_key] = $_out[$_key];
+					foreach($_out as $_key => $_value){	
+						$out[$_key] = $_value;
 					}
 					$part = array();
 					$counter = 0;
@@ -824,9 +821,8 @@ class TableRecord_Base extends inobj{
 			}
 
 			$_out = $this->_FindByArray($part,$options);
-			reset($_out);
-			while(list($_key,) = each($_out)){
-				$out[$_key] = $_out[$_key];
+			foreach($_out as $_key => $_value){	
+				$out[$_key] = $_value;
 			}
 
 			return $out;
@@ -837,8 +833,7 @@ class TableRecord_Base extends inobj{
 		$class_name = get_class($this);
 
 		$i = 0;
-		reset($ids);
-		while(list($_key,$id) = each($ids)){
+		foreach($ids as $_key => $id){	
 			if(is_object($id)){ $id = $id->getId(); }
 			if(!isset($id)){ continue; } // v poli se muze klidne nachazet nejaky null
 			settype($id,$this->_IdFieldType);
@@ -852,7 +847,7 @@ class TableRecord_Base extends inobj{
 			$query = "SELECT ".join(",",$this->_fieldsToRead())." FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
 			$rows = $this->_dbmole->selectRows($query,$bind_ar);
 			if(!is_array($rows)){ return null; }
-			while(list(,$row) = each($rows)){
+			foreach($rows as $row){	
 				$obj = new $class_name();
 				$obj->_setRecordValues($row);
 				$obj->_Hook_Find();
@@ -861,8 +856,7 @@ class TableRecord_Base extends inobj{
 		}
 
 		$out = array();
-		reset($ids);
-		while(list($_key,$_value) = each($ids)){
+		foreach($ids as $_key => $_value){	
 			$id = $_value;
 			if(!isset($objs[$id])){
 				if(!$options["omit_nulls"]){ $out[$_key] = null; }
@@ -871,7 +865,6 @@ class TableRecord_Base extends inobj{
 			$out[$_key] = &$objs[$id];
 		}
 
-		reset($out);
 		return $out;
 	}
 
@@ -1110,10 +1103,9 @@ class TableRecord_Base extends inobj{
 	 * @param array $values
 	 */
 	function setValuesVirtually($values){
-		reset($values);
 		$keys = array_keys($this->_RecordValues);
 
-		while(list($_key,$_value) = each($values)){
+		foreach($values as $_key => $_value){	
 			if(in_array($_key,$keys)){
 				$this->_RecordValues[$_key] = $_value;
 			}

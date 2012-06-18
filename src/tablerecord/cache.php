@@ -61,8 +61,8 @@ class Cache{
 	function _readToCache(){
 		foreach($this->_Prepare as $class => $ids){
 			eval("\$objs = $class::GetInstanceById(\$ids);");
-			while(list($k,) = each($objs)){
-				$this->_Cache[$class][$k] = $objs[$k];
+			foreach($objs as $k => $o){
+				$this->_Cache[$class][$k] = $o;
 			}
 		}
 		$this->_Prepare = array();
