@@ -747,7 +747,7 @@ class Atk14Controller{
 		$ar = null;
 		isset($this->_atk14_caches_action[""]) && ($ar = $this->_atk14_caches_action[""]);
 		isset($this->_atk14_caches_action["$this->action"]) && ($ar = $this->_atk14_caches_action["$this->action"]);
-		if(!$ar || (defined("DEVELOPMENT") && DEVELOPMENT)){ return; }	
+		if(!$ar){ return; }
 
 		$namespace = $ATK14_GLOBAL->getValue("namespace");
 
