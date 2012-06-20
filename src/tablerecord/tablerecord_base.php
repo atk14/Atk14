@@ -1336,7 +1336,8 @@ class TableRecord_Base extends inobj{
 			$method = $matches[1]=="All" ? "FindAll" : "FindFirst";
 			$field = new String($matches[2]);
 			$field = $field->underscore();
-			return $class_name::$method("$field",$arguments[0],isset($arguments[1]) ? $arguments[1] : array());
+			$params = array("$field",$arguments[0],isset($arguments[1]) ? $arguments[1] : array());
+			return call_user_func_array(array($class_name,$method),$params);
 		}
 
 		throw new Exception("TableRecord_Base::__callStatic(): unknown static method $class_name::$name()");
