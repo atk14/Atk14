@@ -250,7 +250,7 @@ class TableRecord_Base extends inobj{
 	 */
 	static function GetNextId(){
 		$class_name = get_called_class();
-		return $class_name::GetSequenceNextval();
+		return call_user_func(array($class_name,"GetSequenceNextval"));
 	}
 
 	/**
