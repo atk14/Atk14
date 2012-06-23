@@ -422,7 +422,9 @@ class Atk14Controller{
 		$this->action_executed = true;
 
 		if($this->render_template && strlen($this->response->getLocation())==0){
+			$this->smarty = $this->_get_smarty(array("assing_data" => false));
 			$this->_before_render();
+			$this->smarty->assign($this->tpl_data);
 		}
 
 		if($this->render_template && strlen($this->response->getLocation())==0){
@@ -466,21 +468,19 @@ class Atk14Controller{
 				return $this->_after_render();
 			}
 
-			$smarty = $this->_get_smarty();
-
 			if(!$cache){
 				$action_content = array(
-					"main" => $smarty->fetch($template_name)
+					"main" => $this->smarty->fetch($template_name)
 				);
 			}else{
 				$action_content = $cache["content"];
 			}
-			$action_content = array_merge($smarty->atk14_contents,$action_content);
+			$action_content = array_merge($this->smarty->atk14_contents,$action_content);
 
 			if($this->render_layout){
-				$smarty->atk14_contents = $action_content;
-				$layout_content = $smarty->fetch($_layout_template);
-				foreach($smarty->atk14_contents as $c_key => $c){
+				$this->smarty->atk14_contents = $action_content;
+				$layout_content = $this->smarty->fetch($_layout_template);
+				foreach($this->smarty->atk14_contents as $c_key => $c){
 					// TODO: toto nahrazeni uz provadim rovnou v helperu placeholder...
 					// facha to? vyhodime to?
 					$layout_content = str_replace("<%atk14_content[$c_key]%>",$c,$layout_content);
@@ -571,8 +571,12 @@ class Atk14Controller{
 		}
 	}
 
-	function _get_smarty(){
+	function _get_smarty($options = array()){
 		global $ATK14_GLOBAL;
+
+		$options = array_merge(array(
+			"assing_data" => true,
+		),$options);
 
 		$smarty = Atk14Utils::GetSmarty(array(
 			$ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$this->controller/",
@@ -610,10 +614,7 @@ class Atk14Controller{
 		}
 		// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
 		$smarty->compile_id = $smarty->compile_id."_ATK14_".$this->namespace."_{$this->controller}_";
-		reset($this->tpl_data);
-		while(list($_key,) =each($this->tpl_data)){
-			$smarty->assign($_key,$this->tpl_data[$_key]);
-		}
+		$options["assing_data"] && $smarty->assign($this->tpl_data);
 		$smarty->atk14_contents = array();
 		return $smarty;
 	}
@@ -654,10 +655,11 @@ class Atk14Controller{
 	}
 
 	/**
-	 * This method is executed before rendering, after action is executed
+	 * This method is executed just before template rendering, after action is executed.
+	 * There is access to $this->smarty class member inside the method.
 	 *
 	 * @access protected
-	 *
+	 * 
 	 */
 	function _before_render(){
 
