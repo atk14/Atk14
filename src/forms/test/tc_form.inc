@@ -9,7 +9,7 @@ class tc_form extends tc_base{
 		$this->assertEquals(false,$f->fields["firstname"]->disabled);
 		$this->assertEquals(false,$f->fields["lasttname"]->disabled);
 
-		$f->disable_fields(array("firstname","title"));
+		$f->disable_fields(array("firstname","title")); // !! there is no a title field
 
 		$this->assertEquals(2,sizeof($f->fields));
 		$this->assertEquals(true,$f->fields["firstname"]->disabled);
