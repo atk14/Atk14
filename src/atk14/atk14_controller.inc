@@ -147,6 +147,13 @@ class Atk14Controller{
 	var $sorting = null;
 
 	/**
+	 * Will be constructed before _before_render() calling.
+	 * 
+	 * @var Smarty
+	 */
+	var $smarty = null;
+
+	/**
 	 * @access private
 	 */
 	var $_atk14_caches_action = array();
@@ -422,7 +429,7 @@ class Atk14Controller{
 		$this->action_executed = true;
 
 		if($this->render_template && strlen($this->response->getLocation())==0){
-			$this->smarty = $this->_get_smarty(array("assing_data" => false));
+			if(is_null($this->smarty)){ $this->smarty = $this->_get_smarty(array("assing_data" => false)); }
 			$this->_before_render();
 			$this->smarty->assign($this->tpl_data);
 		}
@@ -558,9 +565,9 @@ class Atk14Controller{
 
 		// rendering a partial template
 		if(isset($params["partial"])){
-			$smarty = $this->_get_smarty();
-			Atk14Require::Helper("function.render",$smarty);
-			return smarty_function_render($params,$smarty);
+			if(is_null($this->smarty)){ $this->smarty = $this->_get_smarty(); }
+			Atk14Require::Helper("function.render",$this->smarty);
+			return smarty_function_render($params,$this->smarty);
 		}
 
 		// rendering text to the response
