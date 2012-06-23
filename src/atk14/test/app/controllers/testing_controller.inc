@@ -1,5 +1,10 @@
 <?php
 class TestingController extends ApplicationController{
+	function test(){
+		$this->template_name = "test"; // see _before_filter();
+	}
+
+
 	function default_layout(){
 
 	}
@@ -16,4 +21,8 @@ class TestingController extends ApplicationController{
 		$this->template_name = "template";
 	}
 
+	function _before_render(){
+		$this->smarty->assign("value_assigned_directly_from_before_render","there_is_a_value_assigned_directly_from_before_render");
+		$this->tpl_data["value_assigned_usually_from_before_render"] = "there_is_a_value_assigned_usually_from_before_render";
+	}
 }
