@@ -1,22 +1,22 @@
 <?php
-class tc_inobj_table_record_finder extends tc_base{
+class tc_table_record_finder extends tc_base{
 	function test(){
-		$apples = inobj_TestTable::CreateNewRecord(array(
+		$apples = TestTable::CreateNewRecord(array(
 			"title" => "Apples",
 			"an_integer" => 10,
 		));
 
-		$and = inobj_TestTable::CreateNewRecord(array(
+		$and = TestTable::CreateNewRecord(array(
 			"title" => "and",
 			"an_integer" => 10,
 		));
 
-		$oranges = inobj_TestTable::CreateNewRecord(array(
+		$oranges = TestTable::CreateNewRecord(array(
 			"title" => "Oranges",
 			"an_integer" => 30,
 		));
 
-		$finder = inobj_TestTable::Finder(array(
+		$finder = TestTable::Finder(array(
 			"order_by" => "an_integer",
 			"limit" => 1,
 		));
@@ -30,7 +30,7 @@ class tc_inobj_table_record_finder extends tc_base{
 		$this->assertEquals("Apples",$records[0]->getTitle());
 
 		// --
-		$finder = inobj_TestTable::Finder(array(
+		$finder = TestTable::Finder(array(
 			"order_by" => "an_integer",
 			"limit" => 2,
 			"offset" => 1,
@@ -49,7 +49,7 @@ class tc_inobj_table_record_finder extends tc_base{
 		$this->assertEquals("Oranges",$finder[1]->getTitle());
 
 		// --
-		$finder = inobj_TestTable::Finder("an_integer",10,array("order_by" => "UPPER(title) DESC"));
+		$finder = TestTable::Finder("an_integer",10,array("order_by" => "UPPER(title) DESC"));
 
 		$records = $finder->getRecords();
 		$this->assertEquals(2,sizeof($records));
@@ -57,7 +57,7 @@ class tc_inobj_table_record_finder extends tc_base{
 		$this->assertEquals($and->getId(),$records[1]->getId());
 
 		// --
-		$finder = inobj_TestTable::Finder("an_integer",10,"title","Apples",array("order_by" => "UPPER(title) DESC"));
+		$finder = TestTable::Finder("an_integer",10,"title","Apples",array("order_by" => "UPPER(title) DESC"));
 
 		$records = $finder->getRecords();
 		$this->assertEquals(1,sizeof($records));

@@ -19,18 +19,17 @@ function &dbmole_connection(&$dbmole){
 			break;
 
 		case "oracle":
-
-			putenv("ORACLE_BASE=/opt/oracle");
-			putenv("ORACLE_HOME=/opt/oracle/db_1");
-			putenv('NLS_LANG=American_America.EE8MSWIN1250');
-			putenv("NLS_SORT=Czech");
-			putenv("NLS_DATE_FORMAT=YYYY-MM-DD HH24:MI:SS");
-			putenv('PATH='.getenv("PATH").':'.getenv("ORACLE_HOME").'/bin');
-
 			$out = OCILogon("test","test","test"); // user, password, sid
-
 			break;
 	}
 
 	return $out;
 }
+ 
+function dbmole_error_handler(&$dbmole){
+	$dbmole->_ErrorRaised = false;
+
+	throw new Exception("DbMole error: ".$dbmole->getErrorMessage());
+}
+
+DbMole::RegisterErrorHandler("dbmole_error_handler");

@@ -116,4 +116,20 @@ class TcController extends TcBase{
 		$page = new String($controller->response->buffer->toString());
 		$this->assertEquals(true,(bool)$page->match("/^This is a template$/"));
 	}
+
+	function test_before_filter(){
+		$client = new Atk14Client();
+		$client->get("testing/test");
+		$this->assertContains("there_is_a_value_assigned_from_action_method",$client->getContent());
+		$this->assertContains("there_is_a_value_assigned_usually_from_before_render",$client->getContent());
+		$this->assertContains("there_is_a_value_assigned_directly_from_before_render",$client->getContent());
+	}
+
+	function test_render(){
+		$client = new Atk14Client();
+		$controller = $client->get("testing/test_render");
+
+		$this->assertContains("John Doe",$controller->snippet);
+		$this->assertContains("John Doe",$client->getContent());
+	}
 }

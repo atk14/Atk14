@@ -55,8 +55,8 @@ CREATE TABLE test_table(
   flag CHAR(1),
   create_date DATE,
   create_time DATE DEFAULT SYSDATE,
-  CONSTRAINT pk_test_table_id PRIMARY KEY (id) USING INDEX TABLESPACE tbs_eol_indexes
-)TABLESPACE tbs_eol_common;
+  CONSTRAINT pk_test_table_id PRIMARY KEY (id)
+);
 
 CREATE OR REPLACE TRIGGER test_table_id_trg
  BEFORE INSERT

@@ -245,6 +245,8 @@ class Atk14Form extends Form
 		   "$path/$filename",
 		   "$filename",
 		);
+
+		$filename = null;
 		foreach($files as $_file){
 			foreach(array("php","inc") as $suffix){
 				if(file_exists("$_file.$suffix")){
@@ -252,7 +254,11 @@ class Atk14Form extends Form
 					break;
 				}
 			}
+			if(isset($filename)){ break; }
 		}
+		
+		if(!isset($filename)){ return null; }
+
 		$classname = "";
 		if(preg_match('/([^\\/]+)_form\.(inc|php)$/',$filename,$matches)){
 			$classname = "{$matches[1]}Form";
@@ -332,11 +338,13 @@ class Atk14Form extends Form
 		$filename = preg_replace("/([A-Z])/","_\\1",$filename);
 		$filename = strtolower($filename);
 
+		$controller_name = $ATK14_GLOBAL->getValue("controller");
+
 		//echo $ATK14_GLOBAL->getValue("controller")."/$filename.inc"; exit;
 
 		// zde se pokusime najit formik v adresari podle kontroleru a pokud nebude nalezen, zkusime o adresar vyse
-		if(!$form = Atk14Form::GetInstanceByFilename($ATK14_GLOBAL->getValue("controller")."/$filename.inc",$controller,$options)){
-			$form = Atk14Form::GetInstanceByFilename("$filename.inc",$controller,$options);
+		if(!$form = Atk14Form::GetInstanceByFilename("$controller_name/$filename",$controller,$options)){
+			$form = Atk14Form::GetInstanceByFilename("$filename",$controller,$options);
 		}
 		return $form;
 	}

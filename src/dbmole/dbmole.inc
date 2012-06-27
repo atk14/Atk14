@@ -194,13 +194,11 @@ class DbMole{
 		$total_queries = 0;
 		$total_time = 0.0;
 
-		reset($__DMOLE_STATISTICS__);
 		$counter = 1;
-		while(list($q,$itms) = each($__DMOLE_STATISTICS__)){
+		foreach($__DMOLE_STATISTICS__ as $q => $itms){	
 			$total_queries += sizeof($itms);
 			$current_query_time = 0.0;
-			reset($itms);
-			while(list(,$itm) = each($itms)){
+			foreach($itms as $itm){	
 				$total_time += $itm["time"];
 				$current_query_time += $itm["time"];
 			}
@@ -302,9 +300,7 @@ class DbMole{
 		$options["avoid_recursion"] = true; // protoze primo metoda selectRows() vola _selectRows() a naopak, mame tady tento ochranny parametr
 		$cache = (int)$options["cache"];
 
-		foreach($bind_ar as $k => $v){
-			if(is_object($v)){ $bind_ar[$k] = $v->getId(); }
-		}
+		$this->_normalizeBindAr($bind_ar);
 
 		if($cache>0){
 			$rows = $this->_readCache($cache,$query,$bind_ar,$options);
@@ -590,9 +586,8 @@ class DbMole{
 
 		$out = null;
 
-		reset($ar);
-		while(list($_key,) = each($ar)){
-			$out = $ar[$_key];
+		foreach($ar as $_v){	
+			$out = $_v;
 			break;
 		}
 		if(isset($out) && isset($options["type"])){
@@ -679,9 +674,8 @@ class DbMole{
 
 		$rows = $this->_selectRows($query,$bind_ar,$options);
 		if(!is_array($rows)){ return null; }
-		while(list(,$row) = each($rows)){
-			reset($row);
-			while(list(,$value) = each($row)){
+		foreach($rows as $row){	
+			foreach($row as $value){	
 				if(isset($value) && isset($options["type"])){
 					settype($value,$options["type"]);
 				}
@@ -794,8 +788,7 @@ class DbMole{
 		$query_fields = array();
 		$query_values = array();
 		$bind_ar = array();
-		reset($values);
-		while(list($_field_name,$_value) = each($values)){
+		foreach($values as $_field_name => $_value){	
 			$query_fields[] = $_field_name;
 			if(in_array($_field_name,$options["do_not_escape"])){
 				$query_values[] = $_value;
@@ -856,8 +849,7 @@ class DbMole{
 
 			$update_ar = array();
 			$bind_ar = array();
-			reset($values);
-			while(list($_key,$_value) = each($values)){
+			foreach($values as $_key => $_value){	
 				/*if(!isset($options["do_not_escape"]["$_key"])){
 					$bind_ar[":$_key"] = is_object($_value) ? $_value->getId() : $_value;
 				}*/
@@ -943,6 +935,13 @@ class DbMole{
 		$this->_BindAr = $bind_ar;
 		$this->_Options = $options;
 
+		foreach($bind_ar as $k => &$v){
+			if(!preg_match('/^:.*/',$k)){
+				$this->_raiseDBError("there is a suspicious key in bind_ar: \"$k\"");
+				return;
+			}
+		}
+
 		$this->_hookBeforeQueryExecution();
 
 		$out = $this->_executeQuery();
@@ -1003,12 +1002,12 @@ class DbMole{
 		$bind_ar = &$this->_BindAr;
 		$options = &$this->_Options;
 
-		// bindovani promennych
-		// vyuzijeme zde schopnosti fce strtr
-		// pokud se napr. budou bindovat 2 hodnoty :domain a :domain_name, strtr si s tim poradi!
+		$this->_normalizeBindAr($bind_ar);
+
 		foreach($bind_ar as &$value){
-			$value=$this->escapeValue4sql($value);
+			$value = $this->escapeValue4sql($value);
 		}
+
 		$query_to_execute = strtr($query,$bind_ar);
 
 		// 
@@ -1021,7 +1020,11 @@ class DbMole{
 		return $result;
 	}
 
-
+	function _normalizeBindAr(&$bind_ar){
+		foreach($bind_ar as $k => &$value){
+			if(is_object($value)){ $value = $value->getId(); }
+		}
+	}
 	
 	/**
 	 * error message dependent on database type

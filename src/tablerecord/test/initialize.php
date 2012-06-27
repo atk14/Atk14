@@ -5,7 +5,7 @@ require("../../dbmole/pgmole.inc");
 require("../../string/load.inc");
 
 require("../load.php");
-require("./inobj_testtable.php");
+require("./test_table.php");
 require("./article.php");
 require("./image.php");
 require("./author.php");

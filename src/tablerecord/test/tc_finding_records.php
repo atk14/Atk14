@@ -1,6 +1,6 @@
 <?php
 class tc_finding_records extends tc_base{
-	function test_complex_magix_queries(){
+	function test_magic_queries(){
 		$the_true_one = Article::CreateNewRecord(array(
 			"title" => "Foo Bar",
 			"body" => "True Foo Bar",
@@ -25,6 +25,58 @@ class tc_finding_records extends tc_base{
 			"created_at" => "2001-01-02",
 		));
 
+		$null_title = Article::CreateNewRecord(array(
+			"title" => null,
+			"body" => "Null Title",
+			"created_at" => "2001-01-03",
+		));
+
+		//
+		$a = Article::FindFirst("body","True Foo Bar");
+		$this->assertEquals($the_true_one->getId(),$a->getId());
+
+		$a = Article::FindFirst("body=:body",array(":body" => "True Foo Bar"));
+		$this->assertEquals($the_true_one->getId(),$a->getId());
+
+		$a = Article::FindFirst(array("conditions" => array("body" => "True Foo Bar")));
+		$this->assertEquals($the_true_one->getId(),$a->getId());
+
+		$a = Article::FindFirst("body","True Foo Bar","title","Foo Bar");
+		$this->assertEquals($the_true_one->getId(),$a->getId());
+
+		$a = Article::FindFirst(array("conditions" => array(
+			"body" => "True Foo Bar",
+			"title" => "Foo Bar")
+		));
+		$this->assertEquals($the_true_one->getId(),$a->getId());
+
+		$a = Article::FindFirst("body","True Foo Bar","body","True Foo Bar [X]");
+		$this->assertEquals(null,$a);
+
+		$a = Article::FindFirst("body","Just an Imitation");
+		$this->assertEquals($an_imitation->getId(),$a->getId());
+
+		$a = Article::FindFirst(array("conditions" => array("body" => "Just an Imitation")));
+		$this->assertEquals($an_imitation->getId(),$a->getId());
+
+		//
+		$a = Article::FindFirst("body='True Foo Bar'");
+		$this->assertEquals($the_true_one->getId(),$a->getId());
+
+		$a = Article::FindFirst("body='Just an Imitation'");
+		$this->assertEquals($an_imitation->getId(),$a->getId());
+
+		//
+		$a = Article::FindFirst("title",null);
+		$this->assertEquals($null_title->getId(),$a->getId());
+
+		$a = Article::FindFirst("body","Null Title","title",null);
+		$this->assertEquals($null_title->getId(),$a->getId());
+
+		$a = Article::FindFirst("body","Null Title [X]","title",null);
+		$this->assertEquals(null,$a);
+
+		//
 		$a = Article::FindFirst("title","Foo Bar","body","True Foo Bar");
 		$this->assertEquals($the_true_one->getId(),$a->getId());
 
@@ -160,6 +212,12 @@ class tc_finding_records extends tc_base{
 	function test_find_by(){
 		$green = Article::CreateNewRecord(array("title" => "Green"));
 		$red = Article::CreateNewRecord(array("title" => "Red"));
+
+		$a = Article::FindById($red->getId());
+		$this->assertEquals($red->getId(),$a->getId());
+
+		$this->assertNull(Article::FindById(-1234));
+		$this->assertNull(Article::FindById(null));
 
 		$a = Article::FindByTitle("Green");
 		$this->assertEquals($green->getId(),$a->getId());

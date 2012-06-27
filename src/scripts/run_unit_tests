@@ -37,10 +37,13 @@ if(preg_match("/^5/",phpversion())){
 if(PHP4){
 	include_once 'PHPUnit.php';
 	if(!class_exists("PHPUnit_TestCase")){
-		echo "Missing dependency: class PHPUnit_TestCase\n";
-		echo "The following command may help you\n";
-		echo "\n";
-		echo " $ sudo pear install PHPUnit\n";
+		echo "*************************************************\n";
+		echo "*  Missing dependency: class PHPUnit_TestCase   *\n";
+		echo "*  The following command may help you           *\n";
+		echo "*                                               *\n";
+		echo "*  $ sudo pear install PHPUnit                  *\n";
+		echo "*                                               *\n";
+		echo "*************************************************\n";
 		echo "\n";
 		exit(1);
 	}
@@ -97,11 +100,14 @@ if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
 
 if(class_exists("pgmole")){	
 	$dbmole = &PgMole::GetInstance();
-	DbMole::RegisterErrorHandler("_test_dbmole_error_handler");
 }
 if(class_exists("oraclemole")){
 	$dbmole = &OracleMole::GetInstance();
-	DbMole::RegisterErrorHandler("_test_dbmole_error_handler");
+}
+if(class_exists("dbmole")){
+	$_prev_error_handler = DbMole::RegisterErrorHandler("_test_dbmole_error_handler");
+	// pokud uz byl nejaky error_handler nastaven, vratime ho
+	if($_prev_error_handler){ DbMole::RegisterErrorHandler($_prev_error_handler); }
 }
 if(class_exists("inobj")){
 	inobj::RegisterErrorCallback("_test_inobj_error_handler");

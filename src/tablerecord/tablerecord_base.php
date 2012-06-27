@@ -131,8 +131,7 @@ class TableRecord_Base extends inobj{
 		}
 
 		// vsechny hodnoty tohoto objektu nastavime na null
-		reset($this->_TableStructure);
-		while(list($_key,) = each($this->_TableStructure)){
+		foreach(array_keys($this->_TableStructure) as $_key){	
 			$this->_RecordValues[$_key] = null;
 		}
 	}
@@ -244,6 +243,14 @@ class TableRecord_Base extends inobj{
 		$obj = new $class_name;
 		$dbmole = &TableRecord::GetDbmole();
 		return $dbmole->selectSequenceNextval($obj->getSequenceName());
+	}
+
+	/**
+	 * An alias for GetSequenceNextval()
+	 */
+	static function GetNextId(){
+		$class_name = get_called_class();
+		return call_user_func(array($class_name,"GetSequenceNextval"));
 	}
 
 	/**
@@ -689,17 +696,17 @@ class TableRecord_Base extends inobj{
 	 */
 	static function _NormalizeOptions($args,&$options){
 		if(!isset($args[0])){ $args[0] = array(); }
-		if(!isset($args[1])){ $args[1] = array(); }
+		if(sizeof($args)==1){ $args[1] = array(); }
 
 		$extra_options = null;
 
 		if(sizeof($args)==2){
 			$options = $args[0];
-			$bind_ar = isset($args[1]) ? $args[1] : array();
+			$bind_ar = $args[1];
 			$args = array();
 		}elseif(sizeof($args)==3 && is_string($args[0])){
 			$options = $args[0];
-			$bind_ar =  isset($args[1]) ? $args[1] : array();
+			$bind_ar =  $args[1];
 			$extra_options = $args[2];
 		}else{
 			$options = array(
@@ -712,8 +719,12 @@ class TableRecord_Base extends inobj{
 			while(sizeof($args)>=2){
 				$field = array_shift($args);
 				$value = array_shift($args);
-				$conditions[] = "$field=:$field";
-				$bind_ar[":$field"] = $value;
+				if(is_null($value)){
+					$conditions[] = "$field IS NULL";
+				}else{
+					$conditions[] = "$field=:$field";
+					$bind_ar[":$field"] = $value;
+				}
 			}
 
 			// when one item left it should be $options containing "order_by", "limit"...
@@ -727,6 +738,8 @@ class TableRecord_Base extends inobj{
 		}
 
 		// Article::FindFirst("title","Foo Bar") -> Article::FindFirst(array("conditions" => array("title" => "Foo Bar")));
+		// Article::FindFirst("id",123);
+		// Article::FindFirst("id",null);
 		if(is_string($options) && !is_array($bind_ar)){
 			$options = array(
 				"conditions" => array("$options" => $bind_ar)
@@ -753,6 +766,16 @@ class TableRecord_Base extends inobj{
 			if(in_array($alt_key,$keys)){	
 				$options[$right_key] = $options[$alt_key];
 				unset($options[$alt_key]);
+			}
+		}
+
+		// tady kontrolujeme, ze bind_ar obsahuje vsechny klice zacinajici dvojteckou (:key1, :key2...)
+		// TODO: presunout to nekam do dbmole?
+		if(isset($options["bind_ar"])){
+			foreach(array_keys($options["bind_ar"]) as $key){
+				if(!is_string($key) || strlen($key)<1 || $key[0]!=":"){
+					throw new Exception("Insecure bind value: $key");
+				}
 			}
 		}
 	}
@@ -783,16 +806,14 @@ class TableRecord_Base extends inobj{
 
 			$part = array();
 			$counter = 0;
-			reset($ids);
-			while(list($key,$value) = each($ids)){
+			foreach($ids as $key => $value){	
 				$part[$key] = $value;
 				$counter ++;
 
 				if($counter == $MAX_ELEMENTS){
 					$_out = $this->_FindByArray($part,$options);
-					reset($_out);
-					while(list($_key,) = each($_out)){
-						$out[$_key] = $_out[$_key];
+					foreach($_out as $_key => $_value){	
+						$out[$_key] = $_value;
 					}
 					$part = array();
 					$counter = 0;
@@ -800,9 +821,8 @@ class TableRecord_Base extends inobj{
 			}
 
 			$_out = $this->_FindByArray($part,$options);
-			reset($_out);
-			while(list($_key,) = each($_out)){
-				$out[$_key] = $_out[$_key];
+			foreach($_out as $_key => $_value){	
+				$out[$_key] = $_value;
 			}
 
 			return $out;
@@ -813,8 +833,7 @@ class TableRecord_Base extends inobj{
 		$class_name = get_class($this);
 
 		$i = 0;
-		reset($ids);
-		while(list($_key,$id) = each($ids)){
+		foreach($ids as $_key => $id){	
 			if(is_object($id)){ $id = $id->getId(); }
 			if(!isset($id)){ continue; } // v poli se muze klidne nachazet nejaky null
 			settype($id,$this->_IdFieldType);
@@ -828,7 +847,7 @@ class TableRecord_Base extends inobj{
 			$query = "SELECT ".join(",",$this->_fieldsToRead())." FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
 			$rows = $this->_dbmole->selectRows($query,$bind_ar);
 			if(!is_array($rows)){ return null; }
-			while(list(,$row) = each($rows)){
+			foreach($rows as $row){	
 				$obj = new $class_name();
 				$obj->_setRecordValues($row);
 				$obj->_Hook_Find();
@@ -837,8 +856,7 @@ class TableRecord_Base extends inobj{
 		}
 
 		$out = array();
-		reset($ids);
-		while(list($_key,$_value) = each($ids)){
+		foreach($ids as $_key => $_value){	
 			$id = $_value;
 			if(!isset($objs[$id])){
 				if(!$options["omit_nulls"]){ $out[$_key] = null; }
@@ -847,7 +865,6 @@ class TableRecord_Base extends inobj{
 			$out[$_key] = &$objs[$id];
 		}
 
-		reset($out);
 		return $out;
 	}
 
@@ -1086,10 +1103,9 @@ class TableRecord_Base extends inobj{
 	 * @param array $values
 	 */
 	function setValuesVirtually($values){
-		reset($values);
 		$keys = array_keys($this->_RecordValues);
 
-		while(list($_key,$_value) = each($values)){
+		foreach($values as $_key => $_value){	
 			if(in_array($_key,$keys)){
 				$this->_RecordValues[$_key] = $_value;
 			}
@@ -1320,7 +1336,8 @@ class TableRecord_Base extends inobj{
 			$method = $matches[1]=="All" ? "FindAll" : "FindFirst";
 			$field = new String($matches[2]);
 			$field = $field->underscore();
-			return $class_name::$method("$field",$arguments[0],isset($arguments[1]) ? $arguments[1] : array());
+			$params = array("$field",$arguments[0],isset($arguments[1]) ? $arguments[1] : array());
+			return call_user_func_array(array($class_name,$method),$params);
 		}
 
 		throw new Exception("TableRecord_Base::__callStatic(): unknown static method $class_name::$name()");

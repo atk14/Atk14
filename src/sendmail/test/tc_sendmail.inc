@@ -56,7 +56,6 @@ class tc_sendmail extends tc_base{
 
 	function test_mail_compatible_calling(){
 		$ar = sendmail("somebody@example.com","This is a message","Hello,\nthis is a testing e-mail.");
-		
 		$this->assertEquals("somebody@example.com",$ar["to"]);
 		$this->assertEquals("This is a message",$ar["subject"]);
 		$this->assertEquals("Hello,\nthis is a testing e-mail.",$ar["body"]);
@@ -64,7 +63,11 @@ class tc_sendmail extends tc_base{
 
 		//
 		$ar = sendmail("somebody@example.com","This is a message","Hello,\nthis is a testing e-mail.","From: jon@doe.com");
-		// TODO: $this->assertEquals("jon@doe.com",$ar["from"]);
+		$this->assertEquals("somebody@example.com",$ar["to"]);
+		$this->assertContains("From: jon@doe.com",$ar["headers"]);
+		$this->assertEquals("This is a message",$ar["subject"]);
+		$this->assertEquals("Hello,\nthis is a testing e-mail.",$ar["body"]);
+		$this->assertTrue(!isset($ar["from"]));
 	}
 
 	function test_from_name(){

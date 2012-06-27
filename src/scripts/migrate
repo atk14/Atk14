@@ -16,7 +16,7 @@
 
 require_once(dirname(__FILE__)."/load.inc");
 
-$logger = &Atk14Migration::GetLogger();
+$logger = Atk14Migration::GetLogger();
 
 // getting list of migration files
 $migrations = array();
