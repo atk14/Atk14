@@ -20,6 +20,9 @@
 class Atk14Controller{
 
 	/**
+	 * Link to HttpRequest instance.
+	 *
+	 * Contains information about current browsers HTTP request.
 	 *
 	 * @var HTTPRequest
 	 *
@@ -27,12 +30,16 @@ class Atk14Controller{
 	var $request = null;
 
 	/**
+	 * Link to HttpResponse instance.
+	 *
+	 * Contains information about response sent back to a browser.
 	 *
 	 * @var HTTPResponse
 	 */
 	var $response = null;
 
 	/**
+	 * Link to logging engine.
 	 *
 	 * @var Logger
 	 */
@@ -683,7 +690,7 @@ class Atk14Controller{
 	}
 
 	/**
-	 * Tato metoda bude spustena po spusteni action.
+	 * This method is executed after controllers action is executed.
 	 *
 	 * @access protected
 	 *
@@ -888,10 +895,16 @@ class Atk14Controller{
 	}
 
 	/**
-	* $this->_redirect_to_action("overview");
-	* $this->_redirect_to_action("overview",array("offset" => 10));
-	* $this->_redirect_to_action("overview",array("offset" => 10),array("moved_permanently" => true));
-	*/
+	 * Redirect to an action in current controller.
+	 *
+	 * Examples:
+	 * <code>
+	 * $this->_redirect_to_action("overview");
+	 * $this->_redirect_to_action("overview",array("offset" => 10));
+	 * $this->_redirect_to_action("overview",array("offset" => 10),array("moved_permanently" => true));
+	 * </code>
+	 */
+
 	function _redirect_to_action($action,$other_params = array(),$options = array()){
 		$other_params["action"] = $action;
 		return $this->_redirect_to($other_params,$options);
