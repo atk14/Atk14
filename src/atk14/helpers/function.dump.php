@@ -19,7 +19,107 @@
  * @param array $content
  */
 function smarty_function_dump($params,&$smarty){
-	$out = isset($params["var"]) ? print_r($params["var"],true) : "NULL";
-	return "<pre>".strtr($out,array("<" => "&lt;",">" => "&gt;"))."</pre>";
+	if(!in_array("var",array_keys($params))){
+		$out = array();
+		$out[] = "<ul>";
+		$keys = array_keys($smarty->_tpl_vars);
+		sort($keys);
+		foreach($keys as $key){
+			$out[] = '<li>';
+			$out[] = '<pre><code>'.h($key).': '.h(Dumper::Dump($smarty->_tpl_vars[$key])).'</code></pre>';
+			$out[] = '</li>';
+		}
+		$out[] = "</ul>";
+		return join("\n",$out);
+	}
+	$out = isset($params["var"]) ? Dumper::Dump($params["var"]) : "NULL";
+	return "<pre><code>".h($out)."</code></pre>";
 }
-?>
+
+/**
+ * Class for dumping a variable.
+ */
+class Dumper{
+
+	/**
+	 * echo Dumper::Dump($variable);
+	 * echo Dumper::Dump(true); // [true]
+	 * echo Dumper::Dump(null); // NULL
+	 */
+	static function Dump($var,$offset = 0){
+		$dumper = new Dumper();
+
+		return $dumper->_dump($var,$offset);
+	}
+
+	function _dump($var,$offset){
+		if(!isset($var)){
+			return $this->_Pad("NULL",$offset);
+		}
+		if(is_bool($var)){
+			return $this->_Pad($var ? "[true]" : "[false]",$offset);
+		}
+		if(is_object($var)){
+			return $this->_Pad($this->_DumpObject($var,$offset),$offset);
+		}
+		if(is_array($var)){
+			return $this->_Pad($this->_DumpArray($var,$offset),$offset);
+		}
+		return $this->_Pad(print_r($var,true),$offset);	
+	}
+
+	function _DumpObject($obj,$offset){
+		if($offset>0){
+			// in case of a deeper nesting a structure of a object is not being displayed
+			return $this->_Pad(get_class($obj)." Object",$offset);
+		}
+
+		if(method_exists($obj,$_method = "toArray") || method_exists($obj,$_method = "to_array")){
+			//return Dumper::_Pad(get_class($obj,$obj)." Object\n".preg_replace('/^Array\n/s','',print_r($obj->toArray(),true)),$offset);
+			return get_class($obj)." ".$this->_DumpArray($obj->toArray(),0,array("label" => "Object"));
+		}
+
+		if(isset($obj->_beeing_dumped_by_dumper)){ return $this->_Pad("[recursion]",$offset); }
+		$obj->_beeing_dumped_by_dumper = true;
+		$attrs = array();
+		foreach(array_keys(get_object_vars($obj)) as $attr){
+			if(preg_match('/^_/',$attr)){ continue; }
+			$attrs[] = $attr;
+		}
+		if(!$attrs){ return $this->_Pad(get_class($obj).' Object',$offset); }
+
+		$out[] = get_class($obj).' Object(';
+		foreach($attrs as $attr){
+			$out[] = "  [$attr] => ".trim($this->Dump($obj->$attr,1));
+			//$out[] = "  [$attr] => ...";
+		}
+		$out[] = ")";
+
+
+		unset($obj->_beeing_dumped_by_dumper);
+
+		return $this->_Pad($out,$offset);
+	}
+
+	function _DumpArray($ar,$offset,$options = array()){
+		$options = array_merge(array(
+			"label" => "Array",
+		),$options);
+		$out = array();
+		$out[] = $options["label"].'(';
+		foreach($ar as $k => $v){
+			$out[] = " [$k] => ".trim($this->_Pad($this->Dump($v),1));
+		}
+		$out[] = ')';
+		return $this->_Pad($out,$offset);
+	}
+
+	function _Pad($out,$offset){
+		$padding = str_repeat(" ",$offset * 2);
+		if(is_string($out)){ $out = explode("\n",$out); }
+		foreach($out as &$l){
+			$l = "{$padding}$l";
+		}
+		return join("\n",$out);
+	}
+}
