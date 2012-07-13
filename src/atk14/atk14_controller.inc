@@ -227,8 +227,6 @@ class Atk14Controller{
 		),$options);
 
 		$this->lang = $ATK14_GLOBAL->getValue("lang");
-		$this->langz = $this->lang;
-		if($this->langz=="cs"){ $this->langz = "cz"; } 
 	
 		if(isset($options["request"])){
 			$this->request = $options["request"];
@@ -614,7 +612,6 @@ class Atk14Controller{
 		$smarty->assign("requested_controller",$this->requested_controller);
 		$smarty->assign("requested_action",$this->requested_action);
 		$smarty->assign("lang",$this->lang);
-		$smarty->assign("langz",$this->langz);
 		$smarty->assign("public",$ATK14_GLOBAL->getPublicBaseHref());
 		$smarty->assign("root",$ATK14_GLOBAL->getBaseHref());
 		$smarty->assign_by_ref("params",$this->params);
