@@ -26,7 +26,7 @@ function smarty_function_dump($params,&$smarty){
 		sort($keys);
 		foreach($keys as $key){
 			$out[] = '<li>';
-			$out[] = '<pre><code>'.h($key).': '.h(Dumper::Dump($smarty->_tpl_vars[$key])).'</code></pre>';
+			$out[] = '<pre><code>'.h($key).': '.h(Dumper::Dump($smarty->getTemplateVars($key))).'</code></pre>';
 			$out[] = '</li>';
 		}
 		$out[] = "</ul>";

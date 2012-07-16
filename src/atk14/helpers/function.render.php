@@ -30,7 +30,7 @@ function smarty_function_render($params,&$smarty){
 
 	if(in_array("from",array_keys($params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
 
-	$original_tpl_vars = $smarty->_tpl_vars;
+	$original_tpl_vars = $smarty->getTemplateVars();
 
 	$out = array();
 
@@ -95,7 +95,7 @@ function smarty_function_render($params,&$smarty){
 		}
 	}
 
-	$smarty->_tpl_vars = $original_tpl_vars; // vraceni puvodnich hodnot do smarty objectu
+	$smarty->assign($original_tpl_vars); // vraceni puvodnich hodnot do smarty objectu
 
 	Atk14Timer::Stop("helper function.render");
 

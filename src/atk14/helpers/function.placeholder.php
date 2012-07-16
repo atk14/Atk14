@@ -31,11 +31,8 @@
  *
  */
 function smarty_function_placeholder($params,&$smarty){
-	$id = isset($params["for"]) ? $params["for"] : "main"; 
-	if(!isset($smarty->atk14_contents[$id])){ $smarty->atk14_contents[$id] = ""; }
+	$id = isset($params["for"]) ? $params["for"] : "main";
+	$smarty->addAtk14Content($id);
 
-	//return $smarty->atk14_contents[$id];
-
-	//TODO: legacy behaviour, to be romoved
 	return "<%atk14_content[$id]%>"; // returns an internal sign, which will be replaced later within controller
 }

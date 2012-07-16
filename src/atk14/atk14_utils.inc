@@ -168,10 +168,10 @@ class Atk14Utils{
 			if(preg_match("/^_/",$key)){ unset($_params[$key]); }
 		}
 
-		if(!isset($_params["action"]) && !isset($_params["controller"])){ $_params["action"] = $smarty->_tpl_vars["action"]; }
-		if(!isset($_params["controller"])){ $_params["controller"] = $smarty->_tpl_vars["controller"]; }
+		if(!isset($_params["action"]) && !isset($_params["controller"])){ $_params["action"] = $smarty->getTemplateVars("action"); }
+		if(!isset($_params["controller"])){ $_params["controller"] = $smarty->getTemplateVars("controller"); }
 		if(!isset($_params["action"])){ $_params["action"] = "index"; }
-		if(!isset($_params["lang"])){ $_params["lang"] = $smarty->_tpl_vars["lang"]; }
+		if(!isset($_params["lang"])){ $_params["lang"] = $smarty->getTemplateVars("lang"); }
 
 		return Atk14Url::BuildLink($_params,$options);
 	}
@@ -252,13 +252,17 @@ class Atk14Utils{
 			"controller_name" => ""
 		),$options);
 
+		$PATH_SMARTY = "/tmp/smarty/";
+		if(defined("TEMP")){ $PATH_SMARTY = TEMP."/smarty/"; }
+		if(defined("PATH_SMARTY")){ $PATH_SMARTY = PATH_SMARTY; }
+
 		if(function_exists("atk14_get_smarty")){
 
 			$smarty = atk14_get_smarty($template_dir);
 
 		}else{
 
-			$smarty = new Smarty();
+			$smarty = new Atk14Smarty();
 
 			if(!isset($template_dir)){ $template_dir = "./templates/"; }
 
@@ -273,37 +277,33 @@ class Atk14Utils{
 				$_template_dir[] = $template_dir;
 			}
 
-			$PATH_SMARTY = "/tmp/smarty/";
-			if(defined("TEMP")){ $PATH_SMARTY = TEMP."/smarty/"; }
-			if(defined("PATH_SMARTY")){ $PATH_SMARTY = PATH_SMARTY; }
-
 			$_template_dir[] = $PATH_SMARTY."/../templates/";
 
 			$userid = posix_getuid();
 
-			$smarty->template_dir   =   $_template_dir;
-			$smarty->compile_dir    =   "$PATH_SMARTY/$userid/templates_c/"; // the uid of the user owning the current process is involved in the compile_dir, thus some file permission issues are solved
-			$smarty->config_dir     =   $PATH_SMARTY."/config/";
-			$smarty->cache_dir      =   $PATH_SMARTY."/cache/";
-			$smarty->plugins_dir[]  =   $PATH_SMARTY."/plugins/";
+			$smarty->setTemplateDir($_template_dir);
+			$smarty->setCompileDir($_compile_dir = "$PATH_SMARTY/$userid/templates_c/"); // the uid of the user owning the current process is involved in the compile_dir, thus some file permission issues are solved
+			$smarty->setConfigDir($PATH_SMARTY."/config/");
+			$smarty->setCacheDir($PATH_SMARTY."/cache/");
 
-			if(!file_exists($smarty->compile_dir)){
-				files::mkdir($smarty->compile_dir,$err,$err_str);
-			}
+			if(!file_exists($_compile_dir)){ files::mkdir($_compile_dir); }
 
-			if(!files::is_readable_and_writable($smarty->compile_dir,$err,$err_str)){
+			if(!files::is_readable_and_writable($_compile_dir)){
 				//die("$smarty->compile_dir is not writable!!!");
 				// this should by handled by atk14_error_handler()
 			}
 		}
 	
 		$namespace = $ATK14_GLOBAL->getValue("namespace");
-		
-		array_unshift($smarty->plugins_dir,dirname(__FILE__)."/helpers/");
-		array_unshift($smarty->plugins_dir,$ATK14_GLOBAL->getApplicationPath()."helpers/");
-		array_unshift($smarty->plugins_dir,$ATK14_GLOBAL->getApplicationPath()."helpers/$namespace/");
-		array_unshift($smarty->plugins_dir,$ATK14_GLOBAL->getApplicationPath()."helpers/$namespace/$options[controller_name]/");
-		$smarty->register_prefilter('atk14_smarty_prefilter');
+		$smarty->setPluginsDir(array(
+			$ATK14_GLOBAL->getApplicationPath()."helpers/$namespace/$options[controller_name]/",
+			$ATK14_GLOBAL->getApplicationPath()."helpers/$namespace/",
+			$ATK14_GLOBAL->getApplicationPath()."helpers/",
+			dirname(__FILE__)."/helpers/",
+			$PATH_SMARTY."/plugins/",
+		));
+
+		$smarty->registerFilter('pre','atk14_smarty_prefilter');
 
 		return $smarty;
 	}

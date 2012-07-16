@@ -8,7 +8,7 @@
 * 
 */
 function smarty_function_render_component($params,&$smarty){
-	if(!isset($params["controller"])){ $params["controller"] = $smarty->_tpl_vars["controller"]; }
+	if(!isset($params["controller"])){ $params["controller"] = $smarty->getTemplateVars("controller"); }
 
 	if(!isset($params["action"])){ $params["action"] = "index"; }
 
@@ -30,4 +30,3 @@ function smarty_function_render_component($params,&$smarty){
 	$buf = &$response->getOutputBuffer();
 	return $buf->toString();
 }
-?>

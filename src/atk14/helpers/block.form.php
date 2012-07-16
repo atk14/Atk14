@@ -28,7 +28,7 @@
 function smarty_block_form($params, $content, &$smarty, &$repeat)
 {
 	$params = array_merge(array(
-		"form" => $smarty->_tpl_vars["form"],
+		"form" => $smarty->getTemplateVars("form"),
 	),$params);
 
 	$form = $params["form"];
@@ -41,4 +41,3 @@ function smarty_block_form($params, $content, &$smarty, &$repeat)
 	$out[] = $form->end();
 	return join("\n",$out);
 }
-?>
