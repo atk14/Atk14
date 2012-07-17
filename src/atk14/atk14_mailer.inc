@@ -67,6 +67,13 @@ class Atk14Mailer{
 	var $from = DEFAULT_EMAIL;
 
 	/**
+	 * if $return_path is not set, $from is used automatically 
+	 *
+	 * @var string
+	 */
+	var $return_path = null;
+
+	/**
 	 * recipients email address
 	 *
 	 * @var string
@@ -283,6 +290,7 @@ class Atk14Mailer{
 	function _send(){
 		$email_ar = sendmail(array(
 			"from" => $this->from,
+			"return_path" => $this->return_path,
 			"to" => $this->to,
 			"cc" => $this->cc,
 			"bcc" => $this->bcc,
