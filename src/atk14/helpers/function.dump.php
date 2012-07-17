@@ -22,7 +22,7 @@ function smarty_function_dump($params,&$smarty){
 	if(!in_array("var",array_keys($params))){
 		$out = array();
 		$out[] = "<ul>";
-		$keys = array_keys($smarty->_tpl_vars);
+		$keys = array_keys($smarty->getTemplateVars());
 		sort($keys);
 		foreach($keys as $key){
 			$out[] = '<li>';

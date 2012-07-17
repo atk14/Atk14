@@ -21,9 +21,12 @@
 * {render parial="list_item" for=1 to=10 step=1 item=i}
 */
 function smarty_function_render($params,&$smarty){
+	echo "YYYYYYY<br />";
 	Atk14Timer::Start("helper function.render");
 	$template_name = $partial = $params["partial"];
 	unset($params["partial"]);
+
+	var_dump("XXX: $template_name<br />");
 
 	$template_name = preg_replace("/([^\\/]+)$/","_\\1",$template_name);
 	$template_name .= ".tpl";
@@ -36,10 +39,10 @@ function smarty_function_render($params,&$smarty){
 
 	if(!isset($params["from"])){
 	
-		reset($params);
-		while(list($key,$value) = each($params)){
+		foreach($params as $key => $value){	
 			$smarty->assign($key,$value);
 		}
+		echo "ZZZZ<br> ";
 		$out[] = $smarty->fetch($template_name);
 
 	}else{
@@ -75,9 +78,8 @@ function smarty_function_render($params,&$smarty){
 		unset($params["from"]);
 
 		$collection_size = sizeof($collection);
-		reset($collection);
 		$counter = 0;
-		while(list($_key,$_item) = each($collection)){
+		foreach($collection as $_key => $_item){
 			if(isset($key)){ $smarty->assign($key,$_key); }
 			if(isset($item)){ $smarty->assign($item,$_item); }
 			$smarty->assign("__counter__",$counter);
@@ -85,17 +87,21 @@ function smarty_function_render($params,&$smarty){
 			$smarty->assign("__last__",$counter==($collection_size-1));
 
 			// zbytek parametru se naasignuje do sablonky jako v predhozim pripade
-			reset($params);
-			while(list($key,$value) = each($params)){
+			foreach($params as $key => $value){
 				$smarty->assign($key,$value);
 			}
 
+			echo "ZZZZ<br> ";
 			$out[] = $smarty->fetch($template_name);
 			$counter++;
 		}
 	}
 
-	$smarty->assign($original_tpl_vars); // vraceni puvodnich hodnot do smarty objectu
+	// vraceni puvodnich hodnot do smarty objectu
+	$smarty->clearAllAssign();	
+	foreach($original_tpl_vars as $key => $value){
+		$smarty->assign($key,$value);
+	}
 
 	Atk14Timer::Stop("helper function.render");
 
