@@ -1,0 +1,56 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Considers first parameter as a URI to a page in you project.
+ * Displays all parameters the URI is built from.
+ * 
+ * $ ./scripts/recognize_route /en/books/?offset=10
+ * $ ./scripts/recognize_route http://myapp.localhost/en/books/?offset=10
+ */
+
+
+require_once(dirname(__FILE__)."/load.inc");
+
+$uri = isset($argv[1]) ? $argv[1] : "/";
+$uri = preg_replace('/^(https?:\/\/[^\/]+)/','',$uri);
+
+$_GET = _determine_GET($uri);
+
+$route_ar = Atk14Url::RecognizeRoute($uri);
+
+_dump_data($uri,$route_ar);
+
+if($route_ar["force_redirect"]){
+	$uri = $route_ar["force_redirect"];
+	echo "\n\n  ... redirecting to $uri ...\n\n";
+	$_GET = _determine_GET($uri);
+	$route_ar = Atk14Url::RecognizeRoute($uri);
+	_dump_data($uri,$route_ar);
+}
+
+function _dump_data($uri,$route_ar){
+	echo "URI: $uri\n";
+	echo "title: $route_ar[page_title]\n";
+	echo "description: $route_ar[page_description]\n\n";
+	$params = $route_ar;
+	unset($params["page_title"]);
+	unset($params["page_description"]);
+	unset($params["get_params"]);
+	unset($params["force_redirect"]);
+	$params = array_merge($params,$route_ar["get_params"]);
+	foreach($params as $key => $value){
+		echo "$key=$value\n";
+	}
+}
+
+function _determine_GET($uri){
+	$_GET = array();
+	if(preg_match('/\?(.+)$/',$uri,$matches)){
+		foreach(explode('&',$matches[1]) as $item){
+			list($key,$value) = explode("=",$item);
+			$_GET[urldecode($key)] = urldecode($value);
+		}
+	}
+	return $_GET;
+}
+
