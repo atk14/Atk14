@@ -1,7 +1,7 @@
 {*
- * Vytiskne dane formularove pole:
+ * Displays a form field
+ * {render partial="shared/form_field" field="title"}
  * {render partial="shared/form_field" field=$form->get_field("title")}
- * {render partial="shared/form_field" field=title}
  *
  * Generuje toto:
  * <div>
@@ -9,9 +9,11 @@
  * 		<input />
  *		<div class="help">
  *			Help Text
+ *			<p class="hint">Example: a correct value example</p>
  *		</div>
  *		<ul class="error_list">
- *			<li>Error Text</li>
+ *			<li>Error text #1</li>
+ *			<li>Error text #2</li>
  *		</ul>
  * </div>
  *
@@ -26,23 +28,14 @@
  * {render partial="shared/form_field" field=title hide_label=1}
  *
  * Printing out more fields on a single line
- * {render partial="shared/form_field" fields=firstname,lastname,email}
+ * {render partial="shared/form_field" fields="firstname,lastname,email"}
  *
  * When all the fields are required, there`s no need to mark them as required
- * {render partial="shared/form_field" fields=firstname,lastname,email omit_required=1}
+ * {render partial="shared/form_field" fields="firstname,lastname,email" omit_required=1}
  *}
 
-{if is_string($fields) && strlen($fields)>0}
-	{php}
-		$this->_tpl_vars["_fields"] = explode(",",$this->_tpl_vars["fields"]);
-		unset($this->_tpl_vars["fields"]);
-	{/php}
-	{render partial="shared/form_field" from=$_fields item=field}
-{elseif is_array($fields)}
-	{foreach from=$fields item=field}
-		{render partial="shared/form_field" field=$field fields=null}
-	{/foreach}
-{else}
+{if $field}
+
 	{if is_string($field)}
 		{if !$form->has_field($field)}
 			{error_log}The form doesn't contain field {$field}{/error_log}
@@ -77,4 +70,18 @@
 			</ul>
 		{/if}
 	</div>
+
+{else}
+
+	{if isset($fields) && is_string($fields)}
+		{assign var=fields value=","|explode:$fields} {* using PHP function as a smarty modifier! *}
+	{/if}
+
+	{if isset($fields) && is_array($fields)}
+		{foreach from=$fields item=field}
+			{render partial="shared/form_field" field=$field}
+		{/foreach}
+
+	{/if}
+
 {/if}

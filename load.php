@@ -35,7 +35,6 @@ if(ATK14_USE_SMARTY3){
 	require_once(dirname(__FILE__)."/src/smarty3/libs/SmartyBC.class.php");
 }else{
 	require_once(dirname(__FILE__)."/src/smarty/libs/Smarty.class.php");
-	require_once(dirname(__FILE__)."/src/smarty_wrapper.php");
 }
 require_once(dirname(__FILE__)."/src/class_autoload/class_autoload.inc");
 require_once(dirname(__FILE__)."/src/dbmole/dbmole.inc");

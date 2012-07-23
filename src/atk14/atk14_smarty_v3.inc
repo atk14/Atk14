@@ -5,6 +5,12 @@
 class Atk14Smarty extends SmartyBC{
 	protected $atk14_contents = array();
 
+	function __construct(){
+		parent::__construct();
+
+		$this->setErrorReporting(E_ALL ^ E_NOTICE);
+	}
+
 	function addAtk14Content($key,$content = ""){
 		if(!isset($this->atk14_contents[$key])){ $this->atk14_contents[$key] = $content; return; }
 		$this->atk14_contents[$key] .= $content;

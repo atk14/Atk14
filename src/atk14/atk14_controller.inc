@@ -623,7 +623,8 @@ class Atk14Controller{
 			$smarty->assignByRef("sorting",$this->sorting);
 		}
 		// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
-		$smarty->compile_id = $smarty->compile_id."_ATK14_".$this->namespace."_{$this->controller}_";
+		$smarty_version_salt = ATK14_USE_SMARTY3 ? "smarty3" : "smarty2"; 
+		$smarty->compile_id = $smarty->compile_id."atk14_{$smarty_version_salt}_{$this->namespace}_{$this->controller}_";
 		$options["assing_data"] && $smarty->assign($this->tpl_data);
 		return $smarty;
 	}
