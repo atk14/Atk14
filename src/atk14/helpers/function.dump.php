@@ -19,14 +19,16 @@
  * @param array $content
  */
 function smarty_function_dump($params,&$smarty){
+	$smarty = atk14_get_smarty_from_template($smarty);
+
 	if(!in_array("var",array_keys($params))){
 		$out = array();
 		$out[] = "<ul>";
-		$keys = array_keys($smarty->_tpl_vars);
+		$keys = array_keys($smarty->getTemplateVars());
 		sort($keys);
 		foreach($keys as $key){
 			$out[] = '<li>';
-			$out[] = '<pre><code>'.h($key).': '.h(Dumper::Dump($smarty->_tpl_vars[$key])).'</code></pre>';
+			$out[] = '<pre><code>'.h($key).': '.h(Dumper::Dump($smarty->getTemplateVars($key))).'</code></pre>';
 			$out[] = '</li>';
 		}
 		$out[] = "</ul>";

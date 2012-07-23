@@ -2,7 +2,7 @@
 
 {form}
 	<fieldset>
-		{render partial=shared/form_field field=q}
+		{render partial="shared/form_field" field=q}
 
 		<div class="buttons">
 			<button type="submit">{t}Search{/t}</button>

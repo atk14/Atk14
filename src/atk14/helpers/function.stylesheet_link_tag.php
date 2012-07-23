@@ -18,6 +18,8 @@
 */
 function smarty_function_stylesheet_link_tag($params,&$smarty){
 	global $ATK14_GLOBAL;
+	$smarty = atk14_get_smarty_from_template($smarty);
+
 	$href = $ATK14_GLOBAL->getPublicBaseHref()."stylesheets/$params[file]";
 	$filename = $ATK14_GLOBAL->getPublicRoot()."stylesheets/$params[file]";
 

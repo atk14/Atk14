@@ -25,6 +25,8 @@ __defaults__(array(
 
 	"ATK14_PAGINATOR_OFFSET_PARAM_NAME" => "offset", // you may want to use "from" or something else
 	"ATK14_DEFAULT_LANG" => "auto", // "en", "cs"... when it is "auto", the default lang will be determined by config/locale.yml
+
+	"ATK14_USE_SMARTY3" => true,
 ));
 
 __defaults__(array(
@@ -39,6 +41,7 @@ __defaults__(array(
 
 __defaults__(array(
 	"INOBJ_TABLERECORD_CACHES_STRUCTURES" => PRODUCTION ? 60*60 : 0, // caches table structures for given seconds
+
 ));
 
 __defaults__(array(

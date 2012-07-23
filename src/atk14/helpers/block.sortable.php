@@ -63,8 +63,8 @@ function smarty_block_sortable($params, $content, &$smarty, &$repeat){
 		// ??? TODO: neco jako wrap_with_th_tag => true
 	),$params);
 	$key = $params["key"];
-	$sorting = $smarty->_tpl_vars["sorting"];
-	$_params = $smarty->_tpl_vars["params"]->copy();
+	$sorting = $smarty->getTemplateVars("sorting");
+	$_params = $smarty->getTemplateVars("params")->copy();
 	$_params->delete("from"); // smazani parametru pro strankovani
 	$_key = "$key-asc";
 	if($sorting->getActiveKey()==$_key){

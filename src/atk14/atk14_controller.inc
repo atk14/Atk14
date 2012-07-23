@@ -487,15 +487,14 @@ class Atk14Controller{
 			}else{
 				$action_content = $cache["content"];
 			}
-			$action_content = array_merge($this->smarty->atk14_contents,$action_content);
 
 			if($this->render_layout){
-				$this->smarty->atk14_contents = $action_content;
 				$layout_content = $this->smarty->fetch($_layout_template);
-				foreach($this->smarty->atk14_contents as $c_key => $c){
+				$layout_content = str_replace("<%atk14_content[main]%>",$action_content["main"],$layout_content);
+				foreach($this->smarty->getAtk14ContentKeys() as $c_key){
 					// TODO: toto nahrazeni uz provadim rovnou v helperu placeholder...
 					// facha to? vyhodime to?
-					$layout_content = str_replace("<%atk14_content[$c_key]%>",$c,$layout_content);
+					$layout_content = str_replace("<%atk14_content[$c_key]%>",$this->smarty->getAtk14Content($c_key),$layout_content);
 				}
 				$this->response->write($layout_content);
 			}else{
@@ -614,19 +613,19 @@ class Atk14Controller{
 		$smarty->assign("lang",$this->lang);
 		$smarty->assign("public",$ATK14_GLOBAL->getPublicBaseHref());
 		$smarty->assign("root",$ATK14_GLOBAL->getBaseHref());
-		$smarty->assign_by_ref("params",$this->params);
-		$smarty->assign_by_ref("request",$this->request);
+		$smarty->assignByRef("params",$this->params);
+		$smarty->assignByRef("request",$this->request);
 		$smarty->assign("page_title",$this->page_title);
 		$smarty->assign("page_description",$this->page_description);
-		$smarty->assign_by_ref("flash",$this->flash); // !!! musi byt predavani referenci
+		$smarty->assignByRef("flash",$this->flash); // !!! musi byt predavani referenci
 		$smarty->assign("form",$this->form);
 		if(!isset($this->tpl_data["sorting"])){
-			$smarty->assign_by_ref("sorting",$this->sorting);
+			$smarty->assignByRef("sorting",$this->sorting);
 		}
 		// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
-		$smarty->compile_id = $smarty->compile_id."_ATK14_".$this->namespace."_{$this->controller}_";
+		$smarty_version_salt = ATK14_USE_SMARTY3 ? "smarty3" : "smarty2"; 
+		$smarty->compile_id = $smarty->compile_id."atk14_{$smarty_version_salt}_{$this->namespace}_{$this->controller}_";
 		$options["assing_data"] && $smarty->assign($this->tpl_data);
-		$smarty->atk14_contents = array();
 		return $smarty;
 	}
 
@@ -1105,70 +1104,3 @@ class Atk14Controller{
 
 	}
 }
-
-/**
-* In a template in an ATK14 project one can escape curly bracets:
-*
-* <code>
-*		function js_alert(message)\{ alert($message); return false; \}
-* </code>
-* 
-* one can define a data-* attribute in a link
-*
-* <code>
-*		{a_remote action=detail id=$product _class=detail _data-type=json}Detail{/a_remote}
-* </code>
-*
-* Such things are not possible in Smarty template engine.
-* 
-* This function changes a template source in some ways to make this possible.
-* Smarty calls it automatically before a template compilation.
-*/
-function atk14_smarty_prefilter($tpl_source, &$smarty = null){
-	$tpl_source = strtr($tpl_source,array(
-		"\\{" => "{literal}{{/literal}",
-		"\\}" => "{literal}}{/literal}",
-	));
-	
-	$tpl_source = preg_replace("/({(a|a_remote|a_destroy|form|form_remote)\\s+[^}]*\\b_data)-/","\\1___",$tpl_source);
-	/*
-	if(preg_match("/^([^\s]+)\*\s*Smarty\s*\*([^\s]+)/",$tpl_source,$matches)){
-		 $smarty->left_delimiter = $matches[1];
-		 $smarty->right_delimiter = $matches[2];
-		 $tpl_source = preg_replace("/^([^\s]+)\*\s*Smarty\s*\*([^\s]+)/","",$tpl_source);
-	}
-	*/
-	return $tpl_source;
-}
-
-/**
- * Handles some of Smarty errors.
- */
-function atk14_error_handler($errno, $errstr, $errfile, $errline){
-	global $HTTP_RESPONSE;
-
-	// catching Smarty syntax error
-	if($errno==E_USER_ERROR && preg_match("/^Smarty/",$errstr)){
-		if(DEVELOPMENT){
-			echo "$errstr";
-		}else{
-			$HTTP_RESPONSE->internalServerError();
-			$HTTP_RESPONSE->flushAll();
-		}
-		error_log($errstr);
-	}
-
-	// catching Smarty template missing error
-	if($errno==512 && preg_match("/^Smarty/",$errstr)){
-		if(DEVELOPMENT){
-			echo "$errstr";
-		}
-		error_log($errstr);
-	}
-
-	//echo "$errno: $errstr\n";
-
-	return false;
-}
-
-set_error_handler("atk14_error_handler");

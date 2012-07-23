@@ -1,6 +1,12 @@
 <?php
 class MoreContentForCreatures extends Atk14Migration{
 	function up(){
+		if(!class_exists("Creature")){
+			// This migration depends on a sample class Creature.
+			// This condition prevents the migration to fail when you get the class Creature out of the project.
+			return;
+		}
+
 		$data_ar = array(
 			array(
 				"name" => "Second creature",

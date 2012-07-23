@@ -33,6 +33,8 @@
  * @author Jaromir Tomek
  */
 function smarty_function_link_to($params,&$smarty){
+	$smarty = atk14_get_smarty_from_template($smarty);
+
 	$options = array(
 		"connector" => "&amp;",
 		"anchor" => null,
@@ -47,13 +49,12 @@ function smarty_function_link_to($params,&$smarty){
 		unset($params["_$_key"]);
 	}
 
-	if(!isset($params["action"]) && !isset($params["controller"])){ $params["action"] = $smarty->_tpl_vars["action"]; }
-	if(!isset($params["controller"])){ $params["controller"] = $smarty->_tpl_vars["controller"]; }
+	if(!isset($params["action"]) && !isset($params["controller"])){ $params["action"] = $smarty->getTemplateVars("action"); }
+	if(!isset($params["controller"])){ $params["controller"] = $smarty->getTemplateVars("controller"); }
 	if(!isset($params["action"])){ $params["action"] = "index"; }
-	if(!isset($params["lang"])){ $params["lang"] = $smarty->_tpl_vars["lang"]; }
+	if(!isset($params["lang"])){ $params["lang"] = $smarty->getTemplateVars("lang"); }
 
 	$url = Atk14Url::BuildLink($params,$options);
 
 	return $url;
 }
-?>
