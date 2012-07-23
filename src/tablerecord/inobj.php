@@ -3,7 +3,7 @@
  * Basic class of all descendant models.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  * @filesource
  *
  */
@@ -12,7 +12,7 @@
  * Basic class for all descendant models.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  * @filesource
  *
  */
@@ -34,27 +34,39 @@ class inobj{
 	 */
 	var $_dbmole = null;
 
+	/**
+	 * Constructor
+	 */
 	function inobj(){
 		$this->dbmole = &inobj::_GetDbmole();
 		$this->_dbmole = &$this->dbmole;
 	}
 
+	/**
+	 * Obtains instance of PgMole
+	 *
+	 */
 	static function &_GetDbmole(){
 		return PgMole::GetInstance();
 	}
 
 	/**
-	* Metoda volana automaticky pred serializaci.
-	*/
+	 * Method called automatically before serialization.
+	 *
+	 * @ignore
+	 */
 	function __sleep(){
 		$vars = get_object_vars($this);
 		unset($vars["_dbmole"]);
 		unset($vars["dbmole"]);
 		return array_keys($vars);
 	}
+
 	/**
-	* Metoda volana automaticky po unserializaci.
-	*/
+	 * Method called automatically after serialization.
+	 *
+	 * @ignore
+	 */
 	function __wakeup(){
 		if(class_exists("PgMole")){
 			$this->_dbmole = PgMole::GetInstance();
@@ -65,7 +77,8 @@ class inobj{
 	/**
 	 * Converts TableRecord object to its id.
 	 *
-	 * @access private
+	 * @param mixed $obj object to be converted
+	 * 
 	 * @return mixed
 	 * @static
 	 */
@@ -77,6 +90,7 @@ class inobj{
 	 * Legacy method
 	 *
 	 * does nothing
+	 * @param string $function_name
 	 */
 	static function RegisterErrorCallback($function_name){ }
 }

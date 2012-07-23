@@ -3,7 +3,7 @@
  * Class for managing sortable records.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  * @filesource
  *
  *
@@ -38,7 +38,7 @@
  * $lister->setRecordRank($author2,0);
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  * @filesource
  * </code>
  *
@@ -52,6 +52,7 @@ class TableRecord_Lister extends inobj{
 	 *	
 	 * ));
 	 *
+	 * @todo comment options
 	 */
 	function TableRecord_Lister($owner,$subjects,$options = array()){
 		$owner_class = new String(get_class($owner));

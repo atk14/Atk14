@@ -3,7 +3,7 @@
  * Empty finder
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  * @filesource
  */
 
@@ -11,7 +11,7 @@
  * Empty finder
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  */
 class TableRecord_EmptyFinder extends TableRecord_Finder{
  	var $_Records = array();

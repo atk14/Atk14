@@ -4,17 +4,28 @@
  * TODO: to be rewritten as dependency injection
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  * @filesource
  */
 
 /**
+ * TableRecord layer for postgresql.
+ *
+ * Base for each model.
+ * ORM framework.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  */
 class TableRecord extends TableRecord_Base{
 
+	/**
+	 * Constructor
+	 *
+	 * @see TableRecord_Base::TableRecord_Base()
+	 * @param string $table_name
+	 * @param array $options
+	 */
 	function TableRecord($table_name = null,$options = array()){
 		parent::TableRecord_Base($table_name,$options);
 	}
@@ -40,6 +51,7 @@ class TableRecord extends TableRecord_Base{
 	 * @access protected
 	 * @param string $class_name	ie. "Article"
 	 * @param mixed $id						identifikator zaznamu v tabulce; integer, string nebo pole
+	 * @param array $options
 	 * @return TableRecord	resp. tridu, ktera je urcena v $class_name
 	 */
 	static function _GetInstanceById($class_name,$id,$options = array()){
@@ -70,6 +82,7 @@ class TableRecord extends TableRecord_Base{
 	 * @access private
 	 * @param string $class_name					id. "Article"
 	 * @param array $values							
+	 * @param array $options
 	 * @return TableRecord
 	 */
 	static function _CreateNewRecord($class_name,$values,$options = array()){
@@ -78,8 +91,7 @@ class TableRecord extends TableRecord_Base{
 	}
 
 	/**
-	 *
-	 * @access private
+	 * @ignore
 	 */
 	function _setRecordValues($row){
 
@@ -117,7 +129,7 @@ class TableRecord extends TableRecord_Base{
 	/**
 	 * Reads table structure.
 	 *
-	 * @access private
+	 * @ignore
 	 */
 	function _readTableStructure($options = array()){
 		static $STORE;

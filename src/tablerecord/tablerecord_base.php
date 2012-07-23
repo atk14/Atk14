@@ -3,7 +3,7 @@
  * Basic class for manipulating records.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  * @filesource
  */
 
@@ -15,7 +15,7 @@
  * Basic class for manipulating records.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage TableRecord
  */
 class TableRecord_Base extends inobj{
 	/**
@@ -91,12 +91,14 @@ class TableRecord_Base extends inobj{
 	var $_RecordValues = array();
 
 	/**
+	 * Constructor
+	 *
 	 * @param string $table_name
 	 * @param array $options
 	 * <ul>
-	 * 	<li><b>do_not_read_values</b> - </li>
-	 * 	<li><b>id_field_name</b> - </li>
-	 * 	<li><b>id_field_type</b> - </li>
+	 * 	<li><b>do_not_read_values</b> - list of columns that shouldn't be fetched. It can increase performance. Typically when reading from tables cotaining binary objects</li>
+	 * 	<li><b>id_field_name</b> - name of field containing primary key</li>
+	 * 	<li><b>id_field_type</b> - type of field containing primary key</li>
 	 * 	<li><b>sequence_name</b> - </li>
 	 * </ul>
 	 */
@@ -175,6 +177,9 @@ class TableRecord_Base extends inobj{
 		return TableRecord::_CreateNewRecord(get_called_class(),$id,$options);
 	}
 
+	/**
+	 * Method to obtain instance of DbMole.
+	 */
 	function &GetDbmole(){
 		// TODO: toto je takove vachrlate
 		if(class_exists("OracleMole")){
@@ -329,9 +334,19 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
+	 * Gets Lister
+	 *
+	 * Example
+	 * <code>
 	 * $lister = $article->getLister("Authors");
 	 * $lister->append($author);
 	 * $authors = $lister->getRecords(); // Author[]
+	 * </code>
+	 *
+	 * @param $subjects Name of associated classes
+	 * @param $options array {@link TableRecord_Lister()}
+	 *
+	 * @return TableRecord_Lister
 	 */
 	function getLister($subjects,$options = array()){
 		return new TableRecord_Lister($this,$subjects,$options);
@@ -352,6 +367,7 @@ class TableRecord_Base extends inobj{
 	 * Finds a record by id.
 	 *
 	 * @param mixed $id	integer, string, objekt, pole
+	 * @param $options @
 	 * @return TableRecord|array	returns null, when record with given id does not exist or error occured.
 	 * When $id is array method returns array of TableRecord
 	 */
@@ -426,6 +442,7 @@ class TableRecord_Base extends inobj{
 	 * </code>
 	 *
 	 * @param array $options
+	 * @todo describe $options
 	 */
 	static function Finder(){
 		TableRecord::_NormalizeOptions(func_get_args(),$options);
@@ -445,6 +462,8 @@ class TableRecord_Base extends inobj{
 	 *
 	 * @access private
 	 * @param array $options
+	 * @todo describe $options
+	 * @ignore
 	 */
 	function _finder($options){
 		// order_by se prevede na order
@@ -574,7 +593,7 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Find records.
 	 *
-	 * @access private
+	 * @ignore
 	 * @param array $options
 	 * @return array
 	 */
@@ -655,7 +674,9 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
-	 * @access private
+	 * internal method 
+	 *
+	 * @ignore
 	 * @return TableRecord
 	 */
 	function _findFirst($options = array()){
@@ -669,6 +690,7 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Converts associative array of conditions to indexed array.
 	 *
+	 * @ignore
 	 * @access private
 	 */
 	static function _NormalizeConditions(&$conditions,&$bind_ar){
@@ -693,6 +715,8 @@ class TableRecord_Base extends inobj{
 
 	/**
 	 * Renames some option`s names to others. Like class to class_name...
+	 *
+	 * @ignore
 	 */
 	static function _NormalizeOptions($args,&$options){
 		if(!isset($args[0])){ $args[0] = array(); }
@@ -938,8 +962,11 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
-	* 
-	*/
+	 * Converts records values into array.
+	 *
+	 * @return array
+	 *
+	 */
 	function toArray(){ return $this->getValues(array("return_id" => true)); }
 
 	/**
@@ -1032,7 +1059,7 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
 	function _setValues($data,$options){
 		$updates = array();
@@ -1113,12 +1140,12 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
-	 * Reads in record values.
+	 * Fetches record values.
 	 *
 	 * Column fields that will be read can be specified by passing $fields.
 	 *
 	 * @param array $fields
-	 * @access private
+	 * @ignore
 	 * @return array
 	 */
 	function _readValues($fields = null){
@@ -1134,7 +1161,7 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
 	function _readValueIfWasNotRead($field){
 		if(is_array($field)){
@@ -1168,7 +1195,7 @@ class TableRecord_Base extends inobj{
 	/**
 	 * 
 	 * @see TableRecord::_CreateNewRecord()
-	 * @access private
+	 * @ignore
 	 */
 	function _insertRecord($values,$options = array()){
 		settype($values,"array");
@@ -1215,7 +1242,7 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
 	function _fieldsToRead(){
 		$out = array();
@@ -1245,6 +1272,7 @@ class TableRecord_Base extends inobj{
 	 * Can be overriden in descendant.
 	 *
 	 * 
+	 * @param array $fields
 	 * @access protected
 	 */
 	function _Hook_setValues($fields){
@@ -1273,6 +1301,13 @@ class TableRecord_Base extends inobj{
 
 	}
 
+	/**
+	 * Display this class as a string.
+	 *
+	 * Can be modified in descendants method.
+	 *
+	 * @return string
+	 */
 	function toString(){
 		return sprintf("%s#%s",get_class($this),$this->getId());
 	}
@@ -1281,19 +1316,24 @@ class TableRecord_Base extends inobj{
 	 * Magic method:
 	 * 
 	 * echo "$object"; 
+	 * @ignore
 	 */
 	function __toString(){
 		return $this->toString();
 	}
 
 	/**
-	* Magic method changes calling to an nonexistent method in this way:
-	* 
-	* $object->getEmailAddress() -> $object->g("email_address");
-	*
-	* $object->getUserId() -> $object->g("user_id");
-	* $object->getUser() -> User::GetInstanceById($object->g("user_id"));
-	*/
+	 * Magic method changes calling to an nonexistent method in this way:
+	 * 
+	 * $object->getEmailAddress() -> $object->g("email_address");
+	 *
+	 * $object->getUserId() -> $object->g("user_id");
+	 * $object->getUser() -> User::GetInstanceById($object->g("user_id"));
+	 *
+	 * @param string $name
+	 * @param string $arguments
+	 * @ignore
+	 */
 	function __call($name,$arguments){
 		static $CACHES;
 
@@ -1329,6 +1369,9 @@ class TableRecord_Base extends inobj{
 		throw new Exception("TableRecord_Base::__call(): unknown method ".get_class($this)."::$name()");
 	}
 
+	/**
+	 * @ignore
+	 */
 	static function __callStatic($name,$arguments){
 		$class_name = function_exists("get_called_class") ? get_called_class() : "unknown";
 
