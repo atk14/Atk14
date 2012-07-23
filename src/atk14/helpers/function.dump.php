@@ -19,6 +19,8 @@
  * @param array $content
  */
 function smarty_function_dump($params,&$smarty){
+	$smarty = atk14_get_smarty_from_template($smarty);
+
 	if(!in_array("var",array_keys($params))){
 		$out = array();
 		$out[] = "<ul>";

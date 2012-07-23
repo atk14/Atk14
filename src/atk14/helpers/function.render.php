@@ -21,12 +21,11 @@
 * {render parial="list_item" for=1 to=10 step=1 item=i}
 */
 function smarty_function_render($params,&$smarty){
-	echo "YYYYYYY<br />";
+	$smarty = atk14_get_smarty_from_template($smarty);
+
 	Atk14Timer::Start("helper function.render");
 	$template_name = $partial = $params["partial"];
 	unset($params["partial"]);
-
-	var_dump("XXX: $template_name<br />");
 
 	$template_name = preg_replace("/([^\\/]+)$/","_\\1",$template_name);
 	$template_name .= ".tpl";
@@ -40,9 +39,9 @@ function smarty_function_render($params,&$smarty){
 	if(!isset($params["from"])){
 	
 		foreach($params as $key => $value){	
-			$smarty->assign($key,$value);
+			$smarty->assignByRef($key,$value);
 		}
-		echo "ZZZZ<br> ";
+
 		$out[] = $smarty->fetch($template_name);
 
 	}else{
@@ -91,7 +90,6 @@ function smarty_function_render($params,&$smarty){
 				$smarty->assign($key,$value);
 			}
 
-			echo "ZZZZ<br> ";
 			$out[] = $smarty->fetch($template_name);
 			$counter++;
 		}

@@ -1,4 +1,7 @@
 <?
+/**
+ * A middle layer for Smarty version 3.
+ */
 class Atk14Smarty extends SmartyBC{
 	protected $atk14_contents = array();
 

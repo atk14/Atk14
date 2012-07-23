@@ -3,6 +3,8 @@
 *
 */
 function smarty_function_form_tag($params,&$smarty){
+	$smarty = atk14_get_smarty_from_template($smarty);
+
 	$url = Atk14Utils::BuildLink($params,$smarty);
 
 	$attrs = Atk14Utils::ExtractAttributes($params);
