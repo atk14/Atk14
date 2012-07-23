@@ -22,7 +22,7 @@
 
 require_once(dirname(__FILE__)."/load.inc");
 
-$output_dir = $ATK14_GLOBAL->getApplicationPath()."../tmp/documentation";
+$output_dir = realpath($ATK14_GLOBAL->getApplicationPath()."../tmp/documentation");
 
 $src_dirs = array();
 $options = array(
