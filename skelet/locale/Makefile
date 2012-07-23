@@ -1,4 +1,4 @@
-SUBDIRS = cs_CZ en_US
+SUBDIRS = $(shell ls | egrep '^[a-z]{2}_[A-Z]{2,4}' | tr '\n' ' ' )
 
 files-list:
 	@find ../ -type f -name '*.inc' | grep -v -F ".svn" >> files_php

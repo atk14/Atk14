@@ -7,10 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-25 09:35+0100\n"
+"POT-Creation-Date: 2012-07-23 15:19+0200\n"
 "PO-Revision-Date: 2011-02-16 15:06+0100\n"
-"Last-Translator: Yarri <yarri@listonos.cz>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Last-Translator: Translator <translator@email.com>\n"
+"Language-Team: Team <team@email.com>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -56,120 +56,120 @@ msgstr ""
 msgid "Sort table by this column"
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:81
+#: ../atk14/src/forms/fields.inc:136
 msgid "This field is required."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:82
+#: ../atk14/src/forms/fields.inc:137
 msgid "Enter a valid value."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:192 ../atk14/src/forms/fields.inc:405
+#: ../atk14/src/forms/fields.inc:260 ../atk14/src/forms/fields.inc:473
 msgid "Ensure this value has at most %max% characters (it has %length%)."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:193 ../atk14/src/forms/fields.inc:406
+#: ../atk14/src/forms/fields.inc:261 ../atk14/src/forms/fields.inc:474
 msgid "Ensure this value has at least %min% characters (it has %length%)."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:194
+#: ../atk14/src/forms/fields.inc:262
 msgid "Ensure this value has at most %max% characters."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:195
+#: ../atk14/src/forms/fields.inc:263
 msgid "Ensure this value has at least %min% characters."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:196
+#: ../atk14/src/forms/fields.inc:264
 msgid "Ensure this value has between %min% and %max% characters."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:276
+#: ../atk14/src/forms/fields.inc:344
 msgid "Enter a whole number."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:277 ../atk14/src/forms/fields.inc:330
+#: ../atk14/src/forms/fields.inc:345 ../atk14/src/forms/fields.inc:398
 msgid "Ensure this value is less than or equal to %value%."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:278 ../atk14/src/forms/fields.inc:331
+#: ../atk14/src/forms/fields.inc:346 ../atk14/src/forms/fields.inc:399
 msgid "Ensure this value is greater than or equal to %value%."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:329
+#: ../atk14/src/forms/fields.inc:397
 msgid "Enter a number."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:450
+#: ../atk14/src/forms/fields.inc:536
 msgid "Enter a valid e-mail address."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:495
+#: ../atk14/src/forms/fields.inc:581
 msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:496
+#: ../atk14/src/forms/fields.inc:582
 msgid "Please, choose the right option."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:570
+#: ../atk14/src/forms/fields.inc:656
 msgid "Enter a valid date."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:611
+#: ../atk14/src/forms/fields.inc:697
 msgid "Enter a valid date, hours and minutes."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:630
+#: ../atk14/src/forms/fields.inc:716
 msgid "Enter a valid date, hours, minutes and seconds."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:660
+#: ../atk14/src/forms/fields.inc:746
 msgid "Select a valid choice. %(value)s is not one of the available choices."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:661
+#: ../atk14/src/forms/fields.inc:747
 msgid "Enter a list of values."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:662
+#: ../atk14/src/forms/fields.inc:748
 msgid "Please, choose the right options."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:721
+#: ../atk14/src/forms/fields.inc:807
 msgid "Enter a valid IP address."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:770
+#: ../atk14/src/forms/fields.inc:856
 msgid "Ensure this file is image."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:772
+#: ../atk14/src/forms/fields.inc:858
 msgid "Ensure this image is %width_required% pixels wide (it is %width%)."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:773
+#: ../atk14/src/forms/fields.inc:859
 msgid "Ensure this image is %height_required% pixels high (it is %height%)."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:775
+#: ../atk14/src/forms/fields.inc:861
 msgid "Ensure this image is at most %max% pixels wide (it is %width%)."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:776
+#: ../atk14/src/forms/fields.inc:862
 msgid "Ensure this image is at most %max% pixels high (it is %height%)."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:777
+#: ../atk14/src/forms/fields.inc:863
 msgid "Ensure this image is at least %min% pixels wide (it is %width%)."
 msgstr ""
 
-#: ../atk14/src/forms/fields.inc:778
+#: ../atk14/src/forms/fields.inc:864
 msgid "Ensure this image is at least %min% pixels high (it is %height%)."
 msgstr ""
 
-#: ../app/controllers/main_controller.php:4
-#: ../atk14/skelet/app/controllers/main_controller.php:4
+#: ../app/controllers/main_controller.php:11
+#: ../atk14/skelet/app/controllers/main_controller.php:11
 msgid "Welcome!"
 msgstr ""
 
@@ -206,24 +206,37 @@ msgid "The creature has been changed successfuly."
 msgstr ""
 
 #: ../app/helpers/modifier.display_bool.php:13
-#: ../atk14/skelet/app/helpers/modifier.display_bool.php:9
+#: ../atk14/skelet/app/helpers/modifier.display_bool.php:13
 msgid "Yes"
 msgstr ""
 
 #: ../app/helpers/modifier.display_bool.php:14
-#: ../atk14/skelet/app/helpers/modifier.display_bool.php:11
+#: ../atk14/skelet/app/helpers/modifier.display_bool.php:14
 msgid "No"
 msgstr ""
 
 #: ../app/forms/creatures/create_new_form.php:5
 #: ../atk14/skelet/app/forms/creatures/create_new_form.php:5 smarty.c:14
-#: smarty.c:38 smarty.c:146 smarty.c:170
+#: smarty.c:38 smarty.c:149 smarty.c:173 smarty.c:284 smarty.c:308
+#: smarty.c:419 smarty.c:443 smarty.c:554 smarty.c:578 smarty.c:689
+#: smarty.c:713 smarty.c:824 smarty.c:848 smarty.c:959 smarty.c:983
+#: smarty.c:1094 smarty.c:1118 smarty.c:1229 smarty.c:1253 smarty.c:1364
+#: smarty.c:1388 smarty.c:1499 smarty.c:1523 smarty.c:1634 smarty.c:1658
+#: smarty.c:1769 smarty.c:1793 smarty.c:1904 smarty.c:1928 smarty.c:2039
+#: smarty.c:2063 smarty.c:2174 smarty.c:2198 smarty.c:2309 smarty.c:2333
+#: smarty.c:2444 smarty.c:2468 smarty.c:2579 smarty.c:2603 smarty.c:2714
+#: smarty.c:2738 smarty.c:2849 smarty.c:2873 smarty.c:2984 smarty.c:3008
+#: smarty.c:3119 smarty.c:3143
 msgid "Name"
 msgstr ""
 
 #: ../app/forms/creatures/create_new_form.php:10
 #: ../atk14/skelet/app/forms/creatures/create_new_form.php:10 smarty.c:41
-#: smarty.c:173
+#: smarty.c:176 smarty.c:311 smarty.c:446 smarty.c:581 smarty.c:716
+#: smarty.c:851 smarty.c:986 smarty.c:1121 smarty.c:1256 smarty.c:1391
+#: smarty.c:1526 smarty.c:1661 smarty.c:1796 smarty.c:1931 smarty.c:2066
+#: smarty.c:2201 smarty.c:2336 smarty.c:2471 smarty.c:2606 smarty.c:2741
+#: smarty.c:2876 smarty.c:3011 smarty.c:3146
 msgid "Description"
 msgstr ""
 
@@ -256,7 +269,7 @@ msgstr ""
 msgid "next"
 msgstr ""
 
-#: ../atk14/src/atk14/helpers/function.to_sentence.php:6
+#: ../atk14/src/atk14/helpers/function.to_sentence.php:13
 msgid "and"
 msgstr ""
 
@@ -264,175 +277,355 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: smarty.c:2 smarty.c:134
+#: ../atk14/src/forms/test/custom_fields/url_field.php:12
+msgid "This doesn't look like an URL"
+msgstr ""
+
+#: smarty.c:2 smarty.c:137 smarty.c:272 smarty.c:407 smarty.c:542 smarty.c:677
+#: smarty.c:812 smarty.c:947 smarty.c:1082 smarty.c:1217 smarty.c:1352
+#: smarty.c:1487 smarty.c:1622 smarty.c:1757 smarty.c:1892 smarty.c:2027
+#: smarty.c:2162 smarty.c:2297 smarty.c:2432 smarty.c:2567 smarty.c:2702
+#: smarty.c:2837 smarty.c:2972 smarty.c:3107
 msgid "Search"
 msgstr ""
 
-#: smarty.c:5 smarty.c:137
+#: smarty.c:5 smarty.c:140 smarty.c:275 smarty.c:410 smarty.c:545 smarty.c:680
+#: smarty.c:815 smarty.c:950 smarty.c:1085 smarty.c:1220 smarty.c:1355
+#: smarty.c:1490 smarty.c:1625 smarty.c:1760 smarty.c:1895 smarty.c:2030
+#: smarty.c:2165 smarty.c:2300 smarty.c:2435 smarty.c:2570 smarty.c:2705
+#: smarty.c:2840 smarty.c:2975 smarty.c:3110
 msgid "Create a new creature"
 msgstr ""
 
-#: smarty.c:8 smarty.c:140
+#: smarty.c:8 smarty.c:143 smarty.c:278 smarty.c:413 smarty.c:548 smarty.c:683
+#: smarty.c:818 smarty.c:953 smarty.c:1088 smarty.c:1223 smarty.c:1358
+#: smarty.c:1493 smarty.c:1628 smarty.c:1763 smarty.c:1898 smarty.c:2033
+#: smarty.c:2168 smarty.c:2303 smarty.c:2438 smarty.c:2573 smarty.c:2708
+#: smarty.c:2843 smarty.c:2978 smarty.c:3113
 msgid "No creature was found."
 msgstr ""
 
-#: smarty.c:11 smarty.c:143
+#: smarty.c:11 smarty.c:146 smarty.c:281 smarty.c:416 smarty.c:551
+#: smarty.c:686 smarty.c:821 smarty.c:956 smarty.c:1091 smarty.c:1226
+#: smarty.c:1361 smarty.c:1496 smarty.c:1631 smarty.c:1766 smarty.c:1901
+#: smarty.c:2036 smarty.c:2171 smarty.c:2306 smarty.c:2441 smarty.c:2576
+#: smarty.c:2711 smarty.c:2846 smarty.c:2981 smarty.c:3116
 msgid "Id"
 msgstr ""
 
-#: smarty.c:17 smarty.c:149
+#: smarty.c:17 smarty.c:152 smarty.c:287 smarty.c:422 smarty.c:557
+#: smarty.c:692 smarty.c:827 smarty.c:962 smarty.c:1097 smarty.c:1232
+#: smarty.c:1367 smarty.c:1502 smarty.c:1637 smarty.c:1772 smarty.c:1907
+#: smarty.c:2042 smarty.c:2177 smarty.c:2312 smarty.c:2447 smarty.c:2582
+#: smarty.c:2717 smarty.c:2852 smarty.c:2987 smarty.c:3122
 msgid ""
 "<em>The Creature Show</em> gives you a opportunity to inspect a functional "
 "ATK14 code immediatelly after a new web-app installation."
 msgstr ""
 
-#: smarty.c:20 smarty.c:152
+#: smarty.c:20 smarty.c:155 smarty.c:290 smarty.c:425 smarty.c:560
+#: smarty.c:695 smarty.c:830 smarty.c:965 smarty.c:1100 smarty.c:1235
+#: smarty.c:1370 smarty.c:1505 smarty.c:1640 smarty.c:1775 smarty.c:1910
+#: smarty.c:2045 smarty.c:2180 smarty.c:2315 smarty.c:2450 smarty.c:2585
+#: smarty.c:2720 smarty.c:2855 smarty.c:2990 smarty.c:3125
 msgid ""
 "For a beginner there is a lot of things to study. Inspect following files "
 "and direcories."
 msgstr ""
 
-#: smarty.c:23 smarty.c:155
+#: smarty.c:23 smarty.c:158 smarty.c:293 smarty.c:428 smarty.c:563
+#: smarty.c:698 smarty.c:833 smarty.c:968 smarty.c:1103 smarty.c:1238
+#: smarty.c:1373 smarty.c:1508 smarty.c:1643 smarty.c:1778 smarty.c:1913
+#: smarty.c:2048 smarty.c:2183 smarty.c:2318 smarty.c:2453 smarty.c:2588
+#: smarty.c:2723 smarty.c:2858 smarty.c:2993 smarty.c:3128
 msgid "Update creature"
 msgstr ""
 
-#: smarty.c:26 smarty.c:158
+#: smarty.c:26 smarty.c:161 smarty.c:296 smarty.c:431 smarty.c:566
+#: smarty.c:701 smarty.c:836 smarty.c:971 smarty.c:1106 smarty.c:1241
+#: smarty.c:1376 smarty.c:1511 smarty.c:1646 smarty.c:1781 smarty.c:1916
+#: smarty.c:2051 smarty.c:2186 smarty.c:2321 smarty.c:2456 smarty.c:2591
+#: smarty.c:2726 smarty.c:2861 smarty.c:2996 smarty.c:3131
 msgid "Are you sure to destroy the creature #%1?"
 msgstr ""
 
-#: smarty.c:29 smarty.c:161
+#: smarty.c:29 smarty.c:164 smarty.c:299 smarty.c:434 smarty.c:569
+#: smarty.c:704 smarty.c:839 smarty.c:974 smarty.c:1109 smarty.c:1244
+#: smarty.c:1379 smarty.c:1514 smarty.c:1649 smarty.c:1784 smarty.c:1919
+#: smarty.c:2054 smarty.c:2189 smarty.c:2324 smarty.c:2459 smarty.c:2594
+#: smarty.c:2729 smarty.c:2864 smarty.c:2999 smarty.c:3134
 msgid "detail"
 msgstr ""
 
-#: smarty.c:32 smarty.c:164
+#: smarty.c:32 smarty.c:167 smarty.c:302 smarty.c:437 smarty.c:572
+#: smarty.c:707 smarty.c:842 smarty.c:977 smarty.c:1112 smarty.c:1247
+#: smarty.c:1382 smarty.c:1517 smarty.c:1652 smarty.c:1787 smarty.c:1922
+#: smarty.c:2057 smarty.c:2192 smarty.c:2327 smarty.c:2462 smarty.c:2597
+#: smarty.c:2732 smarty.c:2867 smarty.c:3002 smarty.c:3137
 msgid "edit"
 msgstr ""
 
-#: smarty.c:35 smarty.c:167
+#: smarty.c:35 smarty.c:170 smarty.c:305 smarty.c:440 smarty.c:575
+#: smarty.c:710 smarty.c:845 smarty.c:980 smarty.c:1115 smarty.c:1250
+#: smarty.c:1385 smarty.c:1520 smarty.c:1655 smarty.c:1790 smarty.c:1925
+#: smarty.c:2060 smarty.c:2195 smarty.c:2330 smarty.c:2465 smarty.c:2600
+#: smarty.c:2735 smarty.c:2870 smarty.c:3005 smarty.c:3140
 msgid "destroy"
 msgstr ""
 
-#: smarty.c:44 smarty.c:176
+#: smarty.c:44 smarty.c:179 smarty.c:314 smarty.c:449 smarty.c:584
+#: smarty.c:719 smarty.c:854 smarty.c:989 smarty.c:1124 smarty.c:1259
+#: smarty.c:1394 smarty.c:1529 smarty.c:1664 smarty.c:1799 smarty.c:1934
+#: smarty.c:2069 smarty.c:2204 smarty.c:2339 smarty.c:2474 smarty.c:2609
+#: smarty.c:2744 smarty.c:2879 smarty.c:3014 smarty.c:3149
 msgid "Image"
 msgstr ""
 
-#: smarty.c:47 smarty.c:179
+#: smarty.c:47 smarty.c:182 smarty.c:317 smarty.c:452 smarty.c:587
+#: smarty.c:722 smarty.c:857 smarty.c:992 smarty.c:1127 smarty.c:1262
+#: smarty.c:1397 smarty.c:1532 smarty.c:1667 smarty.c:1802 smarty.c:1937
+#: smarty.c:2072 smarty.c:2207 smarty.c:2342 smarty.c:2477 smarty.c:2612
+#: smarty.c:2747 smarty.c:2882 smarty.c:3017 smarty.c:3152
 msgid "An image of the creature"
 msgstr ""
 
-#: smarty.c:50 smarty.c:182
+#: smarty.c:50 smarty.c:185 smarty.c:320 smarty.c:455 smarty.c:590
+#: smarty.c:725 smarty.c:860 smarty.c:995 smarty.c:1130 smarty.c:1265
+#: smarty.c:1400 smarty.c:1535 smarty.c:1670 smarty.c:1805 smarty.c:1940
+#: smarty.c:2075 smarty.c:2210 smarty.c:2345 smarty.c:2480 smarty.c:2615
+#: smarty.c:2750 smarty.c:2885 smarty.c:3020 smarty.c:3155
 msgid "Get the creature as JSON"
 msgstr ""
 
-#: smarty.c:53 smarty.c:185
+#: smarty.c:53 smarty.c:188 smarty.c:323 smarty.c:458 smarty.c:593
+#: smarty.c:728 smarty.c:863 smarty.c:998 smarty.c:1133 smarty.c:1268
+#: smarty.c:1403 smarty.c:1538 smarty.c:1673 smarty.c:1808 smarty.c:1943
+#: smarty.c:2078 smarty.c:2213 smarty.c:2348 smarty.c:2483 smarty.c:2618
+#: smarty.c:2753 smarty.c:2888 smarty.c:3023 smarty.c:3158
 msgid "Get the creature as XML"
 msgstr ""
 
-#: smarty.c:56 smarty.c:188
+#: smarty.c:56 smarty.c:191 smarty.c:326 smarty.c:461 smarty.c:596
+#: smarty.c:731 smarty.c:866 smarty.c:1001 smarty.c:1136 smarty.c:1271
+#: smarty.c:1406 smarty.c:1541 smarty.c:1676 smarty.c:1811 smarty.c:1946
+#: smarty.c:2081 smarty.c:2216 smarty.c:2351 smarty.c:2486 smarty.c:2621
+#: smarty.c:2756 smarty.c:2891 smarty.c:3026 smarty.c:3161
 msgid "Create new creature"
 msgstr ""
 
-#: smarty.c:59 smarty.c:191
+#: smarty.c:59 smarty.c:194 smarty.c:329 smarty.c:464 smarty.c:599
+#: smarty.c:734 smarty.c:869 smarty.c:1004 smarty.c:1139 smarty.c:1274
+#: smarty.c:1409 smarty.c:1544 smarty.c:1679 smarty.c:1814 smarty.c:1949
+#: smarty.c:2084 smarty.c:2219 smarty.c:2354 smarty.c:2489 smarty.c:2624
+#: smarty.c:2759 smarty.c:2894 smarty.c:3029 smarty.c:3164
 msgid "Error 404: Page not found"
 msgstr ""
 
-#: smarty.c:62 smarty.c:194
+#: smarty.c:62 smarty.c:197 smarty.c:332 smarty.c:467 smarty.c:602
+#: smarty.c:737 smarty.c:872 smarty.c:1007 smarty.c:1142 smarty.c:1277
+#: smarty.c:1412 smarty.c:1547 smarty.c:1682 smarty.c:1817 smarty.c:1952
+#: smarty.c:2087 smarty.c:2222 smarty.c:2357 smarty.c:2492 smarty.c:2627
+#: smarty.c:2762 smarty.c:2897 smarty.c:3032 smarty.c:3167
 msgid "We are deeply sorry, but the page on the URI <em>%1</em> wasn't found."
 msgstr ""
 
-#: smarty.c:65 smarty.c:197
+#: smarty.c:65 smarty.c:200 smarty.c:335 smarty.c:470 smarty.c:605
+#: smarty.c:740 smarty.c:875 smarty.c:1010 smarty.c:1145 smarty.c:1280
+#: smarty.c:1415 smarty.c:1550 smarty.c:1685 smarty.c:1820 smarty.c:1955
+#: smarty.c:2090 smarty.c:2225 smarty.c:2360 smarty.c:2495 smarty.c:2630
+#: smarty.c:2765 smarty.c:2900 smarty.c:3035 smarty.c:3170
 msgid "Please, write us to %1 if you think this is our mistake."
 msgstr ""
 
-#: smarty.c:68 smarty.c:200
+#: smarty.c:68 smarty.c:203 smarty.c:338 smarty.c:473 smarty.c:608
+#: smarty.c:743 smarty.c:878 smarty.c:1013 smarty.c:1148 smarty.c:1283
+#: smarty.c:1418 smarty.c:1553 smarty.c:1688 smarty.c:1823 smarty.c:1958
+#: smarty.c:2093 smarty.c:2228 smarty.c:2363 smarty.c:2498 smarty.c:2633
+#: smarty.c:2768 smarty.c:2903 smarty.c:3038 smarty.c:3173
 msgid "This is app/views/application/error404.tpl template"
 msgstr ""
 
-#: smarty.c:71 smarty.c:203
+#: smarty.c:71 smarty.c:206 smarty.c:341 smarty.c:476 smarty.c:611
+#: smarty.c:746 smarty.c:881 smarty.c:1016 smarty.c:1151 smarty.c:1286
+#: smarty.c:1421 smarty.c:1556 smarty.c:1691 smarty.c:1826 smarty.c:1961
+#: smarty.c:2096 smarty.c:2231 smarty.c:2366 smarty.c:2501 smarty.c:2636
+#: smarty.c:2771 smarty.c:2906 smarty.c:3041 smarty.c:3176
 msgid "Go to the homepage"
 msgstr ""
 
-#: smarty.c:74 smarty.c:206
+#: smarty.c:74 smarty.c:209 smarty.c:344 smarty.c:479 smarty.c:614
+#: smarty.c:749 smarty.c:884 smarty.c:1019 smarty.c:1154 smarty.c:1289
+#: smarty.c:1424 smarty.c:1559 smarty.c:1694 smarty.c:1829 smarty.c:1964
+#: smarty.c:2099 smarty.c:2234 smarty.c:2369 smarty.c:2504 smarty.c:2639
+#: smarty.c:2774 smarty.c:2909 smarty.c:3044 smarty.c:3179
 msgid "required"
 msgstr ""
 
-#: smarty.c:77 smarty.c:209
+#: smarty.c:77 smarty.c:212 smarty.c:347 smarty.c:482 smarty.c:617
+#: smarty.c:752 smarty.c:887 smarty.c:1022 smarty.c:1157 smarty.c:1292
+#: smarty.c:1427 smarty.c:1562 smarty.c:1697 smarty.c:1832 smarty.c:1967
+#: smarty.c:2102 smarty.c:2237 smarty.c:2372 smarty.c:2507 smarty.c:2642
+#: smarty.c:2777 smarty.c:2912 smarty.c:3047 smarty.c:3182
 msgid "Example:"
 msgstr ""
 
-#: smarty.c:80 smarty.c:212
+#: smarty.c:80 smarty.c:215 smarty.c:350 smarty.c:485 smarty.c:620
+#: smarty.c:755 smarty.c:890 smarty.c:1025 smarty.c:1160 smarty.c:1295
+#: smarty.c:1430 smarty.c:1565 smarty.c:1700 smarty.c:1835 smarty.c:1970
+#: smarty.c:2105 smarty.c:2240 smarty.c:2375 smarty.c:2510 smarty.c:2645
+#: smarty.c:2780 smarty.c:2915 smarty.c:3050 smarty.c:3185
 msgid "Save"
 msgstr ""
 
-#: smarty.c:83 smarty.c:215
+#: smarty.c:83 smarty.c:218 smarty.c:353 smarty.c:488 smarty.c:623
+#: smarty.c:758 smarty.c:893 smarty.c:1028 smarty.c:1163 smarty.c:1298
+#: smarty.c:1433 smarty.c:1568 smarty.c:1703 smarty.c:1838 smarty.c:1973
+#: smarty.c:2108 smarty.c:2243 smarty.c:2378 smarty.c:2513 smarty.c:2648
+#: smarty.c:2783 smarty.c:2918 smarty.c:3053 smarty.c:3188
 msgid "The following difficulties have occurred during the form processing:"
 msgstr ""
 
-#: smarty.c:86 smarty.c:218
+#: smarty.c:86 smarty.c:221 smarty.c:356 smarty.c:491 smarty.c:626
+#: smarty.c:761 smarty.c:896 smarty.c:1031 smarty.c:1166 smarty.c:1301
+#: smarty.c:1436 smarty.c:1571 smarty.c:1706 smarty.c:1841 smarty.c:1976
+#: smarty.c:2111 smarty.c:2246 smarty.c:2381 smarty.c:2516 smarty.c:2651
+#: smarty.c:2786 smarty.c:2921 smarty.c:3056 smarty.c:3191
 msgid ""
 "Some of the items were filled incorrectly. Please, check the form and "
 "correct the errors."
 msgstr ""
 
-#: smarty.c:89 smarty.c:221
+#: smarty.c:89 smarty.c:224 smarty.c:359 smarty.c:494 smarty.c:629
+#: smarty.c:764 smarty.c:899 smarty.c:1034 smarty.c:1169 smarty.c:1304
+#: smarty.c:1439 smarty.c:1574 smarty.c:1709 smarty.c:1844 smarty.c:1979
+#: smarty.c:2114 smarty.c:2249 smarty.c:2384 smarty.c:2519 smarty.c:2654
+#: smarty.c:2789 smarty.c:2924 smarty.c:3059 smarty.c:3194
 msgid "It's working!"
 msgstr ""
 
-#: smarty.c:92 smarty.c:224
+#: smarty.c:92 smarty.c:227 smarty.c:362 smarty.c:497 smarty.c:632
+#: smarty.c:767 smarty.c:902 smarty.c:1037 smarty.c:1172 smarty.c:1307
+#: smarty.c:1442 smarty.c:1577 smarty.c:1712 smarty.c:1847 smarty.c:1982
+#: smarty.c:2117 smarty.c:2252 smarty.c:2387 smarty.c:2522 smarty.c:2657
+#: smarty.c:2792 smarty.c:2927 smarty.c:3062 smarty.c:3197
 msgid "Hi there, it's nice to see you!"
 msgstr ""
 
-#: smarty.c:95 smarty.c:227
+#: smarty.c:95 smarty.c:230 smarty.c:365 smarty.c:500 smarty.c:635
+#: smarty.c:770 smarty.c:905 smarty.c:1040 smarty.c:1175 smarty.c:1310
+#: smarty.c:1445 smarty.c:1580 smarty.c:1715 smarty.c:1850 smarty.c:1985
+#: smarty.c:2120 smarty.c:2255 smarty.c:2390 smarty.c:2525 smarty.c:2660
+#: smarty.c:2795 smarty.c:2930 smarty.c:3065 smarty.c:3200
 msgid "What you see is a freshly installed ATK14 application."
 msgstr ""
 
-#: smarty.c:98 smarty.c:230
+#: smarty.c:98 smarty.c:233 smarty.c:368 smarty.c:503 smarty.c:638
+#: smarty.c:773 smarty.c:908 smarty.c:1043 smarty.c:1178 smarty.c:1313
+#: smarty.c:1448 smarty.c:1583 smarty.c:1718 smarty.c:1853 smarty.c:1988
+#: smarty.c:2123 smarty.c:2258 smarty.c:2393 smarty.c:2528 smarty.c:2663
+#: smarty.c:2798 smarty.c:2933 smarty.c:3068 smarty.c:3203
 msgid ""
 "This HTTP request is handled by the <code>app/controllers/main_controller."
 "php</code> and the <code>index()</code> action."
 msgstr ""
 
-#: smarty.c:101 smarty.c:233
+#: smarty.c:101 smarty.c:236 smarty.c:371 smarty.c:506 smarty.c:641
+#: smarty.c:776 smarty.c:911 smarty.c:1046 smarty.c:1181 smarty.c:1316
+#: smarty.c:1451 smarty.c:1586 smarty.c:1721 smarty.c:1856 smarty.c:1991
+#: smarty.c:2126 smarty.c:2261 smarty.c:2396 smarty.c:2531 smarty.c:2666
+#: smarty.c:2801 smarty.c:2936 smarty.c:3071 smarty.c:3206
 msgid "This is <code>app/views/main/index.tpl</code> template."
 msgstr ""
 
-#: smarty.c:104 smarty.c:236
+#: smarty.c:104 smarty.c:239 smarty.c:374 smarty.c:509 smarty.c:644
+#: smarty.c:779 smarty.c:914 smarty.c:1049 smarty.c:1184 smarty.c:1319
+#: smarty.c:1454 smarty.c:1589 smarty.c:1724 smarty.c:1859 smarty.c:1994
+#: smarty.c:2129 smarty.c:2264 smarty.c:2399 smarty.c:2534 smarty.c:2669
+#: smarty.c:2804 smarty.c:2939 smarty.c:3074 smarty.c:3209
 msgid "Where to go?"
 msgstr ""
 
-#: smarty.c:107 smarty.c:239
+#: smarty.c:107 smarty.c:242 smarty.c:377 smarty.c:512 smarty.c:647
+#: smarty.c:782 smarty.c:917 smarty.c:1052 smarty.c:1187 smarty.c:1322
+#: smarty.c:1457 smarty.c:1592 smarty.c:1727 smarty.c:1862 smarty.c:1997
+#: smarty.c:2132 smarty.c:2267 smarty.c:2402 smarty.c:2537 smarty.c:2672
+#: smarty.c:2807 smarty.c:2942 smarty.c:3077 smarty.c:3212
 msgid "visit the Creatures show"
 msgstr ""
 
-#: smarty.c:110 smarty.c:242
+#: smarty.c:110 smarty.c:245 smarty.c:380 smarty.c:515 smarty.c:650
+#: smarty.c:785 smarty.c:920 smarty.c:1055 smarty.c:1190 smarty.c:1325
+#: smarty.c:1460 smarty.c:1595 smarty.c:1730 smarty.c:1865 smarty.c:2000
+#: smarty.c:2135 smarty.c:2270 smarty.c:2405 smarty.c:2540 smarty.c:2675
+#: smarty.c:2810 smarty.c:2945 smarty.c:3080 smarty.c:3215
 msgid "check out 404 error page"
 msgstr ""
 
-#: smarty.c:113 smarty.c:245
+#: smarty.c:113 smarty.c:248 smarty.c:383 smarty.c:518 smarty.c:653
+#: smarty.c:788 smarty.c:923 smarty.c:1058 smarty.c:1193 smarty.c:1328
+#: smarty.c:1463 smarty.c:1598 smarty.c:1733 smarty.c:1868 smarty.c:2003
+#: smarty.c:2138 smarty.c:2273 smarty.c:2408 smarty.c:2543 smarty.c:2678
+#: smarty.c:2813 smarty.c:2948 smarty.c:3083 smarty.c:3218
 msgid ""
 "switch the language: <a href=\"%1\">english</a> or <a href=\"%2\">czech</a>"
 msgstr ""
 
-#: smarty.c:116 smarty.c:248
+#: smarty.c:116 smarty.c:251 smarty.c:386 smarty.c:521 smarty.c:656
+#: smarty.c:791 smarty.c:926 smarty.c:1061 smarty.c:1196 smarty.c:1331
+#: smarty.c:1466 smarty.c:1601 smarty.c:1736 smarty.c:1871 smarty.c:2006
+#: smarty.c:2141 smarty.c:2276 smarty.c:2411 smarty.c:2546 smarty.c:2681
+#: smarty.c:2816 smarty.c:2951 smarty.c:3086 smarty.c:3221
 msgid "gettext dictionaries are placed in <code>locale/</code> directory"
 msgstr ""
 
-#: smarty.c:119 smarty.c:251
+#: smarty.c:119 smarty.c:254 smarty.c:389 smarty.c:524 smarty.c:659
+#: smarty.c:794 smarty.c:929 smarty.c:1064 smarty.c:1199 smarty.c:1334
+#: smarty.c:1469 smarty.c:1604 smarty.c:1739 smarty.c:1874 smarty.c:2009
+#: smarty.c:2144 smarty.c:2279 smarty.c:2414 smarty.c:2549 smarty.c:2684
+#: smarty.c:2819 smarty.c:2954 smarty.c:3089 smarty.c:3224
 msgid "External links"
 msgstr ""
 
-#: smarty.c:122 smarty.c:254
+#: smarty.c:122 smarty.c:257 smarty.c:392 smarty.c:527 smarty.c:662
+#: smarty.c:797 smarty.c:932 smarty.c:1067 smarty.c:1202 smarty.c:1337
+#: smarty.c:1472 smarty.c:1607 smarty.c:1742 smarty.c:1877 smarty.c:2012
+#: smarty.c:2147 smarty.c:2282 smarty.c:2417 smarty.c:2552 smarty.c:2687
+#: smarty.c:2822 smarty.c:2957 smarty.c:3092 smarty.c:3227
 msgid "ATK14 project website"
 msgstr ""
 
-#: smarty.c:125 smarty.c:257
+#: smarty.c:125 smarty.c:260 smarty.c:395 smarty.c:530 smarty.c:665
+#: smarty.c:800 smarty.c:935 smarty.c:1070 smarty.c:1205 smarty.c:1340
+#: smarty.c:1475 smarty.c:1610 smarty.c:1745 smarty.c:1880 smarty.c:2015
+#: smarty.c:2150 smarty.c:2285 smarty.c:2420 smarty.c:2555 smarty.c:2690
+#: smarty.c:2825 smarty.c:2960 smarty.c:3095 smarty.c:3230
 msgid "The ATK14 Book"
 msgstr ""
 
-#: smarty.c:128 smarty.c:260
+#: smarty.c:128 smarty.c:263 smarty.c:398 smarty.c:533 smarty.c:668
+#: smarty.c:803 smarty.c:938 smarty.c:1073 smarty.c:1208 smarty.c:1343
+#: smarty.c:1478 smarty.c:1613 smarty.c:1748 smarty.c:1883 smarty.c:2018
+#: smarty.c:2153 smarty.c:2288 smarty.c:2423 smarty.c:2558 smarty.c:2693
+#: smarty.c:2828 smarty.c:2963 smarty.c:3098 smarty.c:3233
 msgid "The API reference"
 msgstr ""
 
-#: smarty.c:131 smarty.c:263
+#: smarty.c:131 smarty.c:266 smarty.c:401 smarty.c:536 smarty.c:671
+#: smarty.c:806 smarty.c:941 smarty.c:1076 smarty.c:1211 smarty.c:1346
+#: smarty.c:1481 smarty.c:1616 smarty.c:1751 smarty.c:1886 smarty.c:2021
+#: smarty.c:2156 smarty.c:2291 smarty.c:2426 smarty.c:2561 smarty.c:2696
+#: smarty.c:2831 smarty.c:2966 smarty.c:3101 smarty.c:3236
 msgid "ATK14 project page on Github"
+msgstr ""
+
+#: smarty.c:134 smarty.c:269 smarty.c:404 smarty.c:539 smarty.c:674
+#: smarty.c:809 smarty.c:944 smarty.c:1079 smarty.c:1214 smarty.c:1349
+#: smarty.c:1484 smarty.c:1619 smarty.c:1754 smarty.c:1889 smarty.c:2024
+#: smarty.c:2159 smarty.c:2294 smarty.c:2429 smarty.c:2564 smarty.c:2699
+#: smarty.c:2834 smarty.c:2969 smarty.c:3104 smarty.c:3239
+msgid ""
+"Hi,\n"
+"\n"
+"this is a test massage.\n"
+"Message was sent at %1."
 msgstr ""
