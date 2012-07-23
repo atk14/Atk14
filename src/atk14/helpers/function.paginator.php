@@ -48,7 +48,7 @@
  * @param array $params
  * @param array $content
  */
-function smarty_function_paginator($params,&$smarty){
+function smarty_function_paginator($params,$smarty){
 	$smarty = atk14_get_smarty_from_template($smarty);
 
 	if(isset($params["finder"])){

@@ -16,7 +16,7 @@
 *																																									
 *		{stylesheet_link_tag file="styles.css"}
 */
-function smarty_function_stylesheet_link_tag($params,&$smarty){
+function smarty_function_stylesheet_link_tag($params,$smarty){
 	global $ATK14_GLOBAL;
 	$smarty = atk14_get_smarty_from_template($smarty);
 

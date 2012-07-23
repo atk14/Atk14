@@ -6,7 +6,7 @@
  * 
  * There is also smarty`s modifier with the same name.
  */
-function smarty_function_to_sentence($params,&$smarty){
+function smarty_function_to_sentence($params,$smarty){
 	$smarty = atk14_get_smarty_from_template($smarty);
 
 	$params = array_merge(array(

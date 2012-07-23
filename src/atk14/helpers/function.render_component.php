@@ -7,7 +7,7 @@
 * 	{render_component controller=article action=overview source_id=123}
 * 
 */
-function smarty_function_render_component($params,&$smarty){
+function smarty_function_render_component($params,$smarty){
 	$smarty = atk14_get_smarty_from_template($smarty);
 
 	if(!isset($params["controller"])){ $params["controller"] = $smarty->getTemplateVars("controller"); }

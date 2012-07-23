@@ -32,7 +32,7 @@
  * @package Atk14
  * @author Jaromir Tomek
  */
-function smarty_function_link_to($params,&$smarty){
+function smarty_function_link_to($params,$smarty){
 	$smarty = atk14_get_smarty_from_template($smarty);
 
 	$options = array(

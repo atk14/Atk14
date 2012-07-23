@@ -26,7 +26,7 @@
  * @param string $content
  *
  */
-function smarty_block_content($params,$content,&$smarty,&$repeat){
+function smarty_block_content($params,$content,$smarty,&$repeat){
 	$smarty->addAtk14Content($params["for"],$content);
 	return "";
 }

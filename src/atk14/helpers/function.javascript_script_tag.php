@@ -23,7 +23,7 @@
 /**
  * Smarty function that outputs HTML <script /> tag.
  */
-function smarty_function_javascript_script_tag($params,&$smarty){
+function smarty_function_javascript_script_tag($params,$smarty){
 	global $ATK14_GLOBAL;
 	$smarty = atk14_get_smarty_from_template($smarty);
 
