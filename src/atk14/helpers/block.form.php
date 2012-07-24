@@ -25,8 +25,9 @@
  * @param array $params
  * @param string $content
  */
-function smarty_block_form($params, $content, &$smarty, &$repeat)
-{
+function smarty_block_form($params, $content, $template, &$repeat){
+	$smarty = atk14_get_smarty_from_template($template);
+
 	$params = array_merge(array(
 		"form" => $smarty->getTemplateVars("form"),
 	),$params);

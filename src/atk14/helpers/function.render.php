@@ -20,8 +20,8 @@
 * Dale je mozne render pouzit misto for(;;){ }:
 * {render parial="list_item" for=1 to=10 step=1 item=i}
 */
-function smarty_function_render($params,$smarty){
-	$smarty = atk14_get_smarty_from_template($smarty);
+function smarty_function_render($params,$template){
+	$smarty = atk14_get_smarty_from_template($template);
 
 	Atk14Timer::Start("helper function.render");
 	$template_name = $partial = $params["partial"];

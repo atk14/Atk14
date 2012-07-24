@@ -5,4 +5,3 @@
 function smarty_modifier_format_datetime($iso_datetime){
 	return Atk14Locale::FormatDateTime($iso_datetime);
 }
-?>

@@ -30,8 +30,8 @@
  * @param array $content
  *
  */
-function smarty_function_placeholder($params,$smarty){
-	$smarty = atk14_get_smarty_from_template($smarty);
+function smarty_function_placeholder($params,$template){
+	$smarty = atk14_get_smarty_from_template($template);
 
 	$id = isset($params["for"]) ? $params["for"] : "main";
 	$smarty->addAtk14Content($id);

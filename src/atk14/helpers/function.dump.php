@@ -18,8 +18,8 @@
  * @param array $params
  * @param array $content
  */
-function smarty_function_dump($params,$smarty){
-	$smarty = atk14_get_smarty_from_template($smarty);
+function smarty_function_dump($params,$template){
+	$smarty = atk14_get_smarty_from_template($template);
 
 	if(!in_array("var",array_keys($params))){
 		$out = array();

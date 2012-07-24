@@ -58,7 +58,10 @@
  * @param string $content
  *
  */
-function smarty_block_sortable($params, $content, &$smarty, &$repeat){
+function smarty_block_sortable($params, $content, $template, &$repeat){
+	if($repeat){ return; }
+	$smarty = atk14_get_smarty_from_template($template);
+
 	$params = array_merge(array(
 		// ??? TODO: neco jako wrap_with_th_tag => true
 	),$params);

@@ -29,8 +29,9 @@
  * @param string $content content of the Smarty block
  *
  */
-function smarty_block_a_remote($params, $content, &$smarty, &$repeat)
-{
+function smarty_block_a_remote($params, $content, $template, &$repeat){
+	$smarty = atk14_get_smarty_from_template($template);
+
 	$attributes = array();
 
 	$params = array_merge(array(

@@ -1,6 +1,6 @@
 <?php
-function smarty_function_form_remote_tag($params,$smarty){
-	$smarty = atk14_get_smarty_from_template($smarty);
+function smarty_function_form_remote_tag($params,$template){
+	$smarty = atk14_get_smarty_from_template($template);
 
 	$url = Atk14Utils::BuildLink($params,$smarty);
 
@@ -15,4 +15,3 @@ function smarty_function_form_remote_tag($params,$smarty){
 
   return "<form$attrs>";
 }
-?>

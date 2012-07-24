@@ -21,7 +21,8 @@
  * @param array $params there are no options for this plugin.
  * @param string $content
  */
-function smarty_block_javascript_tag($params, $content, &$smarty, &$repeat){
+function smarty_block_javascript_tag($params, $content, $template, &$repeat){
+	if(!$content){ return; }
 	$out = array();
 	$out[] = '<script type="text/javascript">';
 	$out[] = '//<![CDATA[';
@@ -31,4 +32,3 @@ function smarty_block_javascript_tag($params, $content, &$smarty, &$repeat){
 
 	return join("\n",$out);
 }
-?>

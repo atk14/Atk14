@@ -70,7 +70,7 @@ function smarty_gettext_strarg($str)
  *   - plural - The plural version of the text (2nd parameter of ngettext())
  *   - count - The item count for plural mode (3rd parameter of ngettext())
  */
-function smarty_block_t($params, $text, &$smarty, &$repeat)
+function smarty_block_t($params, $text, $template, &$repeat)
 {
 	if($repeat){ return; } // only output on the closing tag
 
@@ -124,5 +124,3 @@ function smarty_block_t($params, $text, &$smarty, &$repeat)
 	
 	return $text;
 }
-
-?>

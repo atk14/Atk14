@@ -5,4 +5,3 @@
 function smarty_modifier_format_datetime_with_seconds($iso_datetime){
 	return Atk14Locale::FormatDateTimeWithSeconds($iso_datetime);
 }
-?>
