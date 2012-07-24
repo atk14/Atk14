@@ -39,7 +39,7 @@ function smarty_function_render($params,$template){
 	if(!isset($params["from"])){
 	
 		foreach($params as $key => $value){	
-			$smarty->assignByRef($key,$value);
+			$smarty->assign($key,$value);
 		}
 
 		$out[] = $smarty->fetch($template_name);
