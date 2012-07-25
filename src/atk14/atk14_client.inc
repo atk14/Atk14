@@ -75,30 +75,63 @@ class Atk14Client{
 	 * @return ApplicationController
 	 */
 	function get($path,$params = array()){
-		return $this->_doRequest("GET",$path,$params);
+		return $this->_doRequest("GET",$path,array("params" => $params));
 	}
 
 	/**
 	 * Sends a POST request.
+	 * 
+	 * <code>
+	 * $client->post("books/edit",array(
+	 *	"id" => 123,
+	 *	"title" => "A New Title"
+	 * ));
+	 * 
+	 * // sending raw data
+	 * $code->post("images/create_new",$binary_image_content,array("content_type" => "image/jpg"));
+	 *
+	 * </code>
 	 *
 	 * @param string $path
 	 * @param array $params
 	 * @return ApplicationController
 	 */
-	function post($path,$params = array()){
-		return $this->_doRequest("POST",$path,$params);
+	function post($path,$params = array(),$options = array()){
+		if(!is_array($params)){
+			$options["raw_post_data"] = $params;
+			$params = array();
+		}else{
+			$options["params"] = $params;
+		}
+		return $this->_doRequest("POST",$path,$options);
 	}
 
 	/**
 	 * Common method to make HTTP requests
 	 * @access private
 	 */
-	function _doRequest($method,$path,$params){
+	function _doRequest($method,$path,$options = array()){
 		global $ATK14_GLOBAL;
+
+		$options = array_merge(array(
+			"params" => array(),
+			"raw_post_data" => null,
+			"content_type" => null,
+		),$options);
+
+		$params = $options["params"];
 
 		$request = new HTTPRequest();
 		$request->setUserAgent($this->_UserAgent);
 		$request->setRemoteAddr($this->_RemoteAddr);
+
+		if($options["content_type"]){
+			$request->setContentType($options["content_type"]);
+		}
+
+		if(isset($options["raw_post_data"])){
+			$request->setRawPostData($options["raw_post_data"]);
+		}
 
 		$this->flash->reset();
 
