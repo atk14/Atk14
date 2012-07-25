@@ -606,6 +606,12 @@ class tc_widgets extends tc_base
                         'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array('choices'=>array(1=>1, 2=>2, 3=>3))),
                         'result' => implode("\n", array('<select multiple="multiple" name="nums[]">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
                     ),
+
+
+                    array(
+                        'params' => array('name'=>'numbers', 'value'=>array('1'), 'options'=>array('choices'=>array('0'=>'Zero', '1'=>'One', '2'=>'Two'))),
+                        'result' => implode("\n", array('<select multiple="multiple" name="numbers[]">', '<option value="0">Zero</option>', '<option value="1" selected="selected">One</option>', '<option value="2">Two</option>', '</select>'))
+                    ),
                 )
             ),
             array(
