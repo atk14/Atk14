@@ -68,6 +68,18 @@ class tc_http_request extends tc_base{
 		$this->_compare_arrays(array(),$req->getVars("??")); // nesmyslny parametr
 	}
 
+	function test_get_content_type(){
+		global $_SERVER;
+
+		$_SERVER["CONTENT_TYPE"] = "text/xml";
+
+		$req = new HTTPRequest();
+		$this->assertEquals("text/xml",$req->getContentType());
+
+		$req->setContentType("text/json");
+		$this->assertEquals("text/json",$req->getContentType());
+	}
+
 	function test_get_uploaded_file(){
 		$this->_init_FILES();
 

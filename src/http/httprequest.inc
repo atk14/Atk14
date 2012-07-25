@@ -421,6 +421,9 @@ class HTTPRequest{
 	 */
 	function getContentType(){
 		global $_SERVER;
+
+		if(isset($this->_ForceContentType)){ return $this->_ForceContentType; }
+
 		if(isset($_SERVER["CONTENT_TYPE"])){
 			$_content_type = $_SERVER["CONTENT_TYPE"];
 			if(preg_match("/^([^;]+);/",$_content_type,$matches)){
@@ -431,6 +434,10 @@ class HTTPRequest{
 		return null;
 	}
 
+	function setContentType($content_type){
+		$this->_ForceContentType = $content_type;
+	}
+
 	/**
 	 * Returns content of Accept-Charset HTTP header.
 	 *
@@ -438,6 +445,7 @@ class HTTPRequest{
 	 */
 	function getContentCharset(){
 		global $_SERVER;
+
 		if(isset($_SERVER["CONTENT_TYPE"])){
 			$_content_type = $_SERVER["CONTENT_TYPE"];	
 			$_charset = null;
