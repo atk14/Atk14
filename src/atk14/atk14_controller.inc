@@ -596,6 +596,7 @@ class Atk14Controller{
 			dirname(__FILE__)."/views/",
 		),array(
 			"controller_name" => $this->controller,
+			"namespace" => $ATK14_GLOBAL->getValue("namespace"),
 		));
 
 		// nabindovani hodnot do smarty, ktere by volani action metody nemelo zmenit...
@@ -622,9 +623,6 @@ class Atk14Controller{
 		if(!isset($this->tpl_data["sorting"])){
 			$smarty->assignByRef("sorting",$this->sorting);
 		}
-		// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
-		$smarty_version_salt = ATK14_USE_SMARTY3 ? "smarty3" : "smarty2"; 
-		$smarty->compile_id = $smarty->compile_id."atk14_{$smarty_version_salt}_{$this->namespace}_{$this->controller}_";
 		$options["assing_data"] && $smarty->assign($this->tpl_data);
 		return $smarty;
 	}

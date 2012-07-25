@@ -249,7 +249,9 @@ class Atk14Utils{
 		global $ATK14_GLOBAL;
 
 		$options = array_merge(array(
-			"controller_name" => ""
+			"controller_name" => "",
+			"namespace" => "",
+			"compile_id_salt" => "",
 		),$options);
 
 		$PATH_SMARTY = "/tmp/smarty/";
@@ -293,11 +295,14 @@ class Atk14Utils{
 				// this should by handled by atk14_error_handler()
 			}
 		}
+
+		// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
+		$smarty_version_salt = ATK14_USE_SMARTY3 ? "smarty3" : "smarty2"; 
+		$smarty->compile_id = $smarty->compile_id."atk14{$options["compile_id_salt"]}_{$smarty_version_salt}_{$options["namespace"]}_{$options["controller_name"]}_";
 	
-		$namespace = $ATK14_GLOBAL->getValue("namespace");
 		$smarty->setPluginsDir(array(
-			$ATK14_GLOBAL->getApplicationPath()."helpers/$namespace/$options[controller_name]/",
-			$ATK14_GLOBAL->getApplicationPath()."helpers/$namespace/",
+			$ATK14_GLOBAL->getApplicationPath()."helpers/$options[namespace]/$options[controller_name]/",
+			$ATK14_GLOBAL->getApplicationPath()."helpers/$options[namespace]/",
 			$ATK14_GLOBAL->getApplicationPath()."helpers/",
 			dirname(__FILE__)."/helpers/",
 			$PATH_SMARTY."/plugins/",

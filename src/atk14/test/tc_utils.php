@@ -39,5 +39,16 @@ class TcUtils extends TcBase{
 		// ignorovani null hodnot
 		$this->assertEquals(array("a","b","c","d"),Atk14Utils::JoinArrays("a","b",null,null,array("c","d"))); 
 	}
+
+	function test_get_smarty(){
+		$smarty = Atk14Utils::GetSmarty("template_path");
+		$this->assertEquals("atk14_smarty3___",$smarty->compile_id);
+
+		$smarty = Atk14Utils::GetSmarty("template_path",array(
+			"controller_name" => "books",
+			"namespace" => "admin",
+			"compile_id_salt" => "salt"
+		));
+		$this->assertEquals("atk14salt_smarty3_admin_books_",$smarty->compile_id);
+	}
 }
-?>
