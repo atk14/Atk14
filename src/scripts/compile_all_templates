@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Compiles all templates in app/views/ and app/layouts/
+ * This is a useful test to check out that you have all templates compilable.
+ *
+ * If everyting goes right, you'll see a text TEMPLATES ARE OK
+ */
+
+require_once(dirname(__FILE__)."/load.inc");
+
+$path = $ATK14_GLOBAL->getApplicationPath();
+$smarty = Atk14Utils::GetSmarty(
+	array(
+		"${path}views/",
+		"${path}layouts/"
+	),
+	array("compile_id_salt" => "CompileAllTest")
+);
+
+try{
+	$smarty->compileAllTemplates(".tpl",true,null,1);
+}catch(Exception $e){
+	echo "\n";
+	echo "Exception cought: ".$e->getMessage();
+	echo "\n!!!THERE ARE COMPILE ERRORS!!!\n";
+	die;
+}
+
+echo "\nTEMPLATES ARE OK\n";

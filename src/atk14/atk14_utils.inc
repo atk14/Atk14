@@ -279,8 +279,6 @@ class Atk14Utils{
 				$_template_dir[] = $template_dir;
 			}
 
-			$_template_dir[] = $PATH_SMARTY."/../templates/";
-
 			$userid = posix_getuid();
 
 			$smarty->setTemplateDir($_template_dir);
