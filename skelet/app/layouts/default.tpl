@@ -17,7 +17,7 @@
 
 		<title>{$page_title|h} | {"ATK14_APPLICATION_NAME"|dump_constant}</title>
 		<meta name="description" content="{$page_description|h}" />
-		{render partial=shared/layout/dev_info}
+		{render partial="shared/layout/dev_info"}
 
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 
@@ -42,7 +42,7 @@
 			</header>
 
 			<div class="main" role="main">
-				{render partial=shared/layout/flash_message}
+				{render partial="shared/layout/flash_message"}
 				{placeholder}
 			</div>
 
