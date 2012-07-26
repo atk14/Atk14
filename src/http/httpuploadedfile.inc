@@ -3,7 +3,7 @@
  * Class provides operations on uploaded file.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Http
  * @author Jaromir Tomek
  * @filesource
  */
@@ -12,7 +12,7 @@
  * Class provides operations on uploaded file.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Http
  * @author Jaromir Tomek
  *
  */

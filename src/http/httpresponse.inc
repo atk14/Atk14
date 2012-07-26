@@ -18,6 +18,7 @@
 class HTTPResponse{
 
 	/**
+	 * @ignore
 	 * @access private
 	 * @var integer
 	 */
@@ -25,28 +26,34 @@ class HTTPResponse{
 
 
 	/**
+	 * @ignore
 	 * @access private
 	 * @var string
 	 */
 	var $_StatusMessage = null;
 
 	/**
+	 * @ignore
 	 * @access private
 	 * @var string
 	 */
 	var $_Location = null;
 
 	/**
+	 * @ignore
 	 * @access private
+	 * @var boolean
 	 */
 	var $_LocationMovedPermanently = false;
 
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	var $_LocationMovedWithStatus = null;
 
 	/**
+	 * @ignore
 	 * @access private
 	 * @var string
 	 */
@@ -54,55 +61,69 @@ class HTTPResponse{
 
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	var $_ContentCharset = null;
 
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	var $_Headers = array();
 	
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	var $_StatusCode_Redefined = false;
 
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	var $_Location_Redefined = false;
 	
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	var $_ContentType_Redefined = false;
 	
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	var $_ContentCharset_Redefined = false;
 
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	var $_HTTPCookies = array();
 
 	/**
 	 * @access private
+	 * @ignore
 	 * @var StringBuffer
 	 */
 	var $_OutputBuffer = null;
 
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	var $_OutputBuffer_Flush_Started = false;
 
 	/**
+	 * @access private
+	 * @ignore
 	 * @var StringBuffer
 	 */
 	var $buffer = null;
 	
+	/**
+	 * Constructor.
+	 */
 	function HTTPResponse(){
 		$this->_OutputBuffer = new StringBuffer();
 		$this->buffer = &$this->_OutputBuffer;
@@ -117,6 +138,7 @@ class HTTPResponse{
 
 	/**
 	 * Sets status code of the response.
+	 *
 	 * <code>
 	 *	 $response->setStatusCode(400);
 	 *	 $response->setStatusCode(404,"Not Found Dude");
@@ -124,6 +146,7 @@ class HTTPResponse{
 	 * </code>
 	 *
 	 * @param integer $code
+	 * @param string $message string associated with the status code
 	 */
 	function setStatusCode($code,$message = null){
 		if(preg_match('/^([0-9]{3}) (.+)/',$code,$matches)){
@@ -284,6 +307,11 @@ class HTTPResponse{
 	 */
 	function getContentType(){ return $this->_ContentType;}
 
+	/**
+	 * Sets ContentType response header.
+	 *
+	 * @param string $content_charset
+	 */
 	function setContentCharset($content_charset){
 		settype($content_charset,"string");
 		$this->_ContentCharset_Redefined = true;
@@ -342,17 +370,31 @@ class HTTPResponse{
 	}
 
 	/**
-	 * Cleares previously set header.
+	 * Clears previously set header.
+	 *
+	 * Unset header is not sent.
 	 *
 	 * <code>
 	 * $response->setHeader("X-Frame-Option","SAMEORIGIN");
 	 * $response->Header("X-Frame-Option");
 	 * </code>
+	 *
+	 * @param string $name
 	 */
 	function clearHeader($name){
 		return $this->setHeader($name,"");
 	}
 
+	/**
+	 * Forces client to authentize itself.
+	 *
+	 * Sends client www-authenticate header for basic authentization
+	 * so the browser displays dialog asking username and password.
+	 *
+	 * Check the authentization params with {@link HTTPRequest::getBasicAuthUsername} and {@link HTTPRequest::getBasicAuthPassword()}
+	 *
+	 * @param string $realm
+	 */
 	function authorizationRequired($realm = "private area"){
 		$this->setStatusCode(401);
 		$this->clearOutputBuffer();
@@ -367,6 +409,13 @@ class HTTPResponse{
 		");
 	}
 
+	/**
+	 * Sets the 403 status code.
+	 *
+	 * The associated message to be displayed by client can be set.
+	 *
+	 * @param string $message
+	 */
 	function forbidden($message = null){
 		$this->setStatusCode(403);
 		$this->clearOutputBuffer();
@@ -418,7 +467,7 @@ class HTTPResponse{
 	 * @param string $title optional title. when not passed the status message is used.
 	 * @access private
 	 */
-	function _writeStatusMessage($message,$title = ""){
+	protected function _writeStatusMessage($message,$title = ""){
 
 		if($title==""){ $title = $this->getStatusMessage(); }
 		
@@ -538,7 +587,7 @@ class HTTPResponse{
 	 *
 	 * @access private
 	 */
-	function _flushHeaders(){
+	protected function _flushHeaders(){
 		$_status_message = $this->getStatusMessage();
 		header("HTTP/1.0 $this->_StatusCode $_status_message");
 		

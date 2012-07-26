@@ -1,7 +1,9 @@
 <?php
 /**
+ * HTTPRequest class provides all information about HTTP request.
+ *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Http
  * @filesource
  */
 
@@ -29,7 +31,7 @@ if (get_magic_quotes_gpc()) {
  * Instance of the class is available in any {@link Atk14Controller} descendant as $request variable.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Http
  *
  */
 class HTTPRequest{
@@ -37,52 +39,50 @@ class HTTPRequest{
 	/**
 	 * @access private
 	 */
-	var $_HTTPRequest_documentRoot = "";
+	protected $_HTTPRequest_documentRoot = "";
 	
 	/**
 	 * Server name as set in httpd.conf.
 	 *
-	 * @access private
 	 */
-	var $_HTTPRequest_serverName = "";
+	protected $_HTTPRequest_serverName = "";
 	
 	/**
-	 * Jmeno serveru, ktere napise uzivak do url.
-	 * @access private
+	 * Server name as used in requested url.
+	 *
 	 */
-	var $_HTTPRequest_HTTPHost = "";
+	protected $_HTTPRequest_HTTPHost = "";
 
 	/**
 	 * Protocol used.
-	 * @access private
 	 */
-	var $_HTTPRequest_serverProtocol = "";
+	protected $_HTTPRequest_serverProtocol = "";
 
 	/**
 	 * @access private
 	 */
-	var $_HTTPRequest_serverPort = null;
+	protected $_HTTPRequest_serverPort = null;
 
 	/**
 	 * @access private
 	 */
-	var $_HTTPRequest_scriptName = "";
+	protected $_HTTPRequest_scriptName = "";
 
 	/**
 	 * @access private
 	 */
-	var $_HTTPRequest_scriptFilename = "";
+	protected $_HTTPRequest_scriptFilename = "";
 
 	/**
 	 * @access private
 	 */
-	var $_HTTPRequest_headers = array();
+	protected $_HTTPRequest_headers = array();
 
 	/**
 	 * @access private
 	 * @var array
 	 */
-	var $_SSLPorts = array(443);
+	protected $_SSLPorts = array(443);
 
 	//var $_HTTPRequest_paramsGet = array();
 	//var $_HTTPRequest_paramsPost = array();
@@ -92,17 +92,18 @@ class HTTPRequest{
 	 * @var string
 	 * @access private
 	 */
-	var $_HTTPRequest_BasicAuth_Username = null;
+	protected $_HTTPRequest_BasicAuth_Username = null;
 
 	/**
 	 * @var string
 	 * @access private
 	 */
-	var $_HTTPRequest_BasicAuth_Password = null;
+	protected $_HTTPRequest_BasicAuth_Password = null;
 
 
 	/**
-	 * @return HTTPRequest
+	 * Constructor
+	 *
 	 */
 	function HTTPRequest(){
 		$this->_AutoInitialize();
@@ -126,7 +127,7 @@ class HTTPRequest{
 	 *
 	 * @access private
 	 */
-	function _AutoInitialize(){
+	protected function _AutoInitialize(){
 		global $_SERVER;
 		if(function_exists("getallheaders")){ // ve cli PHP funkce getallheaders neexistuje
 			$_headers = getallheaders();
@@ -575,7 +576,10 @@ class HTTPRequest{
 	 *
 	 * Alias to {@link isVarDefined} method.
 	 *
+	 * @param string $var_name
+	 * @param string $order
 	 * @return bool
+	 * @see isVarDefined for description of $order
 	 */
 	function defined($var_name,$order = "GPC"){
 		return $this->isVarDefined($var_name,$order);
@@ -699,7 +703,7 @@ class HTTPRequest{
 	 *
 	 * Alias to {@link getCookieVar()} method.
 	 *
-	 * @param string $var_name
+	 * @param string $name
 	 * @return string value of cookie $var_name
 	 */
 	function getCookie($name){ return $this->getCookieVar($name); }
@@ -733,6 +737,8 @@ class HTTPRequest{
 	 * </ul>
 	 *
 	 * If there is parameter specified in more than one types then value from the later specified type overrides the first one.
+	 *
+	 * @param string $order
 	 * @return array
 	 *
 	 */
@@ -840,11 +846,22 @@ class HTTPRequest{
 	}
 
 	/**
-	* if($request->getUploadedFileError("userfile")>0){
-	*		echo "doslo k chybe pri nahravani souboru na server";
-	*		// pois chyb zde: http://cz.php.net/manual/en/features.file-upload.errors.php
-	*	}
-	*/
+	 * Return error code for uploaded file.
+	 *
+	 * It necessarily means that there was an error during upload. 
+	 * Value 0 means OK.
+	 *
+	 * Example
+	 * <code>
+	 * if($request->getUploadedFileError("userfile")>0){
+	 *		echo "There was an error during file upload";
+	 *	}
+	 * </code>
+	 *
+	 * @see http://php.net/manual/en/features.file-upload.errors.php Description of error codes 
+	 * @param string $name name of input field used to upload the file
+	 * @return integer
+	 */
 	function getUploadedFileError($name){
 		global $_FILES;
 		if(isset($_FILES["$name"])){ return $_FILES["$name"]["error"]; }
@@ -916,6 +933,7 @@ class HTTPRequest{
 	 * $val = $request->getHeader("x-file-name");
 	 * </code>
 	 *
+	 * @param string $header
 	 * @return string content of the header.
 	 */
 	function getHeader($header){
