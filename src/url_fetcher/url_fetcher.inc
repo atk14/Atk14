@@ -1,41 +1,95 @@
 <?php
+/**
+ * Class providing methods to make http requests
+ *
+ * @package Atk14
+ * @subpackage UrlFetcher
+ * @filesource
+ */
+
 define("URL_FETCHER_VERSION","0.2");
 /**
-* $fetcher = new UrlFetcher();
-*	$fetcher->setAuthorization("username","password");
-*	//$fetcher->ressetAuthorization();
-*	if($fetcher->fetchContent("http://www.root.cz/")){
-*		echo $fetcher->getContent();
-*	}else{
-*		echo $fetcher->getErrorMessage();
-*	}
-*
-* // GET
-* $fetcher = new UrlFetcher("http://username:password@www.root.cz/");
-* if($f->found()){
-* 	echo $f->getContent();
-* }
-*
-* // POST
-* $f = new UrlFetcher("http://www.root.cz/login/");
-* if($f->post("username=madl&password=krtek")){
-* 	echo $f->getContent();
-* }
-*	
-* $f = new UrlFetcher("http://www.example.com/data_collector.php");
-* $f->post($xml,array("content_type" => "text/xml"));
-*
-* // 
-* $f = new UrlFetcher("http://www.example.com/", array("additional_headers" => array("X-App-Version: 1.2")));
-* echo $f->getContent();
-*/
+ * UrlFetcher class provides methods to make http requests
+ *
+ * Basic usage
+ * <code>
+ * $fetcher = new UrlFetcher();
+ * $fetcher->setAuthorization("username","password");
+ * //$fetcher->resetAuthorization();
+ * if($fetcher->fetchContent("http://www.root.cz/")){
+ * 	echo $fetcher->getContent();
+ * }else{
+ * 	echo $fetcher->getErrorMessage();
+ * }
+ * </code>
+ *
+ * Make a GET request
+ * <code>
+ * $fetcher = new UrlFetcher("http://username:password@www.root.cz/");
+ * if($f->found()){
+ * 	echo $f->getContent();
+ * }
+ * </code>
+ *
+ * Make a POST request
+ * <code>
+ * $f = new UrlFetcher("http://www.root.cz/login/");
+ * if($f->post("username=madl&password=krtek")){
+ * 	echo $f->getContent();
+ * }
+ * </code>
+ *	
+ *
+ * Some headers can be specified in options:
+ * <code>
+ * $f = new UrlFetcher("http://www.example.com/data_collector.php");
+ * $f->post($xml,array("content_type" => "text/xml"));
+ * </code>
+ *
+ * Specific headers can be added in additional_headers option
+ * <code>
+ * $f = new UrlFetcher("http://www.example.com/", array("additional_headers" => array("X-App-Version: 1.2")));
+ * echo $f->getContent();
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage UrlFetcher
+ * @filesource
+ */
 class UrlFetcher {
-	var $_AuthType = ""; // "" nebo "basic"
-	var $_Username = "";
-	var $_Password = "";
+	/**
+	 * Authentication type
+	 *
+	 * "" or "basic"
+	 *
+	 * @var string
+	 */
+	protected $_AuthType = "";
 
-	var $_SocketTimeout = 5;
+	/**
+	 * Authentication username
+	 *
+	 * @var string
+	 */
+	protected $_Username = "";
 
+	/**
+	 * Authentication password
+	 *
+	 * @var string
+	 */
+	protected $_Password = "";
+
+	/**
+	 * Connection timeout in seconds
+	 *
+	 * @var integer
+	 */
+	protected $_SocketTimeout = 5;
+
+	/**
+	 * @ignore
+	 */
 	function _reset(){
 		$this->_Fetched = null;
 		$this->_RequestMethod = "GET";
@@ -55,8 +109,14 @@ class UrlFetcher {
 	}
 
 	/**
-	* 
-	*/
+	 * Constructor
+	 *
+	 * @param string $url
+	 * @param array $options
+	 * <ul>
+	 * <li><b>additional_headers</b> - </li>
+	 * </ul>
+	 */
 	function UrlFetcher($url = "", $options = array()){
 		$this->_reset();
 
@@ -71,12 +131,28 @@ class UrlFetcher {
 		$this->_AdditionalHeaders = $options["additional_headers"];
 	}
 
+	/**
+	 * Checks if error occured on request
+	 *
+	 * @return bool
+	 */
 	function errorOccurred(){ return strlen($this->getErrorMessage())>0; }
 
+	/**
+	 * Returns error message about last request.
+	 *
+	 * @return string
+	 */
 	function getErrorMessage(){
 		return $this->_ErrorMessage;
 	}
 
+	/**
+	 * Set authentization parameters.
+	 *
+	 * @param string $username
+	 * @param string $password
+	 */
 	function setAuthorization($username,$password){
 		settype($username,"string");
 		settype($password,"string");
@@ -86,8 +162,16 @@ class UrlFetcher {
 		$this->_AuthType = "basic";
 	}
 
+	/**
+	 * Set timeout for connection
+	 *
+	 * @param int $timeout timeout in seconds
+	 */
 	function setSocketTimeout($timeout){ $this->_SocketTimeout = $timeout; }
 
+	/**
+	 * Resets authentization parameters so it is not used in the request
+	 */
 	function resetAuthorization(){
 		$this->_Username = "";
 		$this->_Password = "";
@@ -95,16 +179,23 @@ class UrlFetcher {
 	}
 
 	/**
-	* Stahne obsah URL.
-	* Sam sebe hlida, aby byl volan pouze 1x.
-	* Nemusi byt volano vne objektu.
-	*
-	* Doporuceny postup:
-	*		$f = new UrlFetcher("http://www.domemka.cz/file.dat");
-	*		if($f->found()){
-	*			echo $f->getContent();
-	*		}
-	*/
+	 * Fetches content from URL.
+	 *
+	 * When called multiple times, the actual request is made only once.
+	 * Can be called from outside.
+	 *
+	 *
+	 * Recommended usage:
+	 * <code>
+	 * $f = new UrlFetcher("http://www.domemka.cz/file.dat");
+	 * 	if($f->found()){
+	 *		echo $f->getContent();
+	 *	}
+	 * </code>
+	 *
+	 * @param string $url
+	 * @return string content of the url
+	 */
 	function fetchContent($url = ""){
 		if(strlen($url)>0){ $this->_setUrl($url); }
 
@@ -173,6 +264,17 @@ class UrlFetcher {
 		return true;
 	}
 
+	/**
+	 * Make POST request.
+	 *
+	 * @param mixed $data when array it is sent as query parameters, otherwise $data is sent without processing
+	 * @param array $options
+	 * <ul>
+	 * <li>content_type string ContentType header</li>
+	 * <li>additional_headers more headers</li>
+	 * </ul>
+	 * @return bool result of request
+	 */
 	function post($data = "",$options = array()){
 		if(is_array($data)){
 			$d = array();
@@ -195,7 +297,22 @@ class UrlFetcher {
 		return $this->found();
 	}
 
+	/**
+	 * Gets request headers.
+	 *
+	 * @return string
+	 */
 	function getRequestHeaders(){ return $this->_RequestHeaders; }
+
+	/**
+	 * Gets headers returned by the server.
+	 *
+	 * @param array $options
+	 * <ul>
+	 * <li><b>as_hash</b></li> - 
+	 * <li><b>lowerize_keys</b></li> - 
+	 * </ul>
+	 */
 	function getResponseHeaders($options = array()){
 		$options = array_merge(array(
 			"as_hash" => false,
@@ -219,43 +336,96 @@ class UrlFetcher {
 
 		return $out;
 	}
+
+	/**
+	 * Returns http headers returned by the server.
+	 *
+	 * @return string
+	 */
 	function getHeaders(){ return $this->getResponseHeaders($options = array()); }
 
+	/**
+	 * Return content of called URL.
+	 *
+	 * @return string
+	 */
 	function getContent(){ $this->fetchContent(); return $this->_Content; }
 
 	/**
-	 * Vrati hodnotu dane hlavicky...
-	 * 
+	 * Returns value of given header
+	 *
+	 * <code>
 	 * $c_type = $uf->getHeaderValue("Content-Type"); // "text/xml"
+	 * </code>
+	 * 
+	 * @param string $header
+	 * @return string
 	 */ 
 	function getHeaderValue($header){
 		$header = strtolower($header);
 		$headers = $this->getResponseHeaders(array("as_hash" => true, "lowerize_keys" => true));
 		if(isset($headers["$header"])){ return $headers["$header"]; }
 	}
+
 	/** 
-   * Alias for UrlFetcher::getHeaderValue().
+	 * Alias for UrlFetcher::getHeaderValue().
+	 *
+	 * @param string $name Name of header
+	 * @return string
 	 */
 	function getHeader($name){
 		return $this->getHeaderValue($name);
 	}
+
+	/**
+	 * Returns value of Content-type header.
+	 *
+	 * @return string
+	 */
 	function getContentType(){
 		$c_type = $this->getHeaderValue("content-type");
 		$c_type = trim(preg_replace("/(.*?);.*/","\\1",$c_type));
 		return $c_type;
 	}
+
+	/**
+	 * Returns content charset value.
+	 * 
+	 * Value is parsed from the content-type header.
+	 *
+	 * @return string
+	 */
 	function getContentCharset(){
 		if(preg_match("/;\\s*charset\\s*=([^;]+)/",$this->getHeaderValue("content-type"),$matches)){
 			return trim($matches[1]);
 		}
 	}
+
+	/**
+	 * Returns value of Content-Length header.
+	 *
+	 * @return string
+	 */
 	function getContentLength(){ return $this->getHeaderValue("content-length"); }
+
+	/**
+	 * Returns status code of response
+	 *
+	 * @return int
+	 */
 	function getStatusCode(){
 		if(preg_match("/^HTTP\\/.\\.. ([0-9]{3})/",$this->getResponseHeaders(),$matches)){
 			return (int)$matches[1];
 		}
 	}
 
+	/**
+	 * Tests if the request returned content.
+	 *
+	 * Checks if the returned status code is 200
+	 *
+	 * @return bool
+	 */
 	function found(){ return $this->getStatusCode()==200; }
 
 	function getFilename(){
@@ -264,12 +434,18 @@ class UrlFetcher {
 		}
 	}
 
+	/**
+	 * @ignore
+	 */
 	function _setError($error_message){
 		$this->_ErrorMessage = $error_message;
 		$this->_Fetched = false;
 		return false;
 	}
 
+	/**
+	 * @ignore
+	 */
 	function _setUrl($url){
 		settype($url,"string");
 	
@@ -310,6 +486,9 @@ class UrlFetcher {
 		return true;
 	}
 
+	/**
+	 * @ignore
+	 */
 	function _buildRequestHeaders(){
 		$out = array();
 		$out[] = "$this->_RequestMethod $this->_Uri HTTP/1.0";
