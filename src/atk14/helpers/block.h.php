@@ -20,8 +20,6 @@
  *
  * Converts special characters to HTML entities.
  */
-function smarty_block_h($params, $content, &$smarty, &$repeat)
-{
+function smarty_block_h($params, $content, $template, &$repeat){
 	return htmlspecialchars($content);
 }
-?>

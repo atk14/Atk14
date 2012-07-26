@@ -526,7 +526,7 @@ class SelectMultiple extends Widget
         $str_values = my_array_merge(array($value));
 
         foreach ($choices as $option_value => $option_label) {
-            if (in_array($option_value, $str_values)) {
+            if (in_array("$option_value", $str_values)) { // uvozovky jsou zde, protoze 0 fungovala spatne
                 $selected = ' selected="selected"';
             }
             else {

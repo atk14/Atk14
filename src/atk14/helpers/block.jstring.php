@@ -30,7 +30,8 @@
  * @param array $params some options
  * @param string $content string to be escaped
  */
-function smarty_block_jstring($params,$content,&$smarty,&$repeat){
+function smarty_block_jstring($params,$content,$template,&$repeat){
+	if($repeat){ return; }
 	$params = array_merge(array(
 		"escsape" => ""
 	),$params);
@@ -42,4 +43,3 @@ function smarty_block_jstring($params,$content,&$smarty,&$repeat){
 	}
 	return '"'.$content.'"';
 }
-?>

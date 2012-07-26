@@ -2,7 +2,9 @@
 /**
 *
 */
-function smarty_function_form_tag($params,&$smarty){
+function smarty_function_form_tag($params,$template){
+	$smarty = atk14_get_smarty_from_template($template);
+
 	$url = Atk14Utils::BuildLink($params,$smarty);
 
 	$attrs = Atk14Utils::ExtractAttributes($params);
@@ -12,4 +14,3 @@ function smarty_function_form_tag($params,&$smarty){
 
   return "<form$attrs>";
 }
-?>

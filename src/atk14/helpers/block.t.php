@@ -70,8 +70,10 @@ function smarty_gettext_strarg($str)
  *   - plural - The plural version of the text (2nd parameter of ngettext())
  *   - count - The item count for plural mode (3rd parameter of ngettext())
  */
-function smarty_block_t($params, $text, &$smarty)
+function smarty_block_t($params, $text, $template, &$repeat)
 {
+	if($repeat){ return; } // only output on the closing tag
+
 	$text = stripslashes($text);
 	
 	// set escape mode
@@ -122,5 +124,3 @@ function smarty_block_t($params, $text, &$smarty)
 	
 	return $text;
 }
-
-?>

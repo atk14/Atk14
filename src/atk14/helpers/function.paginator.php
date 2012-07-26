@@ -48,19 +48,21 @@
  * @param array $params
  * @param array $content
  */
-function smarty_function_paginator($params,&$smarty){
+function smarty_function_paginator($params,$template){
+	$smarty = atk14_get_smarty_from_template($template);
+
 	if(isset($params["finder"])){
 		$finder = $params["finder"];
-	}elseif(isset($smarty->_tpl_vars["finder"])){
-		$finder = $smarty->_tpl_vars["finder"];
+	}elseif(!is_null($smarty->getTemplateVars("finder"))){
+		$finder = $smarty->getTemplateVars("finder");
 	}
 
 	if(isset($finder)){
 		$total_amount = $finder->getTotalAmount();
 		$max_amount = $finder->getLimit();
 	}else{
-		$total_amount = isset($params["total_amount"]) ? (int)$params["total_amount"] : (int)$smarty->_tpl_vars["total_amount"];
-		$max_amount = isset($params["max_amount"]) ? (int)$params["max_amount"] : (int)$smarty->_tpl_vars["max_amount"];
+		$total_amount = isset($params["total_amount"]) ? (int)$params["total_amount"] : (int)$smarty->getTemplateVars("total_amount");
+		$max_amount = isset($params["max_amount"]) ? (int)$params["max_amount"] : (int)$smarty->getTemplateVars("max_amount");
 	}
 
 	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? ATK14_PAGINATOR_OFFSET_PARAM_NAME : "from";
@@ -68,7 +70,7 @@ function smarty_function_paginator($params,&$smarty){
 
 	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
 
-	$par = $smarty->_tpl_vars["params"]->toArray();
+	$par = $smarty->getTemplateVars("params")->toArray();
 	// There is a possibility to change action, controller, lang and namespace variables.
 	// It is usefull when you display first page of some list on the frontpage and links from the paginator must point to an another controller/action.
 	foreach(array("action","controller","lang","namespace") as $_k){

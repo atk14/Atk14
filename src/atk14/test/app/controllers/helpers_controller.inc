@@ -6,6 +6,17 @@ class HelpersController extends ApplicationController{
 		$this->sorting->add("name");
 	}
 
+	function h(){
+		$this->tpl_data["title"] = "The book <strong>is mine!</strong>";
+	}
+
+	function render(){
+		$this->tpl_data["books"] = array(
+			array("title" => "The Adventures of Tom Sawyer", "author" => "Mark Twain"),
+			array("title" => "Swallows and Amazons", "author" => "Arthur Ransome"),
+		);
+	}
+
 	function _before_filter(){
 		$this->render_layout = false;
 	}

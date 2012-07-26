@@ -9,4 +9,3 @@
 function smarty_modifier_count($ar){
 	return sizeof($ar);
 }
-?>

@@ -21,8 +21,6 @@
  *
  * Removes white spaces from beginning and end of a string. Does not recognize any parameters.
  */
-function smarty_block_trim($params, $content, &$smarty, &$repeat)
-{
+function smarty_block_trim($params, $content, $template, &$repeat){
 	return trim($content);
 }
-?>

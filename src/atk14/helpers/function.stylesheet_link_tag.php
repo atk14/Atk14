@@ -16,8 +16,9 @@
 *																																									
 *		{stylesheet_link_tag file="styles.css"}
 */
-function smarty_function_stylesheet_link_tag($params,&$smarty){
+function smarty_function_stylesheet_link_tag($params,$template){
 	global $ATK14_GLOBAL;
+
 	$href = $ATK14_GLOBAL->getPublicBaseHref()."stylesheets/$params[file]";
 	$filename = $ATK14_GLOBAL->getPublicRoot()."stylesheets/$params[file]";
 
@@ -39,4 +40,3 @@ function smarty_function_stylesheet_link_tag($params,&$smarty){
 	
 	return "<link rel=\"stylesheet\" href=\"$href\" ".join(" ",$attribs)."/>";
 }
-?>

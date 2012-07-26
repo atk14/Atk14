@@ -36,8 +36,9 @@
  * More query parameters can be added by adding them to the helper. They will appear in the URL with the name you give them in helper.
  * @param string $content content of the Smarty {a} block tag
  */
-function smarty_block_a($params, $content, &$smarty, &$repeat)
-{
+function smarty_block_a($params, $content, $template, &$repeat){
+	$smarty = atk14_get_smarty_from_template($template);
+
 	$params = array_merge(array(
 		"_method" => "get",
 		"_confirm" => null,

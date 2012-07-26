@@ -227,14 +227,15 @@ class Atk14Mailer{
 			$smarty = Atk14Utils::GetSmarty(array(
 				$ATK14_GLOBAL->getApplicationPath()."views/$namespace/mailer/",
 				$ATK14_GLOBAL->getApplicationPath()."views/$namespace/",
+			),array(
+				"namespace" => $namespace,
+				"compile_id_salt" => "mailer",
 			));
 
 			reset($this->tpl_data);
 			while(list($_key,) =each($this->tpl_data)){
 				$smarty->assign($_key,$this->tpl_data[$_key]);
 			}
-
-			$smarty->compile_id = $smarty->compile_id."_ATK14MAILER_{$namespace}_";
 
 			$template_name = $this->template_name.".tpl";
 

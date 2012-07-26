@@ -22,7 +22,7 @@
  * Smarty block function.
  *
  */
-function smarty_block_insert_html($params, $content, &$smarty, &$repeat){
+function smarty_block_insert_html($params, $content, $template, &$repeat){
 	$content = Atk14Utils::EscapeForJavascript($content);
 
 	$params = array_merge(array(
@@ -44,4 +44,3 @@ function smarty_block_insert_html($params, $content, &$smarty, &$repeat){
 
 	return "$(\"$selector\").$method(\"$content\");";
 }
-?>

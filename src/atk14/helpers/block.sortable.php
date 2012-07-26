@@ -58,13 +58,16 @@
  * @param string $content
  *
  */
-function smarty_block_sortable($params, $content, &$smarty, &$repeat){
+function smarty_block_sortable($params, $content, $template, &$repeat){
+	if($repeat){ return; }
+	$smarty = atk14_get_smarty_from_template($template);
+
 	$params = array_merge(array(
 		// ??? TODO: neco jako wrap_with_th_tag => true
 	),$params);
 	$key = $params["key"];
-	$sorting = $smarty->_tpl_vars["sorting"];
-	$_params = $smarty->_tpl_vars["params"]->copy();
+	$sorting = $smarty->getTemplateVars("sorting");
+	$_params = $smarty->getTemplateVars("params")->copy();
 	$_params->delete("from"); // smazani parametru pro strankovani
 	$_key = "$key-asc";
 	if($sorting->getActiveKey()==$_key){

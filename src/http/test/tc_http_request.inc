@@ -68,6 +68,18 @@ class tc_http_request extends tc_base{
 		$this->_compare_arrays(array(),$req->getVars("??")); // nesmyslny parametr
 	}
 
+	function test_get_content_type(){
+		global $_SERVER;
+
+		$_SERVER["CONTENT_TYPE"] = "text/xml";
+
+		$req = new HTTPRequest();
+		$this->assertEquals("text/xml",$req->getContentType());
+
+		$req->setContentType("text/json");
+		$this->assertEquals("text/json",$req->getContentType());
+	}
+
 	function test_get_uploaded_file(){
 		$this->_init_FILES();
 
@@ -329,6 +341,26 @@ class tc_http_request extends tc_base{
 
 		$request->setRawPostData("Forced_Raw_Content");
 		$this->assertEquals("Forced_Raw_Content",$request->getRawPostData());
+	}
+
+	function test_basic_auth(){
+		global $_SERVER;
+
+		$_SERVER["PHP_AUTH_USER"] = "john_doe";
+		$_SERVER["PHP_AUTH_PW"] = "magic";
+
+		$request = new HTTPRequest();
+
+		$this->assertEquals("john_doe",$request->getBasicAuthUsername());
+		$this->assertEquals("magic",$request->getBasicAuthPassword());
+		$this->assertEquals("john_doe:magic",$request->getBasicAuthString());
+
+		$request->setBasicAuthUsername("carla");
+		$request->setBasicAuthPassword("letMEin");
+
+		$this->assertEquals("carla",$request->getBasicAuthUsername());
+		$this->assertEquals("letMEin",$request->getBasicAuthPassword());
+		$this->assertEquals("carla:letMEin",$request->getBasicAuthString());
 	}
 
 	function _check_request_method($req,$type){

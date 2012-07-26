@@ -92,13 +92,20 @@ class HTTPRequest{
 	 * @var string
 	 * @access private
 	 */
-	protected $_HTTPRequest_BasicAuth_Username = null;
+	protected $_BasicAuthUsername = null;
 
 	/**
 	 * @var string
 	 * @access private
 	 */
-	protected $_HTTPRequest_BasicAuth_Password = null;
+	protected $_BasicAuthPassword = null;
+
+	/**
+	 * An array to store force values.
+	 * 
+	 * @access private
+	 */
+	protected $_ForceValues = array();
 
 
 	/**
@@ -196,9 +203,8 @@ class HTTPRequest{
 			settype($_username,"string");
 			settype($_password,"string");
 
-			$this->_HTTPRequest_BasicAuth_Username = $_username;
-			$this->_HTTPRequest_BasicAuth_Password = $_password;
-
+			$this->_BasicAuthUsername = $_username;
+			$this->_BasicAuthPassword = $_password;
 		}
 		
 	}
@@ -313,14 +319,23 @@ class HTTPRequest{
 	 *
 	 * Returns string in the form "username:password".
 	 *
+	 * <code>
+	 *	if($request->getBasicAuthString()!="john:magic"){
+	 *		$response->authorizationRequired();
+	 *		$response->flushAll();
+	 *		exit;
+	 *	}
+	 * </code>
+	 *
 	 * @access public
 	 * @return string
 	 */
 	function getBasicAuthString(){
-		if(strlen($this->_HTTPRequest_BasicAuth_Username)>0 || strlen($this->_HTTPRequest_BasicAuth_Password)>0){
-			return "$this->_HTTPRequest_BasicAuth_Username:$this->_HTTPRequest_BasicAuth_Password";
+		$username = $this->getBasicAuthUsername();
+		$password = $this->getBasicAuthPassword();
+		if(strlen($username)>0 || strlen($password)>0){
+			return "$username:$password";
 		}
-		return "";
 	}
 
 	/**
@@ -329,8 +344,11 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getBasicAuthUsername(){
-		return $this->_HTTPRequest_BasicAuth_Username;
+		if($val = $this->_getForceValue("BasicAuthUsername")){ return $val; }
+		return $this->_BasicAuthUsername;
 	}
+
+	function setBasicAuthUsername($username){ $this->_setForceValue("BasicAuthUsername",$username); }
 
 	/**
 	 * Returns password from basic authentication string.
@@ -338,7 +356,12 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getBasicAuthPassword(){
-		return $this->_HTTPRequest_BasicAuth_Password;
+		if($val = $this->_getForceValue("BasicAuthPassword")){ return $val; }
+		return $this->_BasicAuthPassword;
+	}
+
+	function setBasicAuthPassword($password){
+		$this->_setForceValue("BasicAuthPassword",$password);
 	}
 
 	/**
@@ -422,6 +445,9 @@ class HTTPRequest{
 	 */
 	function getContentType(){
 		global $_SERVER;
+
+		if(isset($this->_ForceContentType)){ return $this->_ForceContentType; }
+
 		if(isset($_SERVER["CONTENT_TYPE"])){
 			$_content_type = $_SERVER["CONTENT_TYPE"];
 			if(preg_match("/^([^;]+);/",$_content_type,$matches)){
@@ -432,6 +458,10 @@ class HTTPRequest{
 		return null;
 	}
 
+	function setContentType($content_type){
+		$this->_ForceContentType = $content_type;
+	}
+
 	/**
 	 * Returns content of Accept-Charset HTTP header.
 	 *
@@ -439,6 +469,7 @@ class HTTPRequest{
 	 */
 	function getContentCharset(){
 		global $_SERVER;
+
 		if(isset($_SERVER["CONTENT_TYPE"])){
 			$_content_type = $_SERVER["CONTENT_TYPE"];	
 			$_charset = null;
@@ -1101,4 +1132,16 @@ class HTTPRequest{
     return implode("&", $output);
 	}
 
+	function _getForceValue($name){
+		if(isset($this->_ForceValues[$name])){
+			return $this->_ForceValues[$name];
+		}
+	}
+
+	function _setForceValue($name,$value){
+		if(!defined("TEST") || !TEST){
+			trigger_error("HTTPRequest: setting force value in non testing environment: $name=$value",E_USER_WARNING);
+		}
+		$this->_ForceValues[$name] = $value;
+	}
 }

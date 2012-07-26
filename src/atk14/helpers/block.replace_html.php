@@ -23,11 +23,11 @@
  * @param array $params
  * @param string $content
  */
-function smarty_block_replace_html($params, $content, &$smarty, &$repeat){
+function smarty_block_replace_html($params, $content, $template, &$repeat){
+	if($repeat){ return false; }
 	$content = Atk14Utils::EscapeForJavascript($content);
 	
 	$selector = isset($params["id"]) ? "#$params[id]" : $params["selector"];
 
 	return "$('$selector').html(\"$content\");";
 }
-?>
