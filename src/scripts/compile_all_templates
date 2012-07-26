@@ -5,6 +5,8 @@
  * This is a useful test to check out that you have all templates compilable.
  *
  * If everyting goes right, you'll see a text TEMPLATES ARE OK
+ *
+ * Note that this script works with Smarty3 only.
  */
 
 require_once(dirname(__FILE__)."/load.inc");

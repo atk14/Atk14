@@ -41,6 +41,9 @@ class Atk14Client{
 
 	var $_RemoteAddr = "0.0.0.0";
 
+	var $_BasicAuthUsername = null;
+	var $_BasicAuthPassword = null;
+
 	/**
 	 *
 	 */
@@ -58,6 +61,16 @@ class Atk14Client{
 	 */
 	function disableCookies(){
 		$GLOBALS["_COOKIE"] = array();
+	}
+
+	/**
+	 * <code>
+	 * $client->setBasicAuth("robin","the hooded man");
+	 * </code>
+	 */
+	function setBasicAuth($username,$password){
+		$this->_BasicAuthUsername = $username;
+		$this->_BasicAuthPassword = $password;
 	}
 
 	/**
@@ -132,6 +145,9 @@ class Atk14Client{
 		if(isset($options["raw_post_data"])){
 			$request->setRawPostData($options["raw_post_data"]);
 		}
+
+		if($this->_BasicAuthUsername){ $request->setBasicAuthUsername($this->_BasicAuthUsername); }
+		if($this->_BasicAuthPassword){ $request->setBasicAuthPassword($this->_BasicAuthPassword); }
 
 		$this->flash->reset();
 

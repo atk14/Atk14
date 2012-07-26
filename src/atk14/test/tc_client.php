@@ -24,5 +24,14 @@ class TcClient extends TcBase{
 		$this->assertEquals(true,$controller->request->post());
 		$this->assertEquals("text/xml",$controller->request->getContentType());
 		$this->assertEquals("<xml></xml>",$controller->request->getRawPostData());
+
+		// Basic Auth
+		$this->assertEquals(null,$controller->request->getBasicAuthString());
+
+		$client->setBasicAuth("admin","secret");
+
+		$controller = $client->post("testing/test","<xml></xml>",array("content_type" => "text/xml"));
+
+		$this->assertEquals("admin:secret",$controller->request->getBasicAuthString());
 	}
 }

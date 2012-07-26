@@ -343,6 +343,26 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("Forced_Raw_Content",$request->getRawPostData());
 	}
 
+	function test_basic_auth(){
+		global $_SERVER;
+
+		$_SERVER["PHP_AUTH_USER"] = "john_doe";
+		$_SERVER["PHP_AUTH_PW"] = "magic";
+
+		$request = new HTTPRequest();
+
+		$this->assertEquals("john_doe",$request->getBasicAuthUsername());
+		$this->assertEquals("magic",$request->getBasicAuthPassword());
+		$this->assertEquals("john_doe:magic",$request->getBasicAuthString());
+
+		$request->setBasicAuthUsername("carla");
+		$request->setBasicAuthPassword("letMEin");
+
+		$this->assertEquals("carla",$request->getBasicAuthUsername());
+		$this->assertEquals("letMEin",$request->getBasicAuthPassword());
+		$this->assertEquals("carla:letMEin",$request->getBasicAuthString());
+	}
+
 	function _check_request_method($req,$type){
 		$this->assertEquals($type,$req->getRequestMethod());
 
