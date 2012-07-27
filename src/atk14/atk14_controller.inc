@@ -616,8 +616,8 @@ class Atk14Controller{
 		$smarty->assign("root",$ATK14_GLOBAL->getBaseHref());
 		$smarty->assignByRef("params",$this->params);
 		$smarty->assignByRef("request",$this->request);
-		$smarty->assign("page_title",$this->page_title);
-		$smarty->assign("page_description",$this->page_description);
+		$smarty->assignByRef("page_title",$this->page_title); // v _before_render je mozne $this->page_title i $this->page_description zmenit a to se musi projevit ve smarty, proto assignByRef
+		$smarty->assignByRef("page_description",$this->page_description);
 		$smarty->assignByRef("flash",$this->flash); // !!! musi byt predavani referenci
 		$smarty->assign("form",$this->form);
 		if(!isset($this->tpl_data["sorting"])){
