@@ -611,6 +611,7 @@ class Atk14Controller{
 		$smarty->assign("action",$this->action);
 		$smarty->assign("requested_controller",$this->requested_controller);
 		$smarty->assign("requested_action",$this->requested_action);
+		$smarty->assign("rendering_component",$this->rendering_component);
 		$smarty->assign("lang",$this->lang);
 		$smarty->assign("public",$ATK14_GLOBAL->getPublicBaseHref());
 		$smarty->assign("root",$ATK14_GLOBAL->getBaseHref());
