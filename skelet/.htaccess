@@ -8,6 +8,10 @@ RewriteRule (.*) public/crossdomain.xml [L]
 RewriteCond %{REQUEST_URI} ^\/favicon.ico(|\?.*)$
 RewriteRule (.*) public/favicon.ico [L]
 
+# silent redirecting /robots.txt -> /public/robots.txt
+RewriteCond %{REQUEST_URI} ^\/robots.txt(|\?.*)$
+RewriteRule (.*) public/robots.txt [L]
+
 RewriteCond %{REQUEST_URI} ^\/
 RewriteCond %{REQUEST_URI} !^\/public\/
 RewriteCond %{REQUEST_URI} !^\/server-status\/
