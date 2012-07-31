@@ -1,4 +1,9 @@
 <?php
+require_once("app/controllers/application.php");
+require_once("app/controllers/testing_controller.php");
+require_once("app/controllers/multiple_before_filters_controller.php");
+require_once("app/controllers/multiple_after_filters_controller.php");
+
 class TcController extends TcBase{
 	function test_multiple_before_filters(){
 		$c = new MultipleBeforeFiltersController();
@@ -100,36 +105,33 @@ class TcController extends TcBase{
 	}
 
 	function test_layout(){
-		$client = new Atk14Client();
-		$controller = $client->get("testing/default_layout");
+		$controller = $this->client->get("testing/default_layout");
 
 		$page = new String($controller->response->buffer->toString());
 		$this->assertEquals(true,$page->contains("This is a template"));
 		$this->assertEquals(true,$page->contains("<!-- default layout -->"));
 
-		$controller = $client->get("testing/custom_layout");
+		$controller = $this->client->get("testing/custom_layout");
 		$page = new String($controller->response->buffer->toString());
 		$this->assertEquals(true,$page->contains("This is a template"));
 		$this->assertEquals(true,$page->contains("<!-- custom layout -->"));
 
-		$controller = $client->get("testing/no_layout");
+		$controller = $this->client->get("testing/no_layout");
 		$page = new String($controller->response->buffer->toString());
 		$this->assertEquals(true,(bool)$page->match("/^This is a template$/"));
 	}
 
 	function test_before_filter(){
-		$client = new Atk14Client();
-		$client->get("testing/test");
-		$this->assertContains("there_is_a_value_assigned_from_action_method",$client->getContent());
-		$this->assertContains("there_is_a_value_assigned_usually_from_before_render",$client->getContent());
-		$this->assertContains("there_is_a_value_assigned_directly_from_before_render",$client->getContent());
+		$this->client->get("testing/test");
+		$this->assertContains("there_is_a_value_assigned_from_action_method",$this->client->getContent());
+		$this->assertContains("there_is_a_value_assigned_usually_from_before_render",$this->client->getContent());
+		$this->assertContains("there_is_a_value_assigned_directly_from_before_render",$this->client->getContent());
 	}
 
 	function test_render(){
-		$client = new Atk14Client();
-		$controller = $client->get("testing/test_render");
+		$controller = $this->client->get("testing/test_render");
 
 		$this->assertContains("John Doe",$controller->snippet);
-		$this->assertContains("John Doe",$client->getContent());
+		$this->assertContains("John Doe",$this->client->getContent());
 	}
 }

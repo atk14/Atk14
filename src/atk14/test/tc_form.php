@@ -51,4 +51,14 @@ class TcForm extends TcBase{
 			"nickname" => "Hammer",
 		),$form->getInitial());
 	}
+
+	function test_get_default_form(){
+		$form = Atk14Form::GetDefaultForm();
+		$this->assertEquals("ApplicationForm",get_class($form));
+
+		// default form in *admin* namespace should be AdminForm (see app/forms/admin/admin_form.php)
+		$client = new Atk14Client();
+		$controller = $client->get("admin/en/main/index");
+		$this->assertEquals("AdminForm",get_class($controller->form));
+	}
 }

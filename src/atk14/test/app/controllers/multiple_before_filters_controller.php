@@ -1,6 +1,9 @@
 <?php
 class MultipleBeforeFiltersController extends ApplicationController{
 
+	function index(){
+	}
+
 	function _initialize(){
 		$this->before_filters = array();
 

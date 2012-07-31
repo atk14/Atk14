@@ -1,5 +1,5 @@
 <?php
-class TestForm extends Atk14Form{
+class TestForm extends ApplicationForm{
 	function set_up(){
 		$this->add_field("firstname",new CharField());
 		$this->add_field("lastname",new CharField(array(

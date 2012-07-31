@@ -360,6 +360,13 @@ class Atk14Form extends Form
 	 * @return Atk14Form
 	 */
 	static function GetDefaultForm($controller = null){
+		if($controller && $controller->namespace){
+			$class_name = new String($controller->namespace);
+			$class_name = $class_name->camelize()."Form";
+			if($form = Atk14Form::GetForm($class_name)){
+				return $form;
+			}
+		}
 	  ($form = Atk14Form::GetForm("ApplicationForm",$controller)) || ($form = new Atk14Form(array(),$controller));
 	  return $form;
 	}
