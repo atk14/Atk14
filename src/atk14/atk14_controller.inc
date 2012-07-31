@@ -472,11 +472,8 @@ class Atk14Controller{
 			}
 
 			$template_name = $this->template_name.".tpl";
-			if(
-				!file_exists($ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$controller_name/$template_name") &&
-				!file_exists($ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$template_name")
-			){
-				Atk14Utils::ErrorLog("Hey Dude, missing action template: views/$this->namespace/$controller_name/$template_name or views/$this->namespace/$template_name!",$this->response);
+			if(!$this->smarty->templateExists("$template_name")){
+				Atk14Utils::ErrorLog("Hey Dude, missing action template $template_name",$this->response);
 				return $this->_after_render();
 			}
 

@@ -325,6 +325,7 @@ class Atk14Utils{
 	static function ErrorLog($message,&$response){
 		$message = "AK14 error: $message";
 		error_log($message);
+		$response->setStatusCode(500);
 		if(defined("DEVELOPMENT") && DEVELOPMENT){
 			$response->write($message);
 		}else{
