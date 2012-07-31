@@ -1,5 +1,5 @@
 <?php
-class tc_function_to_json extends tc_base{
+class TcFunctionToJson extends TcBase{
 	function test(){
 		$smarty = null;
 		$this->assertEquals('"hello"',smarty_function_to_json(array("var" => "hello"),$smarty));
@@ -7,4 +7,3 @@ class tc_function_to_json extends tc_base{
 		$this->assertEquals('{"key":{"a":"b"}}',smarty_function_to_json(array("var" => array("key" => array("a" => "b"))),$smarty));
 	}
 }
-?>
