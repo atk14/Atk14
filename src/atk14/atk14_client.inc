@@ -218,12 +218,19 @@ class Atk14Client{
 	}
 
 	/**
-	 * Gets status code of server response.
+	 * Gets status code of a server response (e.g. 200)
 	 *
 	 * @return int HTTP status code
 	 */
 	function getStatusCode(){
 		return $this->controller->response->getStatusCode();
+	}
+
+	/**
+	 * Gets status message of a server response (e.g. "Found").
+	 */
+	function getStatusMessage(){
+		return $this->controller->response->getStatusMessage();
 	}
 
 	function setUserAgent($user_agent){

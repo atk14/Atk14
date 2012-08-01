@@ -20,7 +20,7 @@
 class Atk14Controller{
 
 	/**
-	 * Link to HttpRequest instance.
+	 * HTTP request object
 	 *
 	 * Contains information about current browsers HTTP request.
 	 *
@@ -30,7 +30,7 @@ class Atk14Controller{
 	var $request = null;
 
 	/**
-	 * Link to HttpResponse instance.
+	 * HTTP response object
 	 *
 	 * Contains information about response sent back to a browser.
 	 *
@@ -53,6 +53,13 @@ class Atk14Controller{
 	 * @var Atk14Mailer
 	 */
 	var $mailer = null;
+
+	/**
+	 * Name of the namespace.
+	 *
+	 * @var string
+	 */
+	var $namespace = "";
 
 	/**
 	 * Name of the controller
@@ -109,10 +116,18 @@ class Atk14Controller{
 	 */
 	var $lang = "";
 
+	/**
+	 * A flag that an action has been already executed.
+	 *
+	 * When an action is executed during the _before_filter() call,
+	 * no another action should be executed after the _before_filter().
+	 *
+	 * @var signature
+	 */
 	var $action_executed = false;
 
 	/**
-	 * Parameters from http request
+	 * GET and POST parameters.
 	 *
 	 * @var Dictionary
 	 */
@@ -125,7 +140,6 @@ class Atk14Controller{
 	 * @var Atk14Session
 	 */
 	var $session = null;
-
 
 	/**
 	 * Flash messages
@@ -271,6 +285,17 @@ class Atk14Controller{
 
 		$this->tpl_data = array();
 
+		// *** Loading base forms ***
+		// If this is an ArticlesController for instance and there is a file app/forms/articles/articles_form.inc, it will be included.
+		// The class ArticlesForm is ment to be the base class for forms used by the controller.
+		// TODO: utilize class_autoload()
+		$_base_forms = array();
+		if($this->namespace!=""){ $_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/{$this->namespace}_form.inc"; } // ./app/forms/admin/admin_form.inc
+		$_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/$this->controller/{$this->controller}_form.inc"; // ./app/forms/admin/articles/articles_form.inc
+		foreach($_base_forms as $_base_form){
+			atk14_require_once_if_exists($_base_form);
+		}
+
 		$this->_initialize();
 	}
 
@@ -387,16 +412,6 @@ class Atk14Controller{
 	
 		$cache = null;
 		$this->_atk14_read_action_cache($cache);
-
-		// If this is an ArticlesController for instance and there is a file ./app/forms/articles/articles_form.inc, it will be included.
-		// The class ArticlesForm is ment to be the base class for forms used by the controller.
-		// TODO: predelat to na volani class_autoload() (?)
-		$_base_forms = array();
-		if($this->namespace!=""){ $_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/{$this->namespace}_form.inc"; } // ./app/forms/admin/admin_form.inc
-		$_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/$this->controller/{$this->controller}_form.inc"; // ./app/forms/admin/articles/articles_form.inc
-		foreach($_base_forms as $_base_form){
-			atk14_require_once_if_exists($_base_form);
-		}
 
 		// pokud nenajdeme formular urceny presne pro tuto akci, pokusime se najit ApplicationForm a nakonec Atk14Form
 		if(!isset($this->form)){ // pokud uz mame form z _before_filter, tak ho prece nezahodime - TODO: jsem zarazeny z toho, ze se _before_filter() pousti drive
