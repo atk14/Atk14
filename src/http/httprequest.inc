@@ -74,9 +74,12 @@ class HTTPRequest{
 	protected $_HTTPRequest_scriptFilename = "";
 
 	/**
+	* 
+	 * TODO: should be protected...
+	 * 
 	 * @access private
 	 */
-	protected $_HTTPRequest_headers = array();
+	var $_HTTPRequest_headers = array();
 
 	/**
 	 * @access private
@@ -949,7 +952,8 @@ class HTTPRequest{
 	 * @return array
 	 */
 	function getHeaders(){
-		return $this->_HTTPRequest_headers;
+		($headers = $this->_getForceValue("headers")) || ($headers = array());
+		return array_merge($this->_HTTPRequest_headers,$headers);
 	}
 
 	/**
@@ -973,6 +977,14 @@ class HTTPRequest{
 			if(strtoupper($k)==$header){ return $v; }
 		}
 	}
+
+	function setHeader($header,$value){
+		($headers = $this->_getForceValue("headers")) || ($headers = array());
+		$headers[$header] = $value;
+		$this->_setForceValue("headers",$headers);
+	}
+
+
 
 	/**
 	 * Detects mobile device.

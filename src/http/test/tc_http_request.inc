@@ -272,6 +272,11 @@ class tc_http_request extends tc_base{
 
 		$req->_HTTPRequest_headers = array("x-requXXestedwith" => "XmlHttpRequest");
 		$this->assertEquals(false,$req->xhr());
+
+		// test setHeader()
+		$this->assertEquals(null,$req->getHeader("X-User-Id"));
+		$req->setHeader("x-user-id","123");
+		$this->assertEquals("123",$req->getHeader("X-User-Id"));
 	}
 
 	function test_content_type(){
