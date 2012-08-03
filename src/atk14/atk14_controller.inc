@@ -257,8 +257,8 @@ class Atk14Controller{
 		$this->logger = &$GLOBALS["ATK14_LOGGER"];
 		$this->flash = &Atk14Flash::GetInstance();
 
-		$this->session = &Atk14Session::GetInstance();
-		$this->cookies_enabled = $this->session->cookiesEnabled();
+		$this->session = $this->_get_session();
+		$this->cookies_enabled = is_object($this->session) && $this->session->cookiesEnabled();
 
 		$this->sorting = new Atk14Sorting($this->params);
 
@@ -638,6 +638,16 @@ class Atk14Controller{
 		}
 		$options["assing_data"] && $smarty->assign($this->tpl_data);
 		return $smarty;
+	}
+
+	/**
+	 * A method for retrieving session storer object.
+	 * 
+	 * In same cases there is not suitable to instantiate a session storer object,
+	 * so this is possible to cover this method.
+	 */
+	function &_get_session(){
+		return Atk14Session::GetInstance();
 	}
 
 	function _prepend_before_filter($method_name){
