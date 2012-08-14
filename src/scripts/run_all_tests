@@ -1,13 +1,17 @@
 #!/bin/bash
 
-# Run all application`s tests located in ./test/models/, ./test/controllers/, ./test/controllers/namespace, ./test/controllers/another_namespace...
+# Runs all application`s tests
+# Searches tests in directories:
+#   test/models
+#   test/controllers
+#   test/controllers/namespace
+#   test/controllers/another_namespace
 
 cd `dirname $0`
 base_dir=`./_get_application_path`../
 
 cd $base_dir
 for d in `find test -maxdepth 2 -type d | egrep -v ^test$`; do
-	echo $d
 	echo "--- [$d] ---"
 	$base_dir/scripts/run_unit_tests $d
 done
