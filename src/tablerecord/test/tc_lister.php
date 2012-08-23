@@ -1,10 +1,6 @@
 <?php
-class tc_lister extends tc_base{
+class TcLister extends TcBase{
 	function test(){
-		global $dbmole;
-
-		$dbmole->begin();
-
 		$this->article = Article::CreateNewRecord(array(
 			"title" => "Christ's Sheep",
 			"body" => "'My sheep hear My voice'\nChrist did say, 'and I know them\nand they follow Me'",
@@ -90,8 +86,6 @@ class tc_lister extends tc_base{
 
 		$lister->setRecords(array($john,$peter,$paul));
 		$this->_test_authors(array($john,$peter,$paul));
-
-		$dbmole->rollback();
 	}
 
 	function _test_authors($expected_authors){

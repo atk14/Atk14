@@ -1,15 +1,13 @@
 <?php
-class tc_table_record extends tc_base{
+class TcTableRecord extends TcBase{
 
 	function _test_vytvareni_zaznamu(){
-		global $dbmole;
-
-		$this->_vyprazdni_testovaci_tabulku();
+		$this->_empty_test_table();
 
 		$record = TestTable::CreateNewRecord(array());
 
 		$this->assertEquals("test_table_id_seq",$record->getSequenceName());
-		$this->assertEquals($dbmole->SelectSingleValue("SELECT CURRVAL('test_table_id_seq')","integer"),$record->getId());
+		$this->assertEquals($this->dbmole->SelectSingleValue("SELECT CURRVAL('test_table_id_seq')","integer"),$record->getId());
 		$this->assertNull($record->getValue("title"));
 		$this->assertNull($record->getValue("price"));
 		$this->assertNull($record->getValue("an_integer"));
@@ -19,18 +17,16 @@ class tc_table_record extends tc_base{
 			"price" => null,
 			"an_integer" => 10
 		));
-		$this->assertEquals($dbmole->SelectSingleValue("SELECT CURRVAL('test_table_id_seq')","integer"),$record->getId());
+		$this->assertEquals($this->dbmole->SelectSingleValue("SELECT CURRVAL('test_table_id_seq')","integer"),$record->getId());
 		$this->assertEquals("test",$record->getValue("title"));
 		$this->assertNull($record->getValue("price"));
 		$this->assertEquals(10,$record->getValue("an_integer"));
 	}
 
 	function test_test_table(){
-		global $dbmole;
+		$this->_empty_test_table();
 
-		$this->_vyprazdni_testovaci_tabulku();
-
-		$dbmole->doQuery("
+		$this->dbmole->doQuery("
 			INSERT INTO test_table (
 				id,
 				title,
@@ -52,7 +48,7 @@ class tc_table_record extends tc_base{
 			)
 		");
 
-		//var_dump($dbmole->selectRows("SELECT * FROM test_table"));
+		//var_dump($this->dbmole->selectRows("SELECT * FROM test_table"));
 
 		$record = TestTable::GetInstanceById(2);
 
@@ -107,20 +103,18 @@ class tc_table_record extends tc_base{
 
 		// boolean
 		$this->assertEquals(true,$record->getValue("flag"));
-		$this->assertEquals('t',$dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
+		$this->assertEquals('t',$this->dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
 
 		$record->setValue("flag",false);
 		$this->assertEquals(false,$record->getValue("flag"));
-		$this->assertEquals('f',$dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
+		$this->assertEquals('f',$this->dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
 
 		$record->setValue("flag",null);
 		$this->assertEquals(null,$record->getValue("flag"));
-		$this->assertEquals(null,$dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
+		$this->assertEquals(null,$this->dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
 	}
 
 	function test_validates_updating_of_fields(){
-		global $dbmole;
-
 		// vsechno, co menime, bude meneno
 		$record = TestTable::CreateNewRecord(array(
 			"title" => "nazev",
@@ -191,8 +185,6 @@ class tc_table_record extends tc_base{
 	}
 
 	function test_validates_inserting_of_fields(){
-		global $dbmole;
-
 		$record = TestTable::CreateNewRecord(array(
 			"title" => "nazev",
 			"price" => 100,
@@ -242,10 +234,8 @@ class tc_table_record extends tc_base{
 	}
 
 	function test_do_not_escape(){
-		global $dbmole;
-
-		$now = $dbmole->SelectSingleValue("SELECT CAST(NOW() AS DATE)");
-		$before_2_days = $dbmole->SelectSingleValue("SELECT CAST((NOW() - INTERVAL '2 days') AS DATE)");
+		$now = $this->dbmole->SelectSingleValue("SELECT CAST(NOW() AS DATE)");
+		$before_2_days = $this->dbmole->SelectSingleValue("SELECT CAST((NOW() - INTERVAL '2 days') AS DATE)");
 
 		$record = TestTable::CreateNewRecord(array(
 			"create_date" => $now
@@ -280,9 +270,7 @@ class tc_table_record extends tc_base{
 	}
 
 	function test_vytvareni_vice_instanci_najednou(){
-		global $dbmole;
-
-		$this->_vyprazdni_testovaci_tabulku();
+		$this->_empty_test_table();
 
 		$record1 = $this->_vytvor_testovaci_zaznam();
 		$record2 = $this->_vytvor_testovaci_zaznam();
@@ -305,9 +293,7 @@ class tc_table_record extends tc_base{
 	}
 
 	function test_get_keys(){
-		global $dbmole;
-
-		$this->_vyprazdni_testovaci_tabulku();
+		$this->_empty_test_table();
 
 		$record = $this->_vytvor_testovaci_zaznam();
 		$keys = $record->getKeys();
@@ -337,9 +323,7 @@ class tc_table_record extends tc_base{
 	}
 
 	function test_find_all(){
-		global $dbmole;
-
-		$this->_vyprazdni_testovaci_tabulku();
+		$this->_empty_test_table();
 
 		$spring = $this->_vytvor_testovaci_zaznam(array("title" => "Spring"));
 		$summer = $this->_vytvor_testovaci_zaznam(array("title" => "Summer"));
@@ -489,6 +473,23 @@ class tc_table_record extends tc_base{
 		$this->assertEquals((int)$id4,$id3+1);
 	}
 
+	function test_ObjToId(){
+		$this->assertEquals(1,TableRecord::ObjToId(1));
+		$this->assertEquals("ID",TableRecord::ObjToId("ID"));
+		$this->assertEquals(null,TableRecord::ObjToId(null));
+		$this->assertEquals(array(),TableRecord::ObjToId(array()));
+
+		// 
+		$obj = TestTable::CreateNewRecord(array());
+		$obj2 = TestTable::CreateNewRecord(array());
+
+		$this->assertEquals($obj->getId(),TableRecord::ObjToId($obj->getId()));
+		$this->assertEquals($obj->getId(),TableRecord::ObjToId($obj));
+
+		$this->assertEquals(array($obj->getId(),$obj2->getId()),TableRecord::ObjToId(array($obj,$obj2)));
+		$this->assertEquals(array($obj->getId(),$obj2->getId()),TableRecord::ObjToId(array($obj->getId(),$obj2)));
+	}
+
 	function _test_fall($recs){
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals("Fall",$recs[0]->getTitle());
@@ -506,12 +507,5 @@ class tc_table_record extends tc_base{
 			"an_integer" => 11
 		),$values);
 		return TestTable::CreateNewRecord($values);
-	}
-
-
-	function _vyprazdni_testovaci_tabulku(){
-		global $dbmole;
-
-		$dbmole->doQuery("DELETE FROM test_table");
 	}
 }

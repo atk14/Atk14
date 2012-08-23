@@ -1,12 +1,18 @@
 <?php
-class tc_base extends tc_super_base{
+class TcBase extends tc_super_base{
 	function setUp(){
 		Cache::Clear();
-		$GLOBALS["dbmole"]->begin();
-		$GLOBALS["dbmole"]->doQuery("DELETE FROM test_table");
+		$this->dbmole = $GLOBALS["dbmole"];
+
+		$this->dbmole->begin();
+		$this->_empty_test_table();
 	}
  
 	function tearDown(){
-		$GLOBALS["dbmole"]->rollback();
+		$this->dbmole->rollback();
+	}
+
+	function _empty_test_table(){
+		$this->dbmole->doQuery("DELETE FROM test_table");
 	}
 }
