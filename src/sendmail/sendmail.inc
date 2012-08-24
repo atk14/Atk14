@@ -223,6 +223,9 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		$HEADERS .= "MIME-Version: 1.0\n";
 		$HEADERS .= "Content-Type: $BODY_MIME_TYPE".($BODY_CHARSET!="" ? "; charset=$BODY_CHARSET" : "")."\n";
 		$HEADERS .= "Content-Transfer-Encoding: $params[transfer_encoding]\n";
+		if ($RETURN_PATH) {
+			$HEADERS .= "Return-Path: $RETURN_PATH\n";
+		}
 
 		if($params["transfer_encoding"]=="quoted-printable"){
 			$BODY = _sendmail_quoted_printable_encode(_sendmail_lf_to_crlf($BODY));
