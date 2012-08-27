@@ -11,8 +11,5 @@ $_GET = array();
 
 require("../../../load.php");
 
-require(dirname(__FILE__)."/app/forms/test_form.inc");
-require("app/controllers/application.inc");
-require("app/controllers/testing_controller.inc");
-require("app/controllers/multiple_before_filters_controller.inc");
-require("app/controllers/multiple_after_filters_controller.inc");
+require(dirname(__FILE__)."/app/forms/test_form.php");
+

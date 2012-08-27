@@ -67,12 +67,17 @@ foreach(array("app/models","app/fields","app/widgets","lib") as $_d_){
 
 // global variable $dbmole holds database connection
 // at the moment only postgresql is supported (why don't just support the best open source database worldwide?)
-$dbmole = &PgMole::GetInstance();
+$dbmole = &PgMole::GetInstance("default");
 
 function &dbmole_connection(&$dbmole){
 	global $ATK14_GLOBAL;
 
 	$out = null;
+
+	if($dbmole->getConfigurationName()!="default"){
+		// make sure that the function custom_database_connection() exists somewhere within your application
+		return custom_database_connection($dbmole);
+	}
 
 	$d = $ATK14_GLOBAL->getDatabaseConfig();
 
@@ -139,8 +144,18 @@ function atk14_initialize_locale(&$lang){
 }
 
 function_exists("iconv_set_encoding") && iconv_set_encoding('internal_encoding',DEFAULT_CHARSET);
-function_exists("mb_internal_encoding") && mb_internal_encoding(DEFAULT_CHARSET); 
+function_exists("mb_internal_encoding") && mb_internal_encoding(DEFAULT_CHARSET);
 
+// catching up assertion failures
+assert_options(ASSERT_ACTIVE, 1);
+assert_options(ASSERT_WARNING, 0);
+assert_options(ASSERT_BAIL, 1);
+assert_options(ASSERT_CALLBACK, 'assert_callback');
+function assert_callback($script, $line, $message) {
+	$msg = "Assertion failed: Script: $script; Line: $line; Condition: $message";
+	error_log($msg);
+	throw new Exception($msg);
+}
 
 // on non-UTF-8 apps following hack converts UTF-8 params to DEFAULT_CHARSET
 function __to_default_charset__(&$params){

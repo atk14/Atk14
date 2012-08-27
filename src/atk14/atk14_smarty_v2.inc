@@ -67,4 +67,8 @@ class Atk14Smarty extends Smarty{
 	function clearAllAssign(){
 		return $this->clear_all_assign();
 	}
+
+	function templateExists($template){
+		return $this->template_exists($template);
+	}
 }

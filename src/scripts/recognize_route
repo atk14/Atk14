@@ -18,29 +18,39 @@ $_GET = _determine_GET($uri);
 
 $route_ar = Atk14Url::RecognizeRoute($uri);
 
-_dump_data($uri,$route_ar);
-
 if($route_ar["force_redirect"]){
+	echo "URI: $uri\n";
 	$uri = $route_ar["force_redirect"];
-	echo "\n\n  ... redirecting to $uri ...\n\n";
+	echo "  ... redirecting ...\n\n";
 	$_GET = _determine_GET($uri);
 	$route_ar = Atk14Url::RecognizeRoute($uri);
-	_dump_data($uri,$route_ar);
+	//_dump_data($uri,$route_ar);
 }
+
+_dump_data($uri,$route_ar);
+
+
 
 function _dump_data($uri,$route_ar){
 	echo "URI: $uri\n";
-	echo "title: $route_ar[page_title]\n";
-	echo "description: $route_ar[page_description]\n\n";
+	echo "page_title: $route_ar[page_title]\n";
+	echo "page_description: $route_ar[page_description]\n\n";
 	$params = $route_ar;
 	unset($params["page_title"]);
 	unset($params["page_description"]);
 	unset($params["get_params"]);
 	unset($params["force_redirect"]);
 	$params = array_merge($params,$route_ar["get_params"]);
+	$items = array();
 	foreach($params as $key => $value){
 		echo "$key=$value\n";
+		if(in_array($key,array("namespace","lang"))){ continue; }
+		$_v = str_replace('"','\"',$value);
+		$items[] = "$key=\"$_v\"";
 	}
+	echo "\n";
+	echo "{a ".join(" ",$items)."}link{/a}";
+	echo "\n";
 }
 
 function _determine_GET($uri){

@@ -1,5 +1,5 @@
 <?php
-class tc_finding_records extends tc_base{
+class TcFindingRecords extends TcBase{
 	function test_magic_queries(){
 		$the_true_one = Article::CreateNewRecord(array(
 			"title" => "Foo Bar",

@@ -194,11 +194,14 @@ class TableRecord_Base extends inobj{
 	 * Takes instantiated object and returns its database id.
 	 * Can be a string of course if the id is of char type
 	 *
+	 * It also converts an array of objects to an array of identifiers.
+	 *
 	 * <code>
 	 * $article = inobj_Article:GetInstanceById(123);
 	 * $id = TableRecord::ObjToId($article); // returns 123
 	 * $id = TableRecord::ObjToId(123); // returns 123
 	 * $id = TableRecord::ObjToId(null); // returns null
+	 * $ids = TableRecord::ObjToId(array($article,$article2)); // returns array(123,124)
 	 * </code>
 	 *
 	 * @static
@@ -206,6 +209,12 @@ class TableRecord_Base extends inobj{
 	 * @return mixed id of the record from db
 	 */
 	function ObjToId($object){
+		if(is_array($object)){
+			foreach($object as &$item){
+				$item = is_object($item) ? $item->getId() : $item;
+			}
+			return $object;
+		}
 		return is_object($object) ? $object->getId() : $object;
 	}
 

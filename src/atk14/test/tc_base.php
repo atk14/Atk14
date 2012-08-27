@@ -1,5 +1,18 @@
 <?php
 class TcBase extends TcSuperBase{
+	function setUp(){
+		global $dbmole;
+
+		$this->dbmole = $dbmole;
+		$this->dbmole->begin();
+
+		$this->client = new Atk14Client();
+	}
+
+	function tearDown(){
+		$this->dbmole->rollback();
+	}
+
 	function _run_action($path,$options = array()){
 		list($controller,$action) = explode("/",$path);
 		$response = Atk14Dispatcher::ExecuteAction($controller,$action);

@@ -21,6 +21,7 @@ CREATE TABLE test_table (
 
 -- mysql
 
+-- CREATE DATABASE test CHARACTER SET 'UTF8';
 -- GRANT ALL PRIVILEGES ON test.* TO 'test'@'localhost' IDENTIFIED BY 'test';
 CREATE TABLE test_table (
     id INT(11) PRIMARY KEY auto_increment,

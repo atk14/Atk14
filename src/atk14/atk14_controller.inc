@@ -20,7 +20,7 @@
 class Atk14Controller{
 
 	/**
-	 * Link to HttpRequest instance.
+	 * HTTP request object
 	 *
 	 * Contains information about current browsers HTTP request.
 	 *
@@ -30,7 +30,7 @@ class Atk14Controller{
 	var $request = null;
 
 	/**
-	 * Link to HttpResponse instance.
+	 * HTTP response object
 	 *
 	 * Contains information about response sent back to a browser.
 	 *
@@ -53,6 +53,13 @@ class Atk14Controller{
 	 * @var Atk14Mailer
 	 */
 	var $mailer = null;
+
+	/**
+	 * Name of the namespace.
+	 *
+	 * @var string
+	 */
+	var $namespace = "";
 
 	/**
 	 * Name of the controller
@@ -109,10 +116,18 @@ class Atk14Controller{
 	 */
 	var $lang = "";
 
+	/**
+	 * A flag that an action has been already executed.
+	 *
+	 * When an action is executed during the _before_filter() call,
+	 * no another action should be executed after the _before_filter().
+	 *
+	 * @var signature
+	 */
 	var $action_executed = false;
 
 	/**
-	 * Parameters from http request
+	 * GET and POST parameters.
 	 *
 	 * @var Dictionary
 	 */
@@ -125,7 +140,6 @@ class Atk14Controller{
 	 * @var Atk14Session
 	 */
 	var $session = null;
-
 
 	/**
 	 * Flash messages
@@ -243,8 +257,8 @@ class Atk14Controller{
 		$this->logger = &$GLOBALS["ATK14_LOGGER"];
 		$this->flash = &Atk14Flash::GetInstance();
 
-		$this->session = &Atk14Session::GetInstance();
-		$this->cookies_enabled = $this->session->cookiesEnabled();
+		$this->session = $this->_get_session();
+		$this->cookies_enabled = is_object($this->session) && $this->session->cookiesEnabled();
 
 		$this->sorting = new Atk14Sorting($this->params);
 
@@ -270,6 +284,17 @@ class Atk14Controller{
 		}
 
 		$this->tpl_data = array();
+
+		// *** Loading base forms ***
+		// If this is an ArticlesController for instance and there is a file app/forms/articles/articles_form.inc, it will be included.
+		// The class ArticlesForm is ment to be the base class for forms used by the controller.
+		// TODO: utilize class_autoload()
+		$_base_forms = array();
+		if($this->namespace!=""){ $_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/{$this->namespace}_form.inc"; } // ./app/forms/admin/admin_form.inc
+		$_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/$this->controller/{$this->controller}_form.inc"; // ./app/forms/admin/articles/articles_form.inc
+		foreach($_base_forms as $_base_form){
+			atk14_require_once_if_exists($_base_form);
+		}
 
 		$this->_initialize();
 	}
@@ -388,16 +413,6 @@ class Atk14Controller{
 		$cache = null;
 		$this->_atk14_read_action_cache($cache);
 
-		// If this is an ArticlesController for instance and there is a file ./app/forms/articles/articles_form.inc, it will be included.
-		// The class ArticlesForm is ment to be the base class for forms used by the controller.
-		// TODO: predelat to na volani class_autoload() (?)
-		$_base_forms = array();
-		if($this->namespace!=""){ $_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/{$this->namespace}_form.inc"; } // ./app/forms/admin/admin_form.inc
-		$_base_forms[] = $ATK14_GLOBAL->getApplicationPath()."/forms/$this->namespace/$this->controller/{$this->controller}_form.inc"; // ./app/forms/admin/articles/articles_form.inc
-		foreach($_base_forms as $_base_form){
-			atk14_require_once_if_exists($_base_form);
-		}
-
 		// pokud nenajdeme formular urceny presne pro tuto akci, pokusime se najit ApplicationForm a nakonec Atk14Form
 		if(!isset($this->form)){ // pokud uz mame form z _before_filter, tak ho prece nezahodime - TODO: jsem zarazeny z toho, ze se _before_filter() pousti drive
 			($this->form = $this->_get_form()) ||
@@ -472,11 +487,8 @@ class Atk14Controller{
 			}
 
 			$template_name = $this->template_name.".tpl";
-			if(
-				!file_exists($ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$controller_name/$template_name") &&
-				!file_exists($ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$template_name")
-			){
-				Atk14Utils::ErrorLog("Hey Dude, missing action template: views/$this->namespace/$controller_name/$template_name or views/$this->namespace/$template_name!",$this->response);
+			if(!$this->smarty->templateExists("$template_name")){
+				Atk14Utils::ErrorLog("Hey Dude, missing action template $template_name",$this->response);
 				return $this->_after_render();
 			}
 
@@ -611,13 +623,14 @@ class Atk14Controller{
 		$smarty->assign("action",$this->action);
 		$smarty->assign("requested_controller",$this->requested_controller);
 		$smarty->assign("requested_action",$this->requested_action);
+		$smarty->assign("rendering_component",$this->rendering_component);
 		$smarty->assign("lang",$this->lang);
 		$smarty->assign("public",$ATK14_GLOBAL->getPublicBaseHref());
 		$smarty->assign("root",$ATK14_GLOBAL->getBaseHref());
 		$smarty->assignByRef("params",$this->params);
 		$smarty->assignByRef("request",$this->request);
-		$smarty->assign("page_title",$this->page_title);
-		$smarty->assign("page_description",$this->page_description);
+		$smarty->assignByRef("page_title",$this->page_title); // v _before_render je mozne $this->page_title i $this->page_description zmenit a to se musi projevit ve smarty, proto assignByRef
+		$smarty->assignByRef("page_description",$this->page_description);
 		$smarty->assignByRef("flash",$this->flash); // !!! musi byt predavani referenci
 		$smarty->assign("form",$this->form);
 		if(!isset($this->tpl_data["sorting"])){
@@ -625,6 +638,16 @@ class Atk14Controller{
 		}
 		$options["assing_data"] && $smarty->assign($this->tpl_data);
 		return $smarty;
+	}
+
+	/**
+	 * A method for retrieving session storer object.
+	 * 
+	 * In same cases there is not suitable to instantiate a session storer object,
+	 * so this is possible to cover this method.
+	 */
+	function &_get_session(){
+		return Atk14Session::GetInstance();
 	}
 
 	function _prepend_before_filter($method_name){

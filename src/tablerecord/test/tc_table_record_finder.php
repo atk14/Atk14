@@ -1,5 +1,5 @@
 <?php
-class tc_table_record_finder extends tc_base{
+class TcTableRecordFinder extends TcBase{
 	function test(){
 		$apples = TestTable::CreateNewRecord(array(
 			"title" => "Apples",
