@@ -17,6 +17,10 @@ class HelpersController extends ApplicationController{
 		);
 	}
 
+	function a(){
+		$this->lang = "en";
+	}
+
 	function _before_filter(){
 		$this->render_layout = false;
 	}

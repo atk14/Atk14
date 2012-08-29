@@ -30,6 +30,7 @@
  *
  */
 function smarty_block_a_remote($params, $content, $template, &$repeat){
+	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);
 
 	$attributes = array();

@@ -37,6 +37,7 @@
  * @param string $content content of the Smarty {a} block tag
  */
 function smarty_block_a($params, $content, $template, &$repeat){
+	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);
 
 	$params = array_merge(array(

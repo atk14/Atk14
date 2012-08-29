@@ -29,4 +29,11 @@ class TcHelpers extends TcBase{
 		$this->assertContains('<li>The Adventures of Tom Sawyer by Mark Twain</li>',$out);
 		$this->assertContains('<li>Swallows and Amazons by Arthur Ransome</li>',$out);
 	}
+
+	function test_a(){
+		$out = $this->_run_action("helpers/a");
+		$this->assertContains('<a href="/en/books/">List Books</a>',$out);
+		$this->assertContains('<a href="/en/books/detail/?id=123">Book#123</a>',$out);
+		$this->assertContains('<a href="/en/books/detail/?id=456">Book#456</a>',$out);
+	}
 }
