@@ -86,8 +86,8 @@ if(class_exists('PHPUnit2_Framework_TestCase')){
 }
 EOF
 
-echo -n "Host $http_host could be resolved... "
 http_host=`./dump_settings ATK14_HTTP_HOST`
+echo -n "Host $http_host could be resolved... "
 etc_hosts_lines=`egrep "^\s*[0-9\.:]+\s+\b$http_host\b$" /etc/hosts | wc -l`
 if [ "$etc_hosts_lines" -eq "0" ]; then
 	if [ "`host $http_host | grep 'not found' | wc -l`" -eq 1 ]; then
