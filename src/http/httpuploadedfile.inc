@@ -101,6 +101,10 @@ class HTTPUploadedFile{
 	 *
 	 * It's the name specified in the file field.
 	 *
+	 *	{code}
+	 *		echo $file->getName(); // e.g. profile_photo
+	 *	{/code}
+	 *
 	 * @return string
 	 */
 	function getName(){
@@ -109,6 +113,12 @@ class HTTPUploadedFile{
 	
 	/**
 	 * Returns original name of the file on a client machine.
+	 *
+	 * !! Note that this value is pretty unsafe as it is provided by user.
+	 *
+	 * {code}
+	 * 	echo $file->getFileName(); // e.g. MyPhoto.jpg
+	 * {/code}
 	 *
 	 * @return string
 	 */
@@ -201,6 +211,10 @@ class HTTPUploadedFile{
 	/**
 	 * Return name of temporary file.
 	 *
+	 *	{code}
+	 *		$file->getTmpFileName(); // e.g. /tmp/XjdEjsa
+	 *	{/code}
+	 *
 	 * @return string
 	 */
 	function getTmpFileName(){
@@ -248,6 +262,11 @@ class HTTPUploadedFile{
 	function chunkedUpload(){ return false; }
 
 	/**
+	 * Determines the mime type of the file.
+	 * 
+	 * !! Note that it actualy runs the shell command file.
+	 * If it is unable to run the command, 'application/octet-string' is returned.
+	 * 
 	 * @access private
 	 * @return string
 	 */
