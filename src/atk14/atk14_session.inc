@@ -9,7 +9,6 @@
  */
 
 /**
- *
  * Class for simple access to sessions.
  *
  * Usage in controller:
@@ -160,7 +159,34 @@ class Atk14Session{
 		return $this->_SessionStorrer->cookiesEnabled();
 	}
 
+	/**
+	 * Returns the token that identifies current session.
+	 *
+	 * The token is stored in browser in a cookie.
+	 *
+	 * Returns null when cookies are not enabled.
+	 *
+	 *	{code}
+	 *		echo $session->getSecretToken(); // 3386.iNWdSQcTGok1COA49ME2JPhU85zHgjRF
+	 * 	{/code}
+	 *
+	 * @return string
+	 */
 	function getSecretToken(){
 		return $this->_SessionStorrer->getSecretToken();
+	}
+
+	/**
+	 * Changes the session token value.
+	 * This may help against session fixation attack.
+	 *
+	 * Returns the new token.
+	 *
+	 * Do nothing when cookies are not enabled.
+	 *
+	 * @return string
+	 */
+	function changeSecretToken(){
+		return $this->_SessionStorrer->changeSecretToken();
 	}
 }

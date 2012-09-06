@@ -6,13 +6,13 @@ if(!defined("SESSION_STORER_SESSION_MAX_LIFETIME")){
 	define("SESSION_STORER_SESSION_MAX_LIFETIME",60 * 60 * 24 * 1);  // 1 den
 }
 /**
-* Jmeno cookie pro ulozeni session_id 
+* Jmeno cookie pro ulozeni session_id
 */
 if(!defined("SESSION_STORER_COOKIE_NAME_SESSION")){
 	define("SESSION_STORER_COOKIE_NAME_SESSION","_ses_");
 }
 /**
-* Jmeno cookie pro testovani, zda ma uzivak aktivni cookies. 
+* Jmeno cookie pro testovani, zda ma uzivak aktivni cookies.
 */
 if(!defined("SESSION_STORER_COOKIE_NAME_CHECK")){
 	define("SESSION_STORER_COOKIE_NAME_CHECK","_chk_");
@@ -46,7 +46,7 @@ if(!defined("SESSION_STORER_COOKIE_NAME_CHECK")){
 *				last_access TIMESTAMP DEFAULT NOW() NOT NULL
 *			);
 *			CREATE INDEX in_sessions_lastaccess ON sessions (last_access);
-*			
+*
 *			CREATE SEQUENCE seq_session_values;
 *			CREATE TABLE session_values(
 *				id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_session_values'),
@@ -79,7 +79,7 @@ class SessionStorer{
 	var $_SessionId = null;
 
 	/**
-	*	Bezpecnostni nahodny retezec pro identifikaci session. 
+	*	Bezpecnostni nahodny retezec pro identifikaci session.
 	* @var string
 	*/
 	var $_SessionSecurity = null;
@@ -93,10 +93,12 @@ class SessionStorer{
 
 	var $_Initialized = false;
 
+	var $_TokenChanged = false;
+
 	/**
 	*	Konstruktor.
 	*
-	*	@access public 
+	*	@access public
 	*/
 	function SessionStorer($session_name = "default"){
 		settype($session_name,"string");
@@ -109,13 +111,13 @@ class SessionStorer{
 		}elseif(class_exists("OracleMole")){
 			$this->_dbmole = &OracleMole::GetInstance();
 		}
-	
+
 		$this->_setCheckCookieWhenNeeded();
 	}
 
 	function _setCheckCookieWhenNeeded(){
 		global $HTTP_REQUEST;
-		
+
 		if(!isset($HTTP_REQUEST) || !$HTTP_REQUEST->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C")){
 			setcookie(SESSION_STORER_COOKIE_NAME_CHECK,"1",time()+60*60*24*365*5,$this->_getWebDocumentRoot());
 		}
@@ -128,27 +130,27 @@ class SessionStorer{
 	function _initialize(){
 		if($this->_Initialized){ return; }
 		if($this->cookiesEnabled()){
-			list($id,$security) = $this->_ReadSessionCookie();
-			if(!$this->_CheckSession($id,$security)){
-				$this->_CreateNewSession();
+			list($id,$security) = $this->_readSessionCookie();
+			if(!$this->_checkSession($id,$security)){
+				$this->_createNewSession();
 			}
-			$this->_GarbageCollection();
+			$this->_garbageCollection();
 
-			$this->_ReadAllValues();
-			$this->_SetSessionCookie();
+			$this->_readAllValues();
+			$this->_setSessionCookie();
 		}
 		$this->_Initialized = true;
 	}
 
 	/**
 	* Nacte hodnotu id a security ze session cookie.
-	* 
+	*
 	* Pokud neni session cookie nastaven, vrati array(null,null)
-	* 
+	*
 	* @access private
 	* @return array												array($id,$security)
 	*/
-	function _ReadSessionCookie(){
+	function _readSessionCookie(){
 		$id = null;
 		$security = null;
 
@@ -171,12 +173,12 @@ class SessionStorer{
 
 	/**
 	* Overi, ze daba kombinace $id a $security existuje.
-	* 
+	*
 	* @access public
 	* @return bool					true -> dana kombinace $id a $security je ok - tato session existuje
 	*												false -> session neexistuje
 	*/
-	function _CheckSession($id,$security){
+	function _checkSession($id,$security){
 		if(!isset($id) || !isset($security)){ return false; }
 
 		settype($id,"integer");
@@ -216,7 +218,7 @@ class SessionStorer{
 	* @return bool					true -> ok, zaznam vytvoren
 	* 											false -> doslo k chybe pri vykonavani SQL
 	*/
-	function _CreateNewSession(){
+	function _createNewSession(){
 		$id = null;
 		$security = SessionStorer::_RandomString();
 
@@ -249,14 +251,23 @@ class SessionStorer{
 	}
 
 	/**
-	* Nastavi session cookie.
+	* Sets the session cookie.
+	*
+	* Do nothing when the same session cookie has been alrary stored in user`s browser.
+	*
+	* Returns false when it is unable to set the cookie.
 	*
 	* @access private
+	* @return bool
 	*/
-	function _SetSessionCookie(){
+	function _setSessionCookie(){
+		global $_COOKIE;
 		$_expire_time = 0; // session cookie se nastavi do zavreni prohlizece
 		$_cokie_value = $this->getSecretToken();
-		setcookie(SESSION_STORER_COOKIE_NAME_SESSION,$_cokie_value,$_expire_time,$this->_getWebDocumentRoot());
+		if(isset($_COOKIE) && isset($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) && $_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]==$_cokie_value){
+			return true;
+		}
+		return setcookie(SESSION_STORER_COOKIE_NAME_SESSION,$_cokie_value,$_expire_time,$this->_getWebDocumentRoot());
 	}
 
 	/**
@@ -264,7 +275,7 @@ class SessionStorer{
 	*
 	* @access private
 	*/
-	function _ClearSessionCookie(){
+	function _clearSessionCookie(){
 		$_expire_time = $this->_getCurrentTime() - 60 * 60 * 24 * 365;
 		setcookie(SESSION_STORER_COOKIE_NAME_SESSION,"",$_expire_time,$this->_getWebDocumentRoot());
 	}
@@ -274,7 +285,7 @@ class SessionStorer{
 	*
 	* @access private
 	*/
-	function _ReadAllValues(){
+	function _readAllValues(){
 		if(!isset($this->_SessionId)){
 			return;
 		}
@@ -306,11 +317,11 @@ class SessionStorer{
 
 	/**
 	* Provede Garbage Collection.
-	* 
+	*
 	* @access private
 	*	@return null
 	*/
-	function _GarbageCollection(){
+	function _garbageCollection(){
 		$_seconds = SESSION_STORER_SESSION_MAX_LIFETIME;
 		settype($_seconds,"integer");
 		$this->_dbmole->doQuery("
@@ -332,7 +343,7 @@ class SessionStorer{
 	* Zjisti, zda ma klient aktivni cookies.
 	* Jen pokud jsou aktivni cookies, budou session hodnoty ulozeny do databaze.
 	* V opacnem pripade budou po skonceni HTTP requestu ztraceny.
-	* 
+	*
 	* @access public
 	* @return bool
 	*/
@@ -353,9 +364,9 @@ class SessionStorer{
 		settype($key,"string");
 
 		$this->_initialize();
-		
+
 		if(isset($this->_ValuesStore[$key]) && (!isset($this->_ValuesStore[$key]["expiration"]) || $this->_ValuesStore[$key]["expiration"]>$this->_getCurrentTime())){
-			return $this->_UnpackValue($this->_ValuesStore[$key]["packed_value"]);
+			return $this->_unpackValue($this->_ValuesStore[$key]["packed_value"]);
 		}
 
 		return null;
@@ -376,9 +387,9 @@ class SessionStorer{
 
 		$this->_initialize();
 
-		$packed_value = $this->_PackValue($value);
+		$packed_value = $this->_packValue($value);
 
-	
+
 		if(!isset($value) && isset($this->_SessionId)){
 			$this->_dbmole->doQuery("
 				DELETE FROM session_values WHERE
@@ -449,10 +460,43 @@ class SessionStorer{
 		foreach($this->_ValuesStore as $k => $v){ $this->writeValue($k,null); }
 	}
 
+	/**
+	 * Returns a secret content of user`s cookie which identifies current session.
+	 *
+	 * @return string
+	 */
 	function getSecretToken(){
 		if(isset($this->_SessionId) && isset($this->_SessionSecurity)){
 			return $this->_SessionId.".".$this->_SessionSecurity;
 		}
+	}
+
+	/**
+	 * Changes the content of user`s cookie belongs to current session.
+	 * This helps to prevent against session fixation.
+	 *
+	 * Returns the content od the new cookie.
+	 *
+	 * @return string
+	 */
+	function changeSecretToken(){
+		$this->_initialize();
+
+		if($this->_TokenChanged){
+			return $this->getSecretToken();
+		}
+
+		if(isset($this->_SessionId)){
+			$this->_SessionSecurity = SessionStorer::_RandomString();
+			$this->_setSessionCookie();
+			$this->_dbmole->doQuery("UPDATE sessions SET security=:security WHERE id=:id",array(
+				":id" => $this->_SessionId,
+				":security" => $this->_SessionSecurity
+			));
+			$this->_TokenChanged = true;
+		}
+
+		return $this->getSecretToken();
 	}
 
 	/**
@@ -464,7 +508,7 @@ class SessionStorer{
 	* @param mixed $value
 	*	@return string
 	*/
-	function _PackValue($value){
+	function _packValue($value){
 		if(!isset($value)){
 			return "";
 		}
@@ -478,7 +522,7 @@ class SessionStorer{
 	*	@param string $packed_value
 	* @return mixed
 	*/
-	function _UnpackValue($packed_value){
+	function _unpackValue($packed_value){
 		settype($packed_value,"string");
 		if(strlen($packed_value)==0){
 			return null;
@@ -499,7 +543,7 @@ class SessionStorer{
 	}
 
 	function _getWebDocumentRoot(){
-		global $ATK14_GLOBAL;	
+		global $ATK14_GLOBAL;
 
 		if(isset($ATK14_GLOBAL)){
 			return $ATK14_GLOBAL->getBaseHref();
