@@ -175,6 +175,16 @@ class Atk14Url{
 		if($out["force_redirect"]){ return $out; }
 		if($out["controller"]=="application" && $out["action"]=="error404"){ return $out; }
 
+		// defined("ATK14_ENABLE_AUTO_REDIRECTING_IN_ADMIN",false); // disables auto redirecting in namespace admin
+		$enable_redirecting_by_default = defined("ATK14_ENABLE_AUTO_REDIRECTING") ? ATK14_ENABLE_AUTO_REDIRECTING : true;
+		if(
+			(!$out["namespace"] && !$enable_redirecting_by_default) ||
+			($out["namespace"] && defined($constant_name = "ATK14_ENABLE_AUTO_REDIRECTING_IN_".strtoupper($out["namespace"]."_NAMESPACE")) && !constant($constant_name)) ||
+			($out["namespace"] && !$enable_redirecting_by_default)
+		){
+			return $out;
+		}
+
 		$expected_link = Atk14Url::BuildLink(array_merge(
 			$out["get_params"],
 			array(
