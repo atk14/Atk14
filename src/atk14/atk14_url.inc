@@ -179,7 +179,7 @@ class Atk14Url{
 		$enable_redirecting_by_default = defined("ATK14_ENABLE_AUTO_REDIRECTING") ? ATK14_ENABLE_AUTO_REDIRECTING : true;
 		if(
 			(!$out["namespace"] && !$enable_redirecting_by_default) ||
-			($out["namespace"] && defined($constant_name = "ATK14_ENABLE_AUTO_REDIRECTING_IN_".strtoupper($out["namespace"]."_NAMESPACE")) && !constant($constant_name)) ||
+			($out["namespace"] && defined($constant_name = "ATK14_ENABLE_AUTO_REDIRECTING_IN_".strtoupper($out["namespace"])) && !constant($constant_name)) ||
 			($out["namespace"] && !$enable_redirecting_by_default)
 		){
 			return $out;
