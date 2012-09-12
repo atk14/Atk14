@@ -87,6 +87,8 @@ class UrlFetcher {
 	 */
 	protected $_SocketTimeout = 5;
 
+	protected $_CountOfRedirection = 0;
+
 	/**
 	 * @ignore
 	 */
@@ -247,12 +249,8 @@ class UrlFetcher {
 
 		$this->_Fetched = true;
 
-		if($this->getStatusCode()!=200){
-			return $this->_setError("status code is ".$this->getStatusCode());
-		}
-
-		// toto je osklivy hack
-		// nekdy dostaneme obsah delsi nez je Content-Length
+		// this is a nusty hack
+		// sometimes it occurs that the content is longer than Content-Length
 		//
 		// je to hack pro stahovani souboru: http://do-mobilu.respekt.cz/kestazeni-download.php?f_ID=815
 		// tam koumaci prilepili za data velikost souboru - pocitaji natvrdo z HTTP/1.1
@@ -260,6 +258,32 @@ class UrlFetcher {
 			$this->_Content = substr($this->_Content,0,$length);
 		}
 
+		// !! redirection
+		if(in_array($this->getStatusCode(),array(301,302,303)) && ($location = $this->getHeaderValue("Location"))){
+			$this->_CountOfRedirection++;
+			if($this->_CountOfRedirection>=5){
+				return $this->_setError("maximum redirections reached: $this->_CountOfRedirection");
+			}
+			if(preg_match('/^\//',$location)){
+				// absolute redirection
+				$location = preg_replace('/^(https?:\/\/[^\/]+)\/.*/i',"\\1$location",$this->_Url);
+			}elseif(!preg_match('/^https?:\/\//',$location)){
+				// relative redirection
+				if(preg_match('/\?/',$this->_Url)){
+					$location = preg_replace('/(^.+\/)[^\/]*\?.*$/',"\\1$location",$this->_Url);
+				}else{
+					$location = preg_replace('/(^.+\/)[^\/]*$/',"\\1$location",$this->_Url);
+				}
+			}else{
+				// $location contains full URL address
+			}
+			$this->_Fetched = null;
+			return $this->fetchContent($location);
+		}
+
+		if($this->getStatusCode()!=200){
+			return $this->_setError("status code is ".$this->getStatusCode());
+		}
 
 		return true;
 	}
@@ -511,4 +535,3 @@ class UrlFetcher {
 		$this->_RequestHeaders = join("\r\n",$out);
 	}
 }
-?>
