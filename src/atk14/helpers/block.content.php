@@ -27,6 +27,7 @@
  *
  */
 function smarty_block_content($params,$content,$smarty,&$repeat){
+	if($repeat){ return; }
 	$smarty->addAtk14Content($params["for"],$content);
 	return "";
 }

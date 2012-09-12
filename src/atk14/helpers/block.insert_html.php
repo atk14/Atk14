@@ -23,6 +23,7 @@
  *
  */
 function smarty_block_insert_html($params, $content, $template, &$repeat){
+	if($repeat){ return; }
 	$content = Atk14Utils::EscapeForJavascript($content);
 
 	$params = array_merge(array(

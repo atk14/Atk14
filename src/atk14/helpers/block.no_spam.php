@@ -20,6 +20,7 @@
  *
  */
 function smarty_block_no_spam($params, $content, $template, &$repeat){
+	if($repeat){ return; }
 	return __no_spam_filter__($content);
 }
 

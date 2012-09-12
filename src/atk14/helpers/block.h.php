@@ -21,5 +21,6 @@
  * Converts special characters to HTML entities.
  */
 function smarty_block_h($params, $content, $template, &$repeat){
+	if($repeat){ return; }
 	return htmlspecialchars($content);
 }

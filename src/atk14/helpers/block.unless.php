@@ -24,6 +24,7 @@
  * @param string $content
  */
 function smarty_block_unless($params,$content,$template,&$repeat){
+	if($repeat){ return; }
 	if(isset($params["content"]) && strlen($params["content"])>0){
 		return $params["content"];
 	}

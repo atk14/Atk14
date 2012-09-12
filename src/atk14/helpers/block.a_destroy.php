@@ -19,6 +19,7 @@ if(!function_exists("smarty_block_a_remote")){
 	require_once(dirname(__FILE__)."/block.a_remote.php");
 }
 function smarty_block_a_destroy($params, $content, $template, &$repeat){
+	if($repeat){ return; }
 	$params = array_merge(array(
 		"action" => "destroy",
 		"_confirm" => _("Are you sure?"),
