@@ -42,9 +42,11 @@ class Atk14Smarty extends Smarty{
 	 */
 	function setPluginsDir($dir){
 		if(!is_array($dir)){ $dir = array($dir); }
-		foreach(array_reverse($dir) as $d){
-			array_unshift($this->plugins_dir,$d);
-		}
+		$this->plugins_dir = $dir;
+	}
+
+	function getPluginsDir(){
+		return $this->plugins_dir;
 	}
 
 	function registerFilter($type,$callback){
