@@ -5,7 +5,7 @@ class TcHelpers extends TcBase{
 		$mtime = filemtime("public/javascripts/site.js");
 		$this->assertEquals('<script src="/public/javascripts/site.js?'.$mtime.'" type="text/javascript"></script>
 <script src="/public/javascripts/site.js?'.$mtime.'" type="text/javascript" media="screen"></script>
-<!-- javascript file not found: '.ATK14_DOCUMENT_ROOT.'public/javascripts/nonexisting.js -->',trim($out));
+<script src="/public/javascripts/nonexisting.js" type="text/javascript"></script>',trim($out));
 
 	}
 
