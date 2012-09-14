@@ -231,9 +231,8 @@ class Atk14Utils{
 	 * @static
 	 */
 	static function JoinAttributes($attributes){
-		reset($attributes);
 		$out = array();
-		while(list($key,$value) = each($attributes)){
+		foreach($attributes as $key => $value){	
 			$out[] = " ".htmlspecialchars($key)."=\"".htmlspecialchars($value)."\"";
 		}
 		return join("",$out);

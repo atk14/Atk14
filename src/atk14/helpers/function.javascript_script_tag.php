@@ -1,51 +1,53 @@
 <?php
 /**
- * Smarty tag for inserting html <script /> tag.
+ * Smarty tag for inserting a javascript file in a page.
  *
  * Includes HTML tag <script /> to output.
- * Generated file paths are relative to ./public/javascripts
+ * Generated file paths are relative to ./public/javascripts/
  *
- * Example:
+ * Udage in a template:
  * <code>
- * {javascript_script_tag file="scripts.js"}
+ * 		{javascript_script_tag file="script.js"}
  * </code>
  *
- * <ul>
- * 	<li><b>file</b> - name of file with javascript</li>
- * </ul>
+ * This will produce the following output:
+ * <code>
+ *		<script src="/public/javascripts/script.js?1313093878" type="text/javascript"></script>
+ * </code>
+ * 
+ * It is also possible to link a javascript file absolutely:
+ * <code>
+ * 		{javascript_script_tag file="/public/themes/retro/script.js"}
+ * </code>
  *
+ * 
  * @package Atk14
  * @subpackage Helpers
- * @author Jaromir Tomek
  * @filesource
  */
 
 /**
- * Smarty function that outputs HTML <script /> tag.
+ * Smarty tag for inserting a javascript file in a page.
  */
 function smarty_function_javascript_script_tag($params,$template){
 	global $ATK14_GLOBAL;
 
-	$src = $ATK14_GLOBAL->getPublicBaseHref()."javascripts/$params[file]";
-	$filename = $ATK14_GLOBAL->getPublicRoot()."javascripts/$params[file]";
-
-
-	if(file_exists($filename)){
-		$src = $src."?".filemtime($filename);
-	}else{
-		return "<!-- javascript file not found: $filename -->";
-	}
-
+	$file = $params["file"];
 	unset($params["file"]);
 
-	$attribs = array();
-	reset($params);
-	while(list($key,$value) = each($params)){
-		$attribs[] = htmlspecialchars($key)."=\"".htmlspecialchars($value)."\"";
+	if(preg_match('/^\//',$file)){
+		$src = $ATK14_GLOBAL->getBaseHref().preg_replace('/^\//','',$file);
+		$filename = $ATK14_GLOBAL->getApplicationPath()."/../".$file;
+	}else{
+		$src = $ATK14_GLOBAL->getPublicBaseHref()."javascripts/$file";
+		$filename = $ATK14_GLOBAL->getPublicRoot()."javascripts/$file";
 	}
-	if(sizeof($attribs)>0){
-		array_unshift($attribs,"");
+
+	if(file_exists($filename)){
+		$src .= "?".filemtime($filename);
 	}
+
+	$attribs = Atk14Utils::JoinAttributes($params);
 	
-	return "<script src=\"$src\" type=\"text/javascript\"".join(" ",$attribs)."></script>";
+	return "<script src=\"$src\" type=\"text/javascript\"$attribs></script>";
 }
