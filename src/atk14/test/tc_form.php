@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__FILE__)."/app/forms/test_form.php");
 class TcForm extends TcBase{
 	function test_validation_with_disabled_fields(){
 		$form = new TestForm();

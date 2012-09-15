@@ -10,6 +10,3 @@ $GLOBALS["_SERVER"]["HTTP_HOST"] = "www.testing.cz";
 $_GET = array();
 
 require("../../../load.php");
-
-require(dirname(__FILE__)."/app/forms/test_form.php");
-

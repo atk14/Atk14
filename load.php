@@ -50,8 +50,10 @@ require_once(dirname(__FILE__)."/src/functions.inc");
 
 // ...and load basic application`s objects
 foreach(array(
-	ATK14_DOCUMENT_ROOT."/app/forms/application_form.php",
-	ATK14_DOCUMENT_ROOT."/app/forms/form.php",
+	// forms are now loaded in Atk14Utils::LoadControllers()
+	//ATK14_DOCUMENT_ROOT."/app/forms/application_form.php",
+	//ATK14_DOCUMENT_ROOT."/app/forms/form.php",
+
 	ATK14_DOCUMENT_ROOT."/config/routers/load.php"
 ) as $_f_){
 	($_f_ = atk14_find_file($_f_)) && require_once($_f_);

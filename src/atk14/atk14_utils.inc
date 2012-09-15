@@ -116,9 +116,37 @@ class Atk14Utils{
 	 *
 	 */
 	static function LoadControllers($controller_name){
+		global $ATK14_GLOBAL;
+
 		Atk14Require::Controller("ApplicationController");
 		Atk14Require::Controller("_*");
 		Atk14Require::Controller($controller_name);
+
+		$namespace = $ATK14_GLOBAL->getValue("namespace");
+
+		// loading base form class
+		foreach(array(
+			ATK14_DOCUMENT_ROOT."/app/forms/$namespace/application_form.php",
+			ATK14_DOCUMENT_ROOT."/app/forms/application_form.php",
+		) as $_f_){
+			if($_f_ = atk14_find_file($_f_)){
+				require_once($_f_);
+				break;
+			}
+		}
+
+		// Form:legacy name for base form class
+		foreach(array(
+			ATK14_DOCUMENT_ROOT."/app/forms/$namespace/form.php",
+			ATK14_DOCUMENT_ROOT."/app/forms/form.php",
+		) as $_f_){
+			if($_f_ = atk14_find_file($_f_)){
+				require_once($_f_);
+				break;
+			}
+		}
+
+
 	}
 
 	/**

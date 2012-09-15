@@ -81,7 +81,6 @@ class Atk14Dispatcher{
 		$ATK14_GLOBAL->setValue("namespace",$route_ar["namespace"]);
 		$ATK14_GLOBAL->setValue("lang",$route_ar["lang"]);
 
-
 		$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
 			"page_title" => $route_ar["page_title"],
 			"page_description" => $route_ar["page_description"],
