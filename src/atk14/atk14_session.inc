@@ -106,6 +106,24 @@ class Atk14Session{
 	function g($name){ return $this->getValue($name); }
 
 	/**
+	 * Returns all values stored in the session as an associative array.
+	 *
+	 * It's perfect for inspecting a content of a session.
+	 * <code>
+	 * 	var_dump($session->toArray());
+	 * </code>
+	 */
+	function toArray(){
+		// TODO: to be rewritten...
+		$this->_SessionStorrer->_initialize();
+		$out = array();
+		foreach($this->_SessionStorrer->_ValuesStore as $key => $value){
+			$out[$key] = $this->getValue($key);
+		}
+		return $out;
+	}
+
+	/**
 	 * Clears a single session value.
 	 *
 	 * @param string $name
