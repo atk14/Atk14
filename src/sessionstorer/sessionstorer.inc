@@ -119,7 +119,7 @@ class SessionStorer{
 		global $HTTP_REQUEST;
 
 		if(!isset($HTTP_REQUEST) || !$HTTP_REQUEST->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C")){
-			setcookie(SESSION_STORER_COOKIE_NAME_CHECK,"1",time()+60*60*24*365*5,$this->_getWebDocumentRoot());
+			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,"1",time()+60*60*24*365*5);
 		}
 	}
 
@@ -219,6 +219,7 @@ class SessionStorer{
 	* 											false -> doslo k chybe pri vykonavani SQL
 	*/
 	function _createNewSession(){
+		global $HTTP_REQUEST;
 		$id = null;
 		$security = SessionStorer::_RandomString();
 
@@ -237,7 +238,7 @@ class SessionStorer{
 		",array(
 			":id" => $id,
 			":security" => $security,
-			":remote_addr" => $GLOBALS["_SERVER"]["REMOTE_ADDR"]
+			":remote_addr" => $HTTP_REQUEST->getRemoteAddr(),
 		));
 
 		$this->_SessionId = $id;
@@ -267,7 +268,20 @@ class SessionStorer{
 		if(isset($_COOKIE) && isset($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) && $_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]==$_cokie_value){
 			return true;
 		}
-		return setcookie(SESSION_STORER_COOKIE_NAME_SESSION,$_cokie_value,$_expire_time,$this->_getWebDocumentRoot());
+		return $this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION,$_cokie_value,$_expire_time);
+	}
+
+	function _setCookie($name,$value,$time = 0){
+		global $HTTP_REQUEST;
+		return setcookie(
+			$name,
+			$value,
+			$time,
+			$this->_getWebDocumentRoot(), // 
+			$HTTP_REQUEST->getHttpHost(), // domain
+			false, // secure
+			true // http only
+		);
 	}
 
 	/**
@@ -277,7 +291,7 @@ class SessionStorer{
 	*/
 	function _clearSessionCookie(){
 		$_expire_time = $this->_getCurrentTime() - 60 * 60 * 24 * 365;
-		setcookie(SESSION_STORER_COOKIE_NAME_SESSION,"",$_expire_time,$this->_getWebDocumentRoot());
+		$this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION,"",$_expire_time);
 	}
 
 	/**
@@ -340,7 +354,8 @@ class SessionStorer{
 	}
 
 	/**
-	* Zjisti, zda ma klient aktivni cookies.
+	* Checks whether client has cookies enabled.
+	* 
 	* Jen pokud jsou aktivni cookies, budou session hodnoty ulozeny do databaze.
 	* V opacnem pripade budou po skonceni HTTP requestu ztraceny.
 	*
@@ -348,7 +363,7 @@ class SessionStorer{
 	* @return bool
 	*/
 	function cookiesEnabled(){
-		return isset($GLOBALS["_COOKIE"][SESSION_STORER_COOKIE_NAME_CHECK]);
+		return isset($GLOBALS["_COOKIE"]) && sizeof($GLOBALS["_COOKIE"])>0;
 	}
 
 	/**

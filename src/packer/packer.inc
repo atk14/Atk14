@@ -4,7 +4,7 @@ if(!defined("PACKER_CONSTANT_SECRET_SALT")){
 	* salt pro podpis prenasenych dat
 	* tajny konstatni salt pro podepisovani a overovani pakovanych dat
 	*/
-	define("PACKER_CONSTANT_SECRET_SALT","Put_Some_Secret_Text_Here");
+	define("PACKER_CONSTANT_SECRET_SALT",defined("SECRET_TOKEN") ? constant("SECRET_TOKEN") : "Put_Some_Secret_Text_Here");
 }
 
 
