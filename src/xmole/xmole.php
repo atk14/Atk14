@@ -814,24 +814,24 @@ class XMole{
 	 * @return string
 	 */
 	function ToXML($str){
-		settype($str,"string");
-		$illegal_chars = array(
-			'/&/',
-			'/</',
-			'/>/',
-			'/\"/',
-			'/\'/',
-			'/[\x00-\x08]/', // see http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character
-		);
-		$replaces = array(
-			"&amp;",
-			"&lt;",
-			"&gt;",
-			"&quot;",
-			"&apos;",
-			"",
-		);
-		return preg_replace($illegal_chars, $replaces, $str);
+		return strtr($str,array(
+			'&' => '&amp;',
+			'<' => '&lt;',
+			'>' => '&gt;',
+			'"' => '&quot;',
+			'\'' => '&apos;',
+
+			// see http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character
+			chr(0) => '',
+			chr(1) => '',
+			chr(2) => '',
+			chr(3) => '',
+			chr(4) => '',
+			chr(5) => '',
+			chr(6) => '',
+			chr(7) => '',
+			chr(8) => '',
+		));
 	}
 
 	/**
