@@ -143,6 +143,17 @@ class Atk14Global{
 	}
 
 	/**
+	 * echo $ATK14_GLOBAL->getEnvironment(); // DEVELOPMENT
+	 */
+	function getEnvironment(){
+		$out = "";
+		if(DEVELOPMENT){ $out =  "DEVELOPMENT"; }
+		if(PRODUCTION){ $out =  "PRODUCTION"; }
+		if(TEST){ $out =  "TEST"; }
+		return $out;
+	}
+
+	/**
 	 * Returns someting like
 	 * array(
 	 *	"database" => "dbname",
