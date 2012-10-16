@@ -1,7 +1,16 @@
 #!/usr/bin/env php
 <?php
-define("TEST",true);
+/**
+ * Cleares all objects in database.
+ * This script works in DEVELOPMENT or TESTING environment only.
+ */
+
 require_once(dirname(__FILE__)."/load.inc");
+
+if(PRODUCTION){
+	echo "Refuse to purge database objects in PRODUCTION database. Do it by hand. Bye.\n";
+	exit(1);
+}
 
 $dbname = $dbmole->getDatabaseName();
 
@@ -10,13 +19,25 @@ echo "Shall I wipe out all objects in the database $dbname? Hit y, if so... ";
 $fh = fopen('php://stdin', 'r');
 if(trim(fgets($fh,1024))!="y"){
 	echo "Bye, bye\n";
-	exit;
+	exit(1);
 }
 
 foreach($dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemaname='public'") as $table){
 	$dbmole->doQuery("DROP TABLE $table CASCADE");
+	echo "table $table dropped\n";
 }
 
 foreach($dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences") as $sequence){
 	$dbmole->doQuery("DROP SEQUENCE $sequence CASCADE");
+	echo "sequence $sequence dropped\n";
 }
+
+// TODO: purge triggers and procedures
+
+$env = strtolower($ATK14_GLOBAL->getEnvironment());
+echo "\n";
+echo "Database $dbname is now empty. You may want to run:\n";
+echo " $ ATK14_ENV=$env ./scripts/initialize_database\n";
+echo " $ ATK14_ENV=$env ./scripts/migrate\n";
+
+exit(0);

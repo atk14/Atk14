@@ -7,8 +7,8 @@
 * At the moment only the table schema_migrations will be created.
 *
 * Usage:
-*  $ ATK14_ENV=DEVELOPMENT ./scripts/initialize_database.php
-*  $ ATK14_ENV=TEST ./scripts/initialize_database.php
+*  $ ATK14_ENV=DEVELOPMENT ./scripts/initialize_database
+*  $ ATK14_ENV=TEST ./scripts/initialize_database
 */
 
 require_once(dirname(__FILE__)."/load.inc");
