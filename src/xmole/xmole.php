@@ -597,7 +597,7 @@ class XMole{
 	 * @param string|XMole @xmole2
 	 * @return boolean
 	 */
-	function AreSame($xmole1,$xmole2){
+	static function AreSame($xmole1,$xmole2){
 		if(is_string($xmole1)){ $xmole1 = new XMole($xmole1); } 
 		if(is_string($xmole2)){ $xmole2 = new XMole($xmole2); } 
 
@@ -813,7 +813,7 @@ class XMole{
 	 * @param string $str
 	 * @return string
 	 */
-	function ToXML($str){
+	static function ToXML($str){
 		$illegal_chars = array(
 			'&',
 			'<',
@@ -860,7 +860,7 @@ class XMole{
 	*
 	* $xml = '<person name="'.XMole::ToAttribsValue($name).'" />';
 	*/
-	function ToAttribsValue($str){
+	static function ToAttribsValue($str){
 		settype($str,"string");
 		return strtr($str,
 			array(
