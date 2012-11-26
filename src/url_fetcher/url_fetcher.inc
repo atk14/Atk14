@@ -88,6 +88,7 @@ class UrlFetcher {
 	protected $_SocketTimeout = 5;
 
 	protected $_CountOfRedirection = 0;
+	protected $_MaxRedirections = 5;
 
 	/**
 	 * @ignore
@@ -113,17 +114,31 @@ class UrlFetcher {
 	/**
 	 * Constructor
 	 *
+	 * <code>
+	 *	$f = new UrlFetcher();
+	 *	$f = new UrlFetcher("http://www.example.com/");
+	 *	$f = new UrlFetcher("http://www.example.com/",array("additional_headers" => array("X-Powered-By: Grizzly Lib 1.2")));
+	 *	$f = new UrlFetcher(array("additional_headers" => array("X-Powered-By: Grizzly Lib 1.2")));
+	 * </code>
+	 *
 	 * @param string $url
 	 * @param array $options
 	 * <ul>
 	 * <li><b>additional_headers</b> - </li>
+	 * <li><b>max_redirections</b> 5</li>
 	 * </ul>
 	 */
 	function UrlFetcher($url = "", $options = array()){
 		$this->_reset();
 
+		if(is_array($url)){
+			$options = $url;
+			$url = "";
+		}
+
 		$options = array_merge(array(
 			"additional_headers" => array(),
+			"max_redirections" => $this->_MaxRedirections,
 		),$options);
 
 		if(strlen($url)>0){
@@ -131,6 +146,7 @@ class UrlFetcher {
 		}
 
 		$this->_AdditionalHeaders = $options["additional_headers"];
+		$this->_MaxRedirections = $options["max_redirections"];
 	}
 
 	/**
@@ -261,7 +277,7 @@ class UrlFetcher {
 		// !! redirection
 		if(in_array($this->getStatusCode(),array(301,302,303)) && ($location = $this->getHeaderValue("Location"))){
 			$this->_CountOfRedirection++;
-			if($this->_CountOfRedirection>=5){
+			if($this->_CountOfRedirection>=$this->_MaxRedirections){
 				return $this->_setError("maximum redirections reached: $this->_CountOfRedirection");
 			}
 			if(preg_match('/^\//',$location)){
