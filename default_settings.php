@@ -36,10 +36,11 @@ __defaults__(array(
 	"ATK14_ENABLE_AUTO_REDIRECTING" => true,
 ));
 
+// SessionStorer`s constants, a session subsystem
 __defaults__(array(
 	"SESSION_STORER_SESSION_MAX_LIFETIME" => 60 * 60 * 24 * 1, // time in seconds; whole day by default
 	"SESSION_STORER_COOKIE_NAME_SESSION" => "session",
-	"SESSION_STORER_COOKIE_NAME_CHECK" => "check",
+	"SESSION_STORER_COOKIE_NAME_CHECK" => "check", // set this to empty string for disable sending the testing cookie
 ));
 
 __defaults__(array(

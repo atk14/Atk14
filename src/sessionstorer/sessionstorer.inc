@@ -13,6 +13,8 @@ if(!defined("SESSION_STORER_COOKIE_NAME_SESSION")){
 }
 /**
  * Checking cookie name
+ *
+ * Set SESSION_STORER_COOKIE_NAME_CHECK to empty string for disable sending the testing cookie.
  */
 if(!defined("SESSION_STORER_COOKIE_NAME_CHECK")){
 	define("SESSION_STORER_COOKIE_NAME_CHECK","_chk_");
@@ -320,6 +322,11 @@ class SessionStorer{
 	 */
 	function _setCheckCookieWhenNeeded(){
 		global $HTTP_REQUEST;
+
+		if(SESSION_STORER_COOKIE_NAME_CHECK==""){
+			// testing cookie is disabled
+			return;
+		}
 
 		if(!isset($HTTP_REQUEST) || !$HTTP_REQUEST->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C")){
 			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,"1",time()+60*60*24*365*5);
