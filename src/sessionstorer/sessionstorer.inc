@@ -25,6 +25,14 @@ if(!defined("SESSION_STORER_DEFAULT_SESSION_NAME")){
 }
 
 /**
+ * When there isn't a correct session cookie but there is a testing cookie,
+ * shall be the session initialize in database?
+ */
+if(!defined("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY")){
+	define("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY",true);
+}
+
+/**
  * A class for storing and reading values into a session.
  *
  * First value is sent encoded in cookie value in HTTP response.
@@ -205,10 +213,9 @@ class SessionStorer{
 
 		$this->_initialize();
 
-		//* // TODO: uncoment this
 		if((!isset($value) || (isset($expiration) && $expiration<=0)) && !isset($this->_ValuesStore[$key])){
 			return; // there is no need to do anything
-		} //*/
+		}
 
 
 		if(isset($value)){
@@ -225,11 +232,14 @@ class SessionStorer{
 
 		}
 
-		if(!$this->_areDataBeingStoredIntoDatabase()){
-			$this->_writeDataToCookie($key);
-			return;
-		}else{
+		if(!$this->_isSessionInitializedInDatabase() && $this->cookiesEnabled() && SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY){
+			$this->_createNewDatabaseSession();
+		}
+
+		if($this->_isSessionInitializedInDatabase()){
 			$this->_writeDataToDatabase($key);
+		}else{
+			$this->_writeDataToCookie($key);
 		}
 
 	}
@@ -356,7 +366,7 @@ class SessionStorer{
 
 		// transfer data from cookie to database
 		if($data_ar = $this->_readCookieData()){
-			$this->_createNewSession();
+			$this->_createNewDatabaseSession();
 
 			foreach($data_ar as $item){
 				$key = $item["key"];
@@ -405,7 +415,7 @@ class SessionStorer{
 	 * @access 
 	 * @return bool
 	 */
-	function _areDataBeingStoredIntoDatabase(){
+	function _isSessionInitializedInDatabase(){
 		return strlen($this->getSecretToken())>0;
 	}
 
@@ -475,7 +485,7 @@ class SessionStorer{
 	 *
 	 * @access protected
 	 */
-	function _createNewSession(){
+	function _createNewDatabaseSession(){
 		global $HTTP_REQUEST;
 
 		$id = $this->_dbmole->selectSequenceNextval("seq_sessions");
