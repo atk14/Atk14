@@ -169,9 +169,20 @@ class String{
 	 * 
 	 * @return string
 	 */
-	function getId(){ return $this->_String; }
+	function getId(){ return $this->toString(); }
 
 	function getEncoding(){ return $this->_Encoding; }
+
+	/**
+	 * Returns array of chars.
+	 *
+	 * TODO: make it working on multibyte strings
+	 *
+	 * @return array
+	 */
+	function chars(){
+		return str_split($this->toString());
+	}
 
 	/**
 	 * Returns length of string.
