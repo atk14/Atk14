@@ -27,5 +27,15 @@ class TcSessionStorer extends TcBase{
 		$this->assertTrue($s->cookiesEnabled());
 	}
 
+	function test__setSessionCookie(){
+		$s = new SessionStorer();
+		$this->assertEquals(null,$s->getSecretToken());
+		$this->assertEquals(1,sizeof($s->getSentCookies())); // testing cookies
+
+		$s->_createNewDatabaseSession();
+		$this->assertEquals(true,strlen($token = $s->getSecretToken())>0);
+		$this->assertEquals(2,sizeof($s->getSentCookies())); // testing cookies
+	}
+
 	// TODO: we realy need more tests!
 }

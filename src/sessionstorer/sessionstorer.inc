@@ -139,6 +139,10 @@ class SessionStorer{
 	 */
 	var $_SentCookies = array();
 
+	var $_request = null;
+
+	var $_dbmole = null;
+
 	/**
 	 * Constructor
 	 *
@@ -149,13 +153,19 @@ class SessionStorer{
 	 *	 $session = new SessionStorer("admin");
 	 * </code>
 	 */
-	function SessionStorer($session_name = ""){
+	function SessionStorer($session_name = "",$options = array()){
+		$options = array_merge(array(
+			"request" => $GLOBALS["HTTP_REQUEST"],
+			"dbmole" => null
+		),$options);
+
 		if(!$session_name){ $session_name = SESSION_STORER_DEFAULT_SESSION_NAME; }
 		$this->_SessionName = (string)$session_name;
+		$this->_request = $options["request"];
 
-		// a bad way how to find a database connection
-		// TODO: has to be rewritten
-		if(isset($GLOBALS["dbmole"])){
+		if($options["dbmole"]){
+			$this->_dbmole = $options["dbmole"];
+		}elseif(isset($GLOBALS["dbmole"])){
 			$this->_dbmole = &$GLOBALS["dbmole"];
 		}elseif(class_exists("PgMole")){
 			$this->_dbmole = &PgMole::GetInstance();
@@ -331,14 +341,12 @@ class SessionStorer{
 	 * @access protected
 	 */
 	function _setCheckCookieWhenNeeded(){
-		global $HTTP_REQUEST;
-
 		if(SESSION_STORER_COOKIE_NAME_CHECK==""){
 			// testing cookie is disabled
 			return;
 		}
 
-		if(!isset($HTTP_REQUEST) || !$HTTP_REQUEST->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C")){
+		if(!isset($this->_request) || !$this->_request->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C")){
 			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,"1",time()+60*60*24*365*5);
 		}
 	}
@@ -387,20 +395,18 @@ class SessionStorer{
 	}
 
 	/**
-	 * Reads data from the session cookie
+	 * Reads data from the session cookies
 	 *
 	 * @access protected  
 	 */
 	function _readCookieData(){
-		global $_COOKIE;
-
-		if(!isset($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) || !is_array($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION])){
-			return array();
-		}
-
 		$out = array();
 
-		foreach($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION] as $item){
+		for($i=0;$i<100;$i+=2){
+			if($this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i)!="check"){ break; }
+			// well on the current index there is a check cookie, so the next one must contain a data or something is terribly wrong!
+
+			$item = $this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION.($i+1));
 			if(!Packer::Unpack($item,$val)){ return array(); }
 			if(!is_array($val) || array_keys($val)!=array("key","data")){ return array(); }
 			$out[] = $val;
@@ -486,8 +492,6 @@ class SessionStorer{
 	 * @access protected
 	 */
 	function _createNewDatabaseSession(){
-		global $HTTP_REQUEST;
-
 		$id = $this->_dbmole->selectSequenceNextval("seq_sessions");
 		$security = SessionStorer::_RandomString();
 
@@ -504,7 +508,7 @@ class SessionStorer{
 		",array(
 			":id" => $id,
 			":security" => $security,
-			":remote_addr" => $HTTP_REQUEST->getRemoteAddr(),
+			":remote_addr" => $this->_request->getRemoteAddr(),
 		));
 
 		$this->_SessionId = $id;
@@ -524,17 +528,20 @@ class SessionStorer{
 	 * @return bool
 	 */
 	function _setSessionCookie(){
-		global $_COOKIE;
-
-		if(isset($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) && is_array($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION])){
-			foreach(array_keys($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) as $key){
+		if(($cookie = $this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION)) && is_array($cookie)){
+			foreach(array_keys($cookie) as $key){
 				$this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION."[$key]");
+			}
+		}
+		for($i=0;$i<100;$i++){
+			if($this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i)){
+				$this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i);
 			}
 		}
 
 		$_expire_time = 0; // session cookie se nastavi do zavreni prohlizece
 		$_cokie_value = $this->getSecretToken();
-		if(isset($_COOKIE) && isset($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) && $_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]==$_cokie_value){
+		if(is_string($cookie) && $cookie==$_cokie_value){
 			return true;
 		}
 		return $this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION,$_cokie_value,$_expire_time);
@@ -546,17 +553,16 @@ class SessionStorer{
 	 * @access protected
 	 */
 	function _setCookie($name,$value,$time = 0){
-		global $HTTP_REQUEST;
 		$this->_SentCookies[] = array($name,$value,$time);
 		if(strlen($value)>4000){
-			error_log("SessionStorer: there is a long cookie! ".strlen($value)." chars, url: ".$HTTP_REQUEST->getRequestAddress().", consider to reduce size of stored data");
+			error_log("SessionStorer: there is a long cookie! ".strlen($value)." chars, url: ".$this->_request->getRequestAddress().", consider to reduce size of stored data");
 		}
 		return setcookie(
 			$name,
 			$value,
 			$time,
 			$this->_getWebDocumentRoot(), // 
-			$HTTP_REQUEST->getHttpHost(), // domain
+			$this->_request->getHttpHost(), // domain
 			false, // secure
 			true // http only
 		);
@@ -650,15 +656,18 @@ class SessionStorer{
 	 * @access protected
 	 */
 	function _writeDataToCookie($key){
-		$index = &$this->_CookieDataIndex;
 
 		$val = array(
 			"key" => $key,
 			"data" => isset($this->_ValuesStore[$key]) ? $this->_ValuesStore[$key] : null
 		);
 
-		$this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION."[$index]",Packer::Pack($val));
+		$index = &$this->_CookieDataIndex;
 
+		$this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION.$index,"check"); // only a check that a real value is on the next index
+		$index++;
+
+		$this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION.$index,Packer::Pack($val)); // _ses_0, _ses_1, _ses_2...
 		$index++;
 	}
 
