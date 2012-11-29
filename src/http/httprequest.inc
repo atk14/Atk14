@@ -235,6 +235,15 @@ class HTTPRequest{
 	function setRequestUri($uri){ $this->_ForceRequestUri = $uri; }
 	function setUri($uri){ $this->setRequestUri($uri); }
 
+	/**
+	 * Returns complete address for this request
+	 *
+	 * <code>
+	 * echo $HTTP_REQUEST->getRequestAddress(); // e.g. "http://www.grand-book-store.com/en/books/detail/?id=123"
+	 * </code>
+	 *
+	 * @return string
+	 */
 	function getRequestAddress(){
 		$proto = $this->SSLActive() ? "https" : "http";
 		$port = "";
@@ -248,6 +257,12 @@ class HTTPRequest{
 		$uri = $this->getRequestUri();
 		return "$proto://$hostname$port$uri";
 	}
+
+	/**
+	 * Alias for getRequestUri()
+	 * @return string
+	 */
+	function getUrl(){ return $this->getRequestAddress(); }
 
 	/**
 	 * Gets HTTP referer.

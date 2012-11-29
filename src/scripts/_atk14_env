@@ -1,9 +1,16 @@
 #!/usr/bin/env php
 <?php
+/**
+ * Displays environment.
+ *
+ *  $ ./scripts/_atk14_env
+ *  DEVELOPMENT
+ *
+ *  $ ATK14_ENV=production ./scripts/_atk14_env
+ *  PRODUCTION
+ */
 
 require_once(dirname(__FILE__)."/load.inc");
 
-if(DEVELOPMENT){ echo "DEVELOPMENT"; }
-if(PRODUCTION){ echo "PRODUCTION"; }
-if(TEST){ echo "TEST"; }
+echo $ATK14_GLOBAL->getEnvironment();
 echo "\n";

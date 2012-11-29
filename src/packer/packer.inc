@@ -16,6 +16,10 @@ if(!defined("PACKER_USE_COMPRESS")){
 	define("PACKER_USE_COMPRESS",false);
 }
 
+if(!defined("PACKER_ENABLE_ENCRYPTION")){
+	define("PACKER_ENABLE_ENCRYPTION",false);
+}
+
 /**
 * Komprimace libovolne promenne (napr. pole).
 * Trida packer nabizi staticke metody pro kompresi a dekompresi promennych do ascii podoby,
@@ -32,7 +36,7 @@ if(!defined("PACKER_USE_COMPRESS")){
 *		)
 *	);
 *
-*	Packer::set_salt("secret salt 48392134 fiejfiefj");
+*	Packer::SetSalt("secret salt 48392134 fiejfiefj");
 *
 *	$packed_var = Packer::Pack($var);
 *
@@ -57,9 +61,9 @@ class Packer{
 	* @param string  	$salt novy salt
 	* @return string  predchozi salt
 	*/
-	function set_salt($salt){
+	function SetSalt($salt){
 		settype($salt,"string");
-		$current_salt = Packer::_get_set_salt(true,$salt);
+		$current_salt = Packer::_GetSetSalt(true,$salt);
 		
 		return $current_salt;
 	}
@@ -70,17 +74,28 @@ class Packer{
 	* $p = Packer::Pack("hello!");
 	* $p = Packer::Packer(array("a","b","c"));
 	*/
-	function Pack($variable){
+	function Pack($variable,$options = array()){
+		$options = array_merge(array(
+			"use_compress" => PACKER_USE_COMPRESS,
+			"enable_encryption" => PACKER_ENABLE_ENCRYPTION
+		),$options);
 		$out = serialize($variable);
 
-		if(defined("PACKER_USE_COMPRESS") && PACKER_USE_COMPRESS==true){
+		if($options["use_compress"]){
 			$out = gzcompress($out,5);
-			$out = "g".$out;
+			$prefix = "g";
 		}else{
-			$out = "p".$out;
+			$prefix = "p";
 		}
-		$out = Packer::_encode_data_string($out);
-		$sign = Packer::_get_signature($out);
+		if($options["enable_encryption"]){
+			$out = Packer::_EncryptData($out);
+			$prefix = strtoupper($prefix);
+		}
+
+		$out = $prefix.$out;
+
+		$out = Packer::_EncodeDataString($out);
+		$sign = Packer::_CalculateSignature($out);
 		$out = $sign.$out;
 
 		return $out;
@@ -103,20 +118,24 @@ class Packer{
 		}
 		$sign = substr($packed,0,16);
 		$data = substr($packed,16);
-		$expected_sign = Packer::_get_signature($data);
+		$expected_sign = Packer::_CalculateSignature($data);
 		if($expected_sign!=$sign){
 			return false;
 		}
-		$serialized = Packer::_decode_data_string($data);
+		$serialized = Packer::_DecodeDataString($data);
 		if(strlen($serialized)<=1){
 			return false;
 		}
-		$method = $serialized[0];
+		$prefix = $serialized[0];
 		$serialized = substr($serialized,1);
-		if($method[0]!="p" && $method[0]!="g"){
+		if(!in_array($prefix,array("p","g","P","G"))){
 			return false;
 		}
-		if($method=="g"){
+		if($prefix==strtoupper($prefix)){
+			$serialized = Packer::_DecryptData($serialized);
+			$prefix = strtolower($prefix);
+		}
+		if($prefix=="g"){
 			$serialized = gzuncompress($serialized);
 			if(is_bool($serialized)){
 				return false;
@@ -150,13 +169,13 @@ class Packer{
 	* @param string  &$str 			zabalena promenna
 	* @return string podpis
 	*/
-	function _get_signature(&$str){
+	function _CalculateSignature(&$str){
 		$_constant_secret_salt = "";
 		if(defined(PACKER_CONSTANT_SECRET_SALT)){
 			$_constant_secret_salt = PACKER_CONSTANT_SECRET_SALT;
 			settype($_constant_secret_salt,"string");
 		}
-		$_user_secret_salt = Packer::_get_set_salt();
+		$_user_secret_salt = Packer::_GetSetSalt();
 		return substr(md5($str.$_constant_secret_salt.$_user_secret_salt),0,16);
 	}
 
@@ -169,7 +188,7 @@ class Packer{
 	* @param string $salt novy salt, $set musi byt nastaven na true, pokud je nutne nastavit novy salt
 	* @return string  aktualni nebo predchozi (pri nastavovani) salt
 	*/
-	function _get_set_salt($set = false,$salt = ""){
+	function _GetSetSalt($set = false,$salt = ""){
 		static $_SALT_;
 		settype($set,"boolean");
 		settype($salt,"string");
@@ -193,7 +212,7 @@ class Packer{
 	* @access private
 	* @return array
 	*/
-	function _get_escapes(){
+	function _GetEscape(){
 
 		//nevim presne, jake znaky muze obsahovat base64, snad to bude stacit
 		return array(
@@ -216,11 +235,11 @@ class Packer{
 	* @param string $data_string
 	* @return string
 	*/
-	function _encode_data_string($data_string){
+	function _EncodeDataString($data_string){
 		settype($data_string,"string");
 		
 		$out = array();
-		$escapes = Packer::_get_escapes();
+		$escapes = Packer::_GetEscape();
 		$base64 = base64_encode($data_string);
 
 		for($i=0;$i<strlen($base64);$i++){
@@ -243,7 +262,7 @@ class Packer{
 	* @param string $decoded_data_string
 	* @return string
 	*/
-	function _decode_data_string($encoded_data_string){
+	function _DecodeDataString($encoded_data_string){
 		settype($encoded_data_string,"string");
 	
 		if(strlen($encoded_data_string)==0){
@@ -251,7 +270,7 @@ class Packer{
 		}
 	
 		$base64 = array();
-		$_escapes = Packer::_get_escapes();
+		$_escapes = Packer::_GetEscape();
 		$escapes = array();
 		reset($_escapes);
 		while(list($_key,$_value) = each($_escapes)){
@@ -270,5 +289,16 @@ class Packer{
 		$out = join("",$out_ar);
 
 		return base64_decode($out);
+	}
+
+	function _EncryptData($data){
+		// TODO: encyption and decryption has been copy&pastied somwhere from the internet, check out that it's ok
+		$key = PACKER_CONSTANT_SECRET_SALT;
+		return mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $data, MCRYPT_MODE_CBC, md5(md5($key)));
+	}
+
+	function _DecryptData($data){
+		$key = PACKER_CONSTANT_SECRET_SALT;
+		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), $data, MCRYPT_MODE_CBC, md5(md5($key))), "\0");
 	}
 }

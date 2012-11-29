@@ -38,7 +38,7 @@
 <hr />
 <p>
 	{t escape=no}<em>The Creature Show</em> gives you a opportunity to inspect a functional ATK14 code immediatelly after a new web-app installation.{/t}<br />
-	{t}For a beginner there is a lot of things to study. Inspect following files and direcories.{/t}
+	{t}For a beginner there is a lot of things to study. Inspect following files and directories.{/t}
 </p>
 
 <pre><code>db/migrations/0001_table_creatures.sql

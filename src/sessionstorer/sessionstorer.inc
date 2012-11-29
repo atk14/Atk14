@@ -1,109 +1,160 @@
 <?php
 /**
-* Pocet vterin, po niz, pokud nebylo k session pristoupeno, dojde k jejimu smazani.
-*/
+ * Sessions lifetime, count of seconds
+ */
 if(!defined("SESSION_STORER_SESSION_MAX_LIFETIME")){
 	define("SESSION_STORER_SESSION_MAX_LIFETIME",60 * 60 * 24 * 1);  // 1 den
 }
 /**
-* Jmeno cookie pro ulozeni session_id
-*/
+ * Session cookie name
+ */
 if(!defined("SESSION_STORER_COOKIE_NAME_SESSION")){
 	define("SESSION_STORER_COOKIE_NAME_SESSION","_ses_");
 }
 /**
-* Jmeno cookie pro testovani, zda ma uzivak aktivni cookies.
-*/
+ * Checking cookie name
+ *
+ * Set SESSION_STORER_COOKIE_NAME_CHECK to empty string for disable sending the testing cookie.
+ */
 if(!defined("SESSION_STORER_COOKIE_NAME_CHECK")){
 	define("SESSION_STORER_COOKIE_NAME_CHECK","_chk_");
 }
 
+if(!defined("SESSION_STORER_DEFAULT_SESSION_NAME")){
+	define("SESSION_STORER_DEFAULT_SESSION_NAME","default");
+}
+
 /**
-* Trida pro ukladani a nacitani promennych do session.
-* Mechanismus funguje za predpokladu, ze ma uzivatel aktivovane cookies.
-* Do session lze ukladat promenne libovolneho typu.
-*
-* Priklad pouziti:
-*		$session = new SessionStorer();
-*		if(!$session->cookiesEnabled()){
-*			echo "CHYBA: aktivujte si prosim cookies";
-*		}
-*		$session->writeValue("heslo_overeno",true);
-*		//...
-*		if($session->readValue("heslo_overeno") === true){
-*			//...
-*		}
-*
-* Potrebne jsou tyto dve tabulky:
-*			CREATE SEQUENCE seq_sessions;
-*			CREATE TABLE sessions(
-*				id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_sessions'),
-*				security VARCHAR(32) NOT NULL CHECK (security ~ '^[a-zA-Z0-9]{32}$'),
-*				--
-*				remote_addr VARCHAR(255) DEFAULT '' NOT NULL,
-*				--
-*				created TIMESTAMP DEFAULT NOW() NOT NULL,
-*				last_access TIMESTAMP DEFAULT NOW() NOT NULL
-*			);
-*			CREATE INDEX in_sessions_lastaccess ON sessions (last_access);
-*
-*			CREATE SEQUENCE seq_session_values;
-*			CREATE TABLE session_values(
-*				id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_session_values'),
-*				session_id INT NOT NULL,
-*				session_name VARCHAR(64) NOT NULL CHECK(LENGTH(session_name)>0),
-*				--
-*				key VARCHAR(128) NOT NULL CHECK(LENGTH(key)>0),
-*				value TEXT DEFAULT '' NOT NULL,
-*				expiration TIMESTAMP DEFAULT NULL,
-*				--
-*				CONSTRAINT unq_sessionvalues UNIQUE(session_id,session_name,key),
-*				CONSTRAINT fk_sessionvalues_sessions FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
-*			);
-*			CREATE INDEX in_sessionvalues_sessionid ON session_values(session_id);
-*			CREATE INDEX in_sessionvalues_expiration ON session_values(expiration);
-*
-*/
+ * When there isn't a correct session cookie but there is a testing cookie,
+ * shall be the session initialize in database?
+ */
+if(!defined("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY")){
+	define("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY",true);
+}
+
+/**
+ * A class for storing and reading values into a session.
+ *
+ * First value is sent encoded in cookie value in HTTP response.
+ * Another values are stored in a database (using global $dbmole).
+ *
+ * Usage:
+ *		$session = new SessionStorer();
+ *		if(!$session->cookiesEnabled()){
+ *			echo "Error: please, enable cookies in your browser";
+ *		}
+ *		// ...
+ *		$session->writeValue("password_validated",true);
+ *		//...
+ *		if($session->readValue("password_validated") === true){
+ *			//...
+ *		}
+ *
+ * There are two tables needed in a database:
+ * <code>
+ *			CREATE SEQUENCE seq_sessions;
+ *			CREATE TABLE sessions(
+ *				id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_sessions'),
+ *				security VARCHAR(32) NOT NULL CHECK (security ~ '^[a-zA-Z0-9]{32}$'),
+ *				--
+ *				remote_addr VARCHAR(255) DEFAULT '' NOT NULL,
+ *				--
+ *				created TIMESTAMP DEFAULT NOW() NOT NULL,
+ *				last_access TIMESTAMP DEFAULT NOW() NOT NULL
+ *			);
+ *			CREATE INDEX in_sessions_lastaccess ON sessions (last_access);
+ *
+ *			CREATE SEQUENCE seq_session_values;
+ *			CREATE TABLE session_values(
+ *				id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_session_values'),
+ *				session_id INT NOT NULL,
+ *				session_name VARCHAR(64) NOT NULL CHECK(LENGTH(session_name)>0),
+ *				--
+ *				key VARCHAR(128) NOT NULL CHECK(LENGTH(key)>0),
+ *				value TEXT DEFAULT '' NOT NULL,
+ *				expiration TIMESTAMP DEFAULT NULL,
+ *				--
+ *				CONSTRAINT unq_sessionvalues UNIQUE(session_id,session_name,key),
+ *				CONSTRAINT fk_sessionvalues_sessions FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
+ *			);
+ *			CREATE INDEX in_sessionvalues_sessionid ON session_values(session_id);
+ *			CREATE INDEX in_sessionvalues_expiration ON session_values(expiration);
+ * </code>
+ *
+ */
 class SessionStorer{
+
 	/**
-	* Jmeno session.
-	* Nastavuje se v konstruktoru.
-	* @var string
-	*/
+	 * Name of the session
+	 * @access protected
+	 * @var string
+	 */
 	var $_SessionName = "default";
 
 	/**
-	* Identifikator session.
-	* @var integer
-	*/
+	 * Id of a record from the table sessions
+	 * @access protected
+	 * @var integer
+	 */
 	var $_SessionId = null;
 
 	/**
-	*	Bezpecnostni nahodny retezec pro identifikaci session.
-	* @var string
-	*/
+	 * A random string, a security supplement for $_SessionId
+	 * @access protected
+	 * @var string
+	 */
 	var $_SessionSecurity = null;
 
 	/**
-	* Do tohoto pole budou nacteny veskere hodnoty z databaze.
-	* Pri cteni jsou hodnoty cteny z tohoto pole.
-	* @var array
-	*/
+	 * All stored session values
+	 * @access protected
+	 * @var array
+	 */
 	var $_ValuesStore = array();
 
+	/**
+	 * A flag that thit object has been already initialized
+	 * @access protected
+	 */
 	var $_Initialized = false;
 
+	/**
+	 * A flag that the token has been already changed
+	 * @access protected
+	 */
 	var $_TokenChanged = false;
 
 	/**
-	*	Konstruktor.
-	*
-	*	@access public
-	*/
-	function SessionStorer($session_name = "default"){
-		settype($session_name,"string");
-		$this->_SessionName = $session_name;
+	 * Internal index for counting data entries sent by cookies
+	 * @see SessionStorer::_writeDataToCookie()
+	 * @access protected
+	 */
+	var $_CookieDataIndex = 0;
 
+	/**
+	 * Store for cookies sent by this object
+	 * For testing purposes.
+	 * @access protected
+	 * @var array
+	 */
+	var $_SentCookies = array();
+
+	/**
+	 * Constructor
+	 *
+	 * Several sessions could exists in a database with different names.
+	 * <code>
+	 *	 $session = new SessionStorer();
+	 *	 $session = new SessionStorer("main_application");
+	 *	 $session = new SessionStorer("admin");
+	 * </code>
+	 */
+	function SessionStorer($session_name = ""){
+		if(!$session_name){ $session_name = SESSION_STORER_DEFAULT_SESSION_NAME; }
+		$this->_SessionName = (string)$session_name;
+
+		// a bad way how to find a database connection
+		// TODO: has to be rewritten
 		if(isset($GLOBALS["dbmole"])){
 			$this->_dbmole = &$GLOBALS["dbmole"];
 		}elseif(class_exists("PgMole")){
@@ -115,8 +166,177 @@ class SessionStorer{
 		$this->_setCheckCookieWhenNeeded();
 	}
 
+	/**
+	 * Checks whether client has cookies enabled
+	 *
+	 * @return bool
+	 */
+	function cookiesEnabled(){
+		return isset($GLOBALS["_COOKIE"]) && sizeof($GLOBALS["_COOKIE"])>0;
+	}
+
+	/**
+	 * Reads a session value
+	 *
+	 * <code>
+	 *	$session->readValue("fruit"); // null
+	 * 	$session->writeValue("fruit","orange");
+	 *	$session->readValue("fruit"); // "orange"
+	 * </code>
+	 *
+	 * @return mixed
+	 */
+	function readValue($key){
+		settype($key,"string");
+
+		$this->_initialize();
+
+		if(isset($this->_ValuesStore[$key]) && (!isset($this->_ValuesStore[$key]["expiration"]) || $this->_ValuesStore[$key]["expiration"]>$this->_getCurrentTime())){
+			return $this->_unpackValue($this->_ValuesStore[$key]["packed_value"]);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Writes values into the session
+	 *
+	 * @param string $key
+	 * @param mixed $value				an integer, an string, an array, an object...
+	 * @param int $expiration			pocet vterin, po kterou ma hodnota platit
+	 */
+	function writeValue($key,$value,$expiration = null){
+		settype($key,"string");
+		if(isset($expiration)){
+			settype($expiration,"integer");
+		}
+
+		$this->_initialize();
+
+		if((!isset($value) || (isset($expiration) && $expiration<=0)) && !isset($this->_ValuesStore[$key])){
+			return; // there is no need to do anything
+		}
+
+
+		if(isset($value)){
+
+			$packed_value = $this->_packValue($value);
+			$this->_ValuesStore[$key] = array(
+				"packed_value" => $packed_value,
+				"expiration" => isset($expiration) ? $this->_getCurrentTime() + $expiration : null
+			);
+
+		}else{
+
+			unset($this->_ValuesStore[$key]);
+
+		}
+
+		if(!$this->_isSessionInitializedInDatabase() && $this->cookiesEnabled() && SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY){
+			$this->_createNewDatabaseSession();
+		}
+
+		if($this->_isSessionInitializedInDatabase()){
+			$this->_writeDataToDatabase($key);
+		}else{
+			$this->_writeDataToCookie($key);
+		}
+
+	}
+
+	/**
+	 * Cleares all values
+	 */
+	function clear(){
+		$this->_initialize();
+		foreach($this->_ValuesStore as $k => $v){ $this->writeValue($k,null); }
+	}
+
+	/**
+	 * Returns a secret content of user`s cookie which identifies current session
+	 *
+	 * Actualy the secret token is the value of the session cookie.
+	 *
+	 * <code>
+	 *	echo $session->getSecretToken(); // 1215.WKN7voIUyCGER4OzkPwl2B3eJ1QM68mL
+	 * </code>
+	 */
+	function getSecretToken(){
+		if(isset($this->_SessionId) && isset($this->_SessionSecurity)){
+			return $this->_SessionId.".".$this->_SessionSecurity;
+		}
+	}
+
+	/**
+	 * Changes the content of user`s cookie belongs to current session.
+	 * This helps to prevent against session fixation.
+	 *
+	 * Returns the content od the new cookie.
+	 *
+	 * <code>
+	 *	$current_token = $session->getSecretToken();
+	 *	$new_token = $session->changeSecretToken();
+	 *	assert($new_token!=$current_token);
+	 * </code>
+	 */
+	function changeSecretToken(){
+		$this->_initialize();
+
+		if($this->_TokenChanged){
+			return $this->getSecretToken();
+		}
+
+		if(isset($this->_SessionId)){
+			$this->_SessionSecurity = SessionStorer::_RandomString();
+			$this->_dbmole->doQuery("UPDATE sessions SET security=:security WHERE id=:id",array(
+				":id" => $this->_SessionId,
+				":security" => $this->_SessionSecurity
+			));
+			$this->_TokenChanged = true;
+			$this->_setSessionCookie();
+		}
+
+		return $this->getSecretToken();
+	}
+
+	/**
+	 * Returns a set of cookies sent by this object
+	 * 
+	 * <code>
+	 * 	foreach($session->getSentCookies() as $item){
+	 *		list($name,$value,$expiration) = $item;
+	 *	}
+	 * </code>
+	 *
+	 * @return array
+	 */
+	function getSentCookies(){
+		return $this->_SentCookies;
+	}
+
+	/**
+	 * Generates a random string
+	 *
+	 * @access protected
+	 */
+	static function _RandomString($length = 32){
+		return (string)String::RandomString($length);
+	}
+
+	/**
+	 * Sets a testing cookie
+	 *
+	 * The testing cookie has very long expiration.
+	 *
+	 * @access protected
+	 */
 	function _setCheckCookieWhenNeeded(){
 		global $HTTP_REQUEST;
+
+		if(SESSION_STORER_COOKIE_NAME_CHECK==""){
+			// testing cookie is disabled
+			return;
+		}
 
 		if(!isset($HTTP_REQUEST) || !$HTTP_REQUEST->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C")){
 			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,"1",time()+60*60*24*365*5);
@@ -124,68 +344,118 @@ class SessionStorer{
 	}
 
 	/**
-	* Zde se zacne hrabat do databaze.
-	*
-	*/
+	 * Initializes this session object
+   *
+	 * Since this method stars to use a database, it`s good idea to call it ALAP.
+	 *
+	 * @access protected 
+	 */
 	function _initialize(){
 		if($this->_Initialized){ return; }
-		if($this->cookiesEnabled()){
-			list($id,$security) = $this->_readSessionCookie();
-			if(!$this->_checkSession($id,$security)){
-				$this->_createNewSession();
-			}
-			$this->_garbageCollection();
 
-			$this->_readAllValues();
-			$this->_setSessionCookie();
-		}
 		$this->_Initialized = true;
+
+		if(
+			$this->_obtainSessionIdAndSecurity($id,$security) &&
+			$this->_checkSessionSessionIdAndSecurity($id,$security)
+		){
+			$this->_garbageCollection();
+			$this->_readAllValuesFromDatabase();
+			return;
+		}
+
+		// transfer data from cookie to database
+		if($data_ar = $this->_readCookieData()){
+			$this->_createNewDatabaseSession();
+
+			foreach($data_ar as $item){
+				$key = $item["key"];
+				$data = $item["data"];
+				if(!isset($data)){
+					$this->writeValue($key,null);
+					unset($this->_ValuesStore[$key]);
+				}else{
+					$this->_ValuesStore[$key] = $data;
+				}
+			}
+
+			// store all data into database
+			foreach(array_keys($this->_ValuesStore) as $key){
+				$this->_writeDataToDatabase($key);
+			}
+		}
 	}
 
 	/**
-	* Nacte hodnotu id a security ze session cookie.
-	*
-	* Pokud neni session cookie nastaven, vrati array(null,null)
-	*
-	* @access private
-	* @return array												array($id,$security)
-	*/
-	function _readSessionCookie(){
+	 * Reads data from the session cookie
+	 *
+	 * @access protected  
+	 */
+	function _readCookieData(){
+		global $_COOKIE;
+
+		if(!isset($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) || !is_array($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION])){
+			return array();
+		}
+
+		$out = array();
+
+		foreach($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION] as $item){
+			if(!Packer::Unpack($item,$val)){ return array(); }
+			if(!is_array($val) || array_keys($val)!=array("key","data")){ return array(); }
+			$out[] = $val;
+		}
+		
+		return $out;
+	}
+
+	/**
+	 * Are data being stored in database?
+	 *
+	 * @access 
+	 * @return bool
+	 */
+	function _isSessionInitializedInDatabase(){
+		return strlen($this->getSecretToken())>0;
+	}
+
+	/**
+	 * Checks whether there is a session cookie
+	 *
+	 * @access protected
+	 * @return bool
+	 */
+	function _obtainSessionIdAndSecurity(&$id = null,&$security = null){
 		$id = null;
 		$security = null;
 
-		if(isset($GLOBALS["_COOKIE"][SESSION_STORER_COOKIE_NAME_SESSION])){
-			$_cookie = $GLOBALS["_COOKIE"][SESSION_STORER_COOKIE_NAME_SESSION];
-			settype($_cookie,"string");
-			$_ar = explode(".",$_cookie);
-			if(
-				preg_match("/^[0-9]{1,}$/",$_ar[0]) &&
-				preg_match("/^[a-zA-Z0-9]{32}$/",$_ar[1])
-			){
-				settype($_ar[0],"integer");
-				$id = $_ar[0];
-				$security = $_ar[1];
-			}
+		if(!isset($GLOBALS["_COOKIE"][SESSION_STORER_COOKIE_NAME_SESSION])){ return false; }
+		if(!is_string($cookie_val = $GLOBALS["_COOKIE"][SESSION_STORER_COOKIE_NAME_SESSION])){ return false; }
+
+		if(preg_match('/^([1-9][0-9]{0,20})\.([a-z0-9]{32})$/i',$cookie_val,$matches)){
+			$id = $matches[1];
+			$security = $matches[2];
+			return true;
 		}
 
-		return array($id,$security);
+		return false;
 	}
 
 	/**
-	* Overi, ze daba kombinace $id a $security existuje.
-	*
-	* @access public
-	* @return bool					true -> dana kombinace $id a $security je ok - tato session existuje
-	*												false -> session neexistuje
-	*/
-	function _checkSession($id,$security){
-		if(!isset($id) || !isset($security)){ return false; }
-
+	 * Checks whether a given combination od $id and $security is correct
+	 *
+	 * Returns true on success.
+	 * 
+	 * @access protected
+	 * @return bool
+	 */
+	function _checkSessionSessionIdAndSecurity($id,$security){
 		settype($id,"integer");
 		settype($security,"string");
 
-		$session_ok = false;
-		$rec_security = $this->_dbmole->SelectSingleValue("
+		if(!$id || !$security){ return false; }
+
+		$rec_security = $this->_dbmole->selectSingleValue("
 			SELECT
 				security
 			FROM
@@ -194,36 +464,32 @@ class SessionStorer{
 				id=:id
 		",array(":id" => $id));
 		if(isset($rec_security) && $rec_security==$security){
-			$session_ok = true;
 			$this->_dbmole->doQuery("UPDATE sessions SET last_access=:now WHERE id=:id AND last_access<=:before_5_minutes",array(
 				":id" => $id,
 				":now" => $this->_getNow(),
-				":before_5_minutes" => $this->_getIsoDate($this->_getCurrentTime()-60*5), // aktualizujeme last_access nejvyse 1x za 5 minut
+				":before_5_minutes" => $this->_getIsoDateTime($this->_getCurrentTime()-60*5), // aktualizujeme last_access nejvyse 1x za 5 minut
 			));
-		}
-
-		if($session_ok){
 			$this->_SessionId = $id;
 			$this->_SessionSecurity = $security;
+			return true;
 		}
 
-		return $session_ok;
+		$this->_clearSessionCookie();
+		return false;
 	}
 
 	/**
-	* Vytvori novy zaznam v tabulce sessions.
-	* Nastavi vlastni $this->_SessionId a $this->_SessionSecurity.
-	*
-	* @access private
-	* @return bool					true -> ok, zaznam vytvoren
-	* 											false -> doslo k chybe pri vykonavani SQL
-	*/
-	function _createNewSession(){
+	 * Creates a new record in the table sessions
+	 *
+	 * Also sets $this->_SessionId and $this->_SessionSecurity to their new values.
+	 *
+	 * @access protected
+	 */
+	function _createNewDatabaseSession(){
 		global $HTTP_REQUEST;
-		$id = null;
-		$security = SessionStorer::_RandomString();
 
-		$id = $this->_dbmole->SelectSequenceNextval("seq_sessions");
+		$id = $this->_dbmole->selectSequenceNextval("seq_sessions");
+		$security = SessionStorer::_RandomString();
 
 		$stat = $this->_dbmole->doQuery("
 			INSERT INTO sessions(
@@ -244,25 +510,28 @@ class SessionStorer{
 		$this->_SessionId = $id;
 		$this->_SessionSecurity = $security;
 
-		return !!$stat;
-	}
-
-	static function _RandomString($length = 32){
-		return (string)String::RandomString($length);
+		$this->_setSessionCookie();
 	}
 
 	/**
-	* Sets the session cookie.
-	*
-	* Do nothing when the same session cookie has been alrary stored in user`s browser.
-	*
-	* Returns false when it is unable to set the cookie.
-	*
-	* @access private
-	* @return bool
-	*/
+	 * Sets the session cookie
+	 *
+	 * Do nothing when the same session cookie has been already stored in user`s browser.
+	 *
+	 * Returns false when it is unable to set the cookie.
+	 *
+	 * @access protected
+	 * @return bool
+	 */
 	function _setSessionCookie(){
 		global $_COOKIE;
+
+		if(isset($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) && is_array($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION])){
+			foreach(array_keys($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) as $key){
+				$this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION."[$key]");
+			}
+		}
+
 		$_expire_time = 0; // session cookie se nastavi do zavreni prohlizece
 		$_cokie_value = $this->getSecretToken();
 		if(isset($_COOKIE) && isset($_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]) && $_COOKIE[SESSION_STORER_COOKIE_NAME_SESSION]==$_cokie_value){
@@ -271,8 +540,17 @@ class SessionStorer{
 		return $this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION,$_cokie_value,$_expire_time);
 	}
 
+	/**
+	 * Sets a cookie
+	 *
+	 * @access protected
+	 */
 	function _setCookie($name,$value,$time = 0){
 		global $HTTP_REQUEST;
+		$this->_SentCookies[] = array($name,$value,$time);
+		if(strlen($value)>4000){
+			error_log("SessionStorer: there is a long cookie! ".strlen($value)." chars, url: ".$HTTP_REQUEST->getRequestAddress().", consider to reduce size of stored data");
+		}
 		return setcookie(
 			$name,
 			$value,
@@ -285,21 +563,29 @@ class SessionStorer{
 	}
 
 	/**
-	* Smaze session cookie.
-	*
-	* @access private
-	*/
-	function _clearSessionCookie(){
-		$_expire_time = $this->_getCurrentTime() - 60 * 60 * 24 * 365;
-		$this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION,"",$_expire_time);
+	 * Cleares a cookie with a given name
+	 *
+	 * @access protected
+	 */
+	function _clearCookie($name){
+		return $this->_setCookie($name,"",- 60 * 60 * 24 * 365);
 	}
 
 	/**
-	* Nacte vsechny hodnoty ulozene v aktualni session do $this->_ValuesStore.
-	*
-	* @access private
-	*/
-	function _readAllValues(){
+	 * Cleares the session cookie
+	 *
+	 * @access protected
+	 */
+	function _clearSessionCookie(){
+		return $this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION);
+	}
+
+	/**
+	 * Reads all session values from database.
+	 *
+	 * @access protected
+	 */
+	function _readAllValuesFromDatabase(){
 		if(!isset($this->_SessionId)){
 			return;
 		}
@@ -330,11 +616,12 @@ class SessionStorer{
 	}
 
 	/**
-	* Provede Garbage Collection.
-	*
-	* @access private
-	*	@return null
-	*/
+	 * Realizes garbage collection
+	 *
+	 * Deletes old entries from database.
+	 *
+	 * @access protected 
+	 */
 	function _garbageCollection(){
 		$_seconds = SESSION_STORER_SESSION_MAX_LIFETIME;
 		settype($_seconds,"integer");
@@ -342,7 +629,7 @@ class SessionStorer{
 			DELETE FROM sessions WHERE
 				last_access<:last_access
 		",array(
-			":last_access" => $this->_getIsoDate($this->_getCurrentTime() - $_seconds)
+			":last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $_seconds)
 		));
 
 		$this->_dbmole->doQuery("
@@ -354,58 +641,38 @@ class SessionStorer{
 	}
 
 	/**
-	* Checks whether client has cookies enabled.
-	* 
-	* Jen pokud jsou aktivni cookies, budou session hodnoty ulozeny do databaze.
-	* V opacnem pripade budou po skonceni HTTP requestu ztraceny.
-	*
-	* @access public
-	* @return bool
-	*/
-	function cookiesEnabled(){
-		return isset($GLOBALS["_COOKIE"]) && sizeof($GLOBALS["_COOKIE"])>0;
+	 * Writes data entry to cookie
+	 *
+	 * <code>
+	 * $this->_writeDataToCookie("logged_user_id");
+	 * </code>
+	 * 
+	 * @access protected
+	 */
+	function _writeDataToCookie($key){
+		$index = &$this->_CookieDataIndex;
+
+		$val = array(
+			"key" => $key,
+			"data" => isset($this->_ValuesStore[$key]) ? $this->_ValuesStore[$key] : null
+		);
+
+		$this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION."[$index]",Packer::Pack($val));
+
+		$index++;
 	}
 
 	/**
-	* Precte drive ulozenou hodnotu ze session.
-	* Popkud hodnota nebyla nebude nalezena, bude vracen null.
-	*
-	* @access public
-	* @param string $key
-	* @return mixed								bude vraceno ten typ promenne, ktery byl ulozen
-	*															null v pripade, ze hodnota neni ulozena
-	*/
-	function readValue($key){
-		settype($key,"string");
-
-		$this->_initialize();
-
-		if(isset($this->_ValuesStore[$key]) && (!isset($this->_ValuesStore[$key]["expiration"]) || $this->_ValuesStore[$key]["expiration"]>$this->_getCurrentTime())){
-			return $this->_unpackValue($this->_ValuesStore[$key]["packed_value"]);
-		}
-
-		return null;
-	}
-
-	/**
-	* Zapise hodnotu do session.
-	*
-	* @param string $key
-	* @param mixed $value					muze byt string, pole, int...
-	* @param int $expiration			pocet vterin, po kterou ma hodnota platit
-	*/
-	function writeValue($key,$value,$expiration = null){
-		settype($key,"string");
-		if(isset($expiration)){
-			settype($expiration,"integer");
-		}
-
-		$this->_initialize();
-
-		$packed_value = $this->_packValue($value);
-
-
-		if(!isset($value) && isset($this->_SessionId)){
+	 * Writes a data entry into the database
+	 * 
+	 * <code>
+	 * $this->_writeDataToDatabase("logged_user_id");
+	 * </code>
+	 * 
+	 * @access protected
+	 */
+	function _writeDataToDatabase($key){
+		if(!isset($this->_ValuesStore[$key])){
 			$this->_dbmole->doQuery("
 				DELETE FROM session_values WHERE
 					session_id=:session_id AND
@@ -416,9 +683,9 @@ class SessionStorer{
 				":session_name" => $this->_SessionName,
 				":key" => $key
 			));
-		}elseif(isset($this->_SessionId)){
+		}else{
 
-			$id = $this->_dbmole->SelectSingleValue("
+			$id = $this->_dbmole->selectSingleValue("
 				SELECT id FROM session_values WHERE
 					session_id=:session_id AND
 					session_name=:session_name AND
@@ -431,98 +698,27 @@ class SessionStorer{
 
 			if(isset($id)){ $this->_dbmole->doQuery("DELETE FROM session_values WHERE id=:id",array(":id" => $id)); }
 
-
-			$_expiration_sql = null;
-			if(isset($expiration)){
-				$_expiration_sql = $this->_getIsoDate($this->_getCurrentTime()+$expiration);
-			}
-
 			$options = array();
 			if($this->_dbmole->getDatabaseType()=="oracle"){ $options["clobs"] = array("value"); }
 
-			$this->_dbmole->InsertIntoTable("session_values",array(
-				"id" => 						$this->_dbmole->SelectSequenceNextval("seq_session_values"),
+			$this->_dbmole->insertIntoTable("session_values",array(
+				"id" => 						$this->_dbmole->selectSequenceNextval("seq_session_values"),
 				"session_id" => 		$this->_SessionId,
 				"session_name" => 	$this->_SessionName,
 				"key" => 						$key,
-				"value" => 					$packed_value,
-				"expiration" => 		$_expiration_sql
+				"value" => 					$this->_ValuesStore[$key]["packed_value"],
+				"expiration" => 		$this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"])
 			),$options);
 		}
-
-		if(isset($value)){
-			$_expiration = null;
-			if(isset($expiration)){
-				$_expiration = $this->_getCurrentTime() + $expiration;
-			}
-			$this->_ValuesStore[$key] = array(
-				"packed_value" => $packed_value,
-				"expiration" => $_expiration
-			);
-
-		}else{
-
-			unset($this->_ValuesStore[$key]);
-
-		}
 	}
 
 	/**
-	* Cleares all values.
-	*/
-	function clear(){
-		$this->_initialize();
-		foreach($this->_ValuesStore as $k => $v){ $this->writeValue($k,null); }
-	}
-
-	/**
-	 * Returns a secret content of user`s cookie which identifies current session.
+	 * Compress a value into a ascii encoded string
 	 *
+	 * @access protected
+	 * @param mixed $value
 	 * @return string
 	 */
-	function getSecretToken(){
-		if(isset($this->_SessionId) && isset($this->_SessionSecurity)){
-			return $this->_SessionId.".".$this->_SessionSecurity;
-		}
-	}
-
-	/**
-	 * Changes the content of user`s cookie belongs to current session.
-	 * This helps to prevent against session fixation.
-	 *
-	 * Returns the content od the new cookie.
-	 *
-	 * @return string
-	 */
-	function changeSecretToken(){
-		$this->_initialize();
-
-		if($this->_TokenChanged){
-			return $this->getSecretToken();
-		}
-
-		if(isset($this->_SessionId)){
-			$this->_SessionSecurity = SessionStorer::_RandomString();
-			$this->_setSessionCookie();
-			$this->_dbmole->doQuery("UPDATE sessions SET security=:security WHERE id=:id",array(
-				":id" => $this->_SessionId,
-				":security" => $this->_SessionSecurity
-			));
-			$this->_TokenChanged = true;
-		}
-
-		return $this->getSecretToken();
-	}
-
-	/**
-	* Sbali hodnotu do stringu.
-	* Provadi PHP serializaci a prekodovani do base64.
-	* Vysledek muze by s uspechem ulozen do databaze.
-	*
-	* @access private
-	* @param mixed $value
-	*	@return string
-	*/
 	function _packValue($value){
 		if(!isset($value)){
 			return "";
@@ -531,12 +727,12 @@ class SessionStorer{
 	}
 
 	/**
-	* Provede rozbaleni hodnoty z drive zabaleneho stringu.
-	*
-	*	@access private
-	*	@param string $packed_value
-	* @return mixed
-	*/
+	 * Decompress a previously compressed.
+	 *
+	 * @access protected
+	 * @param string $packed_value
+	 * @return mixed
+	 */
 	function _unpackValue($packed_value){
 		settype($packed_value,"string");
 		if(strlen($packed_value)==0){
@@ -545,18 +741,46 @@ class SessionStorer{
 		return unserialize(base64_decode($packed_value));
 	}
 
+	/**
+	 * Returns the current timestamp
+	 *
+	 * @access protected
+	 * @return integer
+	 */
 	function _getCurrentTime(){
 		return defined("CURRENT_TIME") ? CURRENT_TIME : time();
 	}
 
+	/**
+	 * Returns current date and time in ISO format
+	 * 
+	 * @access protected
+	 * @return string
+	 */
 	function _getNow(){
-		return $this->_getIsoDate($this->_getCurrentTime());
+		return $this->_getIsoDateTime($this->_getCurrentTime());
 	}
 
-	function _getIsoDate($time){
+	/**
+	 * Converts timestamp into time and date in ISO format
+	 * 
+	 * @access protected
+	 * @return string
+	 */
+	function _getIsoDateTime($time){
+		if(!isset($time)){ return null; }
 		return date("Y-m-d H:i:s",$time);
 	}
 
+	/**
+	 * Determines application`s base href
+	 *
+	 * On http://eshop.localhost/ it returns /
+	 * On http://localhost/eshop/ it returns /eshop/
+	 *
+	 * @access protected
+	 * @return string
+	 */
 	function _getWebDocumentRoot(){
 		global $ATK14_GLOBAL;
 

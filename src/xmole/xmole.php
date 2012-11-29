@@ -597,7 +597,7 @@ class XMole{
 	 * @param string|XMole @xmole2
 	 * @return boolean
 	 */
-	function AreSame($xmole1,$xmole2){
+	static function AreSame($xmole1,$xmole2){
 		if(is_string($xmole1)){ $xmole1 = new XMole($xmole1); } 
 		if(is_string($xmole2)){ $xmole2 = new XMole($xmole2); } 
 
@@ -813,25 +813,44 @@ class XMole{
 	 * @param string $str
 	 * @return string
 	 */
-	function ToXML($str){
-		return strtr($str,array(
-			'&' => '&amp;',
-			'<' => '&lt;',
-			'>' => '&gt;',
-			'"' => '&quot;',
-			'\'' => '&apos;',
+	static function ToXML($str){
+		$illegal_chars = array(
+			'&',
+			'<',
+			'>',
+			'"',
+			'\'',
 
 			// see http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character
-			chr(0) => '',
-			chr(1) => '',
-			chr(2) => '',
-			chr(3) => '',
-			chr(4) => '',
-			chr(5) => '',
-			chr(6) => '',
-			chr(7) => '',
-			chr(8) => '',
-		));
+			"\x01",
+			"\x01",
+			"\x02",
+			"\x03",
+			"\x04",
+			"\x05",
+			"\x06",
+			"\x07",
+			"\x08",
+		);
+
+		$replaces = array(
+			'&amp;',
+			'&lt;',
+			'&gt;',
+			'&quot;',
+			'&apos;',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+		);
+
+		return str_replace($illegal_chars, $replaces, $str);
 	}
 
 	/**
@@ -841,7 +860,7 @@ class XMole{
 	*
 	* $xml = '<person name="'.XMole::ToAttribsValue($name).'" />';
 	*/
-	function ToAttribsValue($str){
+	static function ToAttribsValue($str){
 		settype($str,"string");
 		return strtr($str,
 			array(

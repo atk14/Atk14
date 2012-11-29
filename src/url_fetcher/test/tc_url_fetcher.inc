@@ -118,12 +118,20 @@ class tc_url_fetcher extends tc_base{
 
 	function test_redirecting(){
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/redirection.php?type=full_address");
+		$this->assertEquals(200,$f->getStatusCode());
 		$this->assertEquals("TEST CONTENT, type=full_address",trim($f->getContent()));
 
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/redirection.php?type=absolute");
+		$this->assertEquals(200,$f->getStatusCode());
 		$this->assertEquals("TEST CONTENT, type=absolute",trim($f->getContent()));
 
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/redirection.php?type=relative");
+		$this->assertEquals(200,$f->getStatusCode());
 		$this->assertEquals("TEST CONTENT, type=relative",trim($f->getContent()));
+
+		// -- disable redirections
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/redirection.php?type=full_address",array("max_redirections" => 0));
+		$this->assertEquals(302,$f->getStatusCode());
+		$this->assertEquals("",$f->getContent());
 	}
 }

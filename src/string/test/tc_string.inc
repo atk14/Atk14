@@ -6,6 +6,11 @@ class tc_string extends tc_base{
 		$this->assertEquals("Hi",$s->getId());
 	}
 
+	function test_chars(){
+		$s = new String("Hi!");
+		$this->assertEquals(array("H","i","!"),$s->chars());
+	}
+
 	function test_random_string(){
 		$s1 = String::RandomString();
 		$s2 = String::RandomString();

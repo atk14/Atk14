@@ -198,8 +198,9 @@ function _test_runner($filename,$DIR){
 
 	if(class_exists($alt_classname)){ $classname = $alt_classname; }
 
+	echo "--- $DIR$filename\n"; flush();
+
 	if(!class_exists($classname)){
-		echo "--- $DIR$filename\n";
 		echo "!!! class $classname doesn't exist\n";
 		return;
 	}
@@ -207,7 +208,6 @@ function _test_runner($filename,$DIR){
 	if(PHP4){
 		$suite  = new PHPUnit_TestSuite($classname);
 		$result = PHPUnit::run($suite);
-		echo "--- $DIR$filename\n";
 		print $result->toString();
 	}
 	if(PHP5){
@@ -222,7 +222,6 @@ function _test_runner($filename,$DIR){
 		$result = $suite->run();
 		$timer->stop();
 
-		echo "--- $DIR$filename\n";
 		$printer->printResult($result, $timer->timeElapsed());
 	}
 }

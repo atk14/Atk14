@@ -15,12 +15,17 @@ class tc_xmole extends tc_base{
     $xm = new XMole('
     <planets system="Solar">
      <earth order="3rd">We love it</earth>
+     <earth:moons>
+      <moons:count>1</moons:count>
+     </earth:moons>
     </planets>
     ');
 
     $this->assertEquals("We love it",$xm->get_data("/planets/earth"));
     $this->assertEquals("We love it",$xm->get_data("planets/earth"));
     $this->assertEquals("We love it",$xm->get_data("earth"));
+
+    $this->assertEquals("1",$xm->get_data("earth:moons/moons:count"));
 
     $this->assertEquals("3rd",$xm->get_attribute("/planets/earth","order"));
     $this->assertEquals("3rd",$xm->get_attribute("planets/earth","order"));
