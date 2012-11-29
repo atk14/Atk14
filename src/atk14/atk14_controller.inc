@@ -267,8 +267,7 @@ class Atk14Controller{
 
 		$this->rendering_component = false;
 
-		reset($options);
-		while(list($_key,$_value) = each($options)){
+		foreach($options as $_key => $_value){	
 			$this->$_key = $_value;
 		}
 
