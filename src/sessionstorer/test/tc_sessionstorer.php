@@ -37,5 +37,30 @@ class TcSessionStorer extends TcBase{
 		$this->assertEquals(2,sizeof($s->getSentCookies())); // testing cookies
 	}
 
+	function test__clearDataCookies(){
+		global $_COOKIE;
+
+		$s = new SessionStorer();
+
+		$this->assertEquals(0,$s->_clearDataCookies());
+
+		// these two are not going to be deleted
+		$_COOKIE["check"] = "1";
+		$_COOKIE["session"] = "123.aRightlyLookingToken";
+
+		$_COOKIE["session0"] = "fake_data";
+		$_COOKIE["session3"] = "fake_data";
+		$_COOKIE["session99"] = "fake_data";
+
+		$this->assertEquals(3,$s->_clearDataCookies());
+
+		$_COOKIE["session"] = array(
+			0 => "another_fake",
+			33 => "yet_another_fake"
+		);
+
+		$this->assertEquals(5,$s->_clearDataCookies());
+	}
+
 	// TODO: we realy need more tests!
 }

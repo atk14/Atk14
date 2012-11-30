@@ -154,6 +154,11 @@ class SessionStorer{
 	 * </code>
 	 */
 	function SessionStorer($session_name = "",$options = array()){
+		if(is_array($session_name)){
+			$options = $session_name;
+			$session_name = "";
+		}
+
 		$options = array_merge(array(
 			"request" => $GLOBALS["HTTP_REQUEST"],
 			"dbmole" => null
@@ -363,6 +368,10 @@ class SessionStorer{
 
 		$this->_Initialized = true;
 
+		// the data cookies are meant to exist only a one request
+		// so it`s perfectly fine to delete them here
+		$this->_clearDataCookies();
+
 		if(
 			$this->_obtainSessionIdAndSecurity($id,$security) &&
 			$this->_checkSessionSessionIdAndSecurity($id,$security)
@@ -528,19 +537,9 @@ class SessionStorer{
 	 * @return bool
 	 */
 	function _setSessionCookie(){
-		if(($cookie = $this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION)) && is_array($cookie)){
-			foreach(array_keys($cookie) as $key){
-				$this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION."[$key]");
-			}
-		}
-		for($i=0;$i<100;$i++){
-			if($this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i)){
-				$this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i);
-			}
-		}
-
 		$_expire_time = 0; // session cookie se nastavi do zavreni prohlizece
 		$_cokie_value = $this->getSecretToken();
+		$cookie = $this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION);
 		if(is_string($cookie) && $cookie==$_cokie_value){
 			return true;
 		}
@@ -800,5 +799,33 @@ class SessionStorer{
 			return WEB_DOCUMENT_ROOT;
 		}
 		return "/";
+	}
+
+	/**
+	 * Cleares all data cookie if there are any
+	 * 
+	 * @access protected
+	 * @return int Count of deleted cookies 
+	 */
+	function _clearDataCookies(){
+		$counter = 0;
+
+		// deleting data cookies if there are any
+		for($i=0;$i<100;$i++){
+			if($this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i)){
+				$this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i);
+				$counter++;
+			}
+		}
+
+		// deleting data cookies - the old way
+		if(($cookie = $this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION)) && is_array($cookie)){
+			foreach(array_keys($cookie) as $key){
+				$this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION."[$key]");
+				$counter++;
+			}
+		}
+
+		return $counter;
 	}
 }
