@@ -489,6 +489,8 @@ class SessionStorer{
 			return true;
 		}
 
+		//error_log("non existing session cookie found: $id.$security (".$this->_request->getRemoteAddr().", ".$this->_request->getUserAgent().")");
+
 		$this->_clearSessionCookie();
 		return false;
 	}
@@ -555,6 +557,16 @@ class SessionStorer{
 		$this->_SentCookies[] = array($name,$value,$time);
 		if(strlen($value)>4000){
 			error_log("SessionStorer: there is a long cookie! ".strlen($value)." chars, url: ".$this->_request->getRequestAddress().", consider to reduce size of stored data");
+		}
+		if($value==""){
+			// when it`s about to delete a cookie, 2 setcookie() calls are realized -
+			// this one is just for sure that the cookie will be deleted
+			setcookie(
+				$name,
+				$value,
+				$time,
+				$this->_getWebDocumentRoot()
+			);
 		}
 		return setcookie(
 			$name,
