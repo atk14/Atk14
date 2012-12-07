@@ -41,6 +41,7 @@ __defaults__(array(
 	"SESSION_STORER_SESSION_MAX_LIFETIME" => 60 * 60 * 24 * 1, // time in seconds; whole day by default
 	"SESSION_STORER_COOKIE_NAME_SESSION" => "session",
 	"SESSION_STORER_COOKIE_NAME_CHECK" => "check", // set this to empty string for disable sending the testing cookie
+	"SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY" => true,
 ));
 
 __defaults__(array(
@@ -59,6 +60,7 @@ __defaults__(array(
 __defaults__(array(
 	"PACKER_CONSTANT_SECRET_SALT" => SECRET_TOKEN,
 	"PACKER_USE_COMPRESS" => false,
+	"PACKER_ENABLE_ENCRYPTION" => false // TODO: provide an explanation
 ));
 
 __defaults__(array(
