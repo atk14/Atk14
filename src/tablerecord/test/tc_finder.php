@@ -1,5 +1,5 @@
 <?php
-class TcTableRecordFinder extends TcBase{
+class TcFinder extends TcBase{
 	function test(){
 		$apples = TestTable::CreateNewRecord(array(
 			"title" => "Apples",
@@ -62,6 +62,20 @@ class TcTableRecordFinder extends TcBase{
 		$records = $finder->getRecords();
 		$this->assertEquals(1,sizeof($records));
 		$this->assertEquals($apples->getId(),$records[0]->getId());
+
+		// -- searching by a custom query
+		$finder = TestTable::Finder(array(
+			"query" => "SELECT id FROM test_table ORDER BY UPPER(title) ASC",
+			"query_count" => "SELECT COUNT(*) FROM test_table",
+			"order_by" => null, // disabling the default ordering
+			"limit" => 2,
+			"offset" => 1,
+		));
+
+		$this->assertEquals(3,$finder->getTotalAmount());
+		$this->assertEquals(2,sizeof($finder));
+		$this->assertEquals("Apples",$finder[0]->getTitle());
+		$this->assertEquals("Oranges",$finder[1]->getTitle());
 	}
 
 	function test_empty_finder(){
