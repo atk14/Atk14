@@ -206,11 +206,37 @@ class Atk14Controller{
 	var $tpl_data = array();
 
 	/**
-	 * Data get from multistep forms.
+	 * Data returned by multistep form actions.
 	 *
 	 * Data are filled in particular form steps and sorted in an array indexed as stated in {@link _walk()} method.
 	 *
-	 * Data contained might look like this:
+	 * These data are returned at the of a step method:
+	 * <code>
+	 * function registration__get_user_data() {
+	 *  ...
+	 * 	return array(
+	 * 		"login" => "terminator",
+	 * 		"name" => "T1000",
+	 * 	);
+	 * }
+	 * </code>
+	 *
+	 * function registration__get_user_info() {
+	 *  ...
+	 * 	return array(
+	 * 		"description" => "Came from future",
+	 * 		"special_skills" => "unbreakable",
+	 * 	);
+	 * }
+	 *
+	 * Then 
+	 * <code>
+	 * function registration__summary() {
+	 * 	var_dump($this->returned_by)
+	 * }
+	 * </code>
+	 *
+	 * will show something like this
 	 * <code>
 	 * array(
 	 * 	"get_user_data" = array("login" => "terminator", "name" => "T1000"),
@@ -221,6 +247,18 @@ class Atk14Controller{
 	 *
 	 */
 	var $returned_by = array();
+
+	/**
+	 * Data filled in multistep forms.
+	 *
+	 * In a method of a multistep form you can use
+	 * <code>
+	 * $this->form_data["get_data"]
+	 * </code>
+	 * to get data inserted in a step get_data
+	 *
+	 */
+	var $form_data = array();
 
 	/**
 	 * Database engine.
@@ -843,10 +881,20 @@ class Atk14Controller{
 	}
 
 	/**
-	* $create_url = $this->_link_to_action("create_new");
-	* $done_url = $this->_link_to_action("create_new",array("done" => "1"));
-	* $done_url = $this->_link_to_action("create_new",array(),array("connector" => "&"));
-	*/
+	 * Generates url to an action in current controller.
+	 *
+	 * <code>
+	 * $create_url = $this->_link_to_action("create_new");
+	 * $done_url = $this->_link_to_action("create_new",array("done" => "1"));
+	 * $done_url = $this->_link_to_action("create_new",array(),array("connector" => "&"));
+	 * </code>
+	 *
+	 * @param string $action
+	 * @param array $other_params
+	 * @param array $options
+	 *
+	 * @see Atk14::BuildLink() for $other_params and $options description
+	 */
 	function _link_to_action($action,$other_params = array(),$options = array()){
 		$other_params["action"] = $action;
 		return $this->_link_to($other_params,$options);
