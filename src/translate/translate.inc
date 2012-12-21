@@ -51,24 +51,25 @@ class translate{
 	* @param array $options						parametry ovlivnujici prevod znakove sady
 	* @return mixed										string nebo pole (podle typu parametru $text)
 	*/
+	
 	static function trans($text,$from_charset,$to_charset,$options = array()){
-
 		$from_charset = translate::_get_charset_by_name($from_charset);
 		$to_charset = translate::_get_charset_by_name($to_charset);
-
 		if($from_charset==$to_charset){
 			return $text;
 		}
+		return translate::_trans($text,$from_charset,$to_charset,$options);
+	}
 
+	static function _trans($text,$from_charset,$to_charset,$options = array()){
 		if(is_array($text)){
 			$out = array();
-			reset($text);
-			while(list($key,) = each($text)){
+			foreach($text as $key => $value){
 				$_key = $key;
 				if(isset($options["recode_array_keys"]) && $options["recode_array_keys"]){
-					$_key = translate::trans($key,$from_charset,$to_charset);
+					$_key = translate::_trans($key,$from_charset,$to_charset);
 				}
-				$out[$_key] = (is_string($text[$key]) || is_array($text[$key])) ? translate::trans($text[$key],$from_charset,$to_charset) : $text[$key];
+				$out[$_key] = (is_string($text[$key]) || is_array($text[$key])) ? translate::_trans($text[$key],$from_charset,$to_charset) : $text[$key];
 			}
 			return $out;
 		}
@@ -77,7 +78,14 @@ class translate{
 			$text = translate::_remove_utf8_headaches($text);
 		}
 
-		switch($to_charset){
+    if(function_exists('iconv')){
+       $success=true;
+       $out=@iconv($from_charset, $to_charset.'//TRANSLIT', $text) or $success=false;
+       if($out!==false && $success)
+          return $out;
+       }
+    
+    switch($to_charset){
 			case "iso-8859-2":
 				return translate::_TO_iso_8859_2($text,$from_charset);
 				break;
@@ -85,7 +93,7 @@ class translate{
 				return translate::_TO_utf8($text,$from_charset);
 				break;
 			case "windows-1250":
-				return translate::_TO_windows_1250($text,$from_charset);
+			  return translate::_TO_windows_1250($text,$from_charset);
 				break;
 			case "852":
 				return translate::_TO_852($text,$from_charset);
@@ -160,26 +168,62 @@ class translate{
 	* @param string $charset
 	* @return string											unifikovane jmeno znakoveho kodovani v ramci teto tridy
 	*/
-	static function _get_charset_by_name($charset){
-		$charset = strtolower(trim($charset));
-		$tr = array(
-			"iso-8859-2" => array('8859_2','iso8859-2','iso_8859-2:1987','latin2','latin-2','lat2','lat-2','il2'),
-			"iso-8859-1" => array('8859_1','iso8859-1','iso_8859-1:1987','latin1','latin-1','lat1','lat-1','il1'),
-			"windows-1250" => array('cp-1250','cp1250','windows1250','win-1250','win1250','1250'),
-			"windows-1252" => array('cp-1252','cp1252','windows1252','win-1252','win1252','1252'),
-			"koi8" => array('cskoi8r','koi-8'),
-			"ascii" => array('us-ascii','usascii'),
-			"utf8" => array('utf-8'),
-			"utf16" => array('utf-16'),
-			"HTML entities" => array("html entities"),
-			"852" => array('cp-852','cp852','ibm-852','ibm852')
-		);	
-		reset($tr);
-		while(list($key,) = each($tr)){
-			if(in_array($charset,$tr[$key])){
-				return $key;
-			}
-		}
+	function _get_charset_by_name($charset){
+        static $trans=array( 	  
+              "8859_2" => "iso-8859-2",
+              "iso8859-2" => "iso-8859-2",
+              "iso_8859-2:1987" => "iso-8859-2",
+              "latin2" => "iso-8859-2",
+              "latin-2" => "iso-8859-2",
+              "lat2" => "iso-8859-2",
+              "lat-2" => "iso-8859-2",
+              "il2" => "iso-8859-2",
+              
+              "8859_1" => "iso-8859-1",
+              "iso8859-1" => "iso-8859-1",
+              "iso_8859-1:1987" => "iso-8859-1",
+              "latin1" => "iso-8859-1",
+              "latin-1" => "iso-8859-1",
+              "lat1" => "iso-8859-1",
+              "lat-1" => "iso-8859-1",
+              "il1" => "iso-8859-1",
+              
+              "cp-1250" => "windows-1250",
+              "cp1250" => "windows-1250",
+              "windows1250" => "windows-1250",
+              "win-1250" => "windows-1250",
+              "win1250" => "windows-1250",
+              "1250" => "windows-1250",
+              
+              "cp-1252" => "windows-1252",
+              "cp1252" => "windows-1252",
+              "windows1252" => "windows-1252",
+              "win-1252" => "windows-1252",
+              "win1252" => "windows-1252",
+              "1252" => "windows-1252",
+              
+              "cskoi8r" => "koi8",
+              "koi-8" => "koi8",
+
+              "us-ascii" => "ascii",
+              "usascii" => "ascii",
+              
+              "utf-8" => "utf8",
+              
+              "utf-16" => "utf16",
+              
+              "html entities" => "HTML entities",
+              
+              "cp-852" => "852",
+              "cp852" => "852",
+              
+              "ibm-852" => "852",
+              "ibm852" => "852",
+              );
+	  
+	  $charset=strtolower(trim($charset));
+	  if(array_key_exists($charset,$trans))
+	      return $trans[$charset];
 		return $charset;
 	}
 
@@ -438,7 +482,7 @@ class translate{
 				return strtr($text,array(chr(160)=>chr(194).chr(160),chr(161)=>chr(194).chr(161),chr(162)=>chr(194).chr(162),chr(163)=>chr(194).chr(163),chr(164)=>chr(194).chr(164),chr(165)=>chr(194).chr(165),chr(166)=>chr(194).chr(166),chr(167)=>chr(194).chr(167),chr(168)=>chr(194).chr(168),chr(169)=>chr(194).chr(169),chr(170)=>chr(194).chr(170),chr(171)=>chr(194).chr(171),chr(172)=>chr(194).chr(172),chr(173)=>chr(194).chr(173),chr(174)=>chr(194).chr(174),chr(175)=>chr(194).chr(175),chr(176)=>chr(194).chr(176),chr(177)=>chr(194).chr(177),chr(178)=>chr(194).chr(178),chr(179)=>chr(194).chr(179),chr(180)=>chr(194).chr(180),chr(181)=>chr(194).chr(181),chr(182)=>chr(194).chr(182),chr(183)=>chr(194).chr(183),chr(184)=>chr(194).chr(184),chr(186)=>chr(194).chr(186),chr(187)=>chr(194).chr(187),chr(188)=>chr(194).chr(188),chr(189)=>chr(194).chr(189),chr(190)=>chr(194).chr(190),chr(191)=>chr(194).chr(191),chr(192)=>chr(195).chr(128),chr(193)=>chr(195).chr(129),chr(194)=>chr(195).chr(130),chr(195)=>chr(195).chr(131),chr(196)=>chr(195).chr(132),chr(197)=>chr(195).chr(133),chr(198)=>chr(195).chr(134),chr(199)=>chr(195).chr(135),chr(200)=>chr(195).chr(136),chr(201)=>chr(195).chr(137),chr(202)=>chr(195).chr(138),chr(203)=>chr(195).chr(139),chr(204)=>chr(195).chr(140),chr(205)=>chr(195).chr(141),chr(206)=>chr(195).chr(142),chr(207)=>chr(195).chr(143),chr(208)=>chr(195).chr(144),chr(209)=>chr(195).chr(145),chr(210)=>chr(195).chr(146),chr(211)=>chr(195).chr(147),chr(212)=>chr(195).chr(148),chr(213)=>chr(195).chr(149),chr(214)=>chr(195).chr(150),chr(215)=>chr(195).chr(151),chr(216)=>chr(195).chr(152),chr(217)=>chr(195).chr(153),chr(218)=>chr(195).chr(154),chr(219)=>chr(195).chr(155),chr(220)=>chr(195).chr(156),chr(221)=>chr(195).chr(157),chr(222)=>chr(195).chr(158),chr(223)=>chr(195).chr(159),chr(224)=>chr(195).chr(160),chr(225)=>chr(195).chr(161),chr(226)=>chr(195).chr(162),chr(227)=>chr(195).chr(163),chr(228)=>chr(195).chr(164),chr(229)=>chr(195).chr(165),chr(230)=>chr(195).chr(166),chr(231)=>chr(195).chr(167),chr(232)=>chr(195).chr(168),chr(233)=>chr(195).chr(169),chr(234)=>chr(195).chr(170),chr(235)=>chr(195).chr(171),chr(236)=>chr(195).chr(172),chr(237)=>chr(195).chr(173),chr(238)=>chr(195).chr(174),chr(239)=>chr(195).chr(175),chr(240)=>chr(195).chr(176),chr(241)=>chr(195).chr(177),chr(242)=>chr(195).chr(178),chr(243)=>chr(195).chr(179),chr(244)=>chr(195).chr(180),chr(245)=>chr(195).chr(181),chr(246)=>chr(195).chr(182),chr(247)=>chr(195).chr(183),chr(248)=>chr(195).chr(184),chr(249)=>chr(195).chr(185),chr(250)=>chr(195).chr(186),chr(251)=>chr(195).chr(187),chr(252)=>chr(195).chr(188),chr(253)=>chr(195).chr(189),chr(254)=>chr(195).chr(190),chr(255)=>chr(195).chr(191)));
 				break;
 			case "windows-1250":
-				return strtr($text,array(chr(130)=>chr(39),chr(132)=>chr(34),chr(133)=>chr(46).chr(46).chr(46),chr(134)=>chr(124),chr(135)=>chr(124),chr(137)=>chr(111).chr(47).chr(111).chr(111),chr(138)=>chr(197).chr(160),chr(139)=>chr(60),chr(140)=>chr(197).chr(154),chr(141)=>chr(197).chr(164),chr(142)=>chr(197).chr(189),chr(143)=>chr(197).chr(185),chr(145)=>chr(96),chr(146)=>chr(39),chr(147)=>chr(34),chr(148)=>chr(34),chr(149)=>chr(42),chr(150)=>chr(45).chr(45),chr(151)=>chr(45).chr(45).chr(45),chr(153)=>chr(40).chr(84).chr(77).chr(41),chr(154)=>chr(197).chr(161),chr(155)=>chr(62),chr(156)=>chr(197).chr(155),chr(157)=>chr(197).chr(165),chr(158)=>chr(197).chr(190),chr(159)=>chr(197).chr(186),chr(160)=>chr(194).chr(160),chr(161)=>chr(203).chr(135),chr(162)=>chr(203).chr(152),chr(163)=>chr(197).chr(129),chr(164)=>chr(194).chr(164),chr(165)=>chr(196).chr(132),chr(166)=>chr(194).chr(166),chr(167)=>chr(194).chr(167),chr(168)=>chr(194).chr(168),chr(169)=>chr(194).chr(169),chr(170)=>chr(197).chr(158),chr(171)=>chr(194).chr(171),chr(172)=>chr(194).chr(172),chr(173)=>chr(194).chr(173),chr(174)=>chr(194).chr(174),chr(175)=>chr(197).chr(187),chr(176)=>chr(194).chr(176),chr(177)=>chr(194).chr(177),chr(178)=>chr(203).chr(155),chr(179)=>chr(197).chr(130),chr(180)=>chr(194).chr(180),chr(181)=>chr(194).chr(181),chr(183)=>chr(203).chr(153),chr(184)=>chr(194).chr(184),chr(185)=>chr(196).chr(133),chr(186)=>chr(197).chr(159),chr(187)=>chr(194).chr(187),chr(188)=>chr(196).chr(189),chr(189)=>chr(203).chr(157),chr(190)=>chr(196).chr(190),chr(191)=>chr(197).chr(188),chr(192)=>chr(197).chr(148),chr(193)=>chr(195).chr(129),chr(194)=>chr(195).chr(130),chr(195)=>chr(196).chr(130),chr(196)=>chr(195).chr(132),chr(197)=>chr(196).chr(185),chr(198)=>chr(196).chr(134),chr(199)=>chr(195).chr(135),chr(200)=>chr(196).chr(140),chr(201)=>chr(195).chr(137),chr(202)=>chr(196).chr(152),chr(203)=>chr(195).chr(139),chr(204)=>chr(196).chr(154),chr(205)=>chr(195).chr(141),chr(206)=>chr(195).chr(142),chr(207)=>chr(196).chr(142),chr(208)=>chr(195).chr(144),chr(209)=>chr(197).chr(131),chr(210)=>chr(197).chr(135),chr(211)=>chr(195).chr(147),chr(212)=>chr(195).chr(148),chr(213)=>chr(197).chr(144),chr(214)=>chr(195).chr(150),chr(215)=>chr(195).chr(151),chr(216)=>chr(197).chr(152),chr(217)=>chr(197).chr(174),chr(218)=>chr(195).chr(154),chr(219)=>chr(197).chr(176),chr(220)=>chr(195).chr(156),chr(221)=>chr(195).chr(157),chr(222)=>chr(197).chr(162),chr(223)=>chr(195).chr(159),chr(224)=>chr(197).chr(149),chr(225)=>chr(195).chr(161),chr(226)=>chr(195).chr(162),chr(227)=>chr(196).chr(131),chr(228)=>chr(195).chr(164),chr(229)=>chr(196).chr(186),chr(230)=>chr(196).chr(135),chr(231)=>chr(195).chr(167),chr(232)=>chr(196).chr(141),chr(233)=>chr(195).chr(169),chr(234)=>chr(196).chr(153),chr(235)=>chr(195).chr(171),chr(236)=>chr(196).chr(155),chr(237)=>chr(195).chr(173),chr(238)=>chr(195).chr(174),chr(239)=>chr(196).chr(143),chr(240)=>chr(195).chr(176),chr(241)=>chr(197).chr(132),chr(242)=>chr(197).chr(136),chr(243)=>chr(195).chr(179),chr(244)=>chr(195).chr(180),chr(245)=>chr(197).chr(145),chr(246)=>chr(195).chr(182),chr(247)=>chr(195).chr(183),chr(248)=>chr(197).chr(153),chr(249)=>chr(197).chr(175),chr(250)=>chr(195).chr(186),chr(251)=>chr(197).chr(177),chr(252)=>chr(195).chr(188),chr(253)=>chr(195).chr(189),chr(254)=>chr(197).chr(163),chr(255)=>chr(203).chr(153)));
+			  return strtr($text,array(chr(130)=>chr(39),chr(132)=>chr(34),chr(133)=>chr(46).chr(46).chr(46),chr(134)=>chr(124),chr(135)=>chr(124),chr(137)=>chr(111).chr(47).chr(111).chr(111),chr(138)=>chr(197).chr(160),chr(139)=>chr(60),chr(140)=>chr(197).chr(154),chr(141)=>chr(197).chr(164),chr(142)=>chr(197).chr(189),chr(143)=>chr(197).chr(185),chr(145)=>chr(96),chr(146)=>chr(39),chr(147)=>chr(34),chr(148)=>chr(34),chr(149)=>chr(42),chr(150)=>chr(45).chr(45),chr(151)=>chr(45).chr(45).chr(45),chr(153)=>chr(40).chr(84).chr(77).chr(41),chr(154)=>chr(197).chr(161),chr(155)=>chr(62),chr(156)=>chr(197).chr(155),chr(157)=>chr(197).chr(165),chr(158)=>chr(197).chr(190),chr(159)=>chr(197).chr(186),chr(160)=>chr(194).chr(160),chr(161)=>chr(203).chr(135),chr(162)=>chr(203).chr(152),chr(163)=>chr(197).chr(129),chr(164)=>chr(194).chr(164),chr(165)=>chr(196).chr(132),chr(166)=>chr(194).chr(166),chr(167)=>chr(194).chr(167),chr(168)=>chr(194).chr(168),chr(169)=>chr(194).chr(169),chr(170)=>chr(197).chr(158),chr(171)=>chr(194).chr(171),chr(172)=>chr(194).chr(172),chr(173)=>chr(194).chr(173),chr(174)=>chr(194).chr(174),chr(175)=>chr(197).chr(187),chr(176)=>chr(194).chr(176),chr(177)=>chr(194).chr(177),chr(178)=>chr(203).chr(155),chr(179)=>chr(197).chr(130),chr(180)=>chr(194).chr(180),chr(181)=>chr(194).chr(181),chr(183)=>chr(203).chr(153),chr(184)=>chr(194).chr(184),chr(185)=>chr(196).chr(133),chr(186)=>chr(197).chr(159),chr(187)=>chr(194).chr(187),chr(188)=>chr(196).chr(189),chr(189)=>chr(203).chr(157),chr(190)=>chr(196).chr(190),chr(191)=>chr(197).chr(188),chr(192)=>chr(197).chr(148),chr(193)=>chr(195).chr(129),chr(194)=>chr(195).chr(130),chr(195)=>chr(196).chr(130),chr(196)=>chr(195).chr(132),chr(197)=>chr(196).chr(185),chr(198)=>chr(196).chr(134),chr(199)=>chr(195).chr(135),chr(200)=>chr(196).chr(140),chr(201)=>chr(195).chr(137),chr(202)=>chr(196).chr(152),chr(203)=>chr(195).chr(139),chr(204)=>chr(196).chr(154),chr(205)=>chr(195).chr(141),chr(206)=>chr(195).chr(142),chr(207)=>chr(196).chr(142),chr(208)=>chr(195).chr(144),chr(209)=>chr(197).chr(131),chr(210)=>chr(197).chr(135),chr(211)=>chr(195).chr(147),chr(212)=>chr(195).chr(148),chr(213)=>chr(197).chr(144),chr(214)=>chr(195).chr(150),chr(215)=>chr(195).chr(151),chr(216)=>chr(197).chr(152),chr(217)=>chr(197).chr(174),chr(218)=>chr(195).chr(154),chr(219)=>chr(197).chr(176),chr(220)=>chr(195).chr(156),chr(221)=>chr(195).chr(157),chr(222)=>chr(197).chr(162),chr(223)=>chr(195).chr(159),chr(224)=>chr(197).chr(149),chr(225)=>chr(195).chr(161),chr(226)=>chr(195).chr(162),chr(227)=>chr(196).chr(131),chr(228)=>chr(195).chr(164),chr(229)=>chr(196).chr(186),chr(230)=>chr(196).chr(135),chr(231)=>chr(195).chr(167),chr(232)=>chr(196).chr(141),chr(233)=>chr(195).chr(169),chr(234)=>chr(196).chr(153),chr(235)=>chr(195).chr(171),chr(236)=>chr(196).chr(155),chr(237)=>chr(195).chr(173),chr(238)=>chr(195).chr(174),chr(239)=>chr(196).chr(143),chr(240)=>chr(195).chr(176),chr(241)=>chr(197).chr(132),chr(242)=>chr(197).chr(136),chr(243)=>chr(195).chr(179),chr(244)=>chr(195).chr(180),chr(245)=>chr(197).chr(145),chr(246)=>chr(195).chr(182),chr(247)=>chr(195).chr(183),chr(248)=>chr(197).chr(153),chr(249)=>chr(197).chr(175),chr(250)=>chr(195).chr(186),chr(251)=>chr(197).chr(177),chr(252)=>chr(195).chr(188),chr(253)=>chr(195).chr(189),chr(254)=>chr(197).chr(163),chr(255)=>chr(203).chr(153)));
 				break;
 			case "windows-1252":
 				return strtr($text,array(chr(130)=>chr(39),chr(132)=>chr(34),chr(133)=>chr(46).chr(46).chr(46),chr(134)=>chr(124),chr(135)=>chr(124),chr(137)=>chr(111).chr(47).chr(111).chr(111),chr(138)=>chr(197).chr(160),chr(139)=>chr(60),chr(140)=>chr(79).chr(69),chr(145)=>chr(96),chr(146)=>chr(39),chr(147)=>chr(34),chr(148)=>chr(34),chr(149)=>chr(42),chr(150)=>chr(45).chr(45),chr(151)=>chr(45).chr(45).chr(45),chr(152)=>chr(203).chr(157),chr(153)=>chr(40).chr(84).chr(77).chr(41),chr(154)=>chr(197).chr(161),chr(155)=>chr(62),chr(156)=>chr(111).chr(101),chr(159)=>chr(89),chr(160)=>chr(194).chr(160),chr(161)=>chr(194).chr(161),chr(162)=>chr(194).chr(162),chr(163)=>chr(194).chr(163),chr(164)=>chr(194).chr(164),chr(165)=>chr(194).chr(165),chr(166)=>chr(194).chr(166),chr(167)=>chr(194).chr(167),chr(168)=>chr(194).chr(168),chr(169)=>chr(194).chr(169),chr(170)=>chr(194).chr(170),chr(171)=>chr(194).chr(171),chr(172)=>chr(194).chr(172),chr(173)=>chr(194).chr(173),chr(174)=>chr(194).chr(174),chr(175)=>chr(194).chr(175),chr(176)=>chr(194).chr(176),chr(177)=>chr(194).chr(177),chr(178)=>chr(194).chr(178),chr(179)=>chr(194).chr(179),chr(180)=>chr(194).chr(180),chr(181)=>chr(194).chr(181),chr(182)=>chr(194).chr(182),chr(183)=>chr(203).chr(153),chr(184)=>chr(194).chr(184),chr(185)=>chr(194).chr(185),chr(186)=>chr(194).chr(186),chr(187)=>chr(194).chr(187),chr(188)=>chr(194).chr(188),chr(189)=>chr(194).chr(189),chr(190)=>chr(194).chr(190),chr(191)=>chr(194).chr(191),chr(192)=>chr(195).chr(128),chr(193)=>chr(195).chr(129),chr(194)=>chr(195).chr(130),chr(195)=>chr(195).chr(131),chr(196)=>chr(195).chr(132),chr(197)=>chr(195).chr(133),chr(198)=>chr(195).chr(134),chr(199)=>chr(195).chr(135),chr(200)=>chr(195).chr(136),chr(201)=>chr(195).chr(137),chr(202)=>chr(195).chr(138),chr(203)=>chr(195).chr(139),chr(204)=>chr(195).chr(140),chr(205)=>chr(195).chr(141),chr(206)=>chr(195).chr(142),chr(207)=>chr(195).chr(143),chr(208)=>chr(195).chr(144),chr(209)=>chr(195).chr(145),chr(210)=>chr(195).chr(146),chr(211)=>chr(195).chr(147),chr(212)=>chr(195).chr(148),chr(213)=>chr(195).chr(149),chr(214)=>chr(195).chr(150),chr(215)=>chr(195).chr(151),chr(216)=>chr(79),chr(217)=>chr(195).chr(153),chr(218)=>chr(195).chr(154),chr(219)=>chr(195).chr(155),chr(220)=>chr(195).chr(156),chr(221)=>chr(195).chr(157),chr(222)=>chr(195).chr(158),chr(223)=>chr(195).chr(159),chr(224)=>chr(195).chr(160),chr(225)=>chr(195).chr(161),chr(226)=>chr(195).chr(162),chr(227)=>chr(195).chr(163),chr(228)=>chr(195).chr(164),chr(229)=>chr(195).chr(165),chr(230)=>chr(195).chr(166),chr(231)=>chr(195).chr(167),chr(232)=>chr(195).chr(168),chr(233)=>chr(195).chr(169),chr(234)=>chr(195).chr(170),chr(235)=>chr(195).chr(171),chr(236)=>chr(195).chr(172),chr(237)=>chr(195).chr(173),chr(238)=>chr(195).chr(174),chr(239)=>chr(195).chr(175),chr(240)=>chr(195).chr(176),chr(241)=>chr(195).chr(177),chr(242)=>chr(195).chr(178),chr(243)=>chr(195).chr(179),chr(244)=>chr(195).chr(180),chr(245)=>chr(195).chr(181),chr(246)=>chr(195).chr(182),chr(247)=>chr(195).chr(183),chr(248)=>chr(195).chr(184),chr(249)=>chr(195).chr(185),chr(250)=>chr(195).chr(186),chr(251)=>chr(195).chr(187),chr(252)=>chr(195).chr(188),chr(253)=>chr(195).chr(189),chr(254)=>chr(195).chr(190),chr(255)=>chr(195).chr(191)));
