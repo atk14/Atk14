@@ -1,0 +1,2 @@
+<?php
+define("TEST",true);
