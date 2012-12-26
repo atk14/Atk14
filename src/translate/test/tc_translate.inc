@@ -25,7 +25,7 @@ class tc_translate extends tc_base{
 		$this->assertEquals(2,sizeof($ar_iso));
 		reset($ar_iso);
 		while(list($_key,$_value) = each($ar_iso)){
-			$this->assertFalse(translate::check_encoding($_key,"UTF-8")); // v teto chvili uz jsou i klice prekodovane do latin 2
+		  $this->assertFalse(translate::check_encoding($_key,"UTF-8")); // v teto chvili uz jsou i klice prekodovane do latin 2
 			$this->assertFalse(translate::check_encoding($_value,"UTF-8")); 
 			$this->assertEquals(2,strlen($_value));	
 		}
@@ -154,8 +154,120 @@ class tc_translate extends tc_base{
 	}
 
 	function test_utf8_to_ascii(){
-		$str = "Hello".chr(0xC2).chr(0xA0)."world";
-		$this->assertEquals("Hello world",translate::trans($str,"UTF-8","ASCII"));
+		$str = "Hello".chr(0xC2).chr(0xA0)."world český";
+		$this->assertEquals("Hello world cesky",translate::trans($str,"UTF-8","ASCII"));
 	}
 
+	function test_translit_whole()
+	{
+	$text="Příliš žluťoučký kůň úpěl ďábelské ódy! logik@centrum.cz-_' \"Řeže";
+	$charset="utf8";
+	$charsets=array("windows-1250", "latin2", "utf8");
+	foreach($charsets as $c)
+	  {
+	  $t=translate::trans($text, $charset, $c);
+	  foreach($charsets as $c2)
+	    {
+	    $tt=translate::trans($t, $c, $c2);
+	    $tt=translate::trans($tt, $c2, $c);
+	    $this->assertEquals($t, $tt);
+	    }
+	  }
+	
+	//test that this chars results in another char, even if transliterated
+	//to something different
+	$chars="+−–—―-„“‚‘»«…’";
+	for($r=0;$r<mb_strlen($chars, "utf8");$r++)
+	  {
+	  $text=mb_substr($chars,$r,1, "utf8").'a';
+	  foreach($charsets as $c)
+      {
+      $t=translate::trans($text, $charset, $c);
+      foreach($charsets as $c2)
+        {
+        $tt=translate::trans($t, $c, $c2);
+        $tt=translate::trans($tt, $c2, $c);
+        $len=strlen($tt);
+        $this->assertTrue($len > 1 && $tt[$len-1]=='a'); 
+        }
+      }
+    }
+    
+  }
+  
+  function test_error()
+  {
+    //errors handling
+  $text="ŘzŘPříliš žluťoučký kůň úpěl ďábelské ódy! logik@centrum.cz-_' \"Řeže";
+	$charset="utf8";
+	$charsets=array("windows-1250", "latin2", "utf8");
+	foreach($charsets as $c)
+	  {
+	  $t=translate::trans(substr($text,1), $charset, $c);
+	  $d=translate::trans(substr($text,2), $charset, $c);
+	  $len=strlen($d)-1;
+	  $d=substr($d,1);
+	  
+	  foreach($charsets as $c2)
+	    {
+	    $tt=translate::trans($t, $c, $c2);
+	    $tt=translate::trans($tt, $c2, $c);
+	    $this->assertEquals($d, substr($tt,strlen($tt)-$len));
+	    }
+	  }
+	}
+	
+	function translate_online($text, $from, $to)
+	{
+	  // Get the curl session object
+  $session = curl_init('kanjidict.stc.cx/recode.php');
+  // Tell curl to use HTTP POST
+  curl_setopt ($session, CURLOPT_POST, true);
+  // Tell curl that this is the body of the POST
+  $params=array("cco" => 1, "s"=> $text, "inset" => $from, "outset" => $to);
+  curl_setopt ($session, CURLOPT_POSTFIELDS, $params);
+  // Tell curl not to return headers, but do return the response
+  curl_setopt($session, CURLOPT_HEADER, false);
+  curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($session);
+  curl_close($session);
+  return trim($response);
+ }
+	
+ 
+ #some transliterations can be done by more ways: make them equals  
+  function normalize($t)
+  {
+    for($r=0;$r<5;$r++) $t=strtr($t,
+      array(
+        ",," => "\"",
+        "´" => "'",
+        chr(180) => "'", #win1250 apostrof
+        "`" => "'",
+        "\"," => "\"'",
+        "''" => "\"",
+        )
+      );
+    return $t;
+  }
+ 
+  function test_translate_online()
+  {
+  $text="’ŘzŘPříliš žluťoučký kůň úpěl ďábelské ódy! 
+  logik@centrum.cz-_' \"Řeže
+  Není tady žádný <html> tag
+  ani divné znaky
+  +-„“‚‘»«…’
+  teď už jo";
+	$c="utf8";
+	$charsets=array("windows-1250", "latin2", "utf8");
+	foreach($charsets as $c2)
+	    {
+	    $d=$this->normalize($this->translate_online($text,$c, $c2));
+	    $t=$this->normalize(translate::trans($text, $c, $c2));
+	    $this->assertEquals($t, $d);
+	    $this->assertEquals(translate::trans($t, $c2, $c), $this->translate_online($t,$c2, $c));
+	    }
+  }
+	
 }
