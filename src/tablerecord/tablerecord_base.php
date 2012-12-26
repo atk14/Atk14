@@ -481,7 +481,7 @@ class TableRecord_Base extends inobj{
 			unset($options["order_by"]);
 		}
 
-		$options = array(
+		$options += array(
 			"order" => $this->_IdFieldName,
 			"conditions" => array(),
 			"bind_ar" => array(),
@@ -1126,7 +1126,7 @@ class TableRecord_Base extends inobj{
 	 * @param array $values
 	 */
 	function setValuesVirtually($values){
-		$keys = array_keys();
+		$keys = array_keys($this->_RecordValues);
 
 		foreach($values as $_key => $_value){	
 			if(in_array($_key,$keys)){
@@ -1140,7 +1140,12 @@ class TableRecord_Base extends inobj{
 	 *
 	 * Column fields that will be read can be specified by passing $fields.
 	 *
-	 * @param array $fields
+	 * <code>
+	 * $this->_readValues("title");
+	 * $this->_readValues(array("title","create_date"));
+	 * </code>
+	 *
+	 * @param mixed $fields
 	 * @ignore
 	 * @return array
 	 */
