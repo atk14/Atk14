@@ -70,6 +70,16 @@ class Atk14Sorting{
 	/**
 	 * Adds a sorting key which represents a table column by default. You can assign own definition to a key.
 	 *
+	 * <code>
+	 *	// usage
+	 * 	$sorting->add("create_date");
+	 * 	$sorting->add("create_date",array("reverse" => true));
+	 *	//
+	 * 	$sorting->add("title",array("order_by" => "UPPER(title)"));
+	 * 	$sorting->add("title",array("ascending_ordering" => "UPPER(title), id", "descending_ordering" => "UPPER(title) DESC, id DESC"));
+	 * 	$sorting->add("title","UPPER(title), id", "UPPER(title) DESC, id DESC");
+	 * </code>
+	 *
 	 * @param string $key Name of the key which can then be used in a template by {sortable} helper.
 	 * @param array $options Options to customize sorting
 	 * <ul>
@@ -81,11 +91,21 @@ class Atk14Sorting{
 	 * </ul>
 	 *
 	 */
-	function add($key,$options = array()){
+	function add($key,$options_or_asc_ordering = array(), $desc_ordering = null, $options = array()){
+		$asc_ordering = null;
+
+		if(is_array($options_or_asc_ordering)){
+			$options = $options_or_asc_ordering;
+		}
+
+		if(is_string($options_or_asc_ordering)){
+			$asc_ordering = $options_or_asc_ordering;
+		}
+
 		$options = array_merge(array(
 			"order_by" => "$key",
-			"ascending_ordering" => null,
-			"descending_ordering" => null,
+			"ascending_ordering" => $asc_ordering,
+			"descending_ordering" => $desc_ordering,
 			"title" => _("Sort table by this column"),
 			"reverse" => false,
 		),$options);
@@ -143,4 +163,3 @@ class Atk14Sorting{
 		return $this->_Ordering[$key]["title"];
 	}
 }
-?>
