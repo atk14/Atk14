@@ -278,7 +278,15 @@ class TcTableRecord extends TcBase{
 		$id1 = $record1->getId();
 		$id2 = $record2->getId();
 
+		// int[]
 		$records = TestTable::GetInstanceById(array($id2,$id1));
+		$this->assertType("array",$records);
+		$this->assertEquals(2,sizeof($records));
+		$this->assertEquals($id2,$records[0]->getId());
+		$this->assertEquals($id1,$records[1]->getId());
+
+		// obj[]
+		$records = TestTable::GetInstanceById(array($record2,$record1));
 		$this->assertType("array",$records);
 		$this->assertEquals(2,sizeof($records));
 		$this->assertEquals($id2,$records[0]->getId());
