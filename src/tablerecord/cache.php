@@ -71,7 +71,7 @@ class Cache{
 		$this->_Prepare = array();
 	}
 
-	function _Deobjectilize($id){
+	static function _Deobjectilize($id){
 		if(is_array($id)){
 			foreach($id as &$v){
 				if(is_object($v)){ $v = $v->getId(); }
