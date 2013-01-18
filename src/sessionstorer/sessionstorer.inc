@@ -561,14 +561,14 @@ class SessionStorer{
 		if($value==""){
 			// when it`s about to delete a cookie, 2 setcookie() calls are realized -
 			// this one is just for sure that the cookie will be deleted
-			setcookie(
+			$this->__setCookie(
 				$name,
 				$value,
 				$time,
 				$this->_getWebDocumentRoot()
 			);
 		}
-		return setcookie(
+		return $this->__setCookie(
 			$name,
 			$value,
 			$time,
@@ -577,6 +577,13 @@ class SessionStorer{
 			false, // secure
 			true // http only
 		);
+	}
+
+	function __setCookie($name , $value, $expire, $path , $domain = null, $secure = false, $httponly = false){
+		if(defined("TEST") && TEST){
+			return @setcookie($name , $value, $expire, $path , $domain, $secure, $httponly);
+		}
+		return setcookie($name , $value, $expire, $path , $domain, $secure, $httponly);
 	}
 
 	/**
