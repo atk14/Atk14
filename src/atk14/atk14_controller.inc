@@ -295,7 +295,7 @@ class Atk14Controller{
 		$this->logger = &$GLOBALS["ATK14_LOGGER"];
 		$this->flash = &Atk14Flash::GetInstance();
 
-		$this->session = $this->_get_session();
+		$this->session = $this->_get_session(); // TODO: to be removed
 		$this->cookies_enabled = is_object($this->session) && $this->session->cookiesEnabled();
 
 		$this->sorting = new Atk14Sorting($this->params);
@@ -682,6 +682,8 @@ class Atk14Controller{
 	 * 
 	 * In same cases there is not suitable to instantiate a session storer object,
 	 * so this is possible to cover this method.
+	 *
+	 * @todo to be removed
 	 */
 	function &_get_session(){
 		return Atk14Session::GetInstance();

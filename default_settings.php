@@ -27,12 +27,13 @@ __defaults__(array(
 	"ATK14_DEFAULT_LANG" => "auto", // "en", "cs"... when it is "auto", the default lang will be determined by config/locale.yml
 
 	"ATK14_USE_SMARTY3" => true,
+	"ATK14_SMARTY_DEFAULT_MODIFIER" => '', // 'h' is a goog one, see http://www.smarty.net/docs/en/variable.default.modifiers.tpl
 
 	// By default ATK14 is able to redirect transparently from an old URL form to a new URL form.
 	// This helps to keep every page on it's current URL form.
 	//
-	// Also you can disable redirecting only in a particular namespace (e.g. admin) by setting the following constant
-	//  define("ATK14_ENABLE_AUTO_REDIRECTING_IN_ADMIN",false);
+	// Also you can disable redirecting only in a particular namespace (e.g. api) by setting the following constant
+	//  define("ATK14_ENABLE_AUTO_REDIRECTING_IN_API",false);
 	"ATK14_ENABLE_AUTO_REDIRECTING" => true,
 ));
 

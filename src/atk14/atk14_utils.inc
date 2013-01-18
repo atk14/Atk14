@@ -344,6 +344,10 @@ class Atk14Utils{
 
 		$smarty->registerFilter('pre','atk14_smarty_prefilter');
 
+		if(defined("ATK14_SMARTY_DEFAULT_MODIFIER") && ATK14_SMARTY_DEFAULT_MODIFIER){
+			$smarty->default_modifiers[] = ATK14_SMARTY_DEFAULT_MODIFIER;
+		}
+
 		return $smarty;
 	}
 
