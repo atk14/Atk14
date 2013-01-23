@@ -110,3 +110,10 @@ ul.radios, ul.checkboxes{
 	padding: 0.25em;
 }
 
+footer {
+	color: #999999;
+}
+
+footer a {
+	color: #3399FF;
+}
