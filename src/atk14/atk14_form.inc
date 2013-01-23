@@ -726,7 +726,7 @@ class Atk14Form extends Form
 	function _get_attrs(){
 		$out = "";
 		foreach($this->atk14_attrs as $key => $value){
-			$out .= ' '.htmlspecialchars($key).'="'.htmlspecialchars($value).'"';
+			$out .= ' '.h($key).'="'.h($value).'"';
 		}
 		return $out;
 	}
@@ -746,7 +746,7 @@ class Atk14Form extends Form
 			reset($this->atk14_hidden_fields);
 			while(list($_key,$_value) = each($this->atk14_hidden_fields))
 			{
-				$out[] = "<input type=\"hidden\" name=\"".htmlspecialchars($_key)."\" value=\"".htmlspecialchars($_value)."\" />";
+				$out[] = "<input type=\"hidden\" name=\"".h($_key)."\" value=\"".h($_value)."\" />";
 			}
 			$out[] = "</div>";
 		}

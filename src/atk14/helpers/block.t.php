@@ -107,7 +107,7 @@ function smarty_block_t($params, $text, $template, &$repeat)
 	}
 
 	if (!isset($escape) || $escape == 'html') { // html escape, default
-	   $text = nl2br(htmlspecialchars($text));
+	   $text = nl2br(h($text));
    } elseif (isset($escape)) {
 		switch ($escape) {
 			case 'javascript':

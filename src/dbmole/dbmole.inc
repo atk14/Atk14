@@ -208,12 +208,6 @@ class DbMole{
 				"time" => $current_query_time
 			);
 			$counter++;
-			/*
-			$out[] = "<h3>".sizeof($itms)."&times; (".$this->_formatSeconds($current_query_time)."s)</h3>";
-			$out[] = "<pre>";
-			$out[] = htmlspecialchars(str_replace("\t","  ",$q));
-			$out[] = "</pre>";
-			*/
 		}
 
 		krsort($ar,SORT_NUMERIC);
@@ -227,7 +221,7 @@ class DbMole{
 			$time_per_single_query = $this->_formatSeconds($item["time"]/$item["count"])."s";
 			$out[] = "<h3>$item[count]&times; ($percent%, $item[count]&times;$time_per_single_query=".$this->_formatSeconds($item["time"])."s)</h3>";
 			$out[] = "<pre>";
-			$out[] = htmlspecialchars(str_replace("\t","  ",$item["query"]));
+			$out[] = h(str_replace("\t","  ",$item["query"]));
 			$out[] = "</pre>";
 		}
 		$out[] = "</div>";
