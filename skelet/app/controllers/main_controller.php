@@ -8,6 +8,6 @@ class MainController extends ApplicationController{
 	 * See default layout: app/layouts/_default.tpl
 	 */
 	function index(){
-		$this->page_title = _("Welcome!");	
+		$this->page_title = _("Welcome!");
 	}
 }

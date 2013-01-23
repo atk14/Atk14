@@ -27,7 +27,7 @@ __defaults__(array(
 	"ATK14_DEFAULT_LANG" => "auto", // "en", "cs"... when it is "auto", the default lang will be determined by config/locale.yml
 
 	"ATK14_USE_SMARTY3" => true,
-	"ATK14_SMARTY_DEFAULT_MODIFIER" => '', // 'h' is a goog one, see http://www.smarty.net/docs/en/variable.default.modifiers.tpl
+	"ATK14_SMARTY_DEFAULT_MODIFIER" => 'h', // 'h' is a goog one, see http://www.smarty.net/docs/en/variable.default.modifiers.tpl
 
 	// By default ATK14 is able to redirect transparently from an old URL form to a new URL form.
 	// This helps to keep every page on it's current URL form.

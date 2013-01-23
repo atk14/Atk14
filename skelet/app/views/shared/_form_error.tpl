@@ -27,7 +27,7 @@
 					{* if there is only one error *}
 					{assign var=errors value=$form->non_field_errors()}
 					<p class="error">
-						<em>{$errors.0}</em>
+						<em>{$errors.0 nofilter}</em>
 					</p>
 				{/if}
 		{elseif !$small_form}
