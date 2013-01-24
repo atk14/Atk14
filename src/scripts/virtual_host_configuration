@@ -3,9 +3,8 @@
 cd `dirname $0` # /home/joe/webapps/myapp/scripts
 cd ..           # /home/joe/webapps/myapp
 
-PWD=`pwd`                                       # /home/joe/webapps/myapp
-APPNAME=`basename "$PWD" | tr "[A-Z]" "[a-z]"`  # myapp
-HOSTNAME="$APPNAME.localhost"                   # myapp.localhost
+PWD=`pwd`                                            # /home/joe/webapps/myapp
+HOSTNAME="`./scripts/dump_settings ATK14_HTTP_HOST`" # myapp.localhost
 FORCE=
 
 while [ -n "$1" ] ; do
@@ -17,13 +16,13 @@ while [ -n "$1" ] ; do
 done
 
 APACHE_CONF_DIR=
-APACHE_CONF_FILENAME="$APPNAME.localhost" # ??? Matyas pridaval ".conf"
+APACHE_CONF_FILENAME="$HOSTNAME" # myapp.localhost
 
 APACHE_CONF=`cat <<EOF
   <VirtualHost *:80>
-   DocumentRoot $PWD
+   DocumentRoot "$PWD"
    ServerName $HOSTNAME
-   <Directory $PWD>
+   <Directory "$PWD">
     Options FollowSymLinks
     AllowOverride All
     Order deny,allow
