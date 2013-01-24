@@ -41,18 +41,13 @@ function smarty_function_link_to($params,$template){
 		"with_hostname" => false,
 		"ssl" => null,
 	);
-	reset($options);
-	while(list($_key,$_value) = each($options)){
-		if(isset($params["_$_key"])){
-			$options[$_key] = $params["_$_key"];
-		}
-		unset($params["_$_key"]);
-	}
+	Atk14Utils::ExtractAttributes($params,$options);
 
+	/*
 	if(!isset($params["action"]) && !isset($params["controller"])){ $params["action"] = $smarty->getTemplateVars("action"); }
 	if(!isset($params["controller"])){ $params["controller"] = $smarty->getTemplateVars("controller"); }
 	if(!isset($params["action"])){ $params["action"] = "index"; }
-	if(!isset($params["lang"])){ $params["lang"] = $smarty->getTemplateVars("lang"); }
+	if(!isset($params["lang"])){ $params["lang"] = $smarty->getTemplateVars("lang"); }*/
 
 	$url = Atk14Url::BuildLink($params,$options);
 

@@ -201,12 +201,7 @@ class Atk14Utils{
 		if(!isset($_params["action"])){ $_params["action"] = "index"; }
 		if(!isset($_params["lang"])){ $_params["lang"] = $smarty->getTemplateVars("lang"); }
 
-		// shortcut to define both controller and action through the action only
-		// action=books/detail -> controller=books, action=detail 
-		if(preg_match('/(.+)\/(.+)/',$_params["action"],$matches)){
-			$_params["controller"] = $matches[1];
-			$_params["action"] = $matches[2];
-		}
+		Atk14Utils::_CorrectActionForUrl($params);
 
 		return Atk14Url::BuildLink($_params,$options);
 	}
@@ -410,6 +405,18 @@ class Atk14Utils{
 			}
 		}
 		return $out;
+	}
+
+	/**
+	 * @ignore
+	 */ 
+	static function _CorrectActionForUrl(&$params){
+		// shortcut to define both controller and action through the action only
+		// action="books/detail" -> controller="books", action="detail"
+		if(preg_match('/(.+)\/(.+)/',$params["action"],$matches)){
+			$params["controller"] = $matches[1];
+			$params["action"] = $matches[2];
+		}
 	}
 }
 
