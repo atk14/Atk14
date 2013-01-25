@@ -100,6 +100,28 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals($this->_lorem_ipsum(),$row["text"]);
 	}
 
+	function test_error_handlers(){
+		$dbmole = PgMole::GetInstance();
+		$dbmole_archive = PgMole::GetInstance("archive");
+		$dbmole_session = PgMole::GetInstance("session");
+
+		$this->assertEquals("dbmole_error_handler",$dbmole->getErrorHandler());
+		$this->assertEquals("dbmole_error_handler",$dbmole_archive->getErrorHandler());
+		$this->assertEquals("dbmole_error_handler",$dbmole_session->getErrorHandler());
+
+		$dbmole_session->setErrorHandler("session_error_handler");
+
+		$this->assertEquals("dbmole_error_handler",$dbmole->getErrorHandler());
+		$this->assertEquals("dbmole_error_handler",$dbmole_archive->getErrorHandler());
+		$this->assertEquals("session_error_handler",$dbmole_session->getErrorHandler());
+
+		$dm = PgMole::GetInstance();
+		$this->assertEquals("session_error_handler",$dbmole_session->getErrorHandler());
+
+		$oracle = OracleMole::GetInstance("session");
+		$this->assertEquals("dbmole_error_handler",$oracle->getErrorHandler());
+	}
+
 	function _test_common_behaviour(&$dbmole){
 		$this->assertTrue($dbmole->doQuery("DELETE FROM test_table"));
 

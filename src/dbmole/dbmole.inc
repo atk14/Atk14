@@ -64,6 +64,12 @@ class DbMole{
 	 */
 	var $_ErrorRaised = false;
 
+	/**
+	 * Name of error handling function.
+	 * @access private
+	 */
+	var $_ErrorHandler = "";
+
 
 	/**
 	 * @access private
@@ -152,13 +158,15 @@ class DbMole{
 	}
 
 	/**
+	 * Needs to be covered by a descendant.
+	 *
 	 * @access private
 	 */
 	function _getDatabaseName(){ }
 
 	/**
-	 * Registers name of function that will be called whenever execution of SQL command fails.
-	 * Instance of a DbMole object (or its descendant) will be passed to the function as parameter.
+	 * Registers a global function that will be called whenever execution of SQL command fails within any $dbmole.
+	 * Instance of a DbMole will be passed to the function as parameter.
 	 *
 	 * Returns name of error handler registered with the last call of this method.
 	 *
@@ -170,11 +178,16 @@ class DbMole{
 	 * Common handler example
 	 * <code>
 	 * function dbmole_error_handler($dbmole){
-	 *   echo "drahy uzivateli, bohuzel doslo k chybe";
+	 *   echo "Dear visitor, unfortunately an internal error occured";
 	 *	 $dbmole->sendErrorReportToEmail("admin@test.cz");
 	 *	 $dbmole->logErrorReport();
 	 *	 exit;
 	 * }	
+	 * </code>
+	 *
+	 * You can also specify an error handler to a certain $dbmole:
+	 * <code>
+	 *	$dbmole->setErrorHandler($function_name);
 	 * </code>
 	 *
 	 * @param string $function_name
@@ -182,6 +195,30 @@ class DbMole{
 	 */
 	static function RegisterErrorHandler($function_name){
 		return DbMole::_GetSetErrorHandlerFunction($function_name,true);
+	}
+
+	/**
+	 * Registers an error handler function to a given DbMole instance.
+	 *
+	 * <code>
+	 *	$dbmole = PgMole::GetInstance();
+	 *	$dbmole_session = PgMole::GetInstance("session");
+	 *	$dbmole_archive = PgMole::GetInstance("archive");
+	 *
+	 * 	DbMole::RegisterErrorHandler("default_error_handler");
+	 * 	$dbmole_session->setErrorHandler("session_error_handler");
+	 * </code>
+	 */ 
+	function setErrorHandler($function_name){
+		$this->_ErrorHandler = $function_name;
+	}
+
+	/**
+	 * Returns the name of error handling function.
+	 */
+	function getErrorHandler(){
+		if($this->_ErrorHandler){ return $this->_ErrorHandler; }
+		return DbMole::_GetSetErrorHandlerFunction();
 	}
 
 	function getStatistics(){
@@ -445,8 +482,6 @@ class DbMole{
 	 * This method is called in case of error.
 	 *
 	 * @access private
-	 * @param string $message_prefix				ie. "OCIParse failed"
-	 *
 	 */
 	function _raiseDBError($message){
     $this->_ErrorMessage = "$message";
@@ -460,7 +495,7 @@ class DbMole{
 		}
 		$this->_ErrorRaised = true;
 
-		$error_handler = DbMole::_GetSetErrorHandlerFunction();
+		$error_handler = $this->getErrorHandler();
 		if(strlen($error_handler)>0){
 			$error_handler($this);
 		}else{
