@@ -102,15 +102,20 @@ class Packer{
 	}
 
 	/**
-	* Rozbali promennou ze zabalene podoby.
-	*
-	* $packed_value = Packer::Pack(array("hello" => "world"));
-	* if(Packer::Unpack($packed_value,$outpout_value)){
-	*		// ok
-	*		print_r($outpout_value);
-	*	}
-	*/
-	function Unpack($packed,&$out){
+	 * Unpack previously packed data.
+	 *
+	 * <code>
+	 * $packed_value = Packer::Pack(array("hello" => "world"));
+	 * if(Packer::Unpack($packed_value,$outpout_value)){
+	 *		// ok
+	 *		print_r($outpout_value);
+	 *	}
+	 * </code>
+	 */
+	function Unpack($packed,&$out,$options = array()){
+		$options += array(
+			"enable_encryption" => PACKER_ENABLE_ENCRYPTION,
+		);
 		settype($packed,"string");
 		$out = null;
 		if(strlen($packed)<=16){
@@ -134,6 +139,9 @@ class Packer{
 		if($prefix==strtoupper($prefix)){
 			$serialized = Packer::_DecryptData($serialized);
 			$prefix = strtolower($prefix);
+		}elseif($options["enable_encryption"]){
+			// encryption is enabled, but there isn't encrypted data
+			return false;
 		}
 		if($prefix=="g"){
 			$serialized = gzuncompress($serialized);
