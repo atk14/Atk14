@@ -1,6 +1,7 @@
 <?php
 !defined("DBMOLE_ORACLE_TRUE") && define("DBMOLE_ORACLE_TRUE","Y");
 !defined("DBMOLE_ORACLE_FALSE") && define("DBMOLE_ORACLE_FALSE","N");
+!defined("DBMOLE_CHECK_BIND_AR_FORMAT") && define("DBMOLE_CHECK_BIND_AR_FORMAT",true);
 
 /**
  * Provides basic functionality with databases.
@@ -964,10 +965,12 @@ class DbMole{
 		$this->_BindAr = $bind_ar;
 		$this->_Options = $options;
 
-		foreach($bind_ar as $k => &$v){
-			if(!preg_match('/^:.*/',$k)){
-				$this->_raiseDBError("there is a suspicious key in bind_ar: \"$k\"");
-				return;
+		if(DBMOLE_CHECK_BIND_AR_FORMAT){
+			foreach($bind_ar as $k => &$v){
+				if(!preg_match('/^:.*/',$k)){
+					$this->_raiseDBError("there is a suspicious key in bind_ar: \"$k\"");
+					return;
+				}
 			}
 		}
 
