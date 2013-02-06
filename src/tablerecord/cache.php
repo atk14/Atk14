@@ -20,6 +20,7 @@ class Cache{
 	}
 
 	static function Prepare($class,$ids){
+		$ids = Cache::_Deobjectilize($ids);
 		$class = strtolower($class);
 		$c = &Cache::GetInstance();
 		!is_array($ids) && ($ids = array($ids));
@@ -33,6 +34,7 @@ class Cache{
 	}
 
 	static function Get($class,$ids){
+		$ids = Cache::_Deobjectilize($ids);
 		$class = strtolower($class);
 		Cache::Prepare($class,$ids);
 		$c = &Cache::GetInstance();
@@ -49,6 +51,7 @@ class Cache{
 	}
 
 	static function Clear($class = null,$id = null){
+		$id = Cache::_Deobjectilize($id);
 		$c = &Cache::GetInstance();
 		if(isset($class)){
 			$class = strtolower($class);
@@ -66,5 +69,16 @@ class Cache{
 			}
 		}
 		$this->_Prepare = array();
+	}
+
+	static function _Deobjectilize($id){
+		if(is_array($id)){
+			foreach($id as &$v){
+				if(is_object($v)){ $v = $v->getId(); }
+			}
+			return $id;
+		}
+		if(is_object($id)){ $id = $id->getId(); }
+		return $id;
 	}
 }

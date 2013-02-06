@@ -1,1 +1,1 @@
-<li>{$error}</li>
+<li>{$error nofilter}</li>

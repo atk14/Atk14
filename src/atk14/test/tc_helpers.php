@@ -33,7 +33,19 @@ class TcHelpers extends TcBase{
 	function test_a(){
 		$out = $this->_run_action("helpers/a");
 		$this->assertContains('<a href="/en/books/">List Books</a>',$out);
-		$this->assertContains('<a href="/en/books/detail/?id=123">Book#123</a>',$out);
-		$this->assertContains('<a href="/en/books/detail/?id=456">Book#456</a>',$out);
+		$this->assertContains('<a title="Book info" href="/en/books/detail/?id=123">Book#123</a>',$out);
+		$this->assertContains('<a href="/en/books/detail/?id=456#detail">Book#456</a>',$out);
+	}
+
+	function test_link_to(){
+		// prerequirement
+		global $ATK14_GLOBAL;
+		$ATK14_GLOBAL->setValue("lang","en");
+		$this->assertEquals("cs",$ATK14_GLOBAL->getDefaultLang());
+		$this->assertEquals("en",$ATK14_GLOBAL->getLang());
+
+		$out = $this->_run_action("helpers/link_to");
+		$this->assertContains('Book#1200 URL: http://www.testing.cz/en/books/detail/?id=1200&amp;format=xml',$out);
+		$this->assertContains('Kniha#600 URL: https://www.testing.cz/cs/books/detail/?id=600#detail',$out);
 	}
 }

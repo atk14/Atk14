@@ -73,7 +73,7 @@ function pretty_name($name)
  */
 function forms_htmlspecialchars($string)
 {
-    return htmlspecialchars($string, ENT_COMPAT);
+    return h($string, ENT_COMPAT);
 
     // puvodne tady byla tato verze.
     // to ale zlobilo na webech, ktere nebezi v UTF-8...

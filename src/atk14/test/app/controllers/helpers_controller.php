@@ -21,6 +21,9 @@ class HelpersController extends ApplicationController{
 		$this->lang = "en";
 	}
 
+	function link_to(){
+	}
+
 	function _before_filter(){
 		$this->render_layout = false;
 	}

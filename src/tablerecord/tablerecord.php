@@ -94,21 +94,20 @@ class TableRecord extends TableRecord_Base{
 	 * @ignore
 	 */
 	function _setRecordValues($row){
-
+	  
 		// pretypovani hodnot hodnot...
 		foreach($row as $_key => $_value){
-
 			if($_value===null){
 				// hodnota je NULL, nemusime nic typovat
 
 			}elseif(preg_match("/^(numeric|double precision)/",$this->_TableStructure[$_key])){
-				settype($_value,"float");
+				$_value=(float) $_value;
 
 			}elseif(preg_match("/^integer/",$this->_TableStructure[$_key])){
 				$_real = $_value;
 				#in 32 system integer can overflow, but float can be sufficient 
-				settype($_real,"float");
-				settype($_value,"integer");
+				 $_real=(float) $_real;
+				 $_value=(int) $_value;
 				if($_value!=$_real){
 					$_value = $_real;
 				}

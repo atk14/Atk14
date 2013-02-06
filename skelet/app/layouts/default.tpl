@@ -15,8 +15,8 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>{$page_title|h} | {"ATK14_APPLICATION_NAME"|dump_constant}</title>
-		<meta name="description" content="{$page_description|h}" />
+		<title>{$page_title} | {"ATK14_APPLICATION_NAME"|dump_constant}</title>
+		<meta name="description" content="{$page_description}" />
 		{render partial="shared/layout/dev_info"}
 
 		<meta name="viewport" content="width=device-width,initial-scale=1">
@@ -47,11 +47,15 @@
 			</div>
 
 			<footer>
+				<hr />
+				{t escape=no}This site runs on <a href="http://www.atk14.net/">ATK14 Framework</a>, for now and ever after{/t}
 			</footer>
 		</div>
 
+
+
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="{$public|h}javascripts/libs/jquery/jquery-1.7.1.min.js"><\/script>')</script>
+		<script>window.jQuery || document.write('<script src="{$public}javascripts/libs/jquery/jquery-1.7.1.min.js"><\/script>')</script>
 		{javascript_script_tag file="atk14.js"}
 		{javascript_script_tag file="application.js"}
 		{placeholder for=js_script_tags}

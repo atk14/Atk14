@@ -112,12 +112,12 @@ class TableRecord_Base extends inobj{
 
 		$this->_TableName = (string)$table_name;
 
-		$options = array_merge(array(
+		$options +=  array(
 			"do_not_read_values" => array(),
 			"id_field_name" => "id",
 			"id_field_type" => "integer",
 			"sequence_name" => $this->_DetermineSequenceName(),
-		),$options);
+		);
 
 		$this->_SequenceName = $options["sequence_name"];
 		$this->_IdFieldName = $options["id_field_name"];
@@ -326,10 +326,10 @@ class TableRecord_Base extends inobj{
 		$guessed_class_name = str_replace("_","",$object);
 		if(class_exists("inobj_$guessed_class_name")){ $guessed_class_name = "inobj_$guessed_class_name"; }
 
-		$options = array_merge(array(
+		$options += array(
 			"class_name" => $guessed_class_name,
 			"attribute_name" => $str->underscore()."_id",
-		),$options);
+		);
 
 		$class_name = $options["class_name"];
 		$attribute_name = $options["attribute_name"];
@@ -481,7 +481,7 @@ class TableRecord_Base extends inobj{
 			unset($options["order_by"]);
 		}
 
-		$options = array_merge(array(
+		$options += array(
 			"order" => $this->_IdFieldName,
 			"conditions" => array(),
 			"bind_ar" => array(),
@@ -490,7 +490,7 @@ class TableRecord_Base extends inobj{
 
 			"query" => null,
 			"query_count" => null,
-		),$options);
+		);
 
 		$conditions = $options["conditions"];
 		if(is_string($conditions) && strlen($conditions)==0){ $conditions = array(); }
@@ -613,11 +613,11 @@ class TableRecord_Base extends inobj{
 			unset($options["order_by"]);
 		}
 
-		$options = array_merge(array(
+		$options += array(
 			"order" => $this->_IdFieldName,
 			"conditions" => array(),
 			"bind_ar" => array()
-		),$options);
+		);
 
 		$conditions = $options["conditions"];
 		if(is_string($conditions) && strlen($conditions)==0){ $conditions = array(); }
@@ -765,38 +765,37 @@ class TableRecord_Base extends inobj{
 			 $extra_options = $args[0];
 			}
 
-			$options["conditions"] = array_merge($options["conditions"],$conditions);
-			$options["bind_ar"] = array_merge($options["bind_ar"],$bind_ar);
+			$options["conditions"] += $conditions;
+			$options["bind_ar"] += $bind_ar;
 
 		}
 
 		// Article::FindFirst("title","Foo Bar") -> Article::FindFirst(array("conditions" => array("title" => "Foo Bar")));
 		// Article::FindFirst("id",123);
 		// Article::FindFirst("id",null);
-		if(is_string($options) && !is_array($bind_ar)){
-			$options = array(
-				"conditions" => array("$options" => $bind_ar)
-			);
-		}
-
 		if(is_string($options)){
-			$options = array(
-				"conditions" => $options,
-				"bind_ar" => $bind_ar
-			);
+		  if(is_array($bind_ar)){
+		      $options = array(
+		        "conditions" => $options,
+		        "bind_ar" => $bind_ar
+		        );
+		  }else{
+		      $options = array(
+		        "conditions" => array("$options" => $bind_ar)
+		      );
+		  }
 		}
 
 		if(isset($extra_options) && is_array($extra_options)){
-			$options = array_merge($options,$extra_options);
+			$options = $extra_options + $options;
 		}
 
-		$keys = array_keys($options);
 		foreach(array(
 			"condition" => "conditions",
 			"class" => "class_name",
 			"bind" => "bind_ar",
 		) as $alt_key => $right_key){
-			if(in_array($alt_key,$keys)){	
+			if(array_key_exists($alt_key,$options)){	
 				$options[$right_key] = $options[$alt_key];
 				unset($options[$alt_key]);
 			}
@@ -805,7 +804,7 @@ class TableRecord_Base extends inobj{
 		// tady kontrolujeme, ze bind_ar obsahuje vsechny klice zacinajici dvojteckou (:key1, :key2...)
 		// TODO: presunout to nekam do dbmole?
 		if(isset($options["bind_ar"])){
-			foreach(array_keys($options["bind_ar"]) as $key){
+			foreach($options["bind_ar"] as $key => $value){
 				if(!is_string($key) || strlen($key)<1 || $key[0]!=":"){
 					throw new Exception("Insecure bind value: $key");
 				}
@@ -827,55 +826,39 @@ class TableRecord_Base extends inobj{
 	 * @return array
 	 */
 	function _FindByArray($ids,$options = array()){
-		settype($ids,"array");
+		$ids=(array)$ids;
 
-		$options = array_merge(array(
+		$options += array(
 			"omit_nulls" => false
-		),$options);
-
+		);
 		$MAX_ELEMENTS = 200;
 		if(sizeof($ids)>$MAX_ELEMENTS){
-			$out = array();
+		  $out = array();
+		  $parts = array_chunk($MAX_ELEMENTS);
 
-			$part = array();
-			$counter = 0;
-			foreach($ids as $key => $value){	
-				$part[$key] = $value;
-				$counter ++;
-
-				if($counter == $MAX_ELEMENTS){
-					$_out = $this->_FindByArray($part,$options);
-					foreach($_out as $_key => $_value){	
-						$out[$_key] = $_value;
-					}
-					$part = array();
-					$counter = 0;
-				}
+			foreach($parts as $part){	
+					$out = $out + $this->_FindByArray($part,$options);
 			}
-
-			$_out = $this->_FindByArray($part,$options);
-			foreach($_out as $_key => $_value){	
-				$out[$_key] = $_value;
-			}
-
 			return $out;
 		}
 
-		$bind_ar = array();
-
+		
 		$class_name = get_class($this);
 
-		$i = 0;
-		foreach($ids as $_key => $id){	
+		$bind_ar = array();
+		$i=0;
+		foreach($ids as $_key => &$id){	
 			if(is_object($id)){ $id = $id->getId(); }
-			if(!isset($id)){ continue; } // v poli se muze klidne nachazet nejaky null
-			settype($id,$this->_IdFieldType);
-			$bind_ar[":id$i"] = $id;
+			if($id!==null)
+			  {
+			  settype($id,$this->_IdFieldType);
+			  $bind_ar[":id$i"] = $id;
+			  }
 			$i++;
 		}
-
-		$objs = array();
-
+		$ids_flip=array_flip($ids);
+		$out=array_fill_keys(array_keys($ids),null);
+		
 		if(sizeof($bind_ar)>0){
 			$query = "SELECT ".join(",",$this->_fieldsToRead())." FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
 			$rows = $this->_dbmole->selectRows($query,$bind_ar);
@@ -884,23 +867,15 @@ class TableRecord_Base extends inobj{
 				$obj = new $class_name();
 				$obj->_setRecordValues($row);
 				$obj->_Hook_Find();
-				$objs[$obj->getId()] = $obj;
+				$out[$ids_flip[$obj->getId()]] = $obj;
 			}
 		}
-
-		$out = array();
-		foreach($ids as $_key => $_value){	
-			$id = $_value;
-			if(!isset($objs[$id])){
-				if(!$options["omit_nulls"]){ $out[$_key] = null; }
-				continue;
-			}
-			$out[$_key] = &$objs[$id];
-		}
-
+	  if(!$options["omit_nulls"]){
+		   array_filter($out); 
+	  }
 		return $out;
-	}
-
+  }
+  
 	/**
 	 * Returns value of a column/s.
 	 *
@@ -916,15 +891,28 @@ class TableRecord_Base extends inobj{
 	 * @return mixed
 	 */
 	function getValue($field_name){
-		if(is_array($field_name)){
-			$out = array();
-			foreach($field_name as $k => $v){
-				$out[$k] = $this->getValue($v);
-			}
-			return $out;
-		}
-		settype($field_name,"string");
-		if(!in_array($field_name,$this->getKeys())){
+	  if(is_array($field_name))  
+	    {
+			$all_fields=$this->_TableStructure;
+ 			$field_name = array_flip($field_name); // now its in form db field name => required value
+ 			$diff=array_diff_key($field_name, $all_fields);
+ 			$out=array();  
+ 			if($diff)
+ 			  {
+ 			  foreach($diff as $key => $value)
+			    {
+ 			    $out[$key]=null;
+ 			    error_log(get_class($this)."::getValue() accesses non existing field $this->_TableName.$key, returning null");
+ 			    }
+ 			  $field_name=array_intersect_key($field_name, $all_fields);
+ 				}
+ 			$this->_readValueIfWasNotRead($field_name);
+ 			foreach(array_intersect_key($this->_RecordValues, $field_name) as $k => $v)
+ 			  $out[$field_name[$k]]=$v;
+ 		  return $out;
+ 			}
+		$field_name=(string) $field_name;
+		if(!$this->hasKey($field_name)){
 			error_log(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name, returning null");
 			return null;
 		}
@@ -959,9 +947,7 @@ class TableRecord_Base extends inobj{
 	 * @return array
 	 */
 	function getValues($options = array()){
-		$options = array_merge(array(
-			"return_id" => false,
-		),$options);
+	  $options += array("return_id" => false);
 		$this->_readValueIfWasNotRead(array_keys($this->_TableStructure));
 		$out = $this->_RecordValues;
 		if(!$options["return_id"]){
@@ -992,6 +978,9 @@ class TableRecord_Base extends inobj{
 		return array_keys($this->_RecordValues);
 	}
 
+	
+	
+	
 	/**
 	 * Set value in a table column.
 	 *
@@ -1005,13 +994,13 @@ class TableRecord_Base extends inobj{
 	 *																	false -> nenestaveno, doslo k chybe
 	 */
 	function setValue($field_name,$value,$options = array()){
-		settype($field_name,"string");
-		settype($options,"array");
+		$field_name = (string) $field_name;
+		$options = ((array) $options);
 
 		if(isset($options["do_not_escape"]) && $options["do_not_escape"]==true){
-			$options["do_not_escape"] = array("$field_name");
+			$options["do_not_escape"] = array($field_name);
 		}else{
-			unset($options["do_not_escape"]);
+			$options["do_not_escape"] = array();
 		}
 
 		return $this->setValues(array("$field_name" => $value),$options);
@@ -1034,24 +1023,22 @@ class TableRecord_Base extends inobj{
 	 * @return boolean true if successfully set, false when not set or error occured
 	 */
 	function setValues($data,$options = array()){
-		settype($data,"array");
-		settype($options,"array");
-
-		$options = array_merge(array(
-			"do_not_escape" => array(),
-			"validates_updating_of_fields" => null,
-		),$options);
+		$data = (array) $data;
+		$options = ((array ) $options) +
+                array(
+                "do_not_escape" => array(),
+                "validates_updating_of_fields" => null,
+              );
 		
 		if(!is_array($options["do_not_escape"])){ $options["do_not_escape"] = array($options["do_not_escape"]); }
 
-		$_keys = array_keys($data);
-		foreach($_keys as $_key){
+		foreach($data as $_key => &$value){
 			if(isset($options["validates_updating_of_fields"]) && !in_array($_key,$options["validates_updating_of_fields"])){
 				unset($data[$_key]);
 				continue;
 			}
-			if(is_object($data[$_key])){
-				$data[$_key] = $data[$_key]->getId();
+			if(is_object($value)){
+				$value = $data[$_key]->getId();
 			}
 		}
 
@@ -1153,14 +1140,19 @@ class TableRecord_Base extends inobj{
 	 *
 	 * Column fields that will be read can be specified by passing $fields.
 	 *
-	 * @param array $fields
+	 * <code>
+	 * $this->_readValues("title");
+	 * $this->_readValues(array("title","create_date"));
+	 * </code>
+	 *
+	 * @param mixed $fields
 	 * @ignore
 	 * @return array
 	 */
 	function _readValues($fields = null){
 		if(!isset($fields)){ $fields = $this->_fieldsToRead(); }
-
-		$fields = join(",",$fields);
+		if(is_array($fields))
+		  $fields = join(",",$fields);
 		if(!$row = $this->_dbmole->selectFirstRow("SELECT $fields FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName=:id",array(":id" => $this->_Id))){
 			return null;
 		}
@@ -1173,15 +1165,13 @@ class TableRecord_Base extends inobj{
 	 * @ignore
 	 */
 	function _readValueIfWasNotRead($field){
-		if(is_array($field)){
-			foreach($field as $f){
-				$this->_readValueIfWasNotRead($f);
-			}
-			return;
-		}
-		if(in_array($field,$this->_DoNotReadValues)){
+		 if(is_array($field)){
+ 			$this->_DoNotReadValues = array_diff($this->_DoNotReadValues,$field);
+ 			$this->_readValues($field);	    
+ 		  }
+ 		elseif(in_array($field,$this->_DoNotReadValues)){
 			$this->_DoNotReadValues = array_diff($this->_DoNotReadValues,array($field));
-			$this->_readValues(array($field));
+			$this->_readValues($field);
 		}
 	}
 
@@ -1207,11 +1197,10 @@ class TableRecord_Base extends inobj{
 	 * @ignore
 	 */
 	function _insertRecord($values,$options = array()){
-		settype($values,"array");
-		settype($options,"array");
+		$values=(array)$values;
+		$options=(array)$options;
 
-		$_keys = array_keys($values);
-		foreach($_keys as $_key){
+		foreach($values as $_key => $value){
 			if(isset($options["validates_inserting_of_fields"]) && !in_array($_key,$options["validates_inserting_of_fields"])){
 				unset($values[$_key]);
 				continue;

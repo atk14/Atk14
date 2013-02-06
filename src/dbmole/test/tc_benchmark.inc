@@ -1,6 +1,8 @@
 <?php
 class tc_benchmark extends tc_base{
 	function test(){
+		return;
+		// this is an internal test
 		$dbmole = $this->ora;
 		$counter = 0;
 		$limit = 10;

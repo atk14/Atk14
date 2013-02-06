@@ -278,11 +278,25 @@ class TcTableRecord extends TcBase{
 		$id1 = $record1->getId();
 		$id2 = $record2->getId();
 
+		// int[]
 		$records = TestTable::GetInstanceById(array($id2,$id1));
 		$this->assertType("array",$records);
 		$this->assertEquals(2,sizeof($records));
 		$this->assertEquals($id2,$records[0]->getId());
 		$this->assertEquals($id1,$records[1]->getId());
+
+		// obj[]
+		$records = TestTable::GetInstanceById(array($record2,$record1));
+		$this->assertType("array",$records);
+		$this->assertEquals(2,sizeof($records));
+		$this->assertEquals($id2,$records[0]->getId());
+		$this->assertEquals($id1,$records[1]->getId());
+
+//		$records = TestTable::GetInstanceById(array($id2,$record1));
+//		$this->assertType("array",$records);
+//		$this->assertEquals(2,sizeof($records));
+//		$this->assertEquals($id2,$records[0]->getId());
+//		$this->assertEquals($id1,$records[1]->getId());
 
 		$records = TestTable::GetInstanceById(array($id1,-1000,$id2));
 		$this->assertType("array",$records);
@@ -488,6 +502,58 @@ class TcTableRecord extends TcBase{
 
 		$this->assertEquals(array($obj->getId(),$obj2->getId()),TableRecord::ObjToId(array($obj,$obj2)));
 		$this->assertEquals(array($obj->getId(),$obj2->getId()),TableRecord::ObjToId(array($obj->getId(),$obj2)));
+	}
+
+	function test_setValuesVirtually(){
+		$record = TestTable::CreateNewRecord(array(
+			"title" => "Blue Savannah",
+			"price" => 99.99,
+			"an_integer" => -20
+		));
+
+		$record->setValuesVirtually(array(
+			"title" => "Even Flow",
+			"price" => 2.0
+		));
+
+		$this->assertEquals(-20,$record->g("an_integer"));
+		$this->assertEquals("Even Flow",$record->g("title"));
+		$this->assertEquals(2.0,$record->g("price"));
+
+		$rec2 = TestTable::GetInstanceById($record);
+		$this->assertEquals("Blue Savannah",$rec2->g("title"));
+		$this->assertEquals(99.99,$rec2->g("price"));
+		$this->assertEquals(-20,$rec2->g("an_integer"));
+	}
+
+	function test__readValues(){
+		$record = TestTable::CreateNewRecord(array(
+			"title" => "Summer Breeze",
+			"price" => 12.34,
+			"an_integer" => 1
+		));
+
+		$this->dbmole->doQuery("UPDATE test_table SET
+				title=:title,
+				price=:price,
+				an_integer=:an_integer
+			WHERE id=:id	
+		",array(
+			":title" => "Explore, be curious",
+			":price" => 56.78,
+			":an_integer" => 2,
+			":id" => $record
+		));
+
+		$record->_readValues("title");
+		$this->assertEquals("Explore, be curious",$record->getTitle());
+		$this->assertEquals(12.34,$record->getPrice());
+		$this->assertEquals(1,$record->getAnInteger());
+
+		$record->_readValues(array("price","an_integer"));
+		$this->assertEquals("Explore, be curious",$record->getTitle());
+		$this->assertEquals(56.78,$record->getPrice());
+		$this->assertEquals(2,$record->getAnInteger());
 	}
 
 	function _test_fall($recs){

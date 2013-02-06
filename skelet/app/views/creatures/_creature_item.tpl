@@ -1,7 +1,7 @@
 {capture assign=confirm_message}{t id=$creature->getId()}Are you sure to destroy the creature #%1?{/t}{/capture}
 <tr>
 	<td>{$creature->getId()}</td>
-	<td>{$creature->getName()|h}</td>
+	<td>{$creature->getName()}</td>
 	<td>
 		{a action=detail id=$creature}{t}detail{/t}{/a} |
 		{a action=edit id=$creature}{t}edit{/t}{/a} |

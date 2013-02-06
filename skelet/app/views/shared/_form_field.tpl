@@ -49,15 +49,15 @@
 	{/if}
 
 	<div{if $required || $field->errors() || $class} class="{trim}{if $required}required{/if}{if $field->errors()} error{/if}{if $class} {$class}{/if}{/trim}"{/if}>
-		{if $reverse}{$field->as_widget()}{/if}
+		{if $reverse}{$field->as_widget() nofilter}{/if}
 		<label for="{$field->id_for_label()}"{if $hide_label} class="access"{/if}>{$field->label}{if $required}<span> ({t}required{/t})</span>{/if}</label>
-		{if !$reverse}{$field->as_widget()}{/if}
+		{if !$reverse}{$field->as_widget() nofilter}{/if}
 
 		{if $field->help_text || $field->hint}
 			<div class="help">
-				{if $field->help_text}<p>{$field->help_text}</p>{/if}
+				{if $field->help_text}<p>{$field->help_text nofilter}</p>{/if}
 				{if $field->hint}
-					<p class="hint"><strong>{t}Example:{/t}</strong> {$field->hint}</p>
+					<p class="hint"><strong>{t}Example:{/t}</strong> {$field->hint nofilter}</p>
 				{/if}
 			</div>
 		{/if}
@@ -65,7 +65,7 @@
 		{if $field->errors()}
 			<ul class="error_list">
 				{foreach from=$field->errors() item=err_item}
-					<li>{$err_item}</li>
+					<li>{$err_item nofilter}</li>
 				{/foreach}
 			</ul>
 		{/if}

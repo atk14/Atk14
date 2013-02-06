@@ -38,5 +38,3 @@ if(TEST){
 	// a place for test environment settings
 
 }
-
-

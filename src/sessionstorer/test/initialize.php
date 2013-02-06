@@ -1,4 +1,6 @@
 <?php
+define("TEST",true);
+
 define("SESSION_STORER_COOKIE_NAME_SESSION","session");
 define("SESSION_STORER_COOKIE_NAME_CHECK","check");
 require("../../stringbuffer/stringbuffer.inc");

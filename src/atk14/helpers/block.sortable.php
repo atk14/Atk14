@@ -93,7 +93,7 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 	}
 	$_class = " class=\"{$_class_orig}sortable$_active\"";
 	if(preg_match("/^<([^>]+)>(.+)(<\\/[^>]+>)$/",$content,$matches)){
-		return "<$matches[1]$_class><a href=\"$href\" title=\"".htmlspecialchars($sorting->getTitle($key))."\" rel=\"nofollow\">$matches[2]$_arrow</a>$matches[3]";
+		return "<$matches[1]$_class><a href=\"$href\" title=\"".h($sorting->getTitle($key))."\" rel=\"nofollow\">$matches[2]$_arrow</a>$matches[3]";
 	}
-	return "<a href=\"$href\" title=\"".htmlspecialchars($sorting->getTitle($key))."\" rel=\"nofollow\"$_class>$content$_arrow</a>";
+	return "<a href=\"$href\" title=\"".h($sorting->getTitle($key))."\" rel=\"nofollow\"$_class>$content$_arrow</a>";
 }

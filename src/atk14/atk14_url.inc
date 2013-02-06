@@ -260,10 +260,10 @@ class Atk14Url{
 		Atk14Timer::Start("Atk14Url::BuildLink");
 
 		$__current_ary__ = array_merge(array(
-			"namespace" => $ATK14_GLOBAL->getValue("namespace"),
+			"namespace" => (string)$ATK14_GLOBAL->getValue("namespace"), // null -> ""
 			"controller" => $ATK14_GLOBAL->getValue("controller"),
 			"action" => $ATK14_GLOBAL->getValue("action"),
-			"lang" => $ATK14_GLOBAL->getValue("lang")
+			"lang" => $ATK14_GLOBAL->getLang(),
 		),$__current_ary__);
 
 		if(!isset($params["namespace"])){ $params["namespace"] = $__current_ary__["namespace"]; }
@@ -271,6 +271,8 @@ class Atk14Url{
 		if(!isset($params["controller"])){ $params["controller"] = $__current_ary__["controller"]; }
 		if(!isset($params["action"])){ $params["action"] = "index"; }
 		if(!isset($params["lang"])){ $params["lang"] = $__current_ary__["lang"]; }
+
+		Atk14Utils::_CorrectActionForUrl($params);
 
 		$options = array_merge(array(
 			"connector" => "&amp;",

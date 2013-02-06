@@ -1,4 +1,10 @@
 <?php
+
+function oracle_run($conn, $stm)
+{
+    oci_execute(oci_parse($conn, $stm));
+}
+
 function &dbmole_connection(&$dbmole){
 	$out = null;
 
@@ -14,6 +20,8 @@ function &dbmole_connection(&$dbmole){
 
 		case "oracle":
 			$out = OCILogon("test","test","test"); // user, password, sid
+      oracle_run($out, "ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD HH24:MI:SS'");
+      oracle_run($out, "ALTER SESSION SET NLS_SORT = 'Czech'");
 			break;
 	}
 

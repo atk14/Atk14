@@ -143,6 +143,11 @@ class XMole{
 		 */
 		var $_output_encoding = null;
 
+		/** Is encoding differ
+		 * @access private
+    **/
+		var $_translate=false;
+		
 		/**
 		 * @access private
 		 */
@@ -168,6 +173,12 @@ class XMole{
 		}
 	}
 
+	function inherit($tree)
+	{
+	    $this->_tree=array(unserialize(serialize($tree)));
+	    return true;
+	}
+	
 
 
 	/**
@@ -199,13 +210,14 @@ class XMole{
 			return false;
 		}
 
+		//debug_print_backtrace();
+		//die();
+		
 		$this->_element_store = array();
 		$this->_attrib_store = array();
 		$this->_data_store = array();
-
 		$this->_tree = array();
-		$this->_tree_references = array();
-
+		
 		unset($this->_parser);
 		$this->_parser = xml_parser_create();
 		xml_set_object($this->_parser,$this);
@@ -231,11 +243,14 @@ class XMole{
 
 		//pokud neni nastaveno vystupni kodovani,
 		//bude nastaveno stejne jako vstupni
-		if(!isset($this->_output_encoding)){
+		if(!isset($this->_output_encoding) || $this->_output_encoding==''){
 			$this->_output_encoding = $this->_input_encoding;
 		}
-
+		$this->_set_translate();
 		$this->_data = $xml_data;
+		//first reference head to my tree (respective forrest)
+		$this->_tree_references=array(array('children' => &$this->_tree));
+
 		$stat = xml_parse($this->_parser,$this->_data);
 		if(!$stat){
 			$this->_error = true;
@@ -247,14 +262,13 @@ class XMole{
 
 		xml_parser_free($this->_parser);
 
-		if(sizeof($this->_tree_references)){
+		if(sizeof($this->_tree_references)>1){
 			// neco chybi do konce dokumentu...
 			// toto muze nastat napr. u <xml><tag>DATA</tag>
 			$this->_error = true;
 			$this->_error_msg = $err_message = "missing the end of the document";
 			return false;
 		}
-
 		return true;
 	}
 
@@ -280,8 +294,17 @@ class XMole{
 	function set_input_encoding($encoding){
 		settype($encoding,"string");
 		$this->_input_encoding = $encoding;
+		$this->_set_translate();
 	}
-
+	
+	/**Aktualizuje $this->_translate po zmìnì encoding **/
+  function _set_translate(){
+		  $this->translate=
+		          isset($this->_input_encoding) && $this->_input_encoding!="" && 
+		          isset($this->_output_encoding) && $this->_output_encoding!="" && 
+		          $this->_input_encoding!=$this->_output_encoding;
+	}
+	
 	/**
 	 * Get input encoding.
 	 *
@@ -304,6 +327,7 @@ class XMole{
 	function set_output_encoding($encoding){
 		settype($encoding,"string");
 		$this->_output_encoding = $encoding;
+		$this->_set_translate();
 	}
 
 	/**
@@ -349,12 +373,43 @@ class XMole{
 		if(strlen($path)>0 && $path[strlen($path)-1]=="/"){
 			$path = substr($path,0,strlen($path)-1);
 		}
+		
+		//$curent_path='/'
+		//return $this->_search_branch_by_path($path,$current_path,$this->_tree);
+		
+		
+		//$current_path='/';
+		//$o2=$this->_search_branch_by_path($path,$current_path,$this->_tree);
+		
+		$top=$path=='' || $path[0]=='/'?1:0;
+		$path=explode('/', $path);
+		
+		if(count($path)==$top)
+		    return $this->_tree[0];
+		return $this->_get_first_matching_branch($path, $top, $this->_tree);
+		}
 
-		$current_path = "/";
-
-		return $this->_search_branch_by_path($path,$current_path,$this->_tree);
+	function _get_first_matching_branch($path, $top, $tree)
+	{
+	  $desired=$path[$top];
+	  foreach($tree as $element){
+		    if($element['element']==$desired){
+		         $ntop=$top+1;
+		         if($ntop==count($path))
+		             return $element;
+		         $out=$this->_get_first_matching_branch($path, $ntop, $element["children"]);
+		         if($out)
+		           return $out;
+		         }
+		    elseif(!$top){
+		         $out=$this->_get_first_matching_branch($path, $top, $element["children"]);
+		         if($out)
+		           return $out;
+		         }
+		    }
+		return null;
 	}
-
+	
 	/**
 	 * Get new XMole instance for a branch specified by path.
 	 *
@@ -383,12 +438,36 @@ class XMole{
 		//odseknuti posledniho lomitka,
 		//pokud se v ceste nachazi
 		if($path[strlen($path)-1]=="/"){
-			$path = substr($path,0,strlen($path)-1);
+		  $path = substr($path,0,strlen($path)-1);
 		}
 
-		$current_path = "/";
-
-		return $this->_search_branches_by_path($path,$current_path,$this->_tree);
+		//$current_path = "/";
+		//return $this->_search_branches_by_path($path,$current_path,$this->_tree);
+		
+    $top=$path=='' || $path[0]=='/'?1:0;		  
+		$path=explode('/', $path);
+    $out=array();
+    
+    if(count($path)==$top)
+		    return $this->_tree;
+		$this->_get_all_matching_branches($out, $path, $top, $this->_tree);
+		return $out;
+	}
+	
+	function _get_all_matching_branches(&$out, $path, $top, $tree)
+	{
+	  $desired=$path[$top];
+	  foreach($tree as $element){
+	      if($element['element']==$desired){
+	           $ntop=$top+1;
+		         if($ntop==count($path))
+		             $out[]=$element;
+		         else
+		             $this->_get_all_matching_branches($out, $path, $ntop, $element["children"]);
+		         }
+		    if(!$top)
+		             $this->_get_all_matching_branches($out, $path, $top, $element["children"]);
+		    }
 	}
 
 	/**
@@ -406,7 +485,8 @@ class XMole{
 		$out = array();
 		for($i=0;$i<sizeof($branches);$i++){
 			$xmole = $this->_new_instance();
-			if(!$xmole->parse($branches[$i]["xml_source"])){
+			if(!$xmole->inherit($branches[$i])){
+			//if(!$xmole->parse($branches[$i]["xml_source"])){
 				return null;
 			}
 			$out[] = $xmole;
@@ -597,7 +677,7 @@ class XMole{
 	 * @param string|XMole @xmole2
 	 * @return boolean
 	 */
-	static function AreSame($xmole1,$xmole2){
+	function AreSame($xmole1,$xmole2){
 		if(is_string($xmole1)){ $xmole1 = new XMole($xmole1); } 
 		if(is_string($xmole2)){ $xmole2 = new XMole($xmole2); } 
 
@@ -707,29 +787,23 @@ class XMole{
 	 * @access private
 	 */
 	function _startElement($parser,$name,$attribs){
-		if(isset($this->_output_encoding) && strlen($this->_output_encoding)>0 && isset($this->_input_encoding) && strlen($this->_input_encoding)>0 && $this->_input_encoding!=$this->_output_encoding){
+		if($this->_translate){
 			$name = translate::trans($name,$this->_input_encoding,$this->_output_encoding);
-			reset($attribs);
-			while(list($key,) = each($attribs)){
+			foreach($attribs as $key => $value){
 				$attribs[$key] = translate::trans($attribs[$key],$this->_input_encoding,$this->_output_encoding);
 			}
 		}
-		$this->_element_store[] = $name;
+		//$this->_element_store[] = $name;
+		//$this->_attrib_store[] = $attribs;
+		
+		$old_ref = &$this->_tree_references[sizeof($this->_tree_references)-1];
+		$ref = &$old_ref["children"];
 
-		$this->_attrib_store[] = $attribs;
-	
-		if(sizeof($this->_tree_references)==0){
-			$ref = &$this->_tree;
-		}else{
-			$old_ref = &$this->_tree_references[sizeof($this->_tree_references)-1];
-			$ref = &$old_ref["children"];
-		}
-
-		//xml zdroj
+    //xml zdroj
 		$_source_index = sizeof($this->_xml_source_store);
 		$_xml_source_store = "<$name";
-		reset($attribs);
-		while(list($_name,$_value) = each($attribs)){
+		
+		foreach($attribs as $_name => $_value){
 			$_xml_source_store .= " $_name=\"".XMole::ToAttribsValue($_value)."\"";
 		}
 		$_xml_source_store .= ">";
@@ -757,35 +831,30 @@ class XMole{
 	 * @access private
 	 */
 	function _endElement($_parser,$name){
-		$element = array_pop($this->_element_store);
-		$attribs = array_pop($this->_attrib_store);
+		//$element = array_pop($this->_element_store);
+		//$attribs = array_pop($this->_attrib_store);
 		$data = array_pop($this->_data_store);
-		if(isset($this->_input_encoding) && $this->_input_encoding!="" && isset($this->_output_encoding) && $this->_output_encoding!="" && $this->_input_encoding!=$this->_output_encoding){
+		if($this->_translate){
 			$data = translate::trans($data,$this->_input_encoding,$this->_output_encoding);
 		}
-		if($this->trim_data()){ $data = trim($data); }
+		if($this->_trim_data){ $data = trim($data); }
 
-		$_reference_index = sizeof($this->_tree_references)-1;
-		
-		$_start_source_index = $this->_tree_references[$_reference_index]["_xml_source_starts_at_index_"];
-		$_end_source_index = sizeof($this->_xml_source_store);
-		unset($this->_tree_references[$_reference_index]["_xml_source_starts_at_index_"]);	//v teto chvili uz muzeme informaci o pocatecnim indexu v $this->_xml_source_store zapomenout...
+		$ref = &$this->_tree_references[count($this->_tree_references)-1];
+		$_start_source_index = $ref["_xml_source_starts_at_index_"];
+		unset($ref["_xml_source_starts_at_index_"]);	//v teto chvili uz muzeme informaci o pocatecnim indexu v $this->_xml_source_store zapomenout...
 
 		//pridavani, aktualizace do posledni reference
-		$this->_tree_references[$_reference_index]["data"] = $data;
+		$ref["data"] = $data;
 
 		//xml zdroj
-		$this->_xml_source_store[$_end_source_index] = "</$name>";
-
-		$_source_ar = array();
-		for($i=$_start_source_index;$i<=$_end_source_index;$i++){
-			$_source_ar[] = $this->_xml_source_store[$i];
-		}
-		$this->_tree_references[$_reference_index]["xml_source"] = join("",$_source_ar);
-
+		$this->_xml_source_store[] = "</$name>";
+		$_end_source_index = count($this->_xml_source_store);
+		$_source_ar = array_slice($this->_xml_source_store, $_start_source_index, $_end_source_index - $_start_source_index);
+		$ref["xml_source"] = join("",$_source_ar);
+		
 		//odstraneni posledni reference
 		array_pop($this->_tree_references);
-	}
+}
 
 	/**
 	 * Handler of a function used by xml_parser.
@@ -795,7 +864,6 @@ class XMole{
 	function _characterData($_parser,$data){
 		//pridavani do posledniho _data_store
 		$this->_data_store[sizeof($this->_data_store)-1] .= $data;
-
 		//xml zdroj
 		$this->_xml_source_store[] = XMole::ToXML($data);
 	}
@@ -813,44 +881,25 @@ class XMole{
 	 * @param string $str
 	 * @return string
 	 */
-	static function ToXML($str){
+	function ToXML($str){
+		settype($str,"string");
 		$illegal_chars = array(
-			'&',
-			'<',
-			'>',
-			'"',
-			'\'',
-
-			// see http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character
-			"\x01",
-			"\x01",
-			"\x02",
-			"\x03",
-			"\x04",
-			"\x05",
-			"\x06",
-			"\x07",
-			"\x08",
+			'/&/',
+			'/</',
+			'/>/',
+			'/\"/',
+			'/\'/',
+			'/[\x00-\x08]/', // see http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character
 		);
-
 		$replaces = array(
-			'&amp;',
-			'&lt;',
-			'&gt;',
-			'&quot;',
-			'&apos;',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
-			'',
+			"&amp;",
+			"&lt;",
+			"&gt;",
+			"&quot;",
+			"&apos;",
+			"",
 		);
-
-		return str_replace($illegal_chars, $replaces, $str);
+		return preg_replace($illegal_chars, $replaces, $str);
 	}
 
 	/**
@@ -860,7 +909,7 @@ class XMole{
 	*
 	* $xml = '<person name="'.XMole::ToAttribsValue($name).'" />';
 	*/
-	static function ToAttribsValue($str){
+	function ToAttribsValue($str){
 		settype($str,"string");
 		return strtr($str,
 			array(
