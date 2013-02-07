@@ -39,9 +39,15 @@
  * @package Atk14
  * @subpackage Core
  * @author Jaromir Tomek
+ * @filesource
  */
 class Atk14Migration{
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param string $version Migration file
+	 */
 	function Atk14Migration($version){
 		$this->version = $version;
 		$this->dbmole = &$GLOBALS["dbmole"];
@@ -51,7 +57,8 @@ class Atk14Migration{
 	}
 
 	/**
-	 * @static
+	 * Gets logger instance
+	 *
 	 * @return logger
 	 */
 	static function &GetLogger(){
@@ -81,6 +88,8 @@ class Atk14Migration{
 	}
 
 	/**
+	 * Abstract method to be overridden in subclass to execute the migration.
+	 *
 	 * @abstract
 	 */
 	function up(){
@@ -90,6 +99,7 @@ class Atk14Migration{
 	// TODO: to be implemented: migrateDown() and down(), unless it is not needed
 
 	/**
+	 * @ignore
 	 * @access private
 	 */
 	function _fail($message){
@@ -111,6 +121,9 @@ class Atk14Migration{
  * @subpackage Core
  */
 class Atk14MigrationBySqlFile extends Atk14Migration{
+	/**
+	 * Executes migration script containing plain sql.
+	 */
 	function up(){
 		global $ATK14_GLOBAL;
 		$filename = $ATK14_GLOBAL->getMigrationsPath().$this->version;
