@@ -48,6 +48,7 @@ $switches = array(
 	),
 	"--directory" => array(
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/atk14",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/dates",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/dbmole",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/dictionary",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/files",
@@ -57,6 +58,7 @@ $switches = array(
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/string",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/stringbuffer",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/tablerecord",
+		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/translate",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/url_fetcher",
 		$ATK14_GLOBAL->getApplicationPath()."../atk14/src/xmole",
 	),
