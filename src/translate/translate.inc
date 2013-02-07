@@ -1,23 +1,47 @@
 <?php
 /**
-* Tato trida je urcena pro konverzi znakove sady textoveho vstupu
-* do jine znakove sady.
-*
-* Je nutne prozkoumat zdrojovy kod a zjistit, jestli je dana konverze pozdporovana!
-*  
-* pouziti: $output_text = translate::trans($input_text,$from_charset,$to_charset);
-* pozn: Pri neschopnosti konverze bude vracen puvodni text.
-*
-* Trida dale umoznuje zmenu velkych pismen na mala a naopak.
-* pouziti: $output_text = translate::lower($input_text,"windows-1250");
-* pouziti: $output_text = translate::upper($input_text,"windows-1250");
-*
-* Dale trida umoznuje kontrolu toho, zda je dany text napsan v urcitem kodovani.
-* pouziti: $output_text = translate::check_encoding($input_text,"utf-8");
-*
-* Zjisteni delky UTF-8 retezce:
-* $length = translate::length($str,"UTF-8");
-*/
+ * Class for converting strings between charsets.
+ *
+ * @package Atk14
+ * @subpackage Translate
+ * @filesource
+ */
+
+/**
+ * This class converts string between charsets.
+ *
+ * It's important to search the code to discover the charset support.
+ *
+ * The class uses phps' iconv extension.
+ * When it is not installed, translate class uses its own translation methods for some charsets.
+ *
+ * Usage:
+ * <code>
+ * $output_text = translate::trans($input_text,$from_charset,$to_charset);
+ * </code>
+ * When it is impossible to convert the string the trans() method returns the input string. 
+ *
+ * The translate class is able to change the string to lowercase or uppercase
+ * Example:
+ * <code>
+ * $output_text = translate::lower($input_text,"windows-1250");
+ * $output_text = translate::upper($input_text,"windows-1250");
+ * </code>
+ *
+ * Checking that string is in selected charset.
+ * <code>
+ * $output_text = translate::check_encoding($input_text,"utf-8");
+ * </code>
+ *
+ * Checking length of a UTF-8 string:
+ * <code>
+ * $length = translate::length($str,"UTF-8");
+ * </code>
+ *
+ * @package Atk14
+ * @subpackage Translate
+ * @filesource
+ */
 
 /*
 *	updaty
@@ -36,22 +60,20 @@
 class translate{
 
 	/**
-	* Prekoduje text z jednoho znakoveho kodovani do druheho.
-	*
-	* Parametrem muze byt i pole, pak bude vraceno pole, pricemz budou prekodovany vsechny prvky tohoto pole.
-	*
-	* Volitelne parametry v poli $options:
-	*		"recode_array_keys" ---> pokud je $text pole, budou prekodovany i klice tohoto pole
-	* 
-	* @static
-	* @access public
-	* @param mixed $text							string nebo pole
-	* @param string $from_charset			"ISO-8859-2"
-	* @param string $to_charset				"UTF-8"
-	* @param array $options						parametry ovlivnujici prevod znakove sady
-	* @return mixed										string nebo pole (podle typu parametru $text)
-	*/
-	
+	 * Converts string from a charset to another.
+	 *
+	 * Parameter can be an array of string and the method also returns array with all converted strings.
+	 *
+	 * Volitelne parametry v poli $options:
+	 *		"recode_array_keys" ---> pokud je $text pole, budou prekodovany i klice tohoto pole
+	 * 
+	 * @param string|array $text
+	 * @param string $from_charset input charset
+	 * @param string $to_charset output charset
+	 * @param array $options
+	 * - recode_array_keys usable only when $text is array; then also keys will be converted
+	 * @return string|array
+	 */
 	static function trans($text,$from_charset,$to_charset,$options = array()){
 		$from_charset = translate::_get_charset_by_name($from_charset);
 		$to_charset = translate::_get_charset_by_name($to_charset);
@@ -61,6 +83,9 @@ class translate{
 		return translate::_trans($text,$from_charset,$to_charset,$options);
 	}
 
+	/**
+	 * @ignore
+	 */
 	static function _trans($text,$from_charset,$to_charset,$options = array()){
 		if(is_array($text)){
 			$out = array();
@@ -112,16 +137,23 @@ class translate{
 	}
 
 	/**
-	* Zde se z textu odstrani spec. znaky, ktere nemaji v 8-bit kodovanich
-	* adekvatni naradu. Napr. ruzne druhy pomlcek.
-	*
-	*/
+	 * Removes special chars which don't have substitution in 8bit charsets.
+	 *
+	 * @ignore
+	 */
 	static function _remove_utf8_headaches($text){
 		return strtr($text,array(
 			chr(0xE2).chr(0x80).chr(0x93) => "-",
 		));
 	}
 
+	/**
+	 * Converts string to lowercase.
+	 *
+	 * @param string $text
+	 * @param string $charset
+	 * @return string
+	 */
 	static function lower($text,$charset){
 		$charset = translate::_get_charset_by_name($charset);
 		switch($charset){
@@ -141,6 +173,14 @@ class translate{
 				break;
 		}
 	}
+
+	/**
+	 * Converts string to uppercase.
+	 *
+	 * @param string $text
+	 * @param string $charset
+	 * @return string
+	 */
 	static function upper($text,$charset){
 		$charset = translate::_get_charset_by_name($charset);
 		switch($charset){
@@ -162,12 +202,11 @@ class translate{
 	}
 
 	/**
-	*
-	* @static
-	* @access private
-	* @param string $charset
-	* @return string											unifikovane jmeno znakoveho kodovani v ramci teto tridy
-	*/
+	 *
+	 * @ignore
+	 * @param string $charset unified chrset name
+	 * @return string
+	 */
 	function _get_charset_by_name($charset){
         static $trans=array( 	  
               "8859_2" => "iso-8859-2",
@@ -227,6 +266,9 @@ class translate{
 		return $charset;
 	}
 
+	/**
+	 * @ignore
+	 */
 	static function _TO_HTML_entitites(&$text,$from_cp){
 		switch($from_cp){
 			case "windows-1250":
@@ -241,6 +283,10 @@ class translate{
 				return $text;
 		}
 	}
+
+	/**
+	 * @ignore
+	 */
 	static function _TO_iso_8859_2(&$text,$from_cp){
 		switch($from_cp){
 			case "windows-1250":
@@ -301,6 +347,10 @@ class translate{
 				return $text;
 		}
 	}
+
+	/**
+	 * @ignore
+	 */
 	static function _TO_windows_1250(&$text,$from_cp){
 		switch($from_cp){
 			case "iso-8859-2":
@@ -460,6 +510,10 @@ class translate{
 				return $text;
 		}		
 	}
+
+	/**
+	 * @ignore
+	 */
 	static function _TO_852(&$text,$from_cp){
 		switch($from_cp){
 			case "utf8":
@@ -473,6 +527,10 @@ class translate{
 		}
 		return $text;
 	}
+
+	/**
+	 * @ignore
+	 */
 	static function _TO_utf8(&$text,$from_cp){
 		switch ($from_cp){
 			case "iso-8859-2":
@@ -491,6 +549,10 @@ class translate{
 				return $text;
 		}
 	}
+
+	/**
+	 * @ignore
+	 */
 	static function _TO_ascii(&$text,$from_cp){
 		switch ($from_cp){
 			case "iso-8859-2":
@@ -519,18 +581,21 @@ class translate{
 	}
 
 	/**
-	* Zkontroluje, zda dany text odpovida danemu znakovemu kodovani.
-	* Navic muze byt specifikovano pole dale nepovolenych znaky (nebo celych sekvenci),
-	* ktere se nesmi v textu objevit.
-	*
-	* @static
-	* @access public
-	* @param mixed $text													string nebo pole
-	* @param string $charset											"UTF-8","us-ascii"...
-	* @param array $disallowed_char_sequencies		nepovolene znaky (nebo cele sekvence): array(".",";","{","}","HUSAK")
-	* @return bool																true -> text odpovida danemu znakovemu kodovani
-	*																							false -> text neodpovida danemu kodovani nebo obsahuje znak nebo sekvenci z pole $disallowed_char_sequencies
-	*/
+	 * Checks if input string is in given charset.
+	 *
+	 * Method can distinguish some characters (or even whole sequencies) that can not appear in the string.
+	 * When they appear method returns false
+	 *
+	 * <code>
+	 * translate::check_encoding($text, "utf-8", array(".",";","{","}","HUSAK"));
+	 * </code>
+	 *
+	 * @param string|array $text string or array of strings
+	 * @param string $charset
+	 * @param array $disallowed_char_sequencies		forbidden chars or strings
+	 * @return bool																true -> text is in given charset
+	 *																						false -> text is not in given charset or contains a character or sequence from array $disallowed_char_sequencies
+	 */
 	static function check_encoding($text,$charset,$disallowed_char_sequencies = array()){
 		if(is_array($text)){
 			reset($text);
@@ -569,6 +634,9 @@ class translate{
 		return $out;
 	}
 
+	/**
+	 * @ignore
+	 */
 	static function _check_encoding_utf8(&$text){
 
 		$_11111110 = bindec("11111110");
@@ -627,6 +695,9 @@ class translate{
 		return true;
 	}
 
+	/**
+	 * @ignore
+	 */
 	static function _check_encoding_ascii(&$text){
 		$_len = strlen($text);
 
@@ -641,6 +712,13 @@ class translate{
 		return true;
 	}
 
+	/**
+	 * Counts length of a string.
+	 *
+	 * @param string $text
+	 * @param string $charset
+	 * @return integer
+	 */
 	static function length(&$text,$charset){
 		$charset = translate::_get_charset_by_name($charset);
 		switch($charset){
@@ -651,6 +729,9 @@ class translate{
 		}
 	}
 
+	/**
+	 * @ignore
+	 */
 	static function _length_utf8(&$str){
 		$i = 0;
     $count = 0;
@@ -671,5 +752,4 @@ class translate{
     }
     return $count;
 	}
-
 }

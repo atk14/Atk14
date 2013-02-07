@@ -11,7 +11,7 @@
  * In both cases they are the same field that return the same value whatever it is rendered.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  * @filesource
  */
 
@@ -99,10 +99,15 @@ function my_array_merge($data)
  * This class shouldn't be used directly but through its descendant.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class Widget
 {
+    /**
+     * Constructor
+     *
+     * @param array $options
+     */
     function Widget($options=array())
     {
         $options = forms_array_merge(array('attrs'=>null), $options);
@@ -132,8 +137,8 @@ class Widget
     }
 
     /**
-    * Posklada pole atributu pro widget.
-    */
+     * Completes all attributes for a widget.
+     */
     function build_attrs($attrs, $extra_attrs=array())
     {
         return forms_array_merge($this->attrs, $attrs, $extra_attrs);
@@ -168,12 +173,17 @@ class Widget
  * Most <input> fields use this class.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class Input extends Widget
 {
     var $input_type = null; // toto musi definovat konkretni odvozene tridy
 
+    /**
+     * Constructor
+     *
+     * @param array $options
+     */
     function Input($options = array()){
         parent::Widget($options);
     }
@@ -209,7 +219,7 @@ class Input extends Widget
  * By default the element has attribute class set to "text"
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class TextInput extends Input
 {
@@ -238,12 +248,17 @@ class TextInput extends Input
  * By default the element has attribute class set to "text"
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class PasswordInput extends Input
 {
     var $input_type = 'password';
 
+    /**
+     * Constructor.
+     *
+     * @param array $options
+     */
     function PasswordInput($options=array())
     {
         if(!isset($this->attrs["class"])){ // pokud nebylo class definovano v konstruktoru
@@ -274,7 +289,7 @@ class PasswordInput extends Input
  * </code>
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class EmailInput extends TextInput{
     var $input_type = 'email';
@@ -289,7 +304,7 @@ class EmailInput extends TextInput{
  * </code>
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class HiddenInput extends Input
 {
@@ -354,7 +369,7 @@ class MultipleHiddenInput extends HiddenInput
  * </code>
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class Textarea extends Widget
 {
@@ -392,7 +407,7 @@ class Textarea extends Widget
  * </code>
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class CheckboxInput extends Widget
 {
@@ -448,7 +463,7 @@ class CheckboxInput extends Widget
  * </code>
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class Select extends Widget
 {
@@ -501,7 +516,7 @@ class Select extends Widget
  * </code>
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class SelectMultiple extends Widget
 {
@@ -551,7 +566,7 @@ class SelectMultiple extends Widget
  * Widget for radio button input field.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class RadioInput
 {
@@ -597,7 +612,7 @@ class RadioInput
  * <ul /><li />
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class RadioSelect extends Select
 {
@@ -644,7 +659,7 @@ class RadioSelect extends Select
  * Each value in $choices renders as <li /> item in <ul /> list.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class CheckboxSelectMultiple extends SelectMultiple
 {
@@ -699,7 +714,7 @@ class CheckboxSelectMultiple extends SelectMultiple
  * Widget for rendering file input field.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class FileInput extends Input{
     var $input_type = "file";

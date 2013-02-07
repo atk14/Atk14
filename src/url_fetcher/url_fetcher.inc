@@ -38,7 +38,7 @@ define("URL_FETCHER_VERSION","0.2");
  * 	echo $f->getContent();
  * }
  * </code>
- *	
+ *
  *
  * Some headers can be specified in options:
  * <code>
@@ -87,7 +87,18 @@ class UrlFetcher {
 	 */
 	protected $_SocketTimeout = 5;
 
+	/**
+	 * Redirections counter
+	 *
+	 * @var integer
+	 */
 	protected $_CountOfRedirection = 0;
+
+	/**
+	 * Maximum number of redirections.
+	 *
+	 * @var integer
+	 */
 	protected $_MaxRedirections = 5;
 
 	/**
@@ -202,6 +213,7 @@ class UrlFetcher {
 	 * When called multiple times, the actual request is made only once.
 	 * Can be called from outside.
 	 *
+	 * When the request is redirected more times than specified by limit, error is returned.
 	 *
 	 * Recommended usage:
 	 * <code>
@@ -468,6 +480,11 @@ class UrlFetcher {
 	 */
 	function found(){ return $this->getStatusCode()==200; }
 
+	/**
+	 * Returns filename
+	 *
+	 * @return string
+	 */
 	function getFilename(){
 		if(preg_match("/([^\\/?]+)(\\?.*|)$/",$this->_Uri,$matches)){
 			return $matches[1];

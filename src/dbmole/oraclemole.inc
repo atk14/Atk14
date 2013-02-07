@@ -40,15 +40,15 @@
  *		OCIFreeStatement($stmt);
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Database
  * @filesource
  *
  */
 
 /**
  * @package Atk14
- * @subpackage InternalLibraries
- *
+ * @subpackage Database
+ * @filesource
  */
 class OracleMole extends DbMole{
 	var $_LastOracleStatement = null;
