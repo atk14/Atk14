@@ -1,14 +1,36 @@
 <?php
+/**
+ * Provides basic functionality with databases.
+ *
+ * @package Atk14
+ * @subpackage Database
+ * @abstract
+ * @filesource
+ */
+
 !defined("DBMOLE_ORACLE_TRUE") && define("DBMOLE_ORACLE_TRUE","Y");
 !defined("DBMOLE_ORACLE_FALSE") && define("DBMOLE_ORACLE_FALSE","N");
 !defined("DBMOLE_CHECK_BIND_AR_FORMAT") && define("DBMOLE_CHECK_BIND_AR_FORMAT",true);
 
 /**
- * Provides basic functionality with databases.
+ * Basic database functionality.
  *
  * This class provides methods that are independent on the database type.
  * Database dependent methods are overridden in descendants
  *
+ * Getting Postgres database DbMole instance
+ * <code>
+ * $dbmole = &PgMole::GetInstance();
+ * </code>
+ *
+ * Basic query execution
+ * <code>
+ * $query = "SELECT id FROM customers WHERE UPPER(name) = UPPER(:customer_name)";
+ * $bind_ary = array(
+ * 	":customer_name" => "john",
+ * );
+ * $customer_ids = $dbmole->selectIntoArray($query, $bind_ary);
+ * </code>
  *
  * Error handling
  * <code>
@@ -27,73 +49,93 @@
  *	$dbmole = &OracleMole::GetInstance();
  *	echo $dbmole->getStatistics();
  * </code>
- * @package Atk14
- * @subpackage InternalLibraries
- * @abstract
- * @filesource
- */
-
-/**
- * Basic database functionality.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Database
  * @abstract
  * @filesource
  */
 class DbMole{
 	/**
+	 * Name of database configuration
+	 *
 	 * @access private
 	 */
 	var $_ConfigurationName = "";
 
 	/**
+	 * Connection resource
+	 *
+	 * @var resource
 	 * @access private
 	 */
 	var $_DbConnect = null;
 
 
 	/**
+	 * Error message returned by a database operation
+	 *
 	 * @access private
 	 */
 	var $_ErrorMessage = null;
 
 
 	/**
-	 * Just an flag that the error handler has been called.
+	 * Just a flag that the error handler has been called.
+	 *
+	 * @var boolean
 	 * @access private
 	 */
 	var $_ErrorRaised = false;
 
 	/**
 	 * Name of error handling function.
+	 *
+	 * @var string
 	 * @access private
 	 */
 	var $_ErrorHandler = "";
 
 
 	/**
+	 * Last executed query.
+	 *
+	 * @var string
 	 * @access private
 	 */
 	var $_Query = "";
 
 	/**
+	 * Parameters of last executed query.
+	 *
+	 * @var array
 	 * @access private
 	 */
 	var $_BindAr = array();
 
 	/**
+	 * Parameters used by query execution.
+	 *
+	 * They are cleared before each query.
+	 *
+	 * @var array
 	 * @access private
 	 */
 	var $_Options = array();
 
 	/**
+	 * Number of executed queries since connection to the database.
+	 *
+	 * @var integer
 	 * @access private
 	 */
 	var $_QueriesExecuted = 0;
 
 
 	/**
+	 * Path for caching queries.
+	 *
+	 * @var string
 	 * @access private
 	 */
 	var $_CacheDir = null;
@@ -108,7 +150,7 @@ class DbMole{
 	 * $dbmole = &DbMole::GetInstance("default","OracleMole");
 	 * </code>
 	 *
-	 * This call using a descendant is better:
+	 * This call using a subclass is better:
 	 * <code>
 	 * $dbmole = &OracleMole::GetInstance("default");
 	 * </code>
@@ -138,6 +180,13 @@ class DbMole{
 		return $instance_store_ar[$db_type][$configuration_name];
 	}
 
+	/**
+	 * Returns type of database connector.
+	 *
+	 * Type of databse is determined by DbMoles subclass.
+	 *
+	 * @return string
+	 */
 	function getDatabaseType(){
 		if(preg_match("/^(.+)mole$/",strtolower(get_class($this)),$matches) && $matches[1]!="db"){
 			return $matches[1];
@@ -146,13 +195,13 @@ class DbMole{
 	}
 
 	/**
-	* Returns the database name.
-	*
-	* If a descendant doesn't know how to determine the database name,
-	* the configuration name will be returned instead.
-	*
-	* @return string
-	*/
+	 * Returns the database name.
+	 *
+	 * If the subclass doesn't know how to determine the database name,
+	 * the configuration name will be returned instead.
+	 *
+	 * @return string
+	 */
 	function getDatabaseName(){
 		if($dbname = $this->_getDatabaseName()){ return (string)$dbname; }
 		return $this->_ConfigurationName;
@@ -209,6 +258,8 @@ class DbMole{
 	 * 	DbMole::RegisterErrorHandler("default_error_handler");
 	 * 	$dbmole_session->setErrorHandler("session_error_handler");
 	 * </code>
+	 *
+	 * @param string $function_name
 	 */ 
 	function setErrorHandler($function_name){
 		$this->_ErrorHandler = $function_name;
@@ -216,12 +267,19 @@ class DbMole{
 
 	/**
 	 * Returns the name of error handling function.
+	 *
+	 * @return string name of function that handles database errors
 	 */
 	function getErrorHandler(){
 		if($this->_ErrorHandler){ return $this->_ErrorHandler; }
 		return DbMole::_GetSetErrorHandlerFunction();
 	}
 
+	/**
+	 * Returns database usage statistics.
+	 *
+	 * @return string
+	 */
 	function getStatistics(){
 		global $__DMOLE_STATISTICS__;
 
@@ -268,21 +326,20 @@ class DbMole{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
 	function _formatSeconds($sec){
 		return number_format($sec,3,".","");
 	}
 
 	/**
-	*
-	* @static
-	* @access private
-	* @param string $function_name
-	* @param bool $set									true -> ulezeni nazvu fce
-	* @return string										aktualni jmeno (nebo predchozi pri nastavavovani) error handler funkce 
-	*																		pokud je vracen prazdny string "", nema se nic volat
-	*/
+	 *
+	 * @ignore
+	 * @param string $function_name
+	 * @param bool $set									true -> ulezeni nazvu fce
+	 * @return string										aktualni jmeno (nebo predchozi pri nastavavovani) error handler funkce 
+	 *																		pokud je vracen prazdny string "", nema se nic volat
+	 */
 	static function _GetSetErrorHandlerFunction($function_name = "",$set = false){
 		static $_FUNCTION_NAME_;
 
@@ -304,8 +361,7 @@ class DbMole{
 	/**
 	 * Connects the database.
 	 *
-	 * This method is abstract.
-	 * Musi byt prekryto!
+	 * This method is abstract and must be overridden.
 	 *
 	 * @access private
 	 * @abstract
@@ -323,6 +379,7 @@ class DbMole{
 	}
 
 	/**
+	 * @ignore
 	 * @access private
 	 */
 	function _selectRows($query,&$bind_ar, $options = array()){
@@ -363,32 +420,58 @@ class DbMole{
 	function errorOccurred(){ return isset($this->_ErrorMessage); }
 
 	/**
-	* Gettery vhodne pro error_handler funkci.
-	*/
-	function getErrorMessage(){ return $this->_ErrorMessage; }
+	 * Gettery vhodne pro error_handler funkci.
+	 */
+
 	/**
+	 * Returns error message for last database operation.
+	 *
+	 * @return string
+	 */
+	function getErrorMessage(){ return $this->_ErrorMessage; }
+
+	/**
+	 * Returns last performed sql query.
+	 *
 	 * @return string
 	 */
 	function getQuery(){ return $this->_Query; }
 
 	/**
+	 * Return bind parameters used on last sql query.
+	 *
 	 * @return array
 	 */
 	function getBindAr(){ return $this->_BindAr; }
 
 	/**
+	 * Returns options used by executed query.
+	 *
 	 * @return array
 	 */
 	function getOptions(){ return $this->_Options; }
 
+	/**
+	 * Get number of executed queries since connection to the database.
+	 *
+	 * @return integer
+	 */
 	function getQueriesExecuted(){ return $this->_QueriesExecuted; }
 
 	/**
+	 * Returns name of configuration.
+	 *
+	 * It is 'default' by default.
+	 *
 	 * @return string
 	 */
 	function getConfigurationName(){ return $this->_ConfigurationName; }
 
 	/**
+	 * Gets error report.
+	 *
+	 * Error report contains important information about executed query and environment settings.
+	 *
 	 * @return string
 	 */
 	function getErrorReport(){
@@ -427,6 +510,13 @@ class DbMole{
 		return join("\n",$out);
 	}
 
+	/**
+	 * Gets error report and sends it to email address.
+	 *
+	 * @param string $email_address
+	 * @param array $options
+	 * - report_failed_database_connection boolean whether send report about failed database connection
+	 */
 	function sendErrorReportToEmail($email_address,$options = array()){
 		$options["report_failed_database_connection"] = isset($options["report_failed_database_connection"]) ? (bool)$options["report_failed_database_connection"] : false;
 
@@ -442,6 +532,9 @@ class DbMole{
 		));
 	}
 
+	/**
+	 * Gets error report and logs it into php error log.
+	 */
 	function logErrorReport(){
 		error_log($this->getErrorReport());
 	}
@@ -449,6 +542,7 @@ class DbMole{
 
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	function _initializeBeforeDoingSQL(){
 		$this->_reset();
@@ -461,7 +555,7 @@ class DbMole{
 	 * Is called before execution of a SQL command.
 	 *
 	 * @access private
-	 *
+	 * @ignore
 	 */
 	function _reset(){
 		$this->_ErrorMessage = null;
@@ -482,6 +576,7 @@ class DbMole{
 	/**
 	 * This method is called in case of error.
 	 *
+	 * @ignore
 	 * @access private
 	 */
 	function _raiseDBError($message){
@@ -510,6 +605,7 @@ class DbMole{
 	/**
 	 * Executes SQL query.
 	 *
+	 * @see executeQuery()
 	 * @param string $query
 	 * @param array $bind_ar
 	 * @param array $options
@@ -524,17 +620,22 @@ class DbMole{
 	}
 
 	/**
-	 * Returns the amount of rows affected during the last sql execution.
+	 * Returns the number of rows affected during the last sql execution.
 	 * 
 	 * <code>
 	 *	$dbmole->doQuery("UPDATE articles SET author_id=22 WHERE author_id=11");
 	 *	echo $dbmole->getAffectedRows(); // amount of records updated
 	 * </code>
+	 * @return integer
 	 */
 	function getAffectedRows(){
 		return $this->_getAffectedRows();
 	}
 
+	/**
+	 * @ignore
+	 * @abstract
+	 */
 	function _getAffectedRows(){ return null; }
 
 	/**
@@ -562,6 +663,12 @@ class DbMole{
 
 	/**
 	 * Alias for selectFirstRow().
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return array
+	 * @see selectFirstRow
 	 */
 	function selectRow($query,$bind_ar = array(),$options = array()){
 		return $this->selectFirstRow($query,$bind_ar,$options);
@@ -598,8 +705,8 @@ class DbMole{
 	 * </code>
 	 *
 	 * @param string $query
-	 * @param array $bind_ar			muze byt string (prevedeno bude na $options["type"])
-	 * @param array $options			muze byt string (prevedeno bude na $options["type"])
+	 * @param array|string $bind_ar	when string will be used as if given $options["type"]
+	 * @param array|string $options	when string it will be used as if given $options["type"]		
 	 * @return mixed						
 	 */
 	function selectSingleValue($query,$bind_ar = array(), $options = array()){
@@ -628,7 +735,12 @@ class DbMole{
 	}
 
 	/**
-	 * 
+	 * Alias to method selectSingleValue().
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return mixed
 	 */
 	function selectValue($query,$bind_ar = array(), $options = array()){
 		return $this->selectSingleValue($query,$bind_ar,$options);
@@ -636,6 +748,12 @@ class DbMole{
 
 	/**
 	 * Shortcut to getting an integer.
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return integer
+	 * @see selectSingleValue
 	 */
 	function selectInt($query,$bind_ar = array(),$options = array()){
 		$options["type"] = "integer";
@@ -644,6 +762,12 @@ class DbMole{
 
 	/**
 	 * Shortcut to getting an string.
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return string
+	 * @see selectSingleValue
 	 */
 	function selectString($query,$bind_ar = array(),$options = array()){
 		$options["type"] = "string";
@@ -652,6 +776,12 @@ class DbMole{
 
 	/**
 	 * Shortcut to getting an float.
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return float
+	 * @see selectSingleValue
 	 */
 	function selectFloat($query,$bind_ar = array(),$options = array()){
 		$options["type"] = "float";
@@ -660,7 +790,14 @@ class DbMole{
 
 	/**
 	 * Shortcut to getting a boolean.
+	 *
 	 * Values considered as the true are: 'y', 'yes', 't', 'true', '1'...
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return boolean
+	 * @see selectSingleValue
 	 */
 	function selectBool($query,$bind_ar = array(),$options = array()){
 		$value = $this->selectString($query,$bind_ar,$options);
@@ -784,6 +921,7 @@ class DbMole{
 
 	/**
 	 * Rollbacks all database operations.
+	 *
 	 * @return bool
 	 */
 	function rollback(){
@@ -850,6 +988,9 @@ class DbMole{
 	 *	);
 	 * </code>
 	 *
+	 * @param string $table_name
+	 * @param array $values
+	 * @param array $options
 	 * @return bool
 	 */
 	function insertOrUpdateRecord($table_name,$values,$options = array()){
@@ -906,8 +1047,27 @@ class DbMole{
 		$this->_DbConnect = null;
 	}
 
+	/**
+	 * Gets next value of a sequence.
+	 *
+	 * @param string $sequence_name
+	 * @abstract
+	 */
 	function selectSequenceNextval($sequence_name){ return null; }
+
+	/**
+	 * Gets current value of a sequence.
+	 *
+	 * @param string $sequence_name
+	 * @abstract
+	 */
 	function selectSequenceCurrval($sequence_name){ return null; }
+
+	/**
+	 * Checks if the database uses sequencies
+	 *
+	 * @return boolean
+	 */
 	function usesSequencies(){ return true; }
 
 	/**
@@ -986,7 +1146,9 @@ class DbMole{
 	}
 
 	/**
+	 * Escapes float value for use in sql string.
 	 *
+	 * @param float $f
 	 * @return string
 	 */
 	function escapeFloat4Sql($f){
@@ -994,21 +1156,30 @@ class DbMole{
 	}
 
 	/**
+	 * Escapes table name so it can be used in sql string
+	 *
+	 * @param string $t name of table
 	 * @return string
 	 */
 	function escapeTableName4Sql($t){
 		return $t;
 	}
 
+	/**
+	 * Escapes boolean value for use in sql string.
+	 *
+	 * @param mixed $value
+	 * @return string
+	 */
 	function escapeBool4Sql($value){
 		return $value? 'TRUE' : 'FALSE';
 	}
 
 	/**
-	 * Realizes the query execution.
-	 * escape given value for using in sql string
+	 * Escapes given value for use in sql string
+	 *
 	 * @param mixed php value
-	 * @returns string SQL reprezentation of given value
+	 * @return string SQL reprezentation of given value
 	 */
 	function escapeValue4sql($value){
 			if(is_object($value)){ $value = $value->getId(); }
@@ -1027,6 +1198,7 @@ class DbMole{
 	 * Realizes the query execution.
 	 *
 	 * @access private
+	 * @ignore
 	 * @return statement or null on error
 	 */
 	function _executeQuery(){
@@ -1052,6 +1224,9 @@ class DbMole{
 		return $result;
 	}
 
+	/**
+	 * @ignore
+	 */
 	function _normalizeBindAr(&$bind_ar){
 		foreach($bind_ar as $k => &$value){
 			if(is_object($value)){ $value = $value->getId(); }
@@ -1061,11 +1236,14 @@ class DbMole{
 	/**
 	 * error message dependent on database type
 	 *
+	 * @ignore
 	 * @access private
 	 */
 	function _getDbLastErrorMessage(){ return ""; }
 
 	/**
+	 *
+	 * @ignore
 	 * @access private
 	 */
 	function _hookBeforeQueryExecution(){
@@ -1076,6 +1254,7 @@ class DbMole{
 	}
 
 	/**
+	 * @ignore
 	 * @access private
 	 */
 	function _hookAfterQueryExecution(){
@@ -1108,6 +1287,7 @@ class DbMole{
 	}
 
 	/**
+	 * @ignore
 	 * @access private
 	 */
 	function _readCache($seconds,$query,$bind_ar,$options){
@@ -1124,6 +1304,7 @@ class DbMole{
 	}
 
 	/**
+	 * @ignore
 	 * @access private
 	 */
 	function _writeCache(&$rows,$query,$bind_ar,$options){
@@ -1136,6 +1317,7 @@ class DbMole{
 	}
 
 	/**
+	 * @ignore
 	 * @access private
 	 */
 	function _getCacheFilename($query,$bind_ar,$options){
@@ -1148,7 +1330,9 @@ class DbMole{
 	}
 
 	/**
-	 * @params mixed boolean field returned from db layer (in form of string or integer or...)
+	 * Detects boolean value returned by database.
+	 *
+	 * @param mixed $value boolean field returned from db layer (in form of string or integer or...)
 	 * @return bool  PHP boolean representation
 	 */
 	function parseBoolFromSql($value){
