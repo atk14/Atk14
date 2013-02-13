@@ -78,6 +78,11 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 		return $this->_Records;
 	}
 
+	/**
+	 * Gets ids of found records.
+	 *
+	 * @return array array of found ids
+	 */
 	function getRecordIds() {
 		if(!isset($this->_RecordIds)){
 			$this->_RecordIds = $this->_dbmole->selectIntoArray($this->_Query,$this->_BindAr,$this->_QueryOptions);
