@@ -57,8 +57,8 @@ class TcFinder extends TcBase{
 		$this->assertEquals(2,sizeof($records));
 		$this->assertEquals($apples->getId(),$records[0]->getId());
 		$this->assertEquals($and->getId(),$records[1]->getId());
-		$this->assertEquals($apples->getId(),$records[0]);
-		$this->assertEquals($and->getId(),$records[1]);
+		$this->assertEquals((int)$apples->getId(),(int)$record_ids[0]);
+		$this->assertEquals((int)$and->getId(),(int)$record_ids[1]);
 
 		// --
 		$finder = TestTable::Finder("an_integer",10,"title","Apples",array("order_by" => "UPPER(title) DESC"));
