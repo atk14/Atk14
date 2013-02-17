@@ -849,6 +849,7 @@ class ImageField extends FileField{
             "max_height" => null,
             "min_width" => null,
             "min_height" => null,
+            "file_formats" => array(), // array("jpeg","png","git","tiff")
         ),$options);
         parent::FileField($options);
 
@@ -862,6 +863,8 @@ class ImageField extends FileField{
             'max_height' => _('Ensure this image is at most %max% pixels high (it is %height%).'),
             'min_width' => _('Ensure this image is at least %min% pixels wide (it is %width%).'),
             'min_height' => _('Ensure this image is at least %min% pixels high (it is %height%).'),
+
+            'file_formats' => _('Ensure this image is in a required format'),
         ));
         $this->width = $options["width"];
         $this->height = $options["height"];
@@ -869,12 +872,25 @@ class ImageField extends FileField{
         $this->max_height = $options["max_height"];
         $this->min_width = $options["min_width"];
         $this->min_height = $options["min_height"];
+        $this->file_formats = $options["file_formats"];
     }
     function clean($value){
         list($err,$value) = parent::clean($value);
         if(isset($err)){ return array($err,null); }
         if(!isset($value)){ return array(null,null); }
+
+        // --
+
         if(!$value->isImage()){ return array($this->messages['not_image'],null); }
+
+        // --
+        
+        if($this->file_formats){
+            list(,$file_format) = split('/',$value->getMimeType());
+            if(!in_array($file_format,$this->file_formats)){
+                return array($this->messages['file_formats'],null);
+            }
+        }
 
         // --
 
