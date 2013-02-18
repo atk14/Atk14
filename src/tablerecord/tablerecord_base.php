@@ -826,6 +826,81 @@ class TableRecord_Base extends inobj{
 	 * @return array
 	 */
 	function _FindByArray($ids,$options = array()){
+		$ids = TableRecord::ObjToId($ids);
+
+		$options = array_merge(array(
+			"omit_nulls" => false
+		),$options);
+
+		$MAX_ELEMENTS = 200;
+		if(sizeof($ids)>$MAX_ELEMENTS){
+			$out = array();
+
+			$part = array();
+			$counter = 0;
+			foreach($ids as $key => $value){	
+				$part[$key] = $value;
+				$counter ++;
+
+				if($counter == $MAX_ELEMENTS){
+					$_out = $this->_FindByArray($part,$options);
+					foreach($_out as $_key => $_value){	
+						$out[$_key] = $_value;
+					}
+					$part = array();
+					$counter = 0;
+				}
+			}
+
+			$_out = $this->_FindByArray($part,$options);
+			foreach($_out as $_key => $_value){	
+				$out[$_key] = $_value;
+			}
+
+			return $out;
+		}
+
+		$bind_ar = array();
+
+		$class_name = get_class($this);
+
+		$i = 0;
+		foreach($ids as $_key => $id){	
+			if(is_object($id)){ $id = $id->getId(); }
+			if(!isset($id)){ continue; } // v poli se muze klidne nachazet nejaky null
+			settype($id,$this->_IdFieldType);
+			$bind_ar[":id$i"] = $id;
+			$i++;
+		}
+
+		$objs = array();
+
+		if(sizeof($bind_ar)>0){
+			$query = "SELECT ".join(",",$this->_fieldsToRead())." FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
+			$rows = $this->_dbmole->selectRows($query,$bind_ar);
+			if(!is_array($rows)){ return null; }
+			foreach($rows as $row){	
+				$obj = new $class_name();
+				$obj->_setRecordValues($row);
+				$obj->_Hook_Find();
+				$objs[$obj->getId()] = $obj;
+			}
+		}
+
+		$out = array();
+		foreach($ids as $_key => $_value){	
+			$id = $_value;
+			if(!isset($objs[$id])){
+				if(!$options["omit_nulls"]){ $out[$_key] = null; }
+				continue;
+			}
+			$out[$_key] = &$objs[$id];
+		}
+
+		return $out;
+
+		/*
+		// a Matyas` try, doesn't work
 		$ids=(array)$ids;
 
 		$options += array(
@@ -874,6 +949,7 @@ class TableRecord_Base extends inobj{
 		   array_filter($out); 
 	  }
 		return $out;
+		*/
   }
   
 	/**
