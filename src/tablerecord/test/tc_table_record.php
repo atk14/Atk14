@@ -114,6 +114,17 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals(null,$this->dbmole->selectString("SELECT flag FROM test_table WHERE id=2"));
 	}
 
+	function test_getting_multiple_values(){
+		$rec = TestTable::CreateNewRecord(array(
+			"title" => "La Fabrique",
+			"price" => 200
+		));
+
+		$this->assertEquals(array("La Fabrique", 200.0),$rec->getValue(array("title","price")));
+		$this->assertEquals(array("title" => "La Fabrique", "price" => 200.0),$rec->getValue(array("title" => "title", "price" => "price")));
+		$this->assertEquals(array("a" => "La Fabrique", "b" => 200.0),$rec->getValue(array("a" => "title", "b" => "price")));
+	}
+
 	function test_validates_updating_of_fields(){
 		// vsechno, co menime, bude meneno
 		$record = TestTable::CreateNewRecord(array(

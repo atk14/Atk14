@@ -891,6 +891,23 @@ class TableRecord_Base extends inobj{
 	 * @return mixed
 	 */
 	function getValue($field_name){
+		if(is_array($field_name)){
+			$out = array();
+			foreach($field_name as $k => $v){
+				$out[$k] = $this->getValue($v);
+			}
+			return $out;
+		}
+		settype($field_name,"string");
+		if(!in_array($field_name,$this->getKeys())){
+			error_log(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name, returning null");
+			return null;
+		}
+		$this->_readValueIfWasNotRead($field_name);
+		return $this->_RecordValues[$field_name];
+
+		/*
+		// a Matyas` try, it doesn't pass tests
 	  if(is_array($field_name))  
 	    {
 			$all_fields=$this->_TableStructure;
@@ -918,6 +935,7 @@ class TableRecord_Base extends inobj{
 		}
 		$this->_readValueIfWasNotRead($field_name);
 		return $this->_RecordValues[$field_name];
+		*/
 	}
 	/**
 	 * Alias to method getValue().
