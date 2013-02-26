@@ -227,6 +227,7 @@ class Atk14Mailer{
 			$smarty = Atk14Utils::GetSmarty(array(
 				$ATK14_GLOBAL->getApplicationPath()."views/$namespace/mailer/",
 				$ATK14_GLOBAL->getApplicationPath()."views/$namespace/",
+				$ATK14_GLOBAL->getApplicationPath()."views/",
 			),array(
 				"namespace" => $namespace,
 				"compile_id_salt" => "mailer",
