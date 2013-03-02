@@ -84,9 +84,16 @@ animals: none
     ),$ar);
   }
 
-	function test_dump(){
+	function test_dump_array(){
+		$ar = array("a","b","c");
+		$this->assertEquals('---
+- a
+- b
+- c',trim(miniYAML::Dump($ar)));
+	}
+
+	function test_dump_colon(){
 		$hash = array(
-			"code" => "500",
 			"message" => "error: oups",
 			"detailed_info" => "detailed error: Oups!!",
 			"a_char" => ":",
@@ -95,13 +102,30 @@ animals: none
 			"a_bad_tail" => "bad:"
 		);
 		$this->assertEquals('---
-code: "500"
 message: "error: oups"
 detailed_info: "detailed error: Oups!!"
 a_char: ":"
 a_safe_one: x:y
 another_safe_one: x::y
 a_bad_tail: "bad:"',trim(miniYAML::Dump($hash)));
+
+		// --
+		$ar = array(
+			"error: oups",
+			"detailed error: Oups!!",
+			":",
+			"x:y",
+			"x::y",
+			"bad:"
+		);
+
+		$this->assertEquals('---
+- "error: oups"
+- "detailed error: Oups!!"
+- ":"
+- x:y
+- x::y
+- "bad:"',trim(miniYAML::Dump($ar)));
 	}
 
 	function test_dump_empty_array(){

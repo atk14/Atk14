@@ -1,15 +1,12 @@
 <?php
 /**
-* YAML parser.
+* YAML dumper & loader
 *
-* Ma zatim velmi omezne schopnosti - umi zpracovat pouze asociativni pole,
-* ktera maji klice i hodnoty stringy. Hodnoty muze byt misto stringu i dalsi
-* asociativni pole.
-* Dale umi zpracovavat indexovana pole (pole stringu).
+* It can dump and load associative or indexed arrays.
 * 
-* Pouziti:
-*    $ary = miniYAML::Load($yaml)
-*    $yaml = miniYAML::Dump($ary)
+* Usage:
+*    $ary = miniYAML::Load($yaml_str);
+*    $yaml = miniYAML::Dump($ary);
 *
 * TODO:
 *   Parser nenacte takovy zapis, ve kterem jsou vsechny radky odsazeny o spolecny indent.
@@ -18,6 +15,7 @@
 *
 * 2013-03-02
 *     Better string escaping
+*     An associative array can be passed to miniYAML::Dump()
 *
 * 2008-04-09
 *     Vylepseno rozpoznavani asociativniho pole.
@@ -34,8 +32,8 @@
 *
 * 2008-01-25
 *     Doplnena schopnost zpracovat prazdne indexove pole.
-*            ---
-*            status: success
+*           ---
+*           status: success
 *           message: Ok
 *           data: 
 *             domain: test.cz
@@ -49,7 +47,7 @@
 *             registrar: REG-GENREG
 *             create_date: 2001-01-10
 *             expiry_date: 2014-01-11
-
+*
 * 2008-01-09
 *    Dodelana schopnost zpracovavat indexovana pole. Priklad YAML:
 *           ---
@@ -96,7 +94,14 @@ class miniYAML{
   */
   static function Dump($ar){
     $obj = new miniYAML();
-    return "---\n".$obj->_dumpHashArray($ar,0)."\n";
+    $out = "---";
+		if($obj->_isIndexedArray($ar)){
+			$out .= "\n".$obj->_dumpIndexedArray($ar,0);
+		}elseif(is_array($ar)){
+			$out .= "\n".$obj->_dumpHashArray($ar,0);
+		}
+		$out .= "\n";
+		return $out;
   }
 
 	/**
@@ -445,4 +450,3 @@ class miniYAML{
   }
 }
 // vim: set expandtab
-?>
