@@ -16,8 +16,11 @@
 *
 * Changelog:
 *
+* 2013-03-02
+*     Better string escaping
+*
 * 2008-04-09
-*			Vylepseno rozpoznavani asociativniho pole.
+*     Vylepseno rozpoznavani asociativniho pole.
 *
 * 2008-01-28
 *      Prepracovani nacitani YAML dokumentu. Parser si nyni poradi i s indexovym pole,
