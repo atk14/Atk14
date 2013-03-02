@@ -84,6 +84,26 @@ animals: none
     ),$ar);
   }
 
+	function test_dump(){
+		$hash = array(
+			"code" => "500",
+			"message" => "error: oups",
+			"detailed_info" => "detailed error: Oups!!",
+			"a_char" => ":",
+			"a_safe_one" => "x:y",
+			"another_safe_one" => "x::y",
+			"a_bad_tail" => "bad:"
+		);
+		$this->assertEquals('---
+code: "500"
+message: "error: oups"
+detailed_info: "detailed error: Oups!!"
+a_char: ":"
+a_safe_one: x:y
+another_safe_one: x::y
+a_bad_tail: "bad:"',trim(miniYAML::Dump($hash)));
+	}
+
 	function test_dump_empty_array(){
 		$hash = array(
 			"empty_array" => array()
@@ -250,4 +270,3 @@ key2: <?= $hodnota_2?>
 		),$ar);
 	}
 }
-?>
