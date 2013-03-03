@@ -277,6 +277,7 @@ class SessionStorer{
 	 * </code>
 	 */
 	function getSecretToken(){
+		$this->_initialize();
 		if(isset($this->_SessionId) && isset($this->_SessionSecurity)){
 			return $this->_SessionId.".".$this->_SessionSecurity;
 		}
