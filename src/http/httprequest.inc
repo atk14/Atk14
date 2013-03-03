@@ -45,13 +45,13 @@ class HTTPRequest{
 	 * Server name as set in httpd.conf.
 	 *
 	 */
-	protected $_HTTPRequest_serverName = "";
+	protected $_ServerName = "";
 	
 	/**
 	 * Server name as used in requested url.
 	 *
 	 */
-	protected $_HTTPRequest_HTTPHost = "";
+	protected $_HttpHost = "";
 
 	/**
 	 * Protocol used.
@@ -61,7 +61,7 @@ class HTTPRequest{
 	/**
 	 * @access private
 	 */
-	protected $_HTTPRequest_serverPort = null;
+	protected $_ServerPort = null;
 
 	/**
 	 * @access private
@@ -157,13 +157,13 @@ class HTTPRequest{
 		if(isset($_SERVER['HTTP_HOST'])){
 			$_tmp = $_SERVER['HTTP_HOST'];
 			settype($_tmp,"string");
-			$this->_HTTPRequest_HTTPHost = $_tmp;
+			$this->_HttpHost = $_tmp;
 		}
 
 		if(isset($_SERVER['SERVER_NAME'])){
 			$_tmp = $_SERVER['SERVER_NAME'];
 			settype($_tmp,"string");
-			$this->_HTTPRequest_serverName = $_tmp;
+			$this->_ServerName = $_tmp;
 		}
 
 		if(isset($_SERVER['SERVER_PROTOCOL'])){
@@ -175,7 +175,7 @@ class HTTPRequest{
 		if(isset($_SERVER['SERVER_PORT'])){
 			$_tmp = $_SERVER['SERVER_PORT'];
 			settype($_tmp,"integer");
-			$this->_HTTPRequest_serverPort = $_tmp;
+			$this->_ServerPort = $_tmp;
 		}
 
 		if(isset($_SERVER['SCRIPT_NAME'])){
@@ -219,7 +219,7 @@ class HTTPRequest{
 	 */
 	function getRequestUri(){
 		global $_SERVER;
-		if(isset($this->_ForceRequestUri)){ return $this->_ForceRequestUri; }
+		if($uri = $this->_getForceValue("RequestUri")){ return $uri; }
 		return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : "";
 	}
 
@@ -232,7 +232,9 @@ class HTTPRequest{
 	 */
 	function getUri(){ return $this->getRequestUri(); }
 
-	function setRequestUri($uri){ $this->_ForceRequestUri = $uri; }
+	function setRequestUri($uri){
+		$this->_setForceValue("RequestUri",$uri);
+	}
 	function setUri($uri){ $this->setRequestUri($uri); }
 
 	/**
@@ -288,12 +290,12 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getRemoteAddr(){
-		if(isset($this->_ForceRemoteAddr)){ return $this->_ForceRemoteAddr; }
+		if($addr = $this->_getForceValue("RemoteAddr")){ return $addr; }
 		return isset($GLOBALS["_SERVER"]["REMOTE_ADDR"]) ? $GLOBALS["_SERVER"]["REMOTE_ADDR"] : null;
 	}
 
 	function setRemoteAddr($addr){
-		$this->_ForceRemoteAddr = $addr;
+		$this->_setForceValue("RemoteAddr",$addr);
 	}
 
 	/**
@@ -304,7 +306,11 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getServerName(){
-		return $this->_HTTPRequest_serverName;
+		return $this->_getForceValue_or_Value("ServerName");
+	}
+
+	function setServerName($name){
+		$this->_setForceValue("ServerName",$name);
 	}
 
 	/**
@@ -313,23 +319,26 @@ class HTTPRequest{
 	 * @return integer
 	 */
 	function getServerPort(){
-		return $this->_HTTPRequest_serverPort;
+		return $this->_getForceValue_or_Value("ServerPort");
+	}
+
+	function setServerPort($port){
+		$this->_setForceValue("ServerPort",$port);
 	}
 
 	/**
 	 * Gets HTTP host.
 	 *
-	 * Returns server name as given by user in URI
+	 * Returns server name as given by user in request`s headers
 	 *
 	 * @return string
 	 */
 	function getHttpHost(){
-		if(isset($this->_ForceHttpHost)){ return $this->_ForceHttpHost; }
-		return $this->_HTTPRequest_HTTPHost;
+		return $this->_getForceValue_or_Value("HttpHost");
 	}
 
 	function setHttpHost($host){
-		$this->_ForceHttpHost = $host;
+		$this->_setForceValue("HttpHost",$host);
 	}
 
 	/**
@@ -388,7 +397,7 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getRequestMethod(){
-		if(isset($this->_ForceRequestMethod)){ return $this->_ForceRequestMethod; }
+		if($method = $this->_getForceValue("RequestMethod")){ return $method; }
 
 		if(isset($GLOBALS["_SERVER"]["REQUEST_METHOD"])){
 			$out = $GLOBALS["_SERVER"]["REQUEST_METHOD"];
@@ -408,7 +417,9 @@ class HTTPRequest{
 	 */
 	function getMethod(){ return $this->getRequestMethod(); }
 
-	function setRequestMethod($method){ $this->_ForceRequestMethod = strtoupper($method); }
+	function setRequestMethod($method){
+		$this->_setForceValue("RequestMethod",strtoupper($method));
+	}
 	function setMethod($method){ $this->setRequestMethod($method); }
 
 	/**
@@ -447,13 +458,19 @@ class HTTPRequest{
 	 * @return bool
 	 */
 	function xhr(){
-		if(isset($this->_ForceXhr)){ return $this->_ForceXhr; }
+		if(!is_null($xhr = $this->_getForceValue("Xhr"))){ return $xhr; }
+		
 		return strtolower($this->getHeader("X-Requested-With"))=="xmlhttprequest";
 	}
 
+	/**
+	 * $request->setXhr();
+	 * $request->setXhr(true);
+	 * $request->setXhr(false);
+	 * $request->setXhr(null);
+	 */
 	function setXhr($value = true){
-		if(!isset($value)){ unset($this->_ForceXhr); return; }
-		$this->_ForceXhr = $value;
+		$this->_setForceValue("Xhr",$value);
 	}
 
 	/**
@@ -464,7 +481,7 @@ class HTTPRequest{
 	function getContentType(){
 		global $_SERVER;
 
-		if(isset($this->_ForceContentType)){ return $this->_ForceContentType; }
+		if($type = $this->_getForceValue("ContentType")){ return $type; }
 
 		if(isset($_SERVER["CONTENT_TYPE"])){
 			$_content_type = $_SERVER["CONTENT_TYPE"];
@@ -477,7 +494,7 @@ class HTTPRequest{
 	}
 
 	function setContentType($content_type){
-		$this->_ForceContentType = $content_type;
+		$this->_setForceValue("ContentType",$content_type);
 	}
 
 	/**
@@ -505,10 +522,10 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getUserAgent(){
-		if(isset($this->_ForceUserAgent)){ return $this->_ForceUserAgent; }
+		if(!is_null($agent = $this->_getForceValue("UserAgent"))){ return $agent; }
 		return isset($GLOBALS["_SERVER"]["HTTP_USER_AGENT"]) ? (string)$GLOBALS["_SERVER"]["HTTP_USER_AGENT"] : null;
 	}
-	function setUserAgent($agent){ $this->_ForceUserAgent = $agent; }
+	function setUserAgent($agent){ $this->_setForceValue("UserAgent",$agent); }
 
 	/**
 	 * Return raw post data.
@@ -517,9 +534,8 @@ class HTTPRequest{
 	 * @return string null when no raw data exist
 	 */
 	function getRawPostData(){
-		if(isset($this->_ForceRawPostData)){
-			return $this->_ForceRawPostData;
-		}
+		if(!is_null($data = $this->_getForceValue("RawPostData"))){ return $data; }
+
 		if(isset($GLOBALS["HTTP_RAW_POST_DATA"])){
 			return $GLOBALS["HTTP_RAW_POST_DATA"];
 		}
@@ -527,7 +543,7 @@ class HTTPRequest{
 	}
 
 	function setRawPostData($data){
-		$this->_ForceRawPostData = $data;
+		$this->_setForceValue("RawPostData",$data);
 	}
 
 	/**
@@ -545,14 +561,14 @@ class HTTPRequest{
 	 * @return bool
 	 */
 	function sslActive(){
-		//TODO: https by se melo spis zjistovat: $GLOBALS["_SERVER"]["HTTPS"]=="on" || isset($GLOBALS["_SERVER"]["SSL_PROTOCOL"])
-		if(!isset($this->_HTTPRequest_serverPort)){
-			return false;
-		}
-		if(in_array($this->_HTTPRequest_serverPort,$this->_SSLPorts)){
+		if(isset($GLOBALS["_SERVER"]["HTTPS"]) && $GLOBALS["_SERVER"]["HTTPS"]=="on"){
 			return true;
 		}
-		return false;
+
+		if(is_null($port = $this->getServerPort())){
+			return false;
+		}
+		return in_array($port,$this->_SSLPorts);
 	}
 
 	/**
@@ -679,7 +695,7 @@ class HTTPRequest{
 	 * @return array
 	 */
 	function getAllGetVars(){
-		if(isset($this->_ForceGetVars)){ return $this->_ForceGetVars; }
+		if(!is_null($vars = $this->_getForceValue("GetVars"))){ return $vars; }
 		return $GLOBALS["_GET"];
 	}
 
@@ -692,7 +708,9 @@ class HTTPRequest{
 	 */
 	function getGetVars(){ return $this->getAllGetVars(); }
 
-	function setGetVars($vars){ $this->_ForceGetVars = $vars; }
+	function setGetVars($vars){
+		$this->_setForceValue("GetVars",$vars);
+	}
 
 
 	/**
@@ -717,7 +735,7 @@ class HTTPRequest{
 	 * @return array
 	 */
 	function getAllPostVars(){
-		if(isset($this->_ForcePostVars)){ return $this->_ForcePostVars; }
+		if(!is_null($vars = $this->_getForceValue("PostVars"))){ return $vars; }
 		return $GLOBALS["_POST"];
 	}
 
@@ -730,7 +748,7 @@ class HTTPRequest{
 	 */
 	function getPostVars(){ return $this->getAllPostVars(); }
 
-	function setPostVars($vars){ $this->_ForcePostVars = $vars; }
+	function setPostVars($vars){ $this->_setForceValue("PostVars",$vars); }
 
 	/**
 	 * Returns value of a cookie $var_name.
@@ -1163,6 +1181,15 @@ class HTTPRequest{
 		if(isset($this->_ForceValues[$name])){
 			return $this->_ForceValues[$name];
 		}
+	}
+
+	function _getForceValue_or_Value($name){
+		$out = $this->_getForceValue($name);
+		if(!is_null($out)){
+			return $out;
+		}
+		$v_name = "_$name";
+		return $this->$v_name;
 	}
 
 	function _setForceValue($name,$value){

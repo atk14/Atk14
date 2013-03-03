@@ -368,6 +368,71 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("carla:letMEin",$request->getBasicAuthString());
 	}
 
+	function test_sslActive(){
+		global $_SERVER;
+		$request = new HTTPRequest();
+		$request->setServerPort(80);
+
+		unset($_SERVER["HTTPS"]);
+		$this->assertEquals(false,$request->sslActive());
+
+		$_SERVER["HTTPS"]="on";
+		$this->assertEquals(true,$request->sslActive());
+
+		unset($_SERVER["HTTPS"]);
+		$this->assertEquals(false,$request->sslActive());
+
+		$request->setServerPort(443);
+		$this->assertEquals(true,$request->sslActive());
+
+		$request->setServerPort(80);
+		$this->assertEquals(false,$request->sslActive());
+	}
+
+	function test_getServerName(){
+		global $_SERVER;
+		$_SERVER["SERVER_NAME"] = "example.com";
+
+		$request = new HTTPRequest();
+		$this->assertEquals("example.com",$request->getServerName());
+
+		$request->setServerName("just-for-testing.com");
+		$this->assertEquals("just-for-testing.com",$request->getServerName());
+	}
+
+	function test_getRequestUri(){
+		global $_SERVER;
+		$_SERVER["REQUEST_URI"] = "/index.aspx";
+
+		$request = new HTTPRequest();
+		$this->assertEquals("/index.aspx",$request->getRequestUri());
+
+		$request->setRequestUri("/index.php");
+		$this->assertEquals("/index.php",$request->getRequestUri());
+	}
+
+	function test_getGetVars(){
+		global $_GET;
+		$_GET = array("id" => "123", "format" => "xml");
+
+		$request = new HTTPRequest();
+		$this->assertEquals(array("id" => "123", "format" => "xml"),$request->getGetVars());
+
+		$request->setGetVars(array("fake" => "1"));
+		$this->assertEquals(array("fake" => "1"),$request->getGetVars());
+	}
+
+	function test_getPostVars(){
+		global $_POST;
+		$_POST = array("id" => "123", "format" => "xml");
+
+		$request = new HTTPRequest();
+		$this->assertEquals(array("id" => "123", "format" => "xml"),$request->getPostVars());
+
+		$request->setPostVars(array("fake" => "1"));
+		$this->assertEquals(array("fake" => "1"),$request->getPostVars());
+	}
+
 	function _check_request_method($req,$type){
 		$this->assertEquals($type,$req->getRequestMethod());
 
