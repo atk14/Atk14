@@ -11,7 +11,7 @@
  * - FloatField
  * - RegexField
  * - EmailField
- * - IPAddressField
+ * - IpAddressField
  * - DateField
  * - DateTimeField
  * - DateTimeWithSecondsField
@@ -789,9 +789,9 @@ class MultipleChoiceField extends ChoiceField
  * @package Atk14
  * @subpackage InternalLibraries
  */
-class IPAddressField extends RegexField
+class IpAddressField extends RegexField
 {
-    function IPAddressField($options = array()){
+    function IpAddressField($options = array()){
         $options = array_merge(array(
             "null_empty_output" => true,
             "ipv4_only" => false,
