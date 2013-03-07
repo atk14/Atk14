@@ -30,6 +30,15 @@ class TcHelpers extends TcBase{
 		$this->assertContains('<li>Swallows and Amazons by Arthur Ransome</li>',$out);
 	}
 
+	function test_render_component(){
+		global $ATK14_GLOBAL;
+		$out = $this->_run_action("helpers/render_component");
+		$this->assertEquals('<div id="external_content">Hello World from Mars!</div>',trim($out));
+
+		$this->assertEquals("helpers",$ATK14_GLOBAL->getValue("controller"));
+		$this->assertEquals("render_component",$ATK14_GLOBAL->getValue("action"));
+	}
+
 	function test_a(){
 		$out = $this->_run_action("helpers/a");
 		$this->assertContains('<a href="/en/books/">List Books</a>',$out);

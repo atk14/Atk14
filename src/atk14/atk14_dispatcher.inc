@@ -150,6 +150,11 @@ class Atk14Dispatcher{
 			$action = "error404";
 		}
 
+		if($options["apply_render_component_hacks"]){
+			$prev_namespace = $ATK14_GLOBAL->getValue("namespace");
+			$prev_controller_name = $ATK14_GLOBAL->getValue("controller");
+			$prev_action = $ATK14_GLOBAL->getValue("action");
+		}
 		$ATK14_GLOBAL->setValue("controller",$controller_name);
 		$ATK14_GLOBAL->setValue("action",$action);
 
@@ -190,7 +195,14 @@ class Atk14Dispatcher{
 
 		$controller->atk14__runAfterFilters();
 
+		if($options["apply_render_component_hacks"]){
+			$ATK14_GLOBAL->setValue("namespace",$prev_namespace);
+			$ATK14_GLOBAL->setValue("controller",$prev_controller_name);
+			$ATK14_GLOBAL->setValue("action",$prev_action);
+		}
+
 		if($options["return_controller"]){ return $controller; }
+
 		return $controller->response;
 	}
 }

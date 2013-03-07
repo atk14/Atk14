@@ -17,6 +17,10 @@ class HelpersController extends ApplicationController{
 		);
 	}
 
+	function render_component(){
+		
+	}
+
 	function a(){
 		$this->lang = "en";
 	}
