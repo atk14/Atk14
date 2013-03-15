@@ -49,19 +49,22 @@
  * 
  */
 class Atk14Sorting{
-	/**
-	 * @access private
-	 */
-	var $_Ordering = array();
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
-	var $_OrderingStrings = array();
+	private $_Ordering = array();
+
+	/**
+	 * @ignore
+	 */
+	private $_OrderingStrings = array();
 
 	/**
 	 * Constructor
+	 *
 	 * @param array $params Parameters from request
+	 * @param array $options
 	 */
 	function Atk14Sorting($params,$options = array()){
 		$this->_Params = $params;
@@ -70,17 +73,21 @@ class Atk14Sorting{
 	/**
 	 * Adds a sorting key which represents a table column by default. You can assign own definition to a key.
 	 *
+	 * First added key is the default sorting key.
+	 *
+	 * Basic usage
 	 * <code>
-	 *	// usage
 	 * 	$sorting->add("create_date");
 	 * 	$sorting->add("create_date",array("reverse" => true));
-	 *	//
+	 *
 	 * 	$sorting->add("title",array("order_by" => "UPPER(title)"));
 	 * 	$sorting->add("title",array("ascending_ordering" => "UPPER(title), id", "descending_ordering" => "UPPER(title) DESC, id DESC"));
 	 * 	$sorting->add("title","UPPER(title), id", "UPPER(title) DESC, id DESC");
 	 * </code>
 	 *
 	 * @param string $key Name of the key which can then be used in a template by {sortable} helper.
+	 * @param string|array $options_or_asc_ordering string for sql definition of ascending ordering or array for options. see description of $options below.
+	 * @param string $desc_ordering sql definition of descending ordering
 	 * @param array $options Options to customize sorting
 	 * <ul>
 	 * 	<li>order_by - </li>
@@ -127,7 +134,6 @@ class Atk14Sorting{
 	 * It is a string and this form is suitable for usage in any finding method used by {@link DbMole}.
 	 *
 	 * @return string the ordering key
-	 *
 	 */
 	function getOrder(){
 		(($key = $this->_Params->g("order","string")) && isset($this->_OrderingStrings[$key])) || ($key = $this->_getDefaultKey());
@@ -138,13 +144,18 @@ class Atk14Sorting{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
-	function _getDefaultKey(){
+	private function _getDefaultKey(){
 		$_ar = array_keys($this->_Ordering);
 		return "$_ar[0]-asc";
 	}
 
+	/**
+	 * Returns name of current sorting key
+	 *
+	 * @return string
+	 */
 	function getActiveKey(){
 		if(!isset($this->_ActiveKey)){
 			$this->getOrder();
@@ -157,7 +168,6 @@ class Atk14Sorting{
 	 *
 	 * @param string $key Name of the key
 	 * @return string Text shown on the sorting link
-	 *
 	 */
 	function getTitle($key){
 		return $this->_Ordering[$key]["title"];
