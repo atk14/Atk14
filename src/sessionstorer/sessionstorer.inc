@@ -32,6 +32,10 @@ if(!defined("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY")){
 	define("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY",true);
 }
 
+if(!defined("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS")){
+	define("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS",false);
+}
+
 /**
  * A class for storing and reading values into a session.
  *
@@ -561,12 +565,19 @@ class SessionStorer{
 		}
 		if($value==""){
 			// when it`s about to delete a cookie, 2 setcookie() calls are realized -
-			// this one is just for sure that the cookie will be deleted
+			// the one is just for sure that the cookie will be deleted
 			$this->__setCookie(
 				$name,
 				$value,
 				$time,
 				$this->_getWebDocumentRoot()
+			);
+			SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS && $this->__setCookie(
+				$name,
+				$value,
+				$time,
+				$this->_getWebDocumentRoot(),
+				$this->_request->getHttpHost()
 			);
 		}
 		return $this->__setCookie(
@@ -574,7 +585,7 @@ class SessionStorer{
 			$value,
 			$time,
 			$this->_getWebDocumentRoot(), // 
-			$this->_request->getHttpHost(), // domain
+			$this->_getCookieDomain(), // domain
 			false, // secure
 			true // http only
 		);
@@ -585,6 +596,15 @@ class SessionStorer{
 			return @setcookie($name , $value, $expire, $path , $domain, $secure, $httponly);
 		}
 		return setcookie($name , $value, $expire, $path , $domain, $secure, $httponly);
+	}
+
+	function _getCookieDomain($share_cookies_on_subdomains = null){
+		if(!isset($share_cookies_on_subdomains)){ $share_cookies_on_subdomains = SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS; }
+		$domain = $this->_request->getHttpHost();
+		if($share_cookies_on_subdomains){
+			$domain = preg_replace('/^.*\.([^.]+\.[a-z]+)$/','\1',$domain);
+		}
+		return $domain;
 	}
 
 	/**

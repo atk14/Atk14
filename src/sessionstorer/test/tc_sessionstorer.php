@@ -62,5 +62,23 @@ class TcSessionStorer extends TcBase{
 		$this->assertEquals(5,$s->_clearDataCookies());
 	}
 
+	function test__getCookieDomain(){
+		global $HTTP_REQUEST;
+
+		$HTTP_REQUEST->setHttpHost("www.example.org");
+		$ss = new SessionStorer();
+
+		$this->assertEquals("www.example.org",$ss->_getCookieDomain());
+		$this->assertEquals("example.org",$ss->_getCookieDomain(true));
+		$this->assertEquals("www.example.org",$ss->_getCookieDomain(false));
+
+		$HTTP_REQUEST->setHttpHost("10.20.30.40");
+		$ss = new SessionStorer();
+
+		$this->assertEquals("10.20.30.40",$ss->_getCookieDomain());
+		$this->assertEquals("10.20.30.40",$ss->_getCookieDomain(true));
+		$this->assertEquals("10.20.30.40",$ss->_getCookieDomain(false));
+	}
+
 	// TODO: we realy need more tests!
 }
