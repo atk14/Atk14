@@ -23,7 +23,7 @@
  *  "bind_ar" => $bind_ar,
  *  "order" => $this->sorting->getOrder(),
  *  "limit" => 10,
- *  "offset" => $this->params->getInt("from"),
+ *  "offset" => $this->params->getInt("offset"),
  * ));
  * </code>
  *
@@ -68,7 +68,7 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 	$key = $params["key"];
 	$sorting = $smarty->getTemplateVars("sorting");
 	$_params = $smarty->getTemplateVars("params")->copy();
-	$_params->delete("from"); // smazani parametru pro strankovani
+	$_params->delete(ATK14_PAGINATOR_OFFSET_PARAM_NAME); // smazani parametru pro strankovani
 	$_key = "$key-asc";
 	if($sorting->getActiveKey()==$_key){
 		$_key = "$key-desc";
