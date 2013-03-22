@@ -13,7 +13,7 @@
 !defined("DBMOLE_CHECK_BIND_AR_FORMAT") && define("DBMOLE_CHECK_BIND_AR_FORMAT",true);
 
 /**
- * Basic database functionality.
+ * Provides basic functionality with databases.
  *
  * This class provides methods that are independent on the database type.
  * Database dependent methods are overridden in descendants
@@ -578,6 +578,8 @@ class DbMole{
 	 *
 	 * @ignore
 	 * @access private
+	 * @param string $message_prefix				ie. "OCIParse failed"
+	 *
 	 */
 	function _raiseDBError($message){
     $this->_ErrorMessage = "$message";

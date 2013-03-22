@@ -30,7 +30,7 @@
  * - ImageField
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  * @filesource
  */
 
@@ -39,7 +39,7 @@
  * Objekt pro sber pravidel pro JS validator a jedno pole.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class JsValidator{
     function JsValidator(){
@@ -72,7 +72,7 @@ class JsValidator{
  * - {@link Field::clean()} provides validation of values
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  * @abstract
  */
 class Field
@@ -239,7 +239,7 @@ class Field
  * Field for strings.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class CharField extends Field
 {
@@ -325,7 +325,7 @@ class CharField extends Field
  * Field for integers.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class IntegerField extends Field
 {
@@ -378,7 +378,7 @@ class IntegerField extends Field
  * Field for floats.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class FloatField extends Field
 {
@@ -431,7 +431,7 @@ class FloatField extends Field
  * Field for boolean values.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class BooleanField extends Field
 {
@@ -462,7 +462,7 @@ class BooleanField extends Field
  * Field for strings that must suit to regular expressions.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class RegexField extends CharField
 {
@@ -519,7 +519,7 @@ class RegexField extends CharField
  * Field for email values.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class EmailField extends RegexField
 {
@@ -565,7 +565,7 @@ class EmailField extends RegexField
  * Field for choices.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class ChoiceField extends Field
 {
@@ -642,7 +642,7 @@ class ChoiceField extends Field
  * Field for date validations.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class DateField extends CharField
 {
@@ -686,7 +686,7 @@ class DateField extends CharField
  * Field for datetime validations.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class DateTimeField extends DateField
 {
@@ -705,7 +705,7 @@ class DateTimeField extends DateField
  * Field for validation of datetime with seconds.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class DateTimeWithSecondsField extends DateField
 {
@@ -725,7 +725,7 @@ class DateTimeWithSecondsField extends DateField
  * Field with multiple choices.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  *
  * @internal NOTE: tohle asi v PHP nebude fachat, protoze pokud se ve formulari objevi vice poli sdilejici stejny nazev, v $_POST se objevi pouze jeden z nich (posledni)
  * @internal NOTE: v PHP to funguje, pokude se parametr ve formulare nazve takto: <select name="choices[]" multiple="multiple">... (yarri)
@@ -787,7 +787,7 @@ class MultipleChoiceField extends ChoiceField
  * Extends {@link RegexField}
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class IpAddressField extends RegexField
 {
@@ -818,7 +818,7 @@ class IpAddressField extends RegexField
  * Uploaded file is accessible as {@link HTTPUploadedFile}
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class FileField extends Field{
     function FileField($options = array()){
@@ -838,7 +838,7 @@ class FileField extends Field{
  * Provides access to uploaded image
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  */
 class ImageField extends FileField{
     function ImageField($options = array()){
