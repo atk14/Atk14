@@ -27,8 +27,8 @@ class tc_files extends tc_base{
 	}
 
 	function test_deterine_file_type(){
-		$this->assertEquals("image/jpeg",files::deterine_file_type("hlava.jpg"));
-		$this->assertEquals("text/plain",files::deterine_file_type("test.txt"));
+		$this->assertEquals("image/jpeg",files::determine_file_type("hlava.jpg"));
+		$this->assertEquals("text/plain",files::determine_file_type("test.txt"));
 	}
 
 	function test_write_to_temp(){

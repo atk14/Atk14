@@ -506,7 +506,7 @@ class files{
 	 * !! Note that it actualy runs the shell command file.
 	 * If it is unable to run the command, 'application/octet-string' is returned.
 	 */
-	static function deterine_file_type($filename, &$error = null, &$error_str  = null){
+	static function determine_file_type($filename, &$error = null, &$error_str  = null){
 		$command = "file -i ".escapeshellarg($filename);
 		$out = `$command`;
 		// /tmp/xxsEEws: text/plain charset=us-ascii
