@@ -118,18 +118,27 @@ class Atk14Utils{
 	static function LoadControllers($controller_name){
 		global $ATK14_GLOBAL;
 
-		Atk14Require::Controller("ApplicationController");
+		$namespace = $ATK14_GLOBAL->getValue("namespace");
+
+		$_requires = array("$namespace/application.php");
+		if($namespace!=""){
+			$_requires[] = "$namespace/$namespace.php";
+		}
+		foreach($_requires as $_f_){
+			if($_f_ = atk14_find_file(ATK14_DOCUMENT_ROOT."/app/controllers/$_f_")){
+				require_once($_f_);
+			}
+		}
+
 		Atk14Require::Controller("_*");
 		Atk14Require::Controller($controller_name);
 
-		$namespace = $ATK14_GLOBAL->getValue("namespace");
-
 		// loading base form class
 		foreach(array(
-			ATK14_DOCUMENT_ROOT."/app/forms/$namespace/application_form.php",
-			ATK14_DOCUMENT_ROOT."/app/forms/application_form.php",
+			"$namespace/application_form.php",
+			"application_form.php",
 		) as $_f_){
-			if($_f_ = atk14_find_file($_f_)){
+			if($_f_ = atk14_find_file(ATK14_DOCUMENT_ROOT."/app/forms/".$_f_)){
 				require_once($_f_);
 				break;
 			}

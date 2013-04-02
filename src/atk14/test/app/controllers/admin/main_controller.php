@@ -1,5 +1,5 @@
 <?php
-class MainController extends ApplicationController{
+class MainController extends AdminController{
 	function index(){
 	}
 

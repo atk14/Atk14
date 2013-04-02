@@ -134,4 +134,21 @@ class TcController extends TcBase{
 		$this->assertContains("John Doe",$controller->snippet);
 		$this->assertContains("John Doe",$this->client->getContent());
 	}
+
+	function test_error404(){
+		$client = &$this->client;
+		$controller = $client->get("nonsence/nonsence");
+		$this->assertEquals(404,$client->getStatusCode());
+		$this->assertEquals("ApplicationController",get_class($controller));
+		$this->assertContains("this is views/application/error404.tpl",$client->getContent());
+
+		$controller = $client->get("admin/en/nonsence/nonsence");
+		$this->assertEquals(404,$client->getStatusCode());
+		$this->assertEquals("AdminController",get_class($controller)); // there is AdminController in file controllers/admin/admin.php
+		$this->assertContains("error404 template in views/admin/admin/error404.tpl",$client->getContent());
+
+		$controller = $client->get("universe/en/nonsence/nonsence");
+		$this->assertEquals(404,$client->getStatusCode());
+		$this->assertEquals("ApplicationController",get_class($controller));
+	}
 }
