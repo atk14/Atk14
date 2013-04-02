@@ -4,7 +4,6 @@
  *
  * @package Atk14
  * @subpackage Core
- * @author Jaromir Tomek
  * @filesource
  */
 
@@ -13,39 +12,91 @@
  *
  * This class is suitable for testing controllers.
  *
+ * Example of testing a GET request
+ * <code>
+ * $controller = $this->client->get("customers/index");
+ * $this->assertEquals(200, $this->client->getStatusCode());
+ * $this->assertNotNull($finder = $controller->tpl_data["finder"]);
+ * $this->assertTrue(sizeof($finder->getRecords())>0);
+ * </code>
+ *
+ * Example of testing a POST request
+ * <code>
+ * $controller = $this->client->post("logins/sign_in", array("username" => "admin", "password" => "SeCrEt.P4ssw0rD"));
+ * $this->assertEquals(200, $this->client->getStatusCode());
+ * $this->assertEquals(1, $controller->session->getValue("admin_id"));
+ * </code>
+ *
  * @package Atk14
  * @subpackage Core
- * @author Jaromir Tomek
  * @todo Some more explanation
  */
 class Atk14Client{
 	
 	/**
+	 * Instance of session storer.
+	 *
 	 * @var Atk14Session
+	 * @see Atk14Session
 	 */
 	var $session = null;
 
 	/**
+	 * Instance of Atk14Flash.
+	 *
+	 * The flash contains messages to be displayed by clients browser
+	 *
 	 * @var Atk14Flash
+	 * @see Atk14Flash
 	 */
 	var $flash = null;
 
 	/**
+	 * Instance of Atk14Controller used by current request.
+	 *
 	 * @var ApplicationController
+	 * @see Atk14Controller
 	 */
 	var $controller = null;
 
+	/**
+	 * Current controllers namespace.
+	 *
+	 * @var string
+	 */
 	var $namespace = "";
 
+	/**
+	 * Content sent in User-Agent HTTP header.
+	 *
+	 * @var string
+	 * @ignore
+	 */
 	var $_UserAgent = "Atk14 Testing Client";
 
+	/**
+	 * @ignore
+	 */
 	var $_RemoteAddr = "0.0.0.0";
 
+	/**
+	 * Basic authentication username.
+	 *
+	 * @var string
+	 * @ignore
+	 */
 	var $_BasicAuthUsername = null;
+
+	/**
+	 * Basic authentication password.
+	 *
+	 * @var string
+	 * @ignore
+	 */
 	var $_BasicAuthPassword = null;
 
 	/**
-	 *
+	 * Constructor
 	 */
 	function Atk14Client(){
 		$this->session = &Atk14Session::GetInstance();
@@ -64,9 +115,14 @@ class Atk14Client{
 	}
 
 	/**
+	 * Set basic HTTP authentization values.
+	 *
 	 * <code>
 	 * $client->setBasicAuth("robin","the hooded man");
 	 * </code>
+	 *
+	 * @param string $username
+	 * @param string $password
 	 */
 	function setBasicAuth($username,$password){
 		$this->_BasicAuthUsername = $username;
@@ -107,6 +163,12 @@ class Atk14Client{
 	 *
 	 * @param string $path
 	 * @param array $params
+	 * @param array $options
+	 * <ul>
+	 * 	<li>raw_post_data</li>
+	 * 	<li>content_type</li>
+	 * </ul>
+	 *
 	 * @return ApplicationController
 	 */
 	function post($path,$params = array(),$options = array()){
@@ -121,9 +183,10 @@ class Atk14Client{
 
 	/**
 	 * Common method to make HTTP requests
-	 * @access private
+	 *
+	 * @ignore
 	 */
-	function _doRequest($method,$path,$options = array()){
+	private function _doRequest($method,$path,$options = array()){
 		global $ATK14_GLOBAL;
 
 		$options = array_merge(array(
@@ -205,14 +268,29 @@ class Atk14Client{
 		return $this->controller->response->buffer->toString();
 	}
 
+	/**
+	 * Content of Content-Type HTTP header
+	 *
+	 * @return string
+	 */
 	function getContentType(){
 		return $this->controller->response->getContentType();
 	}
 
+	/**
+	 * Returns redirection of the request
+	 *
+	 * @return string content of Location response header.
+	 */
 	function getLocation(){
 		return $this->controller->response->getLocation();
 	}
 
+	/**
+	 * Checks if the request was redirected
+	 *
+	 * @return bool true when request was redirected, otherwise false
+	 */
 	function redirected(){
 		return $this->controller->response->redirected();
 	}
@@ -228,15 +306,28 @@ class Atk14Client{
 
 	/**
 	 * Gets status message of a server response (e.g. "Found").
+	 *
+	 * @return string
 	 */
 	function getStatusMessage(){
 		return $this->controller->response->getStatusMessage();
 	}
 
+	/**
+	 * Sets string for User-Agent header.
+	 *
+	 * @param string $user_agent
+	 * @return string
+	 */
 	function setUserAgent($user_agent){
 		return $this->_UserAgent = $user_agent;
 	}
 
+	/**
+	 * Sets ip address of client.
+	 *
+	 * @param string $addr
+	 */
 	function setRemoteAddr($addr){
 		$this->_RemoteAddr = $addr;
 	}
