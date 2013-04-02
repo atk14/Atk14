@@ -24,6 +24,7 @@ __defaults__(array(
 	"ATK14_ADMIN_EMAIL" => DEFAULT_EMAIL,
 
 	"ATK14_PAGINATOR_OFFSET_PARAM_NAME" => "offset", // you may want to use "from" or something else
+	"ATK14_SORTING_PARAM_NAME" => "order",
 	"ATK14_DEFAULT_LANG" => "auto", // "en", "cs"... when it is "auto", the default lang will be determined by config/locale.yml
 
 	"ATK14_USE_SMARTY3" => true,

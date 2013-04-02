@@ -482,4 +482,42 @@ class files{
 		if(!is_array($out)){ $out = null; }
 		return $out;
 	}
+
+	/**
+	 * Write a content to a temporary file.
+	 *
+	 * $tmp_filename = files::write_to_temp($hot_content);
+	 * // ... do some work with $tmp_filename
+	 * files::unlink($tmp_filename);
+	 */
+	static function write_to_temp($content, &$error = null, &$error_str = null){
+		$temp_filename = defined("TEMP") ? TEMP : "/tmp";
+		$temp_filename .= "/files_tmp_".uniqid("",true)."";
+		
+		$out = files::write_to_file($temp_filename,$content,$error,$error_str);
+		if(!$error){
+			return $temp_filename;
+		}
+	}
+
+	/**
+	 * Determines the mime type of the file.
+	 * 
+	 * !! Note that it actualy runs the shell command file.
+	 * If it is unable to run the command, 'application/octet-string' is returned.
+	 */
+	static function determine_file_type($filename, &$error = null, &$error_str  = null){
+		$command = "file -i ".escapeshellarg($filename);
+		$out = `$command`;
+		// /tmp/xxsEEws: text/plain charset=us-ascii
+		// -> text/plain
+		// ya.gif: image/gif; charset=binary
+		// -> image/gif
+		if(preg_match("/^.*?:\\s*([^\\s]+\\/[^\\s;]+)/",$out,$matches)){
+			$mime_type = $matches[1];
+		}else{
+			$mime_type = "application/octet-stream";
+		}
+		return $mime_type;
+	}
 }

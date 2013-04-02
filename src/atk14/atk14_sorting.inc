@@ -63,10 +63,10 @@ class Atk14Sorting{
 	/**
 	 * Constructor
 	 *
-	 * @param array $params Parameters from request
+	 * @param Dictionary $params Parameters from request
 	 * @param array $options
 	 */
-	function Atk14Sorting($params,$options = array()){
+	function __construct($params,$options = array()){
 		$this->_Params = $params;
 	}
 
@@ -81,7 +81,14 @@ class Atk14Sorting{
 	 * 	$sorting->add("create_date",array("reverse" => true));
 	 *
 	 * 	$sorting->add("title",array("order_by" => "UPPER(title)"));
-	 * 	$sorting->add("title",array("ascending_ordering" => "UPPER(title), id", "descending_ordering" => "UPPER(title) DESC, id DESC"));
+	 * 	$sorting->add("title",array(
+	 *		"asc" => "UPPER(title), id",
+	 *		"desc" => "UPPER(title) DESC, id DESC"
+	 *	));
+	 * 	$sorting->add("title",array(
+	 *		"ascending_ordering" => "UPPER(title), id",
+	 *		"descending_ordering" => "UPPER(title) DESC, id DESC"
+	 *	));
 	 * 	$sorting->add("title","UPPER(title), id", "UPPER(title) DESC, id DESC");
 	 * </code>
 	 *
@@ -107,6 +114,16 @@ class Atk14Sorting{
 
 		if(is_string($options_or_asc_ordering)){
 			$asc_ordering = $options_or_asc_ordering;
+		}
+
+		// shortcuts:
+		//	 asc -> asc_ordering
+		//	 desc -> desc_ordering
+		foreach(array("asc","desc") as $_k){
+			if(isset($options[$_k])){
+				$options["{$_k}ending_ordering"] = $options[$_k];
+				unset($options[$_k]);
+			}
 		}
 
 		$options = array_merge(array(
@@ -136,7 +153,7 @@ class Atk14Sorting{
 	 * @return string the ordering key
 	 */
 	function getOrder(){
-		(($key = $this->_Params->g("order","string")) && isset($this->_OrderingStrings[$key])) || ($key = $this->_getDefaultKey());
+		(($key = $this->_Params->g(ATK14_SORTING_PARAM_NAME,"string")) && isset($this->_OrderingStrings[$key])) || ($key = $this->_getDefaultKey());
 
 		$this->_ActiveKey = $key;
 		
@@ -172,4 +189,7 @@ class Atk14Sorting{
 	function getTitle($key){
 		return $this->_Ordering[$key]["title"];
 	}
+
+	function toString(){ return $this->getOrder(); }
+	function __toString(){ return $this->toString(); }
 }

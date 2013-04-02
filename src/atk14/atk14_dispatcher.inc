@@ -131,11 +131,21 @@ class Atk14Dispatcher{
 
 		Atk14Utils::LoadControllers("{$controller_name}_controller");
 
-		$_class_name = str_replace("_","",$controller_name)."Controller";
+		$_base_controller_class_name = "ApplicationController";
+		$_controller_name = "application";
+		if($namespace!=""){
+			$_s = String::ToObject("{$namespace}_controller")->camelize()->toString();
+			if(class_exists($_s)){
+				$_base_controller_class_name = $_s;
+				$_controller_name = $namespace;
+			}
+		}
+
+		$_class_name = String::ToObject("{$controller_name}_controller")->camelize()->toString();
 		if(!class_exists($_class_name) || preg_match("/__/",$controller_name)){
 			DEVELOPMENT && $ATK14_LOGGER->error("controller class $_class_name doesn't exist");
-			$controller_name = "application";
-			$_class_name = "ApplicationController";
+			$controller_name = $_controller_name;
+			$_class_name = $_base_controller_class_name;
 			$action = "error404";
 		}
 		$controller = new $_class_name();
@@ -145,8 +155,8 @@ class Atk14Dispatcher{
 		if(preg_match("/__/",$action) || !in_array($action,$methods)){
 			DEVELOPMENT && $ATK14_LOGGER->error("there's no action method $_class_name::$action()");
 			// tady se meni controller na instance tridy ApplicationController
-			$controller = new ApplicationController();
-			$controller_name = "application";
+			$controller = new $_base_controller_class_name();
+			$controller_name = $_controller_name;
 			$action = "error404";
 		}
 

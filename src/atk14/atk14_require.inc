@@ -50,7 +50,7 @@ class Atk14Require{
 	 * 	<li>filename. You don't have to specify suffix, it will be added automatically.
 	 * 	<code>
 	 * 	Atk14Require::Controller("help_controller");
-	 * 	Atk14Require::Controller("help_controller.inc");
+	 * 	Atk14Require::Controller("help_controller.php");
 	 * 	</code>
 	 * 	</li>
 	 * 	<li>other
@@ -66,6 +66,8 @@ class Atk14Require{
 	static function Controller($controller_name){
 		global $ATK14_GLOBAL;
 		$filename = "";
+		$namespace = $ATK14_GLOBAL->getValue("namespace");
+
 		if($controller_name == "ApplicationController"){
 			$filename = "application.*";
 		}elseif(preg_match("/^([A-Z].*)Controller$/",$controller_name,$matches)){
@@ -74,7 +76,7 @@ class Atk14Require{
 			$filename = "$controller_name.*";
 		}
 
-		$pattern = "controllers/".$ATK14_GLOBAL->getValue("namespace")."/";
+		$pattern = "controllers/$namespace/";
 		if($filename!=""){
 			$pattern .= "$filename";
 		}else{

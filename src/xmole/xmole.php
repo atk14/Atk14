@@ -297,7 +297,7 @@ class XMole{
 		$this->_set_translate();
 	}
 	
-	/**Aktualizuje $this->_translate po zmìnì encoding **/
+	/**Aktualizuje $this->_translate po zmene encoding **/
   function _set_translate(){
 		  $this->translate=
 		          isset($this->_input_encoding) && $this->_input_encoding!="" && 
@@ -881,7 +881,7 @@ class XMole{
 	 * @param string $str
 	 * @return string
 	 */
-	function ToXML($str){
+	static function ToXML($str){
 		settype($str,"string");
 		$illegal_chars = array(
 			'/&/',
@@ -909,7 +909,7 @@ class XMole{
 	*
 	* $xml = '<person name="'.XMole::ToAttribsValue($name).'" />';
 	*/
-	function ToAttribsValue($str){
+	static function ToAttribsValue($str){
 		settype($str,"string");
 		return strtr($str,
 			array(
