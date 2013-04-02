@@ -93,7 +93,7 @@ class Atk14Sorting{
 	 * 	<li>order_by - </li>
 	 * 	<li>ascending_ordering - specifies custom ascending ordering, eg. 'created,id asc'</li>
 	 * 	<li>descending_ordering - specifies custom descending ordering, eg. 'created,id desc'</li>
-	 * 	<li>reverse - </li>
+	 * 	<li>reverse - used only in conjunction with 'order_by'. Reverts order for both descending and ascending ordering</li>
 	 * 	<li>title - string for the title attribute of the generated <a /> tag.</li>
 	 * </ul>
 	 *
