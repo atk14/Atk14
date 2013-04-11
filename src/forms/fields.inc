@@ -677,6 +677,10 @@ class DateField extends CharField
 
     function format_initial_data($data)
     {
+        if (is_numeric($data)) {
+            // converting timestamp to date in ISO format
+            $data = date("Y-m-d H:i:s",$data);
+        }
         eval('$out = Atk14Locale::'.$this->_format_function.'($data);');
         return $out;
     }
