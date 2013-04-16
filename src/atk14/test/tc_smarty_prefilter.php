@@ -4,6 +4,8 @@ class TcSmartyPrefilter extends TcBase{
 		$this->assertEquals("Hello",atk14_smarty_prefilter("Hello"));
 
 		$this->assertEquals('{$hello}',atk14_smarty_prefilter('{$hello}'));
+		$this->assertEquals('{$hello nofilter}',atk14_smarty_prefilter('{$hello nofilter}'));
+		$this->assertEquals('{$hello nofilter}',atk14_smarty_prefilter('{!$hello}'));
 
 		$this->assertEquals('{literal}{{/literal}Hello{literal}}{/literal}',atk14_smarty_prefilter('\{Hello\}'));
 

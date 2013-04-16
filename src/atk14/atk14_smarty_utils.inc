@@ -18,19 +18,18 @@
 * Smarty calls it automatically before a template compilation.
 */
 function atk14_smarty_prefilter($tpl_source, &$smarty = null){
+	// \{HELLO\} -> {literal}{{/literal}HELLO{literal}}{/literal}
 	$tpl_source = strtr($tpl_source,array(
 		"\\{" => "{literal}{{/literal}",
 		"\\}" => "{literal}}{/literal}",
 	));
 	
+	// {a _data-focus=1}xx{/a} -> {a _data__focus=1}xx{/a}
 	$tpl_source = preg_replace("/({(a|a_remote|a_destroy|form|form_remote)\\s+[^}]*\\b_data)-/","\\1___",$tpl_source);
-	/*
-	if(preg_match("/^([^\s]+)\*\s*Smarty\s*\*([^\s]+)/",$tpl_source,$matches)){
-		 $smarty->left_delimiter = $matches[1];
-		 $smarty->right_delimiter = $matches[2];
-		 $tpl_source = preg_replace("/^([^\s]+)\*\s*Smarty\s*\*([^\s]+)/","",$tpl_source);
-	}
-	*/
+
+	// {!$title} -> {$title nofilter}
+	$tpl_source = preg_replace('/\{!([^}]+)\}/','{\1 nofilter}',$tpl_source);
+
 	return $tpl_source;
 }
 
