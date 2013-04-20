@@ -206,6 +206,7 @@ class tc_string extends tc_base{
 			"sheep" => "sheep",
 			"man" => "men",
 			"virus" => "viruses",
+			"news" => "news",
 		) as $singular => $plural){
 			$str = new String($singular);
 			$this->assertEquals($plural,(string)$str->pluralize());
