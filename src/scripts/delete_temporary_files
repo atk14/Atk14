@@ -1,0 +1,26 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Deletes temporary files and directories, no more no less.
+ */
+
+require_once(dirname(__FILE__)."/load.inc");
+
+$d_handle = opendir(TEMP);
+$counter = 0;
+while($item = readdir($d_handle)){
+	if($item=='.' || $item=='..'){ continue; }
+	if(preg_match('/^README\./',$item)){ continue; }
+
+	$file = TEMP."$item";
+	if(is_dir($file)){
+		$counter += files::recursive_unlink_dir($file);
+	}
+	if(is_file($file)){
+		$counter += files::unlink($file);
+	}
+}
+
+echo "$counter files/dirs deleted\n";
+
+exit(0);
