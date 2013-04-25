@@ -34,7 +34,11 @@ class JsFormValidator{
         }
     }
 
-    function get_rules(){
+    /**
+     * print_r($js_validator->get_rules());
+     * print_r($js_validator->get_rules("phone"));
+     */
+    function get_rules($field = null){
         $out = array();
         foreach($this->validators as $name => $validator){
             if($rules = $validator->get_rules()){
@@ -42,10 +46,19 @@ class JsFormValidator{
                 $out[$key] = $rules;
             }
         }
+
+        if($field){
+            return isset($out[$field]) ? $out[$field] : array();
+        }
+
         return $out;
     }
 
-    function get_messages(){
+    /**
+     * print_r($js_validator->get_messages());
+     * print_r($js_validator->get_messages("phone"));
+     */
+    function get_messages($field = null){
         $out = array();
         foreach($this->validators as $name => $validator){
             if($msgs = $validator->get_messages()){
@@ -53,6 +66,11 @@ class JsFormValidator{
                 $out[$key] = $msgs;
             }
         }
+
+        if($field){
+            return isset($out[$field]) ? $out[$field] : array();
+        }
+
         return $out;
     }
 }
