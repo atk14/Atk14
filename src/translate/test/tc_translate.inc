@@ -156,6 +156,14 @@ class tc_translate extends tc_base{
 	function test_utf8_to_ascii(){
 		$str = "Hello".chr(0xC2).chr(0xA0)."world český";
 		$this->assertEquals("Hello world cesky",translate::trans($str,"UTF-8","ASCII"));
+
+		// TODO: otestovat locale
+		$_LANG_LC_ALL = "cs_CZ.UTF-8";
+		$_LANG_LC_ALL = "en_US.UTF-8";
+		putenv("LANG=$_LANG_LC_ALL");
+		putenv("LANGUAGE=$_LANG_LC_ALL");
+		setlocale(LC_MESSAGES,$_LANG_LC_ALL);
+		$this->assertEquals("Jan BRUSEK",translate::trans("Jan BŘUŠEK","UTF-8","ASCII"));
 	}
 
 	function test_translit_whole()

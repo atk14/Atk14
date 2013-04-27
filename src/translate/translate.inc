@@ -57,6 +57,10 @@
 * 
 */
 
+if(!defined("TRANSLATE_USE_ICONV")){
+	define("TRANSLATE_USE_ICONV",true);
+}
+
 class translate{
 
 	/**
@@ -103,7 +107,7 @@ class translate{
 			$text = translate::_remove_utf8_headaches($text);
 		}
 
-    if(function_exists('iconv')){
+    if(TRANSLATE_USE_ICONV && function_exists('iconv')){
        $success=true;
        ($out=@iconv($from_charset, $to_charset.'//TRANSLIT', $text)) or ($success=false);
        if($out!==false && $success)
