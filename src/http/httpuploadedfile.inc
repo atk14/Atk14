@@ -266,6 +266,8 @@ class HTTPUploadedFile{
 	 * 
 	 * !! Note that it actualy runs the shell command file.
 	 * If it is unable to run the command, 'application/octet-string' is returned.
+	 *
+	 * TODO: change this to files::determine_file_type()
 	 * 
 	 * @access private
 	 * @return string
