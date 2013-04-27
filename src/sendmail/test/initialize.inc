@@ -6,5 +6,5 @@ define("SENDMAIL_EMPTY_TO_REPLACE","dummy@localhost");
 define("SENDMAIL_BCC_TO","big.brother@somewhere.com");
 
 require("../../files/load.php");
-require("../../translate/translate.inc");
+require("../../translate/translate.php");
 require("../sendmail.inc");

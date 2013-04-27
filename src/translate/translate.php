@@ -17,25 +17,25 @@
  *
  * Usage:
  * <code>
- * $output_text = translate::trans($input_text,$from_charset,$to_charset);
+ * $output_text = Translate::Trans($input_text,$from_charset,$to_charset);
  * </code>
  * When it is impossible to convert the string the trans() method returns the input string. 
  *
  * The translate class is able to change the string to lowercase or uppercase
  * Example:
  * <code>
- * $output_text = translate::lower($input_text,"windows-1250");
- * $output_text = translate::upper($input_text,"windows-1250");
+ * $output_text = Translate::Lower($input_text,"windows-1250");
+ * $output_text = Translate::Upper($input_text,"windows-1250");
  * </code>
  *
  * Checking that string is in selected charset.
  * <code>
- * $output_text = translate::check_encoding($input_text,"utf-8");
+ * $output_text = Translate::CheckEncoding($input_text,"utf-8");
  * </code>
  *
  * Checking length of a UTF-8 string:
  * <code>
- * $length = translate::length($str,"UTF-8");
+ * $length = Translate::Length($str,"UTF-8");
  * </code>
  *
  * @package Atk14
@@ -48,7 +48,7 @@
 *	3.12.2003 - pridana funkce _TO_windows_1250
 *	4.12.2003 - pridana funkce _TO_ascii pro osmibitove kodovani
 * 15.12.2003 - pridana funkce _check_encoding_ascii a _check_encoding_utf8
-* 13.3.2006 - opravena chyba pri translate::lower($neco,"windows-1250") a translate::upper($neco,"windows-1250")
+* 13.3.2006 - opravena chyba pri Translate::Lower($neco,"windows-1250") a Translate::Upper($neco,"windows-1250")
 * 13.3.2006 - do metod lower a upper pridano kodovani iso-8859-2
 * 16.6.2006 - konvert z windows-1250 do 852 a naopak
 * 26.9.2007 - konvert z utf-8 do ascii (jen ceske znaky)
@@ -78,33 +78,33 @@ class translate{
 	 * - recode_array_keys usable only when $text is array; then also keys will be converted
 	 * @return string|array
 	 */
-	static function trans($text,$from_charset,$to_charset,$options = array()){
-		$from_charset = translate::_get_charset_by_name($from_charset);
-		$to_charset = translate::_get_charset_by_name($to_charset);
+	static function Trans($text,$from_charset,$to_charset,$options = array()){
+		$from_charset = Translate::_GetCharsetByName($from_charset);
+		$to_charset = Translate::_GetCharsetByName($to_charset);
 		if($from_charset==$to_charset){
 			return $text;
 		}
-		return translate::_trans($text,$from_charset,$to_charset,$options);
+		return Translate::_Trans($text,$from_charset,$to_charset,$options);
 	}
 
 	/**
 	 * @ignore
 	 */
-	static function _trans($text,$from_charset,$to_charset,$options = array()){
+	static function _Trans($text,$from_charset,$to_charset,$options = array()){
 		if(is_array($text)){
 			$out = array();
 			foreach($text as $key => $value){
 				$_key = $key;
 				if(isset($options["recode_array_keys"]) && $options["recode_array_keys"]){
-					$_key = translate::_trans($key,$from_charset,$to_charset);
+					$_key = Translate::_Trans($key,$from_charset,$to_charset);
 				}
-				$out[$_key] = (is_string($text[$key]) || is_array($text[$key])) ? translate::_trans($text[$key],$from_charset,$to_charset) : $text[$key];
+				$out[$_key] = (is_string($text[$key]) || is_array($text[$key])) ? Translate::_Trans($text[$key],$from_charset,$to_charset) : $text[$key];
 			}
 			return $out;
 		}
 
 		if($from_charset=="utf8" && $to_charset!="utf8"){
-			$text = translate::_remove_utf8_headaches($text);
+			$text = Translate::_RemoveUtf8Headaches($text);
 		}
 
     if(TRANSLATE_USE_ICONV && function_exists('iconv')){
@@ -116,22 +116,22 @@ class translate{
     
     switch($to_charset){
 			case "iso-8859-2":
-				return translate::_TO_iso_8859_2($text,$from_charset);
+				return Translate::_TO_iso_8859_2($text,$from_charset);
 				break;
 			case "utf8":
-				return translate::_TO_utf8($text,$from_charset);
+				return Translate::_TO_utf8($text,$from_charset);
 				break;
 			case "windows-1250":
-			  return translate::_TO_windows_1250($text,$from_charset);
+			  return Translate::_TO_windows_1250($text,$from_charset);
 				break;
 			case "852":
-				return translate::_TO_852($text,$from_charset);
+				return Translate::_TO_852($text,$from_charset);
 				break;			
 			case "ascii":
-				return translate::_TO_ascii($text,$from_charset);
+				return Translate::_TO_ascii($text,$from_charset);
 				break;
 			case "HTML entities":
-				return translate::_TO_HTML_entitites($text,$from_charset);
+				return Translate::_TO_HTML_entitites($text,$from_charset);
 				break;
 			default: 
 				return $text;
@@ -145,7 +145,7 @@ class translate{
 	 *
 	 * @ignore
 	 */
-	static function _remove_utf8_headaches($text){
+	static function _RemoveUtf8Headaches($text){
 		return strtr($text,array(
 			chr(0xE2).chr(0x80).chr(0x93) => "-",
 		));
@@ -158,8 +158,8 @@ class translate{
 	 * @param string $charset
 	 * @return string
 	 */
-	static function lower($text,$charset){
-		$charset = translate::_get_charset_by_name($charset);
+	static function Lower($text,$charset){
+		$charset = Translate::_GetCharsetByName($charset);
 		switch($charset){
 			case "windows-1250":
 				$mala = chr(97).chr(98).chr(99).chr(100).chr(101).chr(102).chr(103).chr(104).chr(105).chr(106).chr(107).chr(108).chr(109).chr(110).chr(111).chr(112).chr(113).chr(114).chr(115).chr(116).chr(117).chr(118).chr(119).chr(120).chr(121).chr(122).chr(154).chr(156).chr(157).chr(158).chr(159).chr(179).chr(185).chr(186).chr(190).chr(191).chr(224).chr(225).chr(226).chr(227).chr(228).chr(229).chr(230).chr(231).chr(232).chr(233).chr(234).chr(235).chr(236).chr(237).chr(238).chr(239).chr(240).chr(241).chr(242).chr(243).chr(244).chr(245).chr(246).chr(248).chr(249).chr(250).chr(251).chr(252).chr(253).chr(254);
@@ -185,8 +185,8 @@ class translate{
 	 * @param string $charset
 	 * @return string
 	 */
-	static function upper($text,$charset){
-		$charset = translate::_get_charset_by_name($charset);
+	static function Upper($text,$charset){
+		$charset = Translate::_GetCharsetByName($charset);
 		switch($charset){
 			case "windows-1250":
 				$mala = chr(97).chr(98).chr(99).chr(100).chr(101).chr(102).chr(103).chr(104).chr(105).chr(106).chr(107).chr(108).chr(109).chr(110).chr(111).chr(112).chr(113).chr(114).chr(115).chr(116).chr(117).chr(118).chr(119).chr(120).chr(121).chr(122).chr(154).chr(156).chr(157).chr(158).chr(159).chr(179).chr(185).chr(186).chr(190).chr(191).chr(224).chr(225).chr(226).chr(227).chr(228).chr(229).chr(230).chr(231).chr(232).chr(233).chr(234).chr(235).chr(236).chr(237).chr(238).chr(239).chr(240).chr(241).chr(242).chr(243).chr(244).chr(245).chr(246).chr(248).chr(249).chr(250).chr(251).chr(252).chr(253).chr(254);
@@ -211,7 +211,7 @@ class translate{
 	 * @param string $charset unified chrset name
 	 * @return string
 	 */
-	function _get_charset_by_name($charset){
+	function _GetCharsetByName($charset){
         static $trans=array( 	  
               "8859_2" => "iso-8859-2",
               "iso8859-2" => "iso-8859-2",
@@ -521,7 +521,7 @@ class translate{
 	static function _TO_852(&$text,$from_cp){
 		switch($from_cp){
 			case "utf8":
-				$text = translate::trans($text,"utf8","windows-1250");
+				$text = Translate::Trans($text,"utf8","windows-1250");
 			case "windows-1250":
 				$in = array(chr(199),chr(252),chr(233),chr(226),chr(228),chr(249),chr(230),chr(231),chr(179),chr(235),chr(213),chr(245),chr(238),chr(143),chr(196),chr(198),chr(201),chr(197),chr(229),chr(244),chr(246),chr(188),chr(190),chr(140),chr(156),chr(214),chr(220),chr(141),chr(157),chr(163),chr(215),chr(232),chr(225),chr(237),chr(243),chr(250),chr(165),chr(185),chr(142),chr(158),chr(202),chr(234),chr(172),chr(159),chr(200),chr(186),chr(171),chr(187),chr(193),chr(194),chr(204),chr(170),chr(175),chr(191),chr(195),chr(227),chr(164),chr(240),chr(208),chr(207),chr(203),chr(239),chr(210),chr(205),chr(206),chr(236),chr(222),chr(217),chr(211),chr(223),chr(212),chr(209),chr(241),chr(242),chr(138),chr(154),chr(192),chr(218),chr(224),chr(219),chr(253),chr(221),chr(254),chr(180),chr(173),chr(189),chr(178),chr(161),chr(162),chr(167),chr(247),chr(184),chr(176),chr(168),chr(255),chr(216),chr(248),chr(160));
 				$out = array(chr(128),chr(129),chr(130),chr(131),chr(132),chr(133),chr(134),chr(135),chr(136),chr(137),chr(138),chr(139),chr(140),chr(141),chr(142),chr(143),chr(144),chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151),chr(152),chr(153),chr(154),chr(155),chr(156),chr(157),chr(158),chr(159),chr(160),chr(161),chr(162),chr(163),chr(164),chr(165),chr(166),chr(167),chr(168),chr(169),chr(170),chr(171),chr(172),chr(173),chr(174),chr(175),chr(181),chr(182),chr(183),chr(184),chr(189),chr(190),chr(198),chr(199),chr(207),chr(208),chr(209),chr(210),chr(211),chr(212),chr(213),chr(214),chr(215),chr(216),chr(221),chr(222),chr(224),chr(225),chr(226),chr(227),chr(228),chr(229),chr(230),chr(231),chr(232),chr(233),chr(234),chr(235),chr(236),chr(237),chr(238),chr(239),chr(240),chr(241),chr(242),chr(243),chr(244),chr(245),chr(246),chr(247),chr(248),chr(249),chr(250),chr(252),chr(253),chr(255));
@@ -576,8 +576,8 @@ class translate{
 					chr(0xC2).chr(0xA0) => " ", // Non-breaking space
 				));
 				// nasledujicim hackem se prevedou do ascii jen ceske znaky z celeho utf8
-				$out = translate::trans($out,"utf8","iso-8859-2");
-				return translate::trans($out,"iso-8859-2","ascii");
+				$out = Translate::Trans($out,"utf8","iso-8859-2");
+				return Translate::Trans($out,"iso-8859-2","ascii");
 				break;
 			default:
 				return $text;	
@@ -591,7 +591,7 @@ class translate{
 	 * When they appear method returns false
 	 *
 	 * <code>
-	 * translate::check_encoding($text, "utf-8", array(".",";","{","}","HUSAK"));
+	 * Translate::CheckEncoding($text, "utf-8", array(".",";","{","}","HUSAK"));
 	 * </code>
 	 *
 	 * @param string|array $text string or array of strings
@@ -600,12 +600,12 @@ class translate{
 	 * @return bool																true -> text is in given charset
 	 *																						false -> text is not in given charset or contains a character or sequence from array $disallowed_char_sequencies
 	 */
-	static function check_encoding($text,$charset,$disallowed_char_sequencies = array()){
+	static function CheckEncoding($text,$charset,$disallowed_char_sequencies = array()){
 		if(is_array($text)){
 			reset($text);
 			while(list($_key,$_value) = each($text)){
-				$_stat_key = translate::check_encoding($_key,$charset,$disallowed_char_sequencies);
-				$_stat_value = translate::check_encoding($_value,$charset,$disallowed_char_sequencies);
+				$_stat_key = Translate::CheckEncoding($_key,$charset,$disallowed_char_sequencies);
+				$_stat_value = Translate::CheckEncoding($_value,$charset,$disallowed_char_sequencies);
 				if(!$_stat_key || !$_stat_value){
 					return false;
 				}
@@ -615,14 +615,14 @@ class translate{
 
 		settype($charset,"string");
 		settype($disallowed_char_sequencies,"array");
-		$charset = translate::_get_charset_by_name($charset);
+		$charset = Translate::_GetCharsetByName($charset);
 		$out = true;
 		switch($charset){
 			case "utf8":
-				$out = translate::_check_encoding_utf8($text);
+				$out = Translate::_CheckEncodingUtf8($text);
 				break;
 			case "ascii":
-				$out = translate::_check_encoding_ascii($text);
+				$out = Translate::_CheckEncodingAscii($text);
 				break;
 		}
 
@@ -641,7 +641,7 @@ class translate{
 	/**
 	 * @ignore
 	 */
-	static function _check_encoding_utf8(&$text){
+	static function _CheckEncodingUtf8(&$text){
 
 		$_11111110 = bindec("11111110");
 		$_11111100 = bindec("11111100");
@@ -702,7 +702,7 @@ class translate{
 	/**
 	 * @ignore
 	 */
-	static function _check_encoding_ascii(&$text){
+	static function _CheckEncodingAscii(&$text){
 		$_len = strlen($text);
 
 		for($i=0;$i<$_len;$i++){
@@ -723,11 +723,11 @@ class translate{
 	 * @param string $charset
 	 * @return integer
 	 */
-	static function length(&$text,$charset){
-		$charset = translate::_get_charset_by_name($charset);
+	static function Length(&$text,$charset){
+		$charset = Translate::_GetCharsetByName($charset);
 		switch($charset){
 			case "utf8":
-				return translate::_length_utf8($text);
+				return Translate::_LengthUtf8($text);
 			default:
 				return strlen($text);
 		}
@@ -736,7 +736,7 @@ class translate{
 	/**
 	 * @ignore
 	 */
-	static function _length_utf8(&$str){
+	static function _LengthUtf8(&$str){
 		$i = 0;
     $count = 0;
     $len = strlen($str);

@@ -2,7 +2,7 @@
 /**
 * POZOR!!! soubor je v kodovani UTF-8
 */
-class tc_translate extends tc_base{
+class TcTranslate extends TcBase{
 
 	function test_translate_array(){
 		$ar_utf8 = array(
@@ -10,115 +10,115 @@ class tc_translate extends tc_base{
 			"klíč2" => "šč"
 		);
 
-		$ar_iso = translate::trans($ar_utf8,"UTF-8","ISO-8859-2");
+		$ar_iso = Translate::Trans($ar_utf8,"UTF-8","ISO-8859-2");
 		$this->assertType("array",$ar_iso);
 		$this->assertEquals(2,sizeof($ar_iso));
 		reset($ar_iso);
 		while(list($_key,$_value) = each($ar_iso)){
-			$this->assertTrue(translate::check_encoding($_key,"UTF-8")); // klice zustaly v UTF-8
-			$this->assertFalse(translate::check_encoding($_value,"UTF-8")); // kdezto hodnoty uz musi byt prekodovane
+			$this->assertTrue(Translate::CheckEncoding($_key,"UTF-8")); // klice zustaly v UTF-8
+			$this->assertFalse(Translate::CheckEncoding($_value,"UTF-8")); // kdezto hodnoty uz musi byt prekodovane
 			$this->assertEquals(2,strlen($_value));	
 		}
 
-		$ar_iso = translate::trans($ar_utf8,"UTF-8","ISO-8859-2",array("recode_array_keys" => true));
+		$ar_iso = Translate::Trans($ar_utf8,"UTF-8","ISO-8859-2",array("recode_array_keys" => true));
 		$this->assertType("array",$ar_iso);
 		$this->assertEquals(2,sizeof($ar_iso));
 		reset($ar_iso);
 		while(list($_key,$_value) = each($ar_iso)){
-		  $this->assertFalse(translate::check_encoding($_key,"UTF-8")); // v teto chvili uz jsou i klice prekodovane do latin 2
-			$this->assertFalse(translate::check_encoding($_value,"UTF-8")); 
+		  $this->assertFalse(Translate::CheckEncoding($_key,"UTF-8")); // v teto chvili uz jsou i klice prekodovane do latin 2
+			$this->assertFalse(Translate::CheckEncoding($_value,"UTF-8")); 
 			$this->assertEquals(2,strlen($_value));	
 		}
 	}
 
 	function test_length(){
 		$str = "ahoj";
-		$this->assertEquals(4,translate::length($str,"ASCII"));
+		$this->assertEquals(4,Translate::Length($str,"ASCII"));
 
 		$str = "erb";
-		$this->assertEquals(3,translate::length($str,"UTF-8"));
+		$this->assertEquals(3,Translate::Length($str,"UTF-8"));
 
 		$str = "čep";
-		$this->assertEquals(3,translate::length($str,"UTF-8"));
+		$this->assertEquals(3,Translate::Length($str,"UTF-8"));
 
 		$str = "čáp";
-		$this->assertEquals(3,translate::length($str,"UTF-8"));
+		$this->assertEquals(3,Translate::Length($str,"UTF-8"));
 
 		$str = "veš";
-		$this->assertEquals(3,translate::length($str,"UTF-8"));
+		$this->assertEquals(3,Translate::Length($str,"UTF-8"));
 
 		$str = "věž";
-		$this->assertEquals(3,translate::length($str,"UTF-8"));
+		$this->assertEquals(3,Translate::Length($str,"UTF-8"));
 
 		$str = "věž";
-		$this->assertEquals(3,translate::length($str,"UTF-8"));
+		$this->assertEquals(3,Translate::Length($str,"UTF-8"));
 
 		$str = "šíř";
-		$this->assertEquals(3,translate::length($str,"UTF-8"));
+		$this->assertEquals(3,Translate::Length($str,"UTF-8"));
 
-		$this->assertEquals(3,translate::length($str,"UTF-8"));
+		$this->assertEquals(3,Translate::Length($str,"UTF-8"));
 	}
 
 	function test_check_encoding(){
 		$text = "ascii sample text";
 
-		$this->assertTrue(translate::check_encoding($text,"ascii"));
-		$this->assertTrue(translate::check_encoding($text,"utf-8"));
+		$this->assertTrue(Translate::CheckEncoding($text,"ascii"));
+		$this->assertTrue(Translate::CheckEncoding($text,"utf-8"));
 
 		$text = array(
 			"test",
 			"ascii"
 		);
 
-		$this->assertTrue(translate::check_encoding($text,"ascii"));
-		$this->assertTrue(translate::check_encoding($text,"utf-8"));
+		$this->assertTrue(Translate::CheckEncoding($text,"ascii"));
+		$this->assertTrue(Translate::CheckEncoding($text,"utf-8"));
 
 		$text = array(
 			"key1" => "value1",
 			"key2" => "value2",
 		);
-		$this->assertTrue(translate::check_encoding($text,"utf-8"));
+		$this->assertTrue(Translate::CheckEncoding($text,"utf-8"));
 		$text["key3"] = array("value3.1","value3.2");
-		$this->assertTrue(translate::check_encoding($text,"utf-8"));
+		$this->assertTrue(Translate::CheckEncoding($text,"utf-8"));
 		$text["key4"] = array("value4.1","value4.2".chr(250)); //invalid UTF-8 sequence in array value
-		$this->assertFalse(translate::check_encoding($text,"utf-8"));
+		$this->assertFalse(Translate::CheckEncoding($text,"utf-8"));
 		unset($text["key4"]);
-		$this->assertTrue(translate::check_encoding($text,"utf-8"));
+		$this->assertTrue(Translate::CheckEncoding($text,"utf-8"));
 		$text["key4"] = array(array("key4.1".chr(250) => "value4.1.2")); //invalid UTF-8 sequence in array key
-		$this->assertFalse(translate::check_encoding($text,"utf-8"));
+		$this->assertFalse(Translate::CheckEncoding($text,"utf-8"));
 
 		$text = chr(0xC3).chr(0xA2).chr(0x80).chr(0x93);
-		$this->assertFalse(translate::check_encoding($text,"utf-8"));
+		$this->assertFalse(Translate::CheckEncoding($text,"utf-8"));
 
 		$text = chr(0xE2).chr(0x80).chr(0x93);
-		$this->assertTrue(translate::check_encoding($text,"utf-8"));
+		$this->assertTrue(Translate::CheckEncoding($text,"utf-8"));
 	}
 
 	function test_hacks(){
 		$text = chr(0xE2).chr(0x80).chr(0x93);
-		$this->assertTrue(translate::check_encoding($text,"utf-8"));
+		$this->assertTrue(Translate::CheckEncoding($text,"utf-8"));
 
-		$text = translate::trans($text,"utf-8","iso-8859-2");
-		$this->assertTrue(translate::check_encoding($text,"iso-8859-2"));
+		$text = Translate::Trans($text,"utf-8","iso-8859-2");
+		$this->assertTrue(Translate::CheckEncoding($text,"iso-8859-2"));
 
-		$text = translate::trans($text,"iso-8859-2","utf-8");
-		$this->assertTrue(translate::check_encoding($text,"utf-8"));
+		$text = Translate::Trans($text,"iso-8859-2","utf-8");
+		$this->assertTrue(Translate::CheckEncoding($text,"utf-8"));
 	}
 
 	function test_windows_1250_issues(){
-		$out = translate::trans('"',"utf-8","windows-1250");
+		$out = Translate::Trans('"',"utf-8","windows-1250");
 		$this->assertEquals('"',$out);
 
-		$out = translate::trans('---',"utf-8","windows-1250");
+		$out = Translate::Trans('---',"utf-8","windows-1250");
 		$this->assertEquals('---',$out);
 	}
 
 	function test_to_cp852(){
-		$this->assertEquals("hello",translate::trans("hello","utf-8","cp852"));
+		$this->assertEquals("hello",Translate::Trans("hello","utf-8","cp852"));
 
-		$out = translate::trans("ěščč","utf-8","cp852");
+		$out = Translate::Trans("ěščč","utf-8","cp852");
 		$this->assertTrue(strlen($out)>0);
-		$this->assertFalse(translate::check_encoding($out,"utf-8"));
+		$this->assertFalse(Translate::CheckEncoding($out,"utf-8"));
 	}
 
 	function test_translate_array_with_integers(){
@@ -127,7 +127,7 @@ class tc_translate extends tc_base{
 			"int" => 13,
 			"null" => null
 		);
-		$ar = translate::trans($ar,"UTF-8","ASCII");
+		$ar = Translate::Trans($ar,"UTF-8","ASCII");
 		$this->assertEquals("cepice",$ar["word"]);
 
 		$this->assertTrue(is_int($ar["int"]));
@@ -143,7 +143,7 @@ class tc_translate extends tc_base{
 				"null" => null
 			)
 		);
-		$ar = translate::trans($ar,"UTF-8","ASCII");
+		$ar = Translate::Trans($ar,"UTF-8","ASCII");
 		$this->assertEquals("cepice",$ar["parent"]["word"]);
 
 		$this->assertTrue(is_int($ar["parent"]["int"]));
@@ -155,7 +155,7 @@ class tc_translate extends tc_base{
 
 	function test_utf8_to_ascii(){
 		$str = "Hello".chr(0xC2).chr(0xA0)."world český";
-		$this->assertEquals("Hello world cesky",translate::trans($str,"UTF-8","ASCII"));
+		$this->assertEquals("Hello world cesky",Translate::Trans($str,"UTF-8","ASCII"));
 
 		// TODO: otestovat locale
 		$_LANG_LC_ALL = "cs_CZ.UTF-8";
@@ -163,7 +163,7 @@ class tc_translate extends tc_base{
 		putenv("LANG=$_LANG_LC_ALL");
 		putenv("LANGUAGE=$_LANG_LC_ALL");
 		setlocale(LC_MESSAGES,$_LANG_LC_ALL);
-		$this->assertEquals("Jan BRUSEK",translate::trans("Jan BŘUŠEK","UTF-8","ASCII"));
+		$this->assertEquals("Jan BRUSEK",Translate::Trans("Jan BŘUŠEK","UTF-8","ASCII"));
 	}
 
 	function test_translit_whole()
@@ -173,11 +173,11 @@ class tc_translate extends tc_base{
 	$charsets=array("windows-1250", "latin2", "utf8");
 	foreach($charsets as $c)
 	  {
-	  $t=translate::trans($text, $charset, $c);
+	  $t=Translate::Trans($text, $charset, $c);
 	  foreach($charsets as $c2)
 	    {
-	    $tt=translate::trans($t, $c, $c2);
-	    $tt=translate::trans($tt, $c2, $c);
+	    $tt=Translate::Trans($t, $c, $c2);
+	    $tt=Translate::Trans($tt, $c2, $c);
 	    $this->assertEquals($t, $tt);
 	    }
 	  }
@@ -190,11 +190,11 @@ class tc_translate extends tc_base{
 	  $text=mb_substr($chars,$r,1, "utf8").'a';
 	  foreach($charsets as $c)
       {
-      $t=translate::trans($text, $charset, $c);
+      $t=Translate::Trans($text, $charset, $c);
       foreach($charsets as $c2)
         {
-        $tt=translate::trans($t, $c, $c2);
-        $tt=translate::trans($tt, $c2, $c);
+        $tt=Translate::Trans($t, $c, $c2);
+        $tt=Translate::Trans($tt, $c2, $c);
         $len=strlen($tt);
         $this->assertTrue($len > 1 && $tt[$len-1]=='a'); 
         }
@@ -211,15 +211,15 @@ class tc_translate extends tc_base{
 	$charsets=array("windows-1250", "latin2", "utf8");
 	foreach($charsets as $c)
 	  {
-	  $t=translate::trans(substr($text,1), $charset, $c);
-	  $d=translate::trans(substr($text,2), $charset, $c);
+	  $t=Translate::Trans(substr($text,1), $charset, $c);
+	  $d=Translate::Trans(substr($text,2), $charset, $c);
 	  $len=strlen($d)-1;
 	  $d=substr($d,1);
 	  
 	  foreach($charsets as $c2)
 	    {
-	    $tt=translate::trans($t, $c, $c2);
-	    $tt=translate::trans($tt, $c2, $c);
+	    $tt=Translate::Trans($t, $c, $c2);
+	    $tt=Translate::Trans($tt, $c2, $c);
 	    $this->assertEquals($d, substr($tt,strlen($tt)-$len));
 	    }
 	  }
@@ -272,9 +272,9 @@ class tc_translate extends tc_base{
 	foreach($charsets as $c2)
 	    {
 	    $d=$this->normalize($this->translate_online($text,$c, $c2));
-	    $t=$this->normalize(translate::trans($text, $c, $c2));
+	    $t=$this->normalize(Translate::Trans($text, $c, $c2));
 	    $this->assertEquals($t, $d);
-	    $this->assertEquals(translate::trans($t, $c2, $c), $this->translate_online($t,$c2, $c));
+	    $this->assertEquals(Translate::Trans($t, $c2, $c), $this->translate_online($t,$c2, $c));
 	    }
   }
 	

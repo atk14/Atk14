@@ -402,13 +402,13 @@ function _sendmail_correct_address($addr){
 }
 
 function _sendmail_escape_subject($subject,$charset){
-	if(translate::check_encoding($subject,"ascii")){ return $subject; }
+	if(Translate::CheckEncoding($subject,"ascii")){ return $subject; }
 	$out = array();
 	$escape_in_use = false;
 	$out[] = "=?$charset?Q?";
 	for($i=0;$i<strlen($subject);$i++){
 		$c = $subject[$i];
-		if(in_array($c,array("=","?",":","/","_","[","]")) || !translate::check_encoding($c,"ascii")){
+		if(in_array($c,array("=","?",":","/","_","[","]")) || !Translate::CheckEncoding($c,"ascii")){
 			$out[] = "=".strtoupper(dechex(ord($c)));
 			$escape_in_use = true;
 		}else{

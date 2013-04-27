@@ -23,7 +23,7 @@ require_once(dirname(__FILE__)."/default_settings.php");
 
 // load the rest...
 require_once(dirname(__FILE__)."/src/string/load.inc");
-require_once(dirname(__FILE__)."/src/translate/translate.inc");
+require_once(dirname(__FILE__)."/src/translate/translate.php");
 require_once(dirname(__FILE__)."/src/dictionary/dictionary.inc");
 require_once(dirname(__FILE__)."/src/miniyaml/miniyaml.inc");
 require_once(dirname(__FILE__)."/src/dates/load.php");
@@ -164,7 +164,7 @@ function __to_default_charset__(&$params){
 	reset($params);
 	while(list($key,$value) = each($params)){
 		if(is_string($value)){
-			translate::check_encoding($params[$key],"UTF-8") && ($params[$key] = translate::trans($params[$key],"UTF-8",DEFAULT_CHARSET));
+			Translate::CheckEncoding($params[$key],"UTF-8") && ($params[$key] = Translate::Trans($params[$key],"UTF-8",DEFAULT_CHARSET));
 			continue;
 		}
 		if(is_array($value)){
