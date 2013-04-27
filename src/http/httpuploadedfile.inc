@@ -163,7 +163,7 @@ class HTTPUploadedFile{
 		if(is_dir($new_filename)){
 			$new_filename = "$new_filename/".$this->getFileName();
 		}
-		if(files::move_file($this->getTmpFileName(),$new_filename,$error,$error_str)==1){
+		if(Files::MoveFile($this->getTmpFileName(),$new_filename,$error,$error_str)==1){
 			$this->_TmpFileName = $new_filename;
 			return true;
 		}
@@ -195,7 +195,7 @@ class HTTPUploadedFile{
 	 */
 	function cleanUp(){
 		if($tmp_file = $this->getTmpFileName()){
-			files::unlink($tmp_file,$err,$err_str);
+			Files::Unlink($tmp_file,$err,$err_str);
 		}
 	}
 
@@ -205,7 +205,7 @@ class HTTPUploadedFile{
 	 * @return mixed
 	 */
 	function getContent(){
-		return files::get_file_content($this->getTmpFileName(),$error,$error_str);
+		return Files::GetFileContent($this->getTmpFileName(),$error,$error_str);
 	}
 
 	/**

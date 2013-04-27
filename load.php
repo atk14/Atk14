@@ -8,7 +8,7 @@ error_reporting(255);
 // we need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
 // HTTP* classes give us right advices about environment & configuration
 require_once(dirname(__FILE__)."/src/stringbuffer/stringbuffer.inc");
-require_once(dirname(__FILE__)."/src/files/files.inc");
+require_once(dirname(__FILE__)."/src/files/load.php");
 require_once(dirname(__FILE__)."/src/http/load.inc");
 require_once(dirname(__FILE__)."/src/atk14/atk14_utils.inc");
 Atk14Utils::DetermineEnvironment();

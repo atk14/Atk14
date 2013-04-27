@@ -787,8 +787,8 @@ class Atk14Controller{
 			"template_name" => $this->template_name,
 		)));
 
-		files::mkdir($recipe["dir"],$err,$err_msg);
-		files::write_to_file($recipe["filename"],$serialized,$err,$err_msg);
+		Files::Mkdir($recipe["dir"],$err,$err_msg);
+		Files::WriteToFile($recipe["filename"],$serialized,$err,$err_msg);
 	}
 
 	/**
@@ -801,7 +801,7 @@ class Atk14Controller{
 		$filename = $recipe["filename"];
 
 		if(file_exists($filename) && ((time()-filemtime($filename))<=$recipe["expires"])){
-			$serialized = files::get_file_content($filename,$err,$err_msg);
+			$serialized = Files::GetFileContent($filename,$err,$err_msg);
 			if(($unserialized = unserialize($serialized)) && is_array($unserialized) && isset($unserialized["content"])){
 				$cache = $unserialized;
 				return true;
