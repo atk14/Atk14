@@ -105,7 +105,7 @@ class translate{
 
     if(function_exists('iconv')){
        $success=true;
-       $out=@iconv($from_charset, $to_charset.'//TRANSLIT', $text) or $success=false;
+       ($out=@iconv($from_charset, $to_charset.'//TRANSLIT', $text)) or ($success=false);
        if($out!==false && $success)
           return $out;
        }
