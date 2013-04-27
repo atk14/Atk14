@@ -1,6 +1,6 @@
 <?php
 require("../logger.inc");
-require("../../files/load.inc");
+require("../../files/load.php");
 define("LOGGER_DEFAULT_LOG_FILE",__DIR__."/log/default.log");
 $LOGGER_CONFIGURATION = array(
 	"cache_remover" => array(

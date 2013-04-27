@@ -19,7 +19,7 @@
  * @filesource
  *
  */
-class files{
+class Files{
 
 	/**
 	 * Creates a directory.
@@ -35,7 +35,7 @@ class files{
 	 * @param string	 &$error_str Error description
 	 * @return int Number of directories created
 	 */
-	static function mkdir($dirname,&$error = null,&$error_str = null){
+	static function Mkdir($dirname,&$error = null,&$error_str = null){
 		$out = 0;
 		$error = false;
 		$error_str = "";
@@ -76,7 +76,7 @@ class files{
 	 * @return int Number of copied bytes
 	 *
 	 */
-	static function copy_file($from_file,$to_file,&$error = null,&$error_str = null){
+	static function CopyFile($from_file,$to_file,&$error = null,&$error_str = null){
 		$bytes = 0;
 		$error = false;
 		$error_str = "";
@@ -140,7 +140,7 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return int Number of written bytes
 	 */
-	static function write_to_file($file,$content,&$error = null,&$error_str = null){
+	static function WriteToFile($file,$content,&$error = null,&$error_str = null){
 		$bytes = 0;
 		$error = false;
 		$error_str = "";
@@ -200,7 +200,7 @@ class files{
 	 * @return bool	true => file was securely uploaded; false => file was not uploaded
 	 *
 	 */
-	static function is_uploaded_file($filename){
+	static function IsUploadedFile($filename){
 		settype($filename,"string");
 		if(!file_exists($filename)){
 			return false;
@@ -234,9 +234,9 @@ class files{
 	 * @param boolean 	&$error Error flag
 	 * @param string 	&$error_str Error description
 	 * @return int	Number of moved files; ie. on success return 1
-	 * @see files::unlink()
+	 * @see Files::Unlink()
 	 */
-	static function move_file($from_file,$to_file,&$error = null,&$error_str = null){
+	static function MoveFile($from_file,$to_file,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -259,10 +259,10 @@ class files{
 		return 1;
 
 		/*
-		files::copy_file($from_file,$to_file,$error,$error_str);
+		Files::CopyFile($from_file,$to_file,$error,$error_str);
 
 		if(!$error){
-			files::unlink($from_file,$error,$error_str);
+			Files::Unlink($from_file,$error,$error_str);
 		}
 
 		if($error){
@@ -282,7 +282,7 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return int Number of deleted files; on success returns 1; otherwise 0
 	 */
-	static function unlink($file,&$error = null,&$error_str = null){
+	static function Unlink($file,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -312,11 +312,11 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return int Number of deleted directories and files
 	 */
-	static function recursive_unlink_dir($dir,&$error = null,&$error_str = null){
+	static function RecursiveUnlinkDir($dir,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 		settype($dir,"string");
-		return files::_recursive_unlink_dir($dir,$error,$error_str);
+		return Files::_RecursiveUnlinkDir($dir,$error,$error_str);
 	}
 
 	/**
@@ -333,7 +333,7 @@ class files{
 	 * @see file::recursive_unlink_dir()
 	 *
 	 */
-	static function _recursive_unlink_dir($dir,&$error,&$error_str){
+	static function _RecursiveUnlinkDir($dir,&$error,&$error_str){
 		settype($dir,"string");
 		
 		$out = 0;
@@ -361,7 +361,7 @@ class files{
 				continue;
 			}
 			if(is_dir($dir.$item)){
-				$out += files::_recursive_unlink_dir($dir.$item,$error,$error_str);
+				$out += Files::_RecursiveUnlinkDir($dir.$item,$error,$error_str);
 				//2005-10-21: nasledujici continue tady chybel, skript se proto chybne pokousel volat fci unlink na adresar
 				continue;
 			}
@@ -398,7 +398,7 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return string Content of a file
 	 */
-	static function get_file_content($filename,&$error = null,&$error_str = null){
+	static function GetFileContent($filename,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -436,7 +436,7 @@ class files{
 	 * @param string 	&$error_str Error description
 	 * @return int	1 - is readable and writable; 0 - is not
 	 */
-	static function is_readable_and_writable($filename,&$error = null,&$error_str = null){
+	static function IsReadableAndWritable($filename,&$error = null,&$error_str = null){
 		$error = false;
 		$error_str = "";
 
@@ -464,7 +464,7 @@ class files{
 	 * Determines width and height of an image in parameter.
 	 *
 	 * <code>
-	 * list($width,$height) = files::get_image_size($image_content,$err,$err_str);
+	 * list($width,$height) = Files::GetImageSize($image_content,$err,$err_str);
 	 * </code>
 	 * 
 	 * @param string $image_content Binary image data
@@ -473,12 +473,12 @@ class files{
 	 * @return array Image dimensions
 	 *
 	 */
-	static function get_image_size($image_content,&$error = null,&$error_str = null){
+	static function GetImageSize($image_content,&$error = null,&$error_str = null){
 		$temp = defined("TEMP") ? TEMP : "/tmp";
 		$filename = $temp."/get_image_filename_".posix_getpid();
-		if(!files::write_to_file($filename,$image_content,$error,$error_str)){ return null; }
+		if(!Files::WriteToFile($filename,$image_content,$error,$error_str)){ return null; }
 		$out = getimagesize($filename);
-		files::unlink($filename,$error,$error_str);
+		Files::Unlink($filename,$error,$error_str);
 		if(!is_array($out)){ $out = null; }
 		return $out;
 	}
@@ -486,15 +486,15 @@ class files{
 	/**
 	 * Write a content to a temporary file.
 	 *
-	 * $tmp_filename = files::write_to_temp($hot_content);
+	 * $tmp_filename = Files::WriteToTemp($hot_content);
 	 * // ... do some work with $tmp_filename
-	 * files::unlink($tmp_filename);
+	 * Files::Unlink($tmp_filename);
 	 */
-	static function write_to_temp($content, &$error = null, &$error_str = null){
+	static function WriteToTemp($content, &$error = null, &$error_str = null){
 		$temp_filename = defined("TEMP") ? TEMP : "/tmp";
 		$temp_filename .= "/files_tmp_".uniqid("",true)."";
 		
-		$out = files::write_to_file($temp_filename,$content,$error,$error_str);
+		$out = Files::WriteToFile($temp_filename,$content,$error,$error_str);
 		if(!$error){
 			return $temp_filename;
 		}
@@ -506,7 +506,7 @@ class files{
 	 * !! Note that it actualy runs the shell command file.
 	 * If it is unable to run the command, 'application/octet-string' is returned.
 	 */
-	static function determine_file_type($filename, &$error = null, &$error_str  = null){
+	static function DetermineFileType($filename, &$error = null, &$error_str  = null){
 		$command = "file -i ".escapeshellarg($filename);
 		$out = `$command`;
 		// /tmp/xxsEEws: text/plain charset=us-ascii

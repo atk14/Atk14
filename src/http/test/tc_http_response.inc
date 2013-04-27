@@ -155,7 +155,7 @@ class tc_http_response extends tc_base{
 
 	function _fetch_response($response){
 		$ser = serialize($response);
-		files::write_to_file("response.ser",$ser,$err,$err_str);
+		Files::WriteToFile("response.ser",$ser,$err,$err_str);
 		$fetcher = new UrlFetcher("http://127.0.0.1/sources/http/test/response.php",array("max_redirections" => 0));
 		//unlink("response.ser"); // s timto smazanim to nefunguje...!?
 		return $fetcher;

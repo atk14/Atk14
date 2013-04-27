@@ -101,6 +101,6 @@ class HTTPXFile extends HTTPUploadedFile{
 	function _writeTmpFile($content){
 		if($this->_TmpFileName){ return; }
 		$this->_TmpFileName = TEMP."/http_x_file_".uniqid().rand(0,9999);
-		files::write_to_file($this->_TmpFileName,$content,$err,$err_str);
+		Files::WriteToFile($this->_TmpFileName,$content,$err,$err_str);
 	}
 }

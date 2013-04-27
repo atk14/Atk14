@@ -97,7 +97,7 @@ if ($options["generate_app_doc"]) {
 
 
 if (!file_exists($output_dir)) {
-	files::mkdir($output_dir, &$err, &$err_str);
+	Files::Mkdir($output_dir, &$err, &$err_str);
 }
 
 $src_dir = join(",", $src_dirs);

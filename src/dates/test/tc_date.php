@@ -1,5 +1,5 @@
 <?php
-class tc_date extends tc_base{
+class TcDate extends TcBase{
 	
 	function test_date(){
 		$monday = new Date("2008-04-21");
@@ -98,7 +98,7 @@ class tc_date extends tc_base{
 	function test_today_etc(){
 		$current_date = date("Y-m-d");
 		$yesterday_date = date("Y-m-d",time()-60*60*30);
-		$tomorrow_date = dates::add_days($current_date,1);
+		$tomorrow_date = Dates::AddDays($current_date,1);
 
 		$today = Date::Today();
 		$yesterday = Date::Yesterday();

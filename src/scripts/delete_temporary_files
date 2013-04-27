@@ -14,10 +14,10 @@ while($item = readdir($d_handle)){
 
 	$file = TEMP."$item";
 	if(is_dir($file)){
-		$counter += files::recursive_unlink_dir($file);
+		$counter += Files::RecursiveUnlinkDir($file);
 	}
 	if(is_file($file)){
-		$counter += files::unlink($file);
+		$counter += Files::Unlink($file);
 	}
 }
 

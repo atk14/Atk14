@@ -9,7 +9,7 @@ class tc_httpxfile extends tc_base{
 		$HTTP_REQUEST->_HTTPRequest_headers = array("X-File-Name" => "hlava.jpg");
 		$this->assertEquals("hlava.jpg",$HTTP_REQUEST->getHeader("x-file-name"));
 
-		$GLOBALS["HTTP_RAW_POST_DATA"] = files::get_file_content("hlava.jpg",$err,$err_str);
+		$GLOBALS["HTTP_RAW_POST_DATA"] = Files::GetFileContent("hlava.jpg",$err,$err_str);
 		$this->assertTrue(strlen($HTTP_REQUEST->getRawPostData())>0);
 
 		$xfile = HTTPXFile::GetInstance(array("name" => "file.jpg"));

@@ -4,8 +4,8 @@ class tc_base extends tc_super_base{
 	function _init_FILES(){
 		global $_FILES;
 
-		files::copy_file("hlava.jpg",TEMP."/temp_hlava.jpg");
-		files::copy_file("dousi.pdf",TEMP."/temp_dousi.pdf");
+		Files::CopyFile("hlava.jpg",TEMP."/temp_hlava.jpg");
+		Files::CopyFile("dousi.pdf",TEMP."/temp_dousi.pdf");
 
 		$_FILES = array(
 			"hlava" => array(

@@ -7,16 +7,16 @@
 * Priklady pouziti:
 * 
 *	 //overeni spravnosti datumu
-*	 if(!dates::check_date("2004-01-01")){
+*	 if(!Dates::CheckDate("2004-01-01")){
 *			echo "spatny datum";
 *	 }
 * 
 *	 //pridani dnu k datumu
-*  $new_date = dates::add_days("2004-01-01",10);
-*	 $new_date = dates::add_days("2004-01-01",-10);
+*  $new_date = Dates::AddDays("2004-01-01",10);
+*	 $new_date = Dates::AddDays("2004-01-01",-10);
 *
 *	 //spocitani dnu
-*	 $days = dates::count_days("2004-01-31","2004-02-10"); //vrati 11
+*	 $days = Dates::CountDays("2004-01-31","2004-02-10"); //vrati 11
 *
 * @changelog
 * 	2006-05-30: pridany metody get_last_date() a get_first_date()
@@ -30,7 +30,7 @@ class dates{
 	* @access public
 	* @static
 	*/
-	static function now(){
+	static function Now(){
 		return date("Y-m-d");
 	}
 
@@ -43,7 +43,7 @@ class dates{
 	* @param int $day
 	* @return string
 	*/
-	static function make_date($year,$month,$day){
+	static function MakeDate($year,$month,$day){
 		settype($year,"integer");
 		settype($month,"integer");
 		settype($day,"integer");
@@ -54,7 +54,7 @@ class dates{
 
 		$date = "$_year-$_month-$_day";
 
-		if(!dates::check_date($date)){ return ""; }
+		if(!Dates::CheckDate($date)){ return ""; }
 
 		return $date;
 	}
@@ -68,7 +68,7 @@ class dates{
 	* @return bool								true -> datum ma spravny format spravny a den existuje
 	*															false -> datum ma spatny format nebo takovy datum neexistuje
 	*/
-	static function check_date($date){
+	static function CheckDate($date){
 		settype($date,"string");
 		
 		$out = false;
@@ -98,11 +98,11 @@ class dates{
 	* @return string							true -> datum ma spravny format spravny a den existuje
 	*															false -> datum ma spatny format nebo takovy datum neexistuje
 	*/
-	static function add_days($date,$days){
+	static function AddDays($date,$days){
 		settype($date,"string");
 		settype($days,"integer");
 
-		if(!dates::check_date($date)){
+		if(!Dates::CheckDate($date)){
 			return false;
 		}
 
@@ -110,49 +110,49 @@ class dates{
 			return $date;
 		}
 
-		$int_date = dates::_to_int($date);
+		$int_date = Dates::_ToInt($date);
 
-		$int_date = dates::_add_days($int_date,$days);
+		$int_date = Dates::_AddDays($int_date,$days);
 		if(is_int($int_date)){
 			return false;
 		}
 
-		return dates::_to_string($int_date);
+		return Dates::_ToString($int_date);
 	}
 
-	static function add_years($date,$years){
+	static function AddYears($date,$years){
 		settype($date,"string");
 		settype($years,"integer");
 
-		if(!dates::check_date($date)){
+		if(!Dates::CheckDate($date)){
 			return false;
 		}
 		
-		$a = dates::_to_ar($date);
-		($date = dates::make_date($a["y"]+$years,$a["m"],$a["d"])) ||
-		($date = dates::make_date($a["y"]+$years,$a["m"],$a["d"]-1)); // prestupny rok a napr. resime 2008-02-29 + 1 rok -> 2009-02-29
+		$a = Dates::_ToAr($date);
+		($date = Dates::MakeDate($a["y"]+$years,$a["m"],$a["d"])) ||
+		($date = Dates::MakeDate($a["y"]+$years,$a["m"],$a["d"]-1)); // prestupny rok a napr. resime 2008-02-29 + 1 rok -> 2009-02-29
 		return $date;
 	}
 
-	static function add_months($date,$months){
+	static function AddMonths($date,$months){
 		settype($date,"string");
 		settype($months,"integer");
 
-		if(!dates::check_date($date)){
+		if(!Dates::CheckDate($date)){
 			return false;
 		}
 		
-		$a = dates::_to_ar($date);
+		$a = Dates::_ToAr($date);
 
 		$a["m"] += $months;
 		$a["y"] += floor($a["m"] / 12);
 		$a["m"] = $a["m"] - (floor($a["m"] / 12)*12);
 		if($a["m"]<=0){ $a["m"] = 12 + $a["m"]; $a["y"]--; }
 		
-		($date = dates::make_date($a["y"],$a["m"],$a["d"])) ||
-		($date = dates::make_date($a["y"],$a["m"],$a["d"]-1)) ||
-		($date = dates::make_date($a["y"],$a["m"],$a["d"]-2)) ||
-		($date = dates::make_date($a["y"],$a["m"],$a["d"]-3));
+		($date = Dates::MakeDate($a["y"],$a["m"],$a["d"])) ||
+		($date = Dates::MakeDate($a["y"],$a["m"],$a["d"]-1)) ||
+		($date = Dates::MakeDate($a["y"],$a["m"],$a["d"]-2)) ||
+		($date = Dates::MakeDate($a["y"],$a["m"],$a["d"]-3));
 		return $date;
 	}
 	
@@ -166,11 +166,11 @@ class dates{
 	* @return string 	$date_to		datum do
 	* @return int									pocet dni; nebo (bool) false v pripade, ze nejaky datum je zadan spatne
 	*/
-	static function get_difference($date_from,$date_to){
+	static function GetDifference($date_from,$date_to){
 		settype($date_from,"string");
 		settype($date_to,"string");
 
-		$_stat = dates::count_days($date_from,$date_to);
+		$_stat = Dates::CountDays($date_from,$date_to);
 		if(is_bool($_stat)){
 			return false;
 		}
@@ -188,7 +188,7 @@ class dates{
 	* Spocita pocet dnu od mezi datumy.
 	* Pokud jsou datumy stejne, vrati 1.
 	*
-	* Funkce dates::get_difference() spocita rovnez dny mezi datumy,
+	* Funkce Dates::GetDifference() spocita rovnez dny mezi datumy,
 	*	ale vrati 0 v pripade, ze se datumy sobe rovnaji.
 	*
 	* @static
@@ -197,18 +197,18 @@ class dates{
 	* @return string 	$date_to		datum do
 	* @return int									pocet dni; nebo (bool) false v pripade, ze nejaky datum je zadan spatne
 	*/
-	static function count_days($date_from,$date_to){
+	static function CountDays($date_from,$date_to){
 		settype($date_from,"string");
 		settype($date_to,"string");
 
 		$out = false;
 
-		if(!dates::check_date($date_from) || !dates::check_date($date_to)){
+		if(!Dates::CheckDate($date_from) || !Dates::CheckDate($date_to)){
 			return false;
 		}
 
-		$_from = dates::_to_int($date_from);
-		$_to = dates::_to_int($date_to);
+		$_from = Dates::_ToInt($date_from);
+		$_to = Dates::_ToInt($date_to);
 
 		if($_from==$_to){
 			return 1;
@@ -226,7 +226,7 @@ class dates{
 				break;
 			}
 			$_days++;
-			$_current = dates::_add_days($_current,$_sign * 1);
+			$_current = Dates::_AddDays($_current,$_sign * 1);
 		}
 
 		$out = $_sign * $_days;
@@ -238,28 +238,28 @@ class dates{
 	* Velmi uzitecne, pokud se zjistuje, kolik roku ma ten ktery clovek podle data narozeni.
 	*
 	* TODO: pokud se tam zamota prestupny rok, vysledek nemusi byt presny
-	* var_dump(dates::count_years("2000-03-01","2001-03-01")); -> 0.997260273973
+	* var_dump(Dates::CountYears("2000-03-01","2001-03-01")); -> 0.997260273973
 	* 
 	*
 	* @param string $date_from			"1977-07-25"
 	* @param string $date_to				"2007-10-23"
 	* @return float									30.2465753425
 	*/
-	static function count_years($date_from,$date_to){
+	static function CountYears($date_from,$date_to){
 		settype($date_from,"string");
 		settype($date_to,"string");
 
-		if(!dates::check_date($date_from) || !dates::check_date($date_to)){
+		if(!Dates::CheckDate($date_from) || !Dates::CheckDate($date_to)){
 			return null;
 		}
 
-		$from = dates::_to_ar($date_from);
-		$to = dates::_to_ar($date_to);
+		$from = Dates::_ToAr($date_from);
+		$to = Dates::_ToAr($date_to);
 
 		$celych_let = ($date_to - $date_from);
 
-		$_days1 = (float)dates::count_days("$from[y]-01-01",$date_from);
-		$_days2 = (float)dates::count_days("$to[y]-01-01",$date_to);
+		$_days1 = (float)Dates::CountDays("$from[y]-01-01",$date_from);
+		$_days2 = (float)Dates::CountDays("$to[y]-01-01",$date_to);
 
 		// drobny hack pro prestupne roky
 		if($_days1==366){ $_days1 = 365; }
@@ -283,16 +283,16 @@ class dates{
 	*																		-1 -> druhy datum je novejsi nez prvni
 	*																		(bool) false -> v pripade spatneho datumu na vstupu
 	*/
-	static function compare($first_date,$second_date){
+	static function Compare($first_date,$second_date){
 		settype($first_date,"string");
 		settype($second_date,"string");
 
-		if(!dates::check_date($first_date) || !dates::check_date($second_date)){
+		if(!Dates::CheckDate($first_date) || !Dates::CheckDate($second_date)){
 			return false;
 		}
 
-		$_first_date = dates::_to_int($first_date);
-		$_second_date = dates::_to_int($second_date);
+		$_first_date = Dates::_ToInt($first_date);
+		$_second_date = Dates::_ToInt($second_date);
 
 		if($_first_date>$_second_date){
 			return 1;
@@ -315,7 +315,7 @@ class dates{
 	* @return int								posledni den v mesici (1-31)
 	*														nebo null, pokud je neco spatneho na vstupu
 	*/
-	static function get_last_day($month,$year){
+	static function GetLastDay($month,$year){
 		settype($month,"integer");
 		settype($year,"integer");
 		
@@ -330,7 +330,7 @@ class dates{
 			case 1:
 				return 31;
 			case 2:
-				if(dates::check_date("$year-02-29")){
+				if(Dates::CheckDate("$year-02-29")){
 					return 29;
 				}
 				return 28;
@@ -367,11 +367,11 @@ class dates{
 	* @param integer $year
 	* @return string								iso datum, nebo null
 	*/
-	static function get_last_date($month,$year){
+	static function GetLastDate($month,$year){
 		settype($month,"integer");
 		settype($year,"integer");
 
-		$day = dates::get_last_day($month,$year);
+		$day = Dates::GetLastDay($month,$year);
 		if(!isset($day)){
 			return null;
 		}
@@ -395,17 +395,17 @@ class dates{
 	* @param string $date					iso datum (napr. "2008-02-15")
 	* @return string 							iso datum, nebo null (napr. "2008-02-29")
 	*/
-	static function get_last_date_by_date($date){
+	static function GetLastDateByDate($date){
 		settype($date,"string");
 		
-		if(!dates::check_date($date)){
+		if(!Dates::CheckDate($date)){
 			return null;
 		}
 
 		$year = (int)substr($date,0,4);
 		$month = (int)substr($date,5,2);
 
-		return dates::get_last_date($month,$year);
+		return Dates::GetLastDate($month,$year);
 	}
 
 	/**
@@ -415,7 +415,7 @@ class dates{
 	* @access pulic
 	* @return string								iso datum, nebo null
 	*/
-	static function get_first_date($month,$year){
+	static function GetFirstDate($month,$year){
 
 		settype($month,"integer");
 		settype($year,"integer");
@@ -427,7 +427,7 @@ class dates{
 		if(strlen($_month)==1){ $_month = "0$_month"; }
 		
 		$date = "$_year-$_month-$_day";
-		if(!dates::check_date($date)){
+		if(!Dates::CheckDate($date)){
 			$date = null;
 		}
 
@@ -442,17 +442,17 @@ class dates{
 	* @param string $date					iso datum (napr. "2008-02-15")
 	* @return string 							iso datum, nebo null (napr. "2008-02-01")
 	*/
-	static function get_first_date_by_date($date){
+	static function GetFirstDateByDate($date){
 		settype($date,"string");
 		
-		if(!dates::check_date($date)){
+		if(!Dates::CheckDate($date)){
 			return null;
 		}
 
 		$year = (int)substr($date,0,4);
 		$month = (int)substr($date,5,2);
 
-		return dates::get_first_date($month,$year);
+		return Dates::GetFirstDate($month,$year);
 	}
 
 	/**
@@ -463,12 +463,12 @@ class dates{
 	* @param string $date					datum
 	* @return int									datum prevedeny na int
 	*/
-	static function _to_int($date){
-		$ar = dates::_to_ar($date);
+	static function _ToInt($date){
+		$ar = Dates::_ToAr($date);
 		return $ar["y"]*10000 + $ar["m"]*100 + $ar["d"];
 	}
 
-	static function _to_ar($date){
+	static function _ToAr($date){
 		settype($date,"string");
 		$ar = explode("-",$date);
 	
@@ -491,7 +491,7 @@ class dates{
 	* @param mixed $in_date			datum reprezentovany integerem nebo polem
 	* @return string							datum reprezentovany stringem v iso formatu
 	*/
-	static function _to_string($in_date){
+	static function _ToString($in_date){
 		if(is_array($in_date)){
 			$_day = $in_date["d"];
 			$_month = $in_date["m"];
@@ -523,7 +523,7 @@ class dates{
 	* @return int 									vysledny datum ve formatu integer
 	* 															(bool) false -> pokud je na vstupu nesmyslne datum	
 	*/
-	static function _add_days($int_date,$days){
+	static function _AddDays($int_date,$days){
 		settype($int_date,"integer");
 		settype($days,"integer");
 
