@@ -513,6 +513,14 @@ class RegexField extends CharField
         }
         return $this->processResult((string)$value, $catches);
     }
+
+    function js_validator()
+    {
+        $js_validator = parent::js_validator();
+        $js_validator->add_rule("regex",$this->regex);
+        $js_validator->add_message("regex",$this->messages["invalid"]);
+        return $js_validator;
+    }
 }
 
 /**
