@@ -26,7 +26,7 @@ require_once(dirname(__FILE__)."/src/string/load.inc");
 require_once(dirname(__FILE__)."/src/translate/translate.inc");
 require_once(dirname(__FILE__)."/src/dictionary/dictionary.inc");
 require_once(dirname(__FILE__)."/src/miniyaml/miniyaml.inc");
-require_once(dirname(__FILE__)."/src/dates/load.inc");
+require_once(dirname(__FILE__)."/src/dates/load.php");
 require_once(dirname(__FILE__)."/src/xmole/xmole.php");
 require_once(dirname(__FILE__)."/src/stopwatch/stopwatch.inc");
 require_once(dirname(__FILE__)."/src/logger/logger.inc");

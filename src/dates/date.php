@@ -69,7 +69,7 @@ class Date{
 	 * @param string $date
 	 */
 	function Date($date){
-		if(!dates::check_date($date)){ $date = null; }
+		if(!Dates::CheckDate($date)){ $date = null; }
 		$this->_Date = $date;
 	}
 	/**
@@ -84,7 +84,7 @@ class Date{
 	 *
 	 * @return Date
 	 */
-	static function Today(){ $out = new Date(dates::now()); return $out; }
+	static function Today(){ $out = new Date(Dates::Now()); return $out; }
 
 	/**
 	 * Returns object with yesterday's date.
@@ -193,7 +193,7 @@ class Date{
 	 *
 	 * @param integer $days number of days to add
 	 */
-	function addDays($days){ $this->_Date = dates::add_days($this->getDate(),$days); }
+	function addDays($days){ $this->_Date = Dates::AddDays($this->getDate(),$days); }
 
 	/**
 	 * Subtracts one day from the date contained in the object.
@@ -271,7 +271,7 @@ class Date{
 	 *
 	 * @param integer $years
 	 */
-	function addYears($years){ $this->_Date = dates::add_years($this->getDate(),$years);	}
+	function addYears($years){ $this->_Date = Dates::AddYears($this->getDate(),$years);	}
 
 	/**
 	 * Sets date to one year ahead.
@@ -351,7 +351,7 @@ class Date{
 	 *
 	 * @param integer $months
 	 */
-	function addMonths($months){ $this->_Date = dates::add_months($this->getDate(),$months);	}
+	function addMonths($months){ $this->_Date = Dates::AddMonths($this->getDate(),$months);	}
 
 	/**
 	 * Sets date to one month back.
@@ -519,7 +519,7 @@ class Date{
 	 * @return integer
 	 */
 	function daysFrom($date){
-		return dates::get_difference($date->getDate(),$this->getDate());
+		return Dates::GetDifference($date->getDate(),$this->getDate());
 	}
 
 	/**
@@ -636,7 +636,7 @@ class Date{
 	 */
 	function compare($date){
 		$date = $this->_toString($date);
-		return dates::compare($this->getDate(),$date);
+		return Dates::Compare($this->getDate(),$date);
 	}
 
 	/**
@@ -910,14 +910,14 @@ class Date{
 	 *
 	 * @return Date
 	 */
-	function getMonthFirstDay(){ return new Date(dates::get_first_date_by_date($this->getDate())); }
+	function getMonthFirstDay(){ return new Date(Dates::GetFirstDateByDate($this->getDate())); }
 
 	/**
 	 * Returns instance of last day of the month of the objects date.
 	 *
 	 * @return Date
 	 */
-	function getMonthLastDay(){ return new Date(dates::get_last_date_by_date($this->getDate())); }
+	function getMonthLastDay(){ return new Date(Dates::GetLastDateByDate($this->getDate())); }
 
 	/**
 	 * Returns instance of first day of the month preceding the month in the object.
