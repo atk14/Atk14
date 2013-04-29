@@ -111,6 +111,11 @@ class TcTranslate extends TcBase{
 
 		$out = Translate::Trans('---',"utf-8","windows-1250");
 		$this->assertEquals('---',$out);
+
+		$out = Translate::Trans(chr(0x80),"windows-1250","utf-8"); // Euro symbol
+		$this->assertEquals(chr(0xE2).chr(0x82).chr(0xAC),$out);
+		$out = Translate::Trans($out,"utf-8","windows-1250");
+		$this->assertEquals(chr(0x80),$out);
 	}
 
 	function test_to_cp852(){
