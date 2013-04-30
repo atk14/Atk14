@@ -144,6 +144,7 @@ class BoundField
     {
         $this->form = $form;
         $this->field = $field;
+        $this->widget = $field->widget;
         $this->name = $name;
         $this->html_name = $form->add_prefix($name);
         if (is_null($this->field->label)) {
@@ -417,7 +418,7 @@ class Form
      * @var array
      * @access private
      */
-    var $fields = null;
+    var $fields = array();
 
     /**
      * Array with error messages.
