@@ -49,6 +49,23 @@ class TcForm extends TcBase{
 			"extern_field" => "set",
 			"after_set_up" => "set",
 		),$cleaned_data);
+
+		// --
+
+		$form = new BeforeAndAfterSetUpForm();
+
+		$this->assertEquals(true,$form->has_field("before_set_up"));
+		$this->assertEquals(true,$form->has_field("set_up"));
+		$this->assertEquals(false,$form->has_field("after_set_up"));
+
+		$form->begin();
+
+		$this->assertEquals(true,$form->has_field("after_set_up"));
+
+		// --
+
+		$form = new BeforeAndAfterSetUpForm();
+		$this->assertEquals(array("before_set_up","set_up","after_set_up"),$form->get_field_keys(),"after_set_up() must be called before get_field_keys()");
 	}
 
 	function test_validation_with_disabled_fields(){

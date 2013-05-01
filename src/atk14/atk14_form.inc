@@ -909,6 +909,16 @@ class Atk14Form extends Form
 		return $out;
 	}
 
+	function get_field_keys(){
+		$this->_call_super_constructor();
+		return parent::get_field_keys();
+	}
+
+	function list_fields($wildcart = ""){
+		$this->_call_super_constructor();
+		return parent::list_fields();
+	}
+
 	function has_field($name){
 		return isset($this->fields[$name]);
 	}
