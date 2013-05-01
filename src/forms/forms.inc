@@ -432,15 +432,44 @@ class Form
     {
         $options = forms_array_merge(
             array(
-                'data'          => null, 
-                'auto_id'       => 'id_%s',
-                'prefix'        => null, 
-                'initial'       => null, 
-                'label_suffix'  => ':',
                 'call_set_up'   => true,
+                '__do_small_initialization' => true, // don't even thing about it :)
+                '__do_big_initialization' => true, // do not touch this!
             ),
             $options
         );
+        $options["__do_small_initialization"] && $this->__do_small_initialization($options);
+        $options["__do_big_initialization"] && $this->__do_big_initialization($options);
+        $options["call_set_up"] && $this->set_up();
+    }
+
+    function __do_small_initialization($options = array()){
+        $options = forms_array_merge(
+            array(
+                'auto_id'       => 'id_%s',
+                'prefix'        => null, 
+                'label_suffix'  => ':',
+            ),
+            $options
+        );
+
+        $this->auto_id = $options['auto_id'];
+        $this->prefix = $options['prefix'];
+        $this->label_suffix = $options['label_suffix'];
+
+        $this->errors = null;
+        $this->fields = array();
+    }
+
+    function __do_big_initialization($options = array()){
+        $options = forms_array_merge(
+            array(
+                'data'          => null, 
+                'initial'       => null, 
+            ),
+            $options
+        );
+
         $this->is_bound = !is_null($options['data']);
         if (is_array($options['data'])) {
             $this->data = $options['data']; 
@@ -448,18 +477,12 @@ class Form
         else {
             $this->data = array();
         }
-        $this->auto_id = $options['auto_id'];
-        if(isset($options["prefix"])){ $this->prefix = $options['prefix']; }
         if (is_array($options['initial'])) {
             $this->initial = $options['initial'];
         }
         else {
             $this->initial = array();
         }
-        $this->label_suffix = $options['label_suffix'];
-        $this->errors = null;
-        $this->fields = array();
-        $options["call_set_up"] && $this->set_up();
     }
 
     /**

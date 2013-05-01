@@ -1,6 +1,56 @@
 <?php
 require_once(dirname(__FILE__)."/app/forms/test_form.php");
+require_once(dirname(__FILE__)."/app/forms/before_and_after_set_up_form.php");
 class TcForm extends TcBase{
+	function test_constructor(){
+		$form = new TestForm();
+		$this->assertEquals(null,$form->prefix);
+		$form->validate(array());
+		$this->assertEquals(null,$form->prefix);
+
+		$form = new TestForm(array(
+			"prefix" => "test",
+		));
+		$this->assertEquals("test",$form->prefix);
+		$form->prefix = "xxx";
+		$form->validate(array()); // __do_small_initialization() must not be called
+		$this->assertEquals("xxx",$form->prefix);
+	}
+
+	function test_before_and_after_set_up(){
+		$form = new BeforeAndAfterSetUpForm();
+		$form2 = new BeforeAndAfterSetUpForm();
+
+		$form->add_field("extern_field", new CharField(array("initial" => "ok")));
+		$form2->add_field("extern_field", new CharField(array("initial" => "ok")));
+
+		$this->assertEquals($exp = array(
+			"before_set_up" => "ok",
+			"set_up" => "ok",
+			"extern_field" => "ok"
+		),$form->get_initial());
+		$this->assertEquals($exp,$form2->get_initial());
+
+		// after_set_up() must be called just before data validation or displaying of the given form
+		$cleaned_data = $form->validate(array("before_set_up" => "set", "set_up" => "set", "after_set_up" => "set", "extern_field" => "set"));
+		$form2->begin();
+
+		$this->assertEquals($exp = array(
+			"before_set_up" => "ok",
+			"set_up" => "ok",
+			"extern_field" => "ok",
+			"after_set_up" => "ok",
+		),$form->get_initial());
+		$this->assertEquals($exp,$form2->get_initial());
+
+		$this->assertEquals(array(
+			"before_set_up" => "set",
+			"set_up" => "set",
+			"extern_field" => "set",
+			"after_set_up" => "set",
+		),$cleaned_data);
+	}
+
 	function test_validation_with_disabled_fields(){
 		$form = new TestForm();
 		$form->set_initial(array(

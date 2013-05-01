@@ -157,7 +157,7 @@ class Field
         // this automatically adds placeholder and required to the attributes
         if(is_subclass_of($widget,"Input")){
             $_attr_keys = array_keys($widget->attrs);
-            if(strlen($this->hint)>0 && !preg_match('/</',$this->hint)/* no-html */ && !in_array("placeholder",$_attr_keys)){
+            if(strlen($this->hint) && !preg_match('/</',$this->hint)/* no-html */ && !in_array("placeholder",$_attr_keys)){
                 $widget->attrs["placeholder"] = $this->hint;
             }
             if($this->required && !in_array("required",$_attr_keys)){

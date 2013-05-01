@@ -173,7 +173,7 @@ class Atk14Form extends Form
 		$class_name = new String(get_class($this));
 
 		$options = array_merge(array(
-			"call_set_up" => true,
+			"call_set_up" => true, // is this really used somewhere? TODO: to be removed
 			"attrs" => array(),
 		),$options);
 
@@ -188,16 +188,35 @@ class Atk14Form extends Form
 
 		$this->atk14_error_title = _("The form contains errors, therefor it cannot be processed.");
 
-		$this->_initialize();
+		$this->__do_small_initialization($options);
 
+		$this->before_set_up();
 		$options["call_set_up"] && $this->set_up();
 	}
 
 	/**
-	 * Will be called before set_up().
-	 * Just do inside anything you would like to.
+	 * It is called before set_up()
+	 *
+	 * A perfect place pro pre-initialization stuff.
 	 */
-	function _initialize(){ }
+	function before_set_up(){
+		
+	}
+
+	/**
+	 * It is called after set_up() and even after any special field adding.
+	 *
+	 * $form = new SomeForm();
+	 * // before_set_up() and set_up() are called somewhere within form`s constructor
+	 * $form->add_field("")
+	 *
+	 * if($d = $form->validate($param)){
+   * 
+	 * }
+	 */
+	function after_set_up(){
+		
+	}
 
 	/**
 	 * Creates instance of Atk14Form by filename.
@@ -440,23 +459,15 @@ class Atk14Form extends Form
 		if(!$this->atk14_super_constructor_called){
 			$options = $this->atk14_constructor_options;
 			$options["call_set_up"] = false;
+			$options["__do_small_initialization"] = false; // already did in constructor
 
 			if(isset($this->atk14_initial_values)){ $options["initial"] = $this->atk14_initial_values; }
 			if(isset($this->atk14_data)){ $options["data"] = $this->atk14_data; }
 
-			// v konstruktoru dojde ke smazani pole $this->fields;
-			// pokud mame ve fields neco, co tam bylo dodano az v controlleru,
-			// timto hackem dosahneme toho, ze o predhozi hodnoty neprijdeme
-			// (a navic jsou puvodni fiedls podle ocekavani zarazena az na konec)
-			if(isset($this->fields)){ $orig_fields = $this->fields; }
-
 			parent::Form($options);
 
-			if(isset($orig_fields)){
-				$this->fields = array_merge($this->fields,$orig_fields);
-			}
-
 			$this->atk14_super_constructor_called = true;
+			$this->after_set_up();
 		}
 	}
 
@@ -704,7 +715,7 @@ class Atk14Form extends Form
 	function begin()
 	{
 		$this->_call_super_constructor();
-		return "<form action=\"$this->atk14_action\" method=\"$this->atk14_method\"".$this->_get_attrs().">";
+		return "<form action=\"$this->atk14_action\" method=\"".$this->get_method()."\"".$this->_get_attrs().">";
 	}
 
 	/**
