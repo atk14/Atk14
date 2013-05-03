@@ -1,6 +1,6 @@
 <?php
 require_once(dirname(__FILE__)."/app/forms/test_form.php");
-require_once(dirname(__FILE__)."/app/forms/before_and_after_set_up_form.php");
+require_once(dirname(__FILE__)."/app/forms/pre_and_post_set_up_form.php");
 class TcForm extends TcBase{
 	function test_constructor(){
 		$form = new TestForm();
@@ -17,55 +17,55 @@ class TcForm extends TcBase{
 		$this->assertEquals("xxx",$form->prefix);
 	}
 
-	function test_before_and_after_set_up(){
-		$form = new BeforeAndAfterSetUpForm();
-		$form2 = new BeforeAndAfterSetUpForm();
+	function test_before_and_post_set_up(){
+		$form = new PreAndPostSetUpForm();
+		$form2 = new PreAndPostSetUpForm();
 
 		$form->add_field("extern_field", new CharField(array("initial" => "ok")));
 		$form2->add_field("extern_field", new CharField(array("initial" => "ok")));
 
 		$this->assertEquals($exp = array(
-			"before_set_up" => "ok",
+			"pre_set_up" => "ok",
 			"set_up" => "ok",
 			"extern_field" => "ok"
 		),$form->get_initial());
 		$this->assertEquals($exp,$form2->get_initial());
 
-		// after_set_up() must be called just before data validation or displaying of the given form
-		$cleaned_data = $form->validate(array("before_set_up" => "set", "set_up" => "set", "after_set_up" => "set", "extern_field" => "set"));
+		// post_set_up() must be called just before data validation or displaying of the given form
+		$cleaned_data = $form->validate(array("pre_set_up" => "set", "set_up" => "set", "post_set_up" => "set", "extern_field" => "set"));
 		$form2->begin();
 
 		$this->assertEquals($exp = array(
-			"before_set_up" => "ok",
+			"pre_set_up" => "ok",
 			"set_up" => "ok",
 			"extern_field" => "ok",
-			"after_set_up" => "ok",
+			"post_set_up" => "ok",
 		),$form->get_initial());
 		$this->assertEquals($exp,$form2->get_initial());
 
 		$this->assertEquals(array(
-			"before_set_up" => "set",
+			"pre_set_up" => "set",
 			"set_up" => "set",
 			"extern_field" => "set",
-			"after_set_up" => "set",
+			"post_set_up" => "set",
 		),$cleaned_data);
 
 		// --
 
-		$form = new BeforeAndAfterSetUpForm();
+		$form = new PreAndPostSetUpForm();
 
-		$this->assertEquals(true,$form->has_field("before_set_up"));
+		$this->assertEquals(true,$form->has_field("pre_set_up"));
 		$this->assertEquals(true,$form->has_field("set_up"));
-		$this->assertEquals(false,$form->has_field("after_set_up"));
+		$this->assertEquals(false,$form->has_field("post_set_up"));
 
 		$form->begin();
 
-		$this->assertEquals(true,$form->has_field("after_set_up"));
+		$this->assertEquals(true,$form->has_field("post_set_up"));
 
 		// --
 
-		$form = new BeforeAndAfterSetUpForm();
-		$this->assertEquals(array("before_set_up","set_up","after_set_up"),$form->get_field_keys(),"after_set_up() must be called before get_field_keys()");
+		$form = new PreAndPostSetUpForm();
+		$this->assertEquals(array("pre_set_up","set_up","post_set_up"),$form->get_field_keys(),"post_set_up() must be called before get_field_keys()");
 	}
 
 	function test_validation_with_disabled_fields(){

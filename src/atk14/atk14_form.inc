@@ -190,7 +190,7 @@ class Atk14Form extends Form
 
 		$this->__do_small_initialization($options);
 
-		$this->before_set_up();
+		$this->pre_set_up();
 		$options["call_set_up"] && $this->set_up();
 	}
 
@@ -199,7 +199,7 @@ class Atk14Form extends Form
 	 *
 	 * A perfect place pro pre-initialization stuff.
 	 */
-	function before_set_up(){
+	function pre_set_up(){
 		
 	}
 
@@ -207,14 +207,14 @@ class Atk14Form extends Form
 	 * It is called after set_up() and even after any special field adding.
 	 *
 	 * $form = new SomeForm();
-	 * // before_set_up() and set_up() are called somewhere within form`s constructor
+	 * // pre_set_up() and set_up() are called somewhere within form`s constructor
 	 * $form->add_field("")
 	 *
 	 * if($d = $form->validate($param)){
    * 
 	 * }
 	 */
-	function after_set_up(){
+	function post_set_up(){
 		
 	}
 
@@ -467,7 +467,7 @@ class Atk14Form extends Form
 			parent::Form($options);
 
 			$this->atk14_super_constructor_called = true;
-			$this->after_set_up();
+			$this->post_set_up();
 		}
 	}
 
