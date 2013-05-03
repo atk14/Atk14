@@ -104,6 +104,11 @@ function my_array_merge($data)
 class Widget
 {
     /**
+     * Is multipart encoding required for form submission?
+     */
+    var $multipart_encoding_required = false;
+
+    /**
      * Constructor
      *
      * @param array $options
@@ -718,6 +723,7 @@ class CheckboxSelectMultiple extends SelectMultiple
  */
 class FileInput extends Input{
     var $input_type = "file";
+    var $multipart_encoding_required = true;
 
     function render($name, $value, $options=array())
     {

@@ -129,4 +129,20 @@ class TcForm extends TcBase{
 		$controller = $client->get("admin/en/main/index");
 		$this->assertEquals("AdminForm",get_class($controller->form));
 	}
+
+	function test_multipart(){
+		$form = new TestForm();
+		$form->add_field("name",new CharField());
+		$this->assertNotContains('enctype="multipart/form-data"',$form->begin());
+
+		$form = new TestForm();
+		$form->add_field("name",new CharField());
+		$form->add_field("image",new ImageField());
+		$this->assertContains('enctype="multipart/form-data"',$form->begin());
+
+		$form = new TestForm();
+		$form->add_field("name",new CharField());
+		$form->enable_multipart();
+		$this->assertContains('enctype="multipart/form-data"',$form->begin());
+	}
 }

@@ -154,14 +154,16 @@ class Field
             $widget->attrs = forms_array_merge($widget->attrs, $extra_attrs);
         }
 
-        // this automatically adds placeholder and required to the attributes
-        if(is_subclass_of($widget,"Input")){
-            $_attr_keys = array_keys($widget->attrs);
-            if(strlen($this->hint) && !preg_match('/</',$this->hint)/* no-html */ && !in_array("placeholder",$_attr_keys)){
-                $widget->attrs["placeholder"] = $this->hint;
-            }
-            if($this->required && !in_array("required",$_attr_keys)){
-                $widget->attrs["required"] = "required";
+        if(FORMS_ENABLE_EXPERIMENTAL_HTML5_FEATURES){
+            // this automatically adds placeholder and required to the attributes
+            if(is_subclass_of($widget,"Input")){
+                $_attr_keys = array_keys($widget->attrs);
+                if(strlen($this->hint) && !preg_match('/</',$this->hint)/* no-html */ && !in_array("placeholder",$_attr_keys)){
+                    $widget->attrs["placeholder"] = $this->hint;
+                }
+                if($this->required && !in_array("required",$_attr_keys)){
+                    $widget->attrs["required"] = "required";
+                }
             }
         }
 

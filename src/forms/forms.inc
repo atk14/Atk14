@@ -13,7 +13,7 @@
  *
  * @todo Write better explanation
  */
-define('NON_FIELD_ERRORS', '__all__');
+@define('NON_FIELD_ERRORS', '__all__');
 
 /**
  * Basic class for managing forms.
@@ -555,6 +555,13 @@ class Form
     function list_fields($wildcart = ""){
         $out = $this->get_field_keys();
         return $out;
+    }
+
+    function is_multipart(){
+        foreach($this->fields as $f){
+            if($f->widget->multipart_encoding_required){ return true; }
+        }
+        return false;
     }
 
     /**

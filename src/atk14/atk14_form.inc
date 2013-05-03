@@ -516,10 +516,13 @@ class Atk14Form extends Form
 	function set_action($url)
 	{
 		if(is_array($url)){
-			$this->atk14_action = Atk14Url::BuildLink($url);
-			return;
+			$url = Atk14Url::BuildLink($url);
 		}
 		$this->atk14_action = (string)$url;
+	}
+
+	function get_action(){
+		return $this->atk14_action;
 	}
 
 	/**
@@ -691,31 +694,45 @@ class Atk14Form extends Form
 		$this->atk14_attrs = array_merge($this->atk14_attrs,$key_or_values);
 	}
 
+
 	/**
 	 * Sets enctype attribute of form to value "multipart/form-data".
 	 *
 	 * Setting this attribute to "multipart/form-data" allows uploading data in the form.
 	 */
-	function allow_file_upload()
-	{
+	function enable_multipart(){
 		$this->set_method("post");
 		$this->set_attr("enctype","multipart/form-data");
 	}
 
 	/**
-	 * Alias for allow_file_upload()
+	 * Alias for enable_multipart()
+	 * TODO: to be removed
+	 *
+	 * @obsolete
 	 */
-	function enable_file_upload(){ return $this->allow_file_upload(); }
+	function allow_file_upload(){ $this->enable_multipart(); }
+
+	/**
+	 * Alias for enable_multipart()
+	 * TODO: to be removed
+	 *
+	 * @obsolete
+	 */
+	function enable_file_upload(){ return $this->enable_multipart(); }
 
 	/**
 	 * Render start of form tag.
+	 * 
+	 * It detects automatically when multipart encoding is needed for submission and optimizes output markup.
 	 *
 	 * @return string string with form starting HTML code
 	 */
 	function begin()
 	{
 		$this->_call_super_constructor();
-		return "<form action=\"$this->atk14_action\" method=\"".$this->get_method()."\"".$this->_get_attrs().">";
+		if($this->is_multipart()){ $this->enable_multipart(); }
+		return "<form action=\"".h($this->get_action())."\" method=\"".$this->get_method()."\"".$this->_get_attrs().">";
 	}
 
 	/**
@@ -726,9 +743,8 @@ class Atk14Form extends Form
 	function begin_remote()
 	{
 		$this->_call_super_constructor();
-		// takto je to v ROR: onsubmit="new Ajax.Request('', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"
-		//return "<form action=\"$this->atk14_action\" method=\"$this->atk14_method\" onsubmit=\"return remote_form(this);\">";
-		return "<form action=\"$this->atk14_action\" method=\"$this->atk14_method\" class=\"remote_form\"".$this->_get_attrs().">";
+		if($this->is_multipart()){ $this->enable_multipart(); }
+		return "<form action=\"".h($this->get_action())."\" method=\"".$this->get_method()."\" class=\"remote_form\"".$this->_get_attrs().">";
 	}
 
 	/**
