@@ -32,5 +32,12 @@ class tc_form extends tc_base{
 		$f->add_field("picture",new ImageField(array()));
 		$this->assertEquals(true,$f->is_multipart());
 	}
+
+	function test_text_conversion_on_field(){
+		$f = new Form();
+		$f->add_field("firstname",new CharField(array()));
+		$field = $f->get_field("firstname");
+		$this->assertEquals($field->as_widget(),"$field");
+	}
 }
 

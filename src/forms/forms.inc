@@ -350,6 +350,15 @@ class BoundField
        if(isset($this->field->initial)){ return $this->field->initial; }
        return null;
     }
+
+    /**
+     * Magic method for conversion to string
+     *
+     * echo "$field"; // <input type="text" name="company" id="id_company" />
+     */
+    function __toString(){
+        return $this->as_widget();
+    }
 }
 
 
