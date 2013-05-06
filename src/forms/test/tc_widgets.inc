@@ -725,6 +725,17 @@ class tc_widgets extends tc_base
         $this->_check($DATA);
     }
 
+    function test_inut_type(){
+        $w = new TextInput();
+        $this->assertEquals("text",$w->input_type);
+
+        $w = new PasswordInput();
+        $this->assertEquals("password",$w->input_type);
+
+        $w = new CheckboxInput();
+        $this->assertEquals("checkbox",$w->input_type);
+    }
+
     /**
     * Overeni vykreslovani CheckboxSelectMultiple.
     *
