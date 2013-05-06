@@ -39,5 +39,21 @@ class tc_form extends tc_base{
 		$field = $f->get_field("firstname");
 		$this->assertEquals($field->as_widget(),"$field");
 	}
-}
 
+	function test_array_access(){
+		$f = new Form();
+		$this->assertEquals(null,$f["firstname"]);
+
+		$f["firstname"] = new CharField(array());
+		$this->assertEquals(true,is_object($f["firstname"]));
+
+		$f["lasttname"] = new CharField(array());
+		$this->assertEquals(array("firstname","lasttname"),$f->get_field_keys());
+
+		$f["lasttname"] = null;
+		$this->assertEquals(array("firstname"),$f->get_field_keys());
+
+		unset($f["firstname"]);
+		$this->assertEquals(array(),$f->get_field_keys());
+	}
+}

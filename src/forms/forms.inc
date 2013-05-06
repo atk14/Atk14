@@ -369,7 +369,7 @@ class BoundField
  * @subpackage InternalLibraries
  *
  */
-class Form
+class Form implements ArrayAccess
 {
     /**
      * @var string
@@ -533,7 +533,7 @@ class Form
      *
      * @param string $name name of a field
      * @return Field
-     * {@internal Michaluv vymysl}}
+     * {@internal Michaluv vymysl}
      */
     function get_field($name)
     {
@@ -550,7 +550,7 @@ class Form
      *
      * @return array
      *
-     * {@internal NOTE: Michaluv vymysl}}
+     * {@internal NOTE: Michaluv vymysl}
      */
     function get_field_keys()
     {
@@ -903,7 +903,19 @@ class Form
     function js_validator(){
         return new JsFormValidator($this);
     }
+
+    // The ArrayAccess interface functions
+    function offsetExists($offset){ return isset($this->fields[$offset]); }
+    function offsetGet($offset){ return $this->get_field($offset); }
+    function offsetSet($offset,$value){
+        if(!$value){
+            // $form["firstname"] = null;
+            unset($this[$offset]);
+            return;
+        }
+        $this->add_field($offset,$value);
+    }
+    function offsetUnset($offset){ unset($this->fields[$offset]); }
 }
 
 // vim: set et ts=4 sw=4 enc=utf-8 fenc=utf-8 si: 
-?>
