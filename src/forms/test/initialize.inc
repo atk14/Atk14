@@ -1,5 +1,6 @@
 <?php
 define("TEST",true);
+define("FORMS_ENABLE_EXPERIMENTAL_HTML5_FEATURES",false); // this features break up tests
 
 require_once("../../atk14/atk14_locale.inc");
 require_once("../../dates/load.php");

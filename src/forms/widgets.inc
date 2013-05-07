@@ -117,6 +117,11 @@ function my_array_merge($data)
 class Widget
 {
     /**
+     * Is multipart encoding required for form submission?
+     */
+    var $multipart_encoding_required = false;
+
+    /**
      * Constructor
      *
      * @param array $options
@@ -424,6 +429,8 @@ class Textarea extends Widget
  */
 class CheckboxInput extends Widget
 {
+    var $input_type = "checkbox";
+
     function CheckboxInput($options=array())
     {
         $options = forms_array_merge(array('attrs'=>null, 'check_test'=>null), $options);
@@ -435,7 +442,7 @@ class CheckboxInput extends Widget
     {
         $options = forms_array_merge(array('attrs'=>null), $options);
         $final_attrs = $this->build_attrs($options['attrs'], array(
-            'type' => 'checkbox', 
+            'type' => $this->input_type, 
             'name' => $name)
         );
         if ((!is_null($this->check_test)) && ((is_array($this->check_test) && method_exists($this->check_test[0], $this->check_test[1])) || (function_exists($this->check_test)))) {
@@ -583,6 +590,8 @@ class SelectMultiple extends Widget
  */
 class RadioInput
 {
+    var $input_type = "radio";
+
     function RadioInput($name, $value, $attrs, $choice, $index)
     {
         $this->name = $name;
@@ -603,7 +612,7 @@ class RadioInput
             $this->attrs['id'] = $this->attrs['id'].'_'.$this->index;
         }
         $final_attrs = forms_array_merge($this->attrs, array(
-            'type' => 'radio',
+            'type' => $this->input_type,
             'name' => $this->name,
             'value' => $this->choice_value
         ));
@@ -731,6 +740,7 @@ class CheckboxSelectMultiple extends SelectMultiple
  */
 class FileInput extends Input{
     var $input_type = "file";
+    var $multipart_encoding_required = true;
 
     function render($name, $value, $options=array())
     {

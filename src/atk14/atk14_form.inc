@@ -173,7 +173,7 @@ class Atk14Form extends Form
 		$class_name = new String(get_class($this));
 
 		$options = array_merge(array(
-			"call_set_up" => true,
+			"call_set_up" => true, // is this really used somewhere? TODO: to be removed
 			"attrs" => array(),
 		),$options);
 
@@ -188,16 +188,35 @@ class Atk14Form extends Form
 
 		$this->atk14_error_title = _("The form contains errors, therefor it cannot be processed.");
 
-		$this->_initialize();
+		$this->__do_small_initialization($options);
 
+		$this->pre_set_up();
 		$options["call_set_up"] && $this->set_up();
 	}
 
 	/**
-	 * Will be called before set_up().
-	 * Just do inside anything you would like to.
+	 * It is called before set_up()
+	 *
+	 * A perfect place pro pre-initialization stuff.
 	 */
-	function _initialize(){ }
+	function pre_set_up(){
+		
+	}
+
+	/**
+	 * It is called after set_up() and even after any special field adding.
+	 *
+	 * $form = new SomeForm();
+	 * // pre_set_up() and set_up() are called somewhere within form`s constructor
+	 * $form->add_field("")
+	 *
+	 * if($d = $form->validate($param)){
+   * 
+	 * }
+	 */
+	function post_set_up(){
+		
+	}
 
 	/**
 	 * Creates instance of Atk14Form by filename.
@@ -440,23 +459,15 @@ class Atk14Form extends Form
 		if(!$this->atk14_super_constructor_called){
 			$options = $this->atk14_constructor_options;
 			$options["call_set_up"] = false;
+			$options["__do_small_initialization"] = false; // already did in constructor
 
 			if(isset($this->atk14_initial_values)){ $options["initial"] = $this->atk14_initial_values; }
 			if(isset($this->atk14_data)){ $options["data"] = $this->atk14_data; }
 
-			// v konstruktoru dojde ke smazani pole $this->fields;
-			// pokud mame ve fields neco, co tam bylo dodano az v controlleru,
-			// timto hackem dosahneme toho, ze o predhozi hodnoty neprijdeme
-			// (a navic jsou puvodni fiedls podle ocekavani zarazena az na konec)
-			if(isset($this->fields)){ $orig_fields = $this->fields; }
-
 			parent::Form($options);
 
-			if(isset($orig_fields)){
-				$this->fields = array_merge($this->fields,$orig_fields);
-			}
-
 			$this->atk14_super_constructor_called = true;
+			$this->post_set_up();
 		}
 	}
 
@@ -505,10 +516,13 @@ class Atk14Form extends Form
 	function set_action($url)
 	{
 		if(is_array($url)){
-			$this->atk14_action = Atk14Url::BuildLink($url);
-			return;
+			$url = Atk14Url::BuildLink($url);
 		}
 		$this->atk14_action = (string)$url;
+	}
+
+	function get_action(){
+		return $this->atk14_action;
 	}
 
 	/**
@@ -680,31 +694,45 @@ class Atk14Form extends Form
 		$this->atk14_attrs = array_merge($this->atk14_attrs,$key_or_values);
 	}
 
+
 	/**
 	 * Sets enctype attribute of form to value "multipart/form-data".
 	 *
 	 * Setting this attribute to "multipart/form-data" allows uploading data in the form.
 	 */
-	function allow_file_upload()
-	{
+	function enable_multipart(){
 		$this->set_method("post");
 		$this->set_attr("enctype","multipart/form-data");
 	}
 
 	/**
-	 * Alias for allow_file_upload()
+	 * Alias for enable_multipart()
+	 * TODO: to be removed
+	 *
+	 * @obsolete
 	 */
-	function enable_file_upload(){ return $this->allow_file_upload(); }
+	function allow_file_upload(){ $this->enable_multipart(); }
+
+	/**
+	 * Alias for enable_multipart()
+	 * TODO: to be removed
+	 *
+	 * @obsolete
+	 */
+	function enable_file_upload(){ return $this->enable_multipart(); }
 
 	/**
 	 * Render start of form tag.
+	 * 
+	 * It detects automatically when multipart encoding is needed for submission and optimizes output markup.
 	 *
 	 * @return string string with form starting HTML code
 	 */
 	function begin()
 	{
 		$this->_call_super_constructor();
-		return "<form action=\"$this->atk14_action\" method=\"$this->atk14_method\"".$this->_get_attrs().">";
+		if($this->is_multipart()){ $this->enable_multipart(); }
+		return "<form action=\"".h($this->get_action())."\" method=\"".$this->get_method()."\"".$this->_get_attrs().">";
 	}
 
 	/**
@@ -715,9 +743,8 @@ class Atk14Form extends Form
 	function begin_remote()
 	{
 		$this->_call_super_constructor();
-		// takto je to v ROR: onsubmit="new Ajax.Request('', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"
-		//return "<form action=\"$this->atk14_action\" method=\"$this->atk14_method\" onsubmit=\"return remote_form(this);\">";
-		return "<form action=\"$this->atk14_action\" method=\"$this->atk14_method\" class=\"remote_form\"".$this->_get_attrs().">";
+		if($this->is_multipart()){ $this->enable_multipart(); }
+		return "<form action=\"".h($this->get_action())."\" method=\"".$this->get_method()."\" class=\"remote_form\"".$this->_get_attrs().">";
 	}
 
 	/**
@@ -896,6 +923,16 @@ class Atk14Form extends Form
 			throw new Exception(get_class($this).": there is no such a field $name");
 		}
 		return $out;
+	}
+
+	function get_field_keys(){
+		$this->_call_super_constructor();
+		return parent::get_field_keys();
+	}
+
+	function list_fields($wildcart = ""){
+		$this->_call_super_constructor();
+		return parent::list_fields();
 	}
 
 	function has_field($name){

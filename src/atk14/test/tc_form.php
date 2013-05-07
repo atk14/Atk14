@@ -1,6 +1,73 @@
 <?php
 require_once(dirname(__FILE__)."/app/forms/test_form.php");
+require_once(dirname(__FILE__)."/app/forms/pre_and_post_set_up_form.php");
 class TcForm extends TcBase{
+	function test_constructor(){
+		$form = new TestForm();
+		$this->assertEquals(null,$form->prefix);
+		$form->validate(array());
+		$this->assertEquals(null,$form->prefix);
+
+		$form = new TestForm(array(
+			"prefix" => "test",
+		));
+		$this->assertEquals("test",$form->prefix);
+		$form->prefix = "xxx";
+		$form->validate(array()); // __do_small_initialization() must not be called
+		$this->assertEquals("xxx",$form->prefix);
+	}
+
+	function test_before_and_post_set_up(){
+		$form = new PreAndPostSetUpForm();
+		$form2 = new PreAndPostSetUpForm();
+
+		$form->add_field("extern_field", new CharField(array("initial" => "ok")));
+		$form2->add_field("extern_field", new CharField(array("initial" => "ok")));
+
+		$this->assertEquals($exp = array(
+			"pre_set_up" => "ok",
+			"set_up" => "ok",
+			"extern_field" => "ok"
+		),$form->get_initial());
+		$this->assertEquals($exp,$form2->get_initial());
+
+		// post_set_up() must be called just before data validation or displaying of the given form
+		$cleaned_data = $form->validate(array("pre_set_up" => "set", "set_up" => "set", "post_set_up" => "set", "extern_field" => "set"));
+		$form2->begin();
+
+		$this->assertEquals($exp = array(
+			"pre_set_up" => "ok",
+			"set_up" => "ok",
+			"extern_field" => "ok",
+			"post_set_up" => "ok",
+		),$form->get_initial());
+		$this->assertEquals($exp,$form2->get_initial());
+
+		$this->assertEquals(array(
+			"pre_set_up" => "set",
+			"set_up" => "set",
+			"extern_field" => "set",
+			"post_set_up" => "set",
+		),$cleaned_data);
+
+		// --
+
+		$form = new PreAndPostSetUpForm();
+
+		$this->assertEquals(true,$form->has_field("pre_set_up"));
+		$this->assertEquals(true,$form->has_field("set_up"));
+		$this->assertEquals(false,$form->has_field("post_set_up"));
+
+		$form->begin();
+
+		$this->assertEquals(true,$form->has_field("post_set_up"));
+
+		// --
+
+		$form = new PreAndPostSetUpForm();
+		$this->assertEquals(array("pre_set_up","set_up","post_set_up"),$form->get_field_keys(),"post_set_up() must be called before get_field_keys()");
+	}
+
 	function test_validation_with_disabled_fields(){
 		$form = new TestForm();
 		$form->set_initial(array(
@@ -61,5 +128,21 @@ class TcForm extends TcBase{
 		$client = new Atk14Client();
 		$controller = $client->get("admin/en/main/index");
 		$this->assertEquals("AdminForm",get_class($controller->form));
+	}
+
+	function test_multipart(){
+		$form = new TestForm();
+		$form->add_field("name",new CharField());
+		$this->assertNotContains('enctype="multipart/form-data"',$form->begin());
+
+		$form = new TestForm();
+		$form->add_field("name",new CharField());
+		$form->add_field("image",new ImageField());
+		$this->assertContains('enctype="multipart/form-data"',$form->begin());
+
+		$form = new TestForm();
+		$form->add_field("name",new CharField());
+		$form->enable_multipart();
+		$this->assertContains('enctype="multipart/form-data"',$form->begin());
 	}
 }

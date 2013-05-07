@@ -13,7 +13,7 @@
  *
  * @todo Write better explanation
  */
-define('NON_FIELD_ERRORS', '__all__');
+@define('NON_FIELD_ERRORS', '__all__');
 
 /**
  * Basic class for managing forms.
@@ -144,6 +144,7 @@ class BoundField
     {
         $this->form = $form;
         $this->field = $field;
+        $this->widget = $field->widget;
         $this->name = $name;
         $this->html_name = $form->add_prefix($name);
         if (is_null($this->field->label)) {
@@ -349,6 +350,15 @@ class BoundField
        if(isset($this->field->initial)){ return $this->field->initial; }
        return null;
     }
+
+    /**
+     * Magic method for conversion to string
+     *
+     * echo "$field"; // <input type="text" name="company" id="id_company" />
+     */
+    function __toString(){
+        return $this->as_widget();
+    }
 }
 
 
@@ -359,7 +369,7 @@ class BoundField
  * @subpackage InternalLibraries
  *
  */
-class Form
+class Form implements ArrayAccess
 {
     /**
      * @var string
@@ -417,7 +427,7 @@ class Form
      * @var array
      * @access private
      */
-    var $fields = null;
+    var $fields = array();
 
     /**
      * Array with error messages.
@@ -431,15 +441,44 @@ class Form
     {
         $options = forms_array_merge(
             array(
-                'data'          => null, 
-                'auto_id'       => 'id_%s',
-                'prefix'        => null, 
-                'initial'       => null, 
-                'label_suffix'  => ':',
                 'call_set_up'   => true,
+                '__do_small_initialization' => true, // don't even thing about it :)
+                '__do_big_initialization' => true, // do not touch this!
             ),
             $options
         );
+        $options["__do_small_initialization"] && $this->__do_small_initialization($options);
+        $options["__do_big_initialization"] && $this->__do_big_initialization($options);
+        $options["call_set_up"] && $this->set_up();
+    }
+
+    function __do_small_initialization($options = array()){
+        $options = forms_array_merge(
+            array(
+                'auto_id'       => 'id_%s',
+                'prefix'        => null, 
+                'label_suffix'  => ':',
+            ),
+            $options
+        );
+
+        $this->auto_id = $options['auto_id'];
+        $this->prefix = $options['prefix'];
+        $this->label_suffix = $options['label_suffix'];
+
+        $this->errors = null;
+        $this->fields = array();
+    }
+
+    function __do_big_initialization($options = array()){
+        $options = forms_array_merge(
+            array(
+                'data'          => null, 
+                'initial'       => null, 
+            ),
+            $options
+        );
+
         $this->is_bound = !is_null($options['data']);
         if (is_array($options['data'])) {
             $this->data = $options['data']; 
@@ -447,18 +486,12 @@ class Form
         else {
             $this->data = array();
         }
-        $this->auto_id = $options['auto_id'];
-        if(isset($options["prefix"])){ $this->prefix = $options['prefix']; }
         if (is_array($options['initial'])) {
             $this->initial = $options['initial'];
         }
         else {
             $this->initial = array();
         }
-        $this->label_suffix = $options['label_suffix'];
-        $this->errors = null;
-        $this->fields = array();
-        $options["call_set_up"] && $this->set_up();
     }
 
     /**
@@ -500,7 +533,7 @@ class Form
      *
      * @param string $name name of a field
      * @return Field
-     * {@internal Michaluv vymysl}}
+     * {@internal Michaluv vymysl}
      */
     function get_field($name)
     {
@@ -517,7 +550,7 @@ class Form
      *
      * @return array
      *
-     * {@internal NOTE: Michaluv vymysl}}
+     * {@internal NOTE: Michaluv vymysl}
      */
     function get_field_keys()
     {
@@ -531,6 +564,13 @@ class Form
     function list_fields($wildcart = ""){
         $out = $this->get_field_keys();
         return $out;
+    }
+
+    function is_multipart(){
+        foreach($this->fields as $f){
+            if($f->widget->multipart_encoding_required){ return true; }
+        }
+        return false;
     }
 
     /**
@@ -863,7 +903,19 @@ class Form
     function js_validator(){
         return new JsFormValidator($this);
     }
+
+    // The ArrayAccess interface functions
+    function offsetExists($offset){ return isset($this->fields[$offset]); }
+    function offsetGet($offset){ return $this->get_field($offset); }
+    function offsetSet($offset,$value){
+        if(!$value){
+            // $form["firstname"] = null;
+            unset($this[$offset]);
+            return;
+        }
+        $this->add_field($offset,$value);
+    }
+    function offsetUnset($offset){ unset($this->fields[$offset]); }
 }
 
 // vim: set et ts=4 sw=4 enc=utf-8 fenc=utf-8 si: 
-?>

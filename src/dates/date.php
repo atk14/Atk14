@@ -519,6 +519,9 @@ class Date{
 	 * @return integer
 	 */
 	function daysFrom($date){
+		if(!is_object($date)){
+			$date = Date::ByDate($date);
+		}
 		return Dates::GetDifference($date->getDate(),$this->getDate());
 	}
 
