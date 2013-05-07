@@ -10,6 +10,19 @@
  * For example a field for date can be rendered both as a text field and also as a select with 3 options.
  * In both cases they are the same field that return the same value whatever it is rendered.
  *
+ * <code>
+ * $this->add_field("choice", new ChoiceField(array(
+ *  "label" => "Your choice",
+ *  "required" => true,
+ *  "choices" => array(
+ *    "" => "Decide later",
+ *    "yes" => "Yes",
+ *    "no" => "Absolutely not",
+ *    ),
+ *  "widget" => new RadioSelect(),
+ *  )));
+ *
+ * </code>
  * @package Atk14
  * @subpackage Forms
  * @filesource
