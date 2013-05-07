@@ -914,7 +914,7 @@ class TcFields extends TcBase
 
 	function test_ipaddressfield(){
 		$DATA = array(array(
-			'field' => new IPAddressField(array("required" => false)),
+			'field' => new IpAddressField(array("required" => false)),
 			'params' => array(
 				array('clean' => '10.10.2.2', 'error' => null, 'result' => '10.10.2.2'),
 				array('clean' => 'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210', 'error' => null, 'result' => 'FEDC:BA98:7654:3210:FEDC:BA98:7654:3210'),
