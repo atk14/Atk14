@@ -1,5 +1,5 @@
 <?php
-class tc_image_field extends tc_base{
+class TcImageField extends TcBase{
 	function test_file_formats(){
 		$image = $this->_get_uploaded_jpeg();
 

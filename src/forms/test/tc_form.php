@@ -1,5 +1,5 @@
 <?php
-class tc_form extends tc_base{
+class TcForm extends TcBase{
 	function test_disable_field(){
 		$f = new Form();
 		$f->add_field("firstname",new CharField(array()));

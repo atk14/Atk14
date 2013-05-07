@@ -1,5 +1,5 @@
 <?php
-class tc_html_comparator extends tc_base{
+class TcHtmlComparator extends TcBase{
 	function test(){
 		$this->assertTrue($this->_compare_html('<input type="text" name="login" />','<input type="text" name="login" />'));
 		$this->assertTrue($this->_compare_html('<input type="text" name="login" />','<input name="login" type="text" />'));
@@ -16,4 +16,3 @@ class tc_html_comparator extends tc_base{
 		$this->assertFalse($this->_compare_html('Hello <strong>world</strong>, nice to meet you!','Hello <strong>World</strong>, nice to meet you!'));
 	}
 }
-?>
