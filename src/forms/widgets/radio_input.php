@@ -9,7 +9,7 @@ class RadioInput
 {
 	var $input_type = "radio";
 
-	function RadioInput($name, $value, $attrs, $choice, $index)
+	function __construct($name, $value, $attrs, $choice, $index)
 	{
 		$this->name = $name;
 		$this->value = $value;

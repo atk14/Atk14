@@ -24,7 +24,7 @@
  * @subpackage InternalLibraries
  */
 class JsFormValidator{
-	function JsFormValidator(&$form){
+	function __construct(&$form){
 		$this->validators = array();
 		$this->_fields_html_names = array();
 		foreach($form->fields as $name => $field){
@@ -140,7 +140,7 @@ function format_errors($errors)
  */
 class BoundField
 {
-	function BoundField($form, $field, $name)
+	function __construct($form, $field, $name)
 	{
 		$this->form = $form;
 		$this->field = $field;
@@ -437,7 +437,7 @@ class Form implements ArrayAccess
 	 */
 	var $errors = null;
 
-	function Form($options=array())
+	function __construct($options=array())
 	{
 		$options = forms_array_merge(
 			array(

@@ -14,10 +14,10 @@
  */
 class Select extends Widget
 {
-	function Select($options=array())
+	function __construct($options=array())
 	{
 		$options = forms_array_merge(array('attrs'=>null, 'choices'=>array()), $options);
-		parent::Widget($options);
+		parent::__construct($options);
 		$this->choices = $options['choices'];
 	}
 

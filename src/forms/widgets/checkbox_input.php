@@ -14,10 +14,10 @@ class CheckboxInput extends Widget
 {
 	var $input_type = "checkbox";
 
-	function CheckboxInput($options=array())
+	function __construct($options=array())
 	{
 		$options = forms_array_merge(array('attrs'=>null, 'check_test'=>null), $options);
-		parent::Widget($options);
+		parent::__construct($options);
 		$this->check_test = $options['check_test'];
 	}
 

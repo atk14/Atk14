@@ -42,7 +42,7 @@
  * @subpackage Forms
  */
 class JsValidator{
-	function JsValidator(){
+	function __constructor(){
 		$this->_messages = array();
 		$this->_rules = array();
 	}
@@ -110,7 +110,7 @@ class Field
 	 * <li><b>disabled boolean</b> - </li>
 	 * </ul>
 	 */
-	function Field($options=array())
+	function __construct($options=array())
 	{
 		// default data
 		$options = forms_array_merge(array(

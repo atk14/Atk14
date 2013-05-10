@@ -7,7 +7,7 @@
  */
 class EmailField extends RegexField
 {
-	function EmailField($options=array())
+	function __construct($options=array())
 	{
 		$options = array_merge(array(
 			"null_empty_output" => true,
@@ -15,7 +15,7 @@ class EmailField extends RegexField
 		),$options);
 		// NOTE: email_pattern je v Djangu slozen ze tri casti: dot-atom, quoted-string, domain
 		$email_pattern = "/(^[-!#$%&'*+\\/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+\\/=?^_`{}|~0-9A-Z]+)*".'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"'.')@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i';
-		parent::RegexField($email_pattern, $options);
+		parent::__construct($email_pattern, $options);
 		$this->update_messages(array(
 			'invalid' => _('Enter a valid e-mail address.'),
 		));

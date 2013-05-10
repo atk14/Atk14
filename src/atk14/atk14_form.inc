@@ -166,7 +166,7 @@ class Atk14Form extends Form
 	 *
 	 * @todo complete options
 	 */
-	function Atk14Form($options = array(),$controller = null)
+	function __construct($options = array(),$controller = null)
 	{
 		global $HTTP_REQUEST;
 
@@ -464,7 +464,7 @@ class Atk14Form extends Form
 			if(isset($this->atk14_initial_values)){ $options["initial"] = $this->atk14_initial_values; }
 			if(isset($this->atk14_data)){ $options["data"] = $this->atk14_data; }
 
-			parent::Form($options);
+			parent::__construct($options);
 
 			$this->atk14_super_constructor_called = true;
 			$this->post_set_up();

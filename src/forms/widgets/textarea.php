@@ -12,7 +12,7 @@
  */
 class Textarea extends Widget
 {
-	function Textarea($options=array())
+	function __construct($options=array())
 	{
 		$options = forms_array_merge(array('attrs'=>null), $options);
 		$this->attrs = array(

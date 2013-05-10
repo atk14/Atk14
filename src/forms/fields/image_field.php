@@ -6,7 +6,7 @@
  * @subpackage Forms
  */
 class ImageField extends FileField{
-	function ImageField($options = array()){
+	function __construct($options = array()){
 		$options = array_merge(array(
 			"width" => null,
 			"height" => null,
@@ -16,7 +16,7 @@ class ImageField extends FileField{
 			"min_height" => null,
 			"file_formats" => array(), // array("jpeg","png","git","tiff")
 		),$options);
-		parent::FileField($options);
+		parent::__construct($options);
 
 		$this->update_messages(array(
 			'not_image' => _('Ensure this file is image.'),

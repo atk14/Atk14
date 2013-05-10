@@ -9,8 +9,8 @@
  */
 class RadioSelect extends Select
 {
-	function RadioSelect($option = array()){
-		parent::Select($option);
+	function __construct($option = array()){
+		parent::__construct($option);
 	}
 
 	function _renderer($name, $value, $attrs, $choices)

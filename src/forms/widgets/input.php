@@ -16,8 +16,8 @@ class Input extends Widget
 	 *
 	 * @param array $options
 	 */
-	function Input($options = array()){
-		parent::Widget($options);
+	function __construct($options = array()){
+		parent::__construct($options);
 	}
 
 	function render($name, $value, $options=array())

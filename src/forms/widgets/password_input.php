@@ -21,7 +21,7 @@ class PasswordInput extends Input
 	 *
 	 * @param array $options
 	 */
-	function PasswordInput($options=array())
+	function __construct($options=array())
 	{
 		if(!isset($this->attrs["class"])){ // pokud nebylo class definovano v konstruktoru
 			!isset($options["attrs"]) && ($options["attrs"] = array());
@@ -31,7 +31,7 @@ class PasswordInput extends Input
 		} 
 
 		$options = forms_array_merge(array('render_value'=>true), $options);
-		parent::Input($options);
+		parent::__construct($options);
 		$this->render_value = $options['render_value'];
 	}
 

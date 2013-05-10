@@ -7,12 +7,12 @@
  */
 class DateField extends CharField
 {
-	function DateField($options=array())
+	function __construct($options=array())
 	{
 		$options = array_merge(array(
 			"null_empty_output" => true
 		),$options);
-		parent::CharField($options);
+		parent::__construct($options);
 		$this->update_messages(array(
 			'invalid' => _('Enter a valid date.'),
 		));

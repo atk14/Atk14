@@ -10,7 +10,7 @@
  */
 class IpAddressField extends RegexField
 {
-	function IpAddressField($options = array()){
+	function __construct($options = array()){
 		$options = array_merge(array(
 			"null_empty_output" => true,
 			"ipv4_only" => false,
@@ -21,7 +21,7 @@ class IpAddressField extends RegexField
 		$re_exp = "/^(($re_ipv4)|($re_ipv6))$/";
 		$options["ipv4_only"] && ($re_exp = "/^$re_ipv4$/");
 		$options["ipv6_only"] && ($re_exp = "/^$re_ipv6$/");
-		parent::RegexField($re_exp,$options);
+		parent::__construct($re_exp,$options);
 		$this->update_messages(array(
 			"invalid" => _("Enter a valid IP address."),
 		));

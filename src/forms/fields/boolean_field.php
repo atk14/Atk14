@@ -8,12 +8,12 @@
  */
 class BooleanField extends Field
 {
-	function BooleanField($options=array())
+	function __construct($options=array())
 	{
 		$options = array_merge(array(
 			"widget" => new CheckboxInput(),
 		),$options);
-		parent::Field($options);
+		parent::__construct($options);
 	}
 
 	function clean($value)

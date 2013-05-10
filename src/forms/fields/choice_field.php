@@ -9,12 +9,12 @@ class ChoiceField extends Field
 {
 	var $choices = array();
 
-	function ChoiceField($options=array())
+	function __construct($options=array())
 	{
 		if (!isset($this->widget)) {
 			$this->widget = new Select();
 		}
-		parent::Field($options);
+		parent::__construct($options);
 		$this->update_messages(array(
 			'invalid_choice' => _('Select a valid choice. That choice is not one of the available choices.'),
 			'required' => _('Please, choose the right option.'),

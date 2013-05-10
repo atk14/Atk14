@@ -10,7 +10,7 @@
  */
 class MultipleChoiceField extends ChoiceField
 {
-	function MultipleChoiceField($options=array())
+	function __construct($options=array())
 	{
 		//$this->hidden_widget = new MultipleHiddenInput(); // yarri: co to je MultipleHiddenInput()?
 		if (isset($options['widget'])) {
@@ -19,7 +19,7 @@ class MultipleChoiceField extends ChoiceField
 		else {
 			$this->widget = new SelectMultiple();
 		}
-		parent::ChoiceField($options);
+		parent::__construct($options);
 		$this->update_messages(array(
 			'invalid_choice' => _('Select a valid choice. %(value)s is not one of the available choices.'),
 			'invalid_list' => _('Enter a list of values.'),

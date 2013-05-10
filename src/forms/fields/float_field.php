@@ -7,7 +7,7 @@
  */
 class FloatField extends Field
 {
-	function FloatField($options=array())
+	function __construct($options=array())
 	{
 		$options = forms_array_merge(array(
 				'max_value' => null,
@@ -17,7 +17,7 @@ class FloatField extends Field
 		);
 		$this->max_value = $options['max_value'];
 		$this->min_value = $options['min_value'];
-		parent::Field($options);
+		parent::__construct($options);
 		$this->update_messages(array(
 			'invalid' => _('Enter a number.'),
 			'max_value' => _('Ensure this value is less than or equal to %value%.'),

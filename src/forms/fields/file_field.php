@@ -8,11 +8,11 @@
  * @subpackage Forms
  */
 class FileField extends Field{
-	function FileField($options = array()){
+	function __construct($options = array()){
 		$options = array_merge(array(
 			"widget" => new FileInput(),
 		),$options);
-		parent::Field($options);
+		parent::__construct($options);
 	}
 	function clean($value){
 		list($err,$value) = parent::clean($value);

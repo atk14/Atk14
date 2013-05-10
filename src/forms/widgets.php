@@ -127,7 +127,7 @@ class Widget
 	 *
 	 * @param array $options
 	 */
-	function Widget($options=array())
+	function __construct($options=array())
 	{
 		$options = forms_array_merge(array('attrs'=>null), $options);
 		if (!isset($this->is_hidden)) {

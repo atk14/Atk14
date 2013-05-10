@@ -7,9 +7,9 @@
  */
 class DateTimeWithSecondsField extends DateField
 {
-	function DateTimeWithSecondsField($options=array())
+	function __construct($options=array())
 	{
-		parent::DateField($options);
+		parent::__construct($options);
 		$this->update_messages(array(
 			'invalid' => _('Enter a valid date, hours, minutes and seconds.')
 		));

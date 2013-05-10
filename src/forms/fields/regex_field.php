@@ -7,9 +7,9 @@
  */
 class RegexField extends CharField
 {
-	function RegexField($regex, $options=array())
+	function __construct($regex, $options=array())
 	{
-		parent::CharField($options);
+		parent::__construct($options);
 		$this->update_messages(array(
 			'max_length' => _('Ensure this value has at most %max% characters (it has %length%).'),
 			'min_length' => _('Ensure this value has at least %min% characters (it has %length%).'),

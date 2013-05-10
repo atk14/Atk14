@@ -7,7 +7,7 @@
  */
 class CharField extends Field
 {
-	function CharField($options=array())
+	function __construct($options=array())
 	{
 		$options = forms_array_merge(array(
 				'max_length' => null,
@@ -19,7 +19,7 @@ class CharField extends Field
 		);
 		$this->max_length = $options['max_length'];
 		$this->min_length = $options['min_length'];
-		parent::Field($options);
+		parent::__construct($options);
 		$this->update_messages(array(
 			'max_length' => _('Ensure this value has at most %max% characters (it has %length%).'),
 			'min_length' => _('Ensure this value has at least %min% characters (it has %length%).'),
