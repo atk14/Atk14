@@ -516,7 +516,7 @@ class Atk14Form extends Form
 	function set_action($url)
 	{
 		if(is_array($url)){
-			$url = Atk14Url::BuildLink($url);
+			$url = Atk14Url::BuildLink($url,array("connector" => "&"));
 		}
 		$this->atk14_action = (string)$url;
 	}
