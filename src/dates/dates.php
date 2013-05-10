@@ -23,7 +23,7 @@
 *		2007-03-01: pridany metody get_last_date_by_date() a get_first_date_by_date()
 * 
 */
-class dates{
+class Dates{
 	
 	/**
 	* 
