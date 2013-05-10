@@ -265,26 +265,13 @@ class HTTPUploadedFile{
 	 * Determines the mime type of the file.
 	 * 
 	 * !! Note that it actualy runs the shell command file.
-	 * If it is unable to run the command, 'application/octet-string' is returned.
+	 * See Files::DetermineFileType() for more info.
 	 *
-	 * TODO: change this to files::determine_file_type()
-	 * 
 	 * @access private
 	 * @return string
 	 */
 	function _determineFileType(){
-		$command = "file -i ".escapeshellarg($this->getTmpFileName());
-		$out = `$command`;
-		// /tmp/xxsEEws: text/plain charset=us-ascii
-		// -> text/plain
-		// ya.gif: image/gif; charset=binary
-		// -> image/gif
-		if(preg_match("/^.*?:\\s*([^\\s]+\\/[^\\s;]+)/",$out,$matches)){
-			$mime_type = $matches[1];
-		}else{
-			$mime_type = "application/octet-stream";
-		}
-		return $mime_type;
+		return Files::DetermineFileType($this->getTmpFileName());
 	}
 
 	/**
