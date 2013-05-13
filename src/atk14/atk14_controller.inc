@@ -857,10 +857,8 @@ class Atk14Controller{
 	 *
 	 * <code>
 	 * $url = $this->_link_to(array("action" => "overview"));
-	 * $url = $this->_link_to(array("action" => "detail", "id" => 2045, "format" => "xml"),array("connector" => "&")); // defaultni connector je "&amp;"
-	 * $url = $this->_link_to(); // link na akt controller, action a jazyk
-	 *
-	 * 
+	 * $url = $this->_link_to(array("action" => "detail", "id" => 2045, "format" => "xml"),array("connector" => "&amp;")); // default connector is "&"
+	 * $url = $this->_link_to(); // link to the current namespace, ncontroller, action and lang
 	 * </code>
 	 *
 	 * @param array $params
@@ -872,6 +870,9 @@ class Atk14Controller{
 	 *
 	 */
 	function _link_to($params = array(),$options = array()){
+		$options += array(
+			"connector" => "&",
+		);
 		$__current_ary__ = array(
 			"action" => $this->action,
 			"controller" => $this->controller,

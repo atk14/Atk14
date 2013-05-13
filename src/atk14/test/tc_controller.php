@@ -63,13 +63,13 @@ class TcController extends TcBase{
 		$c->_redirect_to($params);
 		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->response->getLocation());
 
-		$this->assertEquals("/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params));
+		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->_link_to($params));
 
-		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("with_hostname" => true)));
-		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("with_hostname" => true, "ssl" => true)));
+		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("with_hostname" => true)));
+		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("with_hostname" => true, "ssl" => true)));
 
-		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("ssl" => true)));
-		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&amp;format=xml",$c->_link_to($params,array("ssl" => false)));
+		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("ssl" => true)));
+		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("ssl" => false)));
 	}
 
 	function test_link_to(){
@@ -84,8 +84,8 @@ class TcController extends TcBase{
 		$this->assertEquals("/en/books/export/",$c->_link_to(array("action" => "export")));
 		$this->assertEquals("/en/books/export/",$c->_link_to("export"));
 
-		$this->assertEquals("/en/books/detail/?id=123&amp;format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml")));
-		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml"),array("connector" => "&")));
+		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml")));
+		$this->assertEquals("/en/books/detail/?id=123&amp;format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml"),array("connector" => "&amp;")));
 
 		$this->assertEquals("/en/articles/",$c->_link_to(array("controller" => "articles")));
 		$this->assertEquals("/en/articles/",$c->_link_to("articles/index"));
