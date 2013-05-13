@@ -1146,7 +1146,7 @@ class Atk14Controller{
 
 		if(isset($this->form)){
 			$this->form->set_hidden_field("step_id",$this->step_id);
-			$this->form->set_action($this->_link_to($this->_walking_extra_params));
+			$this->form->set_action($this->_link_to($this->_walking_extra_params,array("connector" => "&")));
 		}
 
 		$method_name = "{$this->action}__$step";

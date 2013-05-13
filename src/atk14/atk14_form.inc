@@ -181,7 +181,7 @@ class Atk14Form extends Form
 
 		$this->atk14_constructor_options = $options;
 
-		$this->atk14_action = str_replace("&","&amp;",$HTTP_REQUEST->getRequestURI());
+		$this->atk14_action = $HTTP_REQUEST->getRequestURI();
 		//$this->atk14_action = Atk14Url::BuildLink(array()); // tohle sestavi URL s akt. $lang, $namespace, $controller a $action
 
 		$this->controller = $controller;

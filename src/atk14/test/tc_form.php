@@ -148,10 +148,10 @@ class TcForm extends TcBase{
 
 	function test_set_action(){
 		global $HTTP_REQUEST;
-		$HTTP_REQUEST->setRequestUri("/testing/");
+		$HTTP_REQUEST->setRequestUri("/testing/?id=12&format=xml");
 
 		$form = new TestForm();
-		$this->assertEquals('/testing/',$form->get_action());
+		$this->assertEquals('/testing/?id=12&format=xml',$form->get_action());
 
 		$form->set_action('/new-uri/');
 		$this->assertEquals('/new-uri/',$form->get_action());
