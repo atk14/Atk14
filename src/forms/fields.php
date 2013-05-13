@@ -42,7 +42,7 @@
  * @subpackage Forms
  */
 class JsValidator{
-	function __constructor(){
+	function __construct(){
 		$this->_messages = array();
 		$this->_rules = array();
 	}
@@ -67,7 +67,7 @@ class JsValidator{
  *
  * When you develop a new validation class for new field type there are three basic methods available
  * during a lifecycle of a Field:
- * - {@link Field::Field() __constructor()} - declaration of input field. Provides information about field type and its attributes.
+ * - {@link Field::Field() __construct()} - declaration of input field. Provides information about field type and its attributes.
  * - {@link Field::format_initial_data()} provides presentation of values
  * - {@link Field::clean()} provides validation of values
  *
