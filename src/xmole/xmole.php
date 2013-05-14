@@ -788,9 +788,9 @@ class XMole{
 	 */
 	function _startElement($parser,$name,$attribs){
 		if($this->_translate){
-			$name = translate::trans($name,$this->_input_encoding,$this->_output_encoding);
+			$name = Translate::Trans($name,$this->_input_encoding,$this->_output_encoding);
 			foreach($attribs as $key => $value){
-				$attribs[$key] = translate::trans($attribs[$key],$this->_input_encoding,$this->_output_encoding);
+				$attribs[$key] = Translate::Trans($attribs[$key],$this->_input_encoding,$this->_output_encoding);
 			}
 		}
 		//$this->_element_store[] = $name;
@@ -835,7 +835,7 @@ class XMole{
 		//$attribs = array_pop($this->_attrib_store);
 		$data = array_pop($this->_data_store);
 		if($this->_translate){
-			$data = translate::trans($data,$this->_input_encoding,$this->_output_encoding);
+			$data = Translate::Trans($data,$this->_input_encoding,$this->_output_encoding);
 		}
 		if($this->_trim_data){ $data = trim($data); }
 

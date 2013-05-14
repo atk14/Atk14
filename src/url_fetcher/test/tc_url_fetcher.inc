@@ -5,6 +5,7 @@ class tc_url_fetcher extends tc_base{
 		$this->assertTrue($f->fetchContent());
 		$this->assertFalse($f->errorOccurred());
 		$this->assertTrue($f->found());
+		$this->assertEquals("http://jarek.plovarna.cz/unit-testing/dungeon-master.png");
 		$this->assertEquals(11462,strlen($f->getContent()));
 		$this->assertEquals("c4f99bdb6a4feb3b41b1bcd56a4d7aa3",md5($f->getContent()));
 		$this->assertEquals("image/png",$f->getContentType());
@@ -118,8 +119,10 @@ class tc_url_fetcher extends tc_base{
 
 	function test_redirecting(){
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/redirection.php?type=full_address");
+		$this->assertEquals("http://jarek.plovarna.cz/unit-testing/redirection.php?type=full_address",$f->getUrl()); // at the moment UF doesn't know that the given URL will be redirected
 		$this->assertEquals(200,$f->getStatusCode());
 		$this->assertEquals("TEST CONTENT, type=full_address",trim($f->getContent()));
+		$this->assertEquals("http://jarek.plovarna.cz/unit-testing/content.php?type=full_address",$f->getUrl());
 
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/redirection.php?type=absolute");
 		$this->assertEquals(200,$f->getStatusCode());

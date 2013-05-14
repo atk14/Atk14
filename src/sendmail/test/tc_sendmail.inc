@@ -175,7 +175,7 @@ class tc_sendmail extends tc_base{
 			"body_charset" => "us-ascii",
 
 			"attachment" => array(
-				"body" => files::get_file_content("fck.gif",$err,$err_str),
+				"body" => Files::GetFileContent("fck.gif",$err,$err_str),
 				"filename" => "fck.gif",
 				"mime_type" => "image/gif"
 			)
@@ -206,7 +206,7 @@ class tc_sendmail extends tc_base{
 
 			"attachments" => array(
 				array(
-					"body" => files::get_file_content("fck.gif",$err,$err_str),
+					"body" => Files::GetFileContent("fck.gif",$err,$err_str),
 					"filename" => "fck.gif",
 					"mime_type" => "image/gif"
 				),
@@ -334,9 +334,9 @@ PROCESSCONTROL|eudocrpe_11442|NA|
 		$this->_encode_body(str_repeat("a",200)." ".str_repeat("b",200),array("split_up_long_lines_in_spaces" => true));
 		$this->_encode_body(str_repeat("a",200)." ".str_repeat("b",200),array("split_up_long_lines_in_spaces" => false));
 
-		//$this->_encode_body(files::get_file_content("ihned.html",$err,$err_str),array("split_up_long_lines_in_spaces" => true));
+		//$this->_encode_body(Files::GetFileContent("ihned.html",$err,$err_str),array("split_up_long_lines_in_spaces" => true));
 
-		$body = files::get_file_content("ihned.html",$err,$err_str);
+		$body = Files::GetFileContent("ihned.html",$err,$err_str);
 		$this->_encode_body($body,array("split_up_long_lines_in_spaces" => true));
 		//echo _sendmail_quoted_printable_encode($body,array("split_up_long_lines_in_spaces" => true)); exit;
 

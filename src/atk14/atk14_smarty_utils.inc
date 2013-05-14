@@ -37,28 +37,31 @@ function atk14_smarty_prefilter($tpl_source, &$smarty = null){
  * Handles some of Smarty errors.
  */
 function atk14_error_handler($errno, $errstr, $errfile, $errline){
-	global $HTTP_RESPONSE;
+	global $HTTP_RESPONSE,$HTTP_REQUEST;
 
-	// catching Smarty syntax error
-	if($errno==E_USER_ERROR && preg_match("/^Smarty/",$errstr)){
-		if(DEVELOPMENT){
-			echo "$errstr";
-		}else{
-			$HTTP_RESPONSE->internalServerError();
-			$HTTP_RESPONSE->flushAll();
-		}
-		error_log($errstr);
-	}
-
-	// catching Smarty template missing error
-	if($errno==512 && preg_match("/^Smarty/",$errstr)){
+	if(($errno==E_USER_ERROR || $errno==512) && preg_match("/^Smarty/",$errstr)){
 		if(DEVELOPMENT){
 			echo "$errstr";
 		}
+
+		// catching Smarty syntax error
+		if($errno==E_USER_ERROR){
+			if(!DEVELOPMENT){
+				$HTTP_RESPONSE->internalServerError();
+				$HTTP_RESPONSE->flushAll();
+			}
+		}
+
+		// catching Smarty template missing error
+		//if($errno==512){
+			// ...
+		//}
+
+		if($HTTP_REQUEST){
+			$errstr .= " (url: ".$HTTP_REQUEST->getUrl().")";
+		}
 		error_log($errstr);
 	}
-
-	//echo "$errno: $errstr\n";
 
 	return false;
 }

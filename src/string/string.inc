@@ -191,7 +191,7 @@ class String{
 	 */
 	function length(){
 		//return strlen($this->_String);
-		return translate::length($this->_String,$this->getEncoding());
+		return Translate::Length($this->_String,$this->getEncoding());
 	}
 	
 	/**

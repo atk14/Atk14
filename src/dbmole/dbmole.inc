@@ -1297,7 +1297,7 @@ class DbMole{
 		if(!file_exists($filename) || filemtime($filename)<(time()-$seconds)){
 			return null;
 		}
-		$cache = files::get_file_content($filename,$error,$error_str);
+		$cache = Files::GetFileContent($filename,$error,$error_str);
 		$rows = unserialize($cache);
 		if(!is_array($rows)){
 			return null;
@@ -1313,8 +1313,8 @@ class DbMole{
 		$cache = serialize($rows);
 		$filename = $this->_getCacheFilename($query,$bind_ar,$options);
 		$dir = preg_replace("/[^\\/]*$/","",$filename);
-		files::mkdir($dir,$error,$error_str);
-		files::write_to_file($filename,$cache,$error,$error_str);
+		Files::Mkdir($dir,$error,$error_str);
+		Files::WriteToFile($filename,$cache,$error,$error_str);
 		return true;
 	}
 

@@ -15,17 +15,23 @@
  * <ul>
  * 	<li><b>controller</b> - name of controller</li>
  * 	<li><b>action</b> - name of action in the specified controller</li>
- * 	<li><b>lang</b> - language. Defaults to ??</li>
+ * 	<li><b>namespace</b> - application namespace. Defaults to current namespace.</li>
+ * 	<li><b>lang</b> - language. Defaults to ATK14_DEFAULT_LANG</li>
  * 	<li><b>domain_name</b> - Generated url will contain this domain_name when used with _with_hostname=true</li>
  * 	<li><b>_with_hostname</b> - see domain_name parameter</li>
  * 	<li><b>_anchor</b> - generates anchor</li>
- *	<li><b>_method</b></li>
- *	<li><b>_confirm</b></li>
+ *	<li><b>_method</b> - GET or POST. Defaults to GET.</li>
+ *	<li><b>_confirm</b> - dialog that pops up after the link is clicked</li>
  * </ul>
  *
  * You can also define attributes of the tag. Simply add them to the helper with underscore at the beginning. For example parameter <b>_class=heading</b> will generate <a /> tag with attribute class="heading"
  * <code>
  * 	{a controller="articles" action="detail" id=$article _class="heading"}Read the article{/a}
+ * </code>
+ *
+ * When a link to other namespace is needed. For example you are in admin and want a link to the main application which is not namespaced.
+ * <code>
+ * {a controller=products action=detail id=$product namespace=""}Show me the detail in shop{/a}
  * </code>
  *
  * Sometimes you may want to access an URL with method POST.

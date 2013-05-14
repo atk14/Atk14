@@ -128,7 +128,7 @@ class Atk14MigrationBySqlFile extends Atk14Migration{
 		global $ATK14_GLOBAL;
 		$filename = $ATK14_GLOBAL->getMigrationsPath().$this->version;
 
-		$content = files::get_file_content($filename,$err,$err_str);
+		$content = Files::GetFileContent($filename,$err,$err_str);
 
 		if($err){
 			return $this->_fail("can't read $filename: $err_str");

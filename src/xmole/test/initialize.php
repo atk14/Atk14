@@ -1,4 +1,4 @@
 <?php
 include("../xmole.php");
-include("../../translate/translate.inc");
-include("../../files/files.inc");
+include("../../translate/translate.php");
+include("../../files/load.php");

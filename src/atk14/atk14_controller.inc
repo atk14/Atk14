@@ -787,8 +787,8 @@ class Atk14Controller{
 			"template_name" => $this->template_name,
 		)));
 
-		files::mkdir($recipe["dir"],$err,$err_msg);
-		files::write_to_file($recipe["filename"],$serialized,$err,$err_msg);
+		Files::Mkdir($recipe["dir"],$err,$err_msg);
+		Files::WriteToFile($recipe["filename"],$serialized,$err,$err_msg);
 	}
 
 	/**
@@ -801,7 +801,7 @@ class Atk14Controller{
 		$filename = $recipe["filename"];
 
 		if(file_exists($filename) && ((time()-filemtime($filename))<=$recipe["expires"])){
-			$serialized = files::get_file_content($filename,$err,$err_msg);
+			$serialized = Files::GetFileContent($filename,$err,$err_msg);
 			if(($unserialized = unserialize($serialized)) && is_array($unserialized) && isset($unserialized["content"])){
 				$cache = $unserialized;
 				return true;
@@ -857,10 +857,8 @@ class Atk14Controller{
 	 *
 	 * <code>
 	 * $url = $this->_link_to(array("action" => "overview"));
-	 * $url = $this->_link_to(array("action" => "detail", "id" => 2045, "format" => "xml"),array("connector" => "&")); // defaultni connector je "&amp;"
-	 * $url = $this->_link_to(); // link na akt controller, action a jazyk
-	 *
-	 * 
+	 * $url = $this->_link_to(array("action" => "detail", "id" => 2045, "format" => "xml"),array("connector" => "&amp;")); // default connector is "&"
+	 * $url = $this->_link_to(); // link to the current namespace, ncontroller, action and lang
 	 * </code>
 	 *
 	 * @param array $params
@@ -872,6 +870,9 @@ class Atk14Controller{
 	 *
 	 */
 	function _link_to($params = array(),$options = array()){
+		$options += array(
+			"connector" => "&",
+		);
 		$__current_ary__ = array(
 			"action" => $this->action,
 			"controller" => $this->controller,
@@ -1146,7 +1147,7 @@ class Atk14Controller{
 
 		if(isset($this->form)){
 			$this->form->set_hidden_field("step_id",$this->step_id);
-			$this->form->set_action($this->_link_to($this->_walking_extra_params));
+			$this->form->set_action($this->_link_to($this->_walking_extra_params,array("connector" => "&")));
 		}
 
 		$method_name = "{$this->action}__$step";

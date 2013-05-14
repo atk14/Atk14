@@ -14,9 +14,10 @@
  * It is used inside a controller using instance variable $flash.
  *
  * Uses three types of messages, each of them having appropriate method to set:
- * - notice
+ * - notice -> info
  * - success
  * - error
+ * - warning
  *
  * <code>
  * class MyController extends ApplicationController {
@@ -92,6 +93,12 @@ class Atk14Flash{
 		return $this->getMessage("notice");
 	}
 
+	// alias...
+	function setInfo($message){ return $this->setNotice($message); }
+	function info($message = null){
+		return $this->notice($message);
+	}
+
 	/**
 	 * Method to set a error message.
 	 *
@@ -130,6 +137,26 @@ class Atk14Flash{
 	function success($message = null){
 		if(isset($message)){ return $this->setSuccess($message); }
 		return $this->getMessage("success");
+	}
+
+	/**
+	 * Method to set a warning message.
+	 *
+	 * @param string $message A warning string
+	 *
+	 */
+	function setWarning($message){ $this->setMessage("warning",$message); }
+
+	/**
+	 * Getter for warning message. Can be used as alias to setWarning() method
+	 *
+	 * @param string $message - A warning string. When null, method returns the warning message, otherwise it sets the warning flash message.
+	 * @return string Warning message
+	 *
+	 */
+	function warning($message = null){
+		if(isset($message)){ return $this->setWarning($message); }
+		return $this->getMessage("warning");
 	}
 
 	/**

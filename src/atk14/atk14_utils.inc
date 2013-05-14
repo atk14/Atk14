@@ -85,11 +85,11 @@ class Atk14Utils{
 		}
 
 		if(file_exists($_f = $path."database.yml")){
-			$ATK14_GLOBAL->setValue("database",miniYAML::Load(files::get_file_content($_f,$e,$e_s)));
+			$ATK14_GLOBAL->setValue("database",miniYAML::Load(Files::GetFileContent($_f,$e,$e_s)));
 		}
 
 		if(file_exists($_f = $path."locale.yml")){
-			$ATK14_GLOBAL->setValue("locale",miniYAML::Load(files::get_file_content($_f,$e,$e_s)));
+			$ATK14_GLOBAL->setValue("locale",miniYAML::Load(Files::GetFileContent($_f,$e,$e_s)));
 		}
 
 		$dir = opendir($path);
@@ -324,9 +324,9 @@ class Atk14Utils{
 			$smarty->setConfigDir($PATH_SMARTY."/config/");
 			$smarty->setCacheDir($PATH_SMARTY."/cache/");
 
-			if(!file_exists($_compile_dir)){ files::mkdir($_compile_dir); }
+			if(!file_exists($_compile_dir)){ Files::Mkdir($_compile_dir); }
 
-			if(!files::is_readable_and_writable($_compile_dir)){
+			if(!Files::IsReadableAndWritable($_compile_dir)){
 				//die("$smarty->compile_dir is not writable!!!");
 				// this should by handled by atk14_error_handler()
 			}

@@ -24,12 +24,12 @@ class tc_sendhtmlmail extends tc_base{
 			"images" => array(
 				array(
 					"filename" => "120_x_120.jpg",
-					"content" => files::get_file_content("120_x_120.jpg",$err,$err_str),
+					"content" => Files::GetFileContent("120_x_120.jpg",$err,$err_str),
 					"cid" => "rhSSwwo"
 				),
 				array(
 					"filename" => "red_box.png",
-					"content" => files::get_file_content("red_box.png",$err,$err_str),
+					"content" => Files::GetFileContent("red_box.png",$err,$err_str),
 					"cid" => "jau72aakKJD"
 				)
 			),

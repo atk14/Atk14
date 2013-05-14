@@ -94,9 +94,13 @@ class Atk14Robot{
 
 		$this->logger->start();
 
+		Lock::Mklock($robot_name,$this->logger);
+
 		$this->beforeRun();
 		$this->run();
 		$this->afterRun();
+
+		Lock::Unlock($robot_name,$this->logger);
 
 		$this->logger->stop();
 		$this->logger->flush_all();

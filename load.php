@@ -8,7 +8,7 @@ error_reporting(255);
 // we need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
 // HTTP* classes give us right advices about environment & configuration
 require_once(dirname(__FILE__)."/src/stringbuffer/stringbuffer.inc");
-require_once(dirname(__FILE__)."/src/files/files.inc");
+require_once(dirname(__FILE__)."/src/files/load.php");
 require_once(dirname(__FILE__)."/src/http/load.inc");
 require_once(dirname(__FILE__)."/src/atk14/atk14_utils.inc");
 Atk14Utils::DetermineEnvironment();
@@ -23,13 +23,14 @@ require_once(dirname(__FILE__)."/default_settings.php");
 
 // load the rest...
 require_once(dirname(__FILE__)."/src/string/load.inc");
-require_once(dirname(__FILE__)."/src/translate/translate.inc");
+require_once(dirname(__FILE__)."/src/translate/translate.php");
 require_once(dirname(__FILE__)."/src/dictionary/dictionary.inc");
 require_once(dirname(__FILE__)."/src/miniyaml/miniyaml.inc");
-require_once(dirname(__FILE__)."/src/dates/load.inc");
+require_once(dirname(__FILE__)."/src/dates/load.php");
 require_once(dirname(__FILE__)."/src/xmole/xmole.php");
 require_once(dirname(__FILE__)."/src/stopwatch/stopwatch.inc");
 require_once(dirname(__FILE__)."/src/logger/logger.inc");
+require_once(dirname(__FILE__)."/src/lock/lock.php");
 require_once(dirname(__FILE__)."/src/json/load.inc");
 if(ATK14_USE_SMARTY3){
 	require_once(dirname(__FILE__)."/src/smarty3/libs/SmartyBC.class.php");
@@ -43,7 +44,7 @@ require_once(dirname(__FILE__)."/src/tablerecord/load.php");
 require_once(dirname(__FILE__)."/src/sessionstorer/sessionstorer.inc");
 require_once(dirname(__FILE__)."/src/packer/packer.inc");
 require_once(dirname(__FILE__)."/src/sendmail/sendmail.inc");
-require_once(dirname(__FILE__)."/src/forms/load.inc");
+require_once(dirname(__FILE__)."/src/forms/load.php");
 require_once(dirname(__FILE__)."/src/url_fetcher/url_fetcher.inc");
 require_once(dirname(__FILE__)."/src/atk14/load.inc");
 require_once(dirname(__FILE__)."/src/functions.inc");
@@ -164,7 +165,7 @@ function __to_default_charset__(&$params){
 	reset($params);
 	while(list($key,$value) = each($params)){
 		if(is_string($value)){
-			translate::check_encoding($params[$key],"UTF-8") && ($params[$key] = translate::trans($params[$key],"UTF-8",DEFAULT_CHARSET));
+			Translate::CheckEncoding($params[$key],"UTF-8") && ($params[$key] = Translate::Trans($params[$key],"UTF-8",DEFAULT_CHARSET));
 			continue;
 		}
 		if(is_array($value)){

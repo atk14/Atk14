@@ -159,6 +159,21 @@ class UrlFetcher {
 		$this->_AdditionalHeaders = $options["additional_headers"];
 		$this->_MaxRedirections = $options["max_redirections"];
 	}
+	
+	/**
+	 * Returns URL
+	 *
+	 * <code>
+	 * 	$uf = new UrlFetcher("http://example.com/content.html");
+	 * 	echo $uf->getUrl(); // http://example.com/content.html
+	 *
+	 *  $uf = new UrlFetcher("http://example.com/to_be_redirected.html");
+	 *	echo $uf->getUrl(); // http://example.com/to_be_redirected.html
+	 *	$uf->getContent();
+	 *	echo $uf->getUrl(); // http://example.com/redirected_address.html
+	 * </code>
+	 */
+	function getUrl(){ return $this->_Url; }
 
 	/**
 	 * Checks if error occured on request
