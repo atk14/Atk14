@@ -211,7 +211,7 @@ class translate{
 	 * @param string $charset unified chrset name
 	 * @return string
 	 */
-	function _GetCharsetByName($charset){
+	static function _GetCharsetByName($charset){
         static $trans=array( 	  
               "8859_2" => "iso-8859-2",
               "iso8859-2" => "iso-8859-2",
