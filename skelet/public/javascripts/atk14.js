@@ -4,7 +4,7 @@ var ATK14 = (function( $, window, undefined ) {
 	var document = window.document,
 		confirm = window.confirm;
 
-	$( document ).on( "a[data-remote], a[data-method]", "click", function(e) {
+	$( document ).on( "click", "a[data-remote], a[data-method]", function(e) {
 		var $link = $( this );
 
 		if ( !allowAction( $link ) ) {
@@ -20,7 +20,7 @@ var ATK14 = (function( $, window, undefined ) {
 		}
 	});
 
-	$( document ).on( "form[data-remote]", "submit", function(e) {
+	$( document ).on( "submit", "form[data-remote]", function(e) {
 		ATK14.handleRemote( this );
 		e.preventDefault();
 	});
