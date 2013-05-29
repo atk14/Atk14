@@ -127,7 +127,7 @@ DbMole::RegisterErrorHandler("dbmole_error_handler");
 function atk14_initialize_locale(&$lang){
 	global $ATK14_GLOBAL;
 
-	$locale = $ATK14_GLOBAL->getValue("locale");
+	$locale = $ATK14_GLOBAL->getConfig("locale");
 
 	if(!isset($locale[$lang])){
 		$_keys = array_keys($locale);

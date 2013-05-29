@@ -122,11 +122,11 @@ class Atk14Global{
 			return ATK14_DEFAULT_LANG;
 		}
 
-		if(!is_null($locales = $ATK14_GLOBAL->getValue("locale"))){
+		if($locales = $this->getConfig("locale")){
 			$langs = array_keys($locales);
-
 			if(isset($langs[0])){ return $langs[0]; }
 		}
+
 		return "cs";
 	}
 
@@ -159,11 +159,12 @@ class Atk14Global{
 	 *	"database" => "dbname",
 	 *  "host" => "127.0.0.1",
 	 *  "username" => "user",
-	 *  "password" => "funny_boy", 
+	 *  "password" => "funny_boy",
+	 *	"port" => "5432",
 	 * )
 	 */
 	function getDatabaseConfig(){
-		$database_ar = $this->getValue("database");
+		$database_ar = $this->getConfig("database");
 		if(DEVELOPMENT){
 			$d = $database_ar["development"];
 		}elseif(TEST){
@@ -173,6 +174,30 @@ class Atk14Global{
 		}
 		$d["port"] = isset($d["port"]) ? $d["port"] : "5432";
 		return $d;
+	}
+
+	/**
+	 * Loads and returns configuration from conf/$config_name.yml
+	 * Returns null when there is no such configuration file
+	 * 
+	 * $ATK14_GLOBAL->getConfig("database");
+	 */
+	function getConfig($config_name){
+		static $STORE;
+		if(!isset($STORE)){ $STORE = array(); }
+		if(in_array($config_name,array_keys($STORE))){ return $STORE[$config_name]; }
+
+		$STORE[$config_name] = null;
+
+		if(!file_exists($path = $this->getApplicationPath()."../config/")){
+			$path = $this->getApplicationPath()."conf/";
+		}
+
+		if(file_exists($_f = $path."$config_name.yml")){
+			$STORE[$config_name] = miniYAML::Load(Files::GetFileContent($_f));
+		}
+
+		return $STORE[$config_name];
 	}
 
 	function _getRoot(){
