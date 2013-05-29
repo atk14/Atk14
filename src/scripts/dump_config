@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+/**
+* Dumps configuration from a conf/*.yml file
+*/
+
+require_once(dirname(__FILE__)."/load.inc");
+
+if(!isset($argv[1])){
+	echo "Usage:\n";
+	echo "$ $argv[0] config_name\n\n";
+	echo "Tries to load and parse configuration from conf/config_name.yml\n";
+	exit(1);
+}
+
+print_r($ATK14_GLOBAL->getConfig($argv[1]));
