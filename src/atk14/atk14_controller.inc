@@ -422,12 +422,14 @@ class Atk14Controller{
 	/**
 	 * Executes another action defined in current controller.
 	 *
-	 * <ul>
-	 * 	<li>force_to_set_template_name - </li>
-	 * </ul>
+	 * The action executed inside of current action uses its template default to the executed action.
+	 * Option force_to_set_template_name forces usage of template set in current action.
 	 *
 	 * @param string $action name of action executed
 	 * @param array $options
+	 * <ul>
+	 * 	<li><b>force_to_set_template_name</b> - use template set in current action</li>
+	 * </ul>
 	 * @access protected
 	 *
 	 * @uses Atk14Mailer::GetInstanceByController()

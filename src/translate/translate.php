@@ -2,13 +2,30 @@
 /**
  * Class for converting strings between charsets.
  *
+ *
+ * {@internal
+ *	updates
+ *	3.12.2003 - pridana funkce _TO_windows_1250
+ *	4.12.2003 - pridana funkce _TO_ascii pro osmibitove kodovani
+ * 15.12.2003 - pridana funkce _check_encoding_ascii a _check_encoding_utf8
+ * 13.3.2006 - opravena chyba pri Translate::Lower($neco,"windows-1250") a Translate::Upper($neco,"windows-1250")
+ * 13.3.2006 - do metod lower a upper pridano kodovani iso-8859-2
+ * 16.6.2006 - konvert z windows-1250 do 852 a naopak
+ * 26.9.2007 - konvert z utf-8 do ascii (jen ceske znaky)
+ * 22.10.2007 - parametrem pro prekodovani ted muze byt i pole
+ * 29.11.2007 - doplneno urcovani delky retyezce}
+ *
  * @package Atk14
  * @subpackage Translate
  * @filesource
  */
 
+if(!defined("TRANSLATE_USE_ICONV")){
+	define("TRANSLATE_USE_ICONV",true);
+}
+
 /**
- * This class converts string between charsets.
+ * This class converts strings between charsets.
  *
  * It's important to search the code to discover the charset support.
  *
@@ -41,26 +58,8 @@
  * @package Atk14
  * @subpackage Translate
  * @filesource
+ *
  */
-
-/*
-*	updaty
-*	3.12.2003 - pridana funkce _TO_windows_1250
-*	4.12.2003 - pridana funkce _TO_ascii pro osmibitove kodovani
-* 15.12.2003 - pridana funkce _check_encoding_ascii a _check_encoding_utf8
-* 13.3.2006 - opravena chyba pri Translate::Lower($neco,"windows-1250") a Translate::Upper($neco,"windows-1250")
-* 13.3.2006 - do metod lower a upper pridano kodovani iso-8859-2
-* 16.6.2006 - konvert z windows-1250 do 852 a naopak
-* 26.9.2007 - konvert z utf-8 do ascii (jen ceske znaky)
-* 22.10.2007 - parametrem pro prekodovani ted muze byt i pole
-* 29.11.2007 - doplneno urcovani delky retyezce
-* 
-*/
-
-if(!defined("TRANSLATE_USE_ICONV")){
-	define("TRANSLATE_USE_ICONV",true);
-}
-
 class translate{
 
 	/**
