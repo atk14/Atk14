@@ -16,16 +16,16 @@
  */
 class Atk14Global{
 	/**
-	 * @access private
+	 * Array to store values.
+	 *
 	 * @var array
 	 */
-	var $_Store = array();
+	private $_Store = array();
 
 	/**
-	 * Staticka metoda pro ziskani jedinacka.
+	 * Static method to get a singleton.
 	 *
 	 * @return Atk14Global
-	 * @static
 	 */
 	static function &GetInstance(){
 		static $instance;
@@ -36,6 +36,8 @@ class Atk14Global{
 	}
 
 	/**
+	 * Stores a value
+	 *
 	 * @param string $name
 	 * @param mixed $value
 	 */
@@ -44,6 +46,8 @@ class Atk14Global{
 	}
 
 	/**
+	 * Gets stored value.
+	 *
 	 * @param $name name of global variable
 	 * @return mixed
 	 */
@@ -92,6 +96,7 @@ class Atk14Global{
 	}
 
 	/**
+	 * Returns value of HTTP_HOST.
 	 * @return string HTTP_HOST
 	 */
 	function getHttpHost(){
@@ -101,6 +106,13 @@ class Atk14Global{
 		return $out;
 	}
 
+	/**
+	 * Returns current application language code.
+	 * 
+	 * If it is not set, returns default 
+	 *
+	 * @return string
+	 */
 	function getLang(){
 		if(!is_null($lang = $this->getValue("lang"))){
 			return $lang;
@@ -162,6 +174,8 @@ class Atk14Global{
 	 *  "password" => "funny_boy",
 	 *	"port" => "5432",
 	 * )
+	 *
+	 * @return array
 	 */
 	function getDatabaseConfig(){
 		$database_ar = $this->getConfig("database");
@@ -181,6 +195,9 @@ class Atk14Global{
 	 * Returns null when there is no such configuration file
 	 * 
 	 * $ATK14_GLOBAL->getConfig("database");
+	 *
+	 * @param string $config_name
+	 * @return string|null
 	 */
 	function getConfig($config_name){
 		static $STORE;
@@ -200,6 +217,9 @@ class Atk14Global{
 		return $STORE[$config_name];
 	}
 
+	/**
+	 * @ignore
+	 */
 	function _getRoot(){
 		global $_SERVER;
 		$out = "";
