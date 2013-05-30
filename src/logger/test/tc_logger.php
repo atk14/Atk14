@@ -14,7 +14,6 @@ class TcLogger extends TcBase{
 		$this->_test_log_file_creation(new Logger("import_data"),"import.log");
 
 		//
-
 		$this->_test_log_file_creation(new Logger("special_robot"),"default.log");
 		$this->_test_log_file_creation(new Logger("special_robot",array("default_log_file" => __DIR__."/log/another.log")),"another.log");
 
@@ -28,15 +27,23 @@ class TcLogger extends TcBase{
 	}
 
 	function _test_log_file_creation($logger,$log_name){
-		$this->assertFalse(file_exists(__DIR__."/log/$log_name"));
+		$this->assertFalse(file_exists($f = __DIR__."/log/$log_name"));
 
 		$logger->start();
-		$logger->info("doing some important stuff");
+		$logger->info("doing some normal job");
+		$logger->error("Damn, this is bad!");
 		$logger->stop();
 		$logger->flushAll();
 
-		$this->assertTrue(file_exists(__DIR__."/log/$log_name"));
+		$this->assertTrue(file_exists($f));
 
-		unlink(__DIR__."/log/$log_name");
+		$content = Files::GetFileContent($f);
+
+		$this->assertContains("START",$content);
+		$this->assertContains("doing some normal job",$content);
+		$this->assertContains("ERROR: Damn, this is bad!",$content);
+		$this->assertContains("STOP",$content);
+
+		unlink($f);
 	}
 }

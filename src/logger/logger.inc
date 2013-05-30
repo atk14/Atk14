@@ -11,17 +11,18 @@
  *
  * New way of usage
  * <code>
- * $logger = new logger("application_mark");
+ * $logger = new Logger("application_mark");
  * $logger->start();
  * </code>
  *
  *
  * Then in application code
  * <code>
- * $logger->info("a message");
- * $logger->debug("a message");
- * $logger->warn("a message");
- * $logger->error("a message");
+ * $logger->debug("a debug message");
+ * $logger->info("some message");
+ * $logger->warn("a warning message");
+ * $logger->error("an error message");
+ * $logger->security("a security concerning message");
  * </code>
  *
  * Finish logging
@@ -29,15 +30,15 @@
  * $logger->stop();
  * </code>
  *
- * In case we don't need START and STOP marks to show in the output, we create the logger instance this way:
+ * In case we don't need START and STOP marks to show in the STDOUT, we create the logger instance this way:
  * <code>
- * $logger = new logger("application_mark",array("disable_start_and_stop_marks" => true));
+ * $logger = new Logger("application_mark",array("disable_start_and_stop_marks" => true));
  * </code>
  *
  *
  * Older way of usage
  * <code>
- * $logger = new logger();
+ * $logger = new Logger();
  * $logger->set_prefix("application_mark");
  *
  * // by default calls prepared_log("start") and prepared_log("stop") output to stdout
@@ -173,7 +174,7 @@ class Logger{
 	 * <li>log_to_stdout (false) - if true output to stdout</li>
 	 * </ul>
 	 */
-	function logger($prefix = "",$options = array()){
+	function Logger($prefix = "",$options = array()){
 		$options = array_merge(array(
 			"disable_start_and_stop_marks" => false,
 			"log_to_stdout" => false,
@@ -196,7 +197,6 @@ class Logger{
 	 * @return string
 	 */
 	function get_log_file(){ return $this->_log_file; }
-
 	
 	function get_no_log_level(){ return $this->_no_log_level; }
 	function get_notify_level(){ return $this->_notify_level; }
@@ -346,17 +346,8 @@ class Logger{
 				continue;
 			}
 
-			if(!is_bool(strpos($rec['log'],"\n"))){
-				$_ar = explode("\n",$rec['log']);
-				$rec['log'] = "";
-				for($i=0;$i<sizeof($_ar);$i++){
-					$rec['log']	.= "\n\t".$_ar[$i];
-				}
-			}
-			
-			$str = "[".$rec['date']." $this->_my_pid] ".$rec['prefix']."/".$rec['log_level']."=".$this->level_to_str($rec['log_level']).": ".$rec['log']."\n";
+			$str = $this->_build_message($rec);
 			fwrite($fp,$str,strlen($str));
-
 		}
 
 		fclose($fp);
@@ -364,6 +355,25 @@ class Logger{
 		$this->_log_store = array();
 
 		return 0;
+	}
+
+	function _build_message($rec){
+		if(!is_bool(strpos($rec['log'],"\n"))){
+			$_ar = explode("\n",$rec['log']);
+			$rec['log'] = "";
+			for($i=0;$i<sizeof($_ar);$i++){
+				$rec['log']	.= "\n\t".$_ar[$i];
+			}
+		}
+
+		$log_level = "";
+		if($rec['log_level']<0){
+			$log_level = strtolower($this->level_to_str($rec['log_level'])).": "; // "debug: "
+		}elseif($rec['log_level']>0){
+			$log_level = strtoupper($this->level_to_str($rec['log_level'])).": ";
+		}
+
+		return "$rec[date] $rec[prefix][$this->_my_pid]: $log_level$rec[log]\n";
 	}
 
 	/**
@@ -411,6 +421,8 @@ class Logger{
 	 */
 	function error($log){ $this->put_log($log,4); }
 
+	function security($log){ $this->put_log($log,5); }
+
 	/**
 	 * Logs a message to a given level.
 	 *
@@ -421,19 +433,23 @@ class Logger{
 	 * @return int 0
 	 */
 	function put_log($log,$log_level = 0){
+		$this->_put_log($log,$log_level);
+		return 0;
+	}
+
+	function _put_log($log,$log_level = 0){
 		settype($log,"string");
 		$log_level = $this->level_to_int($log_level);
 
-		$this->_log_store[] = array(
+		$rec = array(
 			"date" => date("Y-m-d H:i:s"),
 			"prefix" => $this->_prefix,
 			"log_level" => $log_level,
 			"log" => $log
 		);
 
-		return 0;
+		$this->_log_store[] = $rec;
 	}
-	
 
 	/**
 	 * Starts logging.
@@ -473,11 +489,10 @@ class Logger{
 		settype($style,"string");
 		switch(strtolower($style)){
 			case "start":
-				$this->put_log("START");
+				$rec = $this->_put_log("START");
 				$this->_started_at_time = $this->_get_microtime();
 				if(!$this->_silent_mode){
-					$str = "[".date("Y-m-d H:i:s")." $this->_my_pid] ".$this->_prefix."/0=info: START\n";
-					echo $str;
+					echo $this->_build_message($rec);
 				}
 				break;
 			case "stop":
@@ -488,10 +503,9 @@ class Logger{
 					$_minutes = (floor($_runing_time/60.0));
 					$_log .= sprintf(", running time: %d min %0.2f sec",$_minutes,($_runing_time-($_minutes*60)));
 				}
-				$this->put_log($_log);
+				$rec = $this->_put_log($_log);
 				if(!$this->_silent_mode){
-					$str = "[".date("Y-m-d H:i:s")." $this->_my_pid] ".$this->_prefix."/0=info: STOP\n";
-					echo $str;
+					echo $this->_build_message($rec);
 				}
 				break;
 		}
@@ -509,12 +523,12 @@ class Logger{
 		$output .= "pid: $this->_my_pid\n";
 		$output .= "\n";
 		
-		reset($this->_log_store_whole);
-		
-		while(list(,$rec) = each($this->_log_store_whole)){
-			$output .= "[".$rec['date']."] ".$rec['log_level']."=".$this->level_to_str($rec['log_level']).": ".$rec['log']."\n";
+		foreach($this->_log_store_whole as $rec){	
+			// TODO: vymyslet tady nejaky uspornejsi format (bez prefixu a pidu)
+			$output .= $this->_build_message($rec);
 		}
 
+		// TODO: prepsat na volani sendmail()
 		mail($this->_notify_email,"log report: $this->_prefix, ".date("Y-m-d H:i:s"),$output);
 	}
 
