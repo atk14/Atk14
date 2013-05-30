@@ -30,6 +30,7 @@ require_once(dirname(__FILE__)."/src/dates/load.php");
 require_once(dirname(__FILE__)."/src/xmole/xmole.php");
 require_once(dirname(__FILE__)."/src/stopwatch/stopwatch.inc");
 require_once(dirname(__FILE__)."/src/logger/logger.inc");
+require_once(dirname(__FILE__)."/src/lock/lock.php");
 require_once(dirname(__FILE__)."/src/json/load.inc");
 if(ATK14_USE_SMARTY3){
 	require_once(dirname(__FILE__)."/src/smarty3/libs/SmartyBC.class.php");
@@ -126,7 +127,7 @@ DbMole::RegisterErrorHandler("dbmole_error_handler");
 function atk14_initialize_locale(&$lang){
 	global $ATK14_GLOBAL;
 
-	$locale = $ATK14_GLOBAL->getValue("locale");
+	$locale = $ATK14_GLOBAL->getConfig("locale");
 
 	if(!isset($locale[$lang])){
 		$_keys = array_keys($locale);

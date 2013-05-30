@@ -145,4 +145,25 @@ class TcForm extends TcBase{
 		$form->enable_multipart();
 		$this->assertContains('enctype="multipart/form-data"',$form->begin());
 	}
+
+	function test_set_action(){
+		global $HTTP_REQUEST;
+		$HTTP_REQUEST->setRequestUri("/testing/?id=12&format=xml");
+
+		$form = new TestForm();
+		$this->assertEquals('/testing/?id=12&format=xml',$form->get_action());
+
+		$form->set_action('/new-uri/');
+		$this->assertEquals('/new-uri/',$form->get_action());
+
+		$form->set_action(array(
+			"lang" => "en",
+			"namespace" => "",
+			"controller" => "books",
+			"action" => "detail",
+			"id" => 123,
+			"format" => "raw",
+		));
+		$this->assertEquals('/en/books/detail/?id=123&format=raw',$form->get_action());
+	}
 }

@@ -11,14 +11,32 @@ require_once(dirname(__FILE__)."/load.inc");
 
 $robots_dir = $ATK14_GLOBAL->getApplicationPath()."/../robots";
 
+$robot_name = "";
+if(isset($argv[1])){
+	// ImportUserRobot -> import_user
+	// import_user_robot.php -> import_user_robot
+	// robots/import_user_robot.php -> import_user_robot
+	$robot_name = String::ToObject($argv[1])->underscore()->gsub('/_robot(\.php|\.inc|)$/','')->gsub('/^.+\/([^\/]+)$/','\1');
+}
+
+if(!$robot_name){
+	// print help message and exit
+	echo "In this application there are following robots:\n";
+	$dir = opendir($robots_dir);
+	while($item = readdir($dir)){
+		if(!preg_match('/^([a-z0-9_]+)_robot\.php$/',$item,$matches)){ continue; }
+		if($matches[1]=="application"){ continue; }
+		echo "$matches[1]\n";
+	}
+	echo "\n";
+	echo "You can run a given robot by calling:\n";
+	echo "$ $argv[0] robot_name\n\n";
+	echo "Default robot log file is log/robots.log\n";
+	exit;
+}
+
 require_once("$robots_dir/application_robot.php");
-
-// ImportUserRobot -> import_user
-// import_user_robot.php -> import_user_robot
-// robots/import_user_robot.php -> import_user_robot
-$robot_name = String::ToObject($argv[1])->underscore()->gsub('/_robot(\.php|\.inc|)$/','')->gsub('/^.+\/([^\/]+)$/','\1');
-
 require_once("$robots_dir/{$robot_name}_robot.php");
 
-$class_name = $robot_name->camelize()."Robot";
+$class_name = $robot_name->camelize()."Robot"; // ImportUserRobot
 $robot = new $class_name();

@@ -84,14 +84,6 @@ class Atk14Utils{
 			class_autoload("$path/routers/");
 		}
 
-		if(file_exists($_f = $path."database.yml")){
-			$ATK14_GLOBAL->setValue("database",miniYAML::Load(Files::GetFileContent($_f,$e,$e_s)));
-		}
-
-		if(file_exists($_f = $path."locale.yml")){
-			$ATK14_GLOBAL->setValue("locale",miniYAML::Load(Files::GetFileContent($_f,$e,$e_s)));
-		}
-
 		$dir = opendir($path);
 		while($file = readdir($dir)){
 			if(preg_match('/^(local_|)settings\.(inc|php)$/',$file)){ continue; } // this is ugly hack :( i need to delay loading of ./config/settings.php

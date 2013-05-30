@@ -166,7 +166,7 @@ class Atk14Form extends Form
 	 *
 	 * @todo complete options
 	 */
-	function Atk14Form($options = array(),$controller = null)
+	function __construct($options = array(),$controller = null)
 	{
 		global $HTTP_REQUEST;
 
@@ -181,7 +181,7 @@ class Atk14Form extends Form
 
 		$this->atk14_constructor_options = $options;
 
-		$this->atk14_action = str_replace("&","&amp;",$HTTP_REQUEST->getRequestURI());
+		$this->atk14_action = $HTTP_REQUEST->getRequestURI();
 		//$this->atk14_action = Atk14Url::BuildLink(array()); // tohle sestavi URL s akt. $lang, $namespace, $controller a $action
 
 		$this->controller = $controller;
@@ -464,7 +464,7 @@ class Atk14Form extends Form
 			if(isset($this->atk14_initial_values)){ $options["initial"] = $this->atk14_initial_values; }
 			if(isset($this->atk14_data)){ $options["data"] = $this->atk14_data; }
 
-			parent::Form($options);
+			parent::__construct($options);
 
 			$this->atk14_super_constructor_called = true;
 			$this->post_set_up();
@@ -516,7 +516,7 @@ class Atk14Form extends Form
 	function set_action($url)
 	{
 		if(is_array($url)){
-			$url = Atk14Url::BuildLink($url);
+			$url = Atk14Url::BuildLink($url,array("connector" => "&"));
 		}
 		$this->atk14_action = (string)$url;
 	}
