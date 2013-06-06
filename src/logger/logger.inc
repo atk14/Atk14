@@ -174,7 +174,7 @@ class Logger{
 	 * <li>log_to_stdout (false) - if true output to stdout</li>
 	 * </ul>
 	 */
-	function Logger($prefix = "",$options = array()){
+	function __construct($prefix = "",$options = array()){
 		$options = array_merge(array(
 			"disable_start_and_stop_marks" => false,
 			"log_to_stdout" => false,

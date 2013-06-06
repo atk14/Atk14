@@ -29,10 +29,11 @@ if(!$robot_name){
 		echo "$matches[1]\n";
 	}
 	echo "\n";
-	echo "You can run a given robot by calling:\n";
+	echo "One can run a given robot by calling:\n";
 	echo "$ $argv[0] robot_name\n\n";
 	echo "Default robot log file is log/robots.log\n";
-	exit;
+	echo "Usually robots create lock files in ".LOCK_DIR."\n";
+	exit(1);
 }
 
 require_once("$robots_dir/application_robot.php");

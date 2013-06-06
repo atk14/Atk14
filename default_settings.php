@@ -49,7 +49,7 @@ __defaults__(array(
 __defaults__(array(
 	"LOGGER_DEFAULT_LOG_FILE" => TEST ? dirname(__FILE__)."/../log/test.log" : dirname(__FILE__)."/../log/application.log",
 
-	"LOCK_DIR" => TEMP . "lock/",
+	"LOCK_DIR" => ATK14_DOCUMENT_ROOT . "robots/lock/",
 ));
 
 __defaults__(array(
