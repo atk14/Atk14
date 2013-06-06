@@ -196,13 +196,19 @@ class Atk14Mailer{
 		$namespace = $options["namespace"];
 		$logger = isset($options["logger"]) ? $options["logger"] : $GLOBALS["ATK14_LOGGER"];
 
-		$out = null;
+		$mailer = null;
 		if(Atk14Require::Load("controllers/$namespace/application_mailer.*")){
-			$out = new ApplicationMailer();
-			$out->namespace = $namespace;
-			$out->logger = $logger;
+			$mailer = new ApplicationMailer();
+			$mailer->namespace = $namespace;
+			$mailer->logger = $logger;
 		}
-		return $out;
+		if(!$mailer && $namespace){
+			// In current namespace there is no $mailer?
+			// Gonna load mailer from default namespace...
+			$options["namespace"] = "";
+			return Atk14Mailer::GetInstance($options);
+		}
+		return $mailer;
 	}
 
 	/**
