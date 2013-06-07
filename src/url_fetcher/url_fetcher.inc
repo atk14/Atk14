@@ -324,7 +324,7 @@ class UrlFetcher {
 			return $this->fetchContent($location);
 		}
 
-		if($this->getStatusCode()!=200){
+		if(!preg_match('/^2/',$this->getStatusCode())){
 			return $this->_setError("status code is ".$this->getStatusCode());
 		}
 
