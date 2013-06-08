@@ -101,6 +101,9 @@ class UrlFetcher {
 	 */
 	protected $_MaxRedirections = 5;
 
+	protected $_ConstructorAdditionalHeaders = array(); // this headers never disappear
+	protected $_AdditionalHeaders = array(); // this headers disappear upon every new request, TODO: more explanation & tests
+
 	/**
 	 * @ignore
 	 */
@@ -156,7 +159,7 @@ class UrlFetcher {
 			$this->_setUrl($url);
 		}
 
-		$this->_AdditionalHeaders = $options["additional_headers"];
+		$this->_ConstructorAdditionalHeaders = $options["additional_headers"];
 		$this->_MaxRedirections = $options["max_redirections"];
 	}
 	
@@ -574,6 +577,9 @@ class UrlFetcher {
 		}
 		if($this->_RequestMethod=="POST"){
 			$out[] = "Content-Length: ".strlen($this->_PostData);
+		}
+		foreach($this->_ConstructorAdditionalHeaders as $h){
+			$out[] = $h;
 		}
 		foreach($this->_AdditionalHeaders as $h){
 			$out[] = $h;
