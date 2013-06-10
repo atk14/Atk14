@@ -105,6 +105,8 @@ function &dbmole_connection(&$dbmole){
 }
 
 function dbmole_error_handler($dbmole){
+	global $ATK14_LOGGER;
+
 	if(PRODUCTION){
 		$dbmole->sendErrorReportToEmail(ATK14_ADMIN_EMAIL);
 		$dbmole->logErrorReport(); // zaloguje chybu do error logu
@@ -114,9 +116,14 @@ function dbmole_error_handler($dbmole){
 			"apply_render_component_hacks" => true,
 		));
 		$response->flushAll();
+
+		if($ATK14_LOGGER){
+			$ATK14_LOGGER->error($dbmole->getErrorReport());
+			$ATK14_LOGGER->flush();
+		}
 	}else{
 		echo "<pre>";
-		echo $dbmole->getErrorReport();
+		echo h($dbmole->getErrorReport());
 		echo "</pre>";
 	}
 
