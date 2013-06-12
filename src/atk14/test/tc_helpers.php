@@ -26,8 +26,10 @@ class TcHelpers extends TcBase{
 
 	function test_render(){
 		$out = $this->_run_action("helpers/render");
-		$this->assertContains('<li>The Adventures of Tom Sawyer by Mark Twain</li>',$out);
-		$this->assertContains('<li>Swallows and Amazons by Arthur Ransome</li>',$out);
+		$this->assertContains('<li class="red">ADVENTURE: The Adventures of Tom Sawyer by Mark Twain (nr#0)</li>',$out);
+		$this->assertContains('<li class="red">ADVENTURE: Swallows and Amazons by Arthur Ransome (nr#1)</li>',$out);
+
+		$this->assertContains('some_value: TOP_VALUE',$out);
 	}
 
 	function test_render_component(){

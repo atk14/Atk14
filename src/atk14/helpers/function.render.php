@@ -42,7 +42,7 @@ function smarty_function_render($params,$template){
 			$smarty->assign($key,$value);
 		}
 
-		$out[] = $smarty->fetch($template_name);
+		$out[] = $template->fetch($template_name);
 
 	}else{
 
@@ -90,7 +90,7 @@ function smarty_function_render($params,$template){
 				$smarty->assign($key,$value);
 			}
 
-			$out[] = $smarty->fetch($template_name);
+			$out[] = $template->fetch($template_name);
 			$counter++;
 		}
 	}
