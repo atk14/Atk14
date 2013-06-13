@@ -21,7 +21,7 @@ class Lock{
 	*	@param integer kill_signal
 	*	@return integer 																		vzdy 0
 	*/
-	function Mklock($lock_name,&$logger,$time_to_kill_inactive_scripts = null,$kill_signal = 9){
+	static function Mklock($lock_name,&$logger,$time_to_kill_inactive_scripts = null,$kill_signal = 9){
 		settype($lock_name,"string");
 		if(isset($time_to_kill_inactive_scripts)){
 			settype($time_to_kill_inactive_scripts,"integer");
@@ -139,7 +139,7 @@ class Lock{
 	*	@param logger &$logger
 	*	@return integer									vzdy 0
 	*/
-	function Unlock($lock_name = "",&$logger){
+	static function Unlock($lock_name = "",&$logger){
 		$lock_name = Lock::_ValidLockName($lock_name);
 		$lock_path = LOCK_DIR;
 		$lock_file = "$lock_path/$lock_name";
