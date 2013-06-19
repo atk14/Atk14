@@ -2,6 +2,7 @@
 
 cd `dirname $0`
 ROOT=`./_get_application_path`../
+exit_val=0
 
 assert_command_exists () {
 	cmd=$1
@@ -9,6 +10,7 @@ assert_command_exists () {
 	if [ "`which $cmd`" = "" ]; then
 		echo "fail"
 		echo "!!  command $cmd is not installer"
+		exit_val=1
 	else	
 		echo "ok"
 	fi
@@ -21,6 +23,7 @@ assert_php_function_exists () {
 	if [ `/usr/bin/env php -r "$src"` != "yes" ]; then
 		echo "fail"
 		echo "!!  in PHP there is no function $fn"
+		exit_val=1
 	else	
 		echo "ok"
 	fi
@@ -52,8 +55,9 @@ php_version=`php -v | head -1 | cut -d ' ' -f 2`
 if [ ! "$php_version" \> "5.3." ]; then
 	echo "fail"
 	echo "!!  version of currently installed php is $php_version"
+	exit_val=1
 else	
-	echo "ok";
+	echo "ok"
 fi
 
 # checking for tmp and log directories
@@ -64,6 +68,7 @@ for i in "tmp" "log"; do
 		echo "fail"
 		echo "!!  do the following:"
 		echo "!!  $ mkdir -m 0757 $dir"
+		exit_val=1
 	else	
 		echo "ok"
 	fi
@@ -79,25 +84,34 @@ cat << EOF | php
 @include_once 'Benchmark/Timer.php';
 if(class_exists('PHPUnit2_Framework_TestCase')){
 	echo "ok\n";
+	exit(0);
 }else{
 	echo "fail\n";
 	echo "!!  do the following:\n";
 	echo "!!  $ sudo pear install --alldeps PHPUnit2\n";
+	exit(1);
 }
 EOF
 
+if [ "$?" != "0" ]; then
+	exit_val=1
+fi
+
 http_host=`./dump_settings ATK14_HTTP_HOST`
 echo -n "host $http_host could be resolved... "
-etc_hosts_lines=`egrep "^\s*[0-9\.:]+\s+\b$http_host\b$" /etc/hosts | wc -l`
+etc_hosts_lines=`egrep "^\s*[0-9a-fA-F\.:][^#]*\s$http_host(|#.*|\s.*)$" /etc/hosts | wc -l`
 if [ "$etc_hosts_lines" -eq "0" ]; then
 	if [ "`host $http_host | grep 'not found' | wc -l`" -eq 1 ]; then
 		echo "fail"
-		echo "!!  neither in /etc/hosts there is record for $http_host nor $http_host could be recolved"
+		echo "!!  there is neither record for $http_host in /etc/hosts nor $http_host could be resolved"
 		echo "!!  you may do the following:"
-		echo "!!  $ echo '127.0.0.1 $http_host' >> /etc/hosts.conf"
+		echo "!!  $ echo '127.0.0.1 $http_host' | sudo tee --append /etc/hosts > /dev/null"
+		exit_val=1
 	else
 		echo "ok"
 	fi
 else
 	echo "ok"
 fi
+
+exit $exit_val
