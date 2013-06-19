@@ -36,13 +36,25 @@ function smarty_function_render($params,$template){
 
 	$out = array();
 
+	// in Smarty3 $smarty doesn't know variables assigned in a $template
+	//
+	//		{* template index.tpl *}
+	//		{assign var="flower" value="rose"}
+	//		{render prtial="partial"}
+	//
+	//		{* template _partial.tpl *}
+	//		{$flower} {* normally $smarty doesn't know about a rose *}
+	//
+	// in order to avoid this behavior we have to assign all $template`s vars to $smarty
+	$smarty->assign($template->getTemplateVars());
+
 	if(!isset($params["from"])){
 	
 		foreach($params as $key => $value){	
 			$smarty->assign($key,$value);
 		}
 
-		$out[] = $template->fetch($template_name);
+		$out[] = $smarty->fetch($template_name);
 
 	}else{
 
@@ -90,16 +102,14 @@ function smarty_function_render($params,$template){
 				$smarty->assign($key,$value);
 			}
 
-			$out[] = $template->fetch($template_name);
+			$out[] = $smarty->fetch($template_name);
 			$counter++;
 		}
 	}
 
 	// vraceni puvodnich hodnot do smarty objectu
-	$smarty->clearAllAssign();	
-	foreach($original_tpl_vars as $key => $value){
-		$smarty->assign($key,$value);
-	}
+	$smarty->clearAllAssign();
+	$smarty->assign($original_tpl_vars);
 
 	Atk14Timer::Stop("helper function.render");
 
