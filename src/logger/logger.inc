@@ -325,6 +325,8 @@ class Logger{
 	function flush(){
 		if(sizeof($this->_log_store)==0){ return 0; }
 
+		$_log_file_existed = file_exists($this->_log_file);
+
 		$fp = fopen($this->_log_file,"a");
 
 		if(!$this->_notify_level_reached){
@@ -351,6 +353,13 @@ class Logger{
 		}
 
 		fclose($fp);
+
+		if(!$_log_file_existed){
+			// when the log file was just created by apache user,
+			// it needs to be also writable by another user
+			// TODO: this needs to be considered carefully
+			chmod($this->_log_file,0666); 
+		}
 		
 		$this->_log_store = array();
 
