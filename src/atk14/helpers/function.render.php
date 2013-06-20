@@ -99,9 +99,12 @@ function smarty_function_render($params,$template){
 		foreach($collection as $_key => $_item){
 			if(isset($key)){ $smarty->assign($key,$_key); }
 			if(isset($item)){ $smarty->assign($item,$_item); }
-			$smarty->assign("__counter__",$counter);
+			$smarty->assign("__counter__",$counter); // consider $__counter__ as obsolete, use $__index__ instead
+			$smarty->assign("__index__",$counter);
+			$smarty->assign("__iteration__",$counter+1);
 			$smarty->assign("__first__",$counter==0);
 			$smarty->assign("__last__",$counter==($collection_size-1));
+			$smarty->assign("__total__",$collection_size);
 
 			// zbytek parametru se naasignuje do sablonky jako v predhozim pripade
 			foreach($params as $key => $value){
