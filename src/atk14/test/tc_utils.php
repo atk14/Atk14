@@ -42,13 +42,14 @@ class TcUtils extends TcBase{
 
 	function test_get_smarty(){
 		$smarty = Atk14Utils::GetSmarty("template_path");
-		$this->assertEquals("atk14_smarty3___",$smarty->compile_id);
+		$version = ATK14_USE_SMARTY3 ? "3" : "2";
+		$this->assertEquals("atk14_smarty{$version}___",$smarty->compile_id);
 
 		$smarty = Atk14Utils::GetSmarty("template_path",array(
 			"controller_name" => "books",
 			"namespace" => "admin",
 			"compile_id_salt" => "salt"
 		));
-		$this->assertEquals("atk14salt_smarty3_admin_books_",$smarty->compile_id);
+		$this->assertEquals("atk14salt_smarty{$version}_admin_books_",$smarty->compile_id);
 	}
 }

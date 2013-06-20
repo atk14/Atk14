@@ -23,6 +23,9 @@
 function smarty_function_render($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
+	// $solve_smarty_vs_template_problem is true when Smarty3 is being used
+	$solve_smarty_vs_template_problem = get_class($smarty)!=get_class($template);
+
 	Atk14Timer::Start("helper function.render");
 	$template_name = $partial = $params["partial"];
 	unset($params["partial"]);
@@ -32,21 +35,24 @@ function smarty_function_render($params,$template){
 
 	if(in_array("from",array_keys($params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
 
-	$original_tpl_vars = $smarty->getTemplateVars();
+	$original_smarty_vars = $smarty->getTemplateVars();
+	if($solve_smarty_vs_template_problem){
+		// in Smarty3 $smarty doesn't know variables assigned in a $template
+		//
+		//		{* template index.tpl *}
+		//		{assign var="flower" value="rose"}
+		//		{render prtial="partial"}
+		//
+		//		{* template _partial.tpl *}
+		//		{$flower} {* normally $smarty doesn't know about a rose *}
+		//
+		// in order to avoid this behavior we have to assign all $template`s vars to $smarty
+		$original_tpl_vars = $template->getTemplateVars();
+		$smarty->assign($original_tpl_vars);
+	}
 
 	$out = array();
 
-	// in Smarty3 $smarty doesn't know variables assigned in a $template
-	//
-	//		{* template index.tpl *}
-	//		{assign var="flower" value="rose"}
-	//		{render prtial="partial"}
-	//
-	//		{* template _partial.tpl *}
-	//		{$flower} {* normally $smarty doesn't know about a rose *}
-	//
-	// in order to avoid this behavior we have to assign all $template`s vars to $smarty
-	$smarty->assign($template->getTemplateVars());
 
 	if(!isset($params["from"])){
 	
@@ -109,7 +115,12 @@ function smarty_function_render($params,$template){
 
 	// vraceni puvodnich hodnot do smarty objectu
 	$smarty->clearAllAssign();
-	$smarty->assign($original_tpl_vars);
+	$smarty->assign($original_smarty_vars);
+
+	if($solve_smarty_vs_template_problem){
+		$template->clearAllAssign();
+		$template->assign($original_tpl_vars);
+	}
 
 	Atk14Timer::Stop("helper function.render");
 
