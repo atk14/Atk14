@@ -157,7 +157,14 @@ class StopWatch{
 		return $this->toString();
 	}
 
+	/**
+	 * $this->_humanize(12.345);
+	 */
 	function _humanize($seconds){
+		if($seconds<10.0){
+			$miliseconds = $seconds * 1000.0;
+			return number_format($miliseconds,1,".","")."ms";
+		}
 		$minutes = floor($seconds/60);
 		$seconds = $seconds - (60 * $minutes);
 		$seconds = number_format($seconds,3,".","");
