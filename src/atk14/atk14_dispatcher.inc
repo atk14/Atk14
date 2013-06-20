@@ -47,7 +47,17 @@ class Atk14Dispatcher{
 		Atk14Timer::Start("Atk14Url::RecognizeRoute");
 		$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri());
 		$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
-		DEVELOPMENT && $route_ar["action"]=="error404" && $ATK14_LOGGER->error("no route has been found for ".$request->getRequestUri());
+
+		if(DEVELOPMENT){
+			// logging
+			if($route_ar["action"]=="error404"){
+				$ATK14_LOGGER->warn("no route for ".$request->getRequestUri());
+			}else{
+				$ATK14_LOGGER->info($request->getRequestMethod()." ".$request->getUrl()); // GET http://myapp.localhost/en/main/about/
+			}
+			$ATK14_LOGGER->flush();
+		}
+
 		$_GET = array_merge($_GET,$route_ar["get_params"]);
 		Atk14Timer::Stop("Atk14Url::RecognizeRoute");
 
