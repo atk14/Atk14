@@ -354,7 +354,7 @@ class Logger{
 
 		fclose($fp);
 
-		if(!$_log_file_existed){
+		if(!$_log_file_existed && !preg_match('/^[a-z]+:\/\//i',$this->_log_file)){ // it filters out php://stdout...
 			// when the log file was just created by apache user,
 			// it needs to be also writable by another user
 			// TODO: this needs to be considered carefully
