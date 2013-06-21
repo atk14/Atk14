@@ -9,9 +9,15 @@
 
 cd `dirname $0`
 base_dir=`./_get_application_path`../
+exit_val=0
 
 cd $base_dir
 for d in `find test -maxdepth 2 -type d | egrep -v ^test$ | egrep -v '/\.' | sort` ; do
 	echo "--- [$d] ---"
 	$base_dir/scripts/run_unit_tests $d
+	if [ "$?" != "0" ]; then
+		exit_val=1
+	fi 
 done
+
+exit $exit_val

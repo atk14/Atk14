@@ -1,69 +1,68 @@
 #!/usr/bin/env php
 <?php
-/*
-* V pracovnim adresari vyhleda soubory tc_*.inc. Ty postupne nainkluduje a spusti v nich testy.
-*
-* V souboru tc_currency.inc se ocekava trida TcCurrency, prip. tc_currency.
-*
-* Na prikazove radce mozno definovat seznam testu, ktere se maji provest:
-*		$ run_unit_tests tc_account tc_bank_transfer
-*		pripadne i s priponou .php
-*		$ run_unit_tests tc_account.php tc_bank_transfer.php
-*
-* Nebezpecne testy
-* ----------------
-* Jsou to takove testy, ktere zmeni/nastavi neco, co muze mit nejake nasledky. Napriklad testy pro registraci domeny.
-* Takove testy umistime do souboru zacinajici vykricnikem, napr. !tc_domain_registration.php
-*
-* Test nebude automaticky spusten, pokud nebude implicitne uveden na prikazove radce:
-*		$ run_unit_tests
-*		$ run_unit_tests \!tc_domain_registration.php
-*/
-
+/**
+ * A test runner. Part of ATK14 Framework <http://www.atk14.net/>
+ *
+ * In working directory it searches for tc_*.php files. Every of them loads and runs tests.
+ *
+ *   $ run_unit_tests
+ * 
+ * In file e.g. tc_currency.php it expects TcCurrency class (eventually tc_currency).
+ *
+ * You can specify a list of test files to be executed
+ *
+ *   $ run_unit_tests tc_account tc_bank_transfer
+ *
+ *   eventually with .php suffix
+ *   $ run_unit_tests tc_account.php tc_bank_transfer.php
+ * 
+ * Dangerous tests
+ * ---------------
+ * Sometimes you don`t want to execute some test files automatically unless you specify them on command line.
+ * Prefix such files with exclamation mark.
+ *
+ *   $ run_unit_tests
+ *
+ *   $ run_unit_tests \!tc_gangerous_test_case.php
+ *   $ run_unit_tests '!tc_gangerous_test_case.php'
+ *
+ * Automatization in testing
+ * -------------------------
+ *
+ *   $ cd /path/to/test_files/ ; run_unit_tests && echo "TESTS ARE OK" || echo "THERE WERE ERRORS"
+ *
+ */
 error_reporting(255);
 
-// v PHP5.3 neexistuje $_ENV["PWD"] ??
-isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
-
 if(preg_match("/^4/",phpversion())){
-	define("PHP4",true);
-	define("PHP5",false);
+	echo "Sorry! PHP4 is no more supported\n";
+	exit(1);
 }
 if(preg_match("/^5/",phpversion())){
 	define("PHP4",false);
 	define("PHP5",true);
+}else{
+	echo "Sorry! Your version of PHP is not supported\n";
+	exit(1);
 }
 
-if(PHP4){
-	include_once 'PHPUnit.php';
-	if(!class_exists("PHPUnit_TestCase")){
-		echo "*************************************************\n";
-		echo "*  Missing dependency: class PHPUnit_TestCase   *\n";
-		echo "*  The following command may help you           *\n";
-		echo "*                                               *\n";
-		echo "*  $ sudo pear install PHPUnit                  *\n";
-		echo "*                                               *\n";
-		echo "*************************************************\n";
-		echo "\n";
-		exit(1);
-	}
-}
-if(PHP5){
-	include_once 'PHPUnit2/Framework/TestSuite.php';
-	include_once 'PHPUnit2/Framework/TestCase.php';
-	include_once 'PHPUnit2/TextUI/ResultPrinter.php';
-	include_once 'Benchmark/Timer.php';
+// v PHP5.3 neexistuje $_ENV["PWD"] ??
+isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 
-	if(!class_exists("PHPUnit2_Framework_TestCase")){
-		echo "************************************************************\n";
-		echo "*  Missing dependency: class PHPUnit2_Framework_TestCase   *\n";
-		echo "*  The following command may help you                      *\n";
-		echo "*                                                          *\n";
-		echo "*  $ sudo pear install --alldeps PHPUnit2                  *\n";
-		echo "*                                                          *\n";
-		echo "************************************************************\n";
-		exit(1);
-	}
+include_once 'PHPUnit2/Framework/TestSuite.php';
+include_once 'PHPUnit2/Framework/TestCase.php';
+include_once 'PHPUnit2/TextUI/ResultPrinter.php';
+include_once 'Benchmark/Timer.php';
+
+if(!class_exists("PHPUnit2_Framework_TestCase")){
+	echo "************************************************************\n";
+	echo "*  Missing dependency: class PHPUnit2_Framework_TestCase   *\n";
+	echo "*  The following command may help you                      *\n";
+	echo "*                                                          *\n";
+	echo "*  $ sudo pear install --alldeps PHPUnit2                  *\n";
+	echo "*                                                          *\n";
+	echo "************************************************************\n";
+	exit(1);
 }
 
 isset($argv) || ($argv = array());
@@ -80,14 +79,8 @@ if($DIR){
 	chdir($DIR);
 }
 
-if(PHP4){
-	eval("class tc_super_base extends PHPUnit_TestCase{ }");
-	eval("class TcSuperBase extends PHPUnit_TestCase{ }");
-}
-if(PHP5){
-	eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
-	eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
-}
+eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
+eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
 
 if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
 
@@ -131,40 +124,49 @@ closedir($dir);
 
 ksort($ALLOWED_TESTS);
 
-reset($ALLOWED_TESTS);
-while(list($filename,$classname) = each($ALLOWED_TESTS)){
+foreach($ALLOWED_TESTS as $filename => $classname){	
 	if(sizeof($RUN_TESTS_ONLY)>0 && (!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
 		continue;
 	}
-
-	//_test_runner($filename);
 	$tests_to_execute[] = $filename;
 }
 
-reset($ALLOWED_DANGEROUS_TESTS);
-while(list($filename,$classname) = each($ALLOWED_DANGEROUS_TESTS)){
+foreach($ALLOWED_DANGEROUS_TESTS as $filename => $classname){	
 	if((!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
 		continue;
 	}
-
-	//_test_runner($filename);
 	$tests_to_execute[] = $filename;
 }
 
+if(sizeof($tests_to_execute)==0){
+	echo "There are no test-case files to be executed\n";
+	exit(1);
+}
+
 if(sizeof($tests_to_execute)==1){
-	_test_runner($tests_to_execute[0],$DIR);
-	exit;
+	$result = _test_runner($tests_to_execute[0],$DIR);
+
+	if(!$result || !$result->wasSuccessful()){
+		exit(1);
+	}
+
+	exit(0);
 }
 
 
+$exit_code = 0;
 foreach($tests_to_execute as $_f){
 	$cmd = escapeshellcmd($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
 	if(isset($_SERVER["_"])){
 		// v $_SERVER["_"] je interpret PHP: /usr/bin/php
 		$cmd = escapeshellcmd($_SERVER["_"])." ".escapeshellarg($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
 	}
-	passthru($cmd);
+	passthru($cmd,$_exit_code);
+	if($_exit_code!=0){
+		$exit_code = 1;
+	}
 }
+exit($exit_code);
 
 function _test_dbmole_error_handler($dbmole){
 	echo "An error comes from DbMole\n";
@@ -175,15 +177,18 @@ function _test_dbmole_error_handler($dbmole){
 	print_r($dbmole->getBindAr());
 	echo "options:\n";
 	print_r($dbmole->getOptions());
-	exit;
+	exit(1);
 }
 
 function _test_inobj_error_handler($values){
 	echo "An error comes from inobj\n";
 	print_r($values);
-	exit;
+	exit(1);
 }
 
+/**
+ * @return PHPUnit2_Framework_TestResult
+ */
 function _test_runner($filename,$DIR){
 	$classname = preg_replace('/\.[^.]*$/',"",$filename);
 	$classname = preg_replace('/^!/',"",$classname);
@@ -205,23 +210,17 @@ function _test_runner($filename,$DIR){
 		return;
 	}
 
-	if(PHP4){
-		$suite  = new PHPUnit_TestSuite($classname);
-		$result = PHPUnit::run($suite);
-		print $result->toString();
-	}
-	if(PHP5){
-		$timer  = new Benchmark_Timer;
-		$printer = new PHPUnit2_TextUI_ResultPrinter;
+	$timer  = new Benchmark_Timer;
+	$printer = new PHPUnit2_TextUI_ResultPrinter;
 
-		$suite  = new PHPUnit2_Framework_TestSuite(
-			new ReflectionClass($classname)
-		);
+	$suite  = new PHPUnit2_Framework_TestSuite(
+		new ReflectionClass($classname)
+	);
 
-		$timer->start();
-		$result = $suite->run();
-		$timer->stop();
+	$timer->start();
+	$result = $suite->run();
+	$timer->stop();
+	$printer->printResult($result, $timer->timeElapsed());
 
-		$printer->printResult($result, $timer->timeElapsed());
-	}
+	return $result;
 }
