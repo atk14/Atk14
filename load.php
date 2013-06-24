@@ -127,7 +127,7 @@ function dbmole_error_handler($dbmole){
 		echo "</pre>";
 	}
 
-	exit;
+	exit(1);
 }
 DbMole::RegisterErrorHandler("dbmole_error_handler");
 
