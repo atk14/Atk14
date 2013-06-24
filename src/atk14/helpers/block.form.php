@@ -5,14 +5,14 @@
  * Basic usage:
  * <code>
  * {form}
- * {render partial=shared/form_field fields=first_name,last_name,email}
+ * {render partial="shared/form_field" fields="first_name,last_name,email"}
  * {/form}
  * </code>
  *
  * Attributes of the <form> tag can be set by passing name of an attribute as the parameter name prefixed with '_' character.
  * <code>
  * {form _id="my_form" _class="admin nice"}
- * {render partial=shared/form_field fields=first_name,last_name,email}
+ * {render partial="shared/form_field" fields="first_name,last_name,email"}
  * {/form}
  * </code>
  *

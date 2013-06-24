@@ -4,6 +4,7 @@
  *
  * Php function print_r is used to output the value.
  * <code>
+ * {dump var=$basket}
  * {dump var=$basket->getTotalPrice()}
  * </code>
  *
@@ -88,7 +89,10 @@ class Dumper{
 			if(preg_match('/^_/',$attr)){ continue; }
 			$attrs[] = $attr;
 		}
-		if(!$attrs){ return $this->_Pad(get_class($obj).' Object',$offset); }
+		if(!$attrs){
+			unset($obj->_beeing_dumped_by_dumper);
+			return $this->_Pad(get_class($obj).' Object',$offset);
+		}
 
 		$out[] = get_class($obj).' Object(';
 		foreach($attrs as $attr){
