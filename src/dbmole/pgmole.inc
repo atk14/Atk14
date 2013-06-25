@@ -17,7 +17,8 @@ class PgMole Extends DbMole{
 	function getDatabaseType(){ return "postgresql"; }
 
 	function _disconnectFromDatabase(){
-		pg_close($this->_DbConnect);
+		$connection = $this->_getDbConnect();
+		pg_close($connection);
 	}
 	
 
@@ -91,7 +92,8 @@ class PgMole Extends DbMole{
 	}
 
 	function _getDbLastErrorMessage(){
-		if($err = pg_last_error($this->_DbConnect)){
+		$connection = $this->_getDbConnect();
+		if($err = pg_last_error($connection)){
 			return "pg_last_error: $err";
 		}
 	}
@@ -105,14 +107,15 @@ class PgMole Extends DbMole{
 	}
 
 	function _runQuery($query){
-		$result = pg_query($this->_DbConnect,$query);
+		$connection = $this->_getDbConnect();
+		$result = pg_query($connection,$query);
 		$this->_AffectedRows = pg_affected_rows($result);
 		return $result;
 	}
 
 	function _getDatabaseName(){
-		$this->_connectToDatabase();
-		return pg_dbname($this->_DbConnect);
+		$connection = $this->_getDbConnect();
+		return pg_dbname($connection);
 	}
 
 }

@@ -62,6 +62,70 @@ class tc_dbmole extends tc_base{
 		$this->_test_common_behaviour($this->ora);
 	}
 
+	function test_begin_transaction(){
+		$this->_test_begin_transaction($this->pg);
+		$this->_test_begin_transaction($this->my);
+
+		// oracle is not tested the same way - in oracle 'BEGIN' means nothing by default
+		$this->ora->closeConnection();
+		$this->ora->begin();
+		$this->assertEquals(false,$this->ora->isConnected());
+		$this->ora->commit();
+		$this->ora->begin();
+		$this->ora->rollback();
+		$this->assertEquals(false,$this->ora->isConnected());
+
+		$this->ora->selectFirstRow("SELECT * FROM test_table");
+		$this->assertEquals(true,$this->ora->isConnected());
+	}
+
+	function _test_begin_transaction($dbmole){
+		$dbmole->closeConnection();
+		$this->assertEquals(false,$dbmole->isConnected());
+
+		$count = $dbmole->getQueriesExecuted();
+		$dbmole->begin();
+		$this->assertEquals(true,$dbmole->isConnected());
+		$this->assertEquals($count + 1,$dbmole->getQueriesExecuted());
+		$dbmole->selectFirstRow("SELECT * FROM test_table");
+		$this->assertEquals($count + 2,$dbmole->getQueriesExecuted());
+
+		// rollback
+		$dbmole->closeConnection();
+		$count = $dbmole->getQueriesExecuted();
+		$dbmole->begin(array("execute_after_connecting" => true));
+		$dbmole->rollback();
+		$this->assertEquals($count,$dbmole->getQueriesExecuted());
+		$this->assertEquals(false,$dbmole->isConnected());
+		//
+		$dbmole->begin();
+		$dbmole->rollback();
+		$this->assertEquals($count+2,$dbmole->getQueriesExecuted());
+		$this->assertEquals(true,$dbmole->isConnected());
+
+		// commit
+		$dbmole->closeConnection();
+		$count = $dbmole->getQueriesExecuted();
+		$dbmole->begin(array("execute_after_connecting" => true));
+		$dbmole->commit();
+		$this->assertEquals($count,$dbmole->getQueriesExecuted());
+		$this->assertEquals(false,$dbmole->isConnected());
+		//
+		$dbmole->begin();
+		$dbmole->commit();
+		$this->assertEquals($count+2,$dbmole->getQueriesExecuted());
+		$this->assertEquals(true,$dbmole->isConnected());
+
+		$dbmole->closeConnection();
+
+		$count = $dbmole->getQueriesExecuted();
+		$dbmole->begin(array("execute_after_connecting" => true));
+		$this->assertEquals($count,$dbmole->getQueriesExecuted());
+		$this->assertEquals(false,$dbmole->isConnected());
+		$dbmole->selectFirstRow("SELECT * FROM test_table");
+		$this->assertEquals($count + 2,$dbmole->getQueriesExecuted());
+	}
+
 	function test_pgmole(){
 		$dbmole = &$this->pg;
 		$this->_test_select_sequence($dbmole);

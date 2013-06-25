@@ -67,7 +67,8 @@ class OracleMole extends DbMole{
 	}
 
 	function _disconnectFromDatabase(){
-		OCILogOff($this->_DbConnect);
+		$connection = $this->_getDbConnect();
+		OCILogOff($connection);
 	}
 	
 	/**
@@ -142,7 +143,8 @@ class OracleMole extends DbMole{
 		//}
 
 		// parsovani dotazu
-		$stmt = OCIParse($this->_DbConnect,$query);
+		$connection = $this->_getDbConnect();
+		$stmt = OCIParse($connection,$query);
 		if(!$stmt){
 			$this->_LastOracleStatement = $stmt;
 			$this->_raiseDBError("OCIParse failed");
@@ -157,7 +159,7 @@ class OracleMole extends DbMole{
 				// bindovani large objektu
 				// v podmince je zamerne $_typ=, aby doslo k priprazeni spravneho typu
 				if((in_array($key,$options["blobs"]) && $_type=OCI_B_BLOB) || (in_array($key,$options["clobs"]) && $_type=OCI_B_CLOB)){
-					$lobs[$key] = OCINewDescriptor($this->_DbConnect,OCI_D_LOB);
+					$lobs[$key] = OCINewDescriptor($connection,OCI_D_LOB);
 					$_stat = OCIBindByName($stmt,$key,$lobs[$key],-1,$_type);
 					if(!$_stat){
 						$this->_LastOracleStatement = $stmt;
@@ -343,7 +345,7 @@ class OracleMole extends DbMole{
 		return $this->doQuery($query,$bind_ar,$options);
 	}
 
-	function begin(){
+	function _begin(){
 		return true;
 	}
 
@@ -354,7 +356,7 @@ class OracleMole extends DbMole{
 	* @return bool				true -> uspesne provedeno
 	*											false -> doslo k chybe
 	*/
-	function commit(){
+	function _commit(){
 		return $this->_doCommitOrRollback("COMMIT");
 	}
 
@@ -365,7 +367,7 @@ class OracleMole extends DbMole{
 	* @return bool				true -> uspesne provedeno
 	*											false -> doslo k chybe
 	*/
-	function rollback(){
+	function _rollback(){
 		return $this->_doCommitOrRollback("ROLLBACK");
 	}
 
@@ -380,8 +382,9 @@ class OracleMole extends DbMole{
 	function _doCommitOrRollback($action){
 		settype($action,"string");
 		$function_name = "Oci$action";
-		$this->_initializeBeforeDoingSQL();
-		$_stat = $function_name($this->_DbConnect);
+		$this->_reset();
+		$connection = $this->_getDbConnect();
+		$_stat = $function_name($connection);
 		if(!$_stat){
 			$this->_raiseDBError("$function_name failed");
 			return false;

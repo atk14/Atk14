@@ -39,7 +39,7 @@
  *		echo "Dear visitor, unfortunately an error has occurred";
  *		$dbmole->sendErrorReportToEmail("admin@test.cz");
  *		$dbmole->logErrorReport();
- *		exit(1);
+ *		exit;
  *	}
  * </code>
  *
@@ -141,6 +141,16 @@ class DbMole{
 	var $_CacheDir = null;
 
 	/**
+	 * 
+	 */
+	var $_BeginTransactionDelayed = false;
+
+	protected function __construct($configuration_name){
+		$this->_ConfigurationName = $configuration_name;
+
+	}
+
+	/**
 	 * Returns an instance of DB connector.
 	 *
 	 * Returns an instance of DB connector for given configuration. The object is always the same for given configuration.
@@ -159,21 +169,23 @@ class DbMole{
 	 * @param string $class_name
 	 * @return DbMole
 	 */
-	static function &GetInstance($configuration_name,$class_name){
+	static function &GetInstance($configuration_name = "default",$class_name = null){
 		static $instance_store_ar;
+
+		if(!$class_name){
+			$class_name = get_called_class();
+		}
 
 		settype($configuration_name,"string");
 		settype($class_name,"string");
 
-		$out = new $class_name();
+		$out = new $class_name($configuration_name);
 		$db_type = $out->getDatabaseType();
 
 		if(!isset($instance_store_ar)){ $instance_store_ar = array(); }
 		if(!isset($instance_store_ar[$db_type])){ $instance_store_ar[$db_type] = array(); }
 		
 		if(!isset($instance_store_ar[$db_type][$configuration_name])){
-			$out = new $class_name();
-			$out->_ConfigurationName = $configuration_name;
 			$instance_store_ar[$db_type][$configuration_name] = &$out;
 		}
 		
@@ -231,7 +243,7 @@ class DbMole{
 	 *   echo "Dear visitor, unfortunately an internal error occured";
 	 *	 $dbmole->sendErrorReportToEmail("admin@test.cz");
 	 *	 $dbmole->logErrorReport();
-	 *	 exit(1);
+	 *	 exit;
 	 * }	
 	 * </code>
 	 *
@@ -326,6 +338,15 @@ class DbMole{
 	}
 
 	/**
+	 * Is this DbMole connected to it's database?
+	 *
+	 * echo "Connection to the database " . ($dbmole->isConnected() ? "has been established" : "has not yet been established");
+	 */
+	function isConnected(){
+		return isset($this->_DbConnect);
+	}
+
+	/**
 	 * @ignore
 	 */
 	function _formatSeconds($sec){
@@ -375,7 +396,35 @@ class DbMole{
 			$this->_raiseDBError(sprintf("can't connect to %s database with configuration '%s'",$this->getDatabaseType(),$this->getConfigurationName()));
 			return false;
 		}
+
+		if($this->_BeginTransactionDelayed){
+			$this->_BeginTransactionDelayed = false;
+
+			// TODO: I don't mean it seriously
+			$em = $this->_ErrorMessage;
+			$q = $this->_Query;
+			$b = $this->_BindAr;
+			$o = $this->_Options;
+
+			$this->_begin();
+
+			$this->_ErrorMessage = $em;
+			$this->_Query = $q;
+			$this->_BindAr = $b;
+			$this->_Options = $o;
+		}
+
 		return true;
+	}
+
+	/**
+	 * $connection = $this->_getDbConnect();
+	 */
+	protected function &_getDbConnect(){
+		if(!$this->isConnected()){
+			$this->_connectToDatabase();
+		}
+		return $this->_DbConnect;
 	}
 
 	/**
@@ -539,16 +588,6 @@ class DbMole{
 		error_log($this->getErrorReport());
 	}
 
-
-	/**
-	 * @access private
-	 * @ignore
-	 */
-	function _initializeBeforeDoingSQL(){
-		$this->_reset();
-		$this->_connectToDatabase();
-	}
-
 	/**
 	 * Resets some states of objects.
 	 *
@@ -562,15 +601,6 @@ class DbMole{
 		$this->_Query = "";
 		$this->_BindAr = array();
 		$this->_Options = array();
-
-		if(!isset($this->_CacheDir)){
-			if(defined("TEMP")){
-				$this->_CacheDir = TEMP;
-			}else{
-				$this->_CacheDir = "/tmp/";
-			}
-			$this->_CacheDir .= "/dbmole_cache/".$this->getDatabaseType()."/".$this->getConfigurationName()."/";
-		}
 	}
 
 	/**
@@ -598,7 +628,7 @@ class DbMole{
 			$error_handler($this);
 		}else{
 			$this->logErrorReport();
-			exit(1);
+			exit;
 		}
 
 		return null;
@@ -906,9 +936,22 @@ class DbMole{
 	/**
 	 * Starts a database transaction.
 	 *
+	 * $dbmole->begin(array("execute_after_connecting" => true)); // no connection is being made right now
+	 *
 	 * @return bool
 	 */
-	function begin(){
+	final function begin($options = array()){
+		$options += array(
+			"execute_after_connecting" => false,
+		);
+		if($options["execute_after_connecting"] && !$this->isConnected()){
+			$this->_BeginTransactionDelayed = true;
+			return true;
+		}
+		return $this->_begin();
+	}
+
+	function _begin(){
 		return $this->doQuery("BEGIN");
 	}
 
@@ -917,7 +960,15 @@ class DbMole{
 	 *
 	 * @return bool
 	 */
-	function commit(){
+	final function commit(){
+		$this->_BeginTransactionDelayed = false;
+
+		if(!$this->isConnected()){ return true; }
+		return $this->_commit();
+	}
+
+	function _commit(){
+		if(!$this->isConnected()){ return true; }
 		return $this->doQuery("COMMIT");
 	}
 
@@ -926,7 +977,14 @@ class DbMole{
 	 *
 	 * @return bool
 	 */
-	function rollback(){
+	final function rollback(){
+		$this->_BeginTransactionDelayed = false;
+
+		if(!$this->isConnected()){ return true; }
+		return $this->_rollback();
+	}
+
+	function _rollback(){
 		return $this->doQuery("ROLLBACK");
 	}
 
@@ -1121,7 +1179,7 @@ class DbMole{
 		}
 		$bind_ar = $b_ar;
 
-		$this->_initializeBeforeDoingSQL();
+		$this->_reset();
 
 		$this->_Query = $query;
 		$this->_BindAr = $bind_ar;
@@ -1216,7 +1274,8 @@ class DbMole{
 
 		$query_to_execute = strtr($query,$bind_ar);
 
-		// 
+		//
+		$this->_connectToDatabase();
 		$result = $this->_runQuery($query_to_execute);
 		if(!$result){
 			$this->_raiseDBError("failed to execute SQL query");
@@ -1323,6 +1382,16 @@ class DbMole{
 	 * @access private
 	 */
 	function _getCacheFilename($query,$bind_ar,$options){
+		// TODO: do we really need the atribute $this->_CacheDir?
+		if(!isset($this->_CacheDir)){
+			if(defined("TEMP")){
+				$this->_CacheDir = TEMP;
+			}else{
+				$this->_CacheDir = "/tmp/";
+			}
+			$this->_CacheDir .= "/dbmole_cache/".$this->getDatabaseType()."/".$this->getConfigurationName()."/";
+		}
+
 		return $this->_CacheDir."/".md5($query)."/".md5(
 			serialize(array(
 				"bind_ar" => $bind_ar,

@@ -52,7 +52,8 @@ class MysqlMole extends DbMole{
 	}
 
 	function _getDbLastErrorMessage(){
-		return "mysql_error: ".mysql_error($this->_DbConnect);
+		$connection = $this->_getDbConnect();
+		return "mysql_error: ".mysql_error($connection);
 	}
 
 	function _freeResult(&$result){
@@ -61,14 +62,17 @@ class MysqlMole extends DbMole{
 	}
 
 	function _runQuery($query){
-		return mysql_query($query,$this->_DbConnect);	
+		$connection = $this->_getDbConnect();
+		return mysql_query($query,$connection);	
 	}
 
 	function _disconnectFromDatabase(){
-		mysql_close($this->_DbConnect);
+		$connection = $this->_getDbConnect();
+		mysql_close($connection);
 	}
 
 	function getAffectedRows(){
-		return mysql_affected_rows($this->_DbConnect);
+		$connection = $this->_getDbConnect();
+		return mysql_affected_rows($connection);
 	}
 }

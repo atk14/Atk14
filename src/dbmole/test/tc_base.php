@@ -34,7 +34,7 @@ class tc_base extends tc_super_base{
 
 	function &_get_moles(){
 		$out = array(
-			"base" => new DbMole(),
+			"base" => DbMole::GetInstance(),
 		);	
 		$out["my"] = &MysqlMole::GetInstance();
 		$out["pg"] = &PgMole::GetInstance();
