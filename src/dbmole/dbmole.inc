@@ -39,7 +39,7 @@
  *		echo "Dear visitor, unfortunately an error has occurred";
  *		$dbmole->sendErrorReportToEmail("admin@test.cz");
  *		$dbmole->logErrorReport();
- *		exit;
+ *		exit(1);
  *	}
  * </code>
  *
@@ -243,7 +243,7 @@ class DbMole{
 	 *   echo "Dear visitor, unfortunately an internal error occured";
 	 *	 $dbmole->sendErrorReportToEmail("admin@test.cz");
 	 *	 $dbmole->logErrorReport();
-	 *	 exit;
+	 *	 exit(1);
 	 * }	
 	 * </code>
 	 *
@@ -628,7 +628,7 @@ class DbMole{
 			$error_handler($this);
 		}else{
 			$this->logErrorReport();
-			exit;
+			exit(1);
 		}
 
 		return null;
