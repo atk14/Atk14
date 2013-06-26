@@ -126,6 +126,39 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals($count + 2,$dbmole->getQueriesExecuted());
 	}
 
+	function test_caching(){
+		$this->_test_caching($this->pg);
+		$this->_test_caching($this->my);
+		$this->_test_caching($this->ora);
+	}
+
+	function _test_caching($dbmole){
+		$title = "Test Caching on ".get_class($dbmole);
+		$dbmole->doQuery("DELETE FROM test_table");
+		$dbmole->insertIntoTable("test_table",array(
+			"title" => $title,
+		));
+
+		$q1 = "SELECT title FROM test_table -- ".uniqid();
+		$q2 = "SELECT title FROM test_table -- ".uniqid();
+		$this->assertTrue($q1!=$q2);
+
+		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
+
+		$dbmole->doQuery("UPDATE test_table SET title=:title",array(":title" => "REWRITTEN"));
+
+		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => 60)));
+
+		$dbmole->doQuery("DELETE FROM test_table");
+
+		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => 60)));
+
+		$this->assertEquals(null,$dbmole->selectString($q1));
+		$this->assertEquals(null,$dbmole->selectString($q2));
+	}
+
 	function test_pgmole(){
 		$dbmole = &$this->pg;
 		$this->_test_select_sequence($dbmole);
