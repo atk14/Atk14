@@ -25,6 +25,16 @@ class TestingController extends ApplicationController{
 		$this->layout_name = "custom";
 	}
 
+	function send_ordinary_mail(){
+		$this->render_template = false;
+		$this->mail_ar = $this->mailer->execute("ordinary_notification");
+	}
+
+	function send_html_mail(){
+		$this->render_template = false;
+		$this->mail_ar = $this->mailer->execute("html_notification");
+	}
+
 	function _before_filter(){
 	}
 

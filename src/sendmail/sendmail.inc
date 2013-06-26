@@ -350,7 +350,7 @@ function sendhtmlmail($options){
 	$body[] = "--$alt_boundary--";
 
 	foreach($options["images"] as $im){
-		$_suffix = strtolower(preg_replace("/.*\\.([^.]+)$/","\\1",$im["filename"]));
+		$_suffix = strtolower(preg_replace('/.*\.([^.]+)$/',"\\1",$im["filename"]));
 		$_suffix=="jpg" && ($_suffix = "jpeg");
 		$_mtype = "image/$_suffix";
 

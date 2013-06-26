@@ -103,6 +103,13 @@ class Atk14Mailer{
 	 */
 	var $body = "";
 
+	/**
+	 * This is a HTML version of body for a multipart/alternative email
+	 *
+	 * Please note that sending multipart/related emails is an experimental feature
+	 */
+	var $body_html = "";
+
 
 	/**
 	 * Email address to send copy to.
@@ -229,7 +236,7 @@ class Atk14Mailer{
 	function execute($action,$params = array()){
 		global $ATK14_GLOBAL;
 
-		$this->body = ""; // reset body, opetovne volani by NEvyvolalo vygenerovani sablony
+		$this->body = $this->body_html = ""; // reset body, opetovne volani by NEvyvolalo vygenerovani sablony
 
 		$this->template_name = $action;
 
@@ -254,8 +261,12 @@ class Atk14Mailer{
 			}
 
 			$template_name = $this->template_name.".tpl";
+			$html_template_name = $this->template_name.".html.tpl";
 
 			$this->body = $smarty->fetch($template_name);
+			if($smarty->templateExists($html_template_name)){
+				$this->body_html = $smarty->fetch($html_template_name);
+			}
 		}
 
 		return $this->_send();
@@ -305,7 +316,7 @@ class Atk14Mailer{
 	 *
 	 */
 	function _send(){
-		$email_ar = sendmail(array(
+		$params = array(
 			"from" => $this->from,
 			"from_name" => $this->from_name,
 			"return_path" => $this->return_path,
@@ -317,10 +328,20 @@ class Atk14Mailer{
 			"mime_type" => $this->content_type,
 			"charset" => $this->content_charset,
 			"attachments" => $this->_attachments
-		));
+		);
+		if($this->body_html){
+			// !! experimental feature
+			$params["plain"] = $params["body"]; // oups! there is no param named body
+			$params["html"] = $this->body_html;
+			unset($params["body"]);
+			unset($params["mime_type"]); // mime_type is determined automatically, "multipart/alternative" by default
+			$email_ar = sendhtmlmail($params);
+		}else{
+			$email_ar = sendmail($params);
+		}
 		if(DEVELOPMENT){
 			// logging e-mail data as we are developing
-			$this->logger->info("Sending an e-mail (not really in DEVELOPMENT)\n---------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n\n$email_ar[body]");
+			$this->logger->info("Sending an e-mail (not for real in DEVELOPMENT)\n---------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n\n$email_ar[body]");
 		}
 		return $email_ar;
 	}
