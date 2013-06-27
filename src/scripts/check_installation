@@ -29,6 +29,19 @@ assert_php_function_exists () {
 	fi
 }
 
+assert_php_constant_defined () {
+	constant=$1
+	echo -n "php constant $constant defined... "
+	src="echo defined('$constant') ? 'yes' : 'no';"
+	if [ `/usr/bin/env php -r "$src"` != "yes" ]; then
+		echo "fail"
+		echo "!!  in PHP there is no constant $constant defined"
+		exit_val=1
+	else	
+		echo "ok"
+	fi
+}
+
 assert_command_exists 'env'
 assert_command_exists 'wget'
 assert_command_exists 'php'
@@ -48,6 +61,11 @@ assert_php_function_exists '_'
 assert_php_function_exists 'posix_getpid'
 assert_php_function_exists 'get_called_class'
 assert_php_function_exists 'spl_autoload_register'
+assert_php_function_exists 'mb_strlen'
+assert_php_function_exists 'mcrypt_encrypt'
+assert_php_function_exists 'gzcompress'
+
+assert_php_constant_defined 'MCRYPT_RIJNDAEL_256'
 
 # version of php must be >= 5.3
 echo -n "version of php is 5.3 or newer... "
