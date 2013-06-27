@@ -20,9 +20,12 @@
  * @filesource
  */
 
-if(!defined("TRANSLATE_USE_ICONV")){
-	define("TRANSLATE_USE_ICONV",true);
-}
+/**
+ * Translating character sets is faster with iconv.
+ * Unfortunately iconv doesn't work correctly on all systems though is is installed.
+ * Enable iconv if you are sure that it works (passes tests)
+ */
+@define("TRANSLATE_USE_ICONV",false);
 
 /**
  * This class converts strings between charsets.
@@ -30,7 +33,7 @@ if(!defined("TRANSLATE_USE_ICONV")){
  * It's important to search the code to discover the charset support.
  *
  * The class uses phps' iconv extension.
- * When it is not installed, translate class uses its own translation methods for some charsets.
+ * When it is not installed, Translate class uses its own translation methods for some charsets.
  *
  * Usage:
  * <code>
@@ -38,7 +41,7 @@ if(!defined("TRANSLATE_USE_ICONV")){
  * </code>
  * When it is impossible to convert the string the trans() method returns the input string. 
  *
- * The translate class is able to change the string to lowercase or uppercase
+ * The Translate class is able to change the string to lowercase or uppercase
  * Example:
  * <code>
  * $output_text = Translate::Lower($input_text,"windows-1250");
@@ -60,7 +63,7 @@ if(!defined("TRANSLATE_USE_ICONV")){
  * @filesource
  *
  */
-class translate{
+class Translate{
 
 	/**
 	 * Converts string from a charset to another.
