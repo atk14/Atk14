@@ -27,7 +27,7 @@ class Atk14Dispatcher{
 	 * @return HTTPReponse
 	 */
 	static function Dispatch($options = array()){
-		global $HTTP_RESPONSE,$HTTP_REQUEST,$ATK14_LOGGER, $ATK14_GLOBAL, $_GET;
+		global $HTTP_RESPONSE,$HTTP_REQUEST, $ATK14_GLOBAL, $_GET;
 
 		$options = array_merge(array(
 			"display_response" => true,
@@ -41,8 +41,7 @@ class Atk14Dispatcher{
 		$HTTP_RESPONSE->setContentType("text/html");
 		$HTTP_RESPONSE->setContentCharset(DEFAULT_CHARSET);
 
-		$ATK14_LOGGER = new logger("atk14",array("disable_start_and_stop_marks" => true));
-		$ATK14_LOGGER->start();
+		$logger = $ATK14_GLOBAL->getLogger();
 
 		Atk14Timer::Start("Atk14Url::RecognizeRoute");
 		$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri());
@@ -51,11 +50,11 @@ class Atk14Dispatcher{
 		if(DEVELOPMENT){
 			// logging
 			if($route_ar["action"]=="error404"){
-				$ATK14_LOGGER->warn("no route for ".$request->getRequestUri());
+				$logger->warn("no route for ".$request->getRequestUri());
 			}else{
-				$ATK14_LOGGER->info($request->getRequestMethod()." ".$request->getUrl()); // GET http://myapp.localhost/en/main/about/
+				$logger->info($request->getRequestMethod()." ".$request->getUrl()); // GET http://myapp.localhost/en/main/about/
 			}
-			$ATK14_LOGGER->flush();
+			$logger->flush();
 		}
 
 		$_GET = array_merge($_GET,$route_ar["get_params"]);
@@ -107,7 +106,7 @@ class Atk14Dispatcher{
 		$HTTP_RESPONSE->concatenate($ctrl->response);
 		$options["display_response"] && $HTTP_RESPONSE->flushAll();
 
-		$ATK14_LOGGER->stop();
+		$logger->stop();
 
 		if($options["return_controller"]){ return $ctrl; }
 		return $HTTP_RESPONSE;
@@ -123,7 +122,9 @@ class Atk14Dispatcher{
 	 * @return HTTPReponse
 	 */
 	static function ExecuteAction($controller_name,$action,$options = array()){
-		global $ATK14_GLOBAL, $ATK14_LOGGER;
+		global $ATK14_GLOBAL;
+		$logger = $ATK14_GLOBAL->getLogger();
+
 		$namespace = $ATK14_GLOBAL->getValue("namespace");
 
 		$options = array_merge(array(
@@ -153,7 +154,7 @@ class Atk14Dispatcher{
 
 		$_class_name = String::ToObject("{$controller_name}_controller")->camelize()->toString();
 		if(!class_exists($_class_name) || preg_match("/__/",$controller_name)){
-			DEVELOPMENT && $ATK14_LOGGER->error("controller class $_class_name doesn't exist");
+			DEVELOPMENT && $logger->error("controller class $_class_name doesn't exist");
 			$controller_name = $_controller_name;
 			$_class_name = $_base_controller_class_name;
 			$action = "error404";
@@ -163,7 +164,7 @@ class Atk14Dispatcher{
 		$methods = get_class_methods($controller);
 		// pokud se v nazvu akce objevi dve podtrzitka, nespustime ji, toto se nesmi 
 		if(preg_match("/__/",$action) || !in_array($action,$methods)){
-			DEVELOPMENT && $ATK14_LOGGER->error("there's no action method $_class_name::$action()");
+			DEVELOPMENT && $logger->error("there's no action method $_class_name::$action()");
 			// tady se meni controller na instance tridy ApplicationController
 			$controller = new $_base_controller_class_name();
 			$controller_name = $_controller_name;

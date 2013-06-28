@@ -292,7 +292,7 @@ class Atk14Controller{
 		$this->params->merge($options["params"]);
 		unset($options["params"]); // aby pozdeji nedoslo k automatickemu nastaveni vlastnosti $this->params...
 		$this->dbmole = &$GLOBALS["dbmole"];
-		$this->logger = &$GLOBALS["ATK14_LOGGER"];
+		$this->logger = $ATK14_GLOBAL->getLogger();
 		$this->flash = &Atk14Flash::GetInstance();
 
 		$this->session = $this->_get_session(); // TODO: to be removed

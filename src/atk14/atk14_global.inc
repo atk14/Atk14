@@ -430,4 +430,21 @@ class Atk14Global{
 		
 		return $ROUTES_STORE[$namespace];
 	}
+
+	/**
+	 * Returns reference to the global Logger instance
+	 *
+	 * $logger = $ATK14_GLOBAL->getLogger();
+	 * $logger->info("Captain, it's Houston. We have a problem. We have a phone call. It's your wife on the phone.");
+	 * $logger->info("Just forget it. Hanging up the phone...");
+	 */
+	function &getLogger(){
+		global $ATK14_LOGGER;
+
+		if(!isset($ATK14_LOGGER)){
+			$ATK14_LOGGER = new logger("atk14",array("disable_start_and_stop_marks" => true));
+			$ATK14_LOGGER->start();
+		}
+		return $ATK14_LOGGER;
+	}
 }
