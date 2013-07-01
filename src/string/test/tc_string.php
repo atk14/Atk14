@@ -1,5 +1,5 @@
 <?php
-class tc_string extends tc_base{
+class TcString extends TcBase{
 	function test_get_id(){
 		$s = new String("Hi");
 		$this->assertTrue(is_string($s->getId()));
@@ -228,6 +228,21 @@ class tc_string extends tc_base{
 		$s = new String("And they found that many people were sleeping better.");
 		$this->assertEquals("And they f... (continued)",(string)$s->truncate(25, array("omission" => "... (continued)")));
 		$this->assertEquals("And they... (continued)",(string)$s->truncate(25, array("omission" => "... (continued)", "separator" => " ")));
+	}
+
+	function test_upcase_downcase(){
+		$s = new String("Hello");
+
+		$this->assertEquals("HELLO",(string)$s->upcase());
+		$this->assertEquals("HELLO",(string)$s->upper());
+
+		$this->assertEquals("hello",(string)$s->downcase());
+		$this->assertEquals("hello",(string)$s->lower());
+
+		$s = new String("Špinavá Ředkvička");
+		$this->assertEquals("UTF-8",$s->getEncoding());
+		$this->assertEquals("ŠPINAVÁ ŘEDKVIČKA",(string)$s->upcase());
+		$this->assertEquals("špinavá ředkvička",(string)$s->lower());
 	}
 
 	/*

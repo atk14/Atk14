@@ -22,7 +22,7 @@ if(defined("ATK14_DOCUMENT_ROOT")){
 require_once(dirname(__FILE__)."/default_settings.php");
 
 // load the rest...
-require_once(dirname(__FILE__)."/src/string/load.inc");
+require_once(dirname(__FILE__)."/src/string/load.php");
 require_once(dirname(__FILE__)."/src/translate/translate.php");
 require_once(dirname(__FILE__)."/src/dictionary/dictionary.inc");
 require_once(dirname(__FILE__)."/src/miniyaml/miniyaml.inc");

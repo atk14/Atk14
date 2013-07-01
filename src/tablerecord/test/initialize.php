@@ -2,7 +2,7 @@
 // struktura testovaci databaze je k dispozici v souboru testing_structures.sql
 require("../../dbmole/dbmole.inc");
 require("../../dbmole/pgmole.inc");
-require("../../string/load.inc");
+require("../../string/load.php");
 
 require("../load.php");
 require("./test_table.php");

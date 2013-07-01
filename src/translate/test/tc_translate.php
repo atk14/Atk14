@@ -155,7 +155,25 @@ class TcTranslate extends TcBase{
 		$this->assertEquals(13,$ar["parent"]["int"]);
 
 		$this->assertNull($ar["parent"]["null"]);
-		
+	}
+
+	function test_lower_upper(){
+		$this->assertEquals("HELLO",Translate::Upper("Hello"));
+		$this->assertEquals("hello",Translate::Lower("hello"));
+
+		$this->assertEquals("HELLO",Translate::Upper("Hello","ASCII"));
+		$this->assertEquals("hello",Translate::Lower("hello","ASCII"));
+
+		//
+
+		$this->assertEquals("KŘEMÍLEK",Translate::Upper("Křemílek"));
+		$this->assertEquals("křemílek",Translate::Lower("KřemÍLEK"));
+
+		$this->assertEquals("KŘEMÍLEK",Translate::Upper("Křemílek","UTF-8"));
+		$this->assertEquals("křemílek",Translate::Lower("KřemÍLEK","UTF-8"));
+
+		$this->assertNotEquals("KŘEMÍLEK",Translate::Upper("Křemílek","ASCII"));
+		$this->assertNotEquals("křemílek",Translate::Lower("KřemÍLEK","ASCII"));
 	}
 
 	function test_utf8_to_ascii(){

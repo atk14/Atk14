@@ -5,7 +5,7 @@ define("SESSION_STORER_COOKIE_NAME_SESSION","session");
 define("SESSION_STORER_COOKIE_NAME_CHECK","check");
 require("../../stringbuffer/stringbuffer.inc");
 require("../../http/load.inc");
-require("../../string/load.inc");
+require("../../string/load.php");
 require("../sessionstorer.inc");
 
 // UF! we need dbmole

@@ -487,8 +487,14 @@ class String{
 	}
 
 	function downcase(){
-		return $this->_copy(strtolower($this->_String));
+		return $this->_copy(Translate::Lower($this->toString(),$this->getEncoding()));
 	}
+	function lower(){ return $this->downcase(); }
+
+	function upcase(){
+		return $this->_copy(Translate::Upper($this->toString(),$this->getEncoding()));
+	}
+	function upper(){ return $this->upcase(); }
 
 	function truncate($length,$options = array()){
 		$options = array_merge(array(
