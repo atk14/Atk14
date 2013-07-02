@@ -436,6 +436,15 @@ class SessionStorer{
 	 * @return bool
 	 */
 	function _isSessionInitializedInDatabase(){
+		if(defined("TEST") && TEST && !is_null($this->_SessionId)){
+			// Since this is a testing environment,
+			// there is a big chance that previously saved session could be deleted due to a database rollback
+			if(!$this->_dbmole->selectInt("SELECT COUNT(*) FROM sessions WHERE id=:id",array(":id" => $this->_SessionId))){
+				$this->_SessionId = null;
+				$this->_SessionSecurity = null;
+				return false;
+			}
+		}
 		return strlen($this->getSecretToken())>0;
 	}
 
