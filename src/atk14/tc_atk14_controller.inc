@@ -5,6 +5,7 @@ if(!class_exists("TcSuperBase")){
 
 class TcAtk14Controller extends TcSuperBase{
 	var $namespace = "";
+	var $session = null;
 	var $dbmole = null;
 	var $client = null;
 
@@ -12,6 +13,7 @@ class TcAtk14Controller extends TcSuperBase{
 		$ref = new ReflectionClass("TcSuperBase");
 		$ref->newInstance(func_get_args());
 
+		$this->session = Atk14Session::GetInstance();
 		$this->dbmole = $GLOBALS["dbmole"];
 		$this->client = new Atk14Client();
 
