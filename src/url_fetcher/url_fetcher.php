@@ -257,10 +257,10 @@ class UrlFetcher {
 		$errstr = "";
 		$_ssl = $this->_Ssl ? "ssl://" : "";
 		$f = fsockopen("$_ssl$this->_Server",$this->_Port,$errno,$errstr,$this->_SocketTimeout);
-		stream_set_blocking($f,0);
 		if(!$f){
 			return $this->_setError("failed to open socket: $errstr [$errno]");
 		}
+		stream_set_blocking($f,0);
 		$_data = $this->_RequestHeaders;
 		if($this->_RequestMethod=="POST"){ $_data .= $this->_PostData; }
 		$stat = fwrite($f,$_data,strlen($_data));

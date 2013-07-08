@@ -45,7 +45,7 @@ require_once(dirname(__FILE__)."/src/sessionstorer/sessionstorer.inc");
 require_once(dirname(__FILE__)."/src/packer/packer.inc");
 require_once(dirname(__FILE__)."/src/sendmail/sendmail.inc");
 require_once(dirname(__FILE__)."/src/forms/load.php");
-require_once(dirname(__FILE__)."/src/url_fetcher/url_fetcher.inc");
+require_once(dirname(__FILE__)."/src/url_fetcher/url_fetcher.php");
 require_once(dirname(__FILE__)."/src/atk14/load.inc");
 require_once(dirname(__FILE__)."/src/functions.inc");
 
