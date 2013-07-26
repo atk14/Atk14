@@ -200,6 +200,8 @@ class Atk14Client{
 		$request = new HTTPRequest();
 		$request->setUserAgent($this->_UserAgent);
 		$request->setRemoteAddr($this->_RemoteAddr);
+		$request->setHttpHost($ATK14_GLOBAL->getHttpHost());
+		$request->setServerPort(80);
 
 		if($options["content_type"]){
 			$request->setContentType($options["content_type"]);
