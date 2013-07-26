@@ -298,6 +298,13 @@ class String{
 	}
 
 	/**
+	 * Removes HTML tags
+	 */
+	function stripTags(){
+		return $this->_copy(strip_tags($this->_String));
+	}
+
+	/**
 	 * Returns the number of times pattern matches the string..
 	 *
 	 * When the pattern matches the string it returns these matches in $matches array as if it was returned by preg_match
