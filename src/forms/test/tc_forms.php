@@ -235,10 +235,10 @@ class UserRegistration2 extends Form
 */
 class MyForm extends Form
 {
-	function MyForm($field_list, $options=array())
+	function __construct($field_list, $options=array())
 	{
 		$options['auto_id'] = false;
-		parent::Form($options);
+		parent::__construct($options);
 		// dynamicke vytvoreni polozek formulare
 		// muzu to udelat tady, ale stejne tak bych mohl *PRED* volanim
 		// konstruktoru bazove tridy nastavit nejaky svuj pracovni atribut
@@ -251,10 +251,10 @@ class MyForm extends Form
 }
 class MyForm2 extends Form
 {
-	function MyForm2($field_list, $options=array())
+	function __construct($field_list, $options=array())
 	{
 		$options['auto_id'] = false;
-		parent::Form($options);
+		parent::__construct($options);
 		foreach ($field_list as $k => $v) {
 			$this->add_field($k, $v);
 		}
@@ -268,9 +268,9 @@ class MyForm2 extends Form
 }
 class Person2 extends Form
 {
-	function Person2($names_required=false, $options=array())
+	function __construct($names_required=false, $options=array())
 	{
-		parent::Form($options);
+		parent::__construct($options);
 		if ($names_required) {
 			$this->fields['first_name']->required = true;
 			$this->fields['first_name']->widget->attrs['class'] = 'required';
@@ -287,9 +287,9 @@ class Person2 extends Form
 }
 class Person3 extends Form
 {
-	function Person3($name_max_length=null, $options=array())
+	function __construct($name_max_length=null, $options=array())
 	{
-		parent::Form($options);
+		parent::__construct($options);
 		if ($name_max_length) {
 			$this->fields['first_name']->max_length = $name_max_length;
 			$this->fields['last_name']->max_length = $name_max_length;

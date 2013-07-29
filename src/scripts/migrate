@@ -14,7 +14,7 @@
 *		);
 */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 $logger = Atk14Migration::GetLogger();
 

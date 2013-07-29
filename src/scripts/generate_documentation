@@ -20,7 +20,7 @@
  *
  */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 $output_dir = realpath($ATK14_GLOBAL->getApplicationPath()."../tmp/documentation");
 

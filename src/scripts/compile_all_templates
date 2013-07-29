@@ -9,7 +9,7 @@
  * Note that this script works with Smarty3 only.
  */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 $path = $ATK14_GLOBAL->getApplicationPath();
 $smarty = Atk14Utils::GetSmarty(

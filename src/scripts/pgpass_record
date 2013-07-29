@@ -12,7 +12,7 @@
  *  $ ATK14_ENV=TEST ./scripts/pgpass_record  >> ~/.pgpass
  */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 $d = $ATK14_GLOBAL->getDatabaseConfig();
 echo "$d[host]:$d[port]:$d[database]:$d[username]:$d[password]\n";

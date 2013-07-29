@@ -1,2 +1,2 @@
 <?php
-require("../functions.inc");
+require("../functions.php");

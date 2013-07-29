@@ -13,7 +13,7 @@
 * $ ./scripts/dump_settings.php ATK14_APPLICATION_NAME
 */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 $constants = array_merge(array(
 	"DEVELOPMENT" => DEVELOPMENT,

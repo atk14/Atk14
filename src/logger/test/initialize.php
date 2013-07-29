@@ -1,5 +1,5 @@
 <?php
-require("../logger.inc");
+require("../logger.php");
 require("../../files/load.php");
 define("LOGGER_DEFAULT_LOG_FILE",__DIR__."/log/default.log");
 $LOGGER_CONFIGURATION = array(

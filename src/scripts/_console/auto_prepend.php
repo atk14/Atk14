@@ -1,2 +1,2 @@
 <?php
-require("atk14/src/load.inc");
+require("atk14/load.php");

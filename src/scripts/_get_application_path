@@ -1,5 +1,5 @@
 #!/usr/bin/env php
 <?php
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 echo $ATK14_GLOBAL->getApplicationPath();
 echo "\n";

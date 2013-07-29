@@ -7,4 +7,4 @@ define("SENDMAIL_BCC_TO","big.brother@somewhere.com");
 
 require("../../files/load.php");
 require("../../translate/translate.php");
-require("../sendmail.inc");
+require("../sendmail.php");

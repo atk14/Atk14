@@ -11,7 +11,7 @@
 *  $ ATK14_ENV=TEST ./scripts/initialize_database
 */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 $dbmole->doQuery("CREATE TABLE schema_migrations(version VARCHAR(255) PRIMARY KEY);");
 

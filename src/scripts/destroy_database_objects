@@ -5,7 +5,7 @@
  * This script works in DEVELOPMENT or TESTING environment only.
  */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 if(PRODUCTION){
 	echo "Refuse to purge database objects in PRODUCTION database. Do it by hand. Bye.\n";

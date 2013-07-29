@@ -10,7 +10,7 @@
  *  PRODUCTION
  */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 echo $ATK14_GLOBAL->getEnvironment();
 echo "\n";

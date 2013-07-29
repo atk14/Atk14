@@ -4,7 +4,7 @@
  * Deletes temporary files and directories, no more no less.
  */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 $d_handle = opendir(TEMP);
 $counter = 0;

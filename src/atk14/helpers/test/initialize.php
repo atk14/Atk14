@@ -1,5 +1,5 @@
 <?php
 define("TEST",true);
-require("../../../load.inc");
+require("../../../../load.php");
 require("../function.to_json.php");
 require("../modifier.camelize.php");

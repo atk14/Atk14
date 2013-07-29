@@ -7,7 +7,7 @@
  * $ ./scripts/robot_runner ImportArticlesRobot
  */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 $robots_dir = $ATK14_GLOBAL->getApplicationPath()."/../robots";
 

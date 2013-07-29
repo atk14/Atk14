@@ -9,7 +9,7 @@
  */
 
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 $uri = isset($argv[1]) ? $argv[1] : "/";
 $uri = preg_replace('/^(https?:\/\/[^\/]+)/','',$uri);

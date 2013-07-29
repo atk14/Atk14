@@ -1,2 +1,2 @@
 <?php
-require("../stopwatch.inc");
+require("../stopwatch.php");

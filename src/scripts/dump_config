@@ -4,7 +4,7 @@
 * Dumps configuration from a conf/*.yml file
 */
 
-require_once(dirname(__FILE__)."/load.inc");
+require_once(dirname(__FILE__)."/load.php");
 
 if(!isset($argv[1])){
 	echo "Usage:\n";

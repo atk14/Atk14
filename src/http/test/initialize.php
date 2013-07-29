@@ -6,9 +6,9 @@ $_SERVER["HTTP_HOST"] = "www.test.cz";
 
 define("TEST",true);
 define("TEMP",dirname(__FILE__)."/temp/");
-include("../httpuploadedfile.inc");
-include("../../stringbuffer/stringbuffer.inc");
+include("../httpuploadedfile.php");
+include("../../stringbuffer/stringbuffer.php");
 include("../../url_fetcher/url_fetcher.php");
 include("../../files/load.php");
-include("../../miniyaml/miniyaml.inc");
-include("../load.inc");
+include("../../miniyaml/miniyaml.php");
+include("../load.php");
