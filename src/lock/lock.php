@@ -156,7 +156,7 @@ class Lock{
 	* @access private
 	* @return boolean
 	*/
-	function _IsProcDirMounted(){
+	static function _IsProcDirMounted(){
 		$out = false;
 		if(file_exists("/proc") && is_dir("/proc")){
 			$dir_handle = opendir("/proc/");
@@ -171,7 +171,7 @@ class Lock{
 		return $out;
 	}
 
-	function _ValidLockName($lock_name){
+	static function _ValidLockName($lock_name){
 		$lock_name = preg_replace('/[^a-zA-Z0-9_.-]/','',$lock_name);
 		if($lock_name==""){$lock_name = "default_lock";}
 		return $lock_name;
