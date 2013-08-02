@@ -35,6 +35,11 @@ class TestingController extends ApplicationController{
 		$this->mail_ar = $this->mailer->execute("html_notification");
 	}
 
+	function testing_hooks(){
+		$this->render_template = false;
+		$this->mail_ar = $this->mailer->execute("testing_hooks");
+	}
+
 	function _before_filter(){
 	}
 

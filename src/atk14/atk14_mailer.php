@@ -255,9 +255,10 @@ class Atk14Mailer{
 				"compile_id_salt" => "mailer",
 			));
 
-			reset($this->tpl_data);
-			while(list($_key,) =each($this->tpl_data)){
-				$smarty->assign($_key,$this->tpl_data[$_key]);
+			$this->_before_render();
+
+			foreach($this->tpl_data as $k => $v){	
+				$smarty->assign($k,$v);
 			}
 
 			$template_name = $this->template_name.".tpl";
@@ -267,6 +268,7 @@ class Atk14Mailer{
 			if($smarty->templateExists($html_template_name)){
 				$this->body_html = $smarty->fetch($html_template_name);
 			}
+			$this->_after_render();
 		}
 
 		return $this->_send();
@@ -300,12 +302,23 @@ class Atk14Mailer{
 	/**
 	 * This method is called before every action in ApplicationMailer
 	 *
-	 * zatim jen _before_filter,
-	 * myslim, ze nic dalsiho nebude treba
-	 *
 	 * @access protected
 	 */
 	function _before_filter(){ }
+
+	/**
+	 * This method is called just before rendering body
+	 *
+	 * @access protected
+	 */
+	function _before_render(){ }
+
+	/**
+	 * This method is called just after rendering body
+	 *
+	 * @access protected
+	 */
+	function _after_render(){ }
 
 	/**
 	 * Calls sendmail function and pass it all important fields to construct the message and send it.

@@ -32,4 +32,12 @@ class TcMailer extends TcBase{
 
 		// TODO: decode email bodies
 	}
+
+	function testing_hooks(){
+		$controller = $this->client->get("testing/testing_hooks");
+
+		$this->assertContains("_before_filter: OK (bf)",$controller->mail_ar["body"]);
+		$this->assertContains("_before_render: OK (br)",$controller->mail_ar["body"]);
+		$this->assertContains("_after_render: OK (ar)",$controller->mail_ar["body"]);
+	}
 }
