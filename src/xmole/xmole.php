@@ -890,6 +890,8 @@ class XMole{
 			'/\"/',
 			'/\'/',
 			'/[\x00-\x08]/', // see http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character
+
+			'/\x1C/', // fileseparator, TODO: a temporary fix
 		);
 		$replaces = array(
 			"&amp;",
@@ -897,6 +899,7 @@ class XMole{
 			"&gt;",
 			"&quot;",
 			"&apos;",
+			"",
 			"",
 		);
 		return preg_replace($illegal_chars, $replaces, $str);
