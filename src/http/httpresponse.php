@@ -459,6 +459,18 @@ class HTTPResponse{
 	}
 
 	/**
+	 * Renders a 'Bad request' page
+	 */
+	function badRequest($message = null){
+		$this->setStatusCode(400);
+		$this->clearOutputBuffer();
+		if(!isset($message)){
+			$message = "Your browser sent a request that this server could not understand.";
+		}
+		$this->_writeStatusMessage($message);
+	}
+
+	/**
 	 * Writes status message to output buffer.
 	 *
 	 * The status message written to buffer is wrapped in HTML code.
