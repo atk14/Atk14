@@ -81,6 +81,23 @@ class tc_http_response extends tc_base{
 		$this->assertTrue($response->redirected());
 	}
 
+	function test_setHeader(){
+		$response = new HTTPResponse();
+
+		$this->assertEquals(null,$response->getHeader("X-User-Id"));
+
+		$response->setHeader("x-user-id","123");
+		$this->assertEquals("123",$response->getHeader("X-User-Id"));
+
+		$response->setHeader("X-USER-ID","456");
+		$this->assertEquals("456",$response->getHeader("X-User-Id"));
+
+		$response->setHeader("X-User-Id: 789");
+		$this->assertEquals("789",$response->getHeader("X-USER-ID"));
+		$this->assertEquals("789",$response->getHeader("X-User-Id"));
+		$this->assertEquals("789",$response->getHeader("x-user-id"));
+	}
+
 	function test_concatenate(){
 		$final_resp = new HTTPResponse();
 

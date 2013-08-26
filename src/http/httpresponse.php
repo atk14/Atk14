@@ -346,27 +346,58 @@ class HTTPResponse{
 	 *
 	 * Sets content of HTTP response header to a value. Parameters should be passed as strings but values passed as other types are retyped to string.
 	 *
+	 * <code>
+	 * $response->setHeader("Content-Type","text/plain");
+	 * $response->setHeader("Content-Type: text/plain");
+	 * </code>
+	 *
 	 * @param string $name
 	 * @param string $value
 	 */
-	function setHeader($name,$value){
+	function setHeader($name,$value = ""){
 		settype($name,"string");
 		settype($value,"string");
 
+		if($value=="" && preg_match('/^([a-z0-9-]+):\s?(.+)/i',$name,$matches)){
+			$name = $matches[1];
+			$value = $matches[2];
+		}
+
 		// pokud uz tato header existuje, smazeme ji
-		reset($this->_Headers);
-		while(list($_key,) = each($this->_Headers)){
+		foreach(array_keys($this->_Headers) as $_key){
 			if(strtoupper($_key)== strtoupper($name)){
 				unset($this->_Headers[$_key]);
 				break;
 			}
 		}
 
-		if(strlen($value)==""){
+		if(strlen($value)==0){
 			return;
 		}
 
 		$this->_Headers[$name] = $value;
+	}
+
+	/**
+	 * Returns value of the given HTTP header previously set in this response
+	 *
+	 * Returns null when there is no such header
+	 *
+	 * <code>
+	 *	$response->setHeader("Last-Modified: Mon, 26 Aug 2013 09:41:51 GMT");
+	 *	
+	 *	echo $response->getHeader("Last-Modified"); // Mon, 26 Aug 2013 09:41:51 GMT
+	 *	echo $response->getHeader("last-modified"); // Mon, 26 Aug 2013 09:41:51 GMT
+	 * </code>
+	 *
+	 */
+	function getHeader($name){
+		$name = strtoupper($name);
+		foreach(array_keys($this->_Headers) as $_key){
+			if(strtoupper($_key)== strtoupper($name)){
+				return $this->_Headers[$_key];
+			}
+		}
 	}
 
 	/**
