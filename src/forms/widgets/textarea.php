@@ -31,8 +31,9 @@ class Textarea extends Widget
 			$value = '';
 		}
 		$final_attrs = $this->build_attrs($options['attrs'], array(
-			'name' => $name)
-		);
+			'name' => $name,
+			'class' => 'form-control' // form-control is there for Bootstrap
+		));
 		return '<textarea'.flatatt($final_attrs).'>'.forms_htmlspecialchars($value).'</textarea>';
 	}
 }
