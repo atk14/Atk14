@@ -28,8 +28,9 @@ class Select extends Widget
 			$value = '';
 		}
 		$final_attrs = $this->build_attrs($options['attrs'], array(
-			'name' => $name)
-		);
+			'name' => $name,
+			'class' => 'form-control' // form-control is there for Bootstrap
+		));
 		$output = array('<select'.flatatt($final_attrs).'>');
 		// NOTE: puvodne jsem tu mel array_merge, ale ten nejde pouzit
 		// protoze se chova nehezky k indexum typu integer a string

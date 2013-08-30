@@ -28,8 +28,9 @@ class SelectMultiple extends Widget
 			$value = array();
 		}
 		$final_attrs = $this->build_attrs($options['attrs'], array(
-			'name' => $name.'[]')
-		);
+			'name' => $name.'[]',
+			'class' => 'form-control' // form-control is there for Bootstrap
+		));
 		$output = array('<select multiple="multiple"'.flatatt($final_attrs).'>');
 		$choices = my_array_merge(array($this->choices, $options['choices']));
 		$str_values = my_array_merge(array($value));
