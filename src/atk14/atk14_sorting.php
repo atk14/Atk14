@@ -108,12 +108,21 @@ class Atk14Sorting{
 	function add($key,$options_or_asc_ordering = array(), $desc_ordering = null, $options = array()){
 		$asc_ordering = null;
 
+		if(is_array($desc_ordering)){
+			$options = $desc_ordering;
+			$desc_ordering = null;
+		}
+
 		if(is_array($options_or_asc_ordering)){
 			$options = $options_or_asc_ordering;
 		}
 
 		if(is_string($options_or_asc_ordering)){
 			$asc_ordering = $options_or_asc_ordering;
+			if(!isset($desc_ordering)){
+				$desc_ordering = preg_replace('/\sASC$/i','',$asc_ordering);
+				$desc_ordering .= " DESC"; // TOTO: "name ASC, author ASC" -> "name DESC, author DESC"
+			}
 		}
 
 		// shortcuts:

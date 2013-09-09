@@ -1,33 +1,56 @@
 <?php
 class TcSorting extends TcBase{
 	function test(){
+
+		// -- default
 		$sorting = $this->_get_sorting();
 		$this->assertEquals("id ASC",$sorting->getOrder());
 		$this->assertEquals("id ASC","$sorting");
 
+		$sorting = $this->_get_sorting("id-desc");
+		$this->assertEquals("id DESC",$sorting->getOrder());
+
+		// --
 		$sorting = $this->_get_sorting("created_at-asc");
 		$this->assertEquals("created_at DESC",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("created_at-desc");
 		$this->assertEquals("created_at ASC",$sorting->getOrder());
 
+		// --
 		$sorting = $this->_get_sorting("title-asc");
 		$this->assertEquals("title ASC, id ASC",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("title-desc");
 		$this->assertEquals("title DESC, id DESC",$sorting->getOrder());
 
+		// --
 		$sorting = $this->_get_sorting("author-asc");
 		$this->assertEquals("author ASC, id ASC",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("author-desc");
 		$this->assertEquals("author DESC, id DESC",$sorting->getOrder());
 
+		// --
 		$sorting = $this->_get_sorting("shelf_mark-asc");
 		$this->assertEquals("UPPER(shelf_mark) ASC, title ASC",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("shelf_mark-desc");
 		$this->assertEquals("UPPER(shelf_mark) DESC, title DESC",$sorting->getOrder());
+
+		// --
+		$sorting = $this->_get_sorting("url-asc");
+		$this->assertEquals("articles.url",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("url-desc");
+		$this->assertEquals("articles.url DESC",$sorting->getOrder());
+
+		// --
+		$sorting = $this->_get_sorting("subtitle-asc");
+		$this->assertEquals("articles.subtitle ASC",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("subtitle-desc");
+		$this->assertEquals("articles.subtitle DESC",$sorting->getOrder());
 	}
 
 	function _get_sorting($order = null){
@@ -48,6 +71,10 @@ class TcSorting extends TcBase{
 		));
 
 		$sorting->add("shelf_mark","UPPER(shelf_mark) ASC, title ASC","UPPER(shelf_mark) DESC, title DESC");
+
+		$sorting->add("url","articles.url");
+
+		$sorting->add("subtitle","articles.subtitle ASC");
 
 		return $sorting;
 	}
