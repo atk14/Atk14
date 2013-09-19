@@ -44,6 +44,13 @@ class StringBuffer{
 	function toString(){
 		return join("",$this->_Buffer);
 	}
+
+	/**
+	 * echo "$buffer"; // same as echo $buffer->toString()
+	 */
+	function __toString(){
+		return $this->toString();
+	}
 	
 	/**
 	 * Adds another string to the buffer.
@@ -119,4 +126,3 @@ class StringBuffer{
 		}
 	}
 }
-?>
