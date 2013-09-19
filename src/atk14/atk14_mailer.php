@@ -142,8 +142,9 @@ class Atk14Mailer{
 	/**
 	 * Attachments
 	 *
-	 * @access private
+	 * @access protected
 	 * @var array
+	 * @see Atk14Mailer::add_attachment()
 	 */
 	var $_attachments = array();
 
@@ -151,7 +152,6 @@ class Atk14Mailer{
 	 * Template name
 	 *
 	 * @var string
-	 * @access private
 	 */
 	var $template_name = "";
 
@@ -166,9 +166,15 @@ class Atk14Mailer{
 	 * Application namespace. Is copied from controller when new instance of Atk14Mailer is created.
 	 *
 	 * @var string
-	 * @access private
 	 */
 	var $namespace = null;
+
+	/**
+	 * Name of action before current expected
+	 *
+	 * @var string
+	 */
+	var $action = null;
 
 	/**
 	 *
@@ -238,6 +244,7 @@ class Atk14Mailer{
 
 		$this->body = $this->body_html = ""; // reset body, opetovne volani by NEvyvolalo vygenerovani sablony
 
+		$this->action = $action;
 		$this->template_name = $action;
 
 		$this->_before_filter();
@@ -323,7 +330,7 @@ class Atk14Mailer{
 	/**
 	 * Calls sendmail function and pass it all important fields to construct the message and send it.
 	 *
-	 * @access private
+	 * @access protected
 	 * @return array
 	 * @uses sendmail()
 	 *
@@ -344,7 +351,7 @@ class Atk14Mailer{
 		);
 		if($this->body_html){
 			// !! experimental feature
-			$params["plain"] = $params["body"]; // oups! there is no param named body
+			$params["plain"] = $params["body"]; // oups! in sendhtmlmail() there is no param named body
 			$params["html"] = $this->body_html;
 			unset($params["body"]);
 			unset($params["mime_type"]); // mime_type is determined automatically, "multipart/alternative" by default
