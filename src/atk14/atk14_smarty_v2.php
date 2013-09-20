@@ -5,9 +5,11 @@
 class Atk14Smarty extends Smarty{
 	protected $atk14_contents = array();
 
-	function addAtk14Content($key,$content = ""){
-		if(!isset($this->atk14_contents[$key])){ $this->atk14_contents[$key] = $content; return; }
-		$this->atk14_contents[$key] .= $content;
+	/**
+	 * See Atk14Smarty::addAtk14Content() in atk14_smarty_v3.php
+	 */
+	function addAtk14Content($key,$content = "",$options = array()){
+		return _smarty_addAtk14Content($this,$this->atk14_contents,$key,$content,$options);
 	}
 
 	function getAtk14Content($key){

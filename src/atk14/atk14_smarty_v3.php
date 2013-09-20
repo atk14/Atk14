@@ -11,9 +11,14 @@ class Atk14Smarty extends SmartyBC{
 		$this->setErrorReporting(E_ALL ^ E_NOTICE);
 	}
 
-	function addAtk14Content($key,$content = ""){
-		if(!isset($this->atk14_contents[$key])){ $this->atk14_contents[$key] = $content; return; }
-		$this->atk14_contents[$key] .= $content;
+	/**
+	 * $smarty->addAtk14Content("main","<p>Well...</p>");
+	 * $smarty->addAtk14Content("main","<p>Well...</p>",array(
+	 *	"strategy" => "replace"
+	 * ));
+	 */
+	function addAtk14Content($key,$content = "",$options = array()){
+		return _smarty_addAtk14Content($this,$this->atk14_contents,$key,$content,$options);
 	}
 
 	function getAtk14Content($key){

@@ -61,4 +61,16 @@ class TcHelpers extends TcBase{
 		$this->assertContains('Book#1200 URL: http://www.testing.cz/en/books/detail/?id=1200&amp;format=xml',$out);
 		$this->assertContains('Kniha#600 URL: https://www.testing.cz/cs/books/detail/?id=600#detail',$out);
 	}
+
+	function test_content(){
+		$out = $this->_run_action("helpers/content");
+
+		$out = str_replace("<content>A song just for fun\n</content>","<content>A song just for fun</content>",$out); // HACK: In Smarty3 there is an extra new line, dont know why
+
+		$this->assertContains("<content>A song just for fun</content>",$out);
+		$this->assertContains('<greeting>Hello</greeting>',$out);
+		$this->assertContains('<lyrics>Five little monkeys jumping on the bed. One fell off and bumped his head. Mama called the doctor and the doctor said, "No more monkeys jumping on the bed!"</lyrics>',$out);
+
+		//echo $out;
+	}
 }

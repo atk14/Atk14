@@ -68,8 +68,32 @@ function atk14_error_handler($errno, $errstr, $errfile, $errline){
 set_error_handler("atk14_error_handler");
 
 /**
- * smarty2 <-> smarty3 compatibility hack
+ * Smarty2 <-> Smarty3 compatibility hack
+ *
+ * This is required in block helpers.
  */
 function atk14_get_smarty_from_template($template){
 	return isset($template->smarty) ? $template->smarty : $template;
+}
+
+function _smarty_addAtk14Content(&$smarty,&$atk14_contents,$key,$content,$options){
+	$options += array(
+		"strategy" => "append", // "append", "prepend", "replace",
+			// "_place_initial_content_" // special private purpose
+	);
+	if(!isset($atk14_contents[$key])){ $atk14_contents[$key] = '<%atk14_initial_content%>'; }
+
+	switch($options["strategy"]){
+		case 'prepend':
+			$atk14_contents[$key] = $content.$atk14_contents[$key];
+			break;
+		case 'replace':
+			$atk14_contents[$key] = $content;
+			break;
+		case '_place_initial_content_':
+			$atk14_contents[$key] = str_replace('<%atk14_initial_content%>',$content,$atk14_contents[$key]);
+			break;
+		default: // "append"	
+			$atk14_contents[$key] .= $content;
+	}
 }

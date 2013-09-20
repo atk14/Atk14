@@ -31,9 +31,12 @@
  *
  */
 function smarty_function_placeholder($params,$template){
-	$smarty = atk14_get_smarty_from_template($template);
+	$params += array(
+		"for" => "main"
+	);
+	$id = $params["for"];
 
-	$id = isset($params["for"]) ? $params["for"] : "main";
+	$smarty = atk14_get_smarty_from_template($template);
 	$smarty->addAtk14Content($id);
 
 	return "<%atk14_content[$id]%>"; // returns an internal sign, which will be replaced later within controller

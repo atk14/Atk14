@@ -7,15 +7,23 @@
  * For more info see {@link smarty_function_placeholder()}
  *
  * <code>
- * {content for="javascript"}
- * <script language="javascript" type="text/javascript">
- *  function welcome() {
- *    alert('welcome human');
- *  }
- * </script>
- * {/content}
- *
+ *	 {content for="javascript"}
+ *		 <script language="javascript" type="text/javascript">
+ *			function welcome() {
+ *				alert('welcome human');
+ *			}
+ *		 </script>
+ * 	 {/content}
  * </code>
+ *
+ * Consider a block placeholder in a layout like this:
+ *
+ *	<title>{block_placeholder for=title} | Snake Oil Company{/block_placeholder}</title>
+ *
+ * Now you can set the page title this way:
+ *
+ *	 {content for=title strategy=prepend}Sitemap{/content} {* or *}
+ *	 {content for=title strategy=replace}Brand new Title{/content}
  *
  * @package Atk14
  * @subpackage Helpers
@@ -28,6 +36,14 @@
  */
 function smarty_block_content($params,$content,$smarty,&$repeat){
 	if($repeat){ return; }
-	$smarty->addAtk14Content($params["for"],$content);
+
+	$params += array(
+		"for" => "main",
+		"strategy" => "append",
+	);
+
+	$smarty->addAtk14Content($params["for"],$content,array(
+		"strategy" => $params["strategy"]
+	));
 	return "";
 }
