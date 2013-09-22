@@ -192,13 +192,15 @@ class tc_dictionary extends tc_base{
 	}
 
 	function test_actc_as_array(){
-		$dict = new Dictionary(array("firstname" => "yarrino", "lastname" => "tomino"));
+		$dict = new Dictionary(array("firstname" => "yarrino"));
+		$dict["lastname"] = "tomino";
 		$this->assertEquals("yarrino",$dict["firstname"]);
 		$this->assertEquals("tomino",$dict["lastname"]);
 		$this->assertEquals(null,$dict["xxx"]);
 
 		$this->assertEquals(2,sizeof($dict));
 
+		// testing iteration over array items
 		$out = array();
 		foreach($dict as $key => $value){
 			$out[] = $key;
@@ -208,6 +210,12 @@ class tc_dictionary extends tc_base{
 
 		$dict["very_lastname"] = "coder";
 		$this->assertEquals(3,sizeof($dict));
+
+		$dict["very_lastname"] = null;
+		$this->assertEquals(array("firstname" => "yarrino", "lastname" => "tomino", "very_lastname" => null),$dict->toArray());
+
+		unset($dict["very_lastname"]);
+		$this->assertEquals(array("firstname" => "yarrino", "lastname" => "tomino"),$dict->toArray());
 	}
 
 	function _check_bool($data,$expected){

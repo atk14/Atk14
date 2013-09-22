@@ -276,7 +276,7 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/*** functions implementing array like access ***/
 	function offsetGet($value){ return $this->getValue($value);	}
 
-	function offsetSet($value, $name){ $this->setValue($name, $value);	}
+	function offsetSet($name, $value){ $this->setValue($name, $value);	}
 
 	function offsetUnset($value){ $this->unsetValue($value);	}
 
