@@ -503,6 +503,14 @@ class String{
 	}
 	function upper(){ return $this->upcase(); }
 
+	/**
+	 * Converts string to ASCII
+	 * 
+	 */
+	function toAscii(){
+		return $this->_copy(Translate::Trans($this->toString(),$this->getEncoding(),"ASCII"),"ASCII");
+	}
+
 	function truncate($length,$options = array()){
 		$options = array_merge(array(
 			"omission" => "...",
@@ -542,9 +550,10 @@ class String{
 	 *
 	 * @access private
 	 */
-	function _copy($string = null){
+	function _copy($string = null,$encoding = null){
 		if(!isset($string)){ $string = $this->_String; }
-		return new String($string,$this->_Encoding);
+		if(!isset($encoding)){ $encoding = $this->_Encoding; }
+		return new String($string,$encoding);
 	}
 
 	function toString(){

@@ -245,11 +245,13 @@ class TcString extends TcBase{
 		$this->assertEquals("špinavá ředkvička",(string)$s->lower());
 	}
 
-	/*
-	function test_to_array(){
-		$s = new String("abcd");
-		var_dump($s->toArray());
-		$this->assertEquals(array("a","b","c","d"),$s->toArray());
+	function test_toAscii(){
+		$s = new String("Špinavá Ředkvička");
+		$this->assertEquals("UTF-8",$s->getEncoding());
+
+		$a = $s->toAscii();
+
+		$this->assertEquals("Spinava Redkvicka",(string)$a);
+		$this->assertEquals("ASCII",$a->getEncoding());
 	}
-	*/
 }
