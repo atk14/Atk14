@@ -143,9 +143,10 @@ class XMole{
 		 */
 		var $_output_encoding = null;
 
-		/** Is encoding differ
+		/**
+		 * Is encoding differ
 		 * @access private
-    **/
+ 		 */
 		var $_translate=false;
 		
 		/**
@@ -173,10 +174,9 @@ class XMole{
 		}
 	}
 
-	function inherit($tree)
-	{
-	    $this->_tree=array(unserialize(serialize($tree)));
-	    return true;
+	function inherit($tree){
+		$this->_tree=array(unserialize(serialize($tree)));
+		return true;
 	}
 	
 
@@ -297,12 +297,16 @@ class XMole{
 		$this->_set_translate();
 	}
 	
-	/**Aktualizuje $this->_translate po zmene encoding **/
-  function _set_translate(){
-		  $this->translate=
-		          isset($this->_input_encoding) && $this->_input_encoding!="" && 
-		          isset($this->_output_encoding) && $this->_output_encoding!="" && 
-		          $this->_input_encoding!=$this->_output_encoding;
+	/**
+	 * Initializes $this->_translate after encoding change.
+	 *
+	 * @access private
+	 */
+	function _set_translate(){
+			$this->_translate=
+				isset($this->_input_encoding) && $this->_input_encoding!="" && 
+				isset($this->_output_encoding) && $this->_output_encoding!="" && 
+				$this->_input_encoding!=$this->_output_encoding;
 	}
 	
 	/**

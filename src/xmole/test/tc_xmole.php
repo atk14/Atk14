@@ -321,6 +321,14 @@ class tc_xmole extends tc_base{
     $xmole->set_output_encoding("WINDOWS-1250");
     $this->assertEquals("UTF-8",$xmole->get_input_encoding());
     $this->assertEquals("WINDOWS-1250",$xmole->get_output_encoding());
+
+    // --
+  
+    $xmole = new XMole();
+    $xmole->set_output_encoding("ASCII");
+    $xmole->parse('<'.'?xml version="1.0" encoding="UTF-8"?'.'><xml><text color="hnědá">hnědá_lištička_skákala</text></xml>');
+    $this->assertEquals('hneda_listicka_skakala',$xmole->get_element_data('text'));
+    $this->assertEquals('hneda',$xmole->get_attribute('text','color'));
   }
 
   function test_encode_special_characters() {
