@@ -893,9 +893,7 @@ class XMole{
 			'/>/',
 			'/\"/',
 			'/\'/',
-			'/[\x00-\x08]/', // see http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character
-
-			'/\x1C/', // fileseparator, TODO: a temporary fix
+			'/[\x00-\x08\x0b-\x0c\x0e-\x1f]/', // characters invalid for XML 1.0; see http://www.w3.org/TR/2006/REC-xml-20060816/#dt-character
 		);
 		$replaces = array(
 			"&amp;",
@@ -903,8 +901,7 @@ class XMole{
 			"&gt;",
 			"&quot;",
 			"&apos;",
-			"",
-			"",
+			"", // applies to XML-1.0
 		);
 		return preg_replace($illegal_chars, $replaces, $str);
 	}
