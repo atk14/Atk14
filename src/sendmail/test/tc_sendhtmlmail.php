@@ -34,6 +34,7 @@ class tc_sendhtmlmail extends tc_base{
 				)
 			),
 		));
+		$this->assertEquals(true,is_null($ar["accepted_for_delivery"])); // messages are not sent in testing environment
 		//var_dump($ar);
 
 		/*

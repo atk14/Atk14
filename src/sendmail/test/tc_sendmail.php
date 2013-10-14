@@ -13,6 +13,7 @@ class tc_sendmail extends tc_base{
 		$this->assertEquals("test@file",$ar["return_path"]);
 		$this->assertTrue((bool)preg_match("/From: test@file/",$ar["headers"]));
 		$this->assertTrue((bool)preg_match("/Content-Type: text\\/plain; charset=us-ascii/",$ar["headers"]));
+		$this->assertEquals(true,is_null($ar["accepted_for_delivery"])); // messages are not sent in testing environment
 
 		$ar = sendmail(array(
 			//"to" => "me@mydomain.com",

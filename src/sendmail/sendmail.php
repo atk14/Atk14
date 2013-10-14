@@ -57,6 +57,11 @@ if(!defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING")){
 *
 *		PHP`s mail() compatible usage
 * 	sendmail("user@gmailer.com","Hello","Hello dear user...");
+*
+*		$mail_ar = sendmail(array(...));
+*		echo $mail_ar["to"];
+*		echo $mail_ar["body"];
+*		print_r($mail_ar["accepted_for_delivery"]); // true, false or null when sending is suppressed by environmet
 *	</code>
 *
 * Note that there is an another function sendhtmlmail()
@@ -174,6 +179,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 			"subject" => $SUBJECT,
 			"headers" => $HEADERS,
 			"body" => $BODY,
+			"accepted_for_delivery" => null,
 		);
 
 		if($params["build_message_only"]){
@@ -189,7 +195,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 				putenv("QMAILUSER=$matches[1]");
 				putenv("QMAILHOST=$matches[2]");
 			}
-			mail($TO,$SUBJECT,$BODY,$HEADERS);
+			$out["accepted_for_delivery"] = mail($TO,$SUBJECT,$BODY,$HEADERS);
 		}
 		return $out;
 	}
@@ -269,6 +275,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		"subject" => $SUBJECT,
 		"headers" => $HEADERS,
 		"body" => $BODY,
+		"accepted_for_delivery" => null,
 	);
 
 	// v $BODY nechceme sekvence \r\n, funguje to spatne
@@ -288,7 +295,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 			putenv("QMAILUSER=$matches[1]");
 			putenv("QMAILHOST=$matches[2]");
 		}
-		mail($TO,$SUBJECT,$BODY,$HEADERS);
+		$out["accepted_for_delivery"] = mail($TO,$SUBJECT,$BODY,$HEADERS);
 	}
 
 	return $out;
