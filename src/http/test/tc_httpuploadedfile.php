@@ -31,6 +31,7 @@ class tc_httpuploadedfile extends tc_base{
 		$hlava = $files[0];
 		$this->assertTrue($hlava->isImage());
 		$this->assertEquals("image/jpeg",$hlava->getMimeType());
+		$this->assertEquals("Hlava.jpg",$hlava->getFileName());
 
 		$this->assertEquals(325,$hlava->getImageWidth());
 		$this->assertEquals(448,$hlava->getImageHeight());
@@ -69,5 +70,17 @@ class tc_httpuploadedfile extends tc_base{
 
 		$hlava->cleanUp();
 		$this->assertFalse(file_exists(TEMP."/$brand_new_tmp_file"));
+	}
+
+	function test__sanitizeFileName(){
+		$f = new HTTPUploadedFile();
+
+		$this->assertEquals("MyPhoto.jpg",$f->_sanitizeFileName("MyPhoto.jpg"));
+		$this->assertEquals("me myself.jpg",$f->_sanitizeFileName("C:\\Document and Settings\\SillyBoy\\ me myself.jpg "));
+		$this->assertEquals("MyPhoto.jpg",$f->_sanitizeFileName("MyPhoto.jpg"));
+
+		$this->assertEquals("none",$f->_sanitizeFileName(" "));
+		$this->assertEquals("none",$f->_sanitizeFileName("\\"));
+		$this->assertEquals("Mala hneda listicka.pdf",$f->_sanitizeFileName("C:/Document and Settings/SillyBoy/ Malá hnědá lištička.pdf"));
 	}
 }

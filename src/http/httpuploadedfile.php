@@ -122,10 +122,29 @@ class HTTPUploadedFile{
 	 *
 	 * @return string
 	 */
-	function getFileName(){
+	function getFileName($options = array()){
+		$options += array(
+			"sanitize" => true,
+		);
 		$filename = $this->_FileName;
-		if($filename==""){ $filename = "_"; }
-		$filename = preg_replace("/[^a-zA-Z0-9_. -]/","_",$filename);
+		if($options["sanitize"]){
+			$filename = $this->_sanitizeFileName($filename);
+		}
+		return $filename;
+	}
+
+	function _sanitizeFileName($filename){
+		// C:\Documents and Settings\Grizzly\MyBestPhotoEver.jpg -> MyBestPhotoEver.jpg
+		$filename = trim(preg_replace('/^.*(\/|\\\\)([^\/\\\\]*)$/','\2',$filename));
+
+		// Malá_hnědá_lištička.pdf -> Mala_hneda_listicka.pdf
+		$charset = defined("DEFAULT_CHARSET") ? DEFAULT_CHARSET : "UTF-8";
+		if(class_exists("Translate") && Translate::CheckEncoding($filename,$charset)){
+			$filename = Translate::Trans($filename,$charset,"ASCII");
+		}
+
+		if($filename==""){ $filename = "none"; }
+		$filename = preg_replace("/[^a-zA-Z0-9_. -]+/","_",$filename);
 		return $filename;
 	}
 
