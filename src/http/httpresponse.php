@@ -292,10 +292,19 @@ class HTTPResponse{
 	/**
 	 * Sets Content-Type response header.
 	 *
+	 * <code>
+	 * $response->setContentType("text/plain");
+	 * $response->setContentType("text/plain; charset=UTF-8");
+	 * </code>
+	 *
 	 * @param string $content_type
 	 */
 	function setContentType($content_type){
 		settype($content_type,"string");
+		if(preg_match('/^([^;]+); charset=["\']?([^\s;]+)["\']?$/',$content_type,$matches)){
+			$content_type = $matches[1];
+			$this->setContentCharset($matches[2]);
+		}
 		$this->_ContentType_Redefined = true;
 		$this->_ContentType = $content_type;
 	}
@@ -347,8 +356,9 @@ class HTTPResponse{
 	 * Sets content of HTTP response header to a value. Parameters should be passed as strings but values passed as other types are retyped to string.
 	 *
 	 * <code>
-	 * $response->setHeader("Content-Type","text/plain");
-	 * $response->setHeader("Content-Type: text/plain");
+	 * $gmdate = gmdate("D, d M Y H:i:s \G\M\T");
+	 * $response->setHeader("Last-Modified",$gmdate");
+	 * $response->setHeader("Last-Modified: $gmdate");
 	 * </code>
 	 *
 	 * @param string $name
@@ -361,6 +371,11 @@ class HTTPResponse{
 		if($value=="" && preg_match('/^([a-z0-9-]+):\s?(.+)/i',$name,$matches)){
 			$name = $matches[1];
 			$value = $matches[2];
+		}
+
+		if(strtolower($name)=="content-type"){
+			$this->setContentType($value);
+			return;
 		}
 
 		// pokud uz tato header existuje, smazeme ji
