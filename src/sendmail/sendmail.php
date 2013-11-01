@@ -408,8 +408,11 @@ function _sendmail_correct_address($addr){
 	return (string)$addr;
 }
 
-function _sendmail_escape_subject($subject,$charset){
+function _sendmail_escape_subject($subject,$charset = null){
 	if(Translate::CheckEncoding($subject,"ascii")){ return $subject; }
+
+	if(!$charset && defined("DEFAULT_CHARSET")){ $charset = DEFAULT_CHARSET; }
+
 	$out = array();
 	$escape_in_use = false;
 	$out[] = "=?$charset?Q?";

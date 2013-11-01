@@ -395,4 +395,10 @@ PROCESSCONTROL|eudocrpe_11442|NA|
 		$this->assertEquals($body,quoted_printable_decode($encoded));
 		return $encoded;
 	}
+
+	function test__sendmail_escape_subject(){
+		$this->assertEquals("Hello World",_sendmail_escape_subject("Hello World"));
+		$this->assertEquals("=?UTF-8?Q?Ahoj_sv=C4=9Bte?=",_sendmail_escape_subject("Ahoj světe"));
+		$this->assertEquals("=?ISO-8859-2?Q?Ahoj_sv=ECte?=",_sendmail_escape_subject(Translate::Trans("Ahoj světe","UTF-8","ISO-8859-2"),"ISO-8859-2"));
+	}
 }
