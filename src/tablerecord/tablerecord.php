@@ -23,11 +23,11 @@ class TableRecord extends TableRecord_Base{
 	 * Constructor
 	 *
 	 * @see TableRecord_Base::TableRecord_Base()
-	 * @param string $table_name
+	 * @param mixed $table_name_or_options
 	 * @param array $options
 	 */
-	function TableRecord($table_name = null,$options = array()){
-		parent::TableRecord_Base($table_name,$options);
+	function __construct($table_name_or_options = null,$options = array()){
+		parent::__construct($table_name_or_options,$options);
 	}
 
 	/**

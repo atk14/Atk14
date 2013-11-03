@@ -93,35 +93,51 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Constructor
 	 *
-	 * @param string $table_name
+	 * @param mixed $table_name_or_options
 	 * @param array $options
 	 * <ul>
-	 * 	<li><b>do_not_read_values</b> - list of columns that shouldn't be fetched. It can increase performance. Typically when reading from tables cotaining binary objects</li>
+	 * 	<li><b>do_not_read_values</b> - list of columns that shouldn't be fetched at the moment of object instantiation. It can increase performance. Typically when reading from tables cotaining binary objects</li>
 	 * 	<li><b>id_field_name</b> - name of field containing primary key</li>
 	 * 	<li><b>id_field_type</b> - type of field containing primary key</li>
 	 * 	<li><b>sequence_name</b> - </li>
 	 * </ul>
 	 */
-	function TableRecord_Base($table_name = null,$options = array()){
+	function __construct($table_name_or_options = null,$options = array()){
+		static $DEFAULT_OPTIONS = array();
+
 		inobj::inobj();
 
-		if(!isset($table_name)){
-			$table_name = new String(get_class($this));
-			$table_name = $table_name->tableize();
+		if(is_array($table_name_or_options)){
+			$options = $table_name_or_options;
+			$table_name = null;
+		}else{
+			$table_name = $table_name_or_options;
 		}
 
-		$this->_TableName = (string)$table_name;
+		$class_name = get_class($this);
 
-		$options +=  array(
+		$defaults = isset($DEFAULT_OPTIONS[$class_name]) ? $DEFAULT_OPTIONS[$class_name] : array(
+			"table_name" => $table_name,
 			"do_not_read_values" => array(),
 			"id_field_name" => "id",
-			"id_field_type" => "integer",
-			"sequence_name" => $this->_DetermineSequenceName(),
+			"id_field_type" => null, // "integer", "string"
+			"sequence_name" => null,
 		);
 
+		$options += $defaults;
+
+		if(is_null($options["table_name"])){
+			$options["table_name"] = new String($class_name);
+			$options["table_name"] = $options["table_name"]->tableize();
+		}
+		$options["table_name"] = (string)$options["table_name"];
+
+		$this->_TableName = $options["table_name"]; // could be member of String
+
+		if(is_null($options["sequence_name"])){
+			$options["sequence_name"] = $this->_DetermineSequenceName();
+		}
 		$this->_SequenceName = $options["sequence_name"];
-		$this->_IdFieldName = $options["id_field_name"];
-		$this->_IdFieldType = $options["id_field_type"];
 		$this->_DoNotReadValues = $options["do_not_read_values"];
 
 		$cache = defined("INOBJ_TABLERECORD_CACHES_STRUCTURES") ? INOBJ_TABLERECORD_CACHES_STRUCTURES : 0;
@@ -132,9 +148,22 @@ class TableRecord_Base extends inobj{
 			throw new Exception("There is not table $table_name in the database ".$this->_dbmole->getDatabaseName());
 		}
 
-		// vsechny hodnoty tohoto objektu nastavime na null
+		$this->_IdFieldName = $options["id_field_name"];
+		if(is_null($options["id_field_type"])){
+			// autodetection
+			$options["id_field_type"] = preg_match('/char/i',$this->_TableStructure[$this->_IdFieldName]) ? "string" : "integer";
+		}
+		$this->_IdFieldType = $options["id_field_type"];
+
+		// all values of the objects should be null
+		// TODO: seems to be useless -> refactoring
 		foreach(array_keys($this->_TableStructure) as $_key){	
 			$this->_RecordValues[$_key] = null;
+		}
+
+		if(!isset($DEFAULT_OPTIONS[$class_name])){
+			// things may be a little faster next time
+			$DEFAULT_OPTIONS[$class_name] = $options;
 		}
 	}
 
