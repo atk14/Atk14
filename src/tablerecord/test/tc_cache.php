@@ -25,5 +25,40 @@ class TcCache extends TcBase{
 		$this->assertEquals($record->getId(),$recs["a"]->getId());
 		$this->assertEquals($record->getId(),$recs["b"]->getId());
 		$this->assertEquals(null,$recs["c"]);
+
+		//
+
+		$record = TestTable::CreateNewRecord(array(
+			"title" => "The_Elephant_Song"
+		));
+		$record2 = TestTable::GetInstanceById($record);
+
+		$cached_r1 = Cache::Get("TestTable",$record);
+		$cached_r2 = Cache::Get("TestTable",$record);
+		$this->assertEquals("The_Elephant_Song",$cached_r1->getTitle());
+		$this->assertEquals("The_Elephant_Song",$cached_r2->getTitle());
+
+		// magic! objects returned from the cache are the same
+		$cached_r1->s("title","The_Squirrel_Dance");
+		$this->assertEquals("The_Squirrel_Dance",$cached_r1->getTitle());
+		$this->assertEquals("The_Squirrel_Dance",$cached_r2->getTitle());
+
+		//
+		$record->s("title","The_Crocodile_Singing");
+
+		$this->assertEquals("The_Crocodile_Singing",$record->getTitle());
+		$this->assertEquals("The_Elephant_Song",$record2->getTitle());
+		$this->assertEquals("The_Squirrel_Dance",$cached_r1->getTitle());
+		$this->assertEquals("The_Squirrel_Dance",$cached_r2->getTitle());
+
+		//
+		Cache::Clear();
+		$cached_r3 = Cache::Get("TestTable",$record);
+
+		$this->assertEquals("The_Crocodile_Singing",$record->getTitle());
+		$this->assertEquals("The_Elephant_Song",$record2->getTitle());
+		$this->assertEquals("The_Squirrel_Dance",$cached_r1->getTitle());
+		$this->assertEquals("The_Squirrel_Dance",$cached_r2->getTitle());
+		$this->assertEquals("The_Crocodile_Singing",$cached_r3->getTitle());
 	}
 }
