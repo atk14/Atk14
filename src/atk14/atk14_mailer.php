@@ -231,15 +231,42 @@ class Atk14Mailer{
 	 *
 	 * Method is called in a controller.
 	 * <code>
-	 * $this->mailer->execute("registration_notification",array(
+	 * 	$this->mailer->execute("registration_notification",array(
 	 *		"user" => $user
 	 *	));
 	 * </code>
 	 *
 	 * @param string $action name of action to be executed
 	 * @param array $params optional additional parameters
+	 * @return array sendmail() output
 	 */
 	function execute($action,$params = array()){
+		$this->_render_message($action,$params);
+		return $this->_send();
+	}
+
+	/**
+	 * Builds a message
+	 *
+	 * The message will not be sent even in production environment.
+	 *
+	 * Method is called in a controller.
+	 * <code>
+	 * 	$mail_ar = $this->mailer->build("registration_notification",array(
+	 *		"user" => $user
+	 * 	));
+	 * </code>
+	 *
+	 * @param string $action name of action to be build
+	 * @param array $params optional additional parameters
+	 * @return array sendmail() output
+	 */
+	function build($action,$params = array()){
+		$this->_render_message($action,$params);
+		return $this->_send(array("build_message_only" => true));
+	}
+
+	function _render_message($action,$params = array()){
 		global $ATK14_GLOBAL;
 
 		$this->body = $this->body_html = ""; // reset body, opetovne volani by NEvyvolalo vygenerovani sablony
@@ -277,8 +304,6 @@ class Atk14Mailer{
 			}
 			$this->_after_render();
 		}
-
-		return $this->_send();
 	}
 
 	/**
@@ -333,9 +358,8 @@ class Atk14Mailer{
 	 * @access protected
 	 * @return array
 	 * @uses sendmail()
-	 *
 	 */
-	function _send(){
+	function _send($options = array()){
 		$params = array(
 			"from" => $this->from,
 			"from_name" => $this->from_name,
@@ -349,6 +373,7 @@ class Atk14Mailer{
 			"charset" => $this->content_charset,
 			"attachments" => $this->_attachments
 		);
+		$params += $options;
 		if($this->body_html){
 			// !! experimental feature
 			$params["plain"] = $params["body"]; // oups! in sendhtmlmail() there is no param named body
