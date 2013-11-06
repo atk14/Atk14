@@ -114,6 +114,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		"cc" => null,
 		"bcc" => null,
 		"return_path" => null,
+		"date" => gmdate('D, d M Y H:i:s \G\M\T', time()),
 		"subject" => $subject,
 		"body" => $message,
 		"transfer_encoding" => SENDMAIL_DEFAULT_TRANSFER_ENCODING, // zpusob kodovani body (nikoli prilohy): "8bit" nebo "quoted-printable"
@@ -155,6 +156,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	$BCC = join(", ",$BCC);
 	$CC = _sendmail_correct_address($params['cc']);
 	$RETURN_PATH = isset($params["return_path"]) ? $params["return_path"] : $FROM;
+	$DATE = $params["date"];
 	$SUBJECT = _sendmail_escape_subject($params['subject'],$params["charset"]);
 	$BODY = $params['body'];
 	if(SENDMAIL_BODY_AUTO_PREFIX!=""){
@@ -231,6 +233,9 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		$HEADERS .= "Content-Transfer-Encoding: $params[transfer_encoding]\n";
 		if ($RETURN_PATH) {
 			$HEADERS .= "Return-Path: $RETURN_PATH\n";
+		}
+		if($DATE){
+			$HEADERS .= "Date: $DATE\n";
 		}
 
 		if($params["transfer_encoding"]=="quoted-printable"){
