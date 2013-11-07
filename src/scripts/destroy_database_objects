@@ -37,6 +37,7 @@ foreach($dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences")
 $env = strtolower($ATK14_GLOBAL->getEnvironment());
 echo "\n";
 echo "Database $dbname is now empty. You may want to run:\n";
+echo " $ ./scripts/delete_temporary_files\n";
 echo " $ ATK14_ENV=$env ./scripts/initialize_database\n";
 echo " $ ATK14_ENV=$env ./scripts/migrate\n";
 
