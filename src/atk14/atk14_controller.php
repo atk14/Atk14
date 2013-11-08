@@ -564,6 +564,8 @@ class Atk14Controller{
 	* Creates a form instance if the given class exists.
 	* 
 	* $form = $this->_get_form("CreateNewForm");
+	* $form = $this->_get_form("create_new_form");
+	* $form = $this->_get_form("edit");
 	*/
 	function _get_form($class_name = null,$options = array()){
 		$options = array_merge(array(
@@ -571,9 +573,12 @@ class Atk14Controller{
 		),$options);
 		if(!isset($class_name)){
 			$class_name = new String("{$this->action}_form");
-			$class_name = $class_name->camelize();
 		}else{
 			$class_name = new String($class_name);
+		}
+		$class_name = $class_name->camelize();
+		if(!preg_match('/Form$/i',$class_name)){
+			$class_name->append("Form");
 		}
 
 		$id = "form_".$this->controller."_".$class_name->underscore();

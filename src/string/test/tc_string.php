@@ -162,6 +162,9 @@ class TcString extends TcBase{
 			"a_b_c_d" => "ABCD",
 		) as $str => $result){
 			$str = new String($str);
+			$this->assertEquals($result,$out = (string)$str->camelize());
+
+			$str = new String($out);
 			$this->assertEquals($result,(string)$str->camelize());
 		}
 
