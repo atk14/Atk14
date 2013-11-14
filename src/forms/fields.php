@@ -106,6 +106,7 @@ class Field
 	 * <li><b>initial</b> - </li>
 	 * <li><b>help_text</b> - </li>
 	 * <li><b>hint</b> - </li>
+	 * <li><b>hints</b> array of string </li>
 	 * <li><b>error_messages</b> - </li>
 	 * <li><b>disabled boolean</b> - </li>
 	 * </ul>
@@ -119,12 +120,17 @@ class Field
 				'label'          => null,
 				'initial'        => null,
 				'help_text'      => '', // like "In this field you can write down your favourite numbers"
-				'hint'           => '', // value format hint, like "1,3,7"
+				'hint'           => '', // value format hint, like "john.doe@example.com"
+				'hints'					 => array(), // array("john.doe","samantha93")
 				'error_messages' => null,
 				'disabled'       => false,
 			),
 			$options
 		);
+		if($options["hint"] && !$options["hints"]){
+			$options["hints"] = array($options["hint"]);
+		}
+
 		if (!isset($this->widget)) {
 			$this->widget = new TextInput();
 		}
@@ -143,6 +149,7 @@ class Field
 		$this->initial = $options['initial'];
 		$this->help_text = $options['help_text'];
 		$this->hint = $options['hint'];
+		$this->hints = $options['hints'];
 		$this->hint_in_placeholder = false;
 		$this->disabled = $options['disabled'];
 		if (is_null($options['widget'])) {
@@ -159,8 +166,8 @@ class Field
 			// this automatically adds placeholder and required to the attributes
 			if(is_subclass_of($widget,"Input")){
 				$_attr_keys = array_keys($widget->attrs);
-				if(strlen($this->hint) && !preg_match('/</',$this->hint)/* no-html */ && !in_array("placeholder",$_attr_keys)){
-					$widget->attrs["placeholder"] = $this->hint;
+				if(sizeof($this->hints)==1 && !preg_match('/</',$this->hints[0])/* no-html */ && !in_array("placeholder",$_attr_keys)){
+					$widget->attrs["placeholder"] = $this->hints[0];
 					$this->hint_in_placeholder = true;
 				}
 				if($this->required && !in_array("required",$_attr_keys)){
