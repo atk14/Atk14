@@ -143,6 +143,7 @@ class Field
 		$this->initial = $options['initial'];
 		$this->help_text = $options['help_text'];
 		$this->hint = $options['hint'];
+		$this->hint_in_placeholder = false;
 		$this->disabled = $options['disabled'];
 		if (is_null($options['widget'])) {
 			$widget = $this->widget;
@@ -160,6 +161,7 @@ class Field
 				$_attr_keys = array_keys($widget->attrs);
 				if(strlen($this->hint) && !preg_match('/</',$this->hint)/* no-html */ && !in_array("placeholder",$_attr_keys)){
 					$widget->attrs["placeholder"] = $this->hint;
+					$this->hint_in_placeholder = true;
 				}
 				if($this->required && !in_array("required",$_attr_keys)){
 					$widget->attrs["required"] = "required";
