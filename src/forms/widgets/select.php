@@ -23,14 +23,16 @@ class Select extends Widget
 
 	function render($name, $value, $options=array())
 	{
+		if(!isset($options["attrs"])){ $options["attrs"] = array(); }
+		$options["attrs"] = forms_array_merge($this->attrs,$options["attrs"]);
 		$options = forms_array_merge(array('attrs'=>null, 'choices'=>array()), $options);
 		if (is_null($value)) {
 			$value = '';
 		}
-		$final_attrs = $this->build_attrs($options['attrs'], array(
+		$final_attrs = $this->build_attrs(array(
 			'name' => $name,
 			'class' => 'form-control' // form-control is there for Bootstrap
-		));
+		),$options['attrs']);
 		$output = array('<select'.flatatt($final_attrs).'>');
 		// NOTE: puvodne jsem tu mel array_merge, ale ten nejde pouzit
 		// protoze se chova nehezky k indexum typu integer a string

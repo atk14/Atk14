@@ -511,7 +511,7 @@ class TcForms extends TcBase
 		// vykresleni policek jako HTML
 		$field = $form->get_field('first_name');
 		$this->assertEquals(
-			'<input type="text" name="first_name" class="text" id="id_first_name" value="John" />',
+			'<input type="text" name="first_name" class="text form-control" id="id_first_name" value="John" />',
 			$field->as_widget()
 		);
 		$this->assertEquals('First name', $field->label);
@@ -519,7 +519,7 @@ class TcForms extends TcBase
 
 		$field = $form->get_field('last_name');
 		$this->assertEquals(
-			'<input type="text" name="last_name" class="text" id="id_last_name" value="Lennon" />',
+			'<input type="text" name="last_name" class="text form-control" id="id_last_name" value="Lennon" />',
 			$field->as_widget()
 		);
 		$this->assertEquals('Last name', $field->label);
@@ -527,7 +527,7 @@ class TcForms extends TcBase
 
 		$field = $form->get_field('age');
 		$this->assertEquals(
-			'<input type="text" name="age" class="text" id="id_age" value="12" />',
+			'<input type="text" name="age" class="text form-control" id="id_age" value="12" />',
 			$field->as_widget()
 		);
 		$this->assertEquals('Age', $field->label);
@@ -540,9 +540,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<tr><th><label for="id_first_name">First name:</label></th><td><input type="text" name="first_name" class="text" id="id_first_name" value="John" /></td></tr>',
-					'<tr><th><label for="id_last_name">Last name:</label></th><td><input type="text" name="last_name" class="text" id="id_last_name" value="Lennon" /></td></tr>',
-					'<tr><th><label for="id_age">Age:</label></th><td><input type="text" name="age" class="text" id="id_age" value="12" /></td></tr>'
+					'<tr><th><label for="id_first_name">First name:</label></th><td><input type="text" name="first_name" class="text form-control" id="id_first_name" value="John" /></td></tr>',
+					'<tr><th><label for="id_last_name">Last name:</label></th><td><input type="text" name="last_name" class="text form-control" id="id_last_name" value="Lennon" /></td></tr>',
+					'<tr><th><label for="id_age">Age:</label></th><td><input type="text" name="age" class="text form-control" id="id_age" value="12" /></td></tr>'
 				)
 			),
 			$form->as_table()
@@ -575,9 +575,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<tr><th><label for="id_first_name">First name:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="text" name="first_name" class="text" id="id_first_name" /></td></tr>',
-					'<tr><th><label for="id_last_name">Last name:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="text" name="last_name" class="text" id="id_last_name" /></td></tr>',
-					'<tr><th><label for="id_age">Age:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="text" name="age" class="text" id="id_age" /></td></tr>'
+					'<tr><th><label for="id_first_name">First name:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="text" name="first_name" class="text form-control" id="id_first_name" /></td></tr>',
+					'<tr><th><label for="id_last_name">Last name:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="text" name="last_name" class="text form-control" id="id_last_name" /></td></tr>',
+					'<tr><th><label for="id_age">Age:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="text" name="age" class="text form-control" id="id_age" /></td></tr>'
 				)
 			),
 			$form->as_table()
@@ -586,9 +586,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text" id="id_first_name" /></li>',
-					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text" id="id_last_name" /></li>',
-					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_age">Age:</label> <input type="text" name="age" class="text" id="id_age" /></li>'
+					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></li>',
+					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></li>',
+					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /></li>'
 				)
 			),
 			$form->as_ul()
@@ -598,11 +598,11 @@ class TcForms extends TcBase
 				"\n", 
 				array(
 					'<ul class="errorlist"><li>This field is required.</li></ul>',
-					'<p><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text" id="id_first_name" /></p>',
+					'<p><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></p>',
 					'<ul class="errorlist"><li>This field is required.</li></ul>',
-					'<p><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text" id="id_last_name" /></p>',
+					'<p><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></p>',
 					'<ul class="errorlist"><li>This field is required.</li></ul>',
-					'<p><label for="id_age">Age:</label> <input type="text" name="age" class="text" id="id_age" /></p>'
+					'<p><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /></p>'
 				)
 			),
 			$form->as_p()
@@ -628,9 +628,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<tr><th><label for="id_first_name">First name:</label></th><td><input type="text" name="first_name" class="text" id="id_first_name" /></td></tr>',
-					'<tr><th><label for="id_last_name">Last name:</label></th><td><input type="text" name="last_name" class="text" id="id_last_name" /></td></tr>',
-					'<tr><th><label for="id_age">Age:</label></th><td><input type="text" name="age" class="text" id="id_age" /></td></tr>',
+					'<tr><th><label for="id_first_name">First name:</label></th><td><input type="text" name="first_name" class="text form-control" id="id_first_name" /></td></tr>',
+					'<tr><th><label for="id_last_name">Last name:</label></th><td><input type="text" name="last_name" class="text form-control" id="id_last_name" /></td></tr>',
+					'<tr><th><label for="id_age">Age:</label></th><td><input type="text" name="age" class="text form-control" id="id_age" /></td></tr>',
 				)
 			),
 			$form->as_table()
@@ -639,9 +639,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text" id="id_first_name" /></li>',
-					'<li><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text" id="id_last_name" /></li>',
-					'<li><label for="id_age">Age:</label> <input type="text" name="age" class="text" id="id_age" /></li>',
+					'<li><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></li>',
+					'<li><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></li>',
+					'<li><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -650,9 +650,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<p><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text" id="id_first_name" /></p>',
-					'<p><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text" id="id_last_name" /></p>',
-					'<p><label for="id_age">Age:</label> <input type="text" name="age" class="text" id="id_age" /></p>',
+					'<p><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></p>',
+					'<p><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></p>',
+					'<p><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /></p>',
 				)
 			),
 			$form->as_p()
@@ -690,11 +690,11 @@ class TcForms extends TcBase
 	{
 		$form = new Person();
 		$field = $form->get_field('first_name');
-		$this->assertEquals('<input type="text" name="first_name" class="text" id="id_first_name" />', $field->as_widget());
+		$this->assertEquals('<input type="text" name="first_name" class="text form-control" id="id_first_name" />', $field->as_widget());
 		$field = $form->get_field('last_name');
-		$this->assertEquals('<input type="text" name="last_name" class="text" id="id_last_name" />', $field->as_widget());
+		$this->assertEquals('<input type="text" name="last_name" class="text form-control" id="id_last_name" />', $field->as_widget());
 		$field = $form->get_field('age');
-		$this->assertEquals('<input type="text" name="age" class="text" id="id_age" />', $field->as_widget());
+		$this->assertEquals('<input type="text" name="age" class="text form-control" id="id_age" />', $field->as_widget());
 	}
 	
 	/**
@@ -759,9 +759,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<tr><th><label for="first_name_id">First name:</label></th><td><input type="text" name="first_name" class="text" id="first_name_id" /></td></tr>',
-					'<tr><th><label for="last_name_id">Last name:</label></th><td><input type="text" name="last_name" class="text" id="last_name_id" /></td></tr>',
-					'<tr><th><label for="age_id">Age:</label></th><td><input type="text" name="age" class="text" id="age_id" /></td></tr>',
+					'<tr><th><label for="first_name_id">First name:</label></th><td><input type="text" name="first_name" class="text form-control" id="first_name_id" /></td></tr>',
+					'<tr><th><label for="last_name_id">Last name:</label></th><td><input type="text" name="last_name" class="text form-control" id="last_name_id" /></td></tr>',
+					'<tr><th><label for="age_id">Age:</label></th><td><input type="text" name="age" class="text form-control" id="age_id" /></td></tr>',
 				)
 			),
 			$form->as_table()
@@ -770,9 +770,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li><label for="first_name_id">First name:</label> <input type="text" name="first_name" class="text" id="first_name_id" /></li>',
-					'<li><label for="last_name_id">Last name:</label> <input type="text" name="last_name" class="text" id="last_name_id" /></li>',
-					'<li><label for="age_id">Age:</label> <input type="text" name="age" class="text" id="age_id" /></li>',
+					'<li><label for="first_name_id">First name:</label> <input type="text" name="first_name" class="text form-control" id="first_name_id" /></li>',
+					'<li><label for="last_name_id">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name_id" /></li>',
+					'<li><label for="age_id">Age:</label> <input type="text" name="age" class="text form-control" id="age_id" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -781,9 +781,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<p><label for="first_name_id">First name:</label> <input type="text" name="first_name" class="text" id="first_name_id" /></p>',
-					'<p><label for="last_name_id">Last name:</label> <input type="text" name="last_name" class="text" id="last_name_id" /></p>',
-					'<p><label for="age_id">Age:</label> <input type="text" name="age" class="text" id="age_id" /></p>',
+					'<p><label for="first_name_id">First name:</label> <input type="text" name="first_name" class="text form-control" id="first_name_id" /></p>',
+					'<p><label for="last_name_id">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name_id" /></p>',
+					'<p><label for="age_id">Age:</label> <input type="text" name="age" class="text form-control" id="age_id" /></p>',
 				)
 			),
 			$form->as_p()
@@ -803,9 +803,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li><label for="first_name">First name:</label> <input type="text" name="first_name" class="text" id="first_name" /></li>',
-					'<li><label for="last_name">Last name:</label> <input type="text" name="last_name" class="text" id="last_name" /></li>',
-					'<li><label for="age">Age:</label> <input type="text" name="age" class="text" id="age" /></li>',
+					'<li><label for="first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="first_name" /></li>',
+					'<li><label for="last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name" /></li>',
+					'<li><label for="age">Age:</label> <input type="text" name="age" class="text form-control" id="age" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -817,9 +817,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li><label for="first_name">First name:</label> <input type="text" name="first_name" class="text" id="first_name" /></li>',
-					'<li><label for="last_name">Last name:</label> <input type="text" name="last_name" class="text" id="last_name" /></li>',
-					'<li><label for="age">Age:</label> <input type="text" name="age" class="text" id="age" /></li>',
+					'<li><label for="first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="first_name" /></li>',
+					'<li><label for="last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name" /></li>',
+					'<li><label for="age">Age:</label> <input type="text" name="age" class="text form-control" id="age" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -839,9 +839,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li>First name: <input type="text" name="first_name" class="text" /></li>',
-					'<li>Last name: <input type="text" name="last_name" class="text" /></li>',
-					'<li>Age: <input type="text" name="age" class="text" /></li>',
+					'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
+					'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
+					'<li>Age: <input type="text" name="age" class="text form-control" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -853,9 +853,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li>First name: <input type="text" name="first_name" class="text" /></li>',
-					'<li>Last name: <input type="text" name="last_name" class="text" /></li>',
-					'<li>Age: <input type="text" name="age" class="text" /></li>',
+					'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
+					'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
+					'<li>Age: <input type="text" name="age" class="text form-control" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -875,9 +875,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li><label for="first_name_id">First name:</label> <input id="first_name_id" type="text" name="first_name" class="text" /></li>',
-					'<li>Last name: <input type="text" name="last_name" class="text" /></li>',
-					'<li>Age: <input type="text" name="age" class="text" /></li>',
+					'<li><label for="first_name_id">First name:</label> <input id="first_name_id" type="text" name="first_name" class="text form-control" /></li>',
+					'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
+					'<li>Age: <input type="text" name="age" class="text form-control" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -897,9 +897,9 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li><label for="first_name_id">First name:</label> <input id="first_name_id" type="text" name="first_name" class="text" /></li>',
-					'<li><label for="last_name">Last name:</label> <input type="text" name="last_name" class="text" id="last_name" /></li>',
-					'<li><label for="age">Age:</label> <input type="text" name="age" class="text" id="age" /></li>',
+					'<li><label for="first_name_id">First name:</label> <input id="first_name_id" type="text" name="first_name" class="text form-control" /></li>',
+					'<li><label for="last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name" /></li>',
+					'<li><label for="age">Age:</label> <input type="text" name="age" class="text form-control" id="age" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -916,7 +916,7 @@ class TcForms extends TcBase
 		$form = new SignupForm(array('auto_id'=>false));
 		$field = $form->get_field('email');
 		$this->assertEquals(
-			'<input type="email" name="email" class="text" />',
+			'<input type="email" name="email" class="text form-control" />',
 			$field->as_widget()
 		);
 		$field = $form->get_field('get_spam');
@@ -932,7 +932,7 @@ class TcForms extends TcBase
 		$form = new SignupForm(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('email');
 		$this->assertEquals(
-			'<input type="email" name="email" class="text" value="test@example.com" />',
+			'<input type="email" name="email" class="text form-control" value="test@example.com" />',
 			$field->as_widget()
 		);
 		$field = $form->get_field('get_spam');
@@ -952,12 +952,12 @@ class TcForms extends TcBase
 		$form = new ContactForm(array('auto_id'=>false));
 		$field = $form->get_field('subject');
 		$this->assertEquals(
-			'<input type="text" name="subject" class="text" />',
+			'<input type="text" name="subject" class="text form-control" />',
 			$field->as_widget()
 		);
 		$field = $form->get_field('message');
 		$this->assertEquals(
-			'<textarea cols="20" rows="80" name="message"></textarea>',
+			'<textarea cols="20" rows="80" name="message" class="form-control"></textarea>',
 			$field->as_widget()
 		);
 
@@ -965,7 +965,7 @@ class TcForms extends TcBase
 		// as_textarea, as_text a as_hidden
 		$field = $form->get_field('subject');
 		$this->assertEquals(
-			'<textarea cols="40" rows="10" name="subject"></textarea>',
+			'<textarea cols="40" rows="10" name="subject" class="form-control"></textarea>',
 			$field->as_textarea()
 		);
 
@@ -974,7 +974,7 @@ class TcForms extends TcBase
 		// prvek cols ani rows neobsahuje)
 		$field = $form->get_field('message');
 		$this->assertEquals(
-			'<input type="text" name="message" class="text" />',
+			'<input type="text" name="message" class="text form-control" />',
 			$field->as_text()
 		);
 		$this->assertEquals(
@@ -988,12 +988,12 @@ class TcForms extends TcBase
 		$form = new ContactForm(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('subject');
 		$this->assertEquals(
-			'<textarea cols="40" rows="10" name="subject">Hello</textarea>',
+			'<textarea cols="40" rows="10" name="subject" class="form-control">Hello</textarea>',
 			$field->as_textarea()
 		);
 		$field = $form->get_field('message');
 		$this->assertEquals(
-			'<input type="text" name="message" class="text" value="I love you." />',
+			'<input type="text" name="message" class="text form-control" value="I love you." />',
 			$field->as_text()
 		);
 		$field = $form->get_field('message');
@@ -1012,7 +1012,7 @@ class TcForms extends TcBase
 		$form = new FrameworkForm(array('auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select name="language">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select name="language" class="form-control">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 
@@ -1021,7 +1021,7 @@ class TcForms extends TcBase
 		$form = new FrameworkForm(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select name="language">', '<option value="P" selected="selected">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select name="language" class="form-control">', '<option value="P" selected="selected">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 
@@ -1030,7 +1030,7 @@ class TcForms extends TcBase
 		$form = new FrameworkForm2(array('auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select name="language">', '<option value="" selected="selected">------</option>', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select name="language" class="form-control">', '<option value="" selected="selected">------</option>', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 
@@ -1068,12 +1068,12 @@ class TcForms extends TcBase
 		$form = new FrameworkForm5(array('auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select name="language">', '</select>')),
+			implode("\n", array('<select name="language" class="form-control">', '</select>')),
 			$field->as_widget()
 		);
 		$field->field->set_choices(array('P'=>'Python', 'J'=>'Java'));
 		$this->assertEquals(
-			implode("\n", array('<select name="language">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select name="language" class="form-control">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 	}
@@ -1096,7 +1096,7 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<tr><th>Name:</th><td><input type="text" name="name" class="text" /></td></tr>',
+					'<tr><th>Name:</th><td><input type="text" name="name" class="text form-control" /></td></tr>',
 					'<tr><th>Language:</th><td><ul class="radios">',
 					'<li><label><input type="radio" name="language" value="P" /> Python</label></li>',
 					'<li><label><input type="radio" name="language" value="J" /> Java</label></li>',
@@ -1109,7 +1109,7 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li>Name: <input type="text" name="name" class="text" /></li>',
+					'<li>Name: <input type="text" name="name" class="text form-control" /></li>',
 					'<li>Language: <ul class="radios">',
 					'<li><label><input type="radio" name="language" value="P" /> Python</label></li>',
 					'<li><label><input type="radio" name="language" value="J" /> Java</label></li>',
@@ -1133,7 +1133,7 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<tr><th><label for="id_name">Name:</label></th><td><input type="text" name="name" class="text" id="id_name" /></td></tr>',
+					'<tr><th><label for="id_name">Name:</label></th><td><input type="text" name="name" class="text form-control" id="id_name" /></td></tr>',
 					'<tr><th><label for="id_language_0">Language:</label></th><td><ul class="radios">',
 					'<li><label><input id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
 					'<li><label><input id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
@@ -1146,7 +1146,7 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<li><label for="id_name">Name:</label> <input type="text" name="name" class="text" id="id_name" /></li>',
+					'<li><label for="id_name">Name:</label> <input type="text" name="name" class="text form-control" id="id_name" /></li>',
 					'<li><label for="id_language_0">Language:</label> <ul class="radios">',
 					'<li><label><input id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
 					'<li><label><input id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
@@ -1159,7 +1159,7 @@ class TcForms extends TcBase
 			implode(
 				"\n", 
 				array(
-					'<p><label for="id_name">Name:</label> <input type="text" name="name" class="text" id="id_name" /></p>',
+					'<p><label for="id_name">Name:</label> <input type="text" name="name" class="text form-control" id="id_name" /></p>',
 					'<p><label for="id_language_0">Language:</label> <ul class="radios">',
 					'<li><label><input id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
 					'<li><label><input id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
@@ -1348,7 +1348,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration2(array('data'=>array(), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th>Username:</th><td><ul class="errorlist"><li>This field is required.</li></ul><input maxlength="10" type="text" name="username" class="text" /></td></tr>',
+				'<tr><th>Username:</th><td><ul class="errorlist"><li>This field is required.</li></ul><input maxlength="10" type="text" name="username" class="text form-control" /></td></tr>',
 				'<tr><th>Password1:</th><td><ul class="errorlist"><li>This field is required.</li></ul><input class="text" type="password" name="password1" /></td></tr>',
 				'<tr><th>Password2:</th><td><ul class="errorlist"><li>This field is required.</li></ul><input class="text" type="password" name="password2" /></td></tr>'
 			)), 
@@ -1374,7 +1374,7 @@ class TcForms extends TcBase
 		$this->assertEquals(
 			implode("\n", array(
 				'<tr><td colspan="2"><ul class="errorlist"><li>Please make sure your passwords match.</li></ul></td></tr>',
-				'<tr><th>Username:</th><td><input maxlength="10" type="text" name="username" class="text" value="adrian" /></td></tr>',
+				'<tr><th>Username:</th><td><input maxlength="10" type="text" name="username" class="text form-control" value="adrian" /></td></tr>',
 				'<tr><th>Password1:</th><td><input class="text" type="password" name="password1" value="foo" /></td></tr>',
 				'<tr><th>Password2:</th><td><input class="text" type="password" name="password2" value="bar" /></td></tr>'
 			)), 
@@ -1383,7 +1383,7 @@ class TcForms extends TcBase
 		$this->assertEquals(
 			implode("\n", array(
 				'<li><ul class="errorlist"><li>Please make sure your passwords match.</li></ul></li>',
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" value="adrian" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" value="adrian" /></li>',
 				'<li>Password1: <input class="text" type="password" name="password1" value="foo" /></li>',
 				'<li>Password2: <input class="text" type="password" name="password2" value="bar" /></li>'
 			)), 
@@ -1420,8 +1420,8 @@ class TcForms extends TcBase
 		$form = new MyForm($field_list);
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th>Field1:</th><td><input type="text" name="field1" class="text" /></td></tr>',
-				'<tr><th>Field2:</th><td><input type="text" name="field2" class="text" /></td></tr>'
+				'<tr><th>Field1:</th><td><input type="text" name="field1" class="text form-control" /></td></tr>',
+				'<tr><th>Field2:</th><td><input type="text" name="field2" class="text form-control" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
@@ -1433,8 +1433,8 @@ class TcForms extends TcBase
 		$form = new MyForm($field_list);
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th>Field3:</th><td><input type="text" name="field3" class="text" /></td></tr>',
-				'<tr><th>Field4:</th><td><input type="text" name="field4" class="text" /></td></tr>'
+				'<tr><th>Field3:</th><td><input type="text" name="field3" class="text form-control" /></td></tr>',
+				'<tr><th>Field4:</th><td><input type="text" name="field4" class="text form-control" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
@@ -1446,8 +1446,8 @@ class TcForms extends TcBase
 		$form2 = new MyForm($field_list);
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th>Field5:</th><td><input type="text" name="field5" class="text" /></td></tr>',
-				'<tr><th>Field6:</th><td><input type="text" name="field6" class="text" /></td></tr>'
+				'<tr><th>Field5:</th><td><input type="text" name="field5" class="text form-control" /></td></tr>',
+				'<tr><th>Field6:</th><td><input type="text" name="field6" class="text form-control" /></td></tr>'
 			)), 
 			$form2->as_table()
 		);
@@ -1460,10 +1460,10 @@ class TcForms extends TcBase
 		$form = new MyForm2($field_list);
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th>Default field 1:</th><td><input type="text" name="default_field_1" class="text" /></td></tr>',
-				'<tr><th>Default field 2:</th><td><input type="text" name="default_field_2" class="text" /></td></tr>',
-				'<tr><th>Field1:</th><td><input type="text" name="field1" class="text" /></td></tr>',
-				'<tr><th>Field2:</th><td><input type="text" name="field2" class="text" /></td></tr>'
+				'<tr><th>Default field 1:</th><td><input type="text" name="default_field_1" class="text form-control" /></td></tr>',
+				'<tr><th>Default field 2:</th><td><input type="text" name="default_field_2" class="text form-control" /></td></tr>',
+				'<tr><th>Field1:</th><td><input type="text" name="field1" class="text form-control" /></td></tr>',
+				'<tr><th>Field2:</th><td><input type="text" name="field2" class="text form-control" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
@@ -1475,10 +1475,10 @@ class TcForms extends TcBase
 		$form = new MyForm2($field_list);
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th>Default field 1:</th><td><input type="text" name="default_field_1" class="text" /></td></tr>',
-				'<tr><th>Default field 2:</th><td><input type="text" name="default_field_2" class="text" /></td></tr>',
-				'<tr><th>Field3:</th><td><input type="text" name="field3" class="text" /></td></tr>',
-				'<tr><th>Field4:</th><td><input type="text" name="field4" class="text" /></td></tr>'
+				'<tr><th>Default field 1:</th><td><input type="text" name="default_field_1" class="text form-control" /></td></tr>',
+				'<tr><th>Default field 2:</th><td><input type="text" name="default_field_2" class="text form-control" /></td></tr>',
+				'<tr><th>Field3:</th><td><input type="text" name="field3" class="text form-control" /></td></tr>',
+				'<tr><th>Field4:</th><td><input type="text" name="field4" class="text form-control" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
@@ -1539,25 +1539,25 @@ class TcForms extends TcBase
 		$form = new Person4(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th>First name:</th><td><input type="text" name="first_name" class="text" /></td></tr>',
-				'<tr><th>Last name:</th><td><input type="text" name="last_name" class="text" /></td></tr>',
-				'<tr><th>Age:</th><td><input type="text" name="age" class="text" /><input type="hidden" name="hidden_text" /></td></tr>'
+				'<tr><th>First name:</th><td><input type="text" name="first_name" class="text form-control" /></td></tr>',
+				'<tr><th>Last name:</th><td><input type="text" name="last_name" class="text form-control" /></td></tr>',
+				'<tr><th>Age:</th><td><input type="text" name="age" class="text form-control" /><input type="hidden" name="hidden_text" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>First name: <input type="text" name="first_name" class="text" /></li>',
-				'<li>Last name: <input type="text" name="last_name" class="text" /></li>',
-				'<li>Age: <input type="text" name="age" class="text" /><input type="hidden" name="hidden_text" /></li>'
+				'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
+				'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
+				'<li>Age: <input type="text" name="age" class="text form-control" /><input type="hidden" name="hidden_text" /></li>'
 			)), 
 			$form->as_ul()
 		);
 		$this->assertEquals(
 			implode("\n", array(
-				'<p>First name: <input type="text" name="first_name" class="text" /></p>',
-				'<p>Last name: <input type="text" name="last_name" class="text" /></p>',
-				'<p>Age: <input type="text" name="age" class="text" /><input type="hidden" name="hidden_text" /></p>'
+				'<p>First name: <input type="text" name="first_name" class="text form-control" /></p>',
+				'<p>Last name: <input type="text" name="last_name" class="text form-control" /></p>',
+				'<p>Age: <input type="text" name="age" class="text form-control" /><input type="hidden" name="hidden_text" /></p>'
 			)), 
 			$form->as_p()
 		);
@@ -1566,25 +1566,25 @@ class TcForms extends TcBase
 		$form = new Person4(array('auto_id'=>'id_%s'));
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th><label for="id_first_name">First name:</label></th><td><input type="text" name="first_name" class="text" id="id_first_name" /></td></tr>',
-				'<tr><th><label for="id_last_name">Last name:</label></th><td><input type="text" name="last_name" class="text" id="id_last_name" /></td></tr>',
-				'<tr><th><label for="id_age">Age:</label></th><td><input type="text" name="age" class="text" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></td></tr>'
+				'<tr><th><label for="id_first_name">First name:</label></th><td><input type="text" name="first_name" class="text form-control" id="id_first_name" /></td></tr>',
+				'<tr><th><label for="id_last_name">Last name:</label></th><td><input type="text" name="last_name" class="text form-control" id="id_last_name" /></td></tr>',
+				'<tr><th><label for="id_age">Age:</label></th><td><input type="text" name="age" class="text form-control" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
 		$this->assertEquals(
 			implode("\n", array(
-				'<li><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text" id="id_first_name" /></li>',
-				'<li><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text" id="id_last_name" /></li>',
-				'<li><label for="id_age">Age:</label> <input type="text" name="age" class="text" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></li>'
+				'<li><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></li>',
+				'<li><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></li>',
+				'<li><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></li>'
 			)), 
 			$form->as_ul()
 		);
 		$this->assertEquals(
 			implode("\n", array(
-				'<p><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text" id="id_first_name" /></p>',
-				'<p><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text" id="id_last_name" /></p>',
-				'<p><label for="id_age">Age:</label> <input type="text" name="age" class="text" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></p>'
+				'<p><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></p>',
+				'<p><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></p>',
+				'<p><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></p>'
 			)), 
 			$form->as_p()
 		);
@@ -1595,27 +1595,27 @@ class TcForms extends TcBase
 		$this->assertEquals(
 			implode("\n", array(
 				'<tr><td colspan="2"><ul class="errorlist"><li>(Hidden field hidden_text) This field is required.</li></ul></td></tr>',
-				'<tr><th>First name:</th><td><input type="text" name="first_name" class="text" value="John" /></td></tr>',
-				'<tr><th>Last name:</th><td><input type="text" name="last_name" class="text" value="Lennon" /></td></tr>',
-				'<tr><th>Age:</th><td><input type="text" name="age" class="text" value="12" /><input type="hidden" name="hidden_text" /></td></tr>'
+				'<tr><th>First name:</th><td><input type="text" name="first_name" class="text form-control" value="John" /></td></tr>',
+				'<tr><th>Last name:</th><td><input type="text" name="last_name" class="text form-control" value="Lennon" /></td></tr>',
+				'<tr><th>Age:</th><td><input type="text" name="age" class="text form-control" value="12" /><input type="hidden" name="hidden_text" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
 		$this->assertEquals(
 			implode("\n", array(
 				'<li><ul class="errorlist"><li>(Hidden field hidden_text) This field is required.</li></ul></li>',
-				'<li>First name: <input type="text" name="first_name" class="text" value="John" /></li>',
-				'<li>Last name: <input type="text" name="last_name" class="text" value="Lennon" /></li>',
-				'<li>Age: <input type="text" name="age" class="text" value="12" /><input type="hidden" name="hidden_text" /></li>'
+				'<li>First name: <input type="text" name="first_name" class="text form-control" value="John" /></li>',
+				'<li>Last name: <input type="text" name="last_name" class="text form-control" value="Lennon" /></li>',
+				'<li>Age: <input type="text" name="age" class="text form-control" value="12" /><input type="hidden" name="hidden_text" /></li>'
 			)), 
 			$form->as_ul()
 		);
 		$this->assertEquals(
 			implode("\n", array(
 				'<ul class="errorlist"><li>(Hidden field hidden_text) This field is required.</li></ul>',
-				'<p>First name: <input type="text" name="first_name" class="text" value="John" /></p>',
-				'<p>Last name: <input type="text" name="last_name" class="text" value="Lennon" /></p>',
-				'<p>Age: <input type="text" name="age" class="text" value="12" /><input type="hidden" name="hidden_text" /></p>'
+				'<p>First name: <input type="text" name="first_name" class="text form-control" value="John" /></p>',
+				'<p>Last name: <input type="text" name="last_name" class="text form-control" value="Lennon" /></p>',
+				'<p>Age: <input type="text" name="age" class="text form-control" value="12" /><input type="hidden" name="hidden_text" /></p>'
 			)), 
 			$form->as_p()
 		);
@@ -1646,20 +1646,20 @@ class TcForms extends TcBase
 		$form = new TestForm2(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th>Field1:</th><td><input type="text" name="field1" class="text" /></td></tr>',
-				'<tr><th>Field2:</th><td><input type="text" name="field2" class="text" /></td></tr>',
-				'<tr><th>Field3:</th><td><input type="text" name="field3" class="text" /></td></tr>',
-				'<tr><th>Field4:</th><td><input type="text" name="field4" class="text" /></td></tr>',
-				'<tr><th>Field5:</th><td><input type="text" name="field5" class="text" /></td></tr>',
-				'<tr><th>Field6:</th><td><input type="text" name="field6" class="text" /></td></tr>',
-				'<tr><th>Field7:</th><td><input type="text" name="field7" class="text" /></td></tr>',
-				'<tr><th>Field8:</th><td><input type="text" name="field8" class="text" /></td></tr>',
-				'<tr><th>Field9:</th><td><input type="text" name="field9" class="text" /></td></tr>',
-				'<tr><th>Field10:</th><td><input type="text" name="field10" class="text" /></td></tr>',
-				'<tr><th>Field11:</th><td><input type="text" name="field11" class="text" /></td></tr>',
-				'<tr><th>Field12:</th><td><input type="text" name="field12" class="text" /></td></tr>',
-				'<tr><th>Field13:</th><td><input type="text" name="field13" class="text" /></td></tr>',
-				'<tr><th>Field14:</th><td><input type="text" name="field14" class="text" /></td></tr>'
+				'<tr><th>Field1:</th><td><input type="text" name="field1" class="text form-control" /></td></tr>',
+				'<tr><th>Field2:</th><td><input type="text" name="field2" class="text form-control" /></td></tr>',
+				'<tr><th>Field3:</th><td><input type="text" name="field3" class="text form-control" /></td></tr>',
+				'<tr><th>Field4:</th><td><input type="text" name="field4" class="text form-control" /></td></tr>',
+				'<tr><th>Field5:</th><td><input type="text" name="field5" class="text form-control" /></td></tr>',
+				'<tr><th>Field6:</th><td><input type="text" name="field6" class="text form-control" /></td></tr>',
+				'<tr><th>Field7:</th><td><input type="text" name="field7" class="text form-control" /></td></tr>',
+				'<tr><th>Field8:</th><td><input type="text" name="field8" class="text form-control" /></td></tr>',
+				'<tr><th>Field9:</th><td><input type="text" name="field9" class="text form-control" /></td></tr>',
+				'<tr><th>Field10:</th><td><input type="text" name="field10" class="text form-control" /></td></tr>',
+				'<tr><th>Field11:</th><td><input type="text" name="field11" class="text form-control" /></td></tr>',
+				'<tr><th>Field12:</th><td><input type="text" name="field12" class="text form-control" /></td></tr>',
+				'<tr><th>Field13:</th><td><input type="text" name="field13" class="text form-control" /></td></tr>',
+				'<tr><th>Field14:</th><td><input type="text" name="field14" class="text form-control" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
@@ -1677,10 +1677,10 @@ class TcForms extends TcBase
 		$form = new UserRegistration3(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" /></li>',
 				'<li>Password: <input class="text" maxlength="10" type="password" name="password" /></li>',
-				'<li>Realname: <input maxlength="10" type="text" name="realname" class="text" /></li>',
-				'<li>Address: <input type="text" name="address" class="text" /></li>'
+				'<li>Realname: <input maxlength="10" type="text" name="realname" class="text form-control" /></li>',
+				'<li>Address: <input type="text" name="address" class="text form-control" /></li>'
 			)), 
 			$form->as_ul()
 		);
@@ -1690,7 +1690,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration4(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" /></li>',
 				'<li>Password: <input class="text" maxlength="10" type="password" name="password" /></li>',
 			)), 
 			$form->as_ul()
@@ -1707,7 +1707,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration5(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Your username: <input maxlength="10" type="text" name="username" class="text" /></li>',
+				'<li>Your username: <input maxlength="10" type="text" name="username" class="text form-control" /></li>',
 				'<li>Password1: <input class="text" type="password" name="password1" /></li>',
 				'<li>Password (again): <input class="text" type="password" name="password2" /></li>'
 			)),
@@ -1719,22 +1719,22 @@ class TcForms extends TcBase
 		$form = new Questions(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<p>The first question: <input type="text" name="q1" class="text" /></p>',
-				'<p>What is your name? <input type="text" name="q2" class="text" /></p>',
-				'<p>The answer to life is: <input type="text" name="q3" class="text" /></p>',
-				'<p>Answer this question! <input type="text" name="q4" class="text" /></p>',
-				'<p>The last question. Period. <input type="text" name="q5" class="text" /></p>'
+				'<p>The first question: <input type="text" name="q1" class="text form-control" /></p>',
+				'<p>What is your name? <input type="text" name="q2" class="text form-control" /></p>',
+				'<p>The answer to life is: <input type="text" name="q3" class="text form-control" /></p>',
+				'<p>Answer this question! <input type="text" name="q4" class="text form-control" /></p>',
+				'<p>The last question. Period. <input type="text" name="q5" class="text form-control" /></p>'
 			)),
 			$form->as_p()
 		);
 		$form = new Questions();
 		$this->assertEquals(
 			implode("\n", array(
-				'<p><label for="id_q1">The first question:</label> <input type="text" name="q1" class="text" id="id_q1" /></p>',
-				'<p><label for="id_q2">What is your name?</label> <input type="text" name="q2" class="text" id="id_q2" /></p>',
-				'<p><label for="id_q3">The answer to life is:</label> <input type="text" name="q3" class="text" id="id_q3" /></p>',
-				'<p><label for="id_q4">Answer this question!</label> <input type="text" name="q4" class="text" id="id_q4" /></p>',
-				'<p><label for="id_q5">The last question. Period.</label> <input type="text" name="q5" class="text" id="id_q5" /></p>'
+				'<p><label for="id_q1">The first question:</label> <input type="text" name="q1" class="text form-control" id="id_q1" /></p>',
+				'<p><label for="id_q2">What is your name?</label> <input type="text" name="q2" class="text form-control" id="id_q2" /></p>',
+				'<p><label for="id_q3">The answer to life is:</label> <input type="text" name="q3" class="text form-control" id="id_q3" /></p>',
+				'<p><label for="id_q4">Answer this question!</label> <input type="text" name="q4" class="text form-control" id="id_q4" /></p>',
+				'<p><label for="id_q5">The last question. Period.</label> <input type="text" name="q5" class="text form-control" id="id_q5" /></p>'
 			)),
 			$form->as_p()
 		);
@@ -1744,7 +1744,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration6(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li> <input maxlength="10" type="text" name="username" class="text" /></li>',
+				'<li> <input maxlength="10" type="text" name="username" class="text form-control" /></li>',
 				'<li>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1752,7 +1752,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration6(array('auto_id'=>'id_%s'));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li> <input maxlength="10" type="text" name="username" class="text" id="id_username" /></li>',
+				'<li> <input maxlength="10" type="text" name="username" class="text form-control" id="id_username" /></li>',
 				'<li><label for="id_password">Password:</label> <input class="text" type="password" name="password" id="id_password" /></li>'
 			)),
 			$form->as_ul()
@@ -1762,7 +1762,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration7(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" /></li>',
 				'<li>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1770,7 +1770,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration7(array('auto_id'=>'id_%s'));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li><label for="id_username">Username:</label> <input maxlength="10" type="text" name="username" class="text" id="id_username" /></li>',
+				'<li><label for="id_username">Username:</label> <input maxlength="10" type="text" name="username" class="text form-control" id="id_username" /></li>',
 				'<li><label for="id_password">Password:</label> <input class="text" type="password" name="password" id="id_password" /></li>'
 			)),
 			$form->as_ul()
@@ -1786,8 +1786,8 @@ class TcForms extends TcBase
 		$form = new FavoriteForm(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Favorite color? <input type="text" name="color" class="text" /></li>',
-				'<li>Favorite animal: <input type="text" name="animal" class="text" /></li>'
+				'<li>Favorite color? <input type="text" name="color" class="text form-control" /></li>',
+				'<li>Favorite animal: <input type="text" name="animal" class="text form-control" /></li>'
 			)),
 			$form->as_ul()
 		);
@@ -1795,8 +1795,8 @@ class TcForms extends TcBase
 		$form = new FavoriteForm(array('auto_id'=>false, 'label_suffix'=>'?'));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Favorite color? <input type="text" name="color" class="text" /></li>',
-				'<li>Favorite animal? <input type="text" name="animal" class="text" /></li>'
+				'<li>Favorite color? <input type="text" name="color" class="text form-control" /></li>',
+				'<li>Favorite animal? <input type="text" name="animal" class="text form-control" /></li>'
 			)),
 			$form->as_ul()
 		);
@@ -1804,8 +1804,8 @@ class TcForms extends TcBase
 		$form = new FavoriteForm(array('auto_id'=>false, 'label_suffix'=>''));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Favorite color? <input type="text" name="color" class="text" /></li>',
-				'<li>Favorite animal <input type="text" name="animal" class="text" /></li>'
+				'<li>Favorite color? <input type="text" name="color" class="text form-control" /></li>',
+				'<li>Favorite animal <input type="text" name="animal" class="text form-control" /></li>'
 			)),
 			$form->as_ul()
 		);
@@ -1822,7 +1822,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration8(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" value="django" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" value="django" /></li>',
 				'<li>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1832,7 +1832,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration8(array('data'=>array(), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li><ul class="errorlist"><li>This field is required.</li></ul>Username: <input maxlength="10" type="text" name="username" class="text" /></li>',
+				'<li><ul class="errorlist"><li>This field is required.</li></ul>Username: <input maxlength="10" type="text" name="username" class="text form-control" /></li>',
 				'<li><ul class="errorlist"><li>This field is required.</li></ul>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1840,7 +1840,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration8(array('data'=>array('username'=>''), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li><ul class="errorlist"><li>This field is required.</li></ul>Username: <input maxlength="10" type="text" name="username" class="text" /></li>',
+				'<li><ul class="errorlist"><li>This field is required.</li></ul>Username: <input maxlength="10" type="text" name="username" class="text form-control" /></li>',
 				'<li><ul class="errorlist"><li>This field is required.</li></ul>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1848,7 +1848,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration8(array('data'=>array('username'=>'foo'), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" value="foo" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" value="foo" /></li>',
 				'<li><ul class="errorlist"><li>This field is required.</li></ul>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1873,7 +1873,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration9(array('initial'=>array('username'=>'django'), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" value="django" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" value="django" /></li>',
 				'<li>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1881,7 +1881,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration9(array('initial'=>array('username'=>'stephane'), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" value="stephane" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" value="stephane" /></li>',
 				'<li>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1891,7 +1891,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration9(array('data'=>array(), 'initial'=>array('username'=>'django'), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li><ul class="errorlist"><li>This field is required.</li></ul>Username: <input maxlength="10" type="text" name="username" class="text" /></li>',
+				'<li><ul class="errorlist"><li>This field is required.</li></ul>Username: <input maxlength="10" type="text" name="username" class="text form-control" /></li>',
 				'<li><ul class="errorlist"><li>This field is required.</li></ul>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1899,7 +1899,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration9(array('data'=>array('username'=>''), 'initial'=>array('username'=>'django'), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li><ul class="errorlist"><li>This field is required.</li></ul>Username: <input maxlength="10" type="text" name="username" class="text" /></li>',
+				'<li><ul class="errorlist"><li>This field is required.</li></ul>Username: <input maxlength="10" type="text" name="username" class="text form-control" /></li>',
 				'<li><ul class="errorlist"><li>This field is required.</li></ul>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1907,7 +1907,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration9(array('data'=>array('username'=>'foo'), 'initial'=>array('username'=>'django'), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" value="foo" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" value="foo" /></li>',
 				'<li><ul class="errorlist"><li>This field is required.</li></ul>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1926,7 +1926,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration10(array('initial'=>array('username'=>'babik'), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" value="babik" /></li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" value="babik" /></li>',
 				'<li>Password: <input class="text" type="password" name="password" /></li>'
 			)),
 			$form->as_ul()
@@ -1942,21 +1942,21 @@ class TcForms extends TcBase
 		$form = new UserRegistration11(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" /> e.g., user@example.com</li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" /> e.g., user@example.com</li>',
 				'<li>Password: <input class="text" type="password" name="password" /> Choose wisely.</li>'
 			)),
 			$form->as_ul()
 		);
 		$this->assertEquals(
 			implode("\n", array(
-				'<p>Username: <input maxlength="10" type="text" name="username" class="text" /> e.g., user@example.com</p>',
+				'<p>Username: <input maxlength="10" type="text" name="username" class="text form-control" /> e.g., user@example.com</p>',
 				'<p>Password: <input class="text" type="password" name="password" /> Choose wisely.</p>'
 			)),
 			$form->as_p()
 		);
 		$this->assertEquals(
 			implode("\n", array(
-				'<tr><th>Username:</th><td><input maxlength="10" type="text" name="username" class="text" /><br />e.g., user@example.com</td></tr>',
+				'<tr><th>Username:</th><td><input maxlength="10" type="text" name="username" class="text form-control" /><br />e.g., user@example.com</td></tr>',
 				'<tr><th>Password:</th><td><input class="text" type="password" name="password" /><br />Choose wisely.</td></tr>'
 			)),
 			$form->as_table()
@@ -1966,7 +1966,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration11(array('data'=>array('username'=>'foo'), 'auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" value="foo" /> e.g., user@example.com</li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" value="foo" /> e.g., user@example.com</li>',
 				'<li><ul class="errorlist"><li>This field is required.</li></ul>Password: <input class="text" type="password" name="password" /> Choose wisely.</li>'
 			)),
 			$form->as_ul()
@@ -1976,7 +1976,7 @@ class TcForms extends TcBase
 		$form = new UserRegistration12(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>Username: <input maxlength="10" type="text" name="username" class="text" /> e.g., user@example.com</li>',
+				'<li>Username: <input maxlength="10" type="text" name="username" class="text form-control" /> e.g., user@example.com</li>',
 				'<li>Password: <input class="text" type="password" name="password" /><input type="hidden" name="next" value="/" /></li>'
 			)),
 			$form->as_ul()
@@ -1991,19 +1991,19 @@ class TcForms extends TcBase
 		$form = new Person(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>First name: <input type="text" name="first_name" class="text" /></li>',
-				'<li>Last name: <input type="text" name="last_name" class="text" /></li>',
-				'<li>Age: <input type="text" name="age" class="text" /></li>'
+				'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
+				'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
+				'<li>Age: <input type="text" name="age" class="text form-control" /></li>'
 			)),
 			$form->as_ul()
 		);
 		$form = new Musician(array('auto_id'=>false));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li>First name: <input type="text" name="first_name" class="text" /></li>',
-				'<li>Last name: <input type="text" name="last_name" class="text" /></li>',
-				'<li>Age: <input type="text" name="age" class="text" /></li>',
-				'<li>Instrument: <input type="text" name="instrument" class="text" /></li>'
+				'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
+				'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
+				'<li>Age: <input type="text" name="age" class="text form-control" /></li>',
+				'<li>Instrument: <input type="text" name="instrument" class="text form-control" /></li>'
 			)),
 			$form->as_ul()
 		);
@@ -2024,26 +2024,26 @@ class TcForms extends TcBase
 		$form = new Person(array('data'=>$data, 'prefix'=>'person1'));
 		$this->assertEquals(
 			implode("\n", array(
-				'<li><label for="id_person1_first_name">First name:</label> <input type="text" name="person1_first_name" class="text" id="id_person1_first_name" value="John" /></li>',
-				'<li><label for="id_person1_last_name">Last name:</label> <input type="text" name="person1_last_name" class="text" id="id_person1_last_name" value="Lennon" /></li>',
-				'<li><label for="id_person1_age">Age:</label> <input type="text" name="person1_age" class="text" id="id_person1_age" value="12" /></li>'
+				'<li><label for="id_person1_first_name">First name:</label> <input type="text" name="person1_first_name" class="text form-control" id="id_person1_first_name" value="John" /></li>',
+				'<li><label for="id_person1_last_name">Last name:</label> <input type="text" name="person1_last_name" class="text form-control" id="id_person1_last_name" value="Lennon" /></li>',
+				'<li><label for="id_person1_age">Age:</label> <input type="text" name="person1_age" class="text form-control" id="id_person1_age" value="12" /></li>'
 			)),
 			$form->as_ul()
 		);
 
 		$field = $form->get_field('first_name');
 		$this->assertEquals(
-			'<input type="text" name="person1_first_name" class="text" id="id_person1_first_name" value="John" />',
+			'<input type="text" name="person1_first_name" class="text form-control" id="id_person1_first_name" value="John" />',
 			$field->as_widget()
 		);
 		$field = $form->get_field('last_name');
 		$this->assertEquals(
-			'<input type="text" name="person1_last_name" class="text" id="id_person1_last_name" value="Lennon" />',
+			'<input type="text" name="person1_last_name" class="text form-control" id="id_person1_last_name" value="Lennon" />',
 			$field->as_widget()
 		);
 		$field = $form->get_field('age');
 		$this->assertEquals(
-			'<input type="text" name="person1_age" class="text" id="id_person1_age" value="12" />',
+			'<input type="text" name="person1_age" class="text form-control" id="id_person1_age" value="12" />',
 			$field->as_widget()
 		);
 
@@ -2135,9 +2135,9 @@ class TcForms extends TcBase
 		$this->assertTrue($form2->is_valid());
 		$this->assertEquals(
 			implode("\n", array(
-				'<li><label for="id_foo-prefix-first_name">First name:</label> <input type="text" name="foo-prefix-first_name" class="text" id="id_foo-prefix-first_name" /></li>',
-				'<li><label for="id_foo-prefix-last_name">Last name:</label> <input type="text" name="foo-prefix-last_name" class="text" id="id_foo-prefix-last_name" /></li>',
-				'<li><label for="id_foo-prefix-age">Age:</label> <input type="text" name="foo-prefix-age" class="text" id="id_foo-prefix-age" /></li>'
+				'<li><label for="id_foo-prefix-first_name">First name:</label> <input type="text" name="foo-prefix-first_name" class="text form-control" id="id_foo-prefix-first_name" /></li>',
+				'<li><label for="id_foo-prefix-last_name">Last name:</label> <input type="text" name="foo-prefix-last_name" class="text form-control" id="id_foo-prefix-last_name" /></li>',
+				'<li><label for="id_foo-prefix-age">Age:</label> <input type="text" name="foo-prefix-age" class="text form-control" id="id_foo-prefix-age" /></li>'
 			)),
 			$form->as_ul()
 		);

@@ -11,8 +11,8 @@ class ChoiceField extends Field
 
 	function __construct($options=array())
 	{
-		if (!isset($this->widget)) {
-			$this->widget = new Select();
+		if (!isset($options["widget"])) {
+			$options["widget"] = new Select();
 		}
 		parent::__construct($options);
 		$this->update_messages(array(
