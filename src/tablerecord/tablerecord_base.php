@@ -145,7 +145,7 @@ class TableRecord_Base extends inobj{
 		$this->_readTableStructure(array("cache" => $cache));
 
 		if(!$this->_TableStructure){
-			throw new Exception("There is not table $table_name in the database ".$this->_dbmole->getDatabaseName());
+			throw new Exception("There is not table $options[table_name] in the database ".$this->_dbmole->getDatabaseName());
 		}
 
 		$this->_IdFieldName = $options["id_field_name"];
