@@ -409,6 +409,34 @@ class Atk14Utils{
 	}
 
 	/**
+	 * Normalizes a URI
+	 *
+	 * <code>
+	 * echo Atk14Utils::NormalizeUri('/public/stylesheets/../dist/css/app.css?1384766775'); // /public/dist/css/app.css?1384766775
+	 * </code>
+	 */
+	static function NormalizeUri($uri){
+		$ar = explode('?',$uri);
+		$uri = array_shift($ar);
+
+		$uri = preg_replace('#/{2,}#','/',$uri);
+
+		do{
+			$orig = $uri;
+			$uri = preg_replace('#/[^/]+/../#','/',$uri); // /public/stylesheets/../dist/style.css -> /public/dist/stylesheets.css
+		}while($orig!=$uri);
+
+		do{
+			$orig = $uri;
+			$uri = preg_replace('#/\./#','/',$uri); // /public/./dist/style.css -> /public/dist/stylesheets.css
+		}while($orig!=$uri);
+
+
+		array_unshift($ar,$uri);
+		return join('?',$ar);
+	}
+
+	/**
 	 * @ignore
 	 */ 
 	static function _CorrectActionForUrl(&$params){

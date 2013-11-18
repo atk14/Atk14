@@ -43,6 +43,8 @@ function smarty_function_javascript_script_tag($params,$template){
 		$filename = $ATK14_GLOBAL->getPublicRoot()."javascripts/$file";
 	}
 
+	$href = Atk14Utils::NormalizeUri($href);
+
 	if(file_exists($filename)){
 		$src .= "?".filemtime($filename);
 	}

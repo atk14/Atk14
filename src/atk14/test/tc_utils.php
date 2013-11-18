@@ -52,4 +52,11 @@ class TcUtils extends TcBase{
 		));
 		$this->assertEquals("atk14salt_smarty{$version}_admin_books_",$smarty->compile_id);
 	}
+
+	function test_normalize_uri(){
+		$this->assertEquals('/public/stylesheets/blueprint/screen.css?1305634061',Atk14Utils::NormalizeUri('/public/stylesheets/blueprint/screen.css?1305634061'));
+
+		$this->assertEquals('/public/stylesheets/blueprint/screen.css?1305634061',Atk14Utils::NormalizeUri('/public/././stylesheets/blueprint/screen.css?1305634061'));
+		$this->assertEquals('/public/dist/css/app.css?1384766775',Atk14Utils::NormalizeUri('/public/stylesheets/../dist/css/app.css?1384766775'));
+	}
 }

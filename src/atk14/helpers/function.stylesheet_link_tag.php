@@ -52,6 +52,8 @@ function smarty_function_stylesheet_link_tag($params,$template){
 		$filename = $ATK14_GLOBAL->getPublicRoot()."stylesheets/$file";
 	}
 
+	$href = Atk14Utils::NormalizeUri($href);
+
 	if(file_exists($filename)){
 		$href .= "?".filemtime($filename);
 	}
