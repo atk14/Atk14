@@ -423,7 +423,7 @@ class Atk14Utils{
 
 		do{
 			$orig = $uri;
-			$uri = preg_replace('#/[^/]+/../#','/',$uri); // /public/stylesheets/../dist/style.css -> /public/dist/stylesheets.css
+			$uri = preg_replace('#/[^/]+/\.\./#','/',$uri); // /public/stylesheets/../dist/style.css -> /public/dist/stylesheets.css
 		}while($orig!=$uri);
 
 		do{

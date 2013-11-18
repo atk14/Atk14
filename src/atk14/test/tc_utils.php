@@ -56,6 +56,7 @@ class TcUtils extends TcBase{
 	function test_normalize_uri(){
 		$this->assertEquals('/public/stylesheets/blueprint/screen.css?1305634061',Atk14Utils::NormalizeUri('/public/stylesheets/blueprint/screen.css?1305634061'));
 
+		$this->assertEquals('/public/dist/js/app.js?1384779779',Atk14Utils::NormalizeUri('/public/javascripts/../dist/js/app.js?1384779779'));
 		$this->assertEquals('/public/stylesheets/blueprint/screen.css?1305634061',Atk14Utils::NormalizeUri('/public/././stylesheets/blueprint/screen.css?1305634061'));
 		$this->assertEquals('/public/dist/css/app.css?1384766775',Atk14Utils::NormalizeUri('/public/stylesheets/../dist/css/app.css?1384766775'));
 	}
