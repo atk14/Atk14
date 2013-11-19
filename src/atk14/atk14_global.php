@@ -212,7 +212,7 @@ class Atk14Global{
 		}
 
 		if(file_exists($_f = $path."$config_name.yml")){
-			$STORE[$config_name] = miniYAML::Load(Files::GetFileContent($_f));
+			$STORE[$config_name] = miniYAML::Load(Files::GetFileContent($_f),array("interpret_php" => true));
 		}
 
 		return $STORE[$config_name];

@@ -114,6 +114,8 @@ class miniYAML{
 	*		"login" => "admin",
 	*		"password" => "magic"
 	*	));
+	*
+	* Note: Think of newline removal at the end of php end tag!
 	*/
 	static function InterpretPHP($__yaml,$__values = array()){
 		foreach($__values as $__k => $__v){
