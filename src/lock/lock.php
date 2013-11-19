@@ -47,7 +47,7 @@ class Lock{
 			$f = fopen($lock_file,"r");
 			$stat = fread($f,1024);
 			$stat_pid = false;
-			if(ereg('^([0-9]{1,}) ([0-9]{1,})$',$stat,$pieces)){
+			if(preg_match('/^([0-9]{1,}) ([0-9]{1,})$/',$stat,$pieces)){
 				$stat = $pieces[1];
 				$stat_pid = $pieces[2];
 				settype($stat_pid,"integer");
