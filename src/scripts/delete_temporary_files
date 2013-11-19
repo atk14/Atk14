@@ -21,6 +21,6 @@ while($item = readdir($d_handle)){
 	}
 }
 
-echo "$counter files/dirs deleted\n";
+echo "$counter temporary files/dirs deleted\n";
 
 exit(0);
