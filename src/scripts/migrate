@@ -1,18 +1,20 @@
 #!/usr/bin/env php
 <?php
 /**
-* Do pending migrations.
-* Load and process *.sql or *.inc files from the migration folder (db/migrations/).
-* 
-* Usage:
-* 	$ php migrate.php
-* 	$ ATK14_ENV=production php migrate.php
-*
-* Note: table schema_migrations needs to be created in the database.
-*		CREATE TABLE schema_migrations(
-*			version VARCHAR(255) PRIMARY KEY
-*		);
-*/
+ * Do pending migrations.
+ * Load and process *.sql or *.php files from the migration folder (db/migrations/).
+ * 
+ * Usage:
+ *  $ ./scripts/migrate
+ *  $ ATK14_ENV=production ./scripts/migrate
+ *
+ * Note: table schema_migrations needs to be created in the database.
+ *   CREATE TABLE schema_migrations(
+ *     version VARCHAR(255) PRIMARY KEY
+ *   );
+ * You can create it by calling
+ *  $ ./scripts/initialize_database
+ */
 
 require_once(dirname(__FILE__)."/load.php");
 
@@ -33,6 +35,7 @@ asort($migrations);
 $already_done_migrations = $dbmole->selectIntoArray("SELECT version FROM schema_migrations ORDER BY version");
 
 $counter = 0;
+$ret = 0;
 foreach($migrations as $m){
 	if(in_array($m,$already_done_migrations)){ continue; }
 
@@ -48,6 +51,7 @@ foreach($migrations as $m){
 	}
 
 	if(!$migr->migrateUp()){
+		$ret = 1;
 		break; // an error occured
 	}
 
@@ -59,3 +63,4 @@ foreach($migrations as $m){
 if($counter==0){ $logger->info("there is nothing to migrate"); }
 
 $logger->flush_all();
+exit($ret);
