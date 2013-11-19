@@ -184,3 +184,12 @@ if(DEFAULT_CHARSET!="UTF-8"){
 	if($HTTP_REQUEST->xhr() && isset($_POST) && is_array($_POST)){ __to_default_charset__($_POST); }
 	if($HTTP_REQUEST->xhr() && isset($_GET) && is_array($_GET)){ __to_default_charset__($_GET); }
 }
+
+if(PRODUCTION && !SECRET_TOKEN){
+	$_msg = "SECRET_TOKEN is empty. Perhaps file config/secret_token.txt is missing or is empty.";
+	if(isset($_SERVER["REQUEST_URI"])){
+		$HTTP_RESPONSE->internalServerError();
+		$HTTP_RESPONSE->flushAll();
+	}
+	throw new Exception($_msg);
+}
