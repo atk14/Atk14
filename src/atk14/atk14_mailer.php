@@ -23,32 +23,34 @@
  *
  * This is how an action is called in a controller:
  * <code>
- * $this->mailer->execute("registration_notification",array(
- *		"user" => $user
- *	));
+ * $this->mailer->execute("notify_user_registration",$user,$password);
  * </code>
  *
  * The called action is defined in application_mailer.inc:
  * <code>
  * class ApplicationMailer extends Atk14Mailer {
- * 	function registration_notification($params) {
+ * 	function notify_user_registration($user,$plain_text_password) {
  * 		$this->from = "info@atk14.net";
- * 		$this->to = "atk@developers.net";
- * 		$this->subject = "News from Atk14 developers";
+ * 		$this->to = $user->getEmail();
+ * 		$this->subject = "Welcome to SiliconeWisdom.com";
  * 		...
- * 		$this->tpl_data["user"] = $params["user"];
+ * 		$this->tpl_data["user"] = $user;
+ *		$this->tpl_data["plain_text_password"] = $plain_text_password;
  * 	}
  * }
  * </code>
  *
  * Example of template:
- * mailer/registration_notification.tpl
+ * mailer/notify_user_registration.tpl
  * <code>
- * 	Hello {$user->getFullName()|h},
+ * 	Hello {$user->getFullName()},
  *
- *  this is Atk14 developers newsletter.
+ *	thanks for signing up for SiliconeWisdom.com!
  *
- *  ...
+ * 	Your data revision
+ *  login: {$user->getLogin()}
+ *	email: {$user->getEmail()}
+ *	password: {$plain_text_password}
  *  ...
  *
  * </code>
@@ -231,17 +233,19 @@ class Atk14Mailer{
 	 *
 	 * Method is called in a controller.
 	 * <code>
-	 * 	$this->mailer->execute("registration_notification",array(
+	 * 	$this->mailer->execute("notify_user_registration",array(
 	 *		"user" => $user
 	 *	));
 	 * </code>
 	 *
 	 * @param string $action name of action to be executed
-	 * @param array $params optional additional parameters
+	 * @param mixed other optional param
+	 * @param mixed other optional param, etc...
 	 * @return array sendmail() output
 	 */
-	function execute($action,$params = array()){
-		$this->_render_message($action,$params);
+	function execute(){
+		$args = func_get_args();
+		call_user_func_array(array($this,"_render_message"),$args);
 		return $this->_send();
 	}
 
@@ -252,22 +256,25 @@ class Atk14Mailer{
 	 *
 	 * Method is called in a controller.
 	 * <code>
-	 * 	$mail_ar = $this->mailer->build("registration_notification",array(
-	 *		"user" => $user
-	 * 	));
+	 * 	$mail_ar = $this->mailer->build("notify_user_registration",$user);
 	 * </code>
 	 *
 	 * @param string $action name of action to be build
-	 * @param array $params optional additional parameters
+	 * @param mixed other optional param
+	 * @param mixed other optional param, etc...
 	 * @return array sendmail() output
 	 */
-	function build($action,$params = array()){
-		$this->_render_message($action,$params);
+	function build(){
+		$args = func_get_args();
+		call_user_func_array(array($this,"_render_message"),$args);
 		return $this->_send(array("build_message_only" => true));
 	}
 
-	function _render_message($action,$params = array()){
+	function _render_message(){
 		global $ATK14_GLOBAL;
+
+		$args = func_get_args();
+		$action = array_shift($args);
 
 		$this->body = $this->body_html = ""; // reset body, opetovne volani by NEvyvolalo vygenerovani sablony
 
@@ -275,7 +282,7 @@ class Atk14Mailer{
 		$this->template_name = $action;
 
 		$this->_before_filter();
-		$this->$action($params);
+		call_user_func_array(array($this,$action),$args); // $this->$action($arg1, $arg2...);
 
 		if(strlen($this->body)==0){
 			$namespace = $this->namespace;

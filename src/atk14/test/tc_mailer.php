@@ -40,4 +40,12 @@ class TcMailer extends TcBase{
 		$this->assertContains("_before_render: OK (br)",$controller->mail_ar["body"]);
 		$this->assertContains("_after_render: OK (ar)",$controller->mail_ar["body"]);
 	}
+
+	function testing_params_passing(){
+		$controller = $this->client->get("testing/send_user_data_summary");
+		$this->assertEquals("john@doe.com",$controller->mail_ar["to"]);
+		$this->assertContains("login: john.doe",$controller->mail_ar["body"]);
+		$this->assertContains("email: john@doe.com",$controller->mail_ar["body"]);
+		$this->assertContains("password: krefERE34",$controller->mail_ar["body"]);
+	}
 }

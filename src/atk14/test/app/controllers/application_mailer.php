@@ -6,6 +6,15 @@ class ApplicationMailer extends Atk14Mailer {
 		$this->to = "john.doe@hotmail.com";
 	}
 
+	function user_data_summary_notification($login,$email,$password){
+		$this->to = $email;
+		$this->tpl_data += array(
+			"login" => $login,
+			"email" => $email,
+			"password" => $password,
+		);
+	}
+
 	function html_notification($params = array()){
 		$this->subject = "Rich formatted notification";
 		$this->to = "john.doe@hotmail.com";

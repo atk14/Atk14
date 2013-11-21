@@ -40,6 +40,10 @@ class TestingController extends ApplicationController{
 		$this->mail_ar = $this->mailer->execute("testing_hooks");
 	}
 
+	function send_user_data_summary(){
+		$this->mail_ar = $this->mailer->execute("user_data_summary_notification","john.doe","john@doe.com","krefERE34");
+	}
+
 	function _before_filter(){
 	}
 
