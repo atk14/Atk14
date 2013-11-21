@@ -13,6 +13,7 @@ require_once("$__PATH__/atk14_form.php");
 require_once("$__PATH__/atk14_utils.php");
 require_once("$__PATH__/atk14_require.php");
 require_once("$__PATH__/atk14_mailer.php");
+require_once("$__PATH__/atk14_mailer_proxy.php");
 require_once("$__PATH__/atk14_sorting.php");
 require_once("$__PATH__/atk14_client.php");
 require_once("$__PATH__/atk14_migration.php");

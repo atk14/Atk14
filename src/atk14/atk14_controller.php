@@ -50,6 +50,8 @@ class Atk14Controller{
 	 *
 	 * The $mailer variable can be used to execute mailer actions in a similar way to common controller actions
 	 *
+	 * Note: in fact this is Atk14MailerProxy member TODO: to be explained
+	 *
 	 * @var Atk14Mailer
 	 */
 	var $mailer = null;
@@ -459,7 +461,7 @@ class Atk14Controller{
 			($this->form = Atk14Form::GetDefaultForm($this));
 		}
 
-		$this->mailer = Atk14Mailer::GetInstanceByController($this);
+		$this->mailer = Atk14MailerProxy::GetInstanceByController($this);
 
 		if(!$cache){
 			Atk14Timer::Start("executing action $action");

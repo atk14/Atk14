@@ -27,7 +27,12 @@ class TestingController extends ApplicationController{
 
 	function send_ordinary_mail(){
 		$this->render_template = false;
-		$this->mail_ar = $this->mailer->execute("ordinary_notification");
+		$this->mail_ar = $this->mailer->execute("ordinary_notification","ORIGINAL_WAY");
+	}
+
+	function send_ordinary_mail_new_way(){
+		$this->render_template = false;
+		$this->mail_ar = $this->mailer->ordinary_notification("NEW_WAY");
 	}
 
 	function send_html_mail(){
@@ -41,6 +46,7 @@ class TestingController extends ApplicationController{
 	}
 
 	function send_user_data_summary(){
+		$this->render_template = false;
 		$this->mail_ar = $this->mailer->execute("user_data_summary_notification","john.doe","john@doe.com","krefERE34");
 	}
 

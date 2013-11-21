@@ -19,6 +19,14 @@ class TcMailer extends TcBase{
 	function test_sending(){
 		$controller = $this->client->get("testing/send_ordinary_mail");
 		$this->assertContains("this is just an ordinary notification from tests",$controller->mail_ar["body"]);
+		$this->assertContains("way: ORIGINAL_WAY",$controller->mail_ar["body"]);
+		$this->assertEquals("unit@testing.com",$controller->mail_ar["from"]);
+		$this->assertContains("From: Unit Testing <unit@testing.com>",$controller->mail_ar["headers"]);
+		$this->assertContains("Content-Type: text/plain",$controller->mail_ar["headers"]);
+
+		$controller = $this->client->get("testing/send_ordinary_mail_new_way");
+		$this->assertContains("this is just an ordinary notification from tests",$controller->mail_ar["body"]);
+		$this->assertContains("way: NEW_WAY",$controller->mail_ar["body"]);
 		$this->assertEquals("unit@testing.com",$controller->mail_ar["from"]);
 		$this->assertContains("From: Unit Testing <unit@testing.com>",$controller->mail_ar["headers"]);
 		$this->assertContains("Content-Type: text/plain",$controller->mail_ar["headers"]);

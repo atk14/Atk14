@@ -1,9 +1,12 @@
 <?php
 class ApplicationMailer extends Atk14Mailer {
 	var $from = "Unit Testing <unit@testing.com>";
-	function ordinary_notification($params = array()){
+
+	function ordinary_notification($way = ""){
 		$this->subject = "Ordinary notification";
 		$this->to = "john.doe@hotmail.com";
+
+		$this->tpl_data["way"] = $way;
 	}
 
 	function user_data_summary_notification($login,$email,$password){
