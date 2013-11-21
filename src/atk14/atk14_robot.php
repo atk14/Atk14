@@ -61,6 +61,8 @@ class Atk14Robot{
 	 *
 	 * Using this variable emails can be sent from a robot.
 	 *
+	 * Note: in fact this is a Atk14MailerProxy member TODO: to be explained
+	 *
 	 * @var Atk14Mailer
 	 */
 	var $mailer = null;
@@ -87,7 +89,7 @@ class Atk14Robot{
 		$robot_name = String::ToObject(get_class($this))->underscore()->gsub('/_robot$/','');
 		$this->logger = new Logger("$robot_name",array("default_log_file" => $this->default_log_file));
 
-		$this->mailer = Atk14Mailer::GetInstance(array(
+		$this->mailer = Atk14MailerProxy::GetInstance(array(
 			"namespace" => "",
 			"logger" => $this->logger,
 		));

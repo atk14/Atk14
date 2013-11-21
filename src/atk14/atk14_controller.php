@@ -50,7 +50,7 @@ class Atk14Controller{
 	 *
 	 * The $mailer variable can be used to execute mailer actions in a similar way to common controller actions
 	 *
-	 * Note: in fact this is Atk14MailerProxy member TODO: to be explained
+	 * Note: in fact this is a Atk14MailerProxy member TODO: to be explained
 	 *
 	 * @var Atk14Mailer
 	 */
