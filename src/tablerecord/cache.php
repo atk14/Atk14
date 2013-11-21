@@ -80,7 +80,7 @@ class Cache{
 	function _readToCache($class){
 		if(!isset($this->_Prepare[$class]) || !$this->_Prepare[$class]){ return; }
 		$ids = $this->_Prepare[$class];
-		$objs = $class::GetInstanceById($ids);
+		$objs = call_user_func(array($class,"GetInstanceById"),$ids);
 		foreach($objs as $k => $o){
 			$this->_Cache[$class][$k] = $o;
 		}

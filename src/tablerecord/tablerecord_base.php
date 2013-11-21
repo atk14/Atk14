@@ -367,8 +367,7 @@ class TableRecord_Base extends inobj{
 			return null;
 		}
 		
-		eval("\$out = $class_name::GetInstanceById(\$value);");
-		return $out;
+		return call_user_func(array($class_name,"GetInstanceById"),$value);
 	}
 
 	/**
