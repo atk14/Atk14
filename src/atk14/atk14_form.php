@@ -694,6 +694,17 @@ class Atk14Form extends Form
 		$this->atk14_attrs = array_merge($this->atk14_attrs,$key_or_values);
 	}
 
+	/**
+	 * Get form attribute
+	 *
+	 * echo $form->get_attr("class"); // null
+	 * $form->set_attr("class","nice");
+	 * echo $form->get_attr("class"); // "nice"
+	 */
+	function get_attr($key){
+		return isset($this->atk14_attrs[$key]) ? $this->atk14_attrs[$key] : null;
+	}
+
 
 	/**
 	 * Sets enctype attribute of form to value "multipart/form-data".

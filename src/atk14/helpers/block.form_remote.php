@@ -35,10 +35,10 @@ function smarty_block_form_remote($params, $content, $template, &$repeat){
 
 	$form = $params["form"];
 
-	$form->set_attr("class","remote_form");
-	$form->set_attr("data-remote","true");
-
 	$form->set_attr(Atk14Utils::ExtractAttributes($params));
+
+	$form->set_attr("class",trim($form->get_attr("class")." remote_form"));
+	$form->set_attr("data-remote","true");
 
 	$out = array();
 	$out[] = $form->begin();
