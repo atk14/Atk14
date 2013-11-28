@@ -664,6 +664,11 @@ class _CMailFile {
 	// This is not in all PHP versions so I define one here manuall.
 	function my_chunk_split($str)
 	{
+		if(function_exists("chunk_split")){
+			return chunk_split($str,76,"\n");
+		}
+
+		// this is way too slow
 		$stmp = $str;
 		$len = strlen($stmp);
 		$out = "";
