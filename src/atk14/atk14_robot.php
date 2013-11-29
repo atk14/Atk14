@@ -87,7 +87,10 @@ class Atk14Robot{
 		
 		$this->dbmole = &$GLOBALS["dbmole"];
 		$robot_name = String::ToObject(get_class($this))->underscore()->gsub('/_robot$/','');
-		$this->logger = new Logger("$robot_name",array("default_log_file" => $this->default_log_file));
+		$this->logger = new Logger("$robot_name",array(
+			"default_log_file" => $this->default_log_file,
+			"automatically_log_to_stdout_on_terminal" => true,
+		));
 
 		$this->mailer = Atk14MailerProxy::GetInstance(array(
 			"namespace" => "",
