@@ -152,6 +152,16 @@ class Logger{
 	/**
 	 * @access private
 	 */
+	var $_log_to_stdout = false;
+
+	/**
+	 * @access private
+	 */
+	var $_automatically_log_to_stdout_on_terminal = false;
+
+	/**
+	 * @access private
+	 */
 	var $_levels = array(
 		"-2" => "debug++",
 		"-1" => "debug",
@@ -165,20 +175,22 @@ class Logger{
 	);
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 *
 	 * @param string $prefix application_mark
 	 * @param array $options
 	 * <ul>
 	 * <li>disable_start_and_stop_marks (false) - whether start and stop marks show up in output</li>
-	 * <li>log_to_stdout (false) - if true output to stdout</li>
+	 * <li>log_to_stdout (false) - log messages to STDOUT instead of a log file</li>
+	 * <li>automatically_log_to_stdout_on_terminal (false) - log messages to a log file and also to STDOUT when we are on TERMINAL</li>
 	 * </ul>
 	 */
 	function __construct($prefix = "",$options = array()){
 		$options = array_merge(array(
 			"disable_start_and_stop_marks" => false,
+			"default_log_file" => LOGGER_DEFAULT_LOG_FILE,
 			"log_to_stdout" => false,
-			"default_log_file" => LOGGER_DEFAULT_LOG_FILE
+			"automatically_log_to_stdout_on_terminal" => false,
 		),$options);
 
 		$this->_default_log_file = $options["default_log_file"];
@@ -188,6 +200,8 @@ class Logger{
 
 		$this->set_prefix($prefix);
 		if($options["log_to_stdout"]){ $this->_log_file = "php://stdout"; }
+		$this->_log_to_stdout = $options["log_to_stdout"];
+		$this->_automatically_log_to_stdout_on_terminal = $options["automatically_log_to_stdout_on_terminal"];
 		$this->_disable_start_and_stop_marks = $options["disable_start_and_stop_marks"];
 	}
 
@@ -350,6 +364,10 @@ class Logger{
 
 			$str = $this->_build_message($rec);
 			fwrite($fp,$str,strlen($str));
+
+			if($this->_automatically_log_to_stdout_on_terminal && !$this->_log_to_stdout && posix_isatty(STDOUT)){
+				echo $str; // TODO: colorize
+			}
 		}
 
 		fclose($fp);
