@@ -17,16 +17,19 @@ Load and process *.sql or *.php files from the migration folder (db/migrations/)
 For displaying this help message run
  $ $script -h
 
-Basic usage in development:
+To display migrations waiting for processing:
+ $ $script -p
+
+To process all pending migrations:
  $ $script
 
-When automatic detection of environment doesn't work:
- $ ATK14_ENV=development $script
- $ ATK14_ENV=production $script
- $ ATK14_ENV=test $script
+To process just specific migrations:
+ $ $script 0010_migration.sql 0011_another_migration.sql
 
-To display migrations waiting for processing run:
- $ $script -p
+You can run migrate script in different environments:
+ $ ATK14_ENV=development $script -p
+ $ ATK14_ENV=production $script -p
+ $ ATK14_ENV=test $script -p
                                                                                   
 Note: table schema_migrations needs to be created in the database.
   CREATE TABLE schema_migrations(
@@ -44,6 +47,19 @@ $logger = Atk14Migration::GetLogger();
 
 if($previewing = isset($arguments["p"]) || isset($arguments["preview"])){
 	$logger->info("previewing pending migrations:");
+}
+
+// read migrations from command line
+// $ ./scripts/migrate -p 0009_adding_fileds_to_drafts.sql 0010_altering_constraint.sql
+// -> array("0009_adding_fileds_to_drafts.sql","0010_altering_constraint")
+$force_to_execute_migrations = array();
+if(sizeof($argv)>1){
+	$_argv = $argv;
+	while($_argv){
+		$_m = array_pop($_argv);
+		if(preg_match('/^-/',$_m)){ break; }
+		$force_to_execute_migrations[] = $_m;
+	}
 }
 
 // getting list of migration files
@@ -65,6 +81,8 @@ $ret = 0;
 foreach($migrations as $m){
 	if(in_array($m,$already_done_migrations)){ continue; }
 
+	if($force_to_execute_migrations && !in_array($m,$force_to_execute_migrations)){ continue; }
+
 	$counter++;
 
 	if($previewing){
@@ -82,7 +100,6 @@ foreach($migrations as $m){
 		// an *.sql file
 		$migr = new Atk14MigrationBySqlFile($m);
 	}
-
 
 	if(!$migr->migrateUp()){
 		$ret = 1;
