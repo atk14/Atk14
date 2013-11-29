@@ -1,24 +1,50 @@
 #!/usr/bin/env php
 <?php
 /**
- * Do pending migrations.
- * Load and process *.sql or *.php files from the migration folder (db/migrations/).
+ * Do pending migrations
  * 
- * Usage:
- *  $ ./scripts/migrate
- *  $ ATK14_ENV=production ./scripts/migrate
- *
- * Note: table schema_migrations needs to be created in the database.
- *   CREATE TABLE schema_migrations(
- *     version VARCHAR(255) PRIMARY KEY
- *   );
- * You can create it by calling
- *  $ ./scripts/initialize_database
+ * For more help run
+ *	$ ./scripts/migrations --help
  */
+
+$arguments = getopt("hp",array("help","preview"));
+if(isset($arguments["h"]) || isset($arguments["help"])){
+$script = $argv[0];
+echo ltrim("
+Do pending migrations
+Load and process *.sql or *.php files from the migration folder (db/migrations/).
+
+For displaying this help message run
+ $ $script -h
+
+Basic usage in development:
+ $ $script
+
+When automatic detection of environment doesn't work:
+ $ ATK14_ENV=development $script
+ $ ATK14_ENV=production $script
+ $ ATK14_ENV=test $script
+
+To display migrations waiting for processing run:
+ $ $script -p
+                                                                                  
+Note: table schema_migrations needs to be created in the database.
+  CREATE TABLE schema_migrations(
+    version VARCHAR(255) PRIMARY KEY
+  );
+You can create it by calling
+ $ ./scripts/initialize_database
+");
+exit(0);
+}
 
 require_once(dirname(__FILE__)."/load.php");
 
 $logger = Atk14Migration::GetLogger();
+
+if($previewing = isset($arguments["p"]) || isset($arguments["preview"])){
+	$logger->info("previewing pending migrations:");
+}
 
 // getting list of migration files
 $migrations = array();
@@ -39,6 +65,13 @@ $ret = 0;
 foreach($migrations as $m){
 	if(in_array($m,$already_done_migrations)){ continue; }
 
+	$counter++;
+
+	if($previewing){
+		$logger->info("$m");
+		continue;
+	}
+
 	$logger->info("about to start migration $m"); $logger->flush();
 	
 	if(preg_match("/^[0-9]+_(.*)\\.(inc|php)$/",$m,$matches)){
@@ -50,14 +83,13 @@ foreach($migrations as $m){
 		$migr = new Atk14MigrationBySqlFile($m);
 	}
 
+
 	if(!$migr->migrateUp()){
 		$ret = 1;
 		break; // an error occured
 	}
 
 	$logger->info("migration $m has been successfully finished"); $logger->flush();
-
-	$counter++;
 }
 
 if($counter==0){ $logger->info("there is nothing to migrate"); }
