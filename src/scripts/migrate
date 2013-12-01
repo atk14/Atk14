@@ -45,9 +45,7 @@ require_once(dirname(__FILE__)."/load.php");
 
 $logger = Atk14Migration::GetLogger();
 
-if($previewing = isset($arguments["p"]) || isset($arguments["preview"])){
-	$logger->info("previewing pending migrations:");
-}
+$previewing = isset($arguments["p"]) || isset($arguments["preview"]);
 
 // read migrations from command line
 // $ ./scripts/migrate -p 0009_adding_fileds_to_drafts.sql 0010_altering_constraint.sql
@@ -109,7 +107,7 @@ foreach($migrations as $m){
 	$logger->info("migration $m has been successfully finished"); $logger->flush();
 }
 
-if($counter==0){ $logger->info("there is nothing to migrate"); }
+if($counter==0 && !$previewing){ $logger->info("there is nothing to migrate"); }
 
 $logger->flush_all();
 exit($ret);
