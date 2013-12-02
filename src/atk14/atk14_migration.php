@@ -81,7 +81,10 @@ class Atk14Migration{
 		$this->dbmole->commit();
 
 		$this->dbmole->begin();
-		$this->dbmole->insertIntoTable("schema_migrations",array("version" => $this->version));
+		// when we are forcing some migration, the given record in schema_migrations already exists
+		if(0==$this->dbmole->selectInt("SELECT COUNT(*) FROM schema_migrations WHERE version=:version",array(":version" => $this->version))){
+			$this->dbmole->insertIntoTable("schema_migrations",array("version" => $this->version));
+		}
 		$this->dbmole->commit();
 
 		return true;

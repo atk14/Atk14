@@ -7,7 +7,7 @@
  *	$ ./scripts/migrations --help
  */
 
-$arguments = getopt("hp",array("help","preview"));
+$arguments = getopt("hpf",array("help","preview","force"));
 if(isset($arguments["h"]) || isset($arguments["help"])){
 $script = $argv[0];
 echo ltrim("
@@ -25,6 +25,9 @@ To process all pending migrations:
 
 To process just specific migrations:
  $ $script 0010_migration.sql 0011_another_migration.sql
+
+Force to process specific migration even when it was already processed:
+ $ $script -f 0012_import_sample_data_migration.php
 
 You can run migrate script in different environments:
  $ ATK14_ENV=development $script -p
@@ -60,6 +63,8 @@ if(sizeof($argv)>1){
 	}
 }
 
+$forcing = (isset($arguments["f"]) || isset($arguments["force"])) && sizeof($force_to_execute_migrations);
+
 // getting list of migration files
 $migrations = array();
 $dir = opendir($ATK14_GLOBAL->getMigrationsPath());
@@ -77,7 +82,7 @@ $already_done_migrations = $dbmole->selectIntoArray("SELECT version FROM schema_
 $counter = 0;
 $ret = 0;
 foreach($migrations as $m){
-	if(in_array($m,$already_done_migrations)){ continue; }
+	if(in_array($m,$already_done_migrations) && !$forcing){ continue; }
 
 	if($force_to_execute_migrations && !in_array($m,$force_to_execute_migrations)){ continue; }
 
