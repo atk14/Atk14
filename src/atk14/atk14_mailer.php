@@ -378,7 +378,8 @@ class Atk14Mailer{
 			"body" => $this->body,
 			"mime_type" => $this->content_type,
 			"charset" => $this->content_charset,
-			"attachments" => $this->_attachments
+			"attachments" => $this->_attachments,
+			"build_message_only" => false,
 		);
 		$params += $options;
 		if($this->body_html){
@@ -393,7 +394,7 @@ class Atk14Mailer{
 		}
 		if(DEVELOPMENT){
 			// logging e-mail data as we are developing
-			$this->logger->info("Sending an e-mail (not for real in DEVELOPMENT)\n---------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n\n$email_ar[body]");
+			$this->logger->info(($options["build_message_only"] ? "Building an e-mail (won't be sent in any environment)" : "Sending an e-mail (not for real in DEVELOPMENT)")."\n-----------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n\n$email_ar[body]");
 		}
 		return $email_ar;
 	}
