@@ -366,8 +366,8 @@ class Atk14Mailer{
 	 * @return array
 	 * @uses sendmail()
 	 */
-	function _send($options = array()){
-		$params = array(
+	function _send($params = array()){
+		$params += array(
 			"from" => $this->from,
 			"from_name" => $this->from_name,
 			"return_path" => $this->return_path,
@@ -381,7 +381,6 @@ class Atk14Mailer{
 			"attachments" => $this->_attachments,
 			"build_message_only" => false,
 		);
-		$params += $options;
 		if($this->body_html){
 			// !! experimental feature
 			$params["plain"] = $params["body"]; // oups! in sendhtmlmail() there is no param named body
@@ -394,7 +393,7 @@ class Atk14Mailer{
 		}
 		if(DEVELOPMENT){
 			// logging e-mail data as we are developing
-			$this->logger->info(($options["build_message_only"] ? "Building an e-mail (won't be sent in any environment)" : "Sending an e-mail (not for real in DEVELOPMENT)")."\n-----------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n\n$email_ar[body]");
+			$this->logger->info(($params["build_message_only"] ? "Building an e-mail (won't be sent in any environment)" : "Sending an e-mail (not for real in DEVELOPMENT)")."\n-----------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n\n$email_ar[body]");
 		}
 		return $email_ar;
 	}
