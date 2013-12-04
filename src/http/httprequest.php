@@ -247,12 +247,12 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getRequestAddress(){
-		$proto = $this->SSLActive() ? "https" : "http";
+		$proto = $this->sslActive() ? "https" : "http";
 		$port = "";
-		if($this->SSLActive() && $this->getServerPort()!=443){
+		if($this->sslActive() && $this->getServerPort()!=443){
 			$port = ":".$this->getServerPort();
 		}
-		if(!$this->SSLActive() && $this->getServerPort()!=80){
+		if(!$this->sslActive() && $this->getServerPort()!=80){
 			$port = ":".$this->getServerPort();
 		}
 		$hostname = $this->getHttpHost();
@@ -656,7 +656,7 @@ class HTTPRequest{
 	 * @param string $var_name name of POST parameter
 	 * @return bool
 	 */
-	function isPostVarDefined($var_name){ return $this->IsVarDefined($var_name,"P"); }
+	function isPostVarDefined($var_name){ return $this->isVarDefined($var_name,"P"); }
 
 	/**
 	 * Checks if a GET parameter is defined.
@@ -664,7 +664,7 @@ class HTTPRequest{
 	 * @param string $var_name name of GET parameter
 	 * @return bool
 	 */
-	function isGetVarDefined($var_name){ return $this->IsVarDefined($var_name,"G"); }
+	function isGetVarDefined($var_name){ return $this->isVarDefined($var_name,"G"); }
 
 	/**
 	 * Checks if a cookie variable is defined.
@@ -672,7 +672,7 @@ class HTTPRequest{
 	 * @param string $var_name name of cookie variable
 	 * @return bool
 	 */
-	function isCookieVarDefined($var_name){ return $this->IsVarDefined($var_name,"C"); }
+	function isCookieVarDefined($var_name){ return $this->isVarDefined($var_name,"C"); }
 
 	/**
 	 * Returns value of GET parameter.

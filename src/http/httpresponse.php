@@ -422,7 +422,7 @@ class HTTPResponse{
 	 *
 	 * <code>
 	 * $response->setHeader("X-Frame-Option","SAMEORIGIN");
-	 * $response->Header("X-Frame-Option");
+	 * $response->header("X-Frame-Option");
 	 * </code>
 	 *
 	 * @param string $name
@@ -529,7 +529,7 @@ class HTTPResponse{
 
 		if($title==""){ $title = $this->getStatusMessage(); }
 		
-		$this->Write("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">
+		$this->write("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">
 			<html><head>
 			<title>".$this->getStatusCode()." $title</title>
 			</head><body>
@@ -567,7 +567,7 @@ class HTTPResponse{
 	function write($string_to_write){
 		settype($string_to_write,"string");
 		if(strlen($string_to_write)>0){
-			$this->_OutputBuffer->AddString($string_to_write);
+			$this->_OutputBuffer->addString($string_to_write);
 		}
 	}
 
@@ -578,14 +578,14 @@ class HTTPResponse{
 	 */
 	function writeln($string_to_write = ""){
 		settype($string_to_write,"string");
-		$this->_OutputBuffer->AddString($string_to_write."\n");
+		$this->_OutputBuffer->addString($string_to_write."\n");
 	}
 
 	/**
 	 * Clears output buffer.
 	 */
 	function clearOutputBuffer(){
-		$this->_OutputBuffer->Clear();
+		$this->_OutputBuffer->clear();
 	}
 
 	/**
@@ -603,8 +603,8 @@ class HTTPResponse{
 
 		if($this->getContentLength()>0){
 			$this->_OutputBuffer_Flush_Started = true;
-			$this->_OutputBuffer->PrintOut();
-			$this->_OutputBuffer->Clear();
+			$this->_OutputBuffer->printOut();
+			$this->_OutputBuffer->clear();
 		}
 	}
 	
@@ -623,8 +623,8 @@ class HTTPResponse{
 
 		if($this->getContentLength()>0){
 			$this->_OutputBuffer_Flush_Started = true;
-			$this->_OutputBuffer->PrintOut();
-			$this->_OutputBuffer->Clear();
+			$this->_OutputBuffer->printOut();
+			$this->_OutputBuffer->clear();
 		}
 	}
 
@@ -680,7 +680,7 @@ class HTTPResponse{
 	 * @param HTTPResponse $http_response
 	 */
 	function concatenate($http_response){
-		$this->_OutputBuffer->AddStringBuffer($http_response->_OutputBuffer);
+		$this->_OutputBuffer->addStringBuffer($http_response->_OutputBuffer);
 
 		//kopirovani presmerovani
 		$_location = $http_response->getLocation();
