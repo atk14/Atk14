@@ -208,9 +208,11 @@ class TableRecord_Base extends inobj{
 
 	/**
 	 * Method to obtain instance of DbMole.
+	 *
+	 * $dbmole = Article::GetDbmole();
 	 */
-	function &GetDbmole(){
-		// TODO: toto je takove vachrlate
+	static function &GetDbmole(){
+		// TODO: ugly solution :(
 		if(class_exists("OracleMole")){
 			return OracleMole::GetInstance();
 		}
