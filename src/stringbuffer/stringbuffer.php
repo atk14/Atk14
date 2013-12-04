@@ -1,6 +1,6 @@
 <?php
 /**
- * Class provides operations with strings.
+ * Class provides operations with string buffering.
  *
  * @package Atk14
  * @subpackage InternalLibraries
@@ -8,7 +8,7 @@
  */
 
 /**
- * Class provides operations with strings.
+ * Class provides operations with string buffering.
  *
  * Internally the class holds its content in array of strings as they were added.
  *
@@ -29,10 +29,10 @@ class StringBuffer{
 	 * By default it creates an instance with empty buffer. Optionally you can pass a string to begin with.
 	 * @param string $string_to_add
 	 */
-	function StringBuffer($string_to_add = ""){
+	function __construct($string_to_add = ""){
 		settype($string_to_add,"string");
 		if(strlen($string_to_add)>0){
-			$this->AddString($string_to_add);
+			$this->addString($string_to_add);
 		}
 	}
 
@@ -57,11 +57,22 @@ class StringBuffer{
 	 *
 	 * @param string $string_to_add
 	 */
-	function AddString($string_to_add){
+	function addString($string_to_add){
 		settype($string_to_add,"string");
 		if(strlen($string_to_add)>0){
-			$this->_Buffer[] = $string_to_add;
+			$this->_Buffer[] = new StringBufferItem($string_to_add);
 		}
+	}
+
+	/**
+	 * Add content of the given file to buffers
+	 *
+	 * $buffer->addFile("/path/to/file");
+	 *
+	 * @param string $filename
+	 */
+	function addFile($filename){
+		$this->_Buffer[] = new StringBufferFileItem($filename);
 	}
 
 	/**
@@ -69,7 +80,7 @@ class StringBuffer{
 	 *
 	 * @param StringBuffer $stringbuffer_to_add
 	 */
-	function AddStringBuffer($stringbuffer_to_add){
+	function addStringBuffer($stringbuffer_to_add){
 		if(!isset($stringbuffer_to_add)){ return;}
 		for($i=0;$i<sizeof($stringbuffer_to_add->_Buffer);$i++){
 			$this->_Buffer[] = $stringbuffer_to_add->_Buffer[$i];
@@ -84,7 +95,7 @@ class StringBuffer{
 	function getLength(){
 		$out = 0;
 		for($i=0;$i<sizeof($this->_Buffer);$i++){
-			$out = $out + strlen($this->_Buffer[$i]);
+			$out = $out + $this->_Buffer[$i]->getLength();
 		}
 		return $out;
 	}
@@ -92,16 +103,16 @@ class StringBuffer{
 	/**
 	 * Echoes content of buffer.
 	 */
-	function PrintOut(){
+	function printOut(){
 		for($i=0;$i<sizeof($this->_Buffer);$i++){
-			echo $this->_Buffer[$i];
+			$this->_Buffer[$i]->flush();
 		}
 	}
 
 	/**
 	 * Clears buffer.
 	 */
-	function Clear(){
+	function clear(){
 		$this->_Buffer = array();
 	}
 
@@ -113,7 +124,7 @@ class StringBuffer{
 	 * @param string $search replaced string
 	 * @param string|StringBuffer $replace	replacement string. or another StringBuffer object
 	 */
-	function Replace($search,$replace){
+	function replace($search,$replace){
 		settype($search,"string");
 
 		// prevod StringBuffer na string
@@ -122,7 +133,48 @@ class StringBuffer{
 		}
 
 		for($i=0;$i<sizeof($this->_Buffer);$i++){
-			$this->_Buffer[$i] = str_replace($search,$replace,$this->_Buffer[$i]);
+			$this->_Buffer[$i]->replace($search,$replace);
 		}
+	}
+}
+
+class StringBufferItem{
+	function __construct($string){
+		$this->_String = $string;
+	}
+
+	function getLength(){ return strlen($this->_String); }
+	function flush(){ echo $this->_String; }
+	function toString(){ return $this->_String; }
+	function __toString(){ return $this->toString(); }
+
+	function replace($search,$replace){
+		$this->_String = str_replace($search,$replace,$this->_String);
+	}
+}
+
+class StringBufferFileItem extends StringBufferItem{
+	function __construct($filename){
+		$this->_Filename = $filename;
+	}
+
+	function getLength(){
+		if(isset($this->_String)){ return parent::getLength(); }
+		return filesize($this->_Filename);
+	}
+
+	function flush(){
+		if(isset($this->_String)){ return parent::flush(); }
+		readfile($this->_Filename);
+	}
+
+	function toString(){
+		if(isset($this->_String)){ return parent::toString(); }
+		return Files::GetFileContent($this->_Filename);
+	}
+
+	function replace($search,$replace){
+		$this->_String = $this->toString();
+		return parent::replace($search,$replace);
 	}
 }
