@@ -1,44 +1,84 @@
 #!/usr/bin/env php
 <?php
 /**
- * Cleares all objects in database.
+ * Cleares all objects in the database.
  * This script works in DEVELOPMENT or TESTING environment only.
+ *
+ * For more help run
+ *	$ ./scripts/destroy_database_objects --help
+ *
+ * TODO: purge triggers and procedures
  */
+
+$arguments = getopt("hp",array("help","preview"));
+if(isset($arguments["h"]) || isset($arguments["help"])){
+$script = $argv[0];
+echo ltrim("
+Cleares all objects in database.
+This script works in DEVELOPMENT or TESTING environment only.
+
+For displaying this help message run
+ $ $script -h
+
+For previewing what it's gonna happen to the database
+ $ $script -p
+");
+exit(0);
+}
 
 require_once(dirname(__FILE__)."/load.php");
 
-if(PRODUCTION){
-	echo "Refuse to purge database objects in PRODUCTION database. Do it by hand. Bye.\n";
-	exit(1);
-}
-
+$previewing = isset($arguments["p"]) || isset($arguments["preview"]);
 $dbname = $dbmole->getDatabaseName();
 
-echo "Shall I wipe out all objects in the database $dbname? Hit y, if so... ";
+if(!$previewing){
 
-$fh = fopen('php://stdin', 'r');
-if(trim(fgets($fh,1024))!="y"){
-	echo "Bye, bye\n";
-	exit(1);
+	if(PRODUCTION){
+		echo "Refuse to purge database objects in PRODUCTION database. Do it by hand. Bye.\n";
+		exit(1);
+	}
+
+	echo "Shall I wipe out all objects in the database $dbname? Hit y, if so... ";
+
+	$fh = fopen('php://stdin', 'r');
+	if(trim(fgets($fh,1024))!="y"){
+		echo "Bye, bye\n";
+		exit(1);
+	}
+}
+
+if($previewing){
+	echo "-- database $dbname\n";
 }
 
 foreach($dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemaname='public'") as $table){
-	$dbmole->doQuery("DROP TABLE $table CASCADE");
+  $q = "DROP TABLE $table CASCADE";
+	if($previewing){
+		echo "$q;\n";
+		continue;
+	}
+	$dbmole->doQuery($q);
 	echo "table $table dropped\n";
 }
 
 foreach($dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences") as $sequence){
-	$dbmole->doQuery("DROP SEQUENCE $sequence CASCADE");
+	$q = "DROP SEQUENCE $sequence CASCADE";
+	if($previewing){
+		echo "$q;\n";
+		continue;
+	}
+	$dbmole->doQuery($q);
 	echo "sequence $sequence dropped\n";
 }
 
-// TODO: purge triggers and procedures
 
+if(!$previewing){
 $env = strtolower($ATK14_GLOBAL->getEnvironment());
 echo "\n";
 echo "Database $dbname is now empty. You may want to run:\n";
 echo " $ ./scripts/delete_temporary_files\n";
 echo " $ ATK14_ENV=$env ./scripts/initialize_database\n";
 echo " $ ATK14_ENV=$env ./scripts/migrate\n";
+}
 
 exit(0);
