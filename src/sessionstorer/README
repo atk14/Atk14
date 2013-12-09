@@ -1,42 +1,10 @@
--- ------------------------------ Oracle ---------------------------------------------
-
-CREATE SEQUENCE seq_sessions START WITH 1 INCREMENT BY 1 ORDER NOMAXVALUE;
-CREATE TABLE sessions(
-	id NUMBER(20,0) NOT NULL,
-	security VARCHAR2(32) NOT NULL,
-	--
-	remote_addr VARCHAR2(255) DEFAULT '' NOT NULL,
-	--
-	created DATE DEFAULT SYSDATE NOT NULL,
-	last_access DATE DEFAULT SYSDATE NOT NULL,
-	--
-	CONSTRAINT pk_sessions_id PRIMARY KEY (id) USING INDEX TABLESPACE tbs_eol_indexes
-) TABLESPACE tbs_eol_common;
-CREATE INDEX in_sessions_lastaccess ON sessions (last_access) TABLESPACE tbs_eol_indexes;
-
-CREATE SEQUENCE seq_session_values START WITH 1 INCREMENT BY 1 ORDER NOMAXVALUE;
-CREATE TABLE session_values(
-	id NUMBER(20,0) NOT NULL,
-	session_id INT NOT NULL,
-	session_name VARCHAR2(64) NOT NULL CHECK(LENGTH(session_name)>0),
-	--
-	key VARCHAR2(128) NOT NULL CHECK(LENGTH(key)>0),
-	value CLOB,
-	expiration DATE DEFAULT NULL,
-	--
-	CONSTRAINT pk_sessionvalues_id PRIMARY KEY (id) USING INDEX TABLESPACE tbs_eol_indexes,
-	CONSTRAINT unq_sessionvalues UNIQUE(session_id,session_name,key) USING INDEX TABLESPACE tbs_eol_indexes,
-	CONSTRAINT fk_sessionvalues_sessions FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
-) TABLESPACE tbs_eol_common;
-CREATE INDEX in_sessionvalues_sessionid ON session_values(session_id) TABLESPACE tbs_eol_indexes;
-CREATE INDEX in_sessionvalues_expiration ON session_values(expiration) TABLESPACE tbs_eol_indexes;
-
 -- ------------------------------ Postgresql -------------------------------------------
 
 CREATE SEQUENCE seq_sessions;
 CREATE TABLE sessions(
         id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_sessions'),
         security VARCHAR(32) NOT NULL CHECK (security ~ '^[a-zA-Z0-9]{32}$'),
+        session_name VARCHAR(64) NOT NULL CHECK(LENGTH(session_name)>0),
         --
         remote_addr VARCHAR(255) DEFAULT '' NOT NULL,
         --
@@ -49,14 +17,49 @@ CREATE SEQUENCE seq_session_values;
 CREATE TABLE session_values(
         id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_session_values'),
         session_id INT NOT NULL,
-        session_name VARCHAR(64) NOT NULL CHECK(LENGTH(session_name)>0),
+        section VARCHAR(64) NOT NULL CHECK(LENGTH(section)>0),
         --
         key VARCHAR(128) NOT NULL CHECK(LENGTH(key)>0),
         value TEXT DEFAULT '' NOT NULL,
         expiration TIMESTAMP DEFAULT NULL,
         --
-        CONSTRAINT unq_sessionvalues UNIQUE(session_id,session_name,key),
+        CONSTRAINT unq_sessionvalues UNIQUE(session_id,section,key),
         CONSTRAINT fk_sessionvalues_sessions FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
 );
 CREATE INDEX in_sessionvalues_sessionid ON session_values(session_id);
 CREATE INDEX in_sessionvalues_expiration ON session_values(expiration);
+
+-- ------------------------------ Oracle ---------------------------------------------
+
+CREATE SEQUENCE seq_sessions START WITH 1 INCREMENT BY 1 ORDER NOMAXVALUE;
+CREATE TABLE sessions(
+	id NUMBER(20,0) NOT NULL,
+	security VARCHAR2(32) NOT NULL,
+	session_name VARCHAR2(64) NOT NULL CHECK(LENGTH(session_name)>0),
+	--
+	remote_addr VARCHAR2(255) DEFAULT '' NOT NULL,
+	--
+	created DATE DEFAULT SYSDATE NOT NULL,
+	last_access DATE DEFAULT SYSDATE NOT NULL,
+	--
+	CONSTRAINT pk_sessions_id PRIMARY KEY (id) USING INDEX TABLESPACE index_tablespace
+) TABLESPACE default_tablespace;
+CREATE INDEX in_sessions_lastaccess ON sessions (last_access) TABLESPACE index_tablespace;
+
+CREATE SEQUENCE seq_session_values START WITH 1 INCREMENT BY 1 ORDER NOMAXVALUE;
+CREATE TABLE session_values(
+	id NUMBER(20,0) NOT NULL,
+	session_id INT NOT NULL,
+	section VARCHAR2(64) NOT NULL CHECK(LENGTH(section)>0),
+	--
+	key VARCHAR2(128) NOT NULL CHECK(LENGTH(key)>0),
+	value CLOB,
+	expiration DATE DEFAULT NULL,
+	--
+	CONSTRAINT pk_sessionvalues_id PRIMARY KEY (id) USING INDEX TABLESPACE index_tablespace,
+	CONSTRAINT unq_sessionvalues UNIQUE(session_id,section,key) USING INDEX TABLESPACE index_tablespace,
+	CONSTRAINT fk_sessionvalues_sessions FOREIGN KEY (session_id) REFERENCES sessions(id) ON DELETE CASCADE
+) TABLESPACE default_tablespace;
+CREATE INDEX in_sessionvalues_sessionid ON session_values(session_id) TABLESPACE index_tablespace;
+CREATE INDEX in_sessionvalues_expiration ON session_values(expiration) TABLESPACE index_tablespace;
+

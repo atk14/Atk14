@@ -42,7 +42,8 @@ __defaults__(array(
 // SessionStorer`s constants, a session subsystem
 __defaults__(array(
 	"SESSION_STORER_SESSION_MAX_LIFETIME" => 60 * 60 * 24 * 1, // time in seconds; whole day by default
-	"SESSION_STORER_COOKIE_NAME_SESSION" => "session",
+	"SESSION_STORER_DEFAULT_SESSION_NAME" => "session",
+	"SESSION_STORER_COOKIE_NAME_SESSION" => "%session_name%",
 	"SESSION_STORER_COOKIE_NAME_CHECK" => "check", // set this to empty string for disable sending the testing cookie
 	"SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY" => true,
 ));

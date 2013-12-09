@@ -5,11 +5,20 @@
 if(!defined("SESSION_STORER_SESSION_MAX_LIFETIME")){
 	define("SESSION_STORER_SESSION_MAX_LIFETIME",60 * 60 * 24 * 1);  // 1 den
 }
+
+if(!defined("SESSION_STORER_DEFAULT_SESSION_NAME")){
+	define("SESSION_STORER_DEFAULT_SESSION_NAME","ses");
+}
+
+if(!defined("SESSION_STORER_DEFAULT_SECTION")){
+	define("SESSION_STORER_DEFAULT_SECTION","default");
+}
+
 /**
  * Session cookie name
  */
 if(!defined("SESSION_STORER_COOKIE_NAME_SESSION")){
-	define("SESSION_STORER_COOKIE_NAME_SESSION","_ses_");
+	define("SESSION_STORER_COOKIE_NAME_SESSION","_%session_name%_"); // _ses_
 }
 /**
  * Checking cookie name
@@ -18,10 +27,6 @@ if(!defined("SESSION_STORER_COOKIE_NAME_SESSION")){
  */
 if(!defined("SESSION_STORER_COOKIE_NAME_CHECK")){
 	define("SESSION_STORER_COOKIE_NAME_CHECK","_chk_");
-}
-
-if(!defined("SESSION_STORER_DEFAULT_SESSION_NAME")){
-	define("SESSION_STORER_DEFAULT_SESSION_NAME","default");
 }
 
 /**
@@ -60,6 +65,7 @@ if(!defined("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS")){
  *			CREATE TABLE sessions(
  *				id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_sessions'),
  *				security VARCHAR(32) NOT NULL CHECK (security ~ '^[a-zA-Z0-9]{32}$'),
+ *				session_name VARCHAR(64) NOT NULL CHECK(LENGTH(session_name)>0),
  *				--
  *				remote_addr VARCHAR(255) DEFAULT '' NOT NULL,
  *				--
@@ -72,7 +78,7 @@ if(!defined("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS")){
  *			CREATE TABLE session_values(
  *				id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_session_values'),
  *				session_id INT NOT NULL,
- *				session_name VARCHAR(64) NOT NULL CHECK(LENGTH(session_name)>0),
+ *				section VARCHAR(64) NOT NULL CHECK(LENGTH(section)>0),
  *				--
  *				key VARCHAR(128) NOT NULL CHECK(LENGTH(key)>0),
  *				value TEXT DEFAULT '' NOT NULL,
@@ -93,7 +99,9 @@ class SessionStorer{
 	 * @access protected
 	 * @var string
 	 */
-	var $_SessionName = "default";
+	var $_SessionName = "ses";
+
+	var $_Section = "default";
 
 	/**
 	 * Id of a record from the table sessions
@@ -147,30 +155,51 @@ class SessionStorer{
 
 	var $_dbmole = null;
 
+	var $_MaxLifetime = null;
+	var $_SslOnly = false;
+	var $_CookieName = "";
+	var $_CookieExpiration = 0;
+
 	/**
 	 * Constructor
 	 *
-	 * Several sessions could exists in a database with different names.
+	 * Several sessions could exists in a database in different sections.
 	 * <code>
 	 *	 $session = new SessionStorer();
 	 *	 $session = new SessionStorer("main_application");
 	 *	 $session = new SessionStorer("admin");
 	 * </code>
 	 */
-	function SessionStorer($session_name = "",$options = array()){
-		if(is_array($session_name)){
-			$options = $session_name;
-			$session_name = "";
+	function __construct($section = "",$options = array()){
+		if(is_array($section)){
+			$options = $section;
+			$section = SESSION_STORER_DEFAULT_SECTION;
 		}
+		if(!$section){ $section = SESSION_STORER_DEFAULT_SECTION; }
 
 		$options = array_merge(array(
 			"request" => $GLOBALS["HTTP_REQUEST"],
-			"dbmole" => null
+			"dbmole" => null,
+
+			"session_name" => SESSION_STORER_DEFAULT_SESSION_NAME,
+			"section" => $section,
+
+			"max_lifetime" => SESSION_STORER_SESSION_MAX_LIFETIME,
+			"ssl_only" => false,
+			"cookie_name" => SESSION_STORER_COOKIE_NAME_SESSION,
+			"cookie_expiration" => 0,
 		),$options);
 
-		if(!$session_name){ $session_name = SESSION_STORER_DEFAULT_SESSION_NAME; }
-		$this->_SessionName = (string)$session_name;
+		$options["cookie_name"] = str_replace("%session_name%",$options["session_name"],$options["cookie_name"]); // "_%session_name%_" -> "_ses_"
+
+		$this->_SessionName = (string)$options["session_name"];
+		$this->_Section = (string)$options["section"];
 		$this->_request = $options["request"];
+
+		$this->_MaxLifetime = $options["max_lifetime"];
+		$this->_SslOnly = $options["ssl_only"];
+		$this->_CookieName = $options["cookie_name"];
+		$this->_CookieExpiration = $options["cookie_expiration"];
 
 		if($options["dbmole"]){
 			$this->_dbmole = $options["dbmole"];
@@ -184,6 +213,20 @@ class SessionStorer{
 
 		$this->_setCheckCookieWhenNeeded();
 	}
+
+	/**
+	 * $storer = new SessionStorer("default",array("session_name" => "secure", "ssl_only" => true));
+	 * echo $storer->getSessionName(); // "secure"
+	 */
+	function getSessionName(){ return $this->_SessionName; }
+
+	/**
+	 * $storer = new SessionStorer("default");
+	 * echo $session->getSection(); // "default"
+	 */
+	function getSection(){ return $this->_Section; }
+
+	function getCookieExpiration(){ return $this->_CookieExpiration; }
 
 	/**
 	 * Checks whether client has cookies enabled
@@ -357,8 +400,10 @@ class SessionStorer{
 		}
 
 		if(!isset($this->_request) || !$this->_request->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C")){
-			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,"1",time()+60*60*24*365*5);
+			// TODO: check cookie has to be set for both http and https
+			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,$this->_getCurrentTime(),$this->_getCurrentTime()+60*60*24*365*5);
 		}
+		// TODO: sent check cookie again when it is too old
 	}
 
 	/**
@@ -417,10 +462,10 @@ class SessionStorer{
 		$out = array();
 
 		for($i=0;$i<100;$i+=2){
-			if($this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i)!="check"){ break; }
+			if($this->_request->getCookie($this->_CookieName.$i)!="check"){ break; }
 			// well on the current index there is a check cookie, so the next one must contain a data or something is terribly wrong!
 
-			$item = $this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION.($i+1));
+			$item = $this->_request->getCookie($this->_CookieName.($i+1));
 			if(!Packer::Unpack($item,$val)){ return array(); }
 			if(!is_array($val) || array_keys($val)!=array("key","data")){ return array(); }
 			$out[] = $val;
@@ -439,7 +484,7 @@ class SessionStorer{
 		if(defined("TEST") && TEST && !is_null($this->_SessionId)){
 			// Since this is a testing environment,
 			// there is a big chance that previously saved session could be deleted due to a database rollback
-			if(!$this->_dbmole->selectInt("SELECT COUNT(*) FROM sessions WHERE id=:id",array(":id" => $this->_SessionId))){
+			if(!$this->_dbmole->selectInt("SELECT COUNT(*) FROM sessions WHERE id=:id AND session_name=:session_name",array(":id" => $this->_SessionId, ":session_name" => $this->getSessionName()))){
 				$this->_SessionId = null;
 				$this->_SessionSecurity = null;
 				return false;
@@ -458,8 +503,8 @@ class SessionStorer{
 		$id = null;
 		$security = null;
 
-		if(!isset($GLOBALS["_COOKIE"][SESSION_STORER_COOKIE_NAME_SESSION])){ return false; }
-		if(!is_string($cookie_val = $GLOBALS["_COOKIE"][SESSION_STORER_COOKIE_NAME_SESSION])){ return false; }
+		if(!isset($GLOBALS["_COOKIE"][$this->_CookieName])){ return false; }
+		if(!is_string($cookie_val = $GLOBALS["_COOKIE"][$this->_CookieName])){ return false; }
 
 		if(preg_match('/^([1-9][0-9]{0,20})\.([a-z0-9]{32})$/i',$cookie_val,$matches)){
 			$id = $matches[1];
@@ -490,8 +535,9 @@ class SessionStorer{
 			FROM
 				sessions
 			WHERE
-				id=:id
-		",array(":id" => $id));
+				id=:id AND
+				session_name=:session_name
+		",array(":id" => $id, ":session_name" => $this->getSessionName()));
 		if(isset($rec_security) && $rec_security==$security){
 			$this->_dbmole->doQuery("UPDATE sessions SET last_access=:now WHERE id=:id AND last_access<=:before_5_minutes",array(
 				":id" => $id,
@@ -500,6 +546,7 @@ class SessionStorer{
 			));
 			$this->_SessionId = $id;
 			$this->_SessionSecurity = $security;
+			// TODO: sent session cookie again when $this->getCookieExpiration()>0 && last_access is too old
 			return true;
 		}
 
@@ -523,15 +570,18 @@ class SessionStorer{
 		$stat = $this->_dbmole->doQuery("
 			INSERT INTO sessions(
 				id,
+				session_name,
 				security,
 				remote_addr
 			) VALUES(
 				:id,
+				:session_name,
 				:security,
 				:remote_addr
 			)
 		",array(
 			":id" => $id,
+			":session_name" => $this->getSessionName(),
 			":security" => $security,
 			":remote_addr" => $this->_request->getRemoteAddr(),
 		));
@@ -555,11 +605,11 @@ class SessionStorer{
 	function _setSessionCookie(){
 		$_expire_time = 0; // session cookie se nastavi do zavreni prohlizece
 		$_cokie_value = $this->getSecretToken();
-		$cookie = $this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION);
+		$cookie = $this->_request->getCookie($this->_CookieName);
 		if(is_string($cookie) && $cookie==$_cokie_value){
 			return true;
 		}
-		return $this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION,$_cokie_value,$_expire_time);
+		return $this->_setCookie($this->_CookieName,$_cokie_value,$_expire_time);
 	}
 
 	/**
@@ -595,7 +645,7 @@ class SessionStorer{
 			$time,
 			$this->_getWebDocumentRoot(), // 
 			$this->_getCookieDomain(), // domain
-			false, // secure
+			$this->_SslOnly, // secure
 			true // http only
 		);
 	}
@@ -631,7 +681,7 @@ class SessionStorer{
 	 * @access protected
 	 */
 	function _clearSessionCookie(){
-		return $this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION);
+		return $this->_clearCookie($this->_CookieName);
 	}
 
 	/**
@@ -652,10 +702,10 @@ class SessionStorer{
 					session_values
 				WHERE
 					session_id=:session_id AND
-					session_name=:session_name
+					section=:section
 			",array(
 				":session_id" => $this->_SessionId,
-				":session_name" => $this->_SessionName
+				":section" => $this->getSection(),
 		));
 		while(list(,$row) = each($rows)){
 			$_expiration = null;
@@ -677,13 +727,13 @@ class SessionStorer{
 	 * @access protected 
 	 */
 	function _garbageCollection(){
-		$_seconds = SESSION_STORER_SESSION_MAX_LIFETIME;
-		settype($_seconds,"integer");
 		$this->_dbmole->doQuery("
 			DELETE FROM sessions WHERE
-				last_access<:last_access
+				last_access<:last_access AND
+				session_name=:session_name
 		",array(
-			":last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $_seconds)
+			":last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $this->_MaxLifetime),
+			":session_name" => $this->getSessionName(),
 		));
 
 		$this->_dbmole->doQuery("
@@ -712,10 +762,10 @@ class SessionStorer{
 
 		$index = &$this->_CookieDataIndex;
 
-		$this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION.$index,"check"); // only a check that a real value is on the next index
+		$this->_setCookie($this->_CookieName.$index,"check"); // only a check that a real value is on the next index
 		$index++;
 
-		$this->_setCookie(SESSION_STORER_COOKIE_NAME_SESSION.$index,Packer::Pack($val)); // _ses_0, _ses_1, _ses_2...
+		$this->_setCookie($this->_CookieName.$index,Packer::Pack($val)); // _ses_0, _ses_1, _ses_2...
 		$index++;
 	}
 
@@ -733,11 +783,11 @@ class SessionStorer{
 			$this->_dbmole->doQuery("
 				DELETE FROM session_values WHERE
 					session_id=:session_id AND
-					session_name=:session_name AND
+					section=:section AND
 					key=:key
 			",array(
 				":session_id" => $this->_SessionId,
-				":session_name" => $this->_SessionName,
+				":section" => $this->getSection(),
 				":key" => $key
 			));
 		}else{
@@ -745,11 +795,11 @@ class SessionStorer{
 			$id = $this->_dbmole->selectSingleValue("
 				SELECT id FROM session_values WHERE
 					session_id=:session_id AND
-					session_name=:session_name AND
+					section=:section AND
 					key=:key
 			",array(
 				":session_id" => $this->_SessionId,
-				":session_name" => $this->_SessionName,
+				":section" => $this->getSection(),
 				":key" => $key
 			));
 
@@ -761,7 +811,7 @@ class SessionStorer{
 			$this->_dbmole->insertIntoTable("session_values",array(
 				"id" => 						$this->_dbmole->selectSequenceNextval("seq_session_values"),
 				"session_id" => 		$this->_SessionId,
-				"session_name" => 	$this->_SessionName,
+				"section" => 				$this->getSection(),
 				"key" => 						$key,
 				"value" => 					$this->_ValuesStore[$key]["packed_value"],
 				"expiration" => 		$this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"])
@@ -861,16 +911,16 @@ class SessionStorer{
 
 		// deleting data cookies if there are any
 		for($i=0;$i<100;$i++){
-			if($this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i)){
-				$this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION.$i);
+			if($this->_request->getCookie($this->_CookieName.$i)){
+				$this->_clearCookie($this->_CookieName.$i);
 				$counter++;
 			}
 		}
 
 		// deleting data cookies - the old way
-		if(($cookie = $this->_request->getCookie(SESSION_STORER_COOKIE_NAME_SESSION)) && is_array($cookie)){
+		if(($cookie = $this->_request->getCookie($this->_CookieName)) && is_array($cookie)){
 			foreach(array_keys($cookie) as $key){
-				$this->_clearCookie(SESSION_STORER_COOKIE_NAME_SESSION."[$key]");
+				$this->_clearCookie($this->_CookieName."[$key]");
 				$counter++;
 			}
 		}

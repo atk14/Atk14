@@ -45,8 +45,8 @@ class Atk14Session{
 	 * @static
 	 * @access private
 	 */
-	function Atk14Session($session_key = "atk14"){
-		$this->_SessionStorrer = new SessionStorer($session_key);
+	function __construct($session_key_or_session_storrer = "atk14"){
+		$this->_SessionStorrer = is_string($session_key_or_session_storrer) ? new SessionStorer($session_key_or_session_storrer) : $session_key_or_session_storrer;
 	}
 
 	/**

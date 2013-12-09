@@ -7,7 +7,7 @@ class TcSessionStorer extends TcBase{
 		$sent_cookies = $s->getSentCookies();
 		$this->assertEquals(1,sizeof($sent_cookies));
 		$this->assertEquals(SESSION_STORER_COOKIE_NAME_CHECK,$sent_cookies[0][0]);
-		$this->assertEquals("1",$sent_cookies[0][1]);
+		$this->assertEquals(CURRENT_TIME,$sent_cookies[0][1]);
 
 		$_COOKIE[SESSION_STORER_COOKIE_NAME_CHECK] = "1";
 		$s = new SessionStorer();
