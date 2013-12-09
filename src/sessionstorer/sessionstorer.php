@@ -3,7 +3,7 @@
  * Sessions lifetime, count of seconds
  */
 if(!defined("SESSION_STORER_SESSION_MAX_LIFETIME")){
-	define("SESSION_STORER_SESSION_MAX_LIFETIME",60 * 60 * 24 * 1);  // 1 den
+	define("SESSION_STORER_SESSION_MAX_LIFETIME",60 * 60 * 24 * 1);  // a day
 }
 
 if(!defined("SESSION_STORER_DEFAULT_SESSION_NAME")){
@@ -160,6 +160,8 @@ class SessionStorer{
 	var $_CookieName = "";
 	var $_CookieExpiration = 0;
 
+	var $_ForceCurrentTime = null;
+
 	/**
 	 * Constructor
 	 *
@@ -184,13 +186,21 @@ class SessionStorer{
 			"session_name" => SESSION_STORER_DEFAULT_SESSION_NAME,
 			"section" => $section,
 
-			"max_lifetime" => SESSION_STORER_SESSION_MAX_LIFETIME,
+			"max_lifetime" => null, // for garbage collection
 			"ssl_only" => false,
 			"cookie_name" => SESSION_STORER_COOKIE_NAME_SESSION,
-			"cookie_expiration" => 0,
+			"cookie_expiration" => 0, // 0 -> to the moment of closing of browser; 86400 -> 1 day
+
+			"current_time" => null,
 		),$options);
 
 		$options["cookie_name"] = str_replace("%session_name%",$options["session_name"],$options["cookie_name"]); // "_%session_name%_" -> "_ses_"
+		if($options["cookie_expiration"]==0 && !isset($options["max_lifetime"])){
+			$options["max_lifetime"] = SESSION_STORER_SESSION_MAX_LIFETIME;
+		}
+		if($options["cookie_expiration"]>0 && !isset($options["max_lifetime"])){
+			$options["max_lifetime"] = round($options["cookie_expiration"] * 1.1); // threshold
+		}
 
 		$this->_SessionName = (string)$options["session_name"];
 		$this->_Section = (string)$options["section"];
@@ -200,6 +210,8 @@ class SessionStorer{
 		$this->_SslOnly = $options["ssl_only"];
 		$this->_CookieName = $options["cookie_name"];
 		$this->_CookieExpiration = $options["cookie_expiration"];
+
+		$this->_ForceCurrentTime = $options["current_time"];
 
 		if($options["dbmole"]){
 			$this->_dbmole = $options["dbmole"];
@@ -225,6 +237,8 @@ class SessionStorer{
 	 * echo $session->getSection(); // "default"
 	 */
 	function getSection(){ return $this->_Section; }
+
+	function getCookieName(){ return $this->_CookieName; }
 
 	function getCookieExpiration(){ return $this->_CookieExpiration; }
 
@@ -374,6 +388,7 @@ class SessionStorer{
 	 * @return array
 	 */
 	function getSentCookies(){
+		$this->_initialize();
 		return $this->_SentCookies;
 	}
 
@@ -399,11 +414,15 @@ class SessionStorer{
 			return;
 		}
 
-		if(!isset($this->_request) || !$this->_request->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C")){
-			// TODO: check cookie has to be set for both http and https
-			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,$this->_getCurrentTime(),$this->_getCurrentTime()+60*60*24*365*5);
+		if(
+			!isset($this->_request) ||
+			!$this->_request->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C") ||
+			$this->_getCurrentTime()-(int)$this->_request->getCookieVar(SESSION_STORER_COOKIE_NAME_CHECK)>60*60*24*365*2 // the check cookie is older than 2 years
+		){
+			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,$this->_getCurrentTime(),$this->_getCurrentTime()+60*60*24*365*5,array(
+				"ssl_only" => false, // value of $this->_SslOnly does not matter
+			));
 		}
-		// TODO: sent check cookie again when it is too old
 	}
 
 	/**
@@ -418,7 +437,7 @@ class SessionStorer{
 
 		$this->_Initialized = true;
 
-		// the data cookies are meant to exist only a one request
+		// the data cookies are meant to exist only in a single request
 		// so it`s perfectly fine to delete them here
 		$this->_clearDataCookies();
 
@@ -462,10 +481,10 @@ class SessionStorer{
 		$out = array();
 
 		for($i=0;$i<100;$i+=2){
-			if($this->_request->getCookie($this->_CookieName.$i)!="check"){ break; }
+			if($this->_request->getCookie($this->getCookieName().$i)!="check"){ break; }
 			// well on the current index there is a check cookie, so the next one must contain a data or something is terribly wrong!
 
-			$item = $this->_request->getCookie($this->_CookieName.($i+1));
+			$item = $this->_request->getCookie($this->getCookieName().($i+1));
 			if(!Packer::Unpack($item,$val)){ return array(); }
 			if(!is_array($val) || array_keys($val)!=array("key","data")){ return array(); }
 			$out[] = $val;
@@ -503,8 +522,8 @@ class SessionStorer{
 		$id = null;
 		$security = null;
 
-		if(!isset($GLOBALS["_COOKIE"][$this->_CookieName])){ return false; }
-		if(!is_string($cookie_val = $GLOBALS["_COOKIE"][$this->_CookieName])){ return false; }
+		if(!isset($GLOBALS["_COOKIE"][$this->getCookieName()])){ return false; }
+		if(!is_string($cookie_val = $GLOBALS["_COOKIE"][$this->getCookieName()])){ return false; }
 
 		if(preg_match('/^([1-9][0-9]{0,20})\.([a-z0-9]{32})$/i',$cookie_val,$matches)){
 			$id = $matches[1];
@@ -529,24 +548,33 @@ class SessionStorer{
 
 		if(!$id || !$security){ return false; }
 
-		$rec_security = $this->_dbmole->selectSingleValue("
+		$row = $this->_dbmole->selectRow("
 			SELECT
-				security
+				security,
+				last_access
 			FROM
 				sessions
 			WHERE
 				id=:id AND
 				session_name=:session_name
 		",array(":id" => $id, ":session_name" => $this->getSessionName()));
+		$rec_security = $row ? $row["security"] : null;
 		if(isset($rec_security) && $rec_security==$security){
-			$this->_dbmole->doQuery("UPDATE sessions SET last_access=:now WHERE id=:id AND last_access<=:before_5_minutes",array(
-				":id" => $id,
-				":now" => $this->_getNow(),
-				":before_5_minutes" => $this->_getIsoDateTime($this->_getCurrentTime()-60*5), // aktualizujeme last_access nejvyse 1x za 5 minut
-			));
 			$this->_SessionId = $id;
 			$this->_SessionSecurity = $security;
-			// TODO: sent session cookie again when $this->getCookieExpiration()>0 && last_access is too old
+
+			if($this->_getCurrentTime()-strtotime($row["last_access"])>=60*5){
+				// sessions.last_access is being updated once a 5 minutes
+				$this->_dbmole->doQuery("UPDATE sessions SET last_access=:now WHERE id=:id",array(
+					":id" => $id,
+					":now" => $this->_getNow(),
+				));
+				if($this->getCookieExpiration()>0){
+					// send session cookie again when there is some expiration
+					$this->_setSessionCookie();
+				}
+			}
+
 			return true;
 		}
 
@@ -572,19 +600,26 @@ class SessionStorer{
 				id,
 				session_name,
 				security,
-				remote_addr
+				remote_addr,
+				last_access,
+				created
 			) VALUES(
 				:id,
 				:session_name,
 				:security,
-				:remote_addr
+				:remote_addr,
+				:now,
+				:now
 			)
 		",array(
 			":id" => $id,
 			":session_name" => $this->getSessionName(),
 			":security" => $security,
 			":remote_addr" => $this->_request->getRemoteAddr(),
+			":now" => $this->_getNow(),
 		));
+
+		$this->_garbageCollection();
 
 		$this->_SessionId = $id;
 		$this->_SessionSecurity = $security;
@@ -603,13 +638,18 @@ class SessionStorer{
 	 * @return bool
 	 */
 	function _setSessionCookie(){
-		$_expire_time = 0; // session cookie se nastavi do zavreni prohlizece
+		$_expire_time = $this->getCookieExpiration()==0 ? 0 : $this->_getCurrentTime() + $this->getCookieExpiration();
 		$_cokie_value = $this->getSecretToken();
-		$cookie = $this->_request->getCookie($this->_CookieName);
-		if(is_string($cookie) && $cookie==$_cokie_value){
+		$cookie = $this->_request->getCookie($this->getCookieName());
+		if(is_string($cookie) && $cookie==$_cokie_value && $this->getCookieExpiration()==0){
 			return true;
 		}
-		return $this->_setCookie($this->_CookieName,$_cokie_value,$_expire_time);
+
+		if($this->_SslOnly && (!$this->_request || !$this->_request->ssl())){
+			return false;
+		}
+
+		return $this->_setCookie($this->getCookieName(),$_cokie_value,$_expire_time);
 	}
 
 	/**
@@ -617,7 +657,14 @@ class SessionStorer{
 	 *
 	 * @access protected
 	 */
-	function _setCookie($name,$value,$time = 0){
+	function _setCookie($name,$value,$time = 0,$options = array()){
+		$options += array(
+			"ssl_only" => $this->_SslOnly,
+			"http_only" => true,
+			"domain" => $this->_getCookieDomain(),
+			"document_root" => $this->_getWebDocumentRoot(),
+		);
+
 		$this->_SentCookies[] = array($name,$value,$time);
 		if(strlen($value)>4000){
 			error_log("SessionStorer: there is a long cookie! ".strlen($value)." chars, url: ".$this->_request->getRequestAddress().", consider to reduce size of stored data");
@@ -629,13 +676,13 @@ class SessionStorer{
 				$name,
 				$value,
 				$time,
-				$this->_getWebDocumentRoot()
+				$options["document_root"]
 			);
 			SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS && $this->__setCookie(
 				$name,
 				$value,
 				$time,
-				$this->_getWebDocumentRoot(),
+				$options["document_root"],
 				$this->_request->getHttpHost()
 			);
 		}
@@ -643,10 +690,10 @@ class SessionStorer{
 			$name,
 			$value,
 			$time,
-			$this->_getWebDocumentRoot(), // 
-			$this->_getCookieDomain(), // domain
-			$this->_SslOnly, // secure
-			true // http only
+			$options["document_root"], // 
+			$options["domain"], // domain
+			$options["ssl_only"], // secure
+			$options["http_only"] // http only
 		);
 	}
 
@@ -681,7 +728,7 @@ class SessionStorer{
 	 * @access protected
 	 */
 	function _clearSessionCookie(){
-		return $this->_clearCookie($this->_CookieName);
+		return $this->_clearCookie($this->getCookieName());
 	}
 
 	/**
@@ -729,10 +776,10 @@ class SessionStorer{
 	function _garbageCollection(){
 		$this->_dbmole->doQuery("
 			DELETE FROM sessions WHERE
-				last_access<:last_access AND
+				last_access<:min_last_access AND
 				session_name=:session_name
 		",array(
-			":last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $this->_MaxLifetime),
+			":min_last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $this->_MaxLifetime),
 			":session_name" => $this->getSessionName(),
 		));
 
@@ -762,10 +809,10 @@ class SessionStorer{
 
 		$index = &$this->_CookieDataIndex;
 
-		$this->_setCookie($this->_CookieName.$index,"check"); // only a check that a real value is on the next index
+		$this->_setCookie($this->getCookieName().$index,"check"); // only a check that a real value is on the next index
 		$index++;
 
-		$this->_setCookie($this->_CookieName.$index,Packer::Pack($val)); // _ses_0, _ses_1, _ses_2...
+		$this->_setCookie($this->getCookieName().$index,Packer::Pack($val)); // _ses_0, _ses_1, _ses_2...
 		$index++;
 	}
 
@@ -855,6 +902,7 @@ class SessionStorer{
 	 * @return integer
 	 */
 	function _getCurrentTime(){
+		if($this->_ForceCurrentTime){ return $this->_ForceCurrentTime; }
 		return defined("CURRENT_TIME") ? CURRENT_TIME : time();
 	}
 
@@ -911,16 +959,16 @@ class SessionStorer{
 
 		// deleting data cookies if there are any
 		for($i=0;$i<100;$i++){
-			if($this->_request->getCookie($this->_CookieName.$i)){
-				$this->_clearCookie($this->_CookieName.$i);
+			if($this->_request->getCookie($this->getCookieName().$i)){
+				$this->_clearCookie($this->getCookieName().$i);
 				$counter++;
 			}
 		}
 
 		// deleting data cookies - the old way
-		if(($cookie = $this->_request->getCookie($this->_CookieName)) && is_array($cookie)){
+		if(($cookie = $this->_request->getCookie($this->getCookieName())) && is_array($cookie)){
 			foreach(array_keys($cookie) as $key){
-				$this->_clearCookie($this->_CookieName."[$key]");
+				$this->_clearCookie($this->getCookieName()."[$key]");
 				$counter++;
 			}
 		}

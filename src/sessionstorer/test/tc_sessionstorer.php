@@ -1,5 +1,61 @@
 <?php
 class TcSessionStorer extends TcBase{
+	function test_different_sections_on_same_session(){
+		global $_COOKIE;
+		$_COOKIE = array();
+
+		$s = new SessionStorer(); // "default"
+		$s->_createNewDatabaseSession();
+		$this->_add_cookies($s->getSentCookies(),$_COOKIE);
+		$this->assertEquals(true,!!strlen($s->getSecretToken()));
+
+		$s_admin = new SessionStorer("admin");
+		$this->assertEquals($s->getSecretToken(),$s_admin->getSecretToken()); // same token
+		$this->assertTrue("session"==$s->getCookieName() && "session"==$s_admin->getCookieName()); // same cookie name
+
+		$s->writeValue("logged_user","jack.ordinary");
+		$s->writeValue("credit",123);
+		$s_admin->writeValue("logged_user","john.admin");
+
+		$sess = new SessionStorer();
+		$this->assertEquals("jack.ordinary",$sess->readValue("logged_user"));
+		$this->assertEquals(123,$sess->readValue("credit"));
+
+		$sess = new SessionStorer("admin");
+		$this->assertEquals("john.admin",$sess->readValue("logged_user"));
+		$this->assertEquals(null,$sess->readValue("credit"));
+
+		// well, let's have another session with another two sections 
+		
+		$secured = new SessionStorer(array("session_name" => "secured"));
+		$secured->_createNewDatabaseSession();
+		$this->_add_cookies($secured->getSentCookies(),$_COOKIE);
+		$this->assertEquals(true,!!strlen($secured->getSecretToken()));
+		$this->assertTrue($s->getSecretToken()!=$secured->getSecretToken());
+
+		$secured_admin = new SessionStorer("admin",array("session_name" => "secured"));
+		$this->assertEquals($secured->getSecretToken(),$secured_admin->getSecretToken());
+		$this->assertTrue("secured"==$secured->getCookieName() && "secured"==$secured_admin->getCookieName());
+
+		$this->assertEquals(null,$secured->readValue("logged_user"));
+		$this->assertEquals(null,$secured->readValue("credit"));
+		$this->assertEquals(null,$secured_admin->readValue("logged_user"));
+		$this->assertEquals(null,$secured_admin->readValue("credit"));
+
+		$secured->writeValue("logged_user","amanda.careful");
+		$secured->writeValue("credit",432);
+
+		$secured_admin->writeValue("logged_user","samantha.armored");
+
+		$sess = new SessionStorer(array("session_name" => "secured"));
+		$this->assertEquals("amanda.careful",$sess->readValue("logged_user"));
+		$this->assertEquals(432,$sess->readValue("credit"));
+
+		$sess = new SessionStorer("admin",array("session_name" => "secured"));
+		$this->assertEquals("samantha.armored",$sess->readValue("logged_user"));
+		$this->assertEquals(null,$sess->readValue("credit"));
+	}
+
 	function test__setCheckCookieWhenNeeded(){
 		global $_COOKIE,$HTTP_REQUEST;
 
@@ -9,10 +65,93 @@ class TcSessionStorer extends TcBase{
 		$this->assertEquals(SESSION_STORER_COOKIE_NAME_CHECK,$sent_cookies[0][0]);
 		$this->assertEquals(CURRENT_TIME,$sent_cookies[0][1]);
 
-		$_COOKIE[SESSION_STORER_COOKIE_NAME_CHECK] = "1";
+		$_COOKIE[SESSION_STORER_COOKIE_NAME_CHECK] = CURRENT_TIME - 1000;
 		$s = new SessionStorer();
 		$sent_cookies = $s->getSentCookies();
 		$this->assertEquals(0,sizeof($sent_cookies));
+
+		$_COOKIE[SESSION_STORER_COOKIE_NAME_CHECK] = CURRENT_TIME - 60*60*24*365*3;
+		$s = new SessionStorer();
+		$sent_cookies = $s->getSentCookies();
+		$this->assertEquals(1,sizeof($sent_cookies));
+		$this->assertEquals(SESSION_STORER_COOKIE_NAME_CHECK,$sent_cookies[0][0]);
+		$this->assertEquals(CURRENT_TIME,$sent_cookies[0][1]);
+		$this->assertEquals(CURRENT_TIME + 60*60*24*365*5,$sent_cookies[0][2]); // 5 years
+	}
+
+	function test_setting_ssl_cookie(){
+		global $_COOKIE,$_SERVER;
+
+		$_SERVER["HTTPS"] = "on";
+		$_COOKIE = array();
+		$s = new SessionStorer(array("ssl_only" => true));
+		$s->_createNewDatabaseSession();
+		$this->assertEquals(2,sizeof($s->getSentCookies())); // on https check and session cookies are set
+
+		unset($_SERVER["HTTPS"]);
+		$_COOKIE = array();
+		$s = new SessionStorer(array("ssl_only" => true));
+		$s->_createNewDatabaseSession();
+		$this->assertEquals(1,sizeof($s->getSentCookies())); // on http only check cookie is set
+
+		$_COOKIE = array();
+		$s = new SessionStorer();
+		$s->_createNewDatabaseSession();
+		$this->assertEquals(2,sizeof($s->getSentCookies())); // two cookies are set without ssl_only option
+	}
+
+	function test_resending_session_cookie(){
+		global $_COOKIE;
+
+		$_COOKIE = array();
+		$s = new SessionStorer();
+		$s->_createNewDatabaseSession();
+		$this->assertEquals(2,sizeof($s->getSentCookies()));
+		$this->_add_cookies($s->getSentCookies(),$_COOKIE);
+
+		$s = new SessionStorer(array("current_time" => CURRENT_TIME + 86400));
+		$this->assertEquals(0,sizeof($s->getSentCookies()));
+
+		$permanent = new SessionStorer(array(
+			"session_name" => "permanent",
+			"cookie_expiration" => 86400 * 365 * 5
+		));
+		$permanent->_createNewDatabaseSession();
+		$this->assertEquals(1,sizeof($permanent->getSentCookies())); // there is already check cookie
+		$this->_add_cookies($permanent->getSentCookies(),$_COOKIE);
+
+		$permanent = new SessionStorer(array(
+			"session_name" => "permanent",
+			"cookie_expiration" => 86400 * 365 * 5,
+			"current_time" => CURRENT_TIME + 5,
+		));
+		$this->assertEquals(0,sizeof($permanent->getSentCookies()));
+
+		// ... after a day
+		$permanent = new SessionStorer(array(
+			"session_name" => "permanent",
+			"cookie_expiration" => 86400 * 365 * 5,
+			"current_time" => CURRENT_TIME + 86400,
+		));
+		$this->assertEquals(1,sizeof($sent_cookies = $permanent->getSentCookies()));
+		$this->assertEquals("permanent",$sent_cookies[0][0]); // ...the session cookie was sent again
+		$this->_add_cookies($sent_cookies,$_COOKIE);
+
+		// ... after 5 seconds
+		$permanent = new SessionStorer(array(
+			"session_name" => "permanent",
+			"cookie_expiration" => 86400 * 365 * 5,
+			"current_time" => CURRENT_TIME + 86400 + 5
+		));
+		$this->assertEquals(0,sizeof($sent_cookies = $permanent->getSentCookies())); // not this time
+
+		// ... after 20 minutes
+		$permanent = new SessionStorer(array(
+			"session_name" => "permanent",
+			"cookie_expiration" => 86400 * 365 * 5,
+			"current_time" => CURRENT_TIME + 86400 + 5 + 60 * 20
+		));
+		$this->assertEquals(1,sizeof($sent_cookies = $permanent->getSentCookies())); // but now again
 	}
 
 	function test_cookiesEnabled(){
@@ -28,13 +167,26 @@ class TcSessionStorer extends TcBase{
 	}
 
 	function test__setSessionCookie(){
+		global $_COOKIE;
+
+		$_COOKIE = array();
 		$s = new SessionStorer();
 		$this->assertEquals(null,$s->getSecretToken());
 		$this->assertEquals(1,sizeof($s->getSentCookies())); // testing cookies
 
+		$_COOKIE = array();
 		$s->_createNewDatabaseSession();
 		$this->assertEquals(true,strlen($token = $s->getSecretToken())>0);
-		$this->assertEquals(2,sizeof($s->getSentCookies())); // testing cookies
+		$this->assertEquals(2,sizeof($sent_cookies = $s->getSentCookies())); // testing cookies + session cookie
+		$this->_add_cookies($sent_cookies,$_COOKIE);
+		$this->assertTrue(!!strlen($s->getSecretToken()));
+		$this->assertEquals("session",$s->getSessionName());
+		$this->assertEquals("default",$s->getSection());
+
+		$s2 = new SessionStorer();
+		$this->assertEquals("session",$s2->getSessionName());
+		$this->assertEquals(0,sizeof($sent_cookies = $s2->getSentCookies()));
+		$this->assertEquals($s->getSecretToken(),$s2->getSecretToken());
 	}
 
 	function test__clearDataCookies(){
@@ -67,10 +219,14 @@ class TcSessionStorer extends TcBase{
 
 		$HTTP_REQUEST->setHttpHost("www.example.org");
 		$ss = new SessionStorer();
-
 		$this->assertEquals("www.example.org",$ss->_getCookieDomain());
 		$this->assertEquals("example.org",$ss->_getCookieDomain(true));
 		$this->assertEquals("www.example.org",$ss->_getCookieDomain(false));
+
+		$HTTP_REQUEST->setHttpHost("beta.admin.internal.example.org");
+		$ss = new SessionStorer();
+		$this->assertEquals("beta.admin.internal.example.org",$ss->_getCookieDomain());
+		$this->assertEquals("example.org",$ss->_getCookieDomain(true)); // TODO: is this correct?
 
 		$HTTP_REQUEST->setHttpHost("10.20.30.40");
 		$ss = new SessionStorer();
@@ -80,5 +236,80 @@ class TcSessionStorer extends TcBase{
 		$this->assertEquals("10.20.30.40",$ss->_getCookieDomain(false));
 	}
 
-	// TODO: we realy need more tests!
+	function test__garbageCollection(){
+		global $_COOKIE;
+
+		// gonna test standard sessions with cookie_expiration=0
+
+		$_COOKIE = array();
+		$first = new SessionStorer();
+		$first->_createNewDatabaseSession();
+		$first->writeValue("logged_user","mr.fox");
+		$cookies_sent_by_first = $first->getSentCookies();
+
+		// after two days the first session shall be deleted by garbage collection
+		$_COOKIE = array();
+		$second = new SessionStorer(array("current_time" => CURRENT_TIME + 2 * 86400));
+		$second->_createNewDatabaseSession();
+		$second->writeValue("logged_user","no.brain");
+		$cookies_sent_by_second = $second->getSentCookies();
+
+		$this->assertTrue($first->getSecretToken()!=$second->getSecretToken());
+
+		// after another hour - the first session is not here
+		$_COOKIE = array();
+		$this->_add_cookies($cookies_sent_by_first,$_COOKIE);
+		$session = new SessionStorer(array("current_time" => CURRENT_TIME + 2*86400 + 60*60));
+		$this->assertEquals(null,$session->getSecretToken());
+		$this->assertEquals(null,$session->readValue("logged_user"));
+
+		// after another hour - the second session exists
+		$_COOKIE = array();
+		$this->_add_cookies($cookies_sent_by_second,$_COOKIE);
+		$session = new SessionStorer(array("current_time" => CURRENT_TIME + 2*86400 + 60*60 + 60*60));
+		$this->assertEquals($second->getSecretToken(),$session->getSecretToken());
+		$this->assertEquals("no.brain",$second->readValue("logged_user"));
+
+		// gonna test long lasting sessions with cookie_expiration>0
+
+		$_COOKIE = array();
+		$persistent_1st = new SessionStorer(array("session_name" => "persisten", "cookie_expiration" => 86400*365));
+		$persistent_1st->_createNewDatabaseSession();
+		$persistent_1st->writeValue("logged_user","we.too.long");
+		$cookies_sent_by_persistent_1st = $persistent_1st->getSentCookies();
+
+		// after 10 days
+		$_COOKIE = array();
+		$persistent_2nd = new SessionStorer(array("session_name" => "persisten", "cookie_expiration" => 86400*365, "current_time" => CURRENT_TIME + 10*86400));
+		$persistent_2nd->_createNewDatabaseSession();
+		$persistent_2nd->writeValue("logged_user","bob.the.bomber");
+		$cookies_sent_by_persistent_2nd = $persistent_2nd->getSentCookies();
+
+		// after 201 days - the first session still exists and it's last_access is gonna be updated
+		$_COOKIE = array();
+		$this->_add_cookies($cookies_sent_by_persistent_1st,$_COOKIE);
+		$session = new SessionStorer(array("session_name" => "persisten", "cookie_expiration" => 86400*365, "current_time" => CURRENT_TIME + 201*86400));
+		$this->assertEquals($persistent_1st->getSecretToken(),$session->getSecretToken());
+		$this->assertEquals("we.too.long",$session->readValue("logged_user"));
+
+		// after 500 days - the first session exists due to newer last_access...
+		$_COOKIE = array();
+		$this->_add_cookies($cookies_sent_by_persistent_1st,$_COOKIE);
+		$session = new SessionStorer(array("session_name" => "persisten", "cookie_expiration" => 86400*365, "current_time" => CURRENT_TIME + 500*86400));
+		$this->assertEquals($persistent_1st->getSecretToken(),$session->getSecretToken());
+		$this->assertEquals("we.too.long",$session->readValue("logged_user"));
+
+		// ... but the 2nd session has been deleted
+		$_COOKIE = array();
+		$this->_add_cookies($cookies_sent_by_persistent_2nd,$_COOKIE);
+		$session = new SessionStorer(array("session_name" => "persisten", "cookie_expiration" => 86400*365, "current_time" => CURRENT_TIME + 500*86400));
+		$this->assertEquals(null,$session->getSecretToken());
+		$this->assertEquals(null,$session->readValue("logged_user"));
+	}
+
+	function _add_cookies($send_cookies,&$store){
+		foreach($send_cookies as $item){
+			$store[$item[0]] = $item[1];
+		}
+	}
 }
