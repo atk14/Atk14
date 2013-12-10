@@ -32,21 +32,26 @@ class Atk14Session{
 	 * @var SessionStorer
 	 * @access private
 	 */
-	var $_SessionStorrer = null;
+	var $_SessionStorer = null;
 
 	/**
-	 *
-	 * Instance must be created by calling
 	 * <code>
-	 * $session = &Atk14Session::GetInstance();
+	 *	$session = new Atk14Session(); // !! do not do this
+	 *	$session = new Atk14Session("shop"); // !! do not do this
+	 *	$secure_session = new Atk14Session(new SessionStorer(array("session" => "secure", "ssl_only" => true)));
+	 *	$persistent_session = new Atk14Session(new SessionStorer(array("session_name" => "persistent", "cookie_expiration" => 86400*365))); // year
+	 * </code>
+	 *
+	 * An instance is usually created by calling
+	 * <code>
+	 * 	$session = Atk14Session::GetInstance();
+	 * 	$session = Atk14Session::GetInstance("shop");
 	 * </code>
 	 *
 	 * @param string $session_key
-	 * @static
-	 * @access private
 	 */
-	function __construct($session_key_or_session_storrer = "atk14"){
-		$this->_SessionStorrer = is_string($session_key_or_session_storrer) ? new SessionStorer($session_key_or_session_storrer) : $session_key_or_session_storrer;
+	function __construct($section_or_session_storer = "atk14"){
+		$this->_SessionStorer = is_string($section_or_session_storer) ? new SessionStorer($section_or_session_storer) : $section_or_session_storer;
 	}
 
 	/**
@@ -66,13 +71,12 @@ class Atk14Session{
 	 * @return Atk14Session
 	 * @static
 	 */
-	static function &GetInstance($session_key = "atk14"){
-		static $instances;
-		if(!isset($instances)){ $instances = array(); }
-		if(!isset($instances[$session_key])){
-			$instances[$session_key] = new Atk14Session($session_key);
+	static function &GetInstance($section = "atk14"){
+		static $INSTANCES = array();
+		if(!isset($INSTANCES[$section])){
+			$INSTANCES[$section] = new Atk14Session($section);
 		}
-		return $instances[$session_key];
+		return $INSTANCES[$section];
 	}
 
 	/**
@@ -82,7 +86,7 @@ class Atk14Session{
 	 * @param string $value
 	 */
 	function setValue($name,$value){
-		$this->_SessionStorrer->writeValue($name,$value);
+		$this->_SessionStorer->writeValue($name,$value);
 	}
 	/**
 	 * Alias to method {@link setValue()}
@@ -97,7 +101,7 @@ class Atk14Session{
 	 *
 	 */
 	function getValue($name){
-		return $this->_SessionStorrer->readValue($name);
+		return $this->_SessionStorer->readValue($name);
 	}
 
 	/**
@@ -115,9 +119,9 @@ class Atk14Session{
 	 */
 	function toArray(){
 		// TODO: to be rewritten...
-		$this->_SessionStorrer->_initialize();
+		$this->_SessionStorer->_initialize();
 		$out = array();
-		foreach($this->_SessionStorrer->_ValuesStore as $key => $value){
+		foreach($this->_SessionStorer->_ValuesStore as $key => $value){
 			$out[$key] = $this->getValue($key);
 		}
 		return $out;
@@ -129,7 +133,7 @@ class Atk14Session{
 	 * @param string $name
 	 * @uses SessionStorer::writeValue()
 	 */
-	function clearValue($name){ $this->_SessionStorrer->writeValue($name,null); }
+	function clearValue($name){ $this->_SessionStorer->writeValue($name,null); }
 
 	/**
 	 * Clears session value
@@ -151,7 +155,7 @@ class Atk14Session{
 	 */
 	function clear($name = null){
 		if(!isset($name)){
-			$this->_SessionStorrer->clear();
+			$this->_SessionStorer->clear();
 			return;
 		}
 		$this->clearValue($name);
@@ -164,7 +168,7 @@ class Atk14Session{
 	 * @return bool
 	 */
 	function defined($name){
-		$_val = $this->_SessionStorrer->readValue($name);
+		$_val = $this->_SessionStorer->readValue($name);
 		return isset($_val);
 	}
 
@@ -174,7 +178,7 @@ class Atk14Session{
 	 * @return bool true if cookies are enabled or false
 	 */
 	function cookiesEnabled(){
-		return $this->_SessionStorrer->cookiesEnabled();
+		return $this->_SessionStorer->cookiesEnabled();
 	}
 
 	/**
@@ -191,7 +195,7 @@ class Atk14Session{
 	 * @return string
 	 */
 	function getSecretToken(){
-		return $this->_SessionStorrer->getSecretToken();
+		return $this->_SessionStorer->getSecretToken();
 	}
 
 	/**
@@ -205,6 +209,6 @@ class Atk14Session{
 	 * @return string
 	 */
 	function changeSecretToken(){
-		return $this->_SessionStorrer->changeSecretToken();
+		return $this->_SessionStorer->changeSecretToken();
 	}
 }
