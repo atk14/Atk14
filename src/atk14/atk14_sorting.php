@@ -199,6 +199,16 @@ class Atk14Sorting{
 		return $this->_Ordering[$key]["title"];
 	}
 
+	/**
+	 * Returns the string representation of the objects' instance.
+	 *
+	 */
 	function toString(){ return $this->getOrder(); }
+
+	/**
+	 * Magical method to get string representation of the objects' instance.
+	 *
+	 *
+	 */
 	function __toString(){ return $this->toString(); }
 }

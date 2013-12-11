@@ -1,13 +1,38 @@
 <?php
-
 /**
  * Field for boolean values.
  *
  * @package Atk14
  * @subpackage Forms
+ * @filesource
+ */
+
+/**
+ * Field for boolean values.
+ *
+ * Example setup of a form with single BooleanField
+ *
+ * 		class SetupForm extends ApplicationForm {
+ * 			function set_up() {
+ * 				$this->add_field("newsletter", new BooleanField(array(
+ * 					"label" => "I want to receive Newsletters about Atk14"
+ * 					"initial" => true,
+ * 				));
+ * 			}
+ * 		}
+ *
+ *
+ * @package Atk14
+ * @subpackage Forms
+ * @filesource
  */
 class BooleanField extends Field
 {
+	/**
+	 * Constructor
+	 *
+	 * @param array $options see {@link Field} class
+	 */
 	function __construct($options=array())
 	{
 		$options = array_merge(array(
@@ -16,6 +41,12 @@ class BooleanField extends Field
 		parent::__construct($options);
 	}
 
+	/**
+	 * Method to validate value from the input.
+	 *
+	 * @param mixed $value
+	 * @return array array with validated value or an error message
+	 */
 	function clean($value)
 	{
 		list($error, $value) = parent::clean($value);

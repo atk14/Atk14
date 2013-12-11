@@ -82,13 +82,17 @@ class Atk14Session{
 	 * Stores value into session.
 	 *
 	 * @param string $name
-	 * @param string $value
+	 * @param mixed $value
 	 */
 	function setValue($name,$value){
 		$this->_SessionStorer->writeValue($name,$value);
 	}
+
 	/**
 	 * Alias to method {@link setValue()}
+	 *
+	 * @param string $name
+	 * @param mixed $value
 	 */
 	function s($name,$value){ return $this->setValue($name,$value); }
 
@@ -105,6 +109,7 @@ class Atk14Session{
 
 	/**
 	 * Alias to method {@link getValue()}
+	 * @param mixed $name
 	 */
 	function g($name){ return $this->getValue($name); }
 

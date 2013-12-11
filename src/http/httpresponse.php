@@ -405,6 +405,7 @@ class HTTPResponse{
 	 *	echo $response->getHeader("last-modified"); // Mon, 26 Aug 2013 09:41:51 GMT
 	 * </code>
 	 *
+	 * @param string $name
 	 */
 	function getHeader($name){
 		$name = strtoupper($name);
@@ -506,6 +507,8 @@ class HTTPResponse{
 
 	/**
 	 * Renders a 'Bad request' page
+	 *
+	 * @param string $message Message to be written out
 	 */
 	function badRequest($message = null){
 		$this->setStatusCode(400);

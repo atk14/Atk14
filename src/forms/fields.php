@@ -1,8 +1,94 @@
 <?php
 /**
- * Input field classes.
+ * This file contains Base classes associated with input form fields classes.
  *
- * Basic field types supported by Atk14.
+ * @package Atk14
+ * @subpackage Forms
+ * @filesource
+ */
+
+
+/**
+ * Object collecting rules for javascript validator for this field.
+ *
+ * @package Atk14
+ * @subpackage Forms
+ */
+class JsValidator{
+	/**
+	 * Constructor
+	 *
+	 * @ignore
+	 */
+	function __construct(){
+		$this->_messages = array();
+		$this->_rules = array();
+	}
+
+	/**
+	 * Gets error messages associated with a field.
+	 *
+	 * @return string[]
+	 */
+	function get_messages(){ return $this->_messages; }
+	
+	/**
+	 * Associate error message with a validation method.
+	 *
+	 * @param string $key
+	 * @param string $message
+	 */
+	function add_message($key,$message){ $this->_messages[$key] = $message; }
+
+	/**
+	 * Gets validation rules associated with a field.
+	 *
+	 * @return string[]
+	 */
+	function get_rules(){ return $this->_rules; }
+
+	/**
+	 *
+	 * Adds a validation rule for javascript validator.
+	 *
+	 * @param string $rule validation method
+	 * @param string $value validation rule
+	 */
+	function add_rule($rule,$value){ $this->_rules[$rule] = $value; }
+
+	/**
+	 * @todo explain
+	 */
+	function set_field_name($name){
+		$this->_field_name = $name;
+	}
+}
+
+
+/**
+ * Parent class for all input fields.
+ *
+ * This class provides a way to render input form fields and validate entered values.
+ *
+ * Here is an example of basic form fields' usage:
+ *
+ * 	class MessageForm extends ApplicationForm {
+ * 		function set_up() {
+ * 			$this->add_field("message", new CharField(array(
+ * 				"label" => "A word to Atk14 developers",
+ * 				"widget" => new TextArea(array(
+ * 					"rows" => '5',
+ * 					"cols" => '40',
+ * 				),
+ * 			)));
+ * 		}
+ * 	}
+ *
+ *
+ * This is the base class for all field types and shouldn't be used directly.
+ * You should use its subclass.
+ *
+ * Atk14 supports following basic field classes.
  *
  * String based fields:
  *
@@ -29,51 +115,19 @@
  * - FileField
  * - ImageField
  *
- * @package Atk14
- * @subpackage Forms
- * @filesource
- */
-
-
-/**
- * Objekt pro sber pravidel pro JS validator a jedno pole.
  *
- * @package Atk14
- * @subpackage Forms
- */
-class JsValidator{
-	function __construct(){
-		$this->_messages = array();
-		$this->_rules = array();
-	}
-
-	function get_messages(){ return $this->_messages; }
-	function add_message($key,$message){ $this->_messages[$key] = $message; }
-
-	function get_rules(){ return $this->_rules; }
-	function add_rule($rule,$value){ $this->_rules[$rule] = $value; }
-
-	function set_field_name($name){
-		$this->_field_name = $name;
-	}
-}
-
-
-/**
- * Parent class for validation of input fields.
+ * You can create new subclass by extending the {@link Field Field class}.
+ * To create new subclass for a new field type you need at least two basic methods.
  *
- * This is the base class for all field types and shouldn't be used directly.
- * It should be used through its descendants.
+ * - {@link Field::__construct() - declaration of input field. Provides information about field type and its attributes}
+ * - {@link Field::clean() provides validation of entered values}
  *
- * When you develop a new validation class for new field type there are three basic methods available
- * during a lifecycle of a Field:
- * - {@link Field::Field() __construct()} - declaration of input field. Provides information about field type and its attributes.
- * - {@link Field::format_initial_data()} provides presentation of values
- * - {@link Field::clean()} provides validation of values
+ * Additionally it's usually good to use {@link Field::format_initial_data() format_initial_data method} when specifying special formatting of values.
  *
  * @package Atk14
  * @subpackage Forms
  * @abstract
+ * @filesource
  */
 class Field
 {
@@ -82,14 +136,16 @@ class Field
 	 *
 	 * Widget instance.
 	 *
-	 * Defines how the input field is rendered.
+	 * Defines how the input field is rendered (e.g., text area, select)
 	 *
 	 * @var Widget
 	 */
 	var $widget = null;
 
 	/**
-	 * Several messages for various states.
+	 * Array of messages for various types.
+	 *
+	 * There are basic types 'required' and 'invalid' used by Atk14. They can be extended by {@link update_messages()}
 	 *
 	 * @var array
 	 */
@@ -97,6 +153,8 @@ class Field
 
 	/**
 	 * Constructor.
+	 *
+	 * Constructor of this class defines only basic set of options. These can be extended by a subclass.
 	 *
 	 * @param array $options Possible options
 	 * <ul>
@@ -180,9 +238,10 @@ class Field
 	}
 
 	/**
-	* Prida do $this->messages dalsi error hlasky.
-	* NOTE: muj vymysl
-	*/
+	 * Updates whole array of messages or adds new ones as specified in $messages array.
+	 *
+	 * @param array $messages
+	 */
 	function update_messages($messages)
 	{
 		$this->messages = forms_array_merge(
@@ -192,18 +251,21 @@ class Field
 	}
 
 	/** 
-	 * <code>
-	 *     $field->update_messages("invalid","This doesn't look like a reasonable value...");
-	 * </code>
+	 * Modifies definition of error message
+	 *
+	 * 		$field->update_messages("invalid","This doesn't look like a reasonable value...");
+	 *
+	 * @param string $type
+	 * @param string $message
 	 */
 	function update_message($type,$message){
 		$this->update_messages(array($type => $message));
 	}
 
 	/**
-	 * Field value validation.
+	 * Basic field value validation.
 	 *
-	 * Checks if the field doesn't contain empty value.
+	 * Checks if the field doesn't contain empty value when it is required. Can be overridden in a subclass.
 	 *
 	 * @param mixed $value
 	 * @return array
@@ -217,6 +279,13 @@ class Field
 		return array(null, $value);
 	}
 
+	/**
+	 * Returns widgets attributes.
+	 *
+	 * To be overridden in a subclass.
+	 *
+	 * @param Widget $widget
+	 */
 	function widget_attrs($widget)
 	{
 		return array();
@@ -240,11 +309,19 @@ class Field
 	/**
 	 * This method provides value presentation.
 	 *
+	 * @param string $data
+	 * @todo should be defined as abstract
 	 */
 	function format_initial_data($data){
 		return $data;
 	}
 
+
+	/**
+	 * Javascript validation rule.
+	 *
+	 * @todo more explanation
+	 */
 	function js_validator(){
 		$js_validator = new JsValidator();
 

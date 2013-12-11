@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+	<title>Atk14 documentation</title>
+	<parser>
+		<default-package-name>Atk14</default-package-name>
+		<target>doc-cache</target>
+		<extensions>
+			<extension>php</extension>
+			<extension>inc</extension>
+		</extensions>
+	</parser>
+	<transformer>
+		<target>output</target>
+	</transformer>
+	<transformations>
+		<!--abstract,checkstyle,clean,new-black,old-ocean,responsive,responsive-twig,xml,zend -->
+		<template name="clean"/>
+	</transformations>
+	<files>
+		<directory>src/atk14</directory>
+		<directory>src/dates</directory>
+		<directory>src/dbmole</directory>
+		<directory>src/dictionary</directory>
+		<directory>src/files</directory>
+		<directory>src/forms</directory>
+		<directory>src/http</directory>
+		<directory>src/logger</directory>
+		<directory>src/string</directory>
+		<directory>src/stringbuffer</directory>
+		<directory>src/tablerecord</directory>
+		<directory>src/translate</directory>
+		<directory>src/url_fetcher</directory>
+		<directory>src/xmole</directory>
+
+		<ignore>*/test/*.inc</ignore>
+		<ignore>*/test/*.php</ignore>
+		<ignore>tc_*.php</ignore>
+		<ignore>tc_*.inc</ignore>
+		<ignore>*/load.inc</ignore>
+		<ignore>*/load.php</ignore>
+		<ignore>initialize.inc</ignore>
+		<ignore>*/demo/*</ignore>
+
+	</files>
+</phpdoc>
