@@ -99,8 +99,9 @@ class Atk14Client{
 	 * Constructor
 	 */
 	function Atk14Client(){
-		$this->session = &Atk14Session::GetInstance();
-		$this->flash = &Atk14Flash::GetInstance();
+		global $ATK14_GLOBAL;
+		$this->session = $ATK14_GLOBAL->getSession();
+		$this->flash = Atk14Flash::GetInstance();
 
 		if(!isset($GLOBALS["_COOKIE"])){ $GLOBALS["_COOKIE"] = array(); }
 		$GLOBALS["_SERVER"]["REMOTE_ADDR"] = "0.0.0.0";

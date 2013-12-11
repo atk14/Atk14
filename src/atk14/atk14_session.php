@@ -36,19 +36,18 @@ class Atk14Session{
 
 	/**
 	 * <code>
-	 *	$session = new Atk14Session(); // !! do not do this
-	 *	$session = new Atk14Session("shop"); // !! do not do this
+	 *  // Instantiation exaples
+	 * 	$session = Atk14Session::GetInstance();
+	 * 	$session = Atk14Session::GetInstance("eshop");
+	 *
 	 *	$secure_session = new Atk14Session(new SessionStorer(array("session" => "secure", "ssl_only" => true)));
 	 *	$persistent_session = new Atk14Session(new SessionStorer(array("session_name" => "persistent", "cookie_expiration" => 86400*365))); // year
+	 * 
+	 *	$session = new Atk14Session(); // !! use Atk14Session::GetInstance() instead
+	 *	$session = new Atk14Session("eshop"); // !! use Atk14Session::GetInstance("eshop") instead
 	 * </code>
 	 *
-	 * An instance is usually created by calling
-	 * <code>
-	 * 	$session = Atk14Session::GetInstance();
-	 * 	$session = Atk14Session::GetInstance("shop");
-	 * </code>
-	 *
-	 * @param string $session_key
+	 * @param mixed $section_or_session_storer
 	 */
 	function __construct($section_or_session_storer = "atk14"){
 		$this->_SessionStorer = is_string($section_or_session_storer) ? new SessionStorer($section_or_session_storer) : $section_or_session_storer;

@@ -448,4 +448,13 @@ class Atk14Global{
 		}
 		return $ATK14_LOGGER;
 	}
+
+	/**
+	 * Returns session object
+	 *
+	 * @return Atk14Session
+	 */
+	function getSession(){
+		return Atk14Session::GetInstance();
+	}
 }

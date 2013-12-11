@@ -982,7 +982,7 @@ class Atk14Form extends Form
 	 */
 	function get_valid_csrf_tokens(){
 		global $HTTP_REQUEST;
-		$session = &Atk14Session::GetInstance();
+		$session = $GLOBALS["ATK14_GLOBAL"]->getSession();
 
 		$out = array();
 

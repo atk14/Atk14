@@ -55,7 +55,7 @@ class Atk14Flash{
 	 *
 	 * @access private
 	 */
-	function Atk14Flash(){
+	function __construct(){
 		
 	}
 
@@ -168,7 +168,7 @@ class Atk14Flash{
 	 * @param string $message
 	 */
 	function setMessage($key,$message = null){
-		$session = Atk14Session::GetInstance();
+		$session = $GLOBALS["ATK14_GLOBAL"]->getSession();
 		if(!isset($message)){
 			$message = $key;
 			$key = "notice";
@@ -189,7 +189,7 @@ class Atk14Flash{
 	 * @return string
 	 */
 	function getMessage($key = "notice"){
-		$session = Atk14Session::GetInstance();
+		$session = $GLOBALS["ATK14_GLOBAL"]->getSession();
 
 		$out = "";
 		$flash_ar = $session->getValue("__flash__");
@@ -206,7 +206,7 @@ class Atk14Flash{
 	 * Clears all flash messages.
 	 */
 	function clearMessages(){
-		$session = Atk14Session::GetInstance();
+		$session = $GLOBALS["ATK14_GLOBAL"]->getSession();
 		$session->clearValue("__flash__");
 	}
 
