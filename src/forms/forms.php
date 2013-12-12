@@ -3,7 +3,7 @@
  * Formulare.
  *
  * @package Atk14
- * @subpackage InternalLibraries
+ * @subpackage Forms
  * @filesource
  *
  */
@@ -16,14 +16,19 @@
 @define('NON_FIELD_ERRORS', '__all__');
 
 /**
- * Basic class for managing forms.
+ * Class managing javascript validators for each input field
  *
- * You should use the class {@link Atk14Form} instead of this class in an application.
- *
- * @package Atk14
- * @subpackage InternalLibraries
+ * Uses jQuery validate plugin
  */
 class JsFormValidator{
+
+	/**
+	 * Set of validation rules for each input field.
+	 *
+	 * @var array
+	 */
+	var $validators = array();
+
 	function __construct(&$form){
 		$this->validators = array();
 		$this->_fields_html_names = array();
@@ -365,11 +370,12 @@ class BoundField
 
 
 /**
- * Base forms class.
+ * Basic class for managing forms.
+ *
+ * You should use the class {@link Atk14Form} instead of this class in an application.
  *
  * @package Atk14
- * @subpackage InternalLibraries
- *
+ * @subpackage Forms
  */
 class Form implements ArrayAccess
 {

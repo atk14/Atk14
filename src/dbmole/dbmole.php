@@ -19,36 +19,31 @@
  * Database dependent methods are overridden in descendants
  *
  * Getting Postgres database DbMole instance
- * <code>
- * $dbmole = &PgMole::GetInstance();
- * </code>
+ *
+ * 	$dbmole = &PgMole::GetInstance();
  *
  * Basic query execution
- * <code>
- * $query = "SELECT id FROM customers WHERE UPPER(name) = UPPER(:customer_name)";
- * $bind_ary = array(
- * 	":customer_name" => "john",
- * );
- * $customer_ids = $dbmole->selectIntoArray($query, $bind_ary);
- * </code>
+ *
+ * 	$query = "SELECT id FROM customers WHERE UPPER(name) = UPPER(:customer_name)";
+ * 	$bind_ary = array(
+ * 		":customer_name" => "john",
+ * 	);
+ * 	$customer_ids = $dbmole->selectIntoArray($query, $bind_ary);
  *
  * Error handling
- * <code>
- *	DbMole::RegisterErrorHandler("dbmole_error_handler");
- *	function dbmole_error_handler($dbmole){
- *		echo "Dear visitor, unfortunately an error has occurred";
- *		$dbmole->sendErrorReportToEmail("admin@test.cz");
- *		$dbmole->logErrorReport();
- *		exit(1);
- *	}
- * </code>
+ * 	DbMole::RegisterErrorHandler("dbmole_error_handler");
+ *		function dbmole_error_handler($dbmole){
+ *			echo "Dear visitor, unfortunately an error has occurred";
+ *			$dbmole->sendErrorReportToEmail("admin@test.cz");
+ *			$dbmole->logErrorReport();
+ *			exit(1);
+ *		}
  *
- * Statistics:
- * <code>
- *	define("DBMOLE_COLLECT_STATICTICS",true);
- *	$dbmole = &OracleMole::GetInstance();
- *	echo $dbmole->getStatistics();
- * </code>
+ * Display statistics
+ *
+ * 	define("DBMOLE_COLLECT_STATICTICS",true);
+ * 	$dbmole = &OracleMole::GetInstance();
+ * 	echo $dbmole->getStatistics();
  *
  * @package Atk14
  * @subpackage Database
@@ -59,7 +54,7 @@ class DbMole{
 	/**
 	 * Name of database configuration
 	 *
-	 * @access private
+	 * @var string
 	 */
 	var $_ConfigurationName = "";
 
@@ -67,7 +62,6 @@ class DbMole{
 	 * Connection resource
 	 *
 	 * @var resource
-	 * @access private
 	 */
 	var $_DbConnect = null;
 
@@ -75,7 +69,6 @@ class DbMole{
 	/**
 	 * Error message returned by a database operation
 	 *
-	 * @access private
 	 */
 	var $_ErrorMessage = null;
 
@@ -84,7 +77,6 @@ class DbMole{
 	 * Just a flag that the error handler has been called.
 	 *
 	 * @var boolean
-	 * @access private
 	 */
 	var $_ErrorRaised = false;
 
@@ -92,7 +84,6 @@ class DbMole{
 	 * Name of error handling function.
 	 *
 	 * @var string
-	 * @access private
 	 */
 	var $_ErrorHandler = "";
 
@@ -101,7 +92,6 @@ class DbMole{
 	 * Last executed query.
 	 *
 	 * @var string
-	 * @access private
 	 */
 	var $_Query = "";
 
@@ -109,7 +99,6 @@ class DbMole{
 	 * Parameters of last executed query.
 	 *
 	 * @var array
-	 * @access private
 	 */
 	var $_BindAr = array();
 
@@ -119,7 +108,6 @@ class DbMole{
 	 * They are cleared before each query.
 	 *
 	 * @var array
-	 * @access private
 	 */
 	var $_Options = array();
 
@@ -127,7 +115,6 @@ class DbMole{
 	 * Number of executed queries since connection to the database.
 	 *
 	 * @var integer
-	 * @access private
 	 */
 	var $_QueriesExecuted = 0;
 
@@ -136,15 +123,22 @@ class DbMole{
 	 * Path for caching queries.
 	 *
 	 * @var string
-	 * @access private
 	 */
 	var $_CacheDir = null;
 
 	/**
-	 * 
+	 * Flag informing that 'begin' command will be delayed until the connection to database is being opened
+	 *
+	 * @var boolean
 	 */
-	var $_BeginTransactionDelayed = false;
+	protected $_BeginTransactionDelayed = false;
 
+	/**
+	 * Constructor
+	 *
+	 * @param string $configuration_name
+	 * @todo explain working with configurations
+	 */
 	protected function __construct($configuration_name){
 		$this->_ConfigurationName = $configuration_name;
 
@@ -156,14 +150,12 @@ class DbMole{
 	 * Returns an instance of DB connector for given configuration. The object is always the same for given configuration.
 	 *
 	 * Basic call:
-	 * <code>
-	 * $dbmole = &DbMole::GetInstance("default","OracleMole");
-	 * </code>
+	 * 	$dbmole = &DbMole::GetInstance("default","OracleMole");
+	 *
 	 *
 	 * This call using a subclass is better:
-	 * <code>
-	 * $dbmole = &OracleMole::GetInstance("default");
-	 * </code>
+	 * 	$dbmole = &OracleMole::GetInstance("default");
+	 *
 	 *
 	 * @param string $configuration_name
 	 * @param string $class_name
@@ -233,24 +225,19 @@ class DbMole{
 	 * Returns name of error handler registered with the last call of this method.
 	 *
 	 * Registration of an error handler
-	 * <code>
-	 * DbMole::RegisterErrorHandler("dbmole_error_handler");
-	 * </code>
+	 * 	DbMole::RegisterErrorHandler("dbmole_error_handler");
 	 *
 	 * Common handler example
-	 * <code>
-	 * function dbmole_error_handler($dbmole){
-	 *   echo "Dear visitor, unfortunately an internal error occured";
-	 *	 $dbmole->sendErrorReportToEmail("admin@test.cz");
-	 *	 $dbmole->logErrorReport();
-	 *	 exit(1);
-	 * }	
-	 * </code>
+	 *
+	 * 	function dbmole_error_handler($dbmole){
+	 * 		echo "Dear visitor, unfortunately an internal error occured";
+	 *	 	$dbmole->sendErrorReportToEmail("admin@test.cz");
+	 *	 	$dbmole->logErrorReport();
+	 *	 	exit(1);
+	 * 	}	
 	 *
 	 * You can also specify an error handler to a certain $dbmole:
-	 * <code>
-	 *	$dbmole->setErrorHandler($function_name);
-	 * </code>
+	 * 	$dbmole->setErrorHandler($function_name);
 	 *
 	 * @param string $function_name
 	 * @return string name of previously registered error handler
@@ -262,14 +249,14 @@ class DbMole{
 	/**
 	 * Registers an error handler function to a given DbMole instance.
 	 *
-	 * <code>
-	 *	$dbmole = PgMole::GetInstance();
-	 *	$dbmole_session = PgMole::GetInstance("session");
-	 *	$dbmole_archive = PgMole::GetInstance("archive");
+	 *
+	 * Example
+	 * 	$dbmole = PgMole::GetInstance();
+	 * 	$dbmole_session = PgMole::GetInstance("session");
+	 * 	$dbmole_archive = PgMole::GetInstance("archive");
 	 *
 	 * 	DbMole::RegisterErrorHandler("default_error_handler");
 	 * 	$dbmole_session->setErrorHandler("session_error_handler");
-	 * </code>
 	 *
 	 * @param string $function_name
 	 */ 
@@ -340,7 +327,8 @@ class DbMole{
 	/**
 	 * Is this DbMole connected to it's database?
 	 *
-	 * echo "Connection to the database " . ($dbmole->isConnected() ? "has been established" : "has not yet been established");
+	 * Example
+	 * 	echo "Connection to the database " . ($dbmole->isConnected() ? "has been established" : "has not yet been established");
 	 */
 	function isConnected(){
 		return isset($this->_DbConnect);
@@ -386,7 +374,7 @@ class DbMole{
 	 *
 	 * @access private
 	 * @abstract
-	 * @return bool true -> uspesne napojeno, false -> doslo k chybe
+	 * @return bool true -> success, false -> connection error
 	 */
 	function _connectToDatabase(){
 		if(isset($this->_DbConnect)){ return true; }
@@ -641,8 +629,7 @@ class DbMole{
 	 * @param string $query
 	 * @param array $bind_ar
 	 * @param array $options
-	 * @return bool			true -> query executed with success
-	 *									false -> error
+	 * @return boolean true -> query executed with success, false -> error
 	 */
 	function doQuery($query,$bind_ar = array(), $options = array()){
 		$result = $this->executeQuery($query,$bind_ar,$options);
@@ -654,10 +641,10 @@ class DbMole{
 	/**
 	 * Returns the number of rows affected during the last sql execution.
 	 * 
-	 * <code>
-	 *	$dbmole->doQuery("UPDATE articles SET author_id=22 WHERE author_id=11");
-	 *	echo $dbmole->getAffectedRows(); // amount of records updated
-	 * </code>
+	 * Example
+	 * 	$dbmole->doQuery("UPDATE articles SET author_id=22 WHERE author_id=11");
+	 * 	echo $dbmole->getAffectedRows(); // amount of records updated
+	 *
 	 * @return integer
 	 */
 	function getAffectedRows(){
@@ -675,10 +662,8 @@ class DbMole{
 	 *
 	 * Returns null when result doesn't contain any record or an error occurs.
 	 *
-	 * <code>
-	 *	$row = $dbmole->selectFirstRow("SELECT * FROM articles WHERE id=:id",array(":id" => $id));
-	 *	$row = $dbmole->selectFirstRow("SELECT * FROM articles",array(),array("order" => "create_date DESC", "limit" => 1));
-	 * </code>
+	 * 	$row = $dbmole->selectFirstRow("SELECT * FROM articles WHERE id=:id",array(":id" => $id));
+	 * 	$row = $dbmole->selectFirstRow("SELECT * FROM articles",array(),array("order" => "create_date DESC", "limit" => 1));
 	 *
 	 * @param string $query
 	 * @param array $bind_ar
@@ -722,19 +707,13 @@ class DbMole{
 	 *
 	 *
 	 * Basic usage
-	 * <code>
-	 * $mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<:id",array(":id" => 3000),array("type" => "integer"));	// takto to bylo vsechno zamysleno
-	 * </code>
+	 * 	$mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<:id",array(":id" => 3000),array("type" => "integer"));	// takto to bylo vsechno zamysleno
 	 *
 	 * can be shortened:
-	 * <code>
-	 * $mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<:id",array(":id" => 3000),"integer");
-	 * </code>
+	 * 	$mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<:id",array(":id" => 3000),"integer");
 	 *
 	 * and can be even more shortened when no bind_ar is passed
-	 * <code>
-	 * $mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<3000","integer");
-	 * </code>
+	 * 	$mole->selectSingleValue("SELECT COUNT(*) FROM articles WHERE id<3000","integer");
 	 *
 	 * @param string $query
 	 * @param array|string $bind_ar	when string will be used as if given $options["type"]
@@ -844,14 +823,10 @@ class DbMole{
 	 *
 	 * Setting option type to 'integer' causes that all returned values are converted to integers.
 	 *
-	 * <code>
-	 * $article_ids = $dbmole->selectIntoArray("SELECT id FROM articles WHERE source_id=100010");
-	 * </code>
+	 * 	$article_ids = $dbmole->selectIntoArray("SELECT id FROM articles WHERE source_id=100010");
 	 * returned array $article_ids can be array("233221","233222","233225"...)
 	 *
-	 * <code>
-	 * $arr = $dbmole->selectIntoArray("SELECT id,name FROM articles WHERE ...");
-	 * </code>
+	 * 	$arr = $dbmole->selectIntoArray("SELECT id,name FROM articles WHERE ...");
 	 * returns array $ar like this
 	 * array("233221","nazev prvniho clanku","233222","nazev druheho clanku"...)
 	 *
@@ -890,9 +865,7 @@ class DbMole{
 	 * Returns records as associative arrays with the first attributes value as key.
 	 *
 	 * sql specifies 2 fields:
-	 * <code>
-	 * $articles = $dbmole->selectIntoAssociativeArray("SELECT id,name FROM articles WHERE source_id=100010");
-	 * </code>
+	 * 	$articles = $dbmole->selectIntoAssociativeArray("SELECT id,name FROM articles WHERE source_id=100010");
 	 * can return for example
 	 *	array(
 	 *		"12" => "Nazev 1",
@@ -902,9 +875,7 @@ class DbMole{
 	 *	)
 	 *
 	 * sql specifies more fields and this call
-	 * <code>
-	 * $articles = $dbmole->selectIntoAssociativeArray("SELECT id,name,author FROM articles WHERE source_id=100010");
-	 * </code>
+	 * 	$articles = $dbmole->selectIntoAssociativeArray("SELECT id,name,author FROM articles WHERE source_id=100010");
 	 * can return this
 	 *	array(
 	 *		"12" => array("name" => "Nazev 1", "author" => "Jan Tuna"),
@@ -936,8 +907,14 @@ class DbMole{
 	/**
 	 * Starts a database transaction.
 	 *
-	 * $dbmole->begin(array("execute_after_connecting" => true)); // no connection is being made right now
 	 *
+	 * The 'begin' command can be delayed to the moment of making connection when the connection is not opened yet.
+	 *
+	 * It can be done with option execute_after_connecting
+	 * 	$dbmole->begin(array("execute_after_connecting" => true));
+	 *
+	 * @param array $options
+	 * - execute_after_connecting - delays connecting to database to the moment when it is needed
 	 * @return bool
 	 */
 	final function begin($options = array()){
@@ -951,6 +928,9 @@ class DbMole{
 		return $this->_begin();
 	}
 
+	/**
+	 * @ignore
+	 */
 	function _begin(){
 		return $this->doQuery("BEGIN");
 	}
@@ -967,6 +947,9 @@ class DbMole{
 		return $this->_commit();
 	}
 
+	/**
+	 * @ignore
+	 */
 	function _commit(){
 		if(!$this->isConnected()){ return true; }
 		return $this->doQuery("COMMIT");
@@ -984,6 +967,9 @@ class DbMole{
 		return $this->_rollback();
 	}
 
+	/**
+	 * @ignore
+	 */
 	function _rollback(){
 		return $this->doQuery("ROLLBACK");
 	}
@@ -993,13 +979,11 @@ class DbMole{
 	 *
 	 * Takes an associative array of column => value pairs and creates a new record with those values in given table.
 	 *
-	 * <code>
-	 * $dbmole->insertIntoTable("comments",array(
-	 *		"title" => "Titulek",
-	 *		"author" => "Yarri",
-	 *		"body" => "text prispevku"
-	 *	));
-	 * </code>
+	 * 	$dbmole->insertIntoTable("comments",array(
+	 *			"title" => "Titulek",
+	 *			"author" => "Yarri",
+	 *			"body" => "text prispevku"
+	 *		));
 	 *
 	 * @param string $table_name
 	 * @param array $values		associative array
@@ -1033,20 +1017,18 @@ class DbMole{
 	/**
 	 * Inserts a record into a table or updates a record if it already exists.
 	 *
-	 * <code>
-	 *	$dbmole->insertOrUpdateRecord("persons",
-	 *		array(
-	 *			"id" => 1000,
-	 *			"firstname" => "John",
-	 *			"surname" => "Blbec",
-	 *			"updated" => "NOW()"
-	 *		),
-	 *		array(
-	 *			"id_field" => "id",
-	 *			"do_not_escape" => array("updated")
-	 *		)
-	 *	);
-	 * </code>
+	 *		$dbmole->insertOrUpdateRecord("persons",
+	 *			array(
+	 *				"id" => 1000,
+	 *				"firstname" => "John",
+	 *				"surname" => "Blbec",
+	 *				"updated" => "NOW()"
+	 *			),
+	 *			array(
+	 *				"id_field" => "id",
+	 *				"do_not_escape" => array("updated")
+	 *			)
+	 *		);
 	 *
 	 * @param string $table_name
 	 * @param array $values
@@ -1135,18 +1117,12 @@ class DbMole{
 	 *
 	 * To prevent against a SQL attack you should not write conditions directly to query string but you should use the form with $bind_ar to sanitize the input data.
 	 *
-	 * <code>
-	 * $dbmole->executeQuery("SELECT * FROM articles WHERE id=:id",array(":id" => 123));
-	 * </code>
+	 * 	$dbmole->executeQuery("SELECT * FROM articles WHERE id=:id",array(":id" => 123));
 	 *
 	 * Also arrays can be used as bind_ar
-	 * <code>
-	 * $dbmole->executeQuery("SELECT * FROM articles WHERE id IN :ids",array(":ids" => array(123,124,125)));
-	 * </code>
+	 * 	$dbmole->executeQuery("SELECT * FROM articles WHERE id IN :ids",array(":ids" => array(123,124,125)));
 	 * which will be internally transformed into this
-	 * <code>
-	 * $dbmole->executeQuery("SELECT * FROM articles WHERE id IN (:ids_0, :ids_1, :ids_2)",array(":ids_0" => 123, ":ids_1" => 124, ":ids_2" => 125));
-	 * </code>
+	 * 	$dbmole->executeQuery("SELECT * FROM articles WHERE id IN (:ids_0, :ids_1, :ids_2)",array(":ids_0" => 123, ":ids_1" => 124, ":ids_2" => 125));
 	 *
 	 * In $options array the execution mode can be set:
 	 *		$options["mode"] = OCI_DEFAULT
@@ -1238,7 +1214,7 @@ class DbMole{
 	/**
 	 * Escapes given value for use in sql string
 	 *
-	 * @param mixed php value
+	 * @param mixed $value php value
 	 * @return string SQL reprezentation of given value
 	 */
 	function escapeValue4sql($value){
@@ -1404,7 +1380,7 @@ class DbMole{
 	 * Detects boolean value returned by database.
 	 *
 	 * @param mixed $value boolean field returned from db layer (in form of string or integer or...)
-	 * @return bool  PHP boolean representation
+	 * @return bool PHP boolean representation
 	 */
 	function parseBoolFromSql($value){
 		if(is_null($value)){return null; }
