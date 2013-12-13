@@ -1,5 +1,6 @@
 <?php
 /**
+ * Class containing several useful methods
  *
  * @package Atk14
  * @subpackage Core
@@ -7,6 +8,8 @@
  */
 
 /**
+ *
+ * Class containing several useful methods
  *
  * @package Atk14
  * @subpackage Core
@@ -26,7 +29,6 @@ class Atk14Utils{
 	 * When even ATK14_ENV is not defined it defines these constants depending on REMOTE_ADDRESS.
 	 * For localhost or addresses in 192.168.0.0 and 172.16.0.0 or no IP(script is run from console) it defines environment as DEVELOPMENT, otherwise PRODUCTION.
 	 *
-	 * @static
 	 */
 	static function DetermineEnvironment(){
 		global $HTTP_REQUEST;
@@ -72,7 +74,6 @@ class Atk14Utils{
 	 * Loads all config files (*.inc) in directory $ATK14_GLOBAL->getApplicationPath()/../config/
 	 * Also tries to use formerly prefered directory $ATK14_GLOBAL->getApplicationPath()/conf
 	 *
-	 * @static
 	 */
 	static function LoadConfig(){
 		global $ATK14_GLOBAL;
@@ -97,13 +98,11 @@ class Atk14Utils{
 	/**
 	 * Loads resources for a controller and also the controller.
 	 *
-	 * <code>
-	 * Atk14Utils::LoadControllers("help_controller");
-	 * </code>
+	 * Load HelpController
+	 * 	Atk14Utils::LoadControllers("help_controller");
 	 *
 	 * This code loads all resources needed by HelpController and in the end loads the HelpController
 	 *
-	 * @static
 	 * @param string $controller_name name of controller
 	 *
 	 */
@@ -155,26 +154,35 @@ class Atk14Utils{
 	 *
 	 * @param string $content string to be escaped
 	 * @return string escaped string
-	 * @static
 	 */
 	static function EscapeForJavascript($content){
 		return EasyReplace($content,array("\\" => "\\\\", "\n" => "\\n","\r" => "\\r","\t" => "\\t","\"" => "\\\"", "<script" => '<scr" + "ipt', "</script>" => '</scr" + "ipt>'));
 	}
 
 	/**
-	* Sestaveni linku ve smarty helperech.
-	*
-	* Pozmenuje $params! - maze hodnoty
-	*		$params["_connector"]
-	*		$params["_anchor"]
-	* 	$params["_with_hostname"]
-	*		$params["_ssl"]
-	*
-	* Pri sestavovani linku jsou ignorovany vsechny parametry zacinajici podtrzitkem.
-	* Tyto parametry jsou uvazovany jako atributy html tagu.
-	*
-	* @static
-	*/
+	 * Build a link for Smarty helpers.
+	 *
+	 * !Changes $params (clears values)
+	 *
+	 *		$params["_connector"]
+	 *		$params["_anchor"]
+	 * 		$params["_with_hostname"]
+	 *		$params["_ssl"]
+	 *
+	 * When building a link parameters beginning with underscore are used as parameters of the &lt;a&gt; tag.
+	 *
+	 *
+	 * @param array $params
+	 * - action
+	 * - controller
+	 * - lang
+	 * @param Smarty $smarty Smarty specific
+	 * @param array $options
+	 * - connector - character joining parameters in url
+	 * - anchor - 
+	 * - with_hostname - boolean - build url even with hostname
+	 * - ssl
+	 */
 	static function BuildLink(&$params,&$smarty,$options = array()){
 		$options = array_merge(array(
 			"connector" => "&",
@@ -210,23 +218,20 @@ class Atk14Utils{
 	/**
 	 * Extracts attributes from $params beginning with underscore.
 	 *
-	 * <code>
-	 * $params = array("id" => "20", "_class" => "red", "_id" => "red_link");
-	 * $attrs = Atk14Utils::ExtractAttributes($params);
+	 * In this example $params will contain array("id" => "20"), $attrs will contain array("class" => "red","id" => "red_link").
+	 * 	$params = array("id" => "20", "_class" => "red", "_id" => "red_link");
+	 * 	$attrs = Atk14Utils::ExtractAttributes($params);
 	 *
-	 * // or
-	 * $attrs = array("data-message" => "Hello guys!");
-	 * Atk14Utils::ExtractAttributes($params,$attrs); // the attribute data-message will be preserved
-	 * </code>
+	 * or
+	 * 	$attrs = array("data-message" => "Hello guys!");
+	 * 	Atk14Utils::ExtractAttributes($params,$attrs);
+	 * the attribute data-message will be preserved
 	 *
-	 * $attrs will contain array("class" => "red","id" => "red_link").
 	 *
-	 * $params will contain array("id" => "20").
 	 *
-	 * @param array &$params
-	 * @param array &$attributes
+	 * @param array $params
+	 * @param array $attributes
 	 * @return array
-	 * @static
 	 */
 	static function ExtractAttributes(&$params,&$attributes = array()){
 		reset($params);
@@ -244,15 +249,13 @@ class Atk14Utils{
 	/**
 	 * Joins attributes to a string.
 	 *
-	 * <code>
-	 * $attrs -> array("href" => "http://www.link.cz/", "class" => "red");
-	 * $attrs = Atk14Utils::JoinAttributes($attrs);
-	 * echo "<a$attrs>text linku</a>"
-	 * </code>
+	 * Example
+	 * 	$attrs -> array("href" => "http://www.link.cz/", "class" => "red");
+	 * 	$attrs = Atk14Utils::JoinAttributes($attrs);
+	 * 	echo "<a$attrs>text linku</a>"
 	 *
 	 * @param array $attributes
 	 * @return string joined attributes
-	 * @static
 	 */
 	static function JoinAttributes($attributes){
 		$out = array();
@@ -268,12 +271,11 @@ class Atk14Utils{
 	 *
 	 * @param string $template_dir
 	 * @param array $options
-	 * <ul>
-	 * <li><b>controller_name</b></li>
-	 * </ul>
+	 * - <b>controller_name</b>
+	 * - namespace
+	 * - compile_id_salt
 	 *
 	 * @return Smarty instance of Smarty
-	 * @static
 	 */
 	static function GetSmarty($template_dir = null, $options = array()){
 		global $ATK14_GLOBAL;
@@ -350,13 +352,11 @@ class Atk14Utils{
 	/**
 	 * Writes a message to error log and to the output defined by HTTPResponse
 	 *
-	 * <code>
-	 * Atk14Utils::ErrorLog("chybi sablona _item.tpl",$http_response);
-	 * </code>
+	 * Example
+	 * 	Atk14Utils::ErrorLog("chybi sablona _item.tpl",$http_response);
 	 *
 	 * @param string $message
-	 * @param HTTPResponse
-	 * @static
+	 * @param HTTPResponse $response
 	 */
 	static function ErrorLog($message,&$response){
 		$message = "AK14 error: $message";
@@ -374,9 +374,8 @@ class Atk14Utils{
 	 *
 	 * Is used for testing in _before_filters
 	 *
-	 * @param Atk14Controller &$controller
+	 * @param Atk14Controller $controller
 	 * @return boolean true - output produced, false - nothing produced
-	 * @static
 	 */
 	static function ResponseProduced(&$controller){
 		return !(
@@ -389,11 +388,11 @@ class Atk14Utils{
 
 	/**
 	 * Joins arrays
-	 * <code>
-	 * Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d")); // -> array("a","b","c","d")
-	 * </code>
+	 *
+	 * Result of this will be array("a","b","c","d")
+	 * 	Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d"));
+	 *
 	 * @return array joined arrays
-	 * @static
 	 */
 	static function JoinArrays(){
 		$out = array();
@@ -409,11 +408,13 @@ class Atk14Utils{
 	}
 
 	/**
-	 * Normalizes a URI
+	 * Normalizes a URI, removes unnecessary path elements.
 	 *
-	 * <code>
-	 * echo Atk14Utils::NormalizeUri('/public/stylesheets/../dist/css/app.css?1384766775'); // /public/dist/css/app.css?1384766775
-	 * </code>
+	 * '/public/stylesheets/../dist/css/app.css?1384766775' => /public/dist/css/app.css?1384766775
+	 * 	echo Atk14Utils::NormalizeUri('/public/stylesheets/../dist/css/app.css?1384766775');
+	 *
+	 * @param string $uri uri to normalize
+	 * @return string normalized uri
 	 */
 	static function NormalizeUri($uri){
 		$ar = explode('?',$uri);
@@ -450,8 +451,12 @@ class Atk14Utils{
 }
 
 /**
+ * Atk14s' variant of require_once
+ *
  * When some/path/file.php is given,
  * it loads some/path/file.php or some/path/file.inc
+ *
+ * @param string $file
  */ 
 function atk14_require_once($file){
 	($_file = atk14_find_file($file)) || ($_file = $file);
@@ -461,6 +466,8 @@ function atk14_require_once($file){
 /**
  * When some/path/file.php is given,
  * finds out whether there is some/path/file.php or some/path/file.inc
+ *
+ * @param string $file
  */
 function atk14_find_file($file){
 	preg_match('/^(.*\.)(inc|php)$/',$file,$matches);
@@ -473,6 +480,11 @@ function atk14_find_file($file){
 	}
 }
 
+/**
+ * Atk14s' way of including required file.
+ *
+ * @param string $file
+ */
 function atk14_require_once_if_exists($file){
 	if($file = atk14_find_file($file)){
 		return atk14_require_once($file);

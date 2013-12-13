@@ -56,21 +56,21 @@ class DbMole{
 	 *
 	 * @var string
 	 */
-	var $_ConfigurationName = "";
+	protected $_ConfigurationName = "";
 
 	/**
 	 * Connection resource
 	 *
 	 * @var resource
 	 */
-	var $_DbConnect = null;
+	protected $_DbConnect = null;
 
 
 	/**
 	 * Error message returned by a database operation
 	 *
 	 */
-	var $_ErrorMessage = null;
+	protected $_ErrorMessage = null;
 
 
 	/**
@@ -85,7 +85,7 @@ class DbMole{
 	 *
 	 * @var string
 	 */
-	var $_ErrorHandler = "";
+	protected $_ErrorHandler = "";
 
 
 	/**
@@ -93,14 +93,14 @@ class DbMole{
 	 *
 	 * @var string
 	 */
-	var $_Query = "";
+	protected $_Query = "";
 
 	/**
 	 * Parameters of last executed query.
 	 *
 	 * @var array
 	 */
-	var $_BindAr = array();
+	protected $_BindAr = array();
 
 	/**
 	 * Parameters used by query execution.
@@ -109,14 +109,14 @@ class DbMole{
 	 *
 	 * @var array
 	 */
-	var $_Options = array();
+	protected $_Options = array();
 
 	/**
 	 * Number of executed queries since connection to the database.
 	 *
 	 * @var integer
 	 */
-	var $_QueriesExecuted = 0;
+	protected $_QueriesExecuted = 0;
 
 
 	/**
@@ -124,7 +124,7 @@ class DbMole{
 	 *
 	 * @var string
 	 */
-	var $_CacheDir = null;
+	protected $_CacheDir = null;
 
 	/**
 	 * Flag informing that 'begin' command will be delayed until the connection to database is being opened

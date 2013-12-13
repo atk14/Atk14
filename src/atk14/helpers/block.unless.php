@@ -17,11 +17,13 @@
  *
  * Reserved parameters:
  * <ul>
- *  <li>content- name of tested variable</li>
+ *  <li>content - name of tested variable</li>
  * </ul>
  *
  * @param array $params
  * @param string $content
+ * @param string $template smarty specific
+ * @param string $repeat smarty specific
  */
 function smarty_block_unless($params,$content,$template,&$repeat){
 	if($repeat){ return; }

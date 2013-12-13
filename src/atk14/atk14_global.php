@@ -12,6 +12,7 @@
  *
  * @package Atk14
  * @subpackage Core
+ * @filesource
  *
  */
 class Atk14Global{
@@ -59,12 +60,14 @@ class Atk14Global{
 	}
 
 	/**
-	 * <code>
-	 * $routes = &$ATK14_GLOBAL->getValue("routes");
-	 * $routes = &$ATK14_GLOBAL->getValue("routes",array());
-	 * </code>
+	 * Returns reference to a value.
+	 *
+	 * Get reference to variable routes
+	 * 	$routes = &$ATK14_GLOBAL->getValue("routes");
+	 * 	$routes = &$ATK14_GLOBAL->getValue("routes",array());
 	 * 
-	 * @param $name name of global variable
+	 * @param string $name name of global variable
+	 * @param string $initial initial value to initialize value when the variable does not exist.
 	 * @return reference to global variable
 	 */
 	function &getValueRef($name,$initial = null){
@@ -75,9 +78,9 @@ class Atk14Global{
 	}
 
 	/**
-	 * Adresar v url, ve kterem je aplikace umistena.
-	 * 
-	 * Toto je dulezite pro sestavovani URL. Kazda URL bude timto zacinat.
+	 * Base directory of the application.
+	 *
+	 * All URLs begin with this value.
 	 *
 	 * "/", "/eshop/"... 
 	 *
@@ -144,8 +147,7 @@ class Atk14Global{
 	}
 
 	/**
-	 *
-	 * Adresar v URL, ktery smeruje do ./public/
+	 * Base directory of the URL with public content.
 	 *
 	 * "/public/", "/eshop/public/"...
 	 *
@@ -156,7 +158,13 @@ class Atk14Global{
 	}
 
 	/**
+	 * Gets environment.
+	 *
+	 * There are three types of environment: DEVELOPMENT, TEST, PRODUCTION
+	 *
 	 * echo $ATK14_GLOBAL->getEnvironment(); // DEVELOPMENT
+	 *
+	 * @return string name of environment
 	 */
 	function getEnvironment(){
 		$out = "";

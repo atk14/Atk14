@@ -23,9 +23,8 @@ class Atk14Require{
 	 * It automatically uses current namespace.
 	 *
 	 * This example loads all forms for controller article:
-	 * <code>
-	 * Atk14Require::Forms("article/*");
-	 * </code>
+	 * 	Atk14Require::Forms("article/*");
+	 *
 	 * @param string $pattern
 	 * @return array
 	 */
@@ -40,25 +39,16 @@ class Atk14Require{
 	 * Loads a controller by name. The controller name can be specified by several ways:
 	 *
 	 * Namespace doesn't have to be specified, it is used automatically.
-	 * <ul>
-	 * 	<li>classname
-	 * 	<code>
-	 * 	Atk14Require::Controller("ApplicationController");
-	 * 	Atk14Require::Controller("HelpController");
-	 * 	</code>
-	 * 	</li>
-	 * 	<li>filename. You don't have to specify suffix, it will be added automatically.
-	 * 	<code>
-	 * 	Atk14Require::Controller("help_controller");
-	 * 	Atk14Require::Controller("help_controller.php");
-	 * 	</code>
-	 * 	</li>
-	 * 	<li>other
-	 * 	<code>
-	 * 	Atk14Require::Controller("_*");
-	 * 	</code>
-	 * 	</li>
-	 * </ul>
+	 * - classname
+	 * 		Atk14Require::Controller("ApplicationController");
+	 * 		Atk14Require::Controller("HelpController");
+	 *
+	 * - filename. You don't have to specify suffix, it will be added automatically.
+	 * 		Atk14Require::Controller("help_controller");
+	 * 		Atk14Require::Controller("help_controller.php");
+	 *
+	 * - other
+	 * 		Atk14Require::Controller("_*");
 	 *
 	 * @param string $controller_name 
 	 * @return array
@@ -88,12 +78,12 @@ class Atk14Require{
 	/**
 	 * Loads a helper
 	 *
-	 * <code>
-	 * Atk14Require::Helper("modifier.format_datetime",$smarty);
-	 * Atk14Require::Helper("modifier.format_datetime.php",$smarty);
-	 * </code>
+	 * Loading a helper examples
+	 * 		Atk14Require::Helper("modifier.format_datetime",$smarty);
+	 * 		Atk14Require::Helper("modifier.format_datetime.php",$smarty);
 	 *
 	 * @param string $filename name of helper. extension doesn't have to be specified, it will be added automatically
+	 * @param Atk14Smarty $smarty
 	 * @return array
 	 */
 	static function Helper($filename,&$smarty){
@@ -111,15 +101,11 @@ class Atk14Require{
 	 * Loads filename specified by pattern.
 	 *
 	 * Alias of {@link _Files()} method.
-	 * <code>
-	 * Atk14Require::Load("controllers/application_mailer.inc");
-	 * Atk14Require::Load("controllers/*.inc");
-	 * </code>
+	 * 	Atk14Require::Load("controllers/application_mailer.inc");
+	 * 	Atk14Require::Load("controllers/*.inc");
 	 *
 	 * @param string $pattern
 	 * @return array
-	 * @uses _Files()
-	 * @static
 	 */
 	static function Load($pattern){
 		return Atk14Require::_Files($pattern);
@@ -129,7 +115,7 @@ class Atk14Require{
 	 *
 	 * Loads files specified by pattern.
 	 *
-	 * @static
+	 * @ignore
 	 *
 	 */
 	static function _Files($pattern){
