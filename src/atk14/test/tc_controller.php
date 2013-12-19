@@ -149,6 +149,6 @@ class TcController extends TcBase{
 
 		$controller = $client->get("universe/en/nonsence/nonsence");
 		$this->assertEquals(404,$client->getStatusCode());
-		$this->assertEquals("ApplicationController",get_class($controller));
+		$this->assertEquals("UniverseController",get_class($controller));
 	}
 }

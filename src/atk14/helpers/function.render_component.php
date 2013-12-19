@@ -10,13 +10,16 @@
 function smarty_function_render_component($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
-	if(!isset($params["controller"])){ $params["controller"] = $smarty->getTemplateVars("controller"); }
-
-	if(!isset($params["action"])){ $params["action"] = "index"; }
+	$params += array(
+		"controller" => $smarty->getTemplateVars("controller"),
+		"action" => "index",
+		"namespace" => $smarty->getTemplateVars("namespace"),
+	);
 
 	$controller_params = $params;
 	unset($controller_params["controller"]);
 	unset($controller_params["action"]);
+	unset($controller_params["namespace"]);
 
 	// pokud je parametr objekt, bude preveden volanim getId() na skalarni hodnotu
 	foreach($controller_params as $key => $v){
@@ -26,7 +29,8 @@ function smarty_function_render_component($params,$template){
 	$response = Atk14Dispatcher::ExecuteAction($params["controller"],$params["action"],array(
 		"render_layout" => false,
 		"apply_render_component_hacks" => true,
-		"params" => $controller_params
+		"params" => $controller_params,
+		"namespace" => $params["namespace"],
 	));
 
 	$buf = &$response->getOutputBuffer();

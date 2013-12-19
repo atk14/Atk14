@@ -125,8 +125,6 @@ class Atk14Dispatcher{
 		global $ATK14_GLOBAL;
 		$logger = $ATK14_GLOBAL->getLogger();
 
-		$namespace = $ATK14_GLOBAL->getValue("namespace");
-
 		$options = array_merge(array(
 			"page_title" => "",
 			"page_description" => "",
@@ -134,11 +132,23 @@ class Atk14Dispatcher{
 			"apply_render_component_hacks" => false,
 			"params" => array(),
 			"return_controller" => false,
-			"request" => null
+			"request" => null,
+			"namespace" => (string)$ATK14_GLOBAL->getValue("namespace"), // may be null
 		),$options);
+
+		$namespace = $options["namespace"];
 
 		$requested_controller = $controller_name;
 		$requested_action = $action;
+
+		if($options["apply_render_component_hacks"]){
+			$prev_namespace = $ATK14_GLOBAL->getValue("namespace");
+			$prev_controller_name = $ATK14_GLOBAL->getValue("controller");
+			$prev_action = $ATK14_GLOBAL->getValue("action");
+		}
+		$ATK14_GLOBAL->setValue("namespace",$namespace);
+		$ATK14_GLOBAL->setValue("controller",$controller_name);
+		$ATK14_GLOBAL->setValue("action",$action);
 
 		Atk14Utils::LoadControllers("{$controller_name}_controller");
 
@@ -170,14 +180,6 @@ class Atk14Dispatcher{
 			$controller_name = $_controller_name;
 			$action = "error404";
 		}
-
-		if($options["apply_render_component_hacks"]){
-			$prev_namespace = $ATK14_GLOBAL->getValue("namespace");
-			$prev_controller_name = $ATK14_GLOBAL->getValue("controller");
-			$prev_action = $ATK14_GLOBAL->getValue("action");
-		}
-		$ATK14_GLOBAL->setValue("controller",$controller_name);
-		$ATK14_GLOBAL->setValue("action",$action);
 
 		$controller->atk14__initialize(array(
 			"namespace" => $namespace,

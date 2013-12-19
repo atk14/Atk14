@@ -1,5 +1,5 @@
 <?php
-class MainController extends ApplicationController{
+class MainController extends UniverseController{
 	function index(){
 		$this->render_template = false;
 	}

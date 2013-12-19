@@ -37,10 +37,12 @@ class TcHelpers extends TcBase{
 	function test_render_component(){
 		global $ATK14_GLOBAL;
 		$out = $this->_run_action("helpers/render_component");
-		$this->assertEquals('<div id="external_content">Hello World from Mars!</div>',trim($out));
+		$this->assertContains('<div id="external_content">Hello World from Mars!</div>',$out);
+		$this->assertContains('<div id="external_content_from_other_namespace">Hello from Venus, an planet from the Universe</div>',$out);
 
 		$this->assertEquals("helpers",$ATK14_GLOBAL->getValue("controller"));
 		$this->assertEquals("render_component",$ATK14_GLOBAL->getValue("action"));
+		$this->assertEquals("",$ATK14_GLOBAL->getValue("namespace"));
 	}
 
 	function test_a(){
