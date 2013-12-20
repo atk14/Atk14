@@ -47,4 +47,51 @@ class TcFiles extends TcBase{
 		Files::Unlink($tmp_filename);
 		Files::Unlink($tmp_filename2);
 	}
+
+	function test_move_file(){
+		$dir1 = TEMP."/dir_1/";
+		$dir2 = TEMP."/dir_2";
+		$dir3 = TEMP."/dir_3";
+
+		if(file_exists($dir1)){ rmdir($dir1); }
+		if(file_exists($dir2)){ rmdir($dir2); }
+		if(file_exists($dir3)){ rmdir($dir3); }
+
+		mkdir($dir1);
+		mkdir($dir3);
+		
+		$this->assertEquals(true,file_exists($dir1));
+		$this->assertEquals(false,file_exists($dir2));
+
+		Files::MoveFile($dir1,$dir2);
+
+		$this->assertEquals(false,file_exists($dir1));
+		$this->assertEquals(true,file_exists($dir2) && is_dir($dir2));
+
+		touch("$dir2/a_file.txt");
+
+		$this->assertEquals(true,file_exists("$dir2/a_file.txt"));
+		$this->assertEquals(false,file_exists("$dir2/another_file.txt"));
+		
+		Files::MoveFile("$dir2/a_file.txt","$dir2/another_file.txt");
+
+		$this->assertEquals(false,file_exists("$dir2/a_file.txt"));
+		$this->assertEquals(true,file_exists("$dir2/another_file.txt"));
+
+		// moving from a directory to another directory
+		Files::MoveFile("$dir2/another_file.txt","$dir3");
+
+		$this->assertEquals(false,file_exists("$dir2/another_file.txt"));
+		$this->assertEquals(true,file_exists("$dir3/another_file.txt"));
+
+		unlink("$dir3/another_file.txt");
+
+		// moving directory
+		Files::MoveFile("$dir3","$dir2/");
+
+		$this->assertEquals(false,file_exists($dir3));
+		$this->assertEquals(true,file_exists("$dir2/dir_3/"));
+
+		rmdir("$dir2/dir_3");
+	}
 }

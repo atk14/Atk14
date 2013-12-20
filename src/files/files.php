@@ -223,10 +223,13 @@ class Files{
 	}
 
 	/**
-	 * Moves a file
+	 * Moves a file or a directory
 	 *
-	 * In fact the method copies the file first and then removes the source file.
-	 *
+	 * <code>
+	 *	Files::MoveFile("/path/to/file","/path/to/another/file",$error,$error_str);
+	 *	Files::MoveFile("/path/to/file","/path/to/directory/",$error,$error_str);
+	 *	Files::MoveFile("/path/to/directory/","/path/to/another/directory/",$error,$error_str);
+	 * </code>
 	 *
 	 * @static
 	 * @param string 	$from_file Source file
@@ -243,6 +246,17 @@ class Files{
 		settype($from_file,"string");
 		settype($to_file,"string");
 
+		if(is_dir($to_file) && file_exists($from_file) && !is_dir($from_file)){
+			// copying a file to an existing directory
+			preg_match('/([^\/]+)$/',$from_file,$matches);
+			$to_file .= "/$matches[1]";
+			
+		}elseif(is_dir($to_file) && file_exists($from_file) && is_dir($from_file)){
+			// copying a directory to an existing directory
+			preg_match('/([^\/]+)\/*$/',$from_file,$matches);
+			$to_file .= "/$matches[1]";
+		}
+
 		if($from_file==$to_file){
 			$error = true;
 			$error_str = "from_file and to_file are the same files";
@@ -257,20 +271,6 @@ class Files{
 		}	
 
 		return 1;
-
-		/*
-		Files::CopyFile($from_file,$to_file,$error,$error_str);
-
-		if(!$error){
-			Files::Unlink($from_file,$error,$error_str);
-		}
-
-		if($error){
-			return 0;
-		}
-
-		return 1;
-		*/
 	}
 
 	/**
