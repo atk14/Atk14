@@ -21,10 +21,20 @@ $constants = array_merge(array(
 	"TEST" => TEST,
 ),$__CONFIG_CONSTANTS__);
 
+if(isset($argv[1]) && !isset($constants[$argv[1]]) && defined($argv[1])){
+	$constants[$argv[1]] = constant($argv[1]); 
+}
+
 foreach($constants as &$c){	if(is_bool($c)){ $c = $c ? "true" : "false"; } }
 
 if(isset($argv[1])){
-	echo isset($constants[$argv[1]]) ? $constants[$argv[1]]."\n" : "";
+	if(!isset($constants[$argv[1]])){
+		$stderr = fopen('php://stderr', 'w');
+		fwrite($stderr,"There is no constant $argv[1]\n");
+		exit(1);
+	}
+
+	echo $constants[$argv[1]]."\n";
 	exit;
 }
 
