@@ -2,5 +2,8 @@ skelet/tmp/*
 skelet/log/*
 !src/logger/test/log/README
 src/logger/test/log/*
+!src/atk14/test/log/README
+src/atk14/test/log/*
+src/atk14/test/robots/lock/*
 skelet/atk14
 src/http/test/temp/*

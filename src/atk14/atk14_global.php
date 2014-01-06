@@ -458,6 +458,14 @@ class Atk14Global{
 	}
 
 	/**
+	 * Sets the global Logger variable
+	 */
+	function setLogger($logger){
+		global $ATK14_LOGGER;
+		$ATK14_LOGGER = $logger;
+	}
+
+	/**
 	 * Returns session object
 	 *
 	 * @return Atk14Session

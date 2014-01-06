@@ -92,6 +92,8 @@ class Atk14Robot{
 			"automatically_log_to_stdout_on_terminal" => true,
 		));
 
+		$ATK14_GLOBAL->setLogger($this->logger);
+
 		$this->mailer = Atk14MailerProxy::GetInstance(array(
 			"namespace" => "",
 			"logger" => $this->logger,
