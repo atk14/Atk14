@@ -509,15 +509,17 @@ class Atk14Form extends Form
 	 *   "controller" => "customer",
 	 *   "action" => "login"
 	 * ));
+	 * $form->set_action("index"); // here "index" is considered as action name
+	 * $form->set_action("books/index"); // "books/index" is considered as controller and action combination
+	 * $form->set_action("/en/articles/detail/?id=123"); // URI
+	 * $form->set_action("http://www.example.com/en/articles/detail/?id=123"); // fully specified URL
 	 * </code>
 	 *
 	 * @param array|string $url
 	 */
 	function set_action($url)
 	{
-		if(is_array($url)){
-			$url = Atk14Url::BuildLink($url,array("connector" => "&"));
-		}
+		$url = Atk14Url::BuildLink($url,array("connector" => "&"));
 		$this->atk14_action = (string)$url;
 	}
 

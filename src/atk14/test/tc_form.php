@@ -147,7 +147,7 @@ class TcForm extends TcBase{
 	}
 
 	function test_set_action(){
-		global $HTTP_REQUEST;
+		global $HTTP_REQUEST,$ATK14_GLOBAL;
 		$HTTP_REQUEST->setRequestUri("/testing/?id=12&format=xml");
 
 		$form = new TestForm();
@@ -165,5 +165,16 @@ class TcForm extends TcBase{
 			"format" => "raw",
 		));
 		$this->assertEquals('/en/books/detail/?id=123&format=raw',$form->get_action());
+
+		$ATK14_GLOBAL->setValue("namespace","");
+		$ATK14_GLOBAL->setValue("lang","en");
+		$ATK14_GLOBAL->setValue("controller","articles");
+		$ATK14_GLOBAL->setValue("action","index");
+		
+		$form->set_action("export");
+		$this->assertEquals("/en/articles/export/",$form->get_action());
+
+		$form->set_action("books/index");
+		$this->assertEquals("/en/books/",$form->get_action());
 	}
 }
