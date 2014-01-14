@@ -1,10 +1,8 @@
 <?php
 /**
  * Class for advanced operations with forms.
- * @package Atk14
- * @subpackage Core
+ * @package Atk14/Core
  * @filesource
- * @author Jaromir Tomek
  */
 
 /**
@@ -74,9 +72,7 @@
  * </code>
  * prints out error summary.
  *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
+ * @package Atk14/Core
  */
 class Atk14Form extends Form
 {
@@ -122,9 +118,11 @@ class Atk14Form extends Form
 	var $atk14_attrs = array();
 
 	/**
-	 * @access private
+	 * Initial values
+	 *
+	 * Must be null when values are not set
 	 */
-	var $atk14_initial_values = null; // vychozi hodnoty; pokud se nenastavuje, musi byt null....
+	private $atk14_initial_values = null;
 
 	/**
 	 * @access private
@@ -158,9 +156,12 @@ class Atk14Form extends Form
 	var $atk14_csrf_protection_enabled = false;
 
 	/**
+	 * Constructor 
+	 *
 	 * @param array $options valid options:
 	 * <ul>
-	 * 	<li><b>call_set_up</b></li>
+	 * 	<li><b>call_set_up</b> -</li>
+	 * 	<li><b>attrs</b> -</li>
 	 * </ul>
 	 * @param Atk14Controller $controller
 	 *
@@ -244,9 +245,8 @@ class Atk14Form extends Form
 	 *
 	 * @param string $filename name of file containing definition of {@link Atk14Form}
 	 * @param Atk14Controller $controller_obj instance of {@link Atk14Controller} using this form
+	 * @param array $options {@see __construct}
 	 * @return Atk14Form instance of {@link Atk14Form}
-	 *
-	 * @static
 	 */
 	static function GetInstanceByFilename($filename,$controller_obj = null,$options = array())
 	{
@@ -301,9 +301,8 @@ class Atk14Form extends Form
 	 * @param string $controller name of controller
 	 * @param string $action name of action
 	 * @param Atk14Controller $controller_obj instance of controller using the form (optional)
+	 * @param array $options {@see __construct}
 	 * @return Atk14Form instance of {@link Atk14Form}
-	 * @static
-	 *
 	 */
 	static function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null,$options = array())
 	{
@@ -326,9 +325,9 @@ class Atk14Form extends Form
 	 * Given the controller instance the method uses its name and name of action currently executed to get the correct form class name.
 	 *
 	 * @param Atk14Controller $controller
+	 * @param array $options {@see __construct}
 	 * @return Atk14Form instance of {@link Atk14Form}
 	 * @uses GetInstanceByControllerAndAction
-	 * @static
 	 */
 	static function GetInstanceByController($controller,$options = array()){
 		return Atk14Form::GetInstanceByControllerAndAction($controller->controller,$controller->action,$controller,$options);
@@ -344,10 +343,10 @@ class Atk14Form extends Form
 	 * $form = Atk14Form::GetForm("MoveForm",$this);
 	 * </code>
 	 *
-	 * @param string $classname
+	 * @param string $class_name
 	 * @param Atk14Controller $controller instance of controller which uses the form
+	 * @param array $options {@see __construct}
 	 * @return Atk14Form
-	 * @static
 	 */
 	static function GetForm($class_name,$controller = null,$options = array()){
 		global $ATK14_GLOBAL;
@@ -453,6 +452,7 @@ class Atk14Form extends Form
 
 	/**
 	 * @access private
+	 * @ignore
 	 */
 	function _call_super_constructor()
 	{
@@ -547,6 +547,11 @@ class Atk14Form extends Form
 		return $this->atk14_method;
 	}
 
+	/**
+	 * Enables CSRF protection.
+	 *
+	 * The method adds new field with name '_token' to the form
+	 */
 	function enable_csrf_protection(){
 		$this->atk14_csrf_protection_enabled = true;
 		$this->set_hidden_field("_token",$this->get_csrf_token());
@@ -860,7 +865,11 @@ class Atk14Form extends Form
 	}
 
 	/**
+	 * Returns errors that are bound to the form.
 	 *
+	 * Returns error messages that are bound to the form as a whole not to fields.
+	 *
+	 * @return array array of error messages
 	 * @todo Comment
 	 */
 	function non_field_errors(){
@@ -923,14 +932,13 @@ class Atk14Form extends Form
 	 *
 	 * @param string $name identifier of the field
 	 * @return Field instance of Field
-	 *
 	 */
+	function get_field($name){
 	// !!! je dulezite pred volanim get_field() volat konstruktor rodice.
 	// !!! jinak by nebyl formular ($this) zinicialozovan (chybela by napr vlastnost $this->auto_id)
 	// !!! a te je dulezita pri volani:
 	// !!!   $field = $form->get_field("name");
 	// !!!   echo $field->label_tag();
-	function get_field($name){
 		$this->_call_super_constructor();
 		if(!$out = parent::get_field($name)){
 			throw new Exception(get_class($this).": there is no such a field $name");
@@ -938,16 +946,34 @@ class Atk14Form extends Form
 		return $out;
 	}
 
+	/**
+	 * Returns names of the fields as array.
+	 *
+	 * @return array
+	 */
 	function get_field_keys(){
 		$this->_call_super_constructor();
 		return parent::get_field_keys();
 	}
 
+	/**
+	 * Returns list of fields.
+	 *
+	 * @param string $wildcart
+	 * @return
+	 * @note what about the param
+	 */
 	function list_fields($wildcart = ""){
 		$this->_call_super_constructor();
 		return parent::list_fields();
 	}
 
+	/**
+	 * Checks if the form contains a field.
+	 *
+	 * @param string $name Name of field
+	 * @return boolean
+	 */
 	function has_field($name){
 		return isset($this->fields[$name]);
 	}

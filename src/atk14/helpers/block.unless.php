@@ -24,6 +24,8 @@
  * @param string $content
  * @param string $template smarty specific
  * @param string $repeat smarty specific
+ * @package Atk14
+ * @subpackage Helpers
  */
 function smarty_block_unless($params,$content,$template,&$repeat){
 	if($repeat){ return; }

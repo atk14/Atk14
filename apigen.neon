@@ -1,0 +1,40 @@
+source:
+	- src/atk14
+	- src/dates
+	- src/dbmole
+	- src/dictionary
+	- src/files
+	- src/forms
+	- src/http
+	- src/logger
+	- src/string
+	- src/stringbuffer
+	- src/tablerecord
+	- src/translate
+	- src/url_fetcher
+	- src/xmole
+
+extensions: [php,inc]
+
+exclude:
+	- */test/*.inc
+	- */test/*.php
+	- *tc_*.inc
+	- *tc_*.php
+	- */load.inc
+	- */load.php
+	- initialize.inc
+
+sourceCode: Yes
+
+destination: output-apigen
+
+title: Atk14 documentation
+
+wipeout: No
+
+php: No
+
+report: output-apigen/errors.xml
+
+skipDocPrefix: [Smarty]
