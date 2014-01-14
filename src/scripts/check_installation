@@ -9,7 +9,7 @@ assert_command_exists () {
 	echo -n "command $cmd exists... "
 	if [ "`which $cmd`" = "" ]; then
 		echo "fail"
-		echo "!!  command $cmd is not installer"
+		echo "!!  command $cmd is not installed"
 		exit_val=1
 	else	
 		echo "ok"
