@@ -2,7 +2,28 @@
 /**
  * Renders radio buttons as unordered list.
  *
- * <ul /><li />
+ * Usage in a form:
+ *
+ *	// a boolean field
+ *	$this->add_field("agreement",new BooleanField(array(
+ *	 "label" => "Do you agree?",
+ *	 "widget" => new RadioSelect(array(
+ *	 	"choices" => array(
+ *	 		"on" => "Yes, I do",
+ *	 		"off" => "No, I don't"
+ *	 	)
+ *	 ))
+ *	)));
+ *
+ *	// a choice field
+ *	$choices = array("single" => "Single", "married" => "Married", "divorced" => "Divorced", "widow" => "Widow, widower");
+ *	$this->add_field("family_status",new ChoiceField(array(
+ *		"label" => "Family Status",
+ *		"choices" => $choices,
+ *		"widget" => new RadioSelect(array(
+ *			"choices" => $choices
+ *		))
+ *	)));
  *
  * @package Atk14
  * @subpackage Forms

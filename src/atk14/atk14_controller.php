@@ -568,6 +568,7 @@ class Atk14Controller{
 	* $form = $this->_get_form("CreateNewForm");
 	* $form = $this->_get_form("create_new_form");
 	* $form = $this->_get_form("edit");
+	* $login_form = $this->_get_form("logins/create_new_form");
 	*/
 	function _get_form($class_name = null,$options = array()){
 		$options = array_merge(array(
