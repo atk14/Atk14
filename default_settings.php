@@ -19,10 +19,10 @@ __defaults__(array(
 __defaults__(array(
 	"ATK14_APPLICATION_NAME" => "Our Website",
 	"ATK14_APPLICATION_DESCRIPTION" => "Yet another application running on ATK14 Framework", // default description
-	"ATK14_DOCUMENT_ROOT" => dirname(__FILE__)."/../", // where is the folder containing app/, config/ dispatcher.php...
+	"ATK14_DOCUMENT_ROOT" => dirname(__FILE__)."/../", // where is the folder containing app/, config/, dispatcher.php...
 	"ATK14_BASE_HREF" => "/",
-	"ATK14_HTTP_HOST" => "www.our-awesome-website.com", // 
-	"ATK14_ADMIN_EMAIL" => DEFAULT_EMAIL,
+	"ATK14_HTTP_HOST" => "www.our-awesome-website.com", //
+	"ATK14_ADMIN_EMAIL" => DEFAULT_EMAIL, // an address for sending DbMole's error reports...
 
 	"ATK14_PAGINATOR_OFFSET_PARAM_NAME" => "offset", // you may want to use "from" or something else
 	"ATK14_SORTING_PARAM_NAME" => "order",
