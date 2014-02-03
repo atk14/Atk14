@@ -956,7 +956,7 @@ class TcForms extends TcBase
 			$field->as_widget()
 		);
 		$field = $form->get_field('message');
-		$this->assertEquals(
+		$this->assertHtmlEquals(
 			'<textarea cols="20" rows="80" name="message" class="form-control"></textarea>',
 			$field->as_widget()
 		);
@@ -964,7 +964,7 @@ class TcForms extends TcBase
 		// podoba policek se da ovlivnit volanim metod
 		// as_textarea, as_text a as_hidden
 		$field = $form->get_field('subject');
-		$this->assertEquals(
+		$this->assertHtmlEquals(
 			'<textarea cols="40" rows="10" name="subject" class="form-control"></textarea>',
 			$field->as_textarea()
 		);
@@ -987,7 +987,7 @@ class TcForms extends TcBase
 		$data = array('subject'=>'Hello', 'message'=>'I love you.');
 		$form = new ContactForm(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('subject');
-		$this->assertEquals(
+		$this->assertHtmlEquals(
 			'<textarea cols="40" rows="10" name="subject" class="form-control">Hello</textarea>',
 			$field->as_textarea()
 		);

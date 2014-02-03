@@ -5,4 +5,8 @@ class TcBase extends TcSuperBase{
 		$actual = new XMole("<xml>$actual</xml>");
 		return XMole::AreSame($expected,$actual);
 	}
+
+	function assertHtmlEquals($expected,$actual){
+		$this->assertTrue($this->_compare_html($expected,$actual,"\n\n### expected ###\n$expected\n\n### actual ###\n$actual\n\n"));
+	}
 }
