@@ -104,9 +104,10 @@ function forms_htmlspecialchars($string)
 }
 
 /**
-* Nahrada za array_merge.
-* V PHP5 se totiz u array_merge zmenilo chovani a prijima vyhradne parametry typu array.
-*/
+ * A smarter replacement for PHP built-in array_merge().
+ *
+ * In PHP5 array_merge() changes its behaviour and accepts strictly arrays.
+ */
 function forms_array_merge ()
 {
 	$merged=array ();
@@ -855,6 +856,7 @@ class Form implements ArrayAccess
 			);
 
 			list($error, $value) = $field->clean($value);
+			if(is_array($error) && sizeof($error)==0){ $error = null; }
 			if (is_null($error)) {
 				$this->cleaned_data[$name] = $value;
 				if (method_exists($this, 'clean_'.$name)) {
@@ -865,11 +867,11 @@ class Form implements ArrayAccess
 				}
 			}
 			if (!is_null($error)) {
-				if (isset($this->errors[$name])) {
-					$this->errors[$name][] = $error;
-				}
-				else {
-					$this->errors[$name] = array($error);
+				if(!isset($this->errors[$name])){ $this->errors[$name] = array(); }
+				if(is_array($error)){
+					foreach($error as $e){ $this->errors[$name][] = (string)$e; }
+				}else{
+					$this->errors[$name][] = (string)$error;
 				}
 				if (isset($this->cleaned_data[$name])) {
 					unset($this->cleaned_data[$name]);

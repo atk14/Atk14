@@ -267,6 +267,8 @@ class Field
 	 *
 	 * Checks if the field doesn't contain empty value when it is required. Can be overridden in a subclass.
 	 *
+	 * list($error,$cleaned_value) = $field->clean($raw_value); // $error may be null, a string or an array of strings; null or empty array means no error
+	 *
 	 * @param mixed $value
 	 * @return array
 	 * @see check_empty_value()
