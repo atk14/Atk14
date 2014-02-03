@@ -287,8 +287,15 @@ class Atk14Url{
 			}elseif($options["with_hostname"]=="false"){ $options["with_hostname"] = false; }
 		}
 
-		if(isset($options["ssl"]) && !$options["with_hostname"]){
-			$options["with_hostname"] = true;
+		if(isset($options["ssl"])){
+			$options["with_hostname"] = true; // this is correct behaviour - we are expecting it in tests
+
+			if($options["ssl"] && !$HTTP_REQUEST->ssl() && !is_string($options["with_hostname"])){
+				$options["with_hostname"] = ATK14_HTTP_HOST_SSL;
+			}
+			if(!$options["ssl"] && $HTTP_REQUEST->ssl() && !is_string($options["with_hostname"])){
+				$options["with_hostname"] = ATK14_HTTP_HOST;
+			}
 		}
 
 		$out = null;
@@ -383,7 +390,7 @@ class Atk14Url{
 		if($options["with_hostname"]){
 			$_server_port = isset($options["port"]) ? $options["port"] : $HTTP_REQUEST->getServerPort();
 			$hostname = (is_string($options["with_hostname"])) ? $options["with_hostname"] : $ATK14_GLOBAL->getHttpHost();
-			if($HTTP_REQUEST->sslActive()){
+			if($HTTP_REQUEST->ssl()){
 				$_exp_port = 443;
 				$_proto = "https";
 			}else{
@@ -396,14 +403,14 @@ class Atk14Url{
 			}
 
 			if(isset($options["ssl"])){
-				if($options["ssl"] && !$HTTP_REQUEST->sslActive()){
+				if($options["ssl"] && !$HTTP_REQUEST->ssl()){
 					$_port = "";
 					$_proto = "https";
 					if(isset($options["port"]) && $options["port"]!=443){
 						$_port = ":$options[port]";
 					}
 				}
-				if(!$options["ssl"] && $HTTP_REQUEST->sslActive()){
+				if(!$options["ssl"] && $HTTP_REQUEST->ssl()){
 					$_port = "";
 					$_proto = "http";
 					if(isset($options["port"]) && $options["port"]!=80){

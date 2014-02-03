@@ -39,6 +39,10 @@ __defaults__(array(
 	"ATK14_ENABLE_AUTO_REDIRECTING" => true,
 ));
 
+__defaults__(array(
+	"ATK14_HTTP_HOST_SSL" => ATK14_HTTP_HOST, // sometimes a ssl hostname differs from the non-ssl, like www.project-x.net and secure.project-x.net
+));
+
 // SessionStorer`s constants, a session subsystem
 __defaults__(array(
 	"SESSION_STORER_SESSION_MAX_LIFETIME" => 60 * 60 * 24 * 1, // time in seconds; whole day by default

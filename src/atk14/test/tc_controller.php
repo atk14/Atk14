@@ -66,9 +66,9 @@ class TcController extends TcBase{
 		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->_link_to($params));
 
 		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("with_hostname" => true)));
-		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("with_hostname" => true, "ssl" => true)));
+		$this->assertEquals("https://secure.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("with_hostname" => true, "ssl" => true)));
 
-		$this->assertEquals("https://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("ssl" => true)));
+		$this->assertEquals("https://secure.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("ssl" => true)));
 		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("ssl" => false)));
 	}
 

@@ -61,7 +61,7 @@ class TcHelpers extends TcBase{
 
 		$out = $this->_run_action("helpers/link_to");
 		$this->assertContains('Book#1200 URL: http://www.testing.cz/en/books/detail/?id=1200&amp;format=xml',$out);
-		$this->assertContains('Kniha#600 URL: https://www.testing.cz/cs/books/detail/?id=600#detail',$out);
+		$this->assertContains('Kniha#600 URL: https://secure.testing.cz/cs/books/detail/?id=600#detail',$out);
 	}
 
 	function test_content(){
