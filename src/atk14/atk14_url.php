@@ -290,10 +290,10 @@ class Atk14Url{
 		if(isset($options["ssl"])){
 			$options["with_hostname"] = true; // this is correct behaviour - we are expecting it in tests
 
-			if($options["ssl"] && !$HTTP_REQUEST->ssl() && !is_string($options["with_hostname"])){
+			if($options["ssl"] && !$HTTP_REQUEST->ssl() && !is_string($options["with_hostname"]) && ATK14_HTTP_HOST!=ATK14_HTTP_HOST_SSL){
 				$options["with_hostname"] = ATK14_HTTP_HOST_SSL;
 			}
-			if(!$options["ssl"] && $HTTP_REQUEST->ssl() && !is_string($options["with_hostname"])){
+			if(!$options["ssl"] && $HTTP_REQUEST->ssl() && !is_string($options["with_hostname"]) && ATK14_HTTP_HOST!=ATK14_HTTP_HOST_SSL){
 				$options["with_hostname"] = ATK14_HTTP_HOST;
 			}
 		}
