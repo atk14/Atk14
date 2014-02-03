@@ -44,7 +44,7 @@ class TcWidgets extends TcBase
 					$test['params']['options']
 				);
 				//$this->assertEquals($test['result'], $result);
-				$this->assertTrue($this->_compare_html($test['result'],$result));
+				$this->assertTrue($this->_compare_html($test['result'],$result),"\n\n### expected ###\n$test[result]\n\n### actual ###\n$result\n\n");
 			}
 		}
 	}
@@ -60,19 +60,19 @@ class TcWidgets extends TcBase
 				'params' => array(
 					array(
 						'params' => array('name'=>'email', 'value'=>'', 'options'=>array()),
-						'result' => '<input type="text" name="email" class="text" />'
+						'result' => '<input type="text" name="email" class="text form-control" />'
 					),
 					array(
 						'params' => array('name'=>'email', 'value'=>null, 'options'=>array()),
-						'result' => '<input type="text" name="email" class="text" />'
+						'result' => '<input type="text" name="email" class="text form-control" />'
 					),
 					array(
 						'params' => array('name'=>'email', 'value'=>'test@example.com', 'options'=>array()),
-						'result' => '<input type="text" name="email" class="text" value="test@example.com" />'
+						'result' => '<input type="text" name="email" class="text form-control" value="test@example.com" />'
 					),
 					array(
 						'params' => array('name'=>'email', 'value'=>'some "quoted" & ampersanded value', 'options'=>array()),
-						'result' => '<input type="text" name="email" class="text" value="some &quot;quoted&quot; &amp; ampersanded value" />'
+						'result' => '<input type="text" name="email" class="text form-control" value="some &quot;quoted&quot; &amp; ampersanded value" />'
 					),
 					array(
 						'params' => array('name'=>'email', 'value'=>'test@example.com', 'options'=>array('attrs'=>array('class'=>'fun'))),
@@ -368,19 +368,19 @@ class TcWidgets extends TcBase
 				'params' => array(
 					array(
 						'params' => array('name'=>'msg', 'value'=>'', 'options'=>array()),
-						'result' => '<textarea cols="40" rows="10" name="msg"></textarea>'
+						'result' => '<textarea cols="40" rows="10" name="msg" class="form-control"></textarea>'
 					),
 					array(
 						'params' => array('name'=>'msg', 'value'=>null, 'options'=>array()),
-						'result' => '<textarea cols="40" rows="10" name="msg"></textarea>'
+						'result' => '<textarea cols="40" rows="10" name="msg" class="form-control"></textarea>'
 					),
 					array(
 						'params' => array('name'=>'msg', 'value'=>'value', 'options'=>array()),
-						'result' => '<textarea cols="40" rows="10" name="msg">value</textarea>'
+						'result' => '<textarea cols="40" rows="10" name="msg" class="form-control">value</textarea>'
 					),
 					array(
 						'params' => array('name'=>'msg', 'value'=>'some "quoted" & ampersanded value', 'options'=>array()),
-						'result' => '<textarea cols="40" rows="10" name="msg">some &quot;quoted&quot; &amp; ampersanded value</textarea>'
+						'result' => '<textarea cols="40" rows="10" name="msg" class="form-control">some &quot;quoted&quot; &amp; ampersanded value</textarea>'
 					),
 					array(
 						'params' => array('name'=>'msg', 'value'=>'value', 'options'=>array('attrs'=>array('class'=>'pretty', 'rows'=>20))),
@@ -508,28 +508,28 @@ class TcWidgets extends TcBase
 				'params' => array(
 					array(
 						'params' => array('name'=>'beatle', 'value'=>'J', 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<select name="beatle">', '<option value="J" selected="selected">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
+						'result' => implode("\n", array('<select name="beatle" class="form-control">', '<option value="J" selected="selected">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
 					),
 					array(
 						'params' => array('name'=>'beatle', 'value'=>null, 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<select name="beatle">', '<option value="J">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
+						'result' => implode("\n", array('<select name="beatle" class="form-control">', '<option value="J">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
 					),
 					array(
 						'params' => array('name'=>'beatle', 'value'=>'John', 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<select name="beatle">', '<option value="J">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
+						'result' => implode("\n", array('<select name="beatle" class="form-control">', '<option value="J">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
 					),
 					// parametry zadane jako integer se interne prevadi na retezce
 					array(
 						'params' => array('name'=>'num', 'value'=>2, 'options'=>array('choices'=>array('1'=>'1', '2'=>'2', '3'=>'3'))),
-						'result' => implode("\n", array('<select name="num">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
+						'result' => implode("\n", array('<select name="num" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
 					),
 					array(
 						'params' => array('name'=>'num', 'value'=>'2', 'options'=>array('choices'=>array(1=>1, 2=>2, 3=>3))),
-						'result' => implode("\n", array('<select name="num">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
+						'result' => implode("\n", array('<select name="num" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
 					),
 					array(
 						'params' => array('name'=>'num', 'value'=>2, 'options'=>array('choices'=>array(1=>1, 2=>2, 3=>3))),
-						'result' => implode("\n", array('<select name="num">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
+						'result' => implode("\n", array('<select name="num" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
 					),
 				)
 			),
@@ -538,17 +538,17 @@ class TcWidgets extends TcBase
 				'params' => array(
 					array(
 						'params' => array('name'=>'num', 'value'=>2, 'options'=>array()),
-						'result' => implode("\n", array('<select name="num">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
+						'result' => implode("\n", array('<select name="num" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
 					),
 					// pokud jsou choices zadany konstruktoru i fci render, vykresli se oboje
 					array(
 						'params' => array('name'=>'num', 'value'=>2, 'options'=>array('choices'=>array(4=>4, 5=>5))),
-						'result' => implode("\n", array('<select name="num">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '<option value="4">4</option>', '<option value="5">5</option>', '</select>'))
+						'result' => implode("\n", array('<select name="num" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '<option value="4">4</option>', '<option value="5">5</option>', '</select>'))
 					),
 					// escapovani hodnot i labels
 					array(
 						'params' => array('name'=>'num', 'value'=>2, 'options'=>array('choices'=>array('bad'=>'you & me', 'good'=>'you &gt; me'))),
-						'result' => implode("\n", array('<select name="num">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '<option value="bad">you &amp; me</option>', '<option value="good">you &amp;gt; me</option>', '</select>'))
+						'result' => implode("\n", array('<select name="num" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '<option value="bad">you &amp; me</option>', '<option value="good">you &amp;gt; me</option>', '</select>'))
 					),
 				),
 			)
@@ -568,49 +568,49 @@ class TcWidgets extends TcBase
 				'params' => array(
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('J'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]">', '<option value="J" selected="selected">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]" class="form-control">', '<option value="J" selected="selected">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
 					),
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('J', 'P'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]">', '<option value="J" selected="selected">John</option>', '<option value="P" selected="selected">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]" class="form-control">', '<option value="J" selected="selected">John</option>', '<option value="P" selected="selected">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
 					),
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('J', 'P', 'R'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]">', '<option value="J" selected="selected">John</option>', '<option value="P" selected="selected">Paul</option>', '<option value="G">George</option>', '<option value="R" selected="selected">Ringo</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]" class="form-control">', '<option value="J" selected="selected">John</option>', '<option value="P" selected="selected">Paul</option>', '<option value="G">George</option>', '<option value="R" selected="selected">Ringo</option>', '</select>'))
 					),
 					// pokud je hodnota null, neoznaci se nic
 					array(
 						'params' => array('name'=>'beatles', 'value'=>null, 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]">', '<option value="J">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]" class="form-control">', '<option value="J">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
 					),
 					// pokud hodonta koresponduje s popiskem, neoznaci se nic
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('John'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]">', '<option value="J">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]" class="form-control">', '<option value="J">John</option>', '<option value="P">Paul</option>', '<option value="G">George</option>', '<option value="R">Ringo</option>', '</select>'))
 					),
 					// pokud se objevi vice hodnot a nektere jsou spatne, oznaci se jen ty dobre
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('J', 'G', 'foo'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]">', '<option value="J" selected="selected">John</option>', '<option value="P">Paul</option>', '<option value="G" selected="selected">George</option>', '<option value="R">Ringo</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="beatles[]" class="form-control">', '<option value="J" selected="selected">John</option>', '<option value="P">Paul</option>', '<option value="G" selected="selected">George</option>', '<option value="R">Ringo</option>', '</select>'))
 					),
 					// ne-stringove hodnoty jsou prevedeny na retezec
 					array(
 						'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array('choices'=>array('1'=>'1', '2'=>'2', '3'=>'3'))),
-						'result' => implode("\n", array('<select multiple="multiple" name="nums[]">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="nums[]" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
 					),
 					array(
 						'params' => array('name'=>'nums', 'value'=>array('2'), 'options'=>array('choices'=>array(1=>1, 2=>2, 3=>3))),
-						'result' => implode("\n", array('<select multiple="multiple" name="nums[]">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="nums[]" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
 					),
 					array(
 						'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array('choices'=>array(1=>1, 2=>2, 3=>3))),
-						'result' => implode("\n", array('<select multiple="multiple" name="nums[]">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="nums[]" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
 					),
 
 
 					array(
 						'params' => array('name'=>'numbers', 'value'=>array('1'), 'options'=>array('choices'=>array('0'=>'Zero', '1'=>'One', '2'=>'Two'))),
-						'result' => implode("\n", array('<select multiple="multiple" name="numbers[]">', '<option value="0">Zero</option>', '<option value="1" selected="selected">One</option>', '<option value="2">Two</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="numbers[]" class="form-control">', '<option value="0">Zero</option>', '<option value="1" selected="selected">One</option>', '<option value="2">Two</option>', '</select>'))
 					),
 				)
 			),
@@ -620,17 +620,17 @@ class TcWidgets extends TcBase
 				'params' => array(
 					array(
 						'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array()),
-						'result' => implode("\n", array('<select multiple="multiple" name="nums[]">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="nums[]" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '</select>'))
 					),
 					// pokud se choices uvedou i u metody render, jsou spojeny s choices z konstruktoru
 					array(
 						'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array('choices'=>array(4=>4, 5=>5))),
-						'result' => implode("\n", array('<select multiple="multiple" name="nums[]">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '<option value="4">4</option>', '<option value="5">5</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="nums[]" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '<option value="4">4</option>', '<option value="5">5</option>', '</select>'))
 					),
 					// escapovani hodnot
 					array(
 						'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array('choices'=>array('bad'=>'you & me', 'good'=>'you &gt; me'))),
-						'result' => implode("\n", array('<select multiple="multiple" name="nums[]">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '<option value="bad">you &amp; me</option>', '<option value="good">you &amp;gt; me</option>', '</select>'))
+						'result' => implode("\n", array('<select multiple="multiple" name="nums[]" class="form-control">', '<option value="1">1</option>', '<option value="2" selected="selected">2</option>', '<option value="3">3</option>', '<option value="bad">you &amp; me</option>', '<option value="good">you &amp;gt; me</option>', '</select>'))
 					),
 				)
 			),

@@ -17,7 +17,8 @@ class Textarea extends Widget
 		$options = forms_array_merge(array('attrs'=>null), $options);
 		$this->attrs = array(
 			'cols' => '40',
-			'rows' => '10'
+			'rows' => '10',
+			'class' => 'form-control', // form-control is there for Bootstrap
 		);
 		if (!is_null($options['attrs'])) {
 			$this->attrs = forms_array_merge($this->attrs, $options['attrs']);
@@ -26,13 +27,10 @@ class Textarea extends Widget
 
 	function render($name, $value, $options=array())
 	{
-		$options = forms_array_merge(array('attrs'=>null), $options);
-		if (is_null($value)) {
-			$value = '';
-		}
-		$final_attrs = $this->build_attrs($options['attrs'], array(
+		if (!isset($options['attrs'])) { $options['attrs'] = array(); }
+		if (is_null($value)) { $value = ''; }
+		$final_attrs = forms_array_merge($this->attrs,$options['attrs'],array(
 			'name' => $name,
-			'class' => 'form-control' // form-control is there for Bootstrap
 		));
 		return '<textarea'.flatatt($final_attrs).'>'.forms_htmlspecialchars($value).'</textarea>';
 	}
