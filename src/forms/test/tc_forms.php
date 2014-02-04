@@ -168,19 +168,6 @@ class SongForm3 extends Form
 		));
 	}
 }
-class SongFormHidden extends Form
-{
-	function set_up()
-	{
-		$this->add_field('name', new CharField());
-		$this->add_field('composers', new MultipleChoiceField(
-			array(
-				'choices' => array('J'=>'John Lennon', 'P'=>'Paul McCartney'),
-				'widget' => new MultipleHiddenInput()
-			)
-		));
-	}
-}
 /**
 * Formulare, na kterych se testuje custom validace poli.
 */
@@ -1175,77 +1162,78 @@ class TcForms extends TcBase
 	*
 	* NOTE: vyrazuju to, v PHP to mozna nerozjedu
 	*/
-/*
 	function test_form_with_mutiplechoicefield()
 	{
 		// MultipleChoiceField bez choices
 		$form = new SongForm(array('auto_id'=>false));
 		$field = $form->get_field('composers');
-		$this->assertEquals(
-			implode("\n", array('<select multiple="multiple" name="composers">', '</select>')),
+		$this->assertHtmlEquals(
+			implode("\n", array('<select multiple="multiple" name="composers[]" class="form-control">', '</select>')),
 			$field->as_widget()
 		);
 		// MultipleChoiceField s choices definovanymi v konstruktoru
 		$form = new SongForm2(array('auto_id'=>false));
 		$field = $form->get_field('composers');
-		$this->assertEquals(
-			implode("\n", array('<select multiple="multiple" name="composers">', '<option value="J">John Lennon</option>', '<option value="P">Paul McCartney</option>', '</select>')),
+		$this->assertHtmlEquals(
+			implode("\n", array('<select multiple="multiple" name="composers[]" class="form-control">', '<option value="J">John Lennon</option>', '<option value="P">Paul McCartney</option>', '</select>')),
 			$field->as_widget()
 		);
 		// formular naplneny vstupnimi daty
 		$data = array('name'=>'Yesterday', 'composers'=>array('P'));
 		$form = new SongForm2(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('name');
-		$this->assertEquals(
-			'<input type="text" name="name" value="Yesterday" />',
+		$this->assertHtmlEquals(
+			'<input type="text" name="name" value="Yesterday" class="text form-control" />',
 			$field->as_widget()
 		);
 		$field = $form->get_field('composers');
-		$this->assertEquals(
-			implode("\n", array('<select multiple="multiple" name="composers">', '<option value="J">John Lennon</option>', '<option value="P" selected="selected">Paul McCartney</option>', '</select>')),
+		$this->assertHtmlEquals(
+			implode("\n", array('<select multiple="multiple" name="composers[]" class="form-control">', '<option value="J">John Lennon</option>', '<option value="P" selected="selected">Paul McCartney</option>', '</select>')),
 			$field->as_widget()
 		);
 		// Pokud se MultipleChoiceField vykresluje jako hidden prvek, jde o specialni pripad:
 		// pro vice hodnot se vykresli hned nekolik hidden prvku, se stejnym nazvem
+		/*
 		$data = array('name'=>'Yesterday', 'composers'=>array('P'));
 		$form = new SongForm2(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('composers');
-		$this->assertEquals(
-			'<input name="composers" type="hidden" value="P" />',
+		$this->assertHtmlEquals(
+			'<input name="composers[]" type="hidden" value="P" />',
 			$field->as_hidden()
 		);
 		$data = array('name'=>'Yesterday', 'composers'=>array('P', 'J'));
 		$form = new SongForm2(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('composers');
 		$this->assertEquals(
-			implode("\n", array('<input name="composers" type="hidden" value="P" />', '<input name="composers" type="hidden" value="J" />')),
+			implode("\n", array('<input name="composers[]" type="hidden" value="P" />', '<input name="composers[]" type="hidden" value="J" />')),
 			$field->as_hidden()
 		);
+		*/
 		// Vykresleni MultipleChoiceField s pomoci widgetu CheckboxSelectMultiple
 		$form = new SongForm3(array('auto_id'=>false));
 		$field = $form->get_field('composers');
-		$this->assertEquals(
-			implode("\n", array('<ul>', '<li><label><input name="composers" type="checkbox" value="J" /> John Lennon</label></li>', '<li><label><input name="composers" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
+		$this->assertHtmlEquals(
+			implode("\n", array('<ul class="checkboxes">', '<li><label><input name="composers[]" type="checkbox" value="J" /> John Lennon</label></li>', '<li><label><input name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
 			$field->as_widget()
 		);
 		$form = new SongForm3(array('data'=>array('composers'=>array('J')), 'auto_id'=>false));
 		$field = $form->get_field('composers');
-		$this->assertEquals(
-			implode("\n", array('<ul>', '<li><label><input name="composers" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li><label><input name="composers" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
+		$this->assertHtmlEquals(
+			implode("\n", array('<ul class="checkboxes">', '<li><label><input name="composers[]" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li><label><input name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
 			$field->as_widget()
 		);
 		$form = new SongForm3(array('data'=>array('composers'=>array('J', 'P')), 'auto_id'=>false));
 		$field = $form->get_field('composers');
-		$this->assertEquals(
-			implode("\n", array('<ul>', '<li><label><input name="composers" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li><label><input name="composers" type="checkbox" checked="checked" value="P" /> Paul McCartney</label></li>', '</ul>')),
+		$this->assertHtmlEquals(
+			implode("\n", array('<ul class="checkboxes">', '<li><label><input name="composers[]" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li><label><input name="composers[]" type="checkbox" checked="checked" value="P" /> Paul McCartney</label></li>', '</ul>')),
 			$field->as_widget()
 		);
 		// id jednotlivych checkboxu jsou specialni pripad -- jsou k nim
 		// pripojeny ciselne indexy, aby byla zachovana jedinecnost nazvu
 		$form = new SongForm3(array('auto_id'=>'%s_id'));
 		$field = $form->get_field('composers');
-		$this->assertEquals(
-			implode("\n", array('<ul>', '<li><label><input id="composers_id_0" name="composers" type="checkbox" value="J" /> John Lennon</label></li>', '<li><label><input id="composers_id_1" name="composers" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
+		$this->assertHtmlEquals(
+			implode("\n", array('<ul class="checkboxes">', '<li><label><input id="composers_id_0" name="composers[]" type="checkbox" value="J" /> John Lennon</label></li>', '<li><label><input id="composers_id_1" name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
 			$field->as_widget()
 		);
 		// spravne zadana data a prazdne error pole
@@ -1253,24 +1241,12 @@ class TcForms extends TcBase
 		$form = new SongForm3(array('data'=>$data));
 		$this->assertEquals(array(), $form->get_errors());
 		$data = array('name'=>'Yesterday', 'composers'=>array('J', 'P'));
-		// policka vykreslena jako MultipleHiddenInput se vykresli opravdu skryte
-		$form = new SongFormHidden(array('data'=>$data, 'auto_id'=>false));
-		$this->assertEquals(
-			implode(
-				"\n", 
-				array(
-					'<li>Name: <input type="text" name="name" value="Yesterday" /><input name="composers" type="hidden" value="J" />',
-					'<input name="composers" type="hidden" value="P" /></li>'
-				)
-			),
-			$form->as_ul()
-		);
 
 		//
 		$data = array('name'=>'Yesterday');
 		$form = new SongForm3(array('data'=>$data, 'auto_id'=>false));
 		$this->assertEquals(
-			array("composers"=>array("This field is required.")), 
+			array("composers"=>array("Please, choose the right options.")),
 			$form->get_errors()
 		);
 
@@ -1290,7 +1266,6 @@ class TcForms extends TcBase
 			$form->cleaned_data
 		);
 	}
-*/
 
 
 	// ===========================================================
