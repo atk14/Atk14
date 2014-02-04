@@ -1193,7 +1193,6 @@ class TcForms extends TcBase
 		);
 		// Pokud se MultipleChoiceField vykresluje jako hidden prvek, jde o specialni pripad:
 		// pro vice hodnot se vykresli hned nekolik hidden prvku, se stejnym nazvem
-		/*
 		$data = array('name'=>'Yesterday', 'composers'=>array('P'));
 		$form = new SongForm2(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('composers');
@@ -1208,7 +1207,6 @@ class TcForms extends TcBase
 			implode("\n", array('<input name="composers[]" type="hidden" value="P" />', '<input name="composers[]" type="hidden" value="J" />')),
 			$field->as_hidden()
 		);
-		*/
 		// Vykresleni MultipleChoiceField s pomoci widgetu CheckboxSelectMultiple
 		$form = new SongForm3(array('auto_id'=>false));
 		$field = $form->get_field('composers');

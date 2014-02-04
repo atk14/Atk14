@@ -15,6 +15,7 @@ class MultipleChoiceField extends ChoiceField
 		$options += array(
 			"widget" => new SelectMultiple()
 		);
+		$this->hidden_widget = new MultipleHiddenInput(); // we need this in order to call $bound_field->as_hidden();
 		parent::__construct($options);
 		$this->update_messages(array(
 			'invalid_choice' => _('Select a valid choice. %(value)s is not one of the available choices.'),

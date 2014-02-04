@@ -1,5 +1,4 @@
 <?php
-// TODO: Do we really need HiddenInput?
 /**
  * Widget for hidden input field.
  *
