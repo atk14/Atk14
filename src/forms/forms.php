@@ -567,9 +567,12 @@ class Form implements ArrayAccess
 	}
 
 	/**
-	* TODO: Chci to volat takto:
-	*   $form->list_fields("address_*");
-	*/
+	 * Returns list of fields.
+	 *
+	 * @param string $wildcart
+	 * @return array of strings with field names
+	 * @note what about the param
+	 */
 	function list_fields($wildcart = ""){
 		$out = $this->get_field_keys();
 		return $out;

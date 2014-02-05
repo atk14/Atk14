@@ -426,6 +426,19 @@ class Atk14Controller{
 	 *
 	 * The action executed inside of current action uses its template default to the executed action.
 	 * Option force_to_set_template_name forces usage of template set in current action.
+	 * Note that $this->form is set to instance defaulting to the calling action.
+	 * If you want the controller to use the form belonging to called action set $this->null;
+	 *
+	 * 	function index() {
+	 * 		$this->form = null;
+	 * 		$this->_execute_action("overview");
+	 * 	}
+	 *
+	 * 	function overview() {
+	 * 	}
+	 *
+	 * If such a case happens, it's better use redirection
+	 * 	return $this->_redirect_to_action("overview");
 	 *
 	 * @param string $action name of action executed
 	 * @param array $options

@@ -2,8 +2,6 @@
 /**
  * Class containing several useful methods
  *
- * @package Atk14
- * @subpackage Core
  * @filesource
  */
 

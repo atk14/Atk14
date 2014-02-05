@@ -2,8 +2,6 @@
 /**
  * Class that simulates client browser.
  *
- * @package Atk14
- * @subpackage Core
  * @filesource
  */
 
@@ -13,22 +11,19 @@
  * This class is suitable for testing controllers.
  *
  * Example of testing a GET request
- * <code>
- * $controller = $this->client->get("customers/index");
- * $this->assertEquals(200, $this->client->getStatusCode());
- * $this->assertNotNull($finder = $controller->tpl_data["finder"]);
- * $this->assertTrue(sizeof($finder->getRecords())>0);
- * </code>
+ *
+ * 	$controller = $this->client->get("customers/index");
+ * 	$this->assertEquals(200, $this->client->getStatusCode());
+ * 	$this->assertNotNull($finder = $controller->tpl_data["finder"]);
+ * 	$this->assertTrue(sizeof($finder->getRecords())>0);
  *
  * Example of testing a POST request
- * <code>
- * $controller = $this->client->post("logins/sign_in", array("username" => "admin", "password" => "SeCrEt.P4ssw0rD"));
- * $this->assertEquals(200, $this->client->getStatusCode());
- * $this->assertEquals(1, $controller->session->getValue("admin_id"));
- * </code>
  *
- * @package Atk14
- * @subpackage Core
+ * 	$controller = $this->client->post("logins/sign_in", array("username" => "admin", "password" => "SeCrEt.P4ssw0rD"));
+ * 	$this->assertEquals(200, $this->client->getStatusCode());
+ * 	$this->assertEquals(1, $controller->session->getValue("admin_id"));
+ *
+ * @package Atk14\Core
  * @todo Some more explanation
  */
 class Atk14Client{
@@ -133,12 +128,24 @@ class Atk14Client{
 	/**
 	 * Sends a GET request.
 	 *
-	 * <code>
-	 * $controller = $client->get("books/index");
-	 * $controller = $client->get("books/index",array("q" => "Mark Twain"));
-	 * $controller = $client->get("en/books/index"); // with language
-	 * $controller = $client->get("admin/en/books/index"); // with namespace
-	 * </code>
+	 * Example
+	 *
+	 * {{{
+	 * 	$controller = $client->get("books/index");
+	 * 	$controller = $client->get("books/index",array("q" => "Mark Twain"));
+	 * }}}
+	 *
+	 * With language
+	 *
+	 * {{{
+	 * 	$controller = $client->get("en/books/index");
+	 * }}}
+	 *
+	 * With namespace
+	 *
+	 * {{{
+	 * 	$controller = $client->get("admin/en/books/index");
+	 * }}}
 	 *
 	 * @param string $path
 	 * @param array $params

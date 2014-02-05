@@ -2,9 +2,6 @@
 /**
  * Class for sending emails.
  *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
  * @filesource
  */
 
