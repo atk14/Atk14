@@ -2,17 +2,16 @@
 /**
  * Simple XML parser.
  *
- * @package Atk14
- * @subpackage XMole
  * @filesource
  *
  */
 
 if(!defined("XMOLE_AUTO_TRIM_ALL_DATA")){
 	/**
-	* Definuje defaultni chovani - trimovani dat
-	* @var boolean
-	*/
+	 * Defines default behaviour of data trimming
+	 *
+	 * @var boolean
+	 */
 	define("XMOLE_AUTO_TRIM_ALL_DATA",true);
 }
 
@@ -21,8 +20,7 @@ if(!defined("XMOLE_AUTO_TRIM_ALL_DATA")){
  *
  * Outputs parsed XML into structured array.
  *
- * Uzel pole je:
- * <code>
+ * A node looks like this
  *		array(
  *			"element" => "jmeno_elementu",
  *			"attribs" => array("jmeno_atributu" => "hodnota_atributu",...),
@@ -30,32 +28,26 @@ if(!defined("XMOLE_AUTO_TRIM_ALL_DATA")){
  *			"children" => array(),
  *			"xml_source" => "" //usek z XML textu
  *		);
- * </code>
  * where children field contains children elements.
  *
- * <code>
- * // When different encodings are set class translate is also required.
- * $XMole = new XMole();
- * $XMole->set_input_encoding("utf8");
- * $XMole->set_output_encoding("windows-1250");
- * $_stat = $XMole->parse($DATA);
- * if(!$_stat){
- *   echo $XMole->get_error_message();
- * }
- * $TREE = $XMole->get_xml_tree();
- * unset($XMole);
- * </code>
+ * When different encodings are set class translate is also required.
+ * 	$XMole = new XMole();
+ * 	$XMole->set_input_encoding("utf8");
+ * 	$XMole->set_output_encoding("windows-1250");
+ * 	$_stat = $XMole->parse($DATA);
+ * 	if(!$_stat){
+ * 		echo $XMole->get_error_message();
+ * 	}
+ * 	$TREE = $XMole->get_xml_tree();
+ * 	unset($XMole);
  *
  * Find element by path:
- * <code>
- * $username_tree = $XMole->get_first_matching_branch("Login/Username");
- * $user_data = $XMole->get_data("Login/Username");
- * $attribute_value = $XMole->get_attribute("Login/Username","case_sensitive");
- * $branches = $XMole->get_all_matching_branches("kniha/nazev");
- * </code>
+ * 	$username_tree = $XMole->get_first_matching_branch("Login/Username");
+ * 	$user_data = $XMole->get_data("Login/Username");
+ * 	$attribute_value = $XMole->get_attribute("Login/Username","case_sensitive");
+ * 	$branches = $XMole->get_all_matching_branches("kniha/nazev");
  *
- * @package Atk14
- * @subpackage XMole
+ * @package Atk14\XMole
  * @filesource
  */
 class XMole{
@@ -124,35 +116,35 @@ class XMole{
 		/**
 		 * Input encoding
 		 *
-		 * Encoding is detected automatically or can be set by {@link set_input_encoding()} method.
+		 * Encoding is detected automatically or can be set by {@link set_input_encoding() set_input_encoding()} method.
 		 *
 		 * @access private
 		 * @var string
-		 * @see XMole::set_input_encoding()
+		 * @see XMole::set_input_encoding() set_input_encoding
 		 */
-		var $_input_encoding = null;
+		private $_input_encoding = null;
 
 		/**
 		 * Output encoding
 		 *
 		 * Encoding is set automatically by input encoding or can be set by {@link set_output_encoding()} method.
 		 *
-		 * @access private
 		 * @var string
-		 * @see XMole::set_output_encoding()
+		 * @see XMole::set_output_encoding() set_output_encoding
 		 */
-		var $_output_encoding = null;
+		private $_output_encoding = null;
 
 		/**
-		 * Is encoding differ
-		 * @access private
+		 * Input encoding differs from output encoding so translation is needed
  		 */
-		var $_translate=false;
+		private $_translate=false;
 		
 		/**
-		 * @access private
+		 * Xml elements tree
+		 *
+		 * @var array
 		 */
-		var $_tree = array();
+		private $_tree = array();
 
 		/**
 		 * @access private
@@ -160,7 +152,17 @@ class XMole{
 		var $_tree_references = array();
 
 	/**
-	 * Constructor
+	 * Creates new instance.
+	 *
+	 * Data can also be passed as a parameter to be parsed immediately.
+	 *
+	 * Options description
+	 *
+	 * - trim_data - boolean - returns data from elements without white spaces at the beginning ant the end of the stored data. 
+	 * Defaults to true
+	 *
+	 * @param string $xml_data
+	 * @param array $options
 	 */
 	function XMole($xml_data = null,$options = array()){
 		$options = array_merge(array(
@@ -174,6 +176,13 @@ class XMole{
 		}
 	}
 
+
+	/**
+	 * Set new xml tree
+	 *
+	 * @todo some explanation needed
+	 * @param array $tree
+	 */
 	function inherit($tree){
 		$this->_tree=array(unserialize(serialize($tree)));
 		return true;
@@ -193,6 +202,8 @@ class XMole{
 	 * Parses XML data.
 	 *
 	 * @param string $xml_data 	XML data
+	 * @param integer $err_code error code when a problem occurs in xml parser {@see xml_get_error_code()}. Does not have to be set when $err_message is set
+	 * @param string $err_message error message
 	 * @return boolean true on success, false on error
 	 */
 	function parse($xml_data,&$err_code = null,&$err_message = null){
@@ -272,12 +283,29 @@ class XMole{
 		return true;
 	}
 
+	/**
+	 * Set trim data flag.
+	 *
+	 * When $trim param is not set the flag is set to true by default.
+	 *
+	 * @param boolean $trim defaults to true
+	 */
 	function set_trim_data($trim = true){
 		$this->_trim_data = $trim;
 	}
 
+	/**
+	 * Returns status of the trim_data flag.
+	 *
+	 * @return boolean
+	 */
 	function trim_data(){ return $this->_trim_data; }
 
+	/**
+	 * Sets both input and output encoding to the same value.
+	 *
+	 * @param string $encoding
+	 */	
 	function set_encoding($encoding){
 		$this->set_input_encoding($encoding);
 		$this->set_output_encoding($encoding);
@@ -300,13 +328,12 @@ class XMole{
 	/**
 	 * Initializes $this->_translate after encoding change.
 	 *
-	 * @access private
 	 */
-	function _set_translate(){
-			$this->_translate=
-				isset($this->_input_encoding) && $this->_input_encoding!="" && 
-				isset($this->_output_encoding) && $this->_output_encoding!="" && 
-				$this->_input_encoding!=$this->_output_encoding;
+	private function _set_translate(){
+		$this->_translate=
+			isset($this->_input_encoding) && $this->_input_encoding!="" && 
+			isset($this->_output_encoding) && $this->_output_encoding!="" && 
+			$this->_input_encoding!=$this->_output_encoding;
 	}
 	
 	/**
@@ -366,7 +393,9 @@ class XMole{
 	 *
 	 * Tag name is specified by $path.
 	 *
-	 * @param string $path		example:. "/DistributedSearchXML/Login/UserName" nebo "Login/UserName"
+	 * 	$xmole->get_first_matching_branch("/DistributedSearchXML/Login/Username")
+	 *
+	 * @param string $path
 	 * @return array 	branch of XML tree or null when path is not found
 	 */
 	function get_first_matching_branch($path){
@@ -393,8 +422,10 @@ class XMole{
 		return $this->_get_first_matching_branch($path, $top, $this->_tree);
 		}
 
-	function _get_first_matching_branch($path, $top, $tree)
-	{
+	/**
+	 * @ignore
+	 */
+	private function _get_first_matching_branch($path, $top, $tree) {
 	  $desired=$path[$top];
 	  foreach($tree as $element){
 		    if($element['element']==$desired){
@@ -434,7 +465,10 @@ class XMole{
 	}
 
 	/**
-	 * @return array
+	 * Returns branches matching given path
+	 * 
+	 * @param string $path
+	 * @return string[] array of XMole objects
 	 */
 	function get_all_matching_branches($path){
 		settype($path,"string");
@@ -457,9 +491,11 @@ class XMole{
 		$this->_get_all_matching_branches($out, $path, $top, $this->_tree);
 		return $out;
 	}
-	
-	function _get_all_matching_branches(&$out, $path, $top, $tree)
-	{
+
+	/**
+	 * @ignore
+	 */
+	private function _get_all_matching_branches(&$out, $path, $top, $tree) {
 	  $desired=$path[$top];
 	  foreach($tree as $element){
 	      if($element['element']==$desired){
@@ -477,12 +513,19 @@ class XMole{
 	/**
 	 * Shortcut to get_xmole_by_first_matching_branch method.
 	 *
+	 * @param string $path
 	 * @return XMole
+	 * @see get_xmole_by_first_matching_branch()
 	 */
 	function get_xmole($path){ return $this->get_xmole_by_first_matching_branch($path); }
 
 	/**
-	 * @return array
+	 * Returns XMole objects matching all branches that suit given path
+	 *
+	 * First finds all branches matching given path and returns its corresponding XMole objects
+	 *
+	 * @param string $path
+	 * @return XMole[]
 	 */
 	function get_xmoles_by_all_matching_branches($path){
 		$branches = $this->get_all_matching_branches($path);
@@ -501,7 +544,9 @@ class XMole{
 	/**
 	 * Alias to get_xmoles_by_all_matching_branches method.
 	 *
-	 * @return array
+	 * @param string $path
+	 * @return XMole[]
+	 * @see get_xmoles_by_all_matching_branches()
 	 */
 	function get_xmoles($path){ return $this->get_xmoles_by_all_matching_branches($path); }
 
@@ -510,6 +555,7 @@ class XMole{
 	 *
 	 * Child elements are indexed starting from 0.
 	 *
+	 * @param integer $index index of the child
 	 * @return XMole
 	 */
 	function get_child($index = 0){
@@ -524,6 +570,8 @@ class XMole{
 	/**
 	 * Get XMole instance of next child.
 	 *
+	 * increments internal position pointer to the next child and return the child XMole object.
+	 *
 	 * @return XMole
 	 */
 	function get_next_child(){
@@ -532,20 +580,33 @@ class XMole{
 		return $this->get_child($this->_next_child_index);
 	}
 
+	/**
+	 * Resets internal position pointer to the first child.
+	 */
 	function reset_next_child_index(){
 		$this->_next_child_index = -1;
 	}
 
+	/**
+	 * Get name of the element
+	 *
+	 * @return string
+	 */
 	function get_root_name(){ return $this->_tree[0]["element"];		}
 
 
 	/**
-	* Vrati data element urceneho podle cesty.
-	* Vracena jsou data prvniho elementu, ktery vyhovuje ceste.
-	* 
-	* @param string $path		napr:. "/DistributedSearchXML/Login/UserName" nebo "Login/UserName"
-	* @return string 				data elementu nebo null, pokud element neni nalezen
-	*/
+	 * Returns data stored in element.
+	 *
+	 * Element is specified by $path.
+	 * Returns first element matching the path
+	 *
+	 * Example
+	 * 	$xmole->get_element_data("Login/UserName");
+	 * 
+	 * @param string $path
+	 * @return string|null Data from element or null if the element is not found
+	 */
 	function get_element_data($path = "/"){
 		if($_tree = $this->get_first_matching_branch($path)){
 			return isset($_tree[0]["data"]) ? $_tree[0]["data"] : $_tree["data"];
@@ -555,20 +616,22 @@ class XMole{
 	/**
 	 * Alias to get_element_data method.
 	 *
+	 * @param string $path
 	 * @return string
 	 */
 	function get_data($path = "/"){ return $this->get_element_data($path); }
 
 	/**
-	* Vrati hodnotu atributu elementu urceneho podle cesty.
-	* Najde prvni element podle cesty a v nem se pokusi najit dany atribut.
-	*
+	 * Returns value from tags attribute.
+	 *
+	 * Element is specified by $path
+	 * If finds first element if there are more.
+	 *
 	* Element 
 	*
-	* @access public
-	* @param string $element_path				cesta elementu
-	* @param string $attribute_name			jmeno atributu
-	* @return string										hodnota atributu nebo null, pokud nebyl element nalezen nebo neobsahuje takovy atribut
+	* @param string $element_path
+	* @param string $attribute_name Name of attribute_name
+	* @return string|null Value of the attribute or null if the element is not found or the element does not contain specified attribute
 	*/
 	function get_attribute_value($element_path,$attribute_name = null){
 		if(!isset($attribute_name)){
@@ -583,6 +646,8 @@ class XMole{
 	/**
 	 * Alias to get_attribute_value method.
 	 * 
+	 * @param string $element_path
+	 * @param string $attribute_name
 	 * @return string
 	 */
 	function get_attribute($element_path,$attribute_name = null){ return $this->get_attribute_value($element_path,$attribute_name); }
@@ -609,30 +674,28 @@ class XMole{
 	 * Order of attributes is not important.
 	 * XMLs with different order of attributes will be evaluated as same.
 	 * 
-	 * <code>
-	 * $xml_1 = '
+	 * 	$xml_1 = '
 	 *		<lide>
 	 *		 <kluk vek="12" vyska="163" />
 	 *		</lide>
-	 * ';
+	 * 	';
 	 *
-	 * $xml_2 = '
+	 * 	$xml_2 = '
 	 *		<lide>
 	 *		 <kluk vyska="163" vek="12" />
 	 *		</lide>
-	 * ';
+	 * 	';
 	 *
 	 *
-	 * $xm1 = new XMole($xml_1);
-	 * $xm2 = new XMole($xml_2);
-	 * if($xm1->is_same_like($xm2)){
+	 * 	$xm1 = new XMole($xml_1);
+	 * 	$xm2 = new XMole($xml_2);
+	 * 	if($xm1->is_same_like($xm2)){
 	 *		// stejne
-	 * }
+	 * 	}
 	 * // nebo
-	 * if($xm1->is_same_like($xml_2)){
+	 * 	if($xm1->is_same_like($xml_2)){
 	 *		// stejne
-	 * }
-	 * </code>
+	 * 	}
 	 * 
 	 * @param XMole $xmole
 	 * @return boolean
@@ -654,9 +717,9 @@ class XMole{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
-	function _compare_xml_branch($that_branch,$this_branch){
+	private function _compare_xml_branch($that_branch,$this_branch){
 		if(!(
 			$that_branch["element"]==$this_branch["element"] &&
 			$that_branch["attribs"]==$this_branch["attribs"] &&
@@ -676,12 +739,11 @@ class XMole{
 	 * Checks if two XML data are the same.
 	 * Compared data can be strings or XMole instances.
 	 *
-	 * @static
-	 * @param string|XMole @xmole1
-	 * @param string|XMole @xmole2
+	 * @param string|XMole $xmole1
+	 * @param string|XMole $xmole2
 	 * @return boolean
 	 */
-	function AreSame($xmole1,$xmole2){
+	static function AreSame($xmole1,$xmole2){
 		if(is_string($xmole1)){ $xmole1 = new XMole($xmole1); } 
 		if(is_string($xmole2)){ $xmole2 = new XMole($xmole2); } 
 
@@ -689,16 +751,18 @@ class XMole{
 	}
 
 	/**
-	* Tato fce je volana rekurzivne pri vyhledavani vetve XML stromu podle cesty.
-	* Prvni volani je z fce get_first_matching_branch().
-	*
-	* @see XMole::get_first_matching_branch()
-	* @access private
-	* @param string $wished_path				pozadovana cesta
-	* @param string $current_path				aktualni cesta
-	* @param array &$xml_tree						vetev xml stromu
-	*/
-	function _search_branch_by_path($wished_path,$current_path,&$xml_tree){
+	 * Tato fce je volana rekurzivne pri vyhledavani vetve XML stromu podle cesty.
+	 * Prvni volani je z fce get_first_matching_branch().
+	 *
+	 * @see XMole::get_first_matching_branch()
+	 * @note not used any more ?
+	 *
+	 * @ignore
+	 * @param string $wished_path				pozadovana cesta
+	 * @param string $current_path				aktualni cesta
+	 * @param array $xml_tree						vetev xml stromu
+	 */
+	private function _search_branch_by_path($wished_path,$current_path,&$xml_tree){
 		settype($wished_path,"string");
 		settype($current_path,"string");
 
@@ -736,16 +800,19 @@ class XMole{
 	}
 
 	/**
-	* Tato fce je volana rekurzivne pri vyhledavani vetvi XML stromu podle cesty.
-	*	Vraceno je pole vsech vetvi, ktere vyhovuji $wished_path.
-	*
-	* @see XMole::get_all_matching_branches()
-	* @access private
-	* @param string $wished_path				pozadovana cesta
-	* @param string $current_path				aktualni cesta
-	* @return array					pole $xml_tree
-	*/
-	function _search_branches_by_path($wished_path,$current_path,&$xml_tree){
+	 * Tato fce je volana rekurzivne pri vyhledavani vetvi XML stromu podle cesty.
+	 *	Vraceno je pole vsech vetvi, ktere vyhovuji $wished_path.
+	 *
+	 * @see XMole::get_all_matching_branches()
+	 * @note obsoleted ?
+	 *
+	 * @ignore
+	 * @param string $wished_path				pozadovana cesta
+	 * @param string $current_path				aktualni cesta
+	 * @param array $xml_tree
+	 * @return array					pole $xml_tree
+	 */
+	private function _search_branches_by_path($wished_path,$current_path,&$xml_tree){
 		settype($wished_path,"string");
 		settype($current_path,"string");
 
@@ -788,9 +855,8 @@ class XMole{
 	/**
 	 * Handler of a function used by xml_parser.
 	 *
-	 * @access private
 	 */
-	function _startElement($parser,$name,$attribs){
+	protected function _startElement($parser,$name,$attribs){
 		if($this->_translate){
 			$name = Translate::Trans($name,$this->_input_encoding,$this->_output_encoding);
 			foreach($attribs as $key => $value){
@@ -832,9 +898,8 @@ class XMole{
 	/**
 	 * Handler of a function used by xml_parser.
 	 *
-	 * @access private
 	 */
-	function _endElement($_parser,$name){
+	protected function _endElement($_parser,$name){
 		//$element = array_pop($this->_element_store);
 		//$attribs = array_pop($this->_attrib_store);
 		$data = array_pop($this->_data_store);
@@ -863,9 +928,10 @@ class XMole{
 	/**
 	 * Handler of a function used by xml_parser.
 	 *
-	 * @access private
+	 * @param $_parser
+	 * @param $data
 	 */
-	function _characterData($_parser,$data){
+	protected function _characterData($_parser,$data){
 		//pridavani do posledniho _data_store
 		$this->_data_store[sizeof($this->_data_store)-1] .= $data;
 		//xml zdroj
@@ -878,9 +944,7 @@ class XMole{
 	 * Output can be used in XML text.
 	 * Can be called statically
 	 *
-	 * <code>
-	 * $xml = "<data>".XMole::ToXML($value)."</data>";
-	 * </code>
+	 * 	$xml = "<data>".XMole::ToXML($value)."</data>";
 	 *
 	 * @param string $str
 	 * @return string
@@ -907,12 +971,16 @@ class XMole{
 	}
 
 	/**
-	* Bezpecne zakoduje nektere znaky vstupniho textu do XML entit
-	*
-	* Vystup je mozno bezpecne pouzit jako hodnotu atributu tagu XML textu. Mozno volat staticky.
-	*
-	* $xml = '<person name="'.XMole::ToAttribsValue($name).'" />';
-	*/
+	 * Encodes some characters as XML entities.
+	 *
+	 * Output can then be used as a tags attribute value.
+	 *
+	 * Example
+	 * 	$xml = '<person name="'.XMole::ToAttribsValue($name).'" />';
+	 *
+	 * @param string $str string to be encoded
+	 * @return string string encoded as xml entities
+	 */
 	static function ToAttribsValue($str){
 		settype($str,"string");
 		return strtr($str,
@@ -941,7 +1009,9 @@ class XMole{
 	}
 
 	/**
-	 * @method toString()
+	 * Outputs string representation of the object 
+	 *
+	 * @return string
 	 */
 	function __toString(){
 		if(!isset($this->_tree[0])){
