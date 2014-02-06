@@ -1040,7 +1040,7 @@ class HTTPRequest{
 		}
 
 		// check if the user agent gives away any tell tale signs it's a mobile browser
-		if(isset($user_agent) && eregi('up.browser|up.link|windows ce|iemobile|mini|mmp|symbian|midp|wap|phone|pocket|mobile|pda|psp|iPhone;|iPod;',$user_agent)){
+		if(isset($user_agent) && preg_match('/up.browser|up.link|windows ce|iemobile|mini|mmp|symbian|midp|wap|phone|pocket|mobile|pda|psp|iPhone;|iPod;/i',$user_agent)){
 			return true;
 		}
 		// check the http accept header to see if wap.wml or wap.xhtml support is claimed
