@@ -7,7 +7,7 @@ error_reporting(255);
 
 // we need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
 // HTTP* classes give us right advices about environment & configuration
-require_once(dirname(__FILE__)."/src/stringbuffer/stringbuffer.php");
+require_once(dirname(__FILE__)."/src/stringbuffer/load.php");
 require_once(dirname(__FILE__)."/src/files/load.php");
 require_once(dirname(__FILE__)."/src/http/load.php");
 require_once(dirname(__FILE__)."/src/atk14/atk14_utils.php");
@@ -23,29 +23,28 @@ require_once(dirname(__FILE__)."/default_settings.php");
 
 // load the rest...
 require_once(dirname(__FILE__)."/src/string/load.php");
-require_once(dirname(__FILE__)."/src/translate/translate.php");
-require_once(dirname(__FILE__)."/src/dictionary/dictionary.php");
-require_once(dirname(__FILE__)."/src/miniyaml/miniyaml.php");
+require_once(dirname(__FILE__)."/src/translate/load.php");
+require_once(dirname(__FILE__)."/src/dictionary/load.php");
+require_once(dirname(__FILE__)."/src/miniyaml/load.php");
 require_once(dirname(__FILE__)."/src/dates/load.php");
-require_once(dirname(__FILE__)."/src/xmole/xmole.php");
-require_once(dirname(__FILE__)."/src/stopwatch/stopwatch.php");
-require_once(dirname(__FILE__)."/src/logger/logger.php");
-require_once(dirname(__FILE__)."/src/lock/lock.php");
+require_once(dirname(__FILE__)."/src/xmole/load.php");
+require_once(dirname(__FILE__)."/src/stopwatch/load.php");
+require_once(dirname(__FILE__)."/src/logger/load.php");
+require_once(dirname(__FILE__)."/src/lock/load.php");
 require_once(dirname(__FILE__)."/src/json/load.php");
 if(ATK14_USE_SMARTY3){
 	require_once(dirname(__FILE__)."/src/smarty3/libs/SmartyBC.class.php");
 }else{
 	require_once(dirname(__FILE__)."/src/smarty/libs/Smarty.class.php");
 }
-require_once(dirname(__FILE__)."/src/class_autoload/class_autoload.php");
-require_once(dirname(__FILE__)."/src/dbmole/dbmole.php");
-require_once(dirname(__FILE__)."/src/dbmole/pgmole.php");
+require_once(dirname(__FILE__)."/src/class_autoload/load.php");
+require_once(dirname(__FILE__)."/src/dbmole/load.php");
 require_once(dirname(__FILE__)."/src/tablerecord/load.php");
-require_once(dirname(__FILE__)."/src/sessionstorer/sessionstorer.php");
-require_once(dirname(__FILE__)."/src/packer/packer.php");
-require_once(dirname(__FILE__)."/src/sendmail/sendmail.php");
+require_once(dirname(__FILE__)."/src/sessionstorer/load.php");
+require_once(dirname(__FILE__)."/src/packer/load.php");
+require_once(dirname(__FILE__)."/src/sendmail/load.php");
 require_once(dirname(__FILE__)."/src/forms/load.php");
-require_once(dirname(__FILE__)."/src/url_fetcher/url_fetcher.php");
+require_once(dirname(__FILE__)."/src/url_fetcher/load.php");
 require_once(dirname(__FILE__)."/src/atk14/load.php");
 require_once(dirname(__FILE__)."/src/functions.php");
 
