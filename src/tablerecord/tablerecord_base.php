@@ -239,7 +239,7 @@ class TableRecord_Base extends inobj{
 	 * @param TableRecord $object
 	 * @return mixed id of the record from db
 	 */
-	function ObjToId($object){
+	static function ObjToId($object){
 		if(is_array($object)){
 			foreach($object as &$item){
 				$item = is_object($item) ? $item->getId() : $item;
@@ -265,7 +265,7 @@ class TableRecord_Base extends inobj{
 	 * @return TableRecord
 	 *
 	 */
-	function IdToObj($id,$class_name){
+	static function IdToObj($id,$class_name){
 		if(!isset($id)){ return null; }
 		if(is_object($id)){ return $id; }
 		return call_user_func(array($class_name,"GetInstanceById"),$id);
