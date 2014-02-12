@@ -27,11 +27,27 @@ class TcClient extends TcBase{
 
 		// Basic Auth
 		$this->assertEquals(null,$controller->request->getBasicAuthString());
+		$this->assertEquals(null,$client->getBasicAuthString());
+		$this->assertEquals(null,$client->getBasicAuthUsername());
+		$this->assertEquals(null,$client->getBasicAuthPassword());
 
 		$client->setBasicAuth("admin","secret");
-
 		$controller = $client->post("testing/test","<xml></xml>",array("content_type" => "text/xml"));
-
 		$this->assertEquals("admin:secret",$controller->request->getBasicAuthString());
+		$this->assertEquals("admin:secret",$client->getBasicAuthString());
+		$this->assertEquals("admin",$client->getBasicAuthUsername());
+		$this->assertEquals("secret",$client->getBasicAuthPassword());
+
+		$client->setBasicAuthString("john:aMagic");
+		$controller = $client->post("testing/test","<xml></xml>",array("content_type" => "text/xml"));
+		$this->assertEquals("john:aMagic",$controller->request->getBasicAuthString());
+
+
+		$client->setBasicAuthString("");
+		$controller = $client->post("testing/test","<xml></xml>",array("content_type" => "text/xml"));
+		$this->assertEquals(null,$controller->request->getBasicAuthString());
+		$this->assertEquals(null,$client->getBasicAuthString());
+		$this->assertEquals(null,$client->getBasicAuthUsername());
+		$this->assertEquals(null,$client->getBasicAuthPassword());
 	}
 }

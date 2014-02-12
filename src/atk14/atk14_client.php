@@ -121,8 +121,33 @@ class Atk14Client{
 	 * @param string $password
 	 */
 	function setBasicAuth($username,$password){
-		$this->_BasicAuthUsername = $username;
-		$this->_BasicAuthPassword = $password;
+		$this->setBasicAuthUsername($username);
+		$this->setBasicAuthPassword($password);
+	}
+
+	function getBasicAuthUsername(){ return $this->_BasicAuthUsername; }
+	function setBasicAuthUsername($username){ $this->_BasicAuthUsername = $username; }
+
+	function getBasicAuthPassword(){ return $this->_BasicAuthPassword; }
+	function setBasicAuthPassword($password){ $this->_BasicAuthPassword = $password; }
+
+	function getBasicAuthString(){
+		$username = $this->getBasicAuthUsername();
+		$password = $this->getBasicAuthPassword();
+		if(strlen($username)>0 || strlen($password)>0){
+			return "$username:$password";
+		}
+	}
+
+	function setBasicAuthString($string){
+		if(preg_match('/^(.*?):(.*)/',$string,$matches)){
+			$this->setBasicAuthUsername($matches[1]);
+			$this->setBasicAuthPassword($matches[2]);
+			return;
+		}
+
+		$this->setBasicAuthUsername(null);
+		$this->setBasicAuthPassword(null);
 	}
 
 	/**

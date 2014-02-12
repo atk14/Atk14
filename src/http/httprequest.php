@@ -366,13 +366,35 @@ class HTTPRequest{
 	}
 
 	/**
+	 * Sets the usename and password by the given authentication string
+	 *
+	 * $request->setBasicAuthString("john:magic");
+	 * echo $request->getBasicAuthUsername(); // "john"
+	 * echo $request->getBasicAuthPassword(); // "magic"
+	 *
+	 *
+	 * $request->setBasicAuthString("");
+	 * print_r($request->getBasicAuthUsername()); // null
+	 * print_r($request->getBasicAuthPassword()); // null
+	 */
+	function setBasicAuthString($string){
+		if(preg_match('/^(.*?):(.*)/',$string,$matches)){
+			$this->setBasicAuthUsername($matches[1]);
+			$this->setBasicAuthPassword($matches[2]);
+			return;
+		}
+
+		$this->setBasicAuthUsername(null);
+		$this->setBasicAuthPassword(null);
+	}
+
+	/**
 	 * Returns username from basic authentication string.
 	 *
 	 * @return string
 	 */
 	function getBasicAuthUsername(){
-		if($val = $this->_getForceValue("BasicAuthUsername")){ return $val; }
-		return $this->_BasicAuthUsername;
+		return $this->_getForceValue_or_Value("BasicAuthUsername");
 	}
 
 	function setBasicAuthUsername($username){ $this->_setForceValue("BasicAuthUsername",$username); }
@@ -383,8 +405,7 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getBasicAuthPassword(){
-		if($val = $this->_getForceValue("BasicAuthPassword")){ return $val; }
-		return $this->_BasicAuthPassword;
+		return $this->_getForceValue_or_Value("BasicAuthPassword");
 	}
 
 	function setBasicAuthPassword($password){
