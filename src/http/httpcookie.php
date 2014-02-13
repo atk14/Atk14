@@ -155,7 +155,7 @@ class HTTPCookie{
 	/**
 	 * Checks if the cookie is set as secure.
 	 *
-	 * @return true
+	 * @return boolean
 	 */
 	function isSecure(){ return $this->_Secure; }
 }
