@@ -2,18 +2,13 @@
 /**
  * Class provides operations on uploaded file.
  *
- * @package Atk14
- * @subpackage Http
- * @author Jaromir Tomek
  * @filesource
  */
 
 /**
  * Class provides operations on uploaded file.
  *
- * @package Atk14
- * @subpackage Http
- * @author Jaromir Tomek
+ * @package Atk14\Http
  *
  */
 class HTTPUploadedFile{
@@ -116,10 +111,10 @@ class HTTPUploadedFile{
 	 *
 	 * !! Note that this value is pretty unsafe as it is provided by user.
 	 *
-	 * {code}
 	 * 	echo $file->getFileName(); // e.g. MyPhoto.jpg
-	 * {/code}
 	 *
+	 * @param array $options
+	 * 	- sanitize
 	 * @return string
 	 */
 	function getFileName($options = array()){
@@ -133,6 +128,17 @@ class HTTPUploadedFile{
 		return $filename;
 	}
 
+	/**
+	 * Makes filename url clean.
+	 *
+	 * - removes path from filename
+	 * - convert to ascii charset
+	 * - replaces non ascii characters with underscore
+	 *
+	 * @param string $filename
+	 * @return string sanitized filename
+	 * @ignore
+	 */
 	function _sanitizeFileName($filename){
 		// C:\Documents and Settings\Grizzly\MyBestPhotoEver.jpg -> MyBestPhotoEver.jpg
 		$filename = trim(preg_replace('/^.*(\/|\\\\)([^\/\\\\]*)$/','\2',$filename));
@@ -277,6 +283,7 @@ class HTTPUploadedFile{
 	/**
 	 * Is this a chunked file upload?
 	 * 
+	 * @return boolean
 	 */
 	function chunkedUpload(){ return false; }
 
@@ -286,10 +293,9 @@ class HTTPUploadedFile{
 	 * !! Note that it actualy runs the shell command file.
 	 * See Files::DetermineFileType() for more info.
 	 *
-	 * @access private
 	 * @return string
 	 */
-	function _determineFileType(){
+	private function _determineFileType(){
 		return Files::DetermineFileType($this->getTmpFileName());
 	}
 

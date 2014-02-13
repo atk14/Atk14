@@ -2,8 +2,6 @@
 /**
  * Class provides operations with string buffering.
  *
- * @package Atk14
- * @subpackage InternalLibraries
  * @filesource
  */
 
@@ -12,21 +10,23 @@
  *
  * Internally the class holds its content in array of strings as they were added.
  *
- * @package Atk14
- * @subpackage InternalLibraries
+ * @package Atk14\StringBuffer
  */
 class StringBuffer{
 
 	/**
 	 * Buffer for storing content.
-	 * @access private
+	 *
+	 * @ignore
+	 * @var array
 	 */
-	var $_Buffer = array();
+	private $_Buffer = array();
 	
 	/**
 	 * Creates new instance of StringBuffer.
 	 *
 	 * By default it creates an instance with empty buffer. Optionally you can pass a string to begin with.
+	 *
 	 * @param string $string_to_add
 	 */
 	function __construct($string_to_add = ""){
@@ -46,7 +46,13 @@ class StringBuffer{
 	}
 
 	/**
-	 * echo "$buffer"; // same as echo $buffer->toString()
+	 * Returns string representation of the object.
+	 *
+	 * This will output 'Something in buffer'
+	 * 	$buffer = new StringBuffer("Something in buffer");
+	 * 	echo "$buffer";
+	 *
+	 * @return string
 	 */
 	function __toString(){
 		return $this->toString();
@@ -138,26 +144,76 @@ class StringBuffer{
 	}
 }
 
+/**
+ * Element to be added to StringBuffer as string
+ *
+ * @package Atk14\StringBuffer
+ */
 class StringBufferItem{
+
+	/**
+	 * Initializes file buffer element
+	 *
+	 * @param string $string
+	 */
 	function __construct($string){
 		$this->_String = $string;
 	}
 
+	/**
+	 * Returns length of string in buffer.
+	 *
+	 * @return int
+	 */
 	function getLength(){ return strlen($this->_String); }
 	function flush(){ echo $this->_String; }
+
+	/**
+	 * Returns string representation of the object.
+	 *
+	 * @return string
+	 */
 	function toString(){ return $this->_String; }
+
+	/**
+	 * Method that returns string representation of the object.
+	 */
 	function __toString(){ return $this->toString(); }
 
+	/**
+	 * Replace part of string in buffer
+	 *
+	 * @param string $search
+	 * @param string $replace
+	 */
 	function replace($search,$replace){
 		$this->_String = str_replace($search,$replace,$this->_String);
 	}
 }
 
+/**
+ * Element to be added to StringBuffer as file
+ *
+ * @package Atk14\StringBuffer
+ */
 class StringBufferFileItem extends StringBufferItem{
+
+	/**
+	 * Initializes String buffer element
+	 *
+	 * @param string $filename
+	 */
 	function __construct($filename){
 		$this->_Filename = $filename;
 	}
 
+	/**
+	 * Get length of the item.
+	 *
+	 * As this item is a file it returns size of the file
+	 *
+	 * @return integer
+	 */
 	function getLength(){
 		if(isset($this->_String)){ return parent::getLength(); }
 		return filesize($this->_Filename);
@@ -168,11 +224,22 @@ class StringBufferFileItem extends StringBufferItem{
 		readfile($this->_Filename);
 	}
 
+	/**
+	 * Outputs content of buffer as string.
+	 *
+	 * @return string
+	 */
 	function toString(){
 		if(isset($this->_String)){ return parent::toString(); }
 		return Files::GetFileContent($this->_Filename);
 	}
 
+	/**
+	 * Replaces part of a string with another string.
+	 *
+	 * @param string $search
+	 * @param string $replace
+	 */
 	function replace($search,$replace){
 		$this->_String = $this->toString();
 		return parent::replace($search,$replace);

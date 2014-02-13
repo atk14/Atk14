@@ -2,21 +2,21 @@
 /**
  * Class provides operations on files uploaded via asynchronous requests
  *
- * @package Atk14
- * @subpackage Http
- * @author Jaromir Tomek
  * @filesource
  */
 
 /**
  * Class provides operations on files uploaded via asynchronous requests
  *
- * @package Atk14
- * @subpackage Http
- * @author Jaromir Tomek
+ * It is not actually needed to use initialization.
+ * It is used and provided by FileInput widget and thus you can retrieve file information from a FileField after a form validation.
+ *
+ * @package Atk14\Http
  */
 class HTTPXFile extends HTTPUploadedFile{
 	/**
+	 * Initialize instance with uploaded file
+	 *
 	 * @param array $options
 	 * @return HTTPXFile
 	 */
@@ -36,6 +36,11 @@ class HTTPXFile extends HTTPUploadedFile{
 		}
 	}
 
+	/**
+	 * Is this a chunked file upload?
+	 * 
+	 * @return boolean
+	 */
 	function chunkedUpload(){
 		return !is_null($this->_getChunkOrder()) && !($this->firstChunk() && $this->lastChunk());
 	}
@@ -43,6 +48,8 @@ class HTTPXFile extends HTTPUploadedFile{
 	/**
 	 * Returns the current chunk order.
 	 * Ordering starts from 1.
+	 *
+	 * @return integer
 	 */
 	function chunkOrder(){
 		if($ar = $this->_getChunkOrder()){
@@ -52,6 +59,8 @@ class HTTPXFile extends HTTPUploadedFile{
 
 	/**
 	 * Returns total amount of chunks.
+	 *
+	 * @return integer
 	 */
 	function chunksTotal(){
 		if($ar = $this->_getChunkOrder()){
@@ -76,11 +85,15 @@ class HTTPXFile extends HTTPUploadedFile{
 
 	/**
 	 * Is this the first chunk?
+	 *
+	 * @return boolean
 	 */
 	function firstChunk(){ return $this->chunkOrder()==1; }
 
 	/**
 	 * Is this the last chunk?
+	 *
+	 * @return boolean
 	 */
 	function lastChunk(){ return $this->chunkOrder()>0 && $this->chunkOrder()==$this->chunksTotal(); }
 
@@ -89,6 +102,8 @@ class HTTPXFile extends HTTPUploadedFile{
 	 * All chunks in the same upload has the same token.
 	 * 
 	 * May be useful for proper chunked upload handling.
+	 *
+	 * @return string
 	 */
 	function getToken(){
 		global $HTTP_REQUEST;
@@ -96,9 +111,12 @@ class HTTPXFile extends HTTPUploadedFile{
 	}
 
 	/**
-	 * @access private
+	 * Write file to temporary place
+	 *
+	 * @param string $content data to write
+	 * @ignore
 	 */
-	function _writeTmpFile($content){
+	private function _writeTmpFile($content){
 		if($this->_TmpFileName){ return; }
 		$this->_TmpFileName = TEMP."/http_x_file_".uniqid().rand(0,9999);
 		Files::WriteToFile($this->_TmpFileName,$content,$err,$err_str);

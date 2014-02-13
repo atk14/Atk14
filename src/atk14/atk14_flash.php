@@ -2,8 +2,6 @@
 /**
  * Class for displaying messages
  *
- * @package Atk14
- * @subpackage Core
  * @filesource
  */
 
@@ -13,26 +11,24 @@
  * The message is available in current session to the next request and then it is deleted automatically.
  * It is used inside a controller using instance variable $flash.
  *
- * Uses three types of messages, each of them having appropriate method to set:
+ * Provides three types of messages, each of them having appropriate method to set:
  * - notice -> info
  * - success
  * - error
  * - warning
  *
- * <code>
- * class MyController extends ApplicationController {
- * 	function edit() {
+ * Example of usage
+ * 	class MyController extends ApplicationController {
+ * 		function edit() {
  * 			...
  * 			$this->flash->notice("record was successfully updated");
  * 			...
+ * 		}
  * 	}
- * }
- * </code>
  *
- * Custom message types can be created using the method {@link setMessage()}
+ * Custom message types can be created using the method {@link setMessage() setMessage()}
  *
- * @package Atk14
- * @subpackage Core
+ * @package Atk14\Core
  */
 class Atk14Flash{
 
@@ -49,11 +45,8 @@ class Atk14Flash{
 	 *
 	 * Do not use it. Instance must be initialized by call {@link GetInstance()}
 	 *
-	 * <code>
-	 * $flash = &Atk14Flash::GetInstance();
-	 * </code>
+	 * 	$flash = &Atk14Flash::GetInstance();
 	 *
-	 * @access private
 	 */
 	function __construct(){
 		
@@ -93,8 +86,19 @@ class Atk14Flash{
 		return $this->getMessage("notice");
 	}
 
-	// alias...
+	/**
+	 * Alias to method setNotice()
+	 *
+	 * @param string $message
+	 * @see setNotice() setNotice()
+	 */
 	function setInfo($message){ return $this->setNotice($message); }
+	/**
+	 * Alias to method notice().
+	 *
+	 * @param string $message {$see notice() notice() method}
+	 * @see notice() notice() method
+	 */
 	function info($message = null){
 		return $this->notice($message);
 	}
@@ -211,7 +215,7 @@ class Atk14Flash{
 	}
 
 	/**
-	 * Clears all flash messages unless the _FlashRead flag is true
+	 * Clears all flash messages unless the messages are internally marked as read.
 	 *
 	 */
 	function clearMessagesIfRead(){
@@ -219,7 +223,7 @@ class Atk14Flash{
 	}
 
 	/**
-	 * Clears all flash messages and sets $_FlashRead flag to true
+	 * Clears all flash messages and marks message states as read.
 	 */
 	function reset(){
 		$this->clearMessages();

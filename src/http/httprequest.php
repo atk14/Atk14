@@ -2,8 +2,6 @@
 /**
  * HTTPRequest class provides all information about HTTP request.
  *
- * @package Atk14
- * @subpackage Http
  * @filesource
  */
 
@@ -30,59 +28,69 @@ if (get_magic_quotes_gpc()) {
  *
  * Instance of the class is available in any {@link Atk14Controller} descendant as $request variable.
  *
- * @package Atk14
- * @subpackage Http
+ * @package Atk14\Http
  *
  */
 class HTTPRequest{
 
 	/**
-	 * @access private
+	 * Document root
+	 *
+	 * @var string
+	 * @ignore
 	 */
 	protected $_HTTPRequest_documentRoot = "";
 	
 	/**
 	 * Server name as set in httpd.conf.
 	 *
+	 * @var string
+	 * @ignore
 	 */
 	protected $_ServerName = "";
 	
 	/**
 	 * Server name as used in requested url.
 	 *
+	 * @var string
+	 * @ignore
 	 */
 	protected $_HttpHost = "";
 
 	/**
 	 * Protocol used.
+	 *
+	 * @var string
+	 * @ignore
 	 */
 	protected $_HTTPRequest_serverProtocol = "";
 
 	/**
-	 * @access private
+	 * Port used on server side of connection
+	 *
+	 * @var integer
+	 * @ignore
 	 */
 	protected $_ServerPort = null;
 
 	/**
-	 * @access private
+	 * @var string
 	 */
 	protected $_HTTPRequest_scriptName = "";
 
 	/**
-	 * @access private
+	 * @var string
 	 */
 	protected $_HTTPRequest_scriptFilename = "";
 
 	/**
-	* 
+	 * 
 	 * TODO: should be protected...
 	 * 
-	 * @access private
 	 */
 	var $_HTTPRequest_headers = array();
 
 	/**
-	 * @access private
 	 * @var array
 	 */
 	protected $_SSLPorts = array(443);
@@ -92,21 +100,26 @@ class HTTPRequest{
 	//var $_HTTPRequest_paramsCookie = array();
 
 	/**
+	 * Username used for basic authentication
+	 *
 	 * @var string
-	 * @access private
+	 * @ignore
 	 */
 	protected $_BasicAuthUsername = null;
 
 	/**
+	 * Password used for basic authentication
+	 *
 	 * @var string
-	 * @access private
+	 * @ignore
 	 */
 	protected $_BasicAuthPassword = null;
 
 	/**
 	 * An array to store force values.
-	 * 
-	 * @access private
+	 *
+	 * @var array
+	 * @ignore
 	 */
 	protected $_ForceValues = array();
 
@@ -122,6 +135,7 @@ class HTTPRequest{
 
 	/**
 	 *
+	 * Add a port which can be used for SSL connection.
 	 *
 	 * @param int $port port number. possible string is converted to integer.
 	 */
@@ -135,7 +149,7 @@ class HTTPRequest{
 	 *
 	 * Does the main part of the class initialization. Sets all parameters of current request.
 	 *
-	 * @access private
+	 * @ignore
 	 */
 	protected function _AutoInitialize(){
 		global $_SERVER;
@@ -344,17 +358,14 @@ class HTTPRequest{
 	/**
 	 * Returns authentication string.
 	 *
-	 * Returns string in the form "username:password".
+	 * Returns authentication string in the form "username:password".
 	 *
-	 * <code>
 	 *	if($request->getBasicAuthString()!="john:magic"){
 	 *		$response->authorizationRequired();
 	 *		$response->flushAll();
 	 *		exit;
 	 *	}
-	 * </code>
 	 *
-	 * @access public
 	 * @return string
 	 */
 	function getBasicAuthString(){
@@ -366,16 +377,27 @@ class HTTPRequest{
 	}
 
 	/**
-	 * Sets the usename and password by the given authentication string
+	 * Sets the username and password by the given authentication string
 	 *
-	 * $request->setBasicAuthString("john:magic");
-	 * echo $request->getBasicAuthUsername(); // "john"
-	 * echo $request->getBasicAuthPassword(); // "magic"
+	 * 	$request->setBasicAuthString("john:magic");
 	 *
 	 *
-	 * $request->setBasicAuthString("");
-	 * print_r($request->getBasicAuthUsername()); // null
-	 * print_r($request->getBasicAuthPassword()); // null
+	 * 	echo $request->getBasicAuthUsername();
+	 * returns "john"
+	 *
+	 * 	echo $request->getBasicAuthPassword();
+	 * returns "magic"
+	 *
+	 *
+	 * 	$request->setBasicAuthString("");
+	 *
+	 * 	print_r($request->getBasicAuthUsername());
+	 * returns null
+	 *
+	 * 	print_r($request->getBasicAuthPassword());
+	 * returns null
+	 *
+	 * @param string $string authentication string in form username:password
 	 */
 	function setBasicAuthString($string){
 		if(preg_match('/^(.*?):(.*)/',$string,$matches)){
@@ -397,6 +419,11 @@ class HTTPRequest{
 		return $this->_getForceValue_or_Value("BasicAuthUsername");
 	}
 
+	/**
+	 * Sets username for basic authentication.
+	 *
+	 * @param string $username
+	 */
 	function setBasicAuthUsername($username){ $this->_setForceValue("BasicAuthUsername",$username); }
 
 	/**
@@ -408,6 +435,9 @@ class HTTPRequest{
 		return $this->_getForceValue_or_Value("BasicAuthPassword");
 	}
 
+	/**
+	 * Sets password for basic authentication.
+	 */
 	function setBasicAuthPassword($password){
 		$this->_setForceValue("BasicAuthPassword",$password);
 	}
@@ -890,25 +920,19 @@ class HTTPRequest{
 	 *
 	 * Method returns uploaded file specified by $name.
 	 *
-	 * <code>
-	 * $file = $request->getUploadedFile("userfile");
-	 * </code>
+	 * 	$file = $request->getUploadedFile("userfile");
 	 *
 	 *
 	 * When no $name is passed it returns first uploaded file:
-	 * <code>
-	 * $file = $request->getUploadedFile();
-	 * </code>
+	 * 	$file = $request->getUploadedFile();
 	 *
 	 *
 	 * You can perform various operations on the returned object
-	 * <code>
-	 * echo "filename: ".$file->getFileName()."\n";
-	 * echo "size: ".$file->getFileSize()."\n";
-	 * echo $file->getContent();
-	 * $file->moveTo("data/store/path/");
-	 * $file->moveTo("data/store/path/data.txt");
-	 * </code>
+	 * 	echo "filename: ".$file->getFileName()."\n";
+	 * 	echo "size: ".$file->getFileSize()."\n";
+	 * 	echo $file->getContent();
+	 * 	$file->moveTo("data/store/path/");
+	 * 	$file->moveTo("data/store/path/data.txt");
 	 *
 	 * Notice: When no file is found it tries to find a file uploaded as XmlHttpRequest.
 	 * 
@@ -1017,10 +1041,8 @@ class HTTPRequest{
 	 *
 	 *
 	 * These calls return same value:
-	 * <code>
-	 * $val = $request->getHeader("X-File-Name");
-	 * $val = $request->getHeader("x-file-name");
-	 * </code>
+	 * 	$val = $request->getHeader("X-File-Name");
+	 * 	$val = $request->getHeader("x-file-name");
 	 *
 	 * @param string $header
 	 * @return string content of the header.
@@ -1032,6 +1054,12 @@ class HTTPRequest{
 		}
 	}
 
+	/**
+	 * Sets a header to a value.
+	 *
+	 * @param string $header
+	 * @param string $value
+	 */
 	function setHeader($header,$value){
 		($headers = $this->_getForceValue("headers")) || ($headers = array());
 		$headers[$header] = $value;
@@ -1198,13 +1226,19 @@ class HTTPRequest{
     return implode("&", $output);
 	}
 
-	function _getForceValue($name){
+	/**
+	 * @ignore
+	 */
+	private function _getForceValue($name){
 		if(isset($this->_ForceValues[$name])){
 			return $this->_ForceValues[$name];
 		}
 	}
 
-	function _getForceValue_or_Value($name){
+	/**
+	 * @ignore
+	 */
+	private function _getForceValue_or_Value($name){
 		$out = $this->_getForceValue($name);
 		if(!is_null($out)){
 			return $out;
@@ -1213,7 +1247,10 @@ class HTTPRequest{
 		return $this->$v_name;
 	}
 
-	function _setForceValue($name,$value){
+	/**
+	 * @ignore
+	 */
+	private function _setForceValue($name,$value){
 		if(!defined("TEST") || !TEST){
 			trigger_error("HTTPRequest: setting force value in non testing environment: $name=$value",E_USER_WARNING);
 		}

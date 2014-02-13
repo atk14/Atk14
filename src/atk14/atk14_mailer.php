@@ -11,50 +11,66 @@
  * Atk14Mailer works similar to Atk14Controller. ApplicationMailer class which is descendent of Atk14Mailer contains actions (methods).
  * These actions can be called from a controller by {@link execute()} method with the name of action as parameter.
  *
- * The action prepares data for a template which is associated to it. Data for the template are passed (like in a controller) in $tpl_data.
+ * The action prepares data for a template which is associated to it. Data for the template are passed (like in a controller) in $this->tpl_data.
  * The action also sets all important parameters of the email (sender, recipients, subject ...)
  * After the action is executed the email is sent.
- * You can define the {@link _before_filter()} method which is called before every action.
+ * You can define the {@link _before_filter() _before_filter} method which is called before every action.
+ *
+ * If the message should not be sent, method build() can be used.
+ * It prepares whole message with headers which will be returned by build method() as array.
  *
  * Template is a standard Smarty template. Name of the template is composed of the actions name and .tpl suffix and is stored in directory mailer.
  *
  * This is how an action is called in a controller:
- * <code>
- * $this->mailer->execute("notify_user_registration",$user,$password);
- * </code>
+ * 	$this->mailer->notify_user_registration($user,$password);
  *
  * The called action is defined in application_mailer.inc:
- * <code>
- * class ApplicationMailer extends Atk14Mailer {
- * 	function notify_user_registration($user,$plain_text_password) {
- * 		$this->from = "info@atk14.net";
- * 		$this->to = $user->getEmail();
- * 		$this->subject = "Welcome to SiliconeWisdom.com";
- * 		...
- * 		$this->tpl_data["user"] = $user;
- *		$this->tpl_data["plain_text_password"] = $plain_text_password;
+ * 	class ApplicationMailer extends Atk14Mailer {
+ * 		function notify_user_registration($user,$plain_text_password) {
+ * 			$this->from = "info@atk14.net";
+ * 			$this->to = $user->getEmail();
+ * 			$this->subject = "Welcome to SiliconeWisdom.com";
+ * 			...
+ * 			$this->tpl_data["user"] = $user;
+ *			$this->tpl_data["plain_text_password"] = $plain_text_password;
+ * 		}
  * 	}
- * }
- * </code>
  *
  * Example of template:
  * mailer/notify_user_registration.tpl
- * <code>
  * 	Hello {$user->getFullName()},
- *
- *	thanks for signing up for SiliconeWisdom.com!
- *
+ * 	 
+ * 	thanks for signing up for SiliconeWisdom.com!
+ * 	 
  * 	Your data revision
- *  login: {$user->getLogin()}
- *	email: {$user->getEmail()}
- *	password: {$plain_text_password}
- *  ...
+ * 	login: {$user->getLogin()}
+ * 	email: {$user->getEmail()}
+ * 	password: {$plain_text_password}
+ * 	...
  *
- * </code>
+ * Sending the email
  *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
+ * class UserController extends ApplicationController {
+ * 	function register_user() {
+ * 		$this->mailer->notify_user_registration()
+ * 	}
+ * }
+ *
+ * Params
+ * - from
+ * - from _name
+ * - return_path
+ * - to
+ * - cc
+ * - bcc
+ * - subject
+ * - body
+ * - mime_type
+ * - charset
+ * - attachments
+ * - build_message_only
+ *
+ * @package Atk14\Core
  */
 class Atk14Mailer{
 
@@ -75,7 +91,7 @@ class Atk14Mailer{
 	var $from_name = "";
 
 	/**
-	 * if $return_path is not set, $from is used automatically 
+	 * if $return_path is not set, $from is used automatically  as $return_path
 	 *
 	 * @var string
 	 */
@@ -176,6 +192,7 @@ class Atk14Mailer{
 	var $action = null;
 
 	/**
+	 * Instance of Logger
 	 *
 	 * @var Logger
 	 */
@@ -190,7 +207,6 @@ class Atk14Mailer{
 	 *
 	 * @param Atk14Controller $controller
 	 * @return ApplicationMailer
-	 * @static
 	 */
 	static function GetInstanceByController($controller){
 		return Atk14Mailer::GetInstance(array(
@@ -199,6 +215,15 @@ class Atk14Mailer{
 		));
 	}
 
+	/**
+	 * Initialization.
+	 *
+	 * Description of $options
+	 * - namespace
+	 * - logger
+	 *
+	 * @param array $options
+	 */
 	static function GetInstance($options = array()){
 		$options = array_merge(array(
 			"namespace" => "",
@@ -229,11 +254,16 @@ class Atk14Mailer{
 	 * Method executes action $action which is actually name of method in ApplicationMailer class. Additional optional parameters are passed as array.
 	 *
 	 * Method is called in a controller.
-	 * <code>
+	 *
 	 * 	$this->mailer->execute("notify_user_registration",array(
-	 *		"user" => $user
-	 *	));
-	 * </code>
+	 * 		"user" => $user
+	 * 	));
+	 *
+	 *
+	 * New form of sending can be used
+	 * 	$this->mailer->notify_user_registration(array(
+	 * 		"user" => $user
+	 * 	));
 	 *
 	 * @param string $action name of action to be executed
 	 * @param mixed other optional param
@@ -252,9 +282,7 @@ class Atk14Mailer{
 	 * The message will not be sent even in production environment.
 	 *
 	 * Method is called in a controller.
-	 * <code>
-	 * 	$mail_ar = $this->mailer->build("notify_user_registration",$user);
-	 * </code>
+	 * 	$mail_ar = $this->mailer->notify_user_registration($user);
 	 *
 	 * @param string $action name of action to be build
 	 * @param mixed other optional param
@@ -267,6 +295,9 @@ class Atk14Mailer{
 		return $this->_send(array("build_message_only" => true));
 	}
 
+	/**
+	 * @ignore
+	 */
 	function _render_message(){
 		global $ATK14_GLOBAL;
 
@@ -359,11 +390,26 @@ class Atk14Mailer{
 	/**
 	 * Calls sendmail function and pass it all important fields to construct the message and send it.
 	 *
-	 * @access protected
+	 * Params
+	 * - from
+	 * - from _name
+	 * - return_path
+	 * - to
+	 * - cc
+	 * - bcc
+	 * - subject
+	 * - body
+	 * - mime_type
+	 * - charset
+	 * - attachments
+	 * - build_message_only
+	 *
+	 * @param array $params
 	 * @return array
 	 * @uses sendmail()
+	 * @ignore
 	 */
-	function _send($params = array()){
+	protected function _send($params = array()){
 		$params += array(
 			"from" => $this->from,
 			"from_name" => $this->from_name,

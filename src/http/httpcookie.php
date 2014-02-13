@@ -2,58 +2,62 @@
 /**
  * Class provides operations on cookies.
  *
- * @package Atk14
- * @subpackage Http
  * @filesource
- * @author Jaromir Tomek
  */
 
 /**
  * Class provides operations on cookies.
  *
  * Basic usage:
- * <code>
- * $cookie = new HTTPCookie("last_login_timestamp", "1297764352");
- * $cookie->setSecure();
- * $cookie->setDomain("atk14.net");
- * </code>
  *
- * @package Atk14
- * @subpackage Http
+ * 	$cookie = new HTTPCookie("last_login_timestamp", "1297764352");
+ * 	$cookie->setSecure();
+ * 	$cookie->setDomain("atk14.net");
  *
- * @author Jaromir Tomek
+ * @package Atk14\Http
  */
 class HTTPCookie{
 
 	/**
-	 * @access private
+	 * Cookie name
+	 * 
+	 * @var string
 	 */
-	var $_Name = null;
+	private $_Name = null;
 
 	/**
-	 * @access private
+	 * Cookie value
+	 *
 	 */
-	var $_Value = null;
+	private $_Value = null;
 
 	/**
-	 * @access private
+	 * Expiration of cookie
+	 *
+	 * @var integer
 	 */
-	var $_Expire = 0;
+	private $_Expire = 0;
 
 	/**
-	 * @access private
+	 * Cookie path
+	 *
+	 * @var string
 	 */
-	var $_Path = "/";
+	private $_Path = "/";
 
 	/**
-	 * @access private
+	 * Cookie domain
+	 *
+	 * @var string
 	 */
-	var $_Domain = "";
+	private $_Domain = "";
 
 	/**
-	 * @access private
+	 * Flag if the cookie is used on ssl
+	 *
+	 * @var boolean
 	 */
-	var $_Secure = false;	
+	private $_Secure = false;	
 	
 	/**
 	 * Creates instantiated cookie object.
