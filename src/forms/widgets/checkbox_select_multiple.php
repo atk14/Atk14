@@ -4,11 +4,12 @@
  *
  * Each value in $choices renders as <li /> item in <ul /> list.
  *
- * @package Atk14
- * @subpackage Forms
+ * @package Atk14\Forms
  */
 class CheckboxSelectMultiple extends SelectMultiple
 {
+	var $input_type = "select";
+
 	function my_check_test($value)
 	{
 		return in_array($value, $this->_my_str_values);

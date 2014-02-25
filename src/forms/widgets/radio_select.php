@@ -30,6 +30,8 @@
  */
 class RadioSelect extends Select
 {
+	var $input_type = "radio";
+
 	function __construct($option = array()){
 		parent::__construct($option);
 	}

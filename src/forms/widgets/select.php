@@ -14,6 +14,8 @@
  */
 class Select extends Widget
 {
+	var $input_type = "select";
+
 	function __construct($options=array())
 	{
 		$options = forms_array_merge(array('attrs'=>null, 'choices'=>array()), $options);

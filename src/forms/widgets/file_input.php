@@ -2,8 +2,7 @@
 /**
  * Widget for rendering file input field.
  *
- * @package Atk14
- * @subpackage Forms
+ * @package Atk14\Forms
  */
 class FileInput extends Input{
 	var $input_type = "file";

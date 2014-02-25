@@ -12,6 +12,8 @@
  */
 class Textarea extends Widget
 {
+	var $input_type = "textarea";
+
 	function __construct($options=array())
 	{
 		$options = forms_array_merge(array('attrs'=>null), $options);

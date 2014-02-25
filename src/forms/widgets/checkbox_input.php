@@ -7,8 +7,7 @@
  * <input type="checkbox" />
  * </code>
  *
- * @package Atk14
- * @subpackage Forms
+ * @package Atk14\Forms
  */
 class CheckboxInput extends Widget
 {
