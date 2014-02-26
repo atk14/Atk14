@@ -330,6 +330,8 @@ class Atk14Form extends Form
 	 * In controller:
 	 * 	$form = Atk14Form::GetForm("MoveForm",$this);
 	 *
+	 * Warning: forms created using this method don't contain id attribute.
+	 *
 	 * @param string $class_name
 	 * @param Atk14Controller $controller instance of controller which uses the form
 	 * @param array $options {@see __construct}

@@ -2,40 +2,35 @@
 /**
  * Implementation of dictionary to store key => value pairs
  *
- * @package Atk14
- * @subpackage InternalLibraries
  * @filesource
  */
 /**
  * Implementation of dictionary to store key => value pairs
  *
  * Basic usage:
- * <code>
- * $dict = new Dictionary(array(
- *  "key1" => "value1",
- *  "key2" => "value2",
- *  "key3" => "value3"
- * ));
+ * 	$dict = new Dictionary(array(
+ *  	"key1" => "value1",
+ *  	"key2" => "value2",
+ *  	"key3" => "value3"
+ * 	));
  *
- * echo $dict->getValue("key1");
- * $dict->setValue("key4","new value");
+ * 	echo $dict->getValue("key1");
+ * 	$dict->setValue("key4","new value");
  *
- * if($dict->defined("key1")){
- * //...
- * }
- * </code>
+ * 	if($dict->defined("key1")){
+ * 	//...
+ * 	}
  *
- * @package Atk14
- * @subpackage InternalLibraries
+ * @package Atk14\Dictionary
  */
 class Dictionary implements ArrayAccess, Iterator, Countable{
 
 	/**
 	 * Internal storage of values
 	 *
-	 * @access private
+	 * @var array
 	 */
-	var $_Values = array();
+	private $_Values = array();
 
 	/**
 	 * By default the constructor initializes empty dictionary. The initial dictionary can be defined by array passed to constructor.
@@ -62,9 +57,7 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 * Returns value from the dictionary specified by $key. Returned value can be retyped by passing $type parameter.
 	 * Parameter $type recognizes same values as PHP.
 	 *
-	 * <code>
-	 * $dictionary->getValue("user_id", "integer");
-	 * </code>
+	 * 	$dictionary->getValue("user_id", "integer");
 	 *
 	 * @param string $key
 	 * @param string $type
@@ -83,8 +76,10 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	}
 
 	/**
-	 * Alias to method {@link getValue()}.
+	 * Alias to method {@link getValue() getValue()}.
 	 *
+	 * @param string $key
+	 * @param string $type
 	 * @return mixed
 	 * @uses getValue()
 	 */
@@ -102,7 +97,21 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 * @uses getValue()
 	 */
 	function getInt($key){ return $this->g($key,"integer"); }
+
+	/**
+	 * Get value from dictionary converted to float.
+	 *
+	 * @param string $key
+	 * @return float
+	 */
 	function getFloat($key){ return $this->g($key,"float"); }
+
+	/**
+	 * Get value from dictionary converted to boolean.
+	 *
+	 * @param string $key
+	 * @return boolean
+	 */
 	function getBool($key){
 		$value = $this->g($key);
 		if(!isset($value)){ return null; }
@@ -146,6 +155,8 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/**
 	 * Shortcut to method setValue().
 	 *
+	 * @param string $key
+	 * @param any $value
 	 * @uses setValue()
 	 */
 	function s($key,$value){ return $this->setValue($key,$value); }
@@ -153,6 +164,8 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/**
 	 * Alias for setValue()
 	 *
+	 * @param string $key
+	 * @param any $value
 	 * @uses setValue()
 	 */
 	function add($key,$value){ return $this->setValue($key,$value); }
@@ -178,6 +191,11 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 		return isset($this->_Values[$key]);
 	}
 
+	/**
+	 * Return key names set in dictionary.
+	 *
+	 * @return array
+	 */
 	function keys(){
 		return array_keys($this->_Values);
 	}
@@ -191,6 +209,12 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 */
 	function contains($key){ return $this->defined($key); }
 
+	/**
+	 * Checks if a key is present in dictionary
+	 *
+	 * @param string $key
+	 * @return boolean
+	 */
 	function keyPresents($key){
 		return in_array($key,array_keys($this->_Values));
 	}
@@ -198,10 +222,10 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/**
 	 * Merges another Dictionary.
 	 *
-	 * Takes another {@link Dictionary} or {@link array} and merges its values with values in current {@link Dictionary}.
+	 * Takes another {@link Dictionary Dictionary} or {@link array} and merges its values with values in current {@link Dictionary}.
 	 * Values in the merged/passed Dictionary override values in current Dictionary.
 	 *
-	 * @param Dictionary|array
+	 * @param Dictionary|array $ary
 	 */
 	function merge($ary){
 		if(is_object($ary)){ $ary = $ary->toArray(); }
@@ -216,6 +240,11 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 */
 	function delete($key){ return $this->unsetValue($key); }
 
+	/**
+	 * Alias to method unsetValue().
+	 *
+	 * @param string $key
+	 */
 	function del($key){ return $this->unsetValue($key); }
 
 	/**
@@ -248,12 +277,14 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/**
 	 * Adds value to the beginning of array.
 	 *
-	 * <code>
-	 * $dict->unshift("color","green");
-	 * $dict->toArray(); // prvni klic a hodnota bude "color" resp. "green"
-	 * </code>
-	 * First returned key should be "color" with value "green".
+	 * 	$dict->unshift("color","green");
 	 *
+	 * First element will be key 'color' with value 'green'
+	 * 	$dict->toArray();
+	 *
+	 *
+	 * @param string $key
+	 * @param string $value
 	 */
 	function unshift($key,$value){
 		$out = array($key => $value);
@@ -274,26 +305,56 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	
 	
 	/*** functions implementing array like access ***/
+	/**
+	 * @ignore
+	 */
 	function offsetGet($value){ return $this->getValue($value);	}
 
+	/**
+	 * @ignore
+	 */
 	function offsetSet($name, $value){ $this->setValue($name, $value);	}
 
+	/**
+	 * @ignore
+	 */
 	function offsetUnset($value){ $this->unsetValue($value);	}
 
+	/**
+	 * @ignore
+	 */
 	function offsetExists($value){ return $this->defined($value);	}
 
+	/**
+	 * @ignore
+	 */
 	function current(){ return current($this->_Values); }
 
+	/**
+	 * @ignore
+	 */
 	function key(){ return key($this->_Values); }
 
+	/**
+	 * @ignore
+	 */
 	function next(){ return next($this->_Values); }
 
+	/**
+	 * @ignore
+	 */
 	function rewind(){ reset($this->_Values); }
 
+	/**
+	 * @ignore
+	 */
 	function valid(){
 		$key = key($this->_Values);
 		return ($key !== null && $key !== false);
 	}
 
+	/**
+	 * @ignore
+	 */
 	function count(){ return $this->size(); }
 }
