@@ -653,7 +653,7 @@ class HTTPResponse{
 		header("HTTP/1.0 $this->_StatusCode $_status_message");
 		
 		$_content_type_header = "Content-Type: $this->_ContentType";
-		if(isset($this->_ContentCharset)){ $_content_type_header .= "; charset=$this->_ContentCharset";}
+		if($this->_ContentCharset){ $_content_type_header .= "; charset=$this->_ContentCharset";}
 		header($_content_type_header);
 
 		if(strlen($this->_Location)>0){
