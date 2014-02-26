@@ -351,13 +351,13 @@ function sendhtmlmail($options){
 	$body[] = "Content-Type: text/plain; charset=$options[charset]";
 	$body[] = "Content-Transfer-Encoding: quoted-printable";
 	$body[] = "";
-	$body[] = _sendmail_quoted_printable_encode($options["plain"]);
+	$body[] = _sendmail_quoted_printable_encode(_sendmail_lf_to_crlf($options["plain"]));
 	$body[] = "";
 	$body[] = "--$alt_boundary";
 	$body[] = "Content-Type: text/html; charset=$options[charset]";
 	$body[] = "Content-Transfer-Encoding: quoted-printable";
 	$body[] = "";
-	$body[] = _sendmail_quoted_printable_encode($options["html"]);
+	$body[] = _sendmail_quoted_printable_encode(_sendmail_lf_to_crlf($options["html"]));
 	$body[] = "";
 	$body[] = "--$alt_boundary--";
 
