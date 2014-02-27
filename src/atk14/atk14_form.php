@@ -10,16 +10,16 @@
  * This class is extension of basic class Form of the form framework.
  *
  * Atk14Form adds following features:
- * <ul>
- * 	<li>possibility to setup initial parameters of form elements later than in constructor.</li>
- * 	<li>possibility to setup sent user data later than in constructor</li>
- * 	<li>simple addition of hidden values</li>
- * 	<li>setup of action attribute of the form</li>
- * 	<li>methods begin() and end() for rendering of the form to template</li>
- * 	<li>method set_method() to change the value of forms method attribute</li>
- * </ul>
+ * - possibility to setup initial parameters of form elements later than in constructor
+ * - possibility to setup sent user data later than in constructor
+ * - simple addition of hidden values
+ * - setup of action attribute of the form
+ * - methods begin() and end() for rendering of the form to template
+ * - method set_method() to change the value of forms method attribute
  *
- * Example of use:
+ * Example of a form
+ *
+ * forms/users/login_form.php
  * 	class LoginForm extends ApplicationForm{
  * 		function set_up(){
  * 			$this->add_field("login",new CharField(array(
@@ -27,22 +27,26 @@
  * 			"help_text" => _("client identification"),
  * 			"min_length" => 1,
  * 			"max_length" => 64
- * 		)));
+ * 			)));
  *
- *		$this->add_field("password",new CharField(array(
- *			"label" => _("Password"),
- *			"min_length" => 1,
- *			"max_length" => 64
- *		)));
- *  	}
- *  }
+ * 			$this->add_field("password",new CharField(array(
+ * 				"label" => _("Password"),
+ * 				"min_length" => 1,
+ * 				"max_length" => 64
+ * 			)));
+ * 		}
+ * 	}
  *
- * 	$form = new LoginForm();
+ * Use the form in a controller
+ * controllers/users/login_controller.php
+ * $this->form is initialized automatically if path of the LoginForm in forms directory matches the path of the controller
+ *
+ * 	$form = &$this->form;
  * 	$form->set_initial("login","user.name");
  * 	$form->set_hidden_field("action","login");
  * 	if($request->Post() && $form->is_valid($this->params)){
- *     // data jsou ok
- *     $data = $form->cleaned_data;
+ * 		// data are ok
+ * 		$data = $form->cleaned_data;
  * 	}
  *
  * Basically you can print a form by using helper {form} in a template:
@@ -340,8 +344,6 @@ class Atk14Form extends Form
 	 *
 	 * In controller:
 	 * 	$form = Atk14Form::GetForm("MoveForm",$this);
-	 *
-	 * Warning: forms created using this method don't contain id attribute.
 	 *
 	 * @param string $class_name
 	 * @param Atk14Controller $controller instance of controller which uses the form
