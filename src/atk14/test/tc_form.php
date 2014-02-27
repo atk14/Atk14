@@ -2,6 +2,38 @@
 require_once(dirname(__FILE__)."/app/forms/test_form.php");
 require_once(dirname(__FILE__)."/app/forms/pre_and_post_set_up_form.php");
 class TcForm extends TcBase{
+	function test_instantiating(){
+		global $ATK14_GLOBAL;
+		require_once(dirname(__FILE__)."/app/forms/application_form.php");
+
+		$form = Atk14Form::GetInstanceByControllerAndAction("non_existing_controller","none");
+		$this->assertEquals(null,$form);
+
+		$ATK14_GLOBAL->setValue("controller","main");
+		$ATK14_GLOBAL->setValue("action","hello_world");
+		$ATK14_GLOBAL->setValue("namespace","");
+
+		$form = Atk14Form::GetInstanceByControllerAndAction("main","hello_world");
+		$this->assertEquals(true,!!is_object($form));
+		$this->assertContains('id="form_main_hello_world"',$form->begin());
+
+		$form = Atk14Form::GetInstanceByControllerAndAction("main","hello_world",null,array("attrs" => array("id" => "a_tiny_form")));
+		$this->assertEquals(true,!!is_object($form));
+		$this->assertContains('id="a_tiny_form"',$form->begin());
+
+		$form = Atk14Form::GetForm("HelloWorldForm");
+		$this->assertEquals(true,!!is_object($form));
+		$this->assertContains('id="form_main_hello_world"',$form->begin());
+
+		$form = Atk14Form::GetForm("HelloWorldForm",null,array("attrs" => array("id" => "a_small_form")));
+		$this->assertEquals(true,!!is_object($form));
+		$this->assertContains('id="a_small_form"',$form->begin());
+
+		$form = Atk14Form::GetForm("HelloWorldForm",null,array("attrs" => array("id" => "")));
+		$this->assertEquals(true,!!is_object($form));
+		$this->assertNotContains('id=""',$form->begin());
+	}
+
 	function test_constructor(){
 		$form = new TestForm();
 		$this->assertEquals(null,$form->prefix);

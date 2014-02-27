@@ -242,11 +242,22 @@ class Atk14Form extends Form
 	static function GetInstanceByFilename($filename,$controller_obj = null,$options = array())
 	{
 		global $ATK14_GLOBAL;
+
+		$options += array(
+			"attrs" => array(),
+		);
+
 		$filename = preg_replace('/\.(inc|php)$/','',$filename); // nechceme tam koncovku
 
 		$controller = $ATK14_GLOBAL->getValue("controller");
 		$namespace = $ATK14_GLOBAL->getValue("namespace");
 		$path = $ATK14_GLOBAL->getApplicationPath()."forms";
+
+		$_action = preg_replace('/.*?([^\/]+)_form$/','\1',$filename);
+
+		$options["attrs"] += array(
+			"id" => "form_{$controller}_{$_action}",
+		);
 
 		// toto je preferovane poradi ve vyhledavani souboru s formularem
 		$files = array(
@@ -295,12 +306,12 @@ class Atk14Form extends Form
 	 */
 	static function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null,$options = array())
 	{
-		$options = array_merge(array(
+		$options += array(
 			"attrs" => array(),
-		),$options);
-		$options["attrs"] = array_merge(array(
+		);
+		$options["attrs"] += array(
 			"id" => "form_{$controller}_{$action}",
-		),$options["attrs"]);
+		);
 
 		($form = Atk14Form::GetInstanceByFilename("$controller/{$controller}_{$action}_form.inc",$controller_obj,$options)) || 
 		($form = Atk14Form::GetInstanceByFilename("$controller/{$action}_form.inc",$controller_obj,$options));
@@ -748,6 +759,7 @@ class Atk14Form extends Form
 	function _get_attrs(){
 		$out = "";
 		foreach($this->atk14_attrs as $key => $value){
+			if($key=="id" && !$value){ continue; } // we do not want something like <form action="/" method="post" id="">
 			$out .= ' '.h($key).'="'.h($value).'"';
 		}
 		return $out;
