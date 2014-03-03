@@ -87,23 +87,30 @@ class String{
 		}
 
 		$options = array_merge(array(
-			"extra_chars" => "",
-			"length" => $length,
+			'extra_chars' => '',
+			'length' => $length,
 		),$options);
 
 		srand ((double) microtime() * 1000000);
-		$temp = array("a","i","o","s","t","u","v","3","4","5","8","B","C","D","E","F","7","G","H","I","J","K","L","M","N","O","j","k","l","6","P","Q","W","b","c","d","e","f","g","h","p","q","r","x","y","z","0","1","S","T","U","w","2","9","A","R","V","m","n");
-		foreach(preg_split("//",$options["extra_chars"]) as $ch){
-			strlen($ch) && ($temp[] = $ch);
+		$chars = array('a','i','o','s','t','u','v','3','4','5','8','B','C','D','E','F','7','G','H','I','J','K','L','M','N','O','j','k','l','6','P','Q','W','b','c','d','e','f','g','h','p','q','r','x','y','z','0','1','S','T','U','w','2','9','A','R','V','m','n');
+		foreach(preg_split('//',$options['extra_chars']) as $ch){
+			strlen($ch) && ($chars[] = $ch);
 		}
-		shuffle($temp);
 
-		$rand = array_rand($temp,$options["length"]);
-		$out = '';
-		for($i=0;$i<sizeof($rand);$i++){
-			$out .= $temp[$rand[$i]];
+		$s = sizeof($chars);
+
+		$out = array();
+		$c = 0;
+		for($i=0;$i<$options['length'];$i++){
+			if($i%$s==0){
+				shuffle($chars);
+				$rand = array_rand($chars,$s);
+				$c = 0;
+			}
+			$out[] = $chars[$rand[$c]];
+			$c++;
 		}
-		return $out;
+		return join('',$out);
 	}
 
 	/**

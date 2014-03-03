@@ -21,6 +21,12 @@ class TcString extends TcBase{
 		$this->assertEquals(22,strlen($s3));
 
 		$this->assertTrue($s1!=$s2);
+
+		$long = String::RandomString(64);
+		$this->assertEquals(64,strlen($long));
+
+		$long = String::RandomString(1000);
+		$this->assertEquals(1000,strlen($long));
 	}
 
 	function test_instance(){
@@ -39,7 +45,6 @@ class TcString extends TcBase{
 		$this->assertTrue(is_object($string));
 		$string2 = String::ToObject($string); 
 		$this->assertTrue(is_object($string2));
-		
 	}
 
 	function test_clone_and_copy(){
