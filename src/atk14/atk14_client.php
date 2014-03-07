@@ -215,6 +215,18 @@ class Atk14Client{
 	}
 
 	/**
+	 * $client->makeRequest("GET","articles/detail",array("id" => 123)); // same as $client->get("articles/detail",array("id" => 123))
+	 * $client->makeRequest("DELETE","articles/destroy",array("id" => 123));
+	 */
+	function makeRequest($method,$path,$params = array(),$options = array()){
+		$method = strtoupper($method);
+		if($method=="POST"){
+			return $this->post($path,$params,$options);
+		}
+		return $this->_doRequest($method,$path,$params,$options);
+	}
+
+	/**
 	 * Common method to make HTTP requests
 	 *
 	 * @ignore
@@ -272,8 +284,7 @@ class Atk14Client{
 		$request->setMethod($method);
 		if($method=="POST"){
 			$request->setPostVars($params);
-		}
-		if($method=="GET"){
+		}else{
 			$request->setGetVars($params);
 		}
 		$request->setUri(Atk14Url::BuildLink(array(
