@@ -628,11 +628,9 @@ class Form implements ArrayAccess
 	 *
 	 * Returns true when there is an error on specified field.
 	 *
-	 * <code>
-	 * if($form->error_on("email")){
-	 *   echo "mate chybu na policku E-mail";
-	 * }
-	 * </code>
+	 * 	if($form->error_on("email")){
+	 * 		 echo "mate chybu na policku E-mail";
+	 * 	}
 	 *
 	 * @param string $name
 	 * @return bool true if there is an error on specified field.
@@ -661,12 +659,10 @@ class Form implements ArrayAccess
 	 *
 	 * Sets $disabled flag of specified fields.
 	 *
-	 * <code>
-	 * $form->disable_fields(array(
-	 *   "firstname",
-	 *   "lastname"
-	 * ));
-	 * </code>
+	 * 	$form->disable_fields(array(
+	 * 		"firstname",
+	 * 		"lastname"
+	 * 	));
 	 *
 	 * @param array $names
 	 */

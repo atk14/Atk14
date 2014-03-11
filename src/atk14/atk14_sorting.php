@@ -2,8 +2,7 @@
 /**
  * Class for sorting records
  *
- * @package Atk14
- * @subpackage Core
+ * @package Atk14\Core
  * @filesource
  */
 
@@ -16,36 +15,29 @@
  *
  * Within a controller's method:
  *
- * <code>
- *	$sorting = new Atk14Sorting($this->params);
- *	$sorting->add("name");
- *	$sorting->add("created",array("reverse" => true));
- *	$sorting->add("rank",array("ascending_ordering" => "rank DESC, id ASC", "descending_ordering" => "rank ASC, id DESC"));
- *
- *	$finder = TableRecord::Finder(array(
- *		"class_name" => "Book",
- *		"order" => $sorting->getOrder(),
- *	));
- *	
- *	$this->tpl_data["finder"] = $finder;
+ * 	$sorting = new Atk14Sorting($this->params);
+ * 	$sorting->add("name");
+ * 	$sorting->add("created",array("reverse" => true));
+ * 	$sorting->add("rank",array("ascending_ordering" => "rank DESC, id ASC", "descending_ordering" => "rank ASC, id DESC"));
+ * 	$finder = TableRecord::Finder(array(
+ * 		"class_name" => "Book",
+ * 		"order" => $sorting->getOrder(),
+ * 	));
+ * 	$this->tpl_data["finder"] = $finder;
  * 	$this->sorting = $sorting;
- * 	</code>
  *
  * Within a template:
- *	
- *	<code>
- *		<table>
- *			<thead>
- *				<tr>
- *					{sortable key=name}<th>Name</th>{/sortable}
- *					{sortable key=created}<th>Create date</th>{/sortable}
- *					...
- *				</tr>
- *			</thead>
- *		</table>
- *	</code>
- * @package Atk14
- * @subpackage Core
+ * 	<table>
+ * 		<thead>
+ * 			<tr>
+ * 				{sortable key=name}<th>Name</th>{/sortable}
+ * 				{sortable key=created}<th>Create date</th>{/sortable}
+ * 				...
+ * 			</tr>
+ * 		</thead>
+ * 	</table>
+ *
+ * @package Atk14\Core
  * 
  */
 class Atk14Sorting{
@@ -76,21 +68,18 @@ class Atk14Sorting{
 	 * First added key is the default sorting key.
 	 *
 	 * Basic usage
-	 * <code>
 	 * 	$sorting->add("create_date");
 	 * 	$sorting->add("create_date",array("reverse" => true));
-	 *
 	 * 	$sorting->add("title",array("order_by" => "UPPER(title)"));
 	 * 	$sorting->add("title",array(
-	 *		"asc" => "UPPER(title), id",
-	 *		"desc" => "UPPER(title) DESC, id DESC"
-	 *	));
+	 * 		"asc" => "UPPER(title), id",
+	 * 		"desc" => "UPPER(title) DESC, id DESC"
+	 * 	));
 	 * 	$sorting->add("title",array(
-	 *		"ascending_ordering" => "UPPER(title), id",
-	 *		"descending_ordering" => "UPPER(title) DESC, id DESC"
-	 *	));
+	 * 		"ascending_ordering" => "UPPER(title), id",
+	 * 		"descending_ordering" => "UPPER(title) DESC, id DESC"
+	 * 	));
 	 * 	$sorting->add("title","UPPER(title), id", "UPPER(title) DESC, id DESC");
-	 * </code>
 	 *
 	 * @param string $key Name of the key which can then be used in a template by {sortable} helper.
 	 * @param string|array $options_or_asc_ordering string for sql definition of ascending ordering or array for options. see description of $options below.

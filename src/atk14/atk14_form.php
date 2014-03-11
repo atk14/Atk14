@@ -372,6 +372,7 @@ class Atk14Form extends Form
 	/**
 	 * Returns an instance of ApplicationForm class if exists or Atk14Form.
 	 *
+	 * Example
 	 * 	$form = Atk14Form::GetDefaultForm($controller);
 	 *
 	 * @param Atk14Controller $controller
@@ -487,7 +488,7 @@ class Atk14Form extends Form
 	 *  	$context->setValues($form->cleaned_data);
 	 *  	$this->flash->notice("Zaznam byl ulozen");
 	 *  	$this->_redirect_to_action("index");
-	 *  }
+	 * 	}
 	 *
 	 * @param array|Dictionary
 	 * @return true
@@ -606,20 +607,18 @@ class Atk14Form extends Form
 	 * 	$form->set_initial("password","heslicko");
 	 *
 	 * You can also set up initial values of more fields by using several types of object.
-	 * <ol>
-	 * <li>array
+	 * - array
+	 *
 	 * 	$form->set_initial(array(
-	 *    "login" => "karel.kulek",
-	 *    "password" => "heslicko"
+	 * 		"login" => "karel.kulek",
+	 * 		"password" => "heslicko"
 	 * 	));
-	 * </li>
-	 * <li>object of class Dictionary, usually variable $params defined in Atk14Controller
+	 * - object of class Dictionary, usually variable $params defined in Atk14Controller
+	 *
 	 * 	$this->set_initial($this->params);
-	 * </li>
-	 * <li>object of class TableRecord
+	 * - object of class TableRecord
+	 *
 	 * 	$this->set_initial($user);
-	 * </li>
-	 * </ol>
 	 *
 	 * @param mixed $key_or_values
 	 * @param string $value
@@ -672,7 +671,7 @@ class Atk14Form extends Form
 	 * 	$form->set_attr(array(
 	 * 		"enctype" => "multipart/form-data",
 	 * 		"class" => "form_common"
-	 * 		));
+	 * 	));
 	 *
 	 * @param string|array $key_or_values name of attribute or array of key=>value pairs
 	 * @param string $value value of attribute when $key_or_values set as string
@@ -833,8 +832,11 @@ class Atk14Form extends Form
 	 * If not field is specified returns array with messages for all fields.
 	 * When $on_field is specified method returns array for only this field.
 	 *
-	 * 	$error_ar = $form->get_errors(); // pole poli chyb na vsech polich
-	 * 	$error_ar = $form->get_errors("email"); // pole chyba na konkretnim poli
+	 * 	$error_ar = $form->get_errors();
+	 * Returns array of arrays with all error messages on all fields
+	 *
+	 * 	$error_ar = $form->get_errors("email");
+	 * Returns array of error messages on a particular field
 	 *
 	 * @param string $on_field name of a field to read errors from
 	 * @return array
@@ -921,9 +923,6 @@ class Atk14Form extends Form
 	 * Gets instance of a {@link Field} of current form.
 	 *
 	 * @param string $name identifier of the field
-	 * @return Field instance of Field
-	 */
-	function get_field($name){
 	// !!! je dulezite pred volanim get_field() volat konstruktor rodice.
 	// !!! jinak by nebyl formular ($this) zinicialozovan (chybela by napr vlastnost $this->auto_id)
 	// !!! a te je dulezita pri volani:
