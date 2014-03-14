@@ -6,6 +6,7 @@ CREATE TABLE test_table (
     title character varying(255),
     znak character(1),
     an_integer integer,
+    a_big_integer bigint,
     price numeric(20,2),
     cena numeric(12,2),
     cena2 double precision,
