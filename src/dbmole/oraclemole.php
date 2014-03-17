@@ -142,11 +142,13 @@ class OracleMole extends DbMole{
 		//	echo $query."\n";
 		//}
 
+		$this->_freeLastOracleStatement();
+
 		// parsovani dotazu
 		$connection = $this->_getDbConnect();
 		$stmt = OCIParse($connection,$query);
+		$this->_LastOracleStatement = &$stmt;
 		if(!$stmt){
-			$this->_LastOracleStatement = $stmt;
 			$this->_raiseDBError("OCIParse failed");
 			return null;
 		}
@@ -162,7 +164,6 @@ class OracleMole extends DbMole{
 					$lobs[$key] = OCINewDescriptor($connection,OCI_D_LOB);
 					$_stat = OCIBindByName($stmt,$key,$lobs[$key],-1,$_type);
 					if(!$_stat){
-						$this->_LastOracleStatement = $stmt;
 						$this->_raiseDBError("bind of the >>$key<< with new descriptor failed");
 						return null;
 					}
@@ -171,7 +172,6 @@ class OracleMole extends DbMole{
 				// bindovani normalnich hodnot
 				$_stat = OCIBindByName($stmt,$key,$bind_ar[$key],-1);
 				if(!$_stat){
-					$this->_LastOracleStatement = $stmt;
 					$this->_raiseDBError("bind of the >>$key<< with value >>$bind_ar[$key]<< failed");
 					return null;
 				}
@@ -183,7 +183,6 @@ class OracleMole extends DbMole{
 
 			$_stat = OCIExecute($stmt,$options["mode"]);
 			if(!$_stat){
-				$this->_LastOracleStatement = $stmt;
 				$this->_raiseDBError("the execution of the SQL query failed");
 				return null;
 			}
@@ -195,14 +194,11 @@ class OracleMole extends DbMole{
 					// PHP4 nezna metody write();
 					$_stat = method_exists($lob,"write") ? $lob->write($bind_ar[$key]) : $lob->save($bind_ar[$key]);
 					if(!$_stat){
-						$this->_LastOracleStatement = $stmt;
 						$this->_raiseDBError("can't save lob data into $key: ".$this->_getDbLastErrorMessage());
 						return null;
 					}
 				}
 			}
-
-			$this->_AffectedRows = oci_num_rows($stmt);
 		}
 
 		return $stmt;
@@ -253,11 +249,6 @@ class OracleMole extends DbMole{
 			}
 			$out[] = $_row;
 		}
-		if(!OCIFreeStatement($stmt)){
-			$this->_LastOracleStatement = $stmt;
-			$this->_raiseDBError("Can't do OCIFreeStatement");
-		}
-		reset($out);
 		return $out;
 	}
 
@@ -393,29 +384,40 @@ class OracleMole extends DbMole{
 	}
 
 	function _getDbLastErrorMessage(){
-		$error = isset($this->_LastOracleStatement) ? OCIError($this->_LastOracleStatement) : null;
+		$error = $this->_LastOracleStatement ? OCIError($this->_LastOracleStatement) : null;
 		if(is_array($error) && isset($error["message"]) && strlen($error["message"])>0){
 			return "OCIError[message]: $error[message]";
 		}
 	}
 
+	/**
+	 * Does nothing
+	 *
+	 * We need the last oracle statment for getAffectedRows()
+	 */
 	function _freeResult(&$stmt){
-		if(!($out = OCIFreeStatement($stmt))){
-			$this->_LastOracleStatement = $stmt;
+		return null;
+	}
+
+	function _freeLastOracleStatement(){
+		if($this->_LastOracleStatement && !($out = OCIFreeStatement($this->_LastOracleStatement))){
 			$this->_raiseDBError("Can't do OCIFreeStatement: ".$this->_getDbLastErrorMessage());
 		}
-		return $out;
+
+		$this->_LastOracleStatement = null;
 	}
 
 	/**
-	 * $this->escapeBool4Sql(true); // returns Y
-	 * $this->escapeBool4Sql(false); // returns N
+	 * echo $dbmole->escapeBool4Sql(true); // "Y"
+	 * echo $dbmole->escapeBool4Sql(false); // "N"
 	 */
 	function escapeBool4Sql($value){
 		return $value ? DBMOLE_ORACLE_TRUE : DBMOLE_ORACLE_FALSE;
 	}
 
 	function _getAffectedRows(){
-		return $this->_AffectedRows;
+		if($this->_LastOracleStatement){
+			return oci_num_rows($this->_LastOracleStatement);
+		}
 	}
 }

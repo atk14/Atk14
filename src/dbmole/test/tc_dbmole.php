@@ -358,8 +358,10 @@ class tc_dbmole extends tc_base{
 		),$ar);
 
 		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=44 WHERE an_integer=22"));
-
 		$this->assertEquals(1,$dbmole->getAffectedRows(),"calling getAffectedRows() on ".$dbmole->getDatabaseType());
+
+		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=44 WHERE an_integer=-1234"));
+		$this->assertEquals(0,$dbmole->getAffectedRows(),"calling getAffectedRows() on ".$dbmole->getDatabaseType());
 
 		$this->assertEquals("44",$dbmole->selectSingleValue("SELECT MAX(an_integer) FROM test_table"));
 
