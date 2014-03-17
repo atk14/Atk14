@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * A middle layer for Smarty version 2.
  */
