@@ -340,6 +340,7 @@ class TcTableRecord extends TcBase{
 			"title",
 			"znak",
 			"an_integer",
+			"a_big_integer",
 			"price",
 			"cena",
 			"cena2",
@@ -350,7 +351,6 @@ class TcTableRecord extends TcBase{
 			"binary_data2",
 			"create_date",
 			"create_time",
-			"a_big_integer",
 		),$keys);
 	}
 

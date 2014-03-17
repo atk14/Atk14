@@ -2,21 +2,21 @@
 
 CREATE SEQUENCE test_table_id_seq;
 CREATE TABLE test_table (
-    id integer DEFAULT nextval('test_table_id_seq') NOT NULL PRIMARY KEY,
-    title character varying(255),
-    znak character(1),
-    an_integer integer,
-    a_big_integer bigint,
-    price numeric(20,2),
-    cena numeric(12,2),
-    cena2 double precision,
-    text text,
-    perex text,
-    flag boolean,
-    binary_data bytea,
-    binary_data2 bytea,
-    create_date date,
-    create_time timestamp without time zone DEFAULT now()
+    id integer DEFAULT NEXTVAL('test_table_id_seq') NOT NULL PRIMARY KEY,
+    title VARCHAR(255),
+    znak CHARACTER(1),
+    an_integer INTEGER,
+    a_big_integer BIGINT,
+    price NUMERIC(20,2),
+    cena NUMERIC(12,2),
+    cena2 DOUBLE PRECISION,
+    text TEXT,
+    perex TEXT,
+    flag BOOLEAN,
+    binary_data BYTEA,
+    binary_data2 BYTEA,
+    create_date DATE,
+    create_time TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
 
 
@@ -29,6 +29,7 @@ CREATE TABLE test_table (
     title char(255),
     znak char(1),
     an_integer INT(11),
+    a_big_integer BIGINT,
     price decimal(20,2),
     cena decimal(12,2),
     cena2 float,
@@ -49,6 +50,7 @@ CREATE TABLE test_table(
   id NUMBER(20,0) NOT NULL ,
   title VARCHAR2(255),
   an_integer INTEGER,
+  a_big_integer NUMBER(20,0),
   price NUMBER(20,2),
   text CLOB,
   perex CLOB,
@@ -60,13 +62,14 @@ CREATE TABLE test_table(
   CONSTRAINT pk_test_table_id PRIMARY KEY (id)
 );
 
+-- autoincrement
 CREATE OR REPLACE TRIGGER test_table_id_trg
  BEFORE INSERT
  ON test_table
  FOR EACH ROW
 BEGIN
     IF :NEW.id IS NULL THEN
-       SELECT test_table_id_seq.nextval
+       SELECT test_table_id_seq.NEXTVAL
        INTO   :NEW.id
        FROM   dual;
     END IF;
