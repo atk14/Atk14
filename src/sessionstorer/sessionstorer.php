@@ -1,5 +1,12 @@
 <?php
 /**
+ *
+ * A class for storing and reading values into a session.
+ *
+ * @package Atk\Sessions
+ * @filesource
+ */
+/**
  * Sessions lifetime, count of seconds
  */
 if(!defined("SESSION_STORER_SESSION_MAX_LIFETIME")){
@@ -65,81 +72,140 @@ class SessionStorer{
 
 	/**
 	 * Name of the session
-	 * @access protected
 	 * @var string
 	 */
-	var $_SessionName = "ses";
+	protected $_SessionName = "ses";
 
-	var $_Section = "default";
+	/**
+	 * Section name
+	 *
+	 * @todo explain
+	 * @var string
+	 */
+	protected $_Section = "default";
 
 	/**
 	 * Id of a record from the table sessions
-	 * @access protected
+	 *
 	 * @var integer
 	 */
-	var $_SessionId = null;
+	protected $_SessionId = null;
 
 	/**
 	 * A random string, a security supplement for $_SessionId
-	 * @access protected
+	 *
 	 * @var string
 	 */
-	var $_SessionSecurity = null;
+	protected $_SessionSecurity = null;
 
 	/**
 	 * All stored session values
-	 * @access protected
 	 * @var array
 	 */
-	var $_ValuesStore = array();
+	protected $_ValuesStore = array();
 
 	/**
 	 * A flag that thit object has been already initialized
-	 * @access protected
+	 *
+	 * @var boolean
 	 */
-	var $_Initialized = false;
+	protected $_Initialized = false;
 
 	/**
 	 * A flag that the token has been already changed
-	 * @access protected
+	 *
+	 * @var boolean
 	 */
-	var $_TokenChanged = false;
+	protected $_TokenChanged = false;
 
 	/**
 	 * Internal index for counting data entries sent by cookies
 	 * @see SessionStorer::_writeDataToCookie()
-	 * @access protected
+	 *
+	 * @var integer
 	 */
-	var $_CookieDataIndex = 0;
+	protected $_CookieDataIndex = 0;
 
 	/**
 	 * Store for cookies sent by this object
 	 * For testing purposes.
-	 * @access protected
+	 *
 	 * @var array
 	 */
-	var $_SentCookies = array();
+	protected $_SentCookies = array();
 
-	var $_request = null;
+	/**
+	 * Instance of HttpRequest that was used during the request.
+	 *
+	 * @var HttpRequest
+	 */
+	protected $_request = null;
 
-	var $_dbmole = null;
+	/**
+	 * DbMole instance with connection to database.
+	 *
+	 * @var DbMole
+	 */
+	protected $_dbmole = null;
 
-	var $_MaxLifetime = null;
-	var $_SslOnly = false;
-	var $_CookieName = "";
-	var $_CookieExpiration = 0;
+	/**
+	 * Max cookie lifetime.
+	 *
+	 * @var integer
+	 */
+	protected $_MaxLifetime = null;
 
-	var $_ForceCurrentTime = null;
+	/**
+	 * Session is only used via https requests.
+	 *
+	 * @var boolean
+	 */
+	protected $_SslOnly = false;
+
+	/**
+	 * Cookie name
+	 *
+	 * @var string
+	 */
+	protected $_CookieName = "";
+
+	/**
+	 * Time in seconds in which cookie expires.
+	 *
+	 * @var integer
+	 */
+	protected $_CookieExpiration = 0;
+
+	/**
+	 * Time to which $_CookieExpiration is relative.
+	 *
+	 * @var integer
+	 */
+	protected $_ForceCurrentTime = null;
 
 	/**
 	 * Constructor
 	 *
 	 * Several sessions could exists in a database in different sections.
-	 * <code>
+	 *
+	 * Example
 	 *	 $session = new SessionStorer();
 	 *	 $session = new SessionStorer("main_application");
 	 *	 $session = new SessionStorer("admin");
-	 * </code>
+	 *
+	 * Options description
+	 * - request
+	 * - dbmole
+	 * - session_name
+	 * - section
+	 * - max_lifetime
+	 * - ssl_only
+	 * - cookie_name
+	 * - cookie_expiration - time in seconds in which cookie expires ( 0 -> until the browser is closed; 86400 -> 1 day )
+	 * - current_time - for testing purposes. You can set base time to relate cookie_expiration to.
+	 *
+	 * @param string $section
+	 * @param array $options
 	 */
 	function __construct($section = "",$options = array()){
 		if(is_array($section)){
@@ -158,7 +224,7 @@ class SessionStorer{
 			"max_lifetime" => null, // for garbage collection
 			"ssl_only" => false,
 			"cookie_name" => SESSION_STORER_COOKIE_NAME_SESSION,
-			"cookie_expiration" => 0, // 0 -> to the moment of closing of browser; 86400 -> 1 day
+			"cookie_expiration" => 0,
 
 			"current_time" => null,
 		),$options);
@@ -196,19 +262,39 @@ class SessionStorer{
 	}
 
 	/**
-	 * $storer = new SessionStorer("default",array("session_name" => "secure", "ssl_only" => true));
-	 * echo $storer->getSessionName(); // "secure"
+	 * Get session name.
+	 *
+	 * Example
+	 * 	$storer = new SessionStorer("default",array("session_name" => "secure", "ssl_only" => true));
+	 * 	echo $storer->getSessionName(); // "secure"
+	 *
+	 * @return string
 	 */
 	function getSessionName(){ return $this->_SessionName; }
 
 	/**
-	 * $storer = new SessionStorer("default");
-	 * echo $session->getSection(); // "default"
+	 * Get cookie section.
+	 *
+	 * Example
+	 * 	$storer = new SessionStorer("default");
+	 * 	echo $session->getSection(); // "default"
+	 *
+	 * @return string
 	 */
 	function getSection(){ return $this->_Section; }
 
+	/**
+	 * Get cookie name.
+	 *
+	 * @return string
+	 */
 	function getCookieName(){ return $this->_CookieName; }
 
+	/**
+	 * Get cookie expiration time
+	 *
+	 * @return integer
+	 */
 	function getCookieExpiration(){ return $this->_CookieExpiration; }
 
 	/**
@@ -223,12 +309,12 @@ class SessionStorer{
 	/**
 	 * Reads a session value
 	 *
-	 * <code>
-	 *	$session->readValue("fruit"); // null
+	 * Examples
+	 * 	$session->readValue("fruit"); // null
 	 * 	$session->writeValue("fruit","orange");
-	 *	$session->readValue("fruit"); // "orange"
-	 * </code>
+	 * 	$session->readValue("fruit"); // "orange"
 	 *
+	 * @param string $key
 	 * @return mixed
 	 */
 	function readValue($key){
@@ -302,9 +388,7 @@ class SessionStorer{
 	 *
 	 * Actualy the secret token is the value of the session cookie.
 	 *
-	 * <code>
 	 *	echo $session->getSecretToken(); // 1215.WKN7voIUyCGER4OzkPwl2B3eJ1QM68mL
-	 * </code>
 	 */
 	function getSecretToken(){
 		$this->_initialize();
@@ -319,11 +403,11 @@ class SessionStorer{
 	 *
 	 * Returns the content od the new cookie.
 	 *
-	 * <code>
 	 *	$current_token = $session->getSecretToken();
 	 *	$new_token = $session->changeSecretToken();
 	 *	assert($new_token!=$current_token);
-	 * </code>
+	 *
+	 * @return string changed token
 	 */
 	function changeSecretToken(){
 		$this->_initialize();
@@ -348,11 +432,9 @@ class SessionStorer{
 	/**
 	 * Returns a set of cookies sent by this object
 	 * 
-	 * <code>
 	 * 	foreach($session->getSentCookies() as $item){
-	 *		list($name,$value,$expiration) = $item;
-	 *	}
-	 * </code>
+	 * 		list($name,$value,$expiration) = $item;
+	 * 	}
 	 *
 	 * @return array
 	 */
@@ -364,6 +446,7 @@ class SessionStorer{
 	/**
 	 * Generates a random string
 	 *
+	 * @param integer $length
 	 * @access protected
 	 */
 	static function _RandomString($length = 32){
@@ -465,10 +548,9 @@ class SessionStorer{
 	/**
 	 * Are data being stored in database?
 	 *
-	 * @access 
 	 * @return bool
 	 */
-	function _isSessionInitializedInDatabase(){
+	protected function _isSessionInitializedInDatabase(){
 		if(defined("TEST") && TEST && !is_null($this->_SessionId)){
 			// Since this is a testing environment,
 			// there is a big chance that previously saved session could be deleted due to a database rollback
@@ -484,7 +566,8 @@ class SessionStorer{
 	/**
 	 * Checks whether there is a session cookie
 	 *
-	 * @access protected
+	 * @param integer $id
+	 * @param string $security
 	 * @return bool
 	 */
 	function _obtainSessionIdAndSecurity(&$id = null,&$security = null){
@@ -507,11 +590,12 @@ class SessionStorer{
 	 * Checks whether a given combination od $id and $security is correct
 	 *
 	 * Returns true on success.
-	 * 
-	 * @access protected
+	 *
+	 * @param integer $id
+	 * @param string $security
 	 * @return bool
 	 */
-	function _checkSessionSessionIdAndSecurity($id,$security){
+	protected function _checkSessionSessionIdAndSecurity($id,$security){
 		settype($id,"integer");
 		settype($security,"string");
 
@@ -624,9 +708,15 @@ class SessionStorer{
 	/**
 	 * Sets a cookie
 	 *
+	 * Possible options
+	 *
 	 * @access protected
+	 * @param string $name
+	 * @param string $value
+	 * @param integer $time
+	 * @param array $options
 	 */
-	function _setCookie($name,$value,$time = 0,$options = array()){
+	protected function _setCookie($name,$value,$time = 0,$options = array()){
 		$options += array(
 			"ssl_only" => $this->_SslOnly,
 			"http_only" => true,
@@ -666,13 +756,31 @@ class SessionStorer{
 		);
 	}
 
-	function __setCookie($name , $value, $expire, $path , $domain = null, $secure = false, $httponly = false){
+	/**
+	 * @internal
+	 *
+	 * @param string $name
+	 * @param string $value
+	 * @param integer $expire
+	 * @param string $path
+	 * @param string $domain
+	 * @param boolean $secure
+	 * @param boolean $http_only
+	 * @return boolean result of operation. can fail in case there is output before calling this method
+	 */
+	protected function __setCookie($name , $value, $expire, $path , $domain = null, $secure = false, $httponly = false){
 		if(defined("TEST") && TEST){
 			return @setcookie($name , $value, $expire, $path , $domain, $secure, $httponly);
 		}
 		return setcookie($name , $value, $expire, $path , $domain, $secure, $httponly);
 	}
 
+	/**
+	 * Returns domain
+	 *
+	 * @param boolean $share_cookies_on_subdomains
+	 * @return string
+	 */
 	function _getCookieDomain($share_cookies_on_subdomains = null){
 		if(!isset($share_cookies_on_subdomains)){ $share_cookies_on_subdomains = SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS; }
 		$domain = $this->_request->getHttpHost();
@@ -685,27 +793,25 @@ class SessionStorer{
 	/**
 	 * Cleares a cookie with a given name
 	 *
-	 * @access protected
+	 * @param string $name
 	 */
-	function _clearCookie($name){
+	protected function _clearCookie($name){
 		return $this->_setCookie($name,"",- 60 * 60 * 24 * 365);
 	}
 
 	/**
 	 * Cleares the session cookie
 	 *
-	 * @access protected
 	 */
-	function _clearSessionCookie(){
+	protected function _clearSessionCookie(){
 		return $this->_clearCookie($this->getCookieName());
 	}
 
 	/**
 	 * Reads all session values from database.
 	 *
-	 * @access protected
 	 */
-	function _readAllValuesFromDatabase(){
+	protected function _readAllValuesFromDatabase(){
 		if(!isset($this->_SessionId)){
 			return;
 		}
@@ -736,13 +842,11 @@ class SessionStorer{
 	}
 
 	/**
-	 * Realizes garbage collection
+	 * Garbage collection
 	 *
-	 * Deletes old entries from database.
-	 *
-	 * @access protected 
+	 * Deletes entries from database which are older than $this->_MaxLifetime.
 	 */
-	function _garbageCollection(){
+	protected function _garbageCollection(){
 		$this->_dbmole->doQuery("
 			DELETE FROM sessions WHERE
 				last_access<:min_last_access AND
@@ -765,7 +869,7 @@ class SessionStorer{
 	 *
 	 * Write value to cookie
 	 * 	$this->_writeDataToCookie("logged_user_id");
-	 * 
+	 *
 	 * @param string $key
 	 */
 	protected function _writeDataToCookie($key){
@@ -867,11 +971,10 @@ class SessionStorer{
 	/**
 	 * Compress a value into a ascii encoded string
 	 *
-	 * @access protected
 	 * @param mixed $value
 	 * @return string
 	 */
-	function _packValue($value){
+	protected function _packValue($value){
 		if(!isset($value)){
 			return "";
 		}
@@ -881,11 +984,10 @@ class SessionStorer{
 	/**
 	 * Decompress a previously compressed.
 	 *
-	 * @access protected
 	 * @param string $packed_value
 	 * @return mixed
 	 */
-	function _unpackValue($packed_value){
+	protected function _unpackValue($packed_value){
 		settype($packed_value,"string");
 		if(strlen($packed_value)==0){
 			return null;
@@ -894,12 +996,13 @@ class SessionStorer{
 	}
 
 	/**
-	 * Returns the current timestamp
+	 * Returns the current timestamp.
 	 *
-	 * @access protected
+	 * If there was passed option current_time while sessino initialization it returns this value.
+	 *
 	 * @return integer
 	 */
-	function _getCurrentTime(){
+	protected function _getCurrentTime(){
 		if($this->_ForceCurrentTime){ return $this->_ForceCurrentTime; }
 		return defined("CURRENT_TIME") ? CURRENT_TIME : time();
 	}
@@ -907,20 +1010,19 @@ class SessionStorer{
 	/**
 	 * Returns current date and time in ISO format
 	 * 
-	 * @access protected
 	 * @return string
 	 */
-	function _getNow(){
+	protected function _getNow(){
 		return $this->_getIsoDateTime($this->_getCurrentTime());
 	}
 
 	/**
 	 * Converts timestamp into time and date in ISO format
 	 * 
-	 * @access protected
+	 * @param integer $time
 	 * @return string
 	 */
-	function _getIsoDateTime($time){
+	protected function _getIsoDateTime($time){
 		if(!isset($time)){ return null; }
 		return date("Y-m-d H:i:s",$time);
 	}
@@ -947,10 +1049,10 @@ class SessionStorer{
 	}
 
 	/**
-	 * Cleares all data cookie if there are any
+	 * Clears all data cookie if there are any
 	 * 
-	 * @access protected
 	 * @return int Count of deleted cookies 
+	 * @access protected
 	 */
 	function _clearDataCookies(){
 		$counter = 0;

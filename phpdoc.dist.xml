@@ -28,6 +28,7 @@
 		<directory>src/forms</directory>
 		<directory>src/http</directory>
 		<directory>src/logger</directory>
+		<directory>src/sessionstorer</directory>
 		<directory>src/string</directory>
 		<directory>src/stringbuffer</directory>
 		<directory>src/tablerecord</directory>
