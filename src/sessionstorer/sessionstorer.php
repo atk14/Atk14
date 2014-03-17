@@ -763,13 +763,12 @@ class SessionStorer{
 	/**
 	 * Writes data entry to cookie
 	 *
-	 * <code>
-	 * $this->_writeDataToCookie("logged_user_id");
-	 * </code>
+	 * Write value to cookie
+	 * 	$this->_writeDataToCookie("logged_user_id");
 	 * 
-	 * @access protected
+	 * @param string $key
 	 */
-	function _writeDataToCookie($key){
+	protected function _writeDataToCookie($key){
 
 		$val = array(
 			"key" => $key,
@@ -787,14 +786,13 @@ class SessionStorer{
 
 	/**
 	 * Writes a data entry into the database
-	 * 
-	 * <code>
-	 * $this->_writeDataToDatabase("logged_user_id");
-	 * </code>
-	 * 
-	 * @access protected
+	 *
+	 * Write value for a session key into database
+	 * 	$this->_writeDataToDatabase("logged_user_id");
+	 *
+	 * @param string $key
 	 */
-	function _writeDataToDatabase($key){
+	protected function _writeDataToDatabase($key){
 		if(!isset($this->_ValuesStore[$key])){
 			$this->_dbmole->doQuery("
 				DELETE FROM session_values WHERE
@@ -808,30 +806,61 @@ class SessionStorer{
 			));
 		}else{
 
-			$id = $this->_dbmole->selectSingleValue("
-				SELECT id FROM session_values WHERE
+			# postgresql
+			if ($this->_dbmole->getDatabaseType()=="postgresql") {
+				$this->_dbmole->doQuery("
+					UPDATE
+						session_values
+					SET
+						value=:value,
+						expiration=:expiration
+					WHERE
+						session_id=:session_id AND section=:section AND key=:key", array(
+						":session_id" => $this->_SessionId,
+						":section" => $this->getSection(),
+						":key" => $key,
+						":value" => $this->_ValuesStore[$key]["packed_value"],
+						":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
+					)
+				);
+				$this->_dbmole->doQuery("
+					INSERT INTO session_values (session_id, section, key, value, expiration)
+					SELECT :session_id, :section, :key, :value, :expiration
+					WHERE NOT EXISTS (SELECT 1 FROM session_values WHERE session_id=:session_id AND section=:section AND key=:key)
+						", array(
+						":session_id" => $this->_SessionId,
+						":section" => $this->getSection(),
+						":key" => $key,
+						":value" => $this->_ValuesStore[$key]["packed_value"],
+						":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
+					)
+				);
+			} else {
+				$id = $this->_dbmole->selectSingleValue("
+					SELECT id FROM session_values WHERE
 					session_id=:session_id AND
 					section=:section AND
 					key=:key
-			",array(
-				":session_id" => $this->_SessionId,
-				":section" => $this->getSection(),
-				":key" => $key
-			));
+					",array(
+						":session_id" => $this->_SessionId,
+						":section" => $this->getSection(),
+						":key" => $key
+					));
 
-			if(isset($id)){ $this->_dbmole->doQuery("DELETE FROM session_values WHERE id=:id",array(":id" => $id)); }
+				if(isset($id)){ $this->_dbmole->doQuery("DELETE FROM session_values WHERE id=:id",array(":id" => $id)); }
 
-			$options = array();
-			if($this->_dbmole->getDatabaseType()=="oracle"){ $options["clobs"] = array("value"); }
+					$options = array();
+				if($this->_dbmole->getDatabaseType()=="oracle"){ $options["clobs"] = array("value"); }
 
-			$this->_dbmole->insertIntoTable("session_values",array(
-				"id" => 						$this->_dbmole->selectSequenceNextval("seq_session_values"),
-				"session_id" => 		$this->_SessionId,
-				"section" => 				$this->getSection(),
-				"key" => 						$key,
-				"value" => 					$this->_ValuesStore[$key]["packed_value"],
-				"expiration" => 		$this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"])
-			),$options);
+					$this->_dbmole->insertIntoTable("session_values",array(
+						"id" => 						$this->_dbmole->selectSequenceNextval("seq_session_values"),
+						"session_id" => 		$this->_SessionId,
+						"section" => 				$this->getSection(),
+						"key" => 						$key,
+						"value" => 					$this->_ValuesStore[$key]["packed_value"],
+						"expiration" => 		$this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"])
+					),$options);
+			}
 		}
 	}
 

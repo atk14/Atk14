@@ -31,6 +31,7 @@ class TcTableRecord extends TcBase{
 				id,
 				title,
 				an_integer,
+				a_big_integer,
 				price,
 				text,
 				create_date,
@@ -40,6 +41,7 @@ class TcTableRecord extends TcBase{
 				2,
 				'titulek',
 				21,
+				9223372036854775807,
 				17.0,
 				'textik',
 				'2001-12-12 12:00:00',
@@ -63,6 +65,8 @@ class TcTableRecord extends TcBase{
 
 		$this->assertEquals(21,$record->getValue("an_integer"));
 		$this->assertTrue(is_int($record->getValue("an_integer")));
+		$this->assertEquals(9223372036854775807,$record->getValue("a_big_integer"));
+		$this->assertTrue(is_int($record->getValue("a_big_integer")));
 
 		$this->assertEquals(17.0,$record->getValue("price"));
 		$this->assertTrue(is_float($record->getValue("price")));
@@ -346,6 +350,7 @@ class TcTableRecord extends TcBase{
 			"binary_data2",
 			"create_date",
 			"create_time",
+			"a_big_integer",
 		),$keys);
 	}
 
