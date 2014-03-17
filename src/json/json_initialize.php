@@ -1,7 +1,7 @@
 <?php
 if(!function_exists('json_encode'))
 {
-	require_once(dirname(__FILE__)."/json.inc");
+	require_once(dirname(__FILE__)."/json.php");
 	$GLOBALS['JSON_OBJECT'] = new Services_JSON();
 	function json_encode($value)
 	{
