@@ -64,6 +64,7 @@ assert_php_function_exists 'spl_autoload_register'
 assert_php_function_exists 'mb_strlen'
 assert_php_function_exists 'mcrypt_encrypt'
 assert_php_function_exists 'gzcompress'
+assert_php_function_exists 'json_encode'
 
 assert_php_constant_defined 'MCRYPT_RIJNDAEL_256'
 

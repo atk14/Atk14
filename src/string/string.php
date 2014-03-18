@@ -453,7 +453,8 @@ class String{
 		),$options);
 		$out = $this->_copy();
 		$s = &$out->_String;
-		$s = preg_replace("/_([a-z0-9])/ie","strtoupper('\\1')",$this->_String);
+		$s = preg_replace_callback("/_([a-z0-9])/i",function($matches){ return strtoupper($matches[1]); },$this->_String);
+
 		if(isset($s[0])){
 			$s[0] = $options["lower"] ? strtolower($s[0]) : strtoupper($s[0]);
 		}

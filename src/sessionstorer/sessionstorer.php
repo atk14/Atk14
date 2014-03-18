@@ -383,6 +383,15 @@ class SessionStorer{
 		foreach($this->_ValuesStore as $k => $v){ $this->writeValue($k,null); }
 	}
 
+	function toArray(){
+		$this->_initialize();
+		$out = array();
+		foreach($this->_ValuesStore as $key => $value){
+			$out[$key] = $this->readValue($key);
+		}
+		return $out;
+	}
+
 	/**
 	 * Returns a secret content of user`s cookie which identifies current session
 	 *

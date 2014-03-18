@@ -108,13 +108,7 @@ class Atk14Session{
 	 * 	var_dump($session->toArray());
 	 */
 	function toArray(){
-		// TODO: to be rewritten...
-		$this->_SessionStorer->_initialize();
-		$out = array();
-		foreach($this->_SessionStorer->_ValuesStore as $key => $value){
-			$out[$key] = $this->getValue($key);
-		}
-		return $out;
+		return $this->_SessionStorer->toArray();
 	}
 
 	/**

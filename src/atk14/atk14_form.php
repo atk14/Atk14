@@ -352,11 +352,9 @@ class Atk14Form extends Form
 	 */
 	static function GetForm($class_name,$controller = null,$options = array()){
 		global $ATK14_GLOBAL;
-		// preved z camelcase na underscore
-		$filename = $class_name;
-		$filename = preg_replace("/^([A-Z])/e","strtolower('\\1')",$filename);
-		$filename = preg_replace("/([A-Z])/","_\\1",$filename);
-		$filename = strtolower($filename);
+
+		$s = new String($class_name);
+		$filename = $s->underscore()->lower()->toString();
 
 		$controller_name = $ATK14_GLOBAL->getValue("controller");
 

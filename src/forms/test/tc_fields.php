@@ -45,7 +45,7 @@ class TcFields extends TcBase
 					// chyba se neocekava
 					if (is_null($error)) {
 						// kontrola typu a hodnoty
-						$this->assertType(gettype($test['result']), $value, 'Hodnota "'.$value.'" prisla v neocekavanem typu.');
+						$this->assertType(gettype($test['result']), $value, 'Hodnota '.(is_array($value) ? print_r($value,true) : '"'.$value.'"').' prisla v neocekavanem typu.');
 						if (is_bool($test['result'])) {
 							if ($test['result']) {
 								$this->assertTrue($value);
