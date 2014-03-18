@@ -1,4 +1,4 @@
-<?
+<?php
 class TcMailer extends TcBase{
 	function test_loading(){
 		$controller = $this->client->get("en/testing/test");

@@ -1,4 +1,4 @@
-<?
+<?php
 class TcLock extends TcBase{
 	/**
 	* TODO: dodelat tento test.
