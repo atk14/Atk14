@@ -31,7 +31,6 @@ require_once(dirname(__FILE__)."/src/xmole/load.php");
 require_once(dirname(__FILE__)."/src/stopwatch/load.php");
 require_once(dirname(__FILE__)."/src/logger/load.php");
 require_once(dirname(__FILE__)."/src/lock/load.php");
-require_once(dirname(__FILE__)."/src/json/load.php");
 if(ATK14_USE_SMARTY3){
 	require_once(dirname(__FILE__)."/src/smarty3/libs/SmartyBC.class.php");
 }else{
