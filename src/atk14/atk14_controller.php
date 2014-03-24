@@ -1083,7 +1083,7 @@ class Atk14Controller{
 			// ale ted se pohybuje zase dopredu ->
 			// presmerujeme ho zpatky tam, kde ma byt :)
 			$logging && $logger->debug("redirecting to: $session_index");
-			return $this->_redirect_to(array_merge($options["extra_params"],array("step_id" => "$step_unique-$session_index","step" => $steps[$session_index])));
+			return $this->_redirect_to(array_merge($this->_walking_extra_params,array("step_id" => "$step_unique-$session_index","step" => $steps[$session_index])));
 		}
 		if($session_index>$request_index){
 			// uzivatel se vraci zpet v prohlizeci ->
@@ -1096,12 +1096,14 @@ class Atk14Controller{
 			}
 			$session_index = $request_index;
 			$state["current_step_index"] = $request_index;
+			
+			// Volanim $this->__save_walking_state() lze upraveny $state ulozit, nicmene neni to nutne.
+			// Totiz ve chvili, kdy uzivatel odesle formular na nektere z minulych obrazovek, je $state ulozen.
+			// Nam se vlastne docela libi, ze uzivatel muze putovat v historii prohlizece sem a tam.
+			// $this->__save_walking_state($state);
 		}
 
-		if($ret = $this->_execute_current_step()){
-			$this->_save_walking_state($ret);
-			return $this->_redirect_to(array_merge($options["extra_params"],array("step_id" => "$step_unique-$state[current_step_index]","step" => $steps[$state["current_step_index"]])));	
-		}
+		$this->_execute_current_step();
 	}
 
 	/**
@@ -1141,10 +1143,25 @@ class Atk14Controller{
 			$state["form_data"][$step] = $this->form->cleaned_data;
 		}
 		$state["current_step_index"]++;
+		$this->__save_walking_state($state);
+	}
+
+	function __save_walking_state($state){
 		$this->session->setValue($state["step_session_name"],$state);
 	}
 
 	function _execute_current_step(){
+		if($ret = $this->__execute_current_step()){
+			$this->_save_walking_state($ret);
+
+			$state = $this->walking_state;
+			$steps = $this->steps;
+
+			return $this->_redirect_to(array_merge($this->_walking_extra_params,array("step_id" => "$state[step_unique]-$state[current_step_index]","step" => $steps[$state["current_step_index"]])));
+		}
+	}
+
+	function __execute_current_step(){
 		$state = &$this->walking_state;
 		$step_unique = $state["step_unique"];
 		$step_index = $state["current_step_index"];
