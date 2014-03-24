@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo "**************************************************************************"
+echo "**                                                                      **"
+echo "**          This is an experimental web server designed to aid          **"
+echo "**                  ATK14 application development.                      **"
+echo "**                                                                      **"
+echo "**          It is not intended to be a full-featured web server.        **"
+echo "**             It should not be used on a public network.               **"
+echo "**                                                                      **"
+echo "**************************************************************************"
+
+cd `dirname $0`
+cd `./_get_application_path`../
+
+php -S localhost:8000 -t ./ ./scripts/_server.php
+
