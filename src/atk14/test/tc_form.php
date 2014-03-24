@@ -15,6 +15,11 @@ class TcForm extends TcBase{
 
 		$form = Atk14Form::GetInstanceByControllerAndAction("main","hello_world");
 		$this->assertEquals(true,!!is_object($form));
+
+		$form->set_initial("greeting","Hello Guys!");
+		$field = $form->get_field("greeting");
+		$this->assertContains('value="Hello Guys!"',$field->as_widget());
+
 		$this->assertContains('id="form_main_hello_world"',$form->begin());
 
 		$form = Atk14Form::GetInstanceByControllerAndAction("main","hello_world",null,array("attrs" => array("id" => "a_tiny_form")));
