@@ -5,8 +5,7 @@
 
 echo "**************************************************************************"
 echo "**                                                                      **"
-echo "** This sucks! There is no autoload capability in the interactive mode. **"
-echo "**          Thus an interactive ATK14 console wont work.                **"
+echo "**               Welcome to ATK14 interactive console                   **"
 echo "**                                                                      **"
 echo "**************************************************************************"
 
