@@ -793,8 +793,9 @@ class SessionStorer{
 	function _getCookieDomain($share_cookies_on_subdomains = null){
 		if(!isset($share_cookies_on_subdomains)){ $share_cookies_on_subdomains = SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS; }
 		$domain = $this->_request->getHttpHost();
+		$domain = preg_replace('/:\d+$/','',$domain); // localhost:8080 -> localhost
 		if($share_cookies_on_subdomains){
-			$domain = preg_replace('/^.*\.([^.]+\.[a-z]+)$/','\1',$domain);
+			$domain = preg_replace('/^.*\.([^.]+\.[a-z]+)$/','\1',$domain); // www.example.com -> example.com
 		}
 		return $domain;
 	}
