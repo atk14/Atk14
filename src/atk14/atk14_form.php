@@ -921,6 +921,8 @@ class Atk14Form extends Form
 	 * Gets instance of a {@link Field} of current form.
 	 *
 	 * @param string $name identifier of the field
+	 */
+	function get_field($name){
 	// !!! je dulezite pred volanim get_field() volat konstruktor rodice.
 	// !!! jinak by nebyl formular ($this) zinicialozovan (chybela by napr vlastnost $this->auto_id)
 	// !!! a te je dulezita pri volani:
