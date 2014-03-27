@@ -328,6 +328,8 @@ class TcTableRecord extends TcBase{
 
 		$record = $this->_vytvor_testovaci_zaznam();
 		$keys = $record->getKeys();
+		# je lepsi klice seradit; pri nejake uprave tabulky metoda muze vratit seznam v jinem poradi
+		sort($keys);
 
 		// overime, zde alespone jedno pole mame null...
 		// protoze i nazev takoveho pole musi byt vracen...
@@ -336,21 +338,21 @@ class TcTableRecord extends TcBase{
 		//var_dump($keys); exit;
 	
 		$this->assertEquals(array(
-			"id",
-			"title",
-			"znak",
-			"an_integer",
 			"a_big_integer",
-			"price",
-			"cena",
-			"cena2",
-			"text",
-			"perex",
-			"flag",
+			"an_integer",
 			"binary_data",
 			"binary_data2",
+			"cena",
+			"cena2",
 			"create_date",
 			"create_time",
+			"flag",
+			"id",
+			"perex",
+			"price",
+			"text",
+			"title",
+			"znak",
 		),$keys);
 	}
 
