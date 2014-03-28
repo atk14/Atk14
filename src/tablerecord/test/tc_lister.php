@@ -23,8 +23,18 @@ class TcLister extends TcBase{
 			"name" => "Paul",
 		));
 
+		$tony = Author::CreateNewRecord(array(
+			"name" => "Tony",
+		));
+
 		$lister2 = $this->article2->getAuthorsLister();
 		$lister2->append($john);
+
+		# test ArrayAccess behavior of the lister
+		$lister2[] = $tony;
+		$this->assertTrue($lister2->contains($john));
+		$this->assertTrue($lister2->contains($tony));
+		$this->assertEquals(2, sizeof($lister2));
 
 		$lister = $this->article->getAuthorsLister();
 
@@ -44,6 +54,7 @@ class TcLister extends TcBase{
 
 		$lister->prepend($paul);
 		$this->_test_authors(array($paul,$john,$peter));
+
 
 		$items = $lister->getItems();
 		// move John to the begin
@@ -86,10 +97,22 @@ class TcLister extends TcBase{
 
 		$lister->setRecords(array($john,$peter,$paul));
 		$this->_test_authors(array($john,$peter,$paul));
+
+		# test ArrayAccess behavior of the Lister
+		$lister[1] = $tony;
+		$this->_test_authors(array($john, $tony, $paul));
+		$lister[2] = $peter;
+		$this->_test_authors(array($john, $tony, $peter));
+		$lister[3] = $paul;
+		$this->_test_authors(array($john, $tony, $peter, $paul));
+		# test offsetUnset
+		unset($lister[2]);
+		$this->_test_authors(array($john, $tony, $paul));
 	}
 
 	function _test_authors($expected_authors){
 		$authors = $this->article->getAuthors();
+
 		$this->assertEquals(sizeof($expected_authors),sizeof($authors));
 		for($i=0;$i<sizeof($authors);$i++){
 			$this->assertEquals($expected_authors[$i]->getId(),$authors[$i]->getId());
@@ -97,9 +120,22 @@ class TcLister extends TcBase{
 
 		$lister = $this->article->getAuthorsLister();
 		$items = $lister->getItems();
+		# test lister behaves as countable
+		$this->assertEquals(sizeof($items), sizeof($lister));
+
 		for($i=0;$i<sizeof($authors);$i++){
 			$this->assertEquals($i,$items[$i]->getRank());
 			$this->assertEquals($expected_authors[$i]->getId(),$items[$i]->getRecordId());
+
+			# test that lister behaves the same as array
+			$this->assertType("Author", $lister[$i]);
+			$this->assertEquals($expected_authors[$i]->getId(),$lister[$i]->getId());
+		}
+
+		foreach($lister as $key => $record) {
+			$this->assertType("Author", $record);
+			$this->assertEquals($expected_authors[$key]->getId(), $record->getId());
+
 		}
 
 		// getRecords(), getRecordIds()
@@ -116,7 +152,7 @@ class TcLister extends TcBase{
 		//
 		 
 		$authors2 = $this->article2->getAuthors();
-		$this->assertEquals(1,sizeof($authors2));
+		$this->assertEquals(2,sizeof($authors2));
 		$this->assertEquals("John",$authors2[0]->getName());
 	}
 }

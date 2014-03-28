@@ -2,19 +2,17 @@
 /**
  * Empty finder
  *
- * @package Atk14
- * @subpackage TableRecord
+ * @package Atk14\TableRecord
  * @filesource
  */
 
 /**
  * Empty finder
  *
- * @package Atk14
- * @subpackage TableRecord
+ * @package Atk14\TableRecord
  */
 class TableRecord_EmptyFinder extends TableRecord_Finder{
- 	var $_Records = array();
+	protected $_Records = array();
 	function TableRecord_EmptyFinder(){
 	}
 

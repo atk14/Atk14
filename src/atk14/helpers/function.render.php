@@ -66,7 +66,7 @@ function smarty_function_render($params,$template){
 
 		$key = null;
 		
-		if(is_array($params["from"])){
+		if(!is_numeric($params["from"])){
 			$collection = $params["from"];
 			$key = isset($params["key"]) ? $params["key"] : null;
 			unset($params["key"]);

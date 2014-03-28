@@ -2,15 +2,12 @@
 /**
  * Class for managing sortable records.
  *
- * @package Atk14
- * @subpackage TableRecord
+ * @package Atk14\TableRecord
  * @filesource
- *
- *
  */
 
 /**
- * Class for managing sortable *NON-UNIQUE* lists of records.
+ * Class for managing sortable *NON-UNIQUE* lists of associated TableRecord instances.
  *
  * This class is intended for use on tables with association table (M:N model association).
  *
@@ -19,38 +16,56 @@
  * Position is defined by default in field 'rank'. Its name can be changed by option 'rank_field_name'.
  * Each item points to associated TableRecord record.
  *
- * <code>
- * $article = Article::GetInstanceById(1);
- * $lister = $article->getLister("Authors");
- * $lister->append($author1);
- * $lister->append($author2);
- * $lister->getRecords(); // array($author1,$author2);
- * $lister->contains($author1); // true
- * $lister->contains($author3); // false
- * $items = $lister->getItems();
- * $items[0]->getRecord(); // $author1
- * $items[1]->getRecord(); // $author2
+ * 	$article = Article::GetInstanceById(1);
+ * 	$lister = $article->getLister("Authors");
+ * 	$lister->append($author1);
+ * 	$lister->append($author2);
+ * 	$lister->getRecords(); // array($author1,$author2);
+ * 	$lister->contains($author1); // true
+ * 	$lister->contains($author3); // false
+ * 	$items = $lister->getItems();
+ * 	$items[0]->getRecord(); // $author1
+ * 	$items[1]->getRecord(); // $author2
  *
- * $items[0]->getRank(); // 0
- * $items[1]->setRank(0); //
- * $items[0]->getRank(); // 1
+ * 	$items[0]->getRank(); // 0
+ * 	$items[1]->setRank(0); //
+ * 	$items[0]->getRank(); // 1
  *
- * $lister->setRecordRank($author2,0);
+ * 	$lister->setRecordRank($author2,0);
  *
- * @package Atk14
- * @subpackage TableRecord
- * @filesource
- * </code>
- *
+ * @package Atk14\TableRecord
  * @param TableRecord $owner
  * @param String $subjects
  * @param array $options
  */
-class TableRecord_Lister extends inobj{
+class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countable {
 	/**
-	 * $authors_lister = new TableRecord_Lister($article,"Authors",array(
-	 *	
-	 * ));
+	 * Constructor
+	 *
+	 * This class uses association table which is derived from the table name of the owning table and from the table name of the associated records.
+	 * Used table names are derived from the name of the owner class and the name of the subjects.
+	 * For example, we use model Articles for articles and each article (in table articles) has some authors (in table authors).
+	 * Based on this information the TableRecord_Lister assumes that the associating table will have the name articles_authors.
+	 * In that table it uses foreign keys article_id and author_id which lead to appropriate ids in tables articles and authors.
+	 * Field name that controls position in the collection is named 'rank' by default.
+	 *
+	 * All the used element names can be changed by options.
+	 *
+	 * Corresponding example
+	 * 	$authors_lister = new TableRecord_Lister($article,"Authors",array(
+	 * 	));
+	 *
+	 * Description $options:
+	 * - class_name
+	 * - table_name - name of table used as association table
+	 * - id_field_name - name of the field used as primary key of the association table
+	 * - owner_field_name - name of the foreign key to connect associating table and owning table
+	 * - subject_field_name - name of the foreign key used to connect associating table and subjects table
+	 * - rank_field_name - name of the field used for sorting
+	 *
+	 * @param $owner TableRecord TableRecord instance to which the $subjects are associated
+	 * @param string $subjects name of associated table is derived from subjects
+	 * @param array $options
 	 *
 	 * @todo comment options
 	 */
@@ -81,7 +96,7 @@ class TableRecord_Lister extends inobj{
 	}
 
 	/**
-	 * Adds an record at the end of the list.
+	 * Adds a record at the end of the list.
 	 *
 	 * @param TableRecord $record
 	 */
@@ -129,9 +144,12 @@ class TableRecord_Lister extends inobj{
 	}
 
 	/**
-	 * @access private
+	 * Internal method to add a record to a collection with set position.
+	 *
+	 * @param TableRecord $record
+	 * @param integer $rank
 	 */
-	function _add($record,$rank){
+	protected function _add($record,$rank){
 		$o = $this->_options;
 		$this->_dbmole->insertIntoTable($o["table_name"],array(
 			$o["id_field_name"] => $this->_dbmole->selectSequenceNextval($o["sequence_name"]),
@@ -192,12 +210,19 @@ class TableRecord_Lister extends inobj{
 	function size(){ return sizeof($this->getItems()); }
 
 	/**
+	 * Checks if lister contains items.
+	 *
 	 * @returns bool
 	 */
 	function isEmpty(){ return $this->size()==0; }
 
 	/**
-	 * @returns array
+	 * Returns items from association table.
+	 *
+	 * This method only returns records from association table that hold additional information such as position in collection.
+	 * To get associated records use method getRecords().
+	 *
+	 * @returns TableRecord_ListerItem[]
 	 */
 	function getItems(){
 		$this->_readItems();
@@ -205,7 +230,9 @@ class TableRecord_Lister extends inobj{
 	}
 
 	/**
-	 * @returns array
+	 * Returns record ids of associated table.
+	 *
+	 * @returns integer[]
 	 */
 	function getRecordIds(){
 		$out = array();
@@ -214,11 +241,12 @@ class TableRecord_Lister extends inobj{
 	}
 
 	/**
-	 * <code>
+	 * Returns records from associated table.
+	 *
 	 *	$lister = $article->getLister("Authors");
 	 *	$authors = $lister->getRecords(); // array of models 
-	 * </code>
-	 * @returns array
+	 *
+	 * @returns TableRecord[]
 	 */
 	function getRecords(){
 		$out = array();
@@ -227,11 +255,17 @@ class TableRecord_Lister extends inobj{
 	}
 
 	/**
-	 * <code> 
-	 *  $lister = $article->getLister("Authors");
-	 *  $lister->setRecordRank(array(123,124,125));
-	 *  $lister->setRecordRank(array($obj1,$obj2,$obj3));
-	 * </code>
+	 * Set records associated to the object.
+	 *
+	 * Currently associated records are destroyed and new are appended to the collection.
+	 *
+	 * Get new lister and associate new records
+	 *
+	 * 	$lister = $article->getLister("Authors");
+	 * 	$lister->setRecords(array(123,124,125));
+	 * 	$lister->setRecords(array($obj1,$obj2,$obj3));
+	 *
+	 * @param TableRecord[] $records
 	 */
 	function setRecords($records){
 		reset($records);
@@ -253,9 +287,8 @@ class TableRecord_Lister extends inobj{
 	/**
 	 * Sets position of a record in the list.
 	 *
-	 * <code>
-	 * 	$lister->setRecordRank($author,0); // moves the given author to begin
-	 * </code>
+	 * Move the given author to beginnig of collection
+	 * 	$lister->setRecordRank($author,0);
 	 *
 	 * @param TableRecord $record
 	 * @param integer $rank
@@ -271,7 +304,11 @@ class TableRecord_Lister extends inobj{
 	}
 
 	/**
-	 * @access private
+	 * Internal method to update ranking of records to contain correct data.
+	 *
+	 * It is applied after every position update.
+	 *
+	 * @todo make it protected
 	 */
 	function _correctRanking(){
 		$o = $this->_options;
@@ -298,10 +335,11 @@ class TableRecord_Lister extends inobj{
 	}
 
 	/**
-	 * @returns array
-	 * @access private
+	 * Internal method to read items from table to internal memory.
+	 *
+	 * @returns TableRecord_ListerItem[]
 	 */
-	function _readItems(){
+	private function _readItems(){
 		$o = $this->_options;
 		if(isset($this->_items)){ return; }
 		$rows = $this->_dbmole->selectRows("
@@ -319,6 +357,94 @@ class TableRecord_Lister extends inobj{
 			$this->_items[] = new TableRecord_ListerItem($this,$row);
 		}
 	}
+
+	/*** functions implementing array like access ***/
+	/**
+	 * @ignore
+	 */
+	function offsetGet($value) {
+		$x=$this->getItems();
+		return $x[$value]->getRecord();
+	}
+
+	/**
+	 * @ignore
+	 */
+	function offsetSet($offset, $record)	{
+		$this->getItems();
+		if (is_null($offset)) {
+			$this->append($record);
+		} else {
+			settype($offset,"integer");
+			if (isset($this->_items[$offset])) {
+				$this->_items[$offset]->destroy();
+			}
+			$this->append($record);
+			$this->setRecordRank($record,$offset);
+		}
+	}
+
+	/**
+	 * @ignore
+	 */
+	function offsetUnset($value) {
+		$this->getItems();
+		$this->_items[$value]->destroy();
+	}
+
+	/**
+	 * @ignore
+	 */
+	function offsetExists($value) {
+		$this->getItems();
+		return array_key_exists($name, $this->_items);
+	}
+
+	/*** functions implementing iterator like access (foreach cycle)***/
+	/**
+	 * @ignore
+	 */
+	public function current() {
+		return current($this->_items)->getRecord();
+	}
+
+	/**
+	 * @ignore
+	 */
+	public function key() {
+		return key($this->_items);
+	}
+
+	/**
+	 * @ignore
+	 */
+	public function next() {
+		return next($this->_items);
+	}
+
+	/**
+	 * @ignore
+	 */
+	public function rewind() {
+		$this->getItems();
+		return reset($this->_items);
+	}
+
+	/**
+	 * @ignore
+	 */
+	public function valid()	{
+		return isset($this->_items) && current($this->_items);
+	}
+
+	/**
+	 * @ignore
+	 */
+	public function count()
+	{
+		$this->getItems();
+		return count($this->_items);
+	}
 }
 
 /**
@@ -327,6 +453,10 @@ class TableRecord_Lister extends inobj{
 class TableRecord_ListerItem{
 
 	/**
+	 * This constructor is only used internally in {@link TableRecord_Lister TableRecord_Lister} and is not needed to use in an application.
+	 *
+	 * @param TableRecord_Lister $lister
+	 * @param array $row_data
 	 * @access private
 	 */
 	function TableRecord_ListerItem(&$lister,$row_data){
@@ -337,14 +467,31 @@ class TableRecord_ListerItem{
 		$this->_dbmole = &$lister->_dbmole;
 	}
 
+	/**
+	 * Gets rank/position of a record in a collection.
+	 *
+	 * @return integer
+	 */
 	function getRank(){
 		return (int)$this->_g("rank");
 	}
 
+	/**
+	 * Returns id of the item.
+	 *
+	 * @returns integer
+	 */
 	function getId(){
 		return (int)$this->_g("id");
 	}
 
+	/**
+	 * Sets rank/position of the record.
+	 *
+	 * After setting the rank of the record positions of all items in the collection are corrected.
+	 *
+	 * @param integer $rank
+	 */
 	function setRank($rank){
 		$o = $this->_options;
 		settype($rank,"integer");
@@ -370,12 +517,22 @@ class TableRecord_ListerItem{
 		$this->_s("rank",$rank);
 	}
 
+	/**
+	 * Gets id of the associated record.
+	 *
+	 * @return integer
+	 */
 	function getRecordId(){
 		$id = $this->_g("record_id");
 		if(is_numeric($id)){ settype($id,"integer"); }
 		return $id;
 	}
 
+	/**
+	 * Associates another record to the item by setting id of the record to association table.
+	 *
+	 * @param $record TableRecord
+	 */
 	function setRecordId($record){
 		$o = $this->_options;
 		$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[subject_field_name]=:record WHERE $o[id_field_name]=:id",array(
@@ -384,10 +541,20 @@ class TableRecord_ListerItem{
 		));	
 	}
 
+	/**
+	 * Gets record associated to the TableRecord_ListerItem.
+	 *
+	 * @return TableRecord
+	 */
 	function getRecord(){
 		return Cache::Get($this->_options["class_name"],$this->getRecordId());
 	}
 
+	/**
+	 * Destroys item with associated record.
+	 *
+	 * @param array $options only __auto_correct_ranking__  can be set to (not) correct ranking of other items. Defaults to true
+	 */
 	function destroy($options = array()){
 		$options = array_merge(array(
 			"__auto_correct_ranking__" => true,
@@ -402,10 +569,21 @@ class TableRecord_ListerItem{
 		}
 	}
 
+	/**
+	 * Internal method to get value from association table.
+	 *
+	 * @param string $key
+	 */
 	function _g($key){
 		return $this->_row_data[$key];
 	}
 
+	/**
+	 * Internal method to set value from association table.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 */
 	function _s($key,$value){
 		$this->_row_data[$key] = $value;
 	}
