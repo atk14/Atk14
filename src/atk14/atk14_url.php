@@ -92,12 +92,10 @@ class Atk14Url{
 		//echo "<pre>"; var_dump($routes); echo "<pre>"; 
 		$out = null;
 
-		reset($routes);
-		while(list($pattern,$rules) = each($routes)){
+		foreach($routes as $pattern => $rules){
 			$_replaces = array();
 			$_rules = array();
-			reset($rules);
-			while(list($_p_key,$_p_value) = each($rules)){
+			foreach($rules as $_p_key => $_p_value){	
 				if(preg_match("/^__/",$_p_key)){ $_rules[$_p_key] = $_p_value; continue; }
 				if($_p_value["regexp"]){
 					$_p_value["value"] = substr($_p_value["value"],1,strlen($_p_value["value"])-2); // "/.*/" -> ".*"
@@ -110,8 +108,7 @@ class Atk14Url{
 			$_pattern = str_replace("/","\\/",$_pattern);
 			$_pattern = strtr($_pattern,$_replaces);
 			if(preg_match("/^$_pattern$/",$uri,$matches)){
-				reset($matches);
-				while(list($_key) = each($matches)){
+				foreach($matches as $_key => $_value){
 					if(is_int($_key)){ unset($matches[$_key]); continue; }
 					$matches[$_key] = urldecode($matches[$_key]); // predpokladame, ze hodnota v REQUEST URI muze byt zakodovana
 				}
@@ -128,8 +125,7 @@ class Atk14Url{
 		}
 
 		$get_params = array();
-		reset($out);
-		while(list($key,) = each($out)){
+		foreach($out as $key => $_value){	
 			if(in_array($key,array("controller","action","lang","__page_title__","__page_description__","__omit_trailing_slash__"))){ continue; }
 			$get_params[$key] = $out[$key];
 		}
@@ -342,8 +338,7 @@ class Atk14Url{
 				unset($_pattern_params["__omit_trailing_slash__"]);
 
 				$_matched = true;
-				reset($_pattern_params);
-				while(list($_p_key,$_p_value) = each($_pattern_params)){
+				foreach($_pattern_params as $_p_key => $_p_value){	
 					if(!isset($_params[$_p_key])){
 						$_matched = false;
 						break;
@@ -362,8 +357,7 @@ class Atk14Url{
 			}
 
 			// nahrazeni <controller>/<action>... -> domain/examination....
-			reset($params);
-			while(list($_key,$_value) = each($params)){
+			foreach($params as $_key => $_value){	
 				if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
 				if($_key=="namespace"){ continue; } // namespace se umistuje vzdy do URL; neprenasi se v GET parametrech
 				if(isset($rules[$_key]["regexp"]) && !preg_match("/^\\/.*\\//",$rules[$_key]["value"])){ continue; }
@@ -463,6 +457,8 @@ class Atk14Url{
 	 * Atk14Url::AddRouter("ProductsRouter");
 	 *
 	 * Atk14Url::AddRouter("","ProductsRouter");
+	 * Atk14Url::AddRouter("ProductsRouter"); // the same as previous
+	 *
 	 * Atk14Url::AddRouter("admin","ProductsRouter");
 	 * Atk14Url::AddRouter("*","ProductsRouter");
 	 */

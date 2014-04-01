@@ -23,7 +23,7 @@ class TcUrl extends TcBase{
 			"force_redirect" => null
 		));
 
-		// format=rss mame v routes.inc
+		// format=rss mame v routes.php
 		$_GET = array("format" => "rss");
 		$this->_test_route("/en/articles/overview/?format=rss",array(
 			"namespace" => "",
@@ -33,7 +33,7 @@ class TcUrl extends TcBase{
 			"force_redirect" => "/articles/feed.rss"
 		));
 
-		// format=xml nemame v routes.inc
+		// format=xml nemame v routes.php
 		$_GET = array("format" => "xml");
 		$this->_test_route("/en/articles/overview/?format=xml",array(
 			"namespace" => "",
@@ -41,7 +41,7 @@ class TcUrl extends TcBase{
 			"controller" => "articles",
 			"action" => "overview",
 			"force_redirect" => null,
-		));
+		),array("format" => "xml"));
 	
 		$_GET = array();
 	}
@@ -157,10 +157,83 @@ class TcUrl extends TcBase{
 		));
 	}
 
-	function _test_route($request_uri,$expected_ar){
-		$route = Atk14Url::RecognizeRoute($request_uri);
+	function test_routers(){
+		global $_GET;
+		$_GET = array();
+
+		$this->_test_route("/fable/green-eggs-and-ham-1",array(
+			"namespace" => "",
+			"lang" => "en",
+			"controller" => "fables",
+			"action" => "detail",
+			"force_redirect" => null
+		));
+
+		$this->_test_route("/fable/green-eggs-and-ham-1",array(
+			"namespace" => "",
+			"lang" => "en",
+			"controller" => "fables",
+			"action" => "detail",
+			"force_redirect" => null
+		),array("id" => "1"));
+
+		$this->_test_route("/universe/fable/green-eggs-and-ham-1",array(
+			"namespace" => "universe",
+			"lang" => "en",
+			"controller" => "fables",
+			"action" => "detail",
+			"force_redirect" => null
+		),array("id" => "1"));
+
+		$this->_test_route("/fable/the-dog-in-the-hat-3",array( // ! dog
+			"namespace" => "",
+			"lang" => "en",
+			"controller" => "fables",
+			"action" => "detail",
+			"force_redirect" => "/fable/the-cat-in-the-hat-3" // ! cat
+		),array("id" => "3"));
+
+		$_GET["id"] = "5";
+		$this->_test_route("/admin/en/fables/detail/?id=5",array(
+			"namespace" => "admin",
+			"lang" => "en",
+			"controller" => "fables",
+			"action" => "detail",
+			"force_redirect" => null
+		),array("id" => "5"));
+
+		$_GET = array("format" => "xml");
+		$this->_test_route("/fable/a-very-good-fable-2?format=xml",array(
+			"namespace" => "",
+			"lang" => "en",
+			"controller" => "fables",
+			"action" => "detail",
+			"force_redirect" => null
+		),array("id" => "2", "format" => "xml"));
+
+		$_GET = array();
+
+		$this->assertEquals("/fable/where-the-wild-things-are-5",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 5)));
+		$this->assertEquals("/fable/where-the-wild-things-are-5?format=xml&print=1",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 5, "format" => "xml", "print" => 1)));
+
+		// the router is for namespace "" and "universe", but not for namespace "admin"
+		// see config/routers/load.php
+		$this->assertEquals("/admin/en/fables/detail/?id=5",$this->_build_link(array("namespace" => "admin", "controller" => "fables", "action" => "detail", "id" => 5)));
+		$this->assertEquals("/universe/fable/where-the-wild-things-are-5",$this->_build_link(array("namespace" => "universe", "controller" => "fables", "action" => "detail", "id" => 5)));
+
+
+		$this->assertEquals("/fable/a-very-good-fable-22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22)));
+		$this->assertEquals("/bajka/a-very-good-fable-22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22, "lang" => "cs")));
+		$this->assertEquals("/sk/fables/detail/?id=22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22, "lang" => "sk"))); // in the router there is no support for sk
+	}
+
+	function _test_route($request_uri,$expected_ar,$expected_params = array()){
+		$route = atk14url::recognizeroute($request_uri);
 		foreach($expected_ar as $k => $v){
-			$this->assertEquals($v,$route[$k],"testing $k in $request_uri");
+			$this->assertequals($v,$route[$k],"testing $k in $request_uri");
+		}
+		foreach($expected_params as $k => $v){
+			$this->assertEquals($route["get_params"][$k],$v,"params $k in $request_uri");
 		}
 		return $route;
 	}
@@ -178,5 +251,16 @@ class TcUrl extends TcBase{
 			"action" => "error404",
 			"force_redirect" => null
 		));
+	}
+
+	function _build_link($params = array()){
+		$params += array(
+			"namespace" => "",
+			"controller" => "main",
+			"action" => "index",
+			"lang" => "en",
+		);
+
+		return Atk14Url::BuildLink($params,array("connector" => "&"));
 	}
 }
