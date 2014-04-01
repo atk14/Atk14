@@ -4,7 +4,7 @@
 * Initializes database! :)
 * Creates all necessaries in there.
 *
-* At the moment only the table schema_migrations will be created.
+* At the moment, it creates only the table schema_migrations.
 *
 * Usage:
 *  $ ATK14_ENV=DEVELOPMENT ./scripts/initialize_database
@@ -13,5 +13,8 @@
 
 require_once(dirname(__FILE__)."/load.php");
 
-$dbmole->doQuery("CREATE TABLE schema_migrations(version VARCHAR(255) PRIMARY KEY);");
+$dbmole->doQuery("CREATE TABLE schema_migrations(
+	version VARCHAR(255) PRIMARY KEY,
+	created_at TIMESTAMP NOT NULL DEFAULT NOW()
+)");
 
