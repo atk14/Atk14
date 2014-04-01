@@ -7,9 +7,22 @@
 #   test/controllers/namespace
 #   test/controllers/another_namespace
 
-cd `dirname $0`
+dirname=`dirname $0`
+cd $dirname
 base_dir=`./_get_application_path`../
 exit_val=0
+
+[  -z "`ATK14_ENV=TEST ./migrate -p`" ] || (cat << EOF && sleep 2)
+**************************************************************************
+**                                                                      **
+**                   There are pending migrations!                      **
+**                                                                      **
+**************************************************************************
+
+Why not to try the following command?
+  $ ATK14_ENV=TEST $dirname/migrate
+
+EOF
 
 cd $base_dir
 for d in `find test -maxdepth 2 -type d | egrep -v ^test$ | egrep -v '/\.' | sort` ; do
