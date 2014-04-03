@@ -26,11 +26,14 @@ EOF
 
 cd $base_dir
 for d in `find test -maxdepth 2 -type d | egrep -v ^test$ | egrep -v '/\.' | sort` ; do
-	echo "--- [$d] ---"
-	$base_dir/scripts/run_unit_tests $d
-	if [ "$?" != "0" ]; then
-		exit_val=1
-	fi 
+	# in a directory with tests there should be initialize.php (or initialize.inc)
+	if [ -e $d/initialize.php ] || [ -e $d/initialize.inc ]; then
+		echo "--- [$d] ---"
+		$base_dir/scripts/run_unit_tests $d
+		if [ "$?" != "0" ]; then
+			exit_val=1
+		fi
+	fi
 done
 
 exit $exit_val
