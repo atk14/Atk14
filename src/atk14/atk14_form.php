@@ -439,7 +439,7 @@ class Atk14Form extends Form
 		if(
 			$out &&
 			$this->atk14_csrf_protection_enabled &&
-			!in_array((string)$HTTP_REQUEST->getVar("_token","PG"),$this->get_valid_csrf_tokens())
+			!in_array((string)$HTTP_REQUEST->getVar("_csrf_token_","PG"),$this->get_valid_csrf_tokens())
 		){
 			$this->set_error(_("Please, submit the form again"));
 			$out = false;
@@ -553,11 +553,11 @@ class Atk14Form extends Form
 	/**
 	 * Enables CSRF protection.
 	 *
-	 * The method adds new field with name '_token' to the form
+	 * The method adds new field with name '_csrf_token_' to the form
 	 */
 	function enable_csrf_protection(){
 		$this->atk14_csrf_protection_enabled = true;
-		$this->set_hidden_field("_token",$this->get_csrf_token());
+		$this->set_hidden_field("_csrf_token_",$this->get_csrf_token());
 	}
 
 	/**
@@ -1004,6 +1004,10 @@ class Atk14Form extends Form
 		$out = array();
 
 		$t = floor(time()/(60 * 5));
+
+		if(defined("TEST") && TEST){
+			$out[] = "testing_csrf_token"; // this token should be valid only in testing environment!
+		}
 
 		for($i=0;$i<=1;$i++){
 			$_t = $t - $i;
