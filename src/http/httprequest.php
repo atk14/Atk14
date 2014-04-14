@@ -129,7 +129,7 @@ class HTTPRequest{
 	 *
 	 */
 	function HTTPRequest(){
-		$this->_AutoInitialize();
+		$this->_autoInitialize();
 	}
 
 
@@ -151,12 +151,19 @@ class HTTPRequest{
 	 *
 	 * @ignore
 	 */
-	protected function _AutoInitialize(){
+	protected function _autoInitialize(){
 		global $_SERVER;
-		if(function_exists("getallheaders")){ // ve cli PHP funkce getallheaders neexistuje
+		if(function_exists("getallheaders")){ // in CLI there is no function getallheaders()
 			$_headers = getallheaders();
 		}else{
 			$_headers = array();
+			foreach($_SERVER as $k => $v){
+				if(substr($k,0,5)=="HTTP_"){ // HTTP_HOST, HTTP_USER_AGENT
+					$k = substr($k,5);
+					$k = str_replace("_","-",$k);
+					$_headers[$k] = $v;
+				}
+			}
 		}
 		if(is_array($_headers)){
 			$this->_HTTPRequest_headers = $_headers;
