@@ -77,7 +77,7 @@ $env = strtolower($ATK14_GLOBAL->getEnvironment());
 echo "\n";
 echo "Database $dbname is now empty. You may want to run:\n";
 echo " $ ./scripts/delete_temporary_files\n";
-echo " $ ATK14_ENV=$env ./scripts/initialize_database\n";
+//echo " $ ATK14_ENV=$env ./scripts/initialize_database\n"; // when database is not initialized it will be initialized in ./scripts/migrate
 echo " $ ATK14_ENV=$env ./scripts/migrate\n";
 }
 
