@@ -110,6 +110,17 @@ class Atk14Migration{
 		$this->logger->flush();
 		$this->_failed = true;
 	}
+
+	static function SchemaMigrationsTableExists($dbmole){
+		return 1==$dbmole->selectInt("SELECT COUNT(*) FROM pg_tables WHERE LOWER(tablename)='schema_migrations'");
+	}
+
+	static function CreateSchemaMigrationsTable($dbmole){
+		$dbmole->doQuery("CREATE TABLE schema_migrations(
+			version VARCHAR(255) PRIMARY KEY,
+			created_at TIMESTAMP NOT NULL DEFAULT NOW()
+		)");
+	}
 }
 
 /**

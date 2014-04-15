@@ -76,6 +76,11 @@ while($item = readdir($dir)){
 closedir($dir);
 asort($migrations);
 
+// creating schema_migrations table when it doesn't exist
+if(!Atk14Migration::SchemaMigrationsTableExists($dbmole)){
+	Atk14Migration::CreateSchemaMigrationsTable($dbmole);
+}
+
 // getting list of done migrations
 $already_done_migrations = $dbmole->selectIntoArray("SELECT version FROM schema_migrations ORDER BY version");
 

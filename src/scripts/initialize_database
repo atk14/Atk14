@@ -13,8 +13,10 @@
 
 require_once(dirname(__FILE__)."/load.php");
 
-$dbmole->doQuery("CREATE TABLE schema_migrations(
-	version VARCHAR(255) PRIMARY KEY,
-	created_at TIMESTAMP NOT NULL DEFAULT NOW()
-)");
+if(Atk14Migration::SchemaMigrationsTableExists($dbmole)){
+	echo "It seems the database has been already initialized\n";
+	exit(1);
+}
 
+Atk14Migration::CreateSchemaMigrationsTable($dbmole);
+exit(0);
