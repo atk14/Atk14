@@ -285,7 +285,7 @@ class Atk14Controller{
 		if(isset($options["request"])){
 			$this->request = $options["request"];
 		}else{
-			$this->request = &$GLOBALS["HTTP_REQUEST"];
+			$this->request = $GLOBALS["HTTP_REQUEST"];
 		}
 		unset($options["request"]);
 

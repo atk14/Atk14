@@ -68,7 +68,8 @@ foreach(array("app/models","app/fields","app/widgets","lib") as $_d_){
 
 // global variable $dbmole holds database connection
 // at the moment only postgresql is supported (why don't just support the best open source database worldwide?)
-$dbmole = &PgMole::GetInstance("default");
+global $dbmole;
+$dbmole = PgMole::GetInstance("default");
 
 function &dbmole_connection(&$dbmole){
 	global $ATK14_GLOBAL;

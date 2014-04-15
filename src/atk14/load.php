@@ -29,7 +29,8 @@ require_once("$__PATH__/tc_atk14_controller.php");
 require_once("$__PATH__/tc_atk14_model.php");
 require_once("$__PATH__/tc_atk14_field.php");
 
-$ATK14_GLOBAL = &Atk14Global::GetInstance();
+global $ATK14_GLOBAL;
+$ATK14_GLOBAL = Atk14Global::GetInstance();
 
 Atk14Utils::LoadConfig();
 
