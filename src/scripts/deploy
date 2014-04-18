@@ -27,7 +27,7 @@ if($cwd!=getcwd()){
 
 $CONFIGS = $ATK14_GLOBAL->getConfig("deploy");
 if(!$CONFIGS){
-	echo "It looks like there is no file ./config/deploy.yml\n";
+	echo file_exists("./config/deploy.yml") ? "It looks like the file ./config/deploy.yml is corrupted\n" : "It looks like there is no file ./config/deploy.yml\n";
 	exit(1);
 }
 $STAGES = array_keys($CONFIGS);
@@ -46,6 +46,7 @@ $default_config += array(
 	"deploy_via" => "git_push", // there is only one way
 	"deploy_repository" => null,
 	"deploy_branch" => "master",
+	"rsync" => array()
 );
 $config = $CONFIGS[$stage];
 $config += $default_config;
@@ -80,7 +81,14 @@ echo _remote_exec("git submodule init && git submodule update && echo submodules
 echo _remote_exec("./scripts/migrate && echo migration");
 echo _remote_exec("./scripts/delete_temporary_files dbmole_cache"); // deleting cached database structures
 
-echo "Everything looks good!\n";
+foreach($config["rsync"] as $file){
+	if(is_dir($file)){
+		_remote_exec("mkdir -p $file"); // creates directory when it is missing
+	}
+	_exec("rsync -avz --delete $file $config[user]@$config[server]:$config[directory]/$file");
+}
+
+echo "Everything now looks suspiciously good...\n";
 exit(0);
 
 function _exec($cmd){

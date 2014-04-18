@@ -17,7 +17,7 @@ if(isset($argv[1])){
 }
 
 if(!file_exists($dirname)){
-	echo "WARN: directory $dirname doesn't exist\n";
+	echo "warn: directory $dirname doesn't exist\n";
 	exit(0); // perhaps this is not an error
 }
 
