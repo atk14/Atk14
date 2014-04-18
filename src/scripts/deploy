@@ -1,0 +1,101 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Provides deployment of the application to production
+ *
+ * It reads configuration from config/deploy.yml
+ *
+ * To deploy on the first stage in config/deploy.yml
+ *  $ ./scripts/deploy
+ *
+ * To deploy on the specific stage
+ *  $ ./scripts/deploy preview
+ */
+
+require_once(dirname(__FILE__)."/load.php");
+$cwd = getcwd();
+chdir(ATK14_DOCUMENT_ROOT);
+if($cwd!=getcwd()){
+	$ar = $argv;
+	array_shift($ar);
+	array_unshift($ar,"./scripts/deploy");
+	echo "To avoid misunderstandings please go to the applications root and run this script again.\n";
+	echo "  $ cd ",ATK14_DOCUMENT_ROOT,"\n";
+	echo "  $ ",join(" ",$ar),"\n";
+	exit(1);
+}
+
+$CONFIGS = $ATK14_GLOBAL->getConfig("deploy");
+if(!$CONFIGS){
+	echo "It looks like there is no file ./config/deploy.yml\n";
+	exit(1);
+}
+$STAGES = array_keys($CONFIGS);
+
+$stage = isset($argv[1]) ? $argv[1] : $STAGES[0];
+
+if(!isset($CONFIGS[$stage])){
+	echo "Sorry, in ./config/deploy.yml I have no information about a stage $stage\n";
+	exit(1);
+}
+$default_config = $CONFIGS[$STAGES[0]]; // the ferst stage
+$default_config += array(
+	"user" => null,
+	"server" => null,
+	"directory" => null,
+	"deploy_via" => "git_push", // there is only one way
+	"deploy_repository" => null,
+	"deploy_branch" => "master",
+);
+$config = $CONFIGS[$stage];
+$config += $default_config;
+
+echo "### gonna deploy to $stage ###\n";
+sleep(1);
+
+$current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD"));
+if($current_branch=="HEAD"){
+	echo "You are not currently on a branch\n";
+	exit(1);
+}
+
+$out = _exec("git remote -v");
+// searching for:
+//  production      devel@kajka:apps/phyllostomus.com/repos/production.git (fetch)
+//  production      devel@kajka:apps/phyllostomus.com/repos/production.git (push)
+preg_match_all("/\\n$stage\\s+([^\\s]+)\\s+/","\n$out",$matches);
+if(sizeof($matches[1])==0){
+	_exec("git remote add $stage $config[deploy_repository]");
+}elseif($matches[1]!=array($config["deploy_repository"],$config["deploy_repository"])){
+	echo "Seems that you have remote $stage configured with a different URL.\n";
+	echo "It is expected $config[deploy_repository]\n";
+	echo "You shall run:\n";
+	echo "  $ git remote rm $stage\n";
+	echo "  $ git remote add $stage $config[deploy_repository]\n";
+	exit(1);
+}
+
+_exec("git push $stage $config[deploy_branch]");
+echo _remote_exec("git submodule init && git submodule update && echo submodules updated");
+echo _remote_exec("./scripts/migrate && echo migration");
+echo _remote_exec("./scripts/delete_temporary_files dbmole_cache"); // deleting cached database structures
+
+echo "Everything looks good!\n";
+exit(0);
+
+function _exec($cmd){
+	echo "### $cmd\n";
+	exec($cmd,$output,$err);
+	if($err){
+		echo "command execution failed ($err), exiting...\n";
+		exit(1);
+	}
+	$output && ($output[] = "");
+	return join("\n",$output);
+}
+
+function _remote_exec($cmd){
+	global $config;
+	$cmd = "ssh $config[user]@$config[server] \"cd $config[directory] && export ATK14_ENV=production && (".str_replace('"','\"',$cmd).")\"";
+	return _exec($cmd);
+}

@@ -2,11 +2,26 @@
 <?php
 /**
  * Deletes temporary files and directories, no more no less.
+ *
+ * To delete all files in /path/to/project/tmp/
+ *  $ ./scripts/delete_temporary_files
+ *
+ * To delete all files in /path/to/project/tmp/dbmole_cache/
+ *  $ ./scripts/delete_temporary_files dbmole_cache
  */
-
 require_once(dirname(__FILE__)."/load.php");
 
-$d_handle = opendir(TEMP);
+$dirname = TEMP;
+if(isset($argv[1])){
+	$dirname = TEMP."/".preg_replace('..','',$argv[1]); // little sanitization never hurts
+}
+
+if(!file_exists($dirname)){
+	echo "WARN: directory $dirname doesn't exist\n";
+	exit(0); // perhaps this is not an error
+}
+
+$d_handle = opendir($dirname);
 $counter = 0;
 while($item = readdir($d_handle)){
 	if($item=='.' || $item=='..'){ continue; }
@@ -22,5 +37,4 @@ while($item = readdir($d_handle)){
 }
 
 echo "$counter temporary files/dirs deleted\n";
-
 exit(0);
