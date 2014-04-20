@@ -393,11 +393,7 @@ class Atk14Controller{
 	 * Renders page with error message and sets HTTP status code 404.
 	 */
 	function error404(){
-		if($this->request->xhr()){
-			$this->response->write("alert('Requested URI was not found!');");
-		}else{
-			$this->response->notFound();
-		}
+		$this->response->notFound();
 		$this->render_template = false;
 	}
 
@@ -408,6 +404,19 @@ class Atk14Controller{
 	 */
 	function error500(){
 		$this->response->internalServerError();
+		$this->render_template = false;
+	}
+
+	function error503(){
+		$this->response->setStatusCode(503);
+		$this->response->write("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">
+			<html><head>
+			<title>503 Service unavailable</title>
+			</head><body>
+			<h1>503 Service unavailable</h1>
+			<p>Sorry, we are doing something important at the moment! Please, come back again later.</p>
+			</body></html>
+		");
 		$this->render_template = false;
 	}
 

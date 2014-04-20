@@ -43,64 +43,71 @@ class Atk14Dispatcher{
 
 		$logger = $ATK14_GLOBAL->getLogger();
 
-		Atk14Timer::Start("Atk14Url::RecognizeRoute");
-		$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri());
-		$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
+		if(defined("MAINTENANCE") && MAINTENANCE){
 
-		if(DEVELOPMENT){
-			// logging
-			if($route_ar["action"]=="error404"){
-				$logger->warn("no route for ".$request->getRequestUri());
-			}else{
-				$logger->info($request->getRequestMethod()." ".$request->getUrl()); // GET http://myapp.localhost/en/main/about/
+			$ctrl = Atk14Dispatcher::ExecuteAction("application","error503",array("namespace" => "", "request" => $request, "return_controller" => true));
+
+		}else{
+
+			Atk14Timer::Start("Atk14Url::RecognizeRoute");
+			$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri());
+			$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
+
+			if(DEVELOPMENT){
+				// logging
+				if($route_ar["action"]=="error404"){
+					$logger->warn("no route for ".$request->getRequestUri());
+				}else{
+					$logger->info($request->getRequestMethod()." ".$request->getUrl()); // GET http://myapp.localhost/en/main/about/
+				}
+				$logger->flush();
 			}
-			$logger->flush();
-		}
 
-		$_GET = array_merge($_GET,$route_ar["get_params"]);
-		Atk14Timer::Stop("Atk14Url::RecognizeRoute");
+			$_GET = array_merge($_GET,$route_ar["get_params"]);
+			Atk14Timer::Stop("Atk14Url::RecognizeRoute");
 
-		if(strlen($uri)==strlen($route_ar["force_redirect"])){
-			// Here solving PHP's dot to underscore conversion.
-			// If the uri contains a parametr with dot in it's name, PHP silently converts it to underscore.
-			// Thus such URL:
-			// 		http://www.myapp.com/en/books/detail/?id=1&in.format=xml
-			// should not be redirected to
-			// 		http://www.myapp.com/en/books/detail/?id=1&in_format=xml
-			$_meaningful_redirect = false;
-			for($i=0;$i<strlen($uri);$i++){
-				if($uri[$i]==$route_ar["force_redirect"][$i]){ continue; }
-				if($uri[$i]=="." && $route_ar["force_redirect"][$i]=="_"){ continue; }
-				$_meaningful_redirect = true;
-				break;
+			if(strlen($uri)==strlen($route_ar["force_redirect"])){
+				// Here solving PHP's dot to underscore conversion.
+				// If the uri contains a parametr with dot in it's name, PHP silently converts it to underscore.
+				// Thus such URL:
+				// 		http://www.myapp.com/en/books/detail/?id=1&in.format=xml
+				// should not be redirected to
+				// 		http://www.myapp.com/en/books/detail/?id=1&in_format=xml
+				$_meaningful_redirect = false;
+				for($i=0;$i<strlen($uri);$i++){
+					if($uri[$i]==$route_ar["force_redirect"][$i]){ continue; }
+					if($uri[$i]=="." && $route_ar["force_redirect"][$i]=="_"){ continue; }
+					$_meaningful_redirect = true;
+					break;
+				}
+				if(!$_meaningful_redirect){ $route_ar["force_redirect"] = null; }
 			}
-			if(!$_meaningful_redirect){ $route_ar["force_redirect"] = null; }
-		}
 
+			if($request->get() && strlen($route_ar["force_redirect"])>0 && !$request->xhr()){
+				$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
+				$options["display_response"] && $HTTP_RESPONSE->flushAll();
+				return Atk14Dispatcher::_ReturnResponseOrController($HTTP_RESPONSE,null,$options);
+			}
 
-		if($request->get() && strlen($route_ar["force_redirect"])>0 && !$request->xhr()){
-			$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
-			$options["display_response"] && $HTTP_RESPONSE->flushAll();
-			return $HTTP_RESPONSE;
-		}
+			// prestehovano Atk14Url::RecognizeRoute()
+			//i18n::init_translation($route_ar["lang"]); // inicializace gettextu
 
-		// prestehovano Atk14Url::RecognizeRoute()
-		//i18n::init_translation($route_ar["lang"]); // inicializace gettextu
+			$ATK14_GLOBAL->setValue("namespace",$route_ar["namespace"]);
+			$ATK14_GLOBAL->setValue("lang",$route_ar["lang"]);
 
-		$ATK14_GLOBAL->setValue("namespace",$route_ar["namespace"]);
-		$ATK14_GLOBAL->setValue("lang",$route_ar["lang"]);
+			$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
+				"page_title" => $route_ar["page_title"],
+				"page_description" => $route_ar["page_description"],
+				"return_controller" => true,
+				"request" => $request
+			));
 
-		$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
-			"page_title" => $route_ar["page_title"],
-			"page_description" => $route_ar["page_description"],
-			"return_controller" => true,
-			"request" => $request
-		));
+			// ajaxove presmerovani...
+			if(strlen($ctrl->response->getLocation())>0 && $request->xhr()){
+				$ctrl->response->write("location.replace('".$ctrl->response->getLocation()."');"); // watch out, it's javascript
+				$ctrl->response->setLocation(null);
+			}
 
-		// ajaxove presmerovani...
-		if(strlen($ctrl->response->getLocation())>0 && $request->xhr()){
-			$ctrl->response->write("location.replace('".$ctrl->response->getLocation()."');"); // watch out, it's javascript
-			$ctrl->response->setLocation(null);
 		}
 
 		$HTTP_RESPONSE->concatenate($ctrl->response);
@@ -108,8 +115,7 @@ class Atk14Dispatcher{
 
 		$logger->stop();
 
-		if($options["return_controller"]){ return $ctrl; }
-		return $HTTP_RESPONSE;
+		return Atk14Dispatcher::_ReturnResponseOrController($HTTP_RESPONSE,$ctrl,$options);
 	}
 
 	/**
@@ -224,8 +230,14 @@ class Atk14Dispatcher{
 			$ATK14_GLOBAL->setValue("action",$prev_action);
 		}
 
-		if($options["return_controller"]){ return $controller; }
+		return Atk14Dispatcher::_ReturnResponseOrController($controller->response,$controller,$options);
+	}
 
-		return $controller->response;
+	/**
+	 * @ignore
+	 */
+	static private function _ReturnResponseOrController($response,$controller,$options){
+		if($options["return_controller"]){ return $controller; }
+		return $response;
 	}
 }
