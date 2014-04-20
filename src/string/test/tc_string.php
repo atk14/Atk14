@@ -262,4 +262,30 @@ class TcString extends TcBase{
 		$this->assertEquals("Spinava Redkvicka",(string)$a);
 		$this->assertEquals("ASCII",$a->getEncoding());
 	}
+
+	function test_toBoolean(){
+		foreach(array(
+			"off" => false,
+			"no" => false,
+			"0" => false,
+			"n" => false,
+
+			"on" => true,
+			"y" => true,
+			"yes" => true,
+			"1" => true,
+		) as $s => $expected){
+			$s = new String($s);
+			$this->assertEquals($expected,$s->toBoolean(),"$s");
+
+			$s = new String(strtoupper($s));
+			$this->assertEquals($expected,$s->toBoolean(),"strtoupper($s)");
+		}
+
+		$s = new String(true);
+		$this->assertEquals(true,$s->toBoolean());
+
+		$s = new String(false);
+		$this->assertEquals(false,$s->toBoolean());
+	}
 }

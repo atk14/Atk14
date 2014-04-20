@@ -592,6 +592,16 @@ class String{
 	function toString(){
 		return $this->_String;
 	}
+
+	/**
+	 * Converts string to a boolean value
+	 */
+	function toBoolean(){
+		if(in_array($this->lower(),array('false','off','no','n','f'))){
+			return false;
+		}
+		return (bool)$this->toString();
+	}
 	
 	/**
 	 * Magic method
