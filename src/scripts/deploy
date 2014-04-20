@@ -83,7 +83,7 @@ if(sizeof($matches[1])==0){
 	exit(1);
 }
 
-$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",false);" > config/maintenance.php','gonna create maintenance file');
+$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create maintenance file');
 
 _exec("git push $stage $config[deploy_branch]","gonna push to deployment repo");
 echo _remote_exec("git submodule init && git submodule update","gonna initialize and update submodules");
@@ -101,8 +101,6 @@ if($config["after_deploy"]){
 }
 
 $config["create_maintenance_file"] && _remote_exec("rm config/maintenance.php");
-
-//_remote_exec('rm config/maintenance.php');
 
 echo "Everything now looks suspiciously good...\n";
 exit(0);
