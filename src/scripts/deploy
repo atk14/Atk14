@@ -27,7 +27,7 @@ if($cwd!=getcwd()){
 
 $CONFIGS = $ATK14_GLOBAL->getConfig("deploy");
 if(!$CONFIGS){
-	echo file_exists("./config/deploy.yml") ? "It looks like the file ./config/deploy.yml is corrupted\n" : "It looks like there is no file ./config/deploy.yml\n";
+	echo file_exists("./config/deploy.yml") ? "It looks like the file ./config/deploy.yml is corrupted (beware of usage of tabulators)\n" : "It looks like there is no file ./config/deploy.yml\n";
 	exit(1);
 }
 $STAGES = array_keys($CONFIGS);
@@ -35,7 +35,7 @@ $STAGES = array_keys($CONFIGS);
 $stage = isset($argv[1]) ? $argv[1] : $STAGES[0];
 
 if(!isset($CONFIGS[$stage])){
-	echo "Sorry, in ./config/deploy.yml I have no information about a stage $stage\n";
+	echo "sorry, in ./config/deploy.yml I have no information about a stage $stage\n";
 	exit(1);
 }
 $default_config = $CONFIGS[$STAGES[0]]; // the ferst stage
@@ -43,24 +43,31 @@ $default_config += array(
 	"user" => null,
 	"server" => null,
 	"directory" => null,
+	"create_maintenance_file" => "true",
 	"deploy_via" => "git_push", // there is only one way
 	"deploy_repository" => null,
 	"deploy_branch" => "master",
-	"rsync" => array()
+	"rsync" => array(), // array of directories which have to be synchronized to the server
+	"after_deploy" => "./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache",
 );
 $config = $CONFIGS[$stage];
 $config += $default_config;
+$config["create_maintenance_file"] = String::ToObject($config["create_maintenance_file"])->toBoolean(); // "false" -> false
+if(is_string($config["rsync"])){
+	$config["rsync"] = $config["rsync"] ? array($config["rsync"]) : array();
+}
 
-echo "### gonna deploy to $stage ###\n";
+echo "gonna deploy to $stage\n";
 sleep(1);
 
-$current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD"));
+$current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD","getting name of the branch you are on"));
+echo "$current_branch\n";
 if($current_branch=="HEAD"){
 	echo "You are not currently on a branch\n";
 	exit(1);
 }
 
-$out = _exec("git remote -v");
+$out = _exec("git remote -v","checking out existing remote URLs");
 // searching for:
 //  production      devel@kajka:apps/phyllostomus.com/repos/production.git (fetch)
 //  production      devel@kajka:apps/phyllostomus.com/repos/production.git (push)
@@ -76,23 +83,38 @@ if(sizeof($matches[1])==0){
 	exit(1);
 }
 
-_exec("git push $stage $config[deploy_branch]");
-echo _remote_exec("git submodule init && git submodule update && echo submodules updated");
-echo _remote_exec("./scripts/migrate && echo migration");
-echo _remote_exec("./scripts/delete_temporary_files dbmole_cache"); // deleting cached database structures
+$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",false);" > config/maintenance.php','gonna create maintenance file');
+
+_exec("git push $stage $config[deploy_branch]","gonna push to deployment repo");
+echo _remote_exec("git submodule init && git submodule update","gonna initialize and update submodules");
 
 foreach($config["rsync"] as $file){
+	if(!$file){ continue; } // empty value
 	if(is_dir($file)){
-		_remote_exec("mkdir -p $file"); // creates directory when it is missing
+		_remote_exec("mkdir -p $file","gonna create directory $file if doesn't exist"); // creates directory when it is missing
 	}
-	_exec("rsync -avz --delete $file $config[user]@$config[server]:$config[directory]/$file");
+	echo _exec("rsync -avz --delete $file $config[user]@$config[server]:$config[directory]/$file","gonna synchronize $file");
 }
+
+if($config["after_deploy"]){
+	echo _remote_exec($config["after_deploy"],"gonna execute pending migrations");
+}
+
+$config["create_maintenance_file"] && _remote_exec("rm config/maintenance.php");
+
+//_remote_exec('rm config/maintenance.php');
 
 echo "Everything now looks suspiciously good...\n";
 exit(0);
 
-function _exec($cmd){
-	echo "### $cmd\n";
+function _exec($cmd,$options = array()){
+	if(is_string($options)){ $options = array("description" => $options); }
+	$options += array(
+		"description" => null,
+	);
+	echo "################\n";
+	if($options["description"]){ echo "# $options[description]\n"; }
+	echo "$ $cmd\n";
 	exec($cmd,$output,$err);
 	if($err){
 		echo "command execution failed ($err), exiting...\n";
@@ -102,8 +124,8 @@ function _exec($cmd){
 	return join("\n",$output);
 }
 
-function _remote_exec($cmd){
+function _remote_exec($cmd,$options = array()){
 	global $config;
-	$cmd = "ssh $config[user]@$config[server] \"cd $config[directory] && export ATK14_ENV=production && (".str_replace('"','\"',$cmd).")\"";
-	return _exec($cmd);
+	$cmd = "ssh $config[user]@$config[server] \"cd $config[directory] && export ATK14_ENV=production && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
+	return _exec($cmd,$options);
 }
