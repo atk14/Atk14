@@ -31,6 +31,7 @@ class Atk14Utils{
 	static function DetermineEnvironment(){
 		global $HTTP_REQUEST;
 		// Determining environment constants (i.e. DEVELOPMENT, TEST, PRODUCTION).
+
 		// An existing constant has the strongest importance.
 		if(defined("TEST") && TEST){
 			define("DEVELOPMENT",false);
@@ -42,25 +43,25 @@ class Atk14Utils{
 			define("DEVELOPMENT",false);
 			define("TEST",false);
 
-		// No environment constant was defined? Checkatk14_smarty_prefiltering out the ATK14_ENV environment variable...
-		}elseif(strtoupper(getenv("ATK14_ENV"))=="TEST"){
+		// No environment constant was defined? Check out the ATK14_ENV environment variable...
+		}elseif(($atk14_env = strtoupper(getenv("ATK14_ENV")))=="TEST"){
 			define("TEST",true);
 			define("DEVELOPMENT",false);
 			define("PRODUCTION",false);
-		}elseif(strtoupper(getenv("ATK14_ENV"))=="DEVELOPMENT"){
+		}elseif($atk14_env=="DEVELOPMENT"){
 			define("TEST",false);
 			define("DEVELOPMENT",true);
 			define("PRODUCTION",false);
-		}elseif(strtoupper(getenv("ATK14_ENV"))=="PRODUCTION"){
+		}elseif($atk14_env=="PRODUCTION"){
 			define("TEST",false);
 			define("DEVELOPMENT",false);
 			define("PRODUCTION",true);
 
-		// At last there is an auto determination.
+		// At last there is an auto detection.
 		// If there is an internal remote address or there is no remote address at all (i.e. a script is running from a console),
 		// environment is treat as DEVELOPMENT.
 		}else{
-			define("DEVELOPMENT",$HTTP_REQUEST->getRemoteAddr()=="127.0.0.1" || preg_match("/^(192\\.168\\.|10\\.|172\\.16\\.)/",$HTTP_REQUEST->getRemoteAddr()) || $HTTP_REQUEST->getRemoteAddr()=="");
+			define("DEVELOPMENT",in_array($HTTP_REQUEST->getRemoteAddr(),array("127.0.0.1","::1")) || preg_match("/^(192\\.168\\.|10\\.|172\\.16\\.)/",$HTTP_REQUEST->getRemoteAddr()) || $HTTP_REQUEST->getRemoteAddr()=="");
 			define("PRODUCTION",!DEVELOPMENT);
 			define("TEST",false);
 		}
