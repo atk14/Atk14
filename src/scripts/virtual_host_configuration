@@ -16,7 +16,7 @@ while [ -n "$1" ] ; do
 done
 
 APACHE_CONF_DIR=
-APACHE_CONF_FILENAME="$HOSTNAME" # myapp.localhost
+APACHE_CONF_FILENAME="$HOSTNAME.conf" # myapp.localhost
 
 APACHE_CONF=`cat <<EOF
   <VirtualHost *:80>
@@ -25,8 +25,13 @@ APACHE_CONF=`cat <<EOF
    <Directory "$PWD">
     Options FollowSymLinks
     AllowOverride All
-    Order deny,allow
-    Allow from all
+
+    # Apache 2.4
+    Require all granted
+
+    # Apache 2.2
+    #Order deny,allow
+    #Allow from all
    </Directory>
   </VirtualHost>
 EOF`
@@ -38,10 +43,10 @@ if [ -z "$FORCE" ]; then
 # Automatic deploy works great on Ubuntu.
 #
 #   $ $0 -f
-# 
+#
 # or you can do it manually following the instructions bellow.
 #
-#   $ $0 | sudo tee /etc/apache2/sites-available/$HOSTNAME > /dev/null
+#   $ $0 | sudo tee /etc/apache2/sites-available/$APACHE_CONF_FILENAME > /dev/null
 #   $ sudo a2ensite $HOSTNAME
 #   $ echo '127.0.0.1 $HOSTNAME' | sudo tee --append /etc/hosts > /dev/null
 #
@@ -62,12 +67,12 @@ for dir in /etc/apache2/sites-available /etc/apache2/vhosts.d ; do
   if [ -e $dir ] ; then
     APACHE_CONF_DIR="$dir"
     break;
-  fi      
+  fi
 done
 
 # configuring apache
 echo ""
-if [ -z "$APACHE_CONF_DIR" ] ; then 
+if [ -z "$APACHE_CONF_DIR" ] ; then
   echo "WARNING: Apache configuration not found, please configure apache manually!"
 else
   APACHE_CONF_FILE="$APACHE_CONF_DIR/$APACHE_CONF_FILENAME"
@@ -80,13 +85,13 @@ else
     echo "$APACHE_CONF" | sudo tee "$APACHE_CONF_FILE" > /dev/null
 
     for dir in /etc/apache2/sites-enabled ; do
-      if [ -e $dir ] ; then 
+      if [ -e $dir ] ; then
         sudo ln -s $APACHE_CONF_FILE $dir/$APACHE_CONF_FILENAME
-        break 
+        break
       fi
     done
 
-    # !!! toto nelze, protoze v ubuntu je /etc/apache2/apache2.conf 
+    # !!! toto nelze, protoze v ubuntu je /etc/apache2/apache2.conf
     # grep -q '^\s*NameVirtualHost\s*\*\s*:\s*80' /etc/apache2/httpd.conf ||
     # (
     #  echo " Add NamedVirtualHost directive to /etc/apache2/httpd.conf"
@@ -99,11 +104,11 @@ else
     for cmd in /etc/init.d/apache2 /usr/sbin/rcapache2 ; do
       if sudo [ -x "$cmd" ] && sudo "$cmd" restart ; then
         RESTART=1
-        break  
+        break
       fi
     done
     if [ -z "$RESTART" ] ; then
-      echo "WARNING: Restarting command not found or failed, please restart apache manually!"     
+      echo "WARNING: Restarting command not found or failed, please restart apache manually!"
     fi;
   else
     echo "WARNING: Old configuration file found, it was let intact."
