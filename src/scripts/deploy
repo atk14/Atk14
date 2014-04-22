@@ -56,6 +56,8 @@ $config["create_maintenance_file"] = String::ToObject($config["create_maintenanc
 if(is_string($config["rsync"])){
 	$config["rsync"] = $config["rsync"] ? array($config["rsync"]) : array();
 }
+!preg_match('/\/$/',$config["directory"]) && ($config["directory"] .= "/"); // "projects/myapp" -> "projects/myapp"
+
 
 echo "gonna deploy to $stage\n";
 sleep(1);
@@ -92,6 +94,7 @@ foreach($config["rsync"] as $file){
 	if(!$file){ continue; } // empty value
 	if(is_dir($file)){
 		_remote_exec("mkdir -p $file","gonna create directory $file if doesn't exist"); // creates directory when it is missing
+		!preg_match('/\/$/',$file) && ($file .= "/"); // "public/dist" -> "public/dist/"
 	}
 	echo _exec("rsync -avz --delete $file $config[user]@$config[server]:$config[directory]/$file","gonna synchronize $file");
 }
