@@ -293,4 +293,15 @@ key2: <?= $hodnota_2?>
 			"key2" => "don't know"
 		),$ar);
 	}
+
+	function test_white_char_exception(){
+		$data = "---\nkey: value\n\tkey2: value2";
+
+		try{
+			$a = miniYAML::Load($data);
+			$this->fail();
+		}catch(Exception $e){
+			$this->assertContains("token cannot begin with tabulator",$e->getMessage());
+		}
+	}
 }

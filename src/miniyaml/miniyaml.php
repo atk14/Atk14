@@ -324,6 +324,9 @@ class miniYAML{
       }else{
         $value = $this->_readVar($_values,$li,array("testing_for_array" => false));
       }
+			if(preg_match('/^\s/',$key)){
+				throw new Exception("token cannot begin with tabulator or other white character on line: $line");
+			}
       $out[$key] = $value;
     }
     $lines_read = $i;
