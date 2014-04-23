@@ -10,15 +10,15 @@
 * ));
 */
 function class_autoload($params){
+	static $entries_count = 0;
+	if($entries_count>0){ return; }
+	$entries_count++;
 	if(is_string($params)){
 		__class_autoload__(array("directory" => $params));
-		return;
-	}
-	if(is_array($params)){
+	}elseif(is_array($params)){
 		__class_autoload__(array("filenames_by_class" => $params));
-		return;
 	}
-	
+	$entries_count--;
 }
 
 function __class_autoload__($options_or_class_name){
@@ -59,6 +59,7 @@ function __class_autoload__($options_or_class_name){
 
 			foreach($filenames as $f){
 				if(file_exists("$d/$f")){ require_once("$d/$f"); }
+				if(class_exists($class_name)){ return true; }
 			}
 		}
 
