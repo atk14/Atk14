@@ -59,7 +59,7 @@ if(sizeof($argv)>1){
 	while($_argv){
 		$_m = array_pop($_argv);
 		if(preg_match('/^-/',$_m)){ break; }
-		$force_to_execute_migrations[] = $_m;
+		$force_to_execute_migrations[] = preg_replace('/^.*\/([^\/]+)$/','\1',$_m); // "db/migrations/0012_repositories.sql" -> "0012_repositories.sql"
 	}
 }
 
@@ -75,6 +75,13 @@ while($item = readdir($dir)){
 }
 closedir($dir);
 asort($migrations);
+
+foreach($force_to_execute_migrations as $_m){
+	if(!in_array($_m,$migrations)){
+		echo "There is not migration $_m\n";
+		exit(1);
+	}
+}
 
 // creating schema_migrations table when it doesn't exist
 if(!Atk14Migration::SchemaMigrationsTableExists($dbmole)){
