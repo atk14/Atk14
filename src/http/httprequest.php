@@ -178,6 +178,7 @@ class HTTPRequest{
 		if(isset($_SERVER['HTTP_HOST'])){
 			$_tmp = $_SERVER['HTTP_HOST'];
 			settype($_tmp,"string");
+			$_tmp = preg_replace('/:\d+$/','',$_tmp); // secure.example.com:444 -> secure.example.com
 			$this->_HttpHost = $_tmp;
 		}
 

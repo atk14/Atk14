@@ -208,7 +208,7 @@ class tc_http_request extends tc_base{
 	function test_http_host(){
 		global $_SERVER;
 
-		$_SERVER["HTTP_HOST"] = "www.test.cz";
+		$_SERVER["HTTP_HOST"] = "www.test.cz:81";
 
 		$req = new HTTPRequest();
 
