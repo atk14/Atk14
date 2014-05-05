@@ -280,7 +280,7 @@ class tc_http_request extends tc_base{
 	}
 
 	function test_content_type(){
-		$uf = new UrlFetcher("http://127.0.0.1/sources/http/test/dump_request.php");
+		$uf = new UrlFetcher("http://jarek.plovarna.cz/atk14/src/http/test/dump_request.php");
 		$uf->post("testing data",array(
 			"content_type" => "text/plain; charset=UTF-8"
 		));

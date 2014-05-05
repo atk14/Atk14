@@ -3,7 +3,9 @@
  * Dumps the HTTP request into a YAML.
  */
 
-require_once(dirname(__FILE__)."/initialize.inc");
+require_once(dirname(__FILE__)."/../../stringbuffer/load.php");
+require_once(dirname(__FILE__)."/../../miniyaml/load.php");
+require_once(dirname(__FILE__)."/../load.php");
 
 $request = &$HTTP_REQUEST;
 $response = &$HTTP_RESPONSE;
