@@ -41,6 +41,8 @@ __defaults__(array(
 
 __defaults__(array(
 	"ATK14_HTTP_HOST_SSL" => ATK14_HTTP_HOST, // sometimes a ssl hostname differs from the non-ssl, like www.project-x.net and secure.project-x.net
+	"ATK14_NON_SSL_PORT" => 80,
+	"ATK14_SSL_PORT" => 443,
 ));
 
 // SessionStorer`s constants, a session subsystem

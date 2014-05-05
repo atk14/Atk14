@@ -292,6 +292,23 @@ class Atk14Url{
 			if(!$options["ssl"] && $HTTP_REQUEST->ssl() && !is_string($options["with_hostname"]) && ATK14_HTTP_HOST!=ATK14_HTTP_HOST_SSL){
 				$options["with_hostname"] = ATK14_HTTP_HOST;
 			}
+		}else{
+			$options["ssl"] = $HTTP_REQUEST->ssl();
+		}
+
+		if($options["ssl"]){
+			if(!$options["port"]){
+				$options["port"] = $HTTP_REQUEST->ssl() ? $HTTP_REQUEST->getServerPort() : ATK14_SSL_PORT;
+			}
+		}else{
+			if(!$options["port"]){
+				$options["port"] = $HTTP_REQUEST->ssl() ? ATK14_NON_SSL_PORT : $HTTP_REQUEST->getServerPort();
+			}
+		}
+
+		if(!$options["port"]){
+			// ... it's possible that $HTTP_REQUEST->getServerPort() returns null
+			$options["port"] = $options["ssl"] ? ATK14_SSL_PORT : ATK14_NON_SSL_PORT;
 		}
 
 		$out = null;
