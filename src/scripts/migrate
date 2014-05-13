@@ -44,6 +44,7 @@ You can create it by calling
 exit(0);
 }
 
+define("INOBJ_TABLERECORD_CACHES_STRUCTURES",0); // do not read cached structures during migration
 require_once(dirname(__FILE__)."/load.php");
 
 $logger = Atk14Migration::GetLogger();
