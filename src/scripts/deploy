@@ -15,15 +15,6 @@
 require_once(dirname(__FILE__)."/load.php");
 $cwd = getcwd();
 chdir(ATK14_DOCUMENT_ROOT);
-if($cwd!=getcwd()){
-	$ar = $argv;
-	array_shift($ar);
-	array_unshift($ar,"./scripts/deploy");
-	echo "To avoid misunderstandings please go to the applications root and run this script again.\n";
-	echo "  $ cd ",ATK14_DOCUMENT_ROOT,"\n";
-	echo "  $ ",join(" ",$ar),"\n";
-	exit(1);
-}
 
 $CONFIGS = $ATK14_GLOBAL->getConfig("deploy");
 if(!$CONFIGS){
@@ -72,6 +63,10 @@ foreach($config as $k => $v){
 echo "gonna deploy to $stage\n";
 echo miniYAML::Dump(array("$stage" => $config));
 sleep(1);
+
+if($cwd!=getcwd()){
+	echo "NOTICE: working directory changed to ".getcwd()."\n";
+}
 
 $current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD","getting name of the branch you are on"));
 echo "$current_branch\n";
