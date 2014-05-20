@@ -48,6 +48,16 @@ class TcFiles extends TcBase{
 		Files::Unlink($tmp_filename2);
 	}
 
+	function test_get_temp_filename(){
+		$t1 = Files::GetTempFilename();
+		$t2 = Files::GetTempFilename();
+
+		$this->assertContains(TEMP,$t1);
+		$this->assertContains(TEMP,$t2);
+
+		$this->assertTrue($t1!=$t2);
+	}
+
 	function test_move_file(){
 		$dir1 = TEMP."/dir_1/";
 		$dir2 = TEMP."/dir_2";

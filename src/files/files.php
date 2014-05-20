@@ -491,13 +491,21 @@ class Files{
 	 * Files::Unlink($tmp_filename);
 	 */
 	static function WriteToTemp($content, &$error = null, &$error_str = null){
-		$temp_filename = defined("TEMP") ? TEMP : "/tmp";
-		$temp_filename .= "/files_tmp_".uniqid("",true)."";
+		$temp_filename = Files::GetTempFilename();
 		
 		$out = Files::WriteToFile($temp_filename,$content,$error,$error_str);
 		if(!$error){
 			return $temp_filename;
 		}
+	}
+
+	/**
+	 * Returns a filename for a new temporary file.
+	 */
+	static function GetTempFilename(){
+		$temp_filename = defined("TEMP") ? TEMP : "/tmp";
+		$temp_filename .= "/files_tmp_".uniqid("",true)."";
+		return $temp_filename;
 	}
 
 	/**
