@@ -140,7 +140,11 @@ class Files{
 	 * @param string 	&$error_str Error description
 	 * @return int Number of written bytes
 	 */
-	static function WriteToFile($file,$content,&$error = null,&$error_str = null){
+	static function WriteToFile($file,$content,&$error = null,&$error_str = null,$options = array()){
+		$options += array(
+			"file_open_mode" => "w",
+		);
+
 		$bytes = 0;
 		$error = false;
 		$error_str = "";
@@ -161,7 +165,7 @@ class Files{
 			}
 		}
 
-		$f = fopen($file,"w");
+		$f = fopen($file,$options["file_open_mode"]);
 		if(!$f){
 			$error = true;
 			$error_str = "failed to open file for writing";
@@ -190,6 +194,13 @@ class Files{
 
 
 		return $bytes;
+	}
+
+	/**
+	 * Appends content to the given file.
+	 */
+	static function AppendToFile($file,$content,&$error = null,&$error_str = null){
+		return Files::WriteToFile($file,$content,$error,$error_str,array("file_open_mode" => "a"));
 	}
 
 	/**

@@ -104,4 +104,18 @@ class TcFiles extends TcBase{
 
 		rmdir("$dir2/dir_3");
 	}
+
+	function test_AppendToFile(){
+		$filename = Files::GetTempFilename();
+		$this->assertEquals(false,file_exists($filename));
+
+		$this->assertEquals(5,Files::WriteToFile($filename,"Hello"));
+		$this->assertEquals("Hello",Files::GetFileContent($filename));
+
+		$this->assertEquals(7,Files::AppendToFile($filename," World!"));
+		clearstatcache();
+		$this->assertEquals("Hello World!",Files::GetFileContent($filename));
+
+		Files::Unlink($filename);
+	}
 }
