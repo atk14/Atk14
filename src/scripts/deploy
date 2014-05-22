@@ -39,16 +39,22 @@ $default_config += ($raw_def = array(
 	"deploy_via" => "git_push", // there is only one way
 	"deploy_repository" => null,
 	"deploy_branch" => "master",
+	"before_deploy" => array(),
 	"rsync" => array(), // array of directories which have to be synchronized to the server
-	"after_deploy" => "./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache",
+	"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
 ));
 $config = $CONFIGS[$stage];
 $config += $default_config;
 $config["create_maintenance_file"] = String::ToObject($config["create_maintenance_file"])->toBoolean(); // "false" -> false
-if(is_string($config["rsync"])){
-	$config["rsync"] = $config["rsync"] ? array($config["rsync"]) : array();
+
+// converting string into array on the following options
+foreach(array("before_deploy","rsync","after_deploy") as $k){
+	if(is_string($config[$k])){
+		$config[$k] = $config[$k] ? array($config[$k]) : array();
+	}
 }
-!preg_match('/\/$/',$config["directory"]) && ($config["directory"] .= "/"); // "projects/myapp" -> "projects/myapp"
+
+!preg_match('/\/$/',$config["directory"]) && ($config["directory"] .= "/"); // "projects/myapp" -> "projects/myapp/"
 
 $raw_def_keys = array_keys($raw_def);
 foreach($config as $k => $v){
@@ -93,6 +99,8 @@ if(sizeof($matches[1])==0){
 
 $config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create the maintenance file');
 
+_run_commands($config["before_deploy"],"before_deploy");
+
 _exec("git push $stage $config[deploy_branch]","gonna push to deployment repo");
 echo _remote_exec("git submodule init && git submodule update","gonna initialize and update submodules");
 
@@ -105,14 +113,14 @@ foreach($config["rsync"] as $file){
 	echo _exec("rsync -avz --delete $file $config[user]@$config[server]:$config[directory]/$file","gonna synchronize $file");
 }
 
-if($config["after_deploy"]){
-	echo _remote_exec($config["after_deploy"],"gonna execute after_deploy command");
-}
+_run_commands($config["after_deploy"],"after_deploy");
 
 $config["create_maintenance_file"] && _remote_exec("rm config/maintenance.php","gonna remove the maintenance file");
 
 echo "Everything now looks suspiciously good...\n";
 exit(0);
+
+// ------------- and now some functions...
 
 function _exec($cmd,$options = array()){
 	if(is_string($options)){ $options = array("description" => $options); }
@@ -136,3 +144,19 @@ function _remote_exec($cmd,$options = array()){
 	$cmd = "ssh $config[user]@$config[server] \"cd $config[directory] && export ATK14_ENV=production && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
 	return _exec($cmd,$options);
 }
+
+function _run_commands($commands,$name = "before_deploy"){
+	foreach($commands as $cmd){
+		$location = "remote";
+		if(preg_match($_pattern = '/^@(local|remote)\s/',$cmd,$matches)){
+			$location = $matches[1];
+			$cmd = preg_replace($_pattern,'',$cmd); // "@local ./composer.phar update" -> "./composer.phar update"
+		}
+		if($location=="remote"){
+			echo _remote_exec($cmd,"gonna execute $name command remotely");
+		}else{
+			echo _exec($cmd,"gonna execute $name command locally");
+		}
+	}
+}
+
