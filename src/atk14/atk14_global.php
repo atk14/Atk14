@@ -125,6 +125,16 @@ class Atk14Global{
 	}
 
 	/**
+	 * print_r($ATK14_GLOBAL->getSupportedLangs()); // array("en","cs","de");
+	 */
+	function getSupportedLangs(){
+		if($locales = $this->getConfig("locale")){
+			return array_keys($locales);
+		}
+		return array("cs");
+	}
+
+	/**
 	 * Returns default language code.
 	 *
 	 * It's either the ATK14_DEFAULT_LANG constant or the first code in the config/locale.yml.
@@ -138,12 +148,8 @@ class Atk14Global{
 			return ATK14_DEFAULT_LANG;
 		}
 
-		if($locales = $this->getConfig("locale")){
-			$langs = array_keys($locales);
-			if(isset($langs[0])){ return $langs[0]; }
-		}
-
-		return "cs";
+		$langs = $this->getSupportedLangs();
+		return $langs[0];
 	}
 
 	/**

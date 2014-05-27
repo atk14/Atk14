@@ -3,6 +3,8 @@ class TcGlobal extends TcBase{
 	function test(){
 		$global = new Atk14Global();
 
+		$this->assertEquals(array("cs","en","sk"),$global->getSupportedLangs()); // see config/locale.yml
+
 		$this->assertEquals("cs",$global->getDefaultLang());
 		$this->assertEquals("cs",$global->getLang());
 
