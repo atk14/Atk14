@@ -288,4 +288,25 @@ class TcString extends TcBase{
 		$s = new String(false);
 		$this->assertEquals(false,$s->toBoolean());
 	}
+
+	function test_substr(){
+		$s = new String("Lorem Ipsum");
+
+		$this->assertEquals("Lorem",(string)$s->substr(0,5));
+		$this->assertEquals("Ipsum",(string)$s->substr(-5));
+		$this->assertEquals("Lorem Ipsum",(string)$s->substr(0));
+	}
+
+	function test_toSlug(){
+		$s = new String("Špinavá Ředkvička!");
+		$this->assertEquals("UTF-8",$s->getEncoding());
+
+		$a = $s->toSlug();
+		$this->assertEquals("spinava-redkvicka",(string)$a);
+		$this->assertEquals("ASCII",$a->getEncoding());
+
+		$this->assertEquals("spinava",(string)$s->toSlug(7));
+		$this->assertEquals("spinava",(string)$s->toSlug(8));
+		$this->assertEquals("spinava-r",(string)$s->toSlug(9));
+	}
 }

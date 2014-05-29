@@ -363,11 +363,18 @@ class String{
 	/**
 	 * Returns substring of the stored string.
 	 *
+	 * 		$str = new String("Lorem Ipsum");
+	 * 		echo $str->substr(0,5); // "Lorem"
+	 * 		echo $str->substr(-5); // "Ipsum"
+	 *
 	 * @param integer $start
 	 * @param integer $length
 	 * @return String
 	 */
 	function substr($start,$length = null){
+		if(is_null($length)){
+			return $this->_copy(substr($this->_String,$start));
+		}
 		return $this->_copy(substr($this->_String,$start,$length));
 	}
 
@@ -538,6 +545,14 @@ class String{
 	 */
 	function toAscii(){
 		return $this->_copy(Translate::Trans($this->toString(),$this->getEncoding(),"ASCII"),"ASCII");
+	}
+
+	/**
+	 * $s = new String("Amazing facts about foxes!");
+	 * echo $s->toSlug(); // "amazing-facts-about-foxes"
+	 */
+	function toSlug($max_length = null){
+		return $this->toAscii()->lower()->gsub('/[^a-z0-9]+/',' ')->substr(0,$max_length)->trim()->replace(' ','-');
 	}
 
 	function truncate($length,$options = array()){
