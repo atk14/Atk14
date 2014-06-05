@@ -219,6 +219,15 @@ class Dates{
 			$_sign = -1;
 		}
 
+		if(class_exists("DateTime")){
+			// this is faster.
+			$datetime1 = new DateTime($date_from);
+			$datetime2 = new DateTime($date_to);
+			$interval = $datetime2->diff($datetime1);
+			$out = $_sign * (int)$interval->days + $_sign;
+			return $out;
+		}
+
 		$_days = 1;
 		$_current = $_from;
 		while(1){
@@ -597,4 +606,3 @@ class Dates{
 		return $_year*10000 + $_month*100 + $_day;
 	}
 }
-?>

@@ -146,6 +146,14 @@ class TcDate extends TcBase{
 		$this->assertEquals(25,$d1->daysFrom($d2));
 
 		$this->assertEquals(24,$d1->daysFrom("2010-05-02"));
+
+		$d1 = Date::ByDate("2010-01-01");
+		$d2 = Date::ByDate("2011-01-01");
+		$this->assertEquals(365,$d2->daysFrom($d1));
+
+		$d1 = Date::ByDate("2012-01-01");
+		$d2 = Date::ByDate("2013-01-01");
+		$this->assertEquals(366,$d2->daysFrom($d1)); // prestupny rok
 	}
 
 	function test_compare(){
