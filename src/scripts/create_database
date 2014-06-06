@@ -40,7 +40,6 @@ if [ "$1" != '-f' ] ; then
 echo
 echo "Now you may want to run"
 echo "  $ touch ~/.pgpass && chmod 600 ~/.pgpass && ATK14_ENV=$environment $dirname/pgpass_record >> ~/.pgpass"
-echo "  $ ATK14_ENV=$environment $dirname/initialize_database"
 echo "  $ ATK14_ENV=$environment $dirname/migrate"
 echo
 echo "Any time you can enter database console by typing"
