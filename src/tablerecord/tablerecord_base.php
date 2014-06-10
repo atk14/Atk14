@@ -1006,8 +1006,9 @@ class TableRecord_Base extends inobj{
 		}
 		settype($field_name,"string");
 		if(!in_array($field_name,$this->getKeys())){
-			error_log(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name, returning null");
-			return null;
+			throw new Exception(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name");
+			//error_log(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name, returning null");
+			//return null;
 		}
 		$this->_readValueIfWasNotRead($field_name);
 		return $this->_RecordValues[$field_name];
