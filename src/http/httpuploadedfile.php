@@ -45,6 +45,10 @@ class HTTPUploadedFile{
 	 */
 	var $_MimeType = null;
 
+	function __construct(){
+
+	}
+
 	static function GetInstances($options = array()){
 		global $_FILES;
 

@@ -14,6 +14,22 @@
  * @package Atk14\Http
  */
 class HTTPXFile extends HTTPUploadedFile{
+
+	function __construct(){
+		global $HTTP_REQUEST;
+
+		parent::__construct();
+
+		if(preg_match('/\bfilename="(.*?)"/',$HTTP_REQUEST->getHeader("Content-Disposition"),$matches)){ // Content-Disposition:	attachment; filename="DSC_0078.JPG"
+			$this->_FileName = $matches[1];
+
+		// legacy way
+		}elseif($filename = $HTTP_REQUEST->getHeader("X-File-Name")){
+			$this->_FileName = $filename;
+
+		}
+	}
+
 	/**
 	 * Initialize instance with uploaded file
 	 *
@@ -25,12 +41,12 @@ class HTTPXFile extends HTTPUploadedFile{
 
 		$options = array_merge(array(
 			"name" => "file",
+			"request" => null,
 		),$options);
 
-		if($HTTP_REQUEST->post() && ($filename = $HTTP_REQUEST->getHeader("X-File-Name"))){
+		if($HTTP_REQUEST->post() && (preg_match('/^attachment/',$HTTP_REQUEST->getHeader("Content-Disposition")) || $HTTP_REQUEST->getHeader("X-File-Name"))){
 			$out = new HTTPXFile();
 			$out->_writeTmpFile($HTTP_REQUEST->getRawPostData());
-			$out->_FileName = $filename;
 			$out->_Name = $options["name"];
 			return $out;
 		}
@@ -75,6 +91,36 @@ class HTTPXFile extends HTTPUploadedFile{
 	 */
 	function _getChunkOrder(){
 		global $HTTP_REQUEST;
+
+		$content_range = $HTTP_REQUEST->getHeader("Content-Range"); // Content-Range: bytes 0-1048575/2344594
+		if(preg_match('/^bytes (\d+)-(\d+)\/(\d+)$/',$content_range,$matches)){
+			$start_offset = $matches[1];
+			$end_offset = $matches[2];
+			$total_length = $matches[3];
+			if(!($total_length>0 && $end_offset>$start_offset && $end_offset<$total_length)){ // sanitization never hurts
+				return null;
+			}
+
+			if($start_offset==0 && $end_offset+1==$total_length){
+				return array(1,1);
+			}
+
+			if($start_offset==0){
+				return array(1,3);
+			}
+
+			if($start_offset>0 && $end_offset+1<$total_length){
+				return array(2,3);
+			}
+
+			if($start_offset>0 && $end_offset+1==$total_length){
+				return array(3,3);
+			}
+
+			assert(false);
+		}
+
+		// legacy way
 		$ch = $HTTP_REQUEST->getHeader("X-File-Chunk");
 		if(preg_match('/^(\d+)\/(\d+)$/',$ch,$matches)){
 			$order = $matches[1]+0;
@@ -107,7 +153,11 @@ class HTTPXFile extends HTTPUploadedFile{
 	 */
 	function getToken(){
 		global $HTTP_REQUEST;
-		return substr(preg_replace('/[^a-z0-9_-]/i','',$HTTP_REQUEST->getHeader("X-File-Token")),0,20); // little sanitization never harms
+		if($HTTP_REQUEST->getHeader("X-File-Token")){ // legy way
+			return substr(preg_replace('/[^a-z0-9_-]/i','',$HTTP_REQUEST->getHeader("X-File-Token")),0,20); // little sanitization never harms
+		}
+
+		return md5($HTTP_REQUEST->getHeader("Content-Disposition"));
 	}
 
 	/**

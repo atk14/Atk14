@@ -1,7 +1,48 @@
 <?php
 class tc_httpxfile extends tc_base{
 	function test(){
+		global $HTTP_REQUEST;
+		$HTTP_REQUEST = new HTTPRequest(); // reset
+
+		$request = $HTTP_REQUEST;
+
+		$this->assertNull(HTTPXFile::GetInstance());
+
+		$request->setMethod("post");
+
+		$this->assertNull(HTTPXFile::GetInstance());
+
+		$request->setHeader("Content-Disposition",'attachment; filename="hlava.jpg"');
+
+		$this->assertNotNull($file = HTTPXFile::GetInstance());
+		$this->assertEquals("hlava.jpg",$file->getFileName());
+		$this->assertEquals(false,$file->chunkedUpload());
+
+		$request->setHeader("Content-Range","bytes 0-100/256");
+
+		$this->assertEquals(true,$file->chunkedUpload());
+		$this->assertEquals(true,$file->firstChunk());
+		$this->assertEquals(false,$file->lastChunk());
+
+		$request->setHeader("Content-Range","bytes 200-255/256");
+		$this->assertEquals(true,$file->chunkedUpload());
+		$this->assertEquals(false,$file->firstChunk());
+		$this->assertEquals(true,$file->lastChunk());
+
+		$request->setHeader("Content-Range","bytes 100-200/256");
+		$this->assertEquals(true,$file->chunkedUpload());
+		$this->assertEquals(false,$file->firstChunk());
+		$this->assertEquals(false,$file->lastChunk());
+
+		$request->setHeader("Content-Range","bytes 0-255/256");
+		$this->assertEquals(false,$file->chunkedUpload());
+		$this->assertEquals(true,$file->firstChunk());
+		$this->assertEquals(true,$file->lastChunk());
+	}
+
+	function test_legacy_way(){
 		global $HTTP_REQUEST,$_FILES;
+		$HTTP_REQUEST = new HTTPRequest(); // reset
 
 		$_FILES = null;
 
