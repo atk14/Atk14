@@ -28,6 +28,7 @@ class Cache{
 
 	static function Prepare($class,$ids){
 		$ids = Cache::_Deobjectilize($ids);
+		assert(class_exists($class)); // this needs to be called before lowering the name of the class (autoload issue)
 		$class = strtolower($class);
 		$c = Cache::GetInstance();
 		!is_array($ids) && ($ids = array($ids));
@@ -42,6 +43,7 @@ class Cache{
 
 	static function Get($class,$ids){
 		$ids = Cache::_Deobjectilize($ids);
+		assert(class_exists($class)); // this needs to be called before lowering the name of the class (autoload issue)
 		$class = strtolower($class);
 		Cache::Prepare($class,$ids);
 		$c = Cache::GetInstance();
