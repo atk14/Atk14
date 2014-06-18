@@ -97,9 +97,11 @@ if(sizeof($matches[1])==0){
 	exit(1);
 }
 
-$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create the maintenance file');
+//$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create the maintenance file');
 
 _run_commands($config["before_deploy"],"before_deploy");
+
+_create_maintenance_file_if_required(); // we are trying to create the maintenance file as late as possible
 
 _exec("git push $stage $config[deploy_branch]","gonna push to deployment repo");
 echo _remote_exec("git submodule init && git submodule update","gonna initialize and update submodules");
@@ -153,10 +155,21 @@ function _run_commands($commands,$name = "before_deploy"){
 			$cmd = preg_replace($_pattern,'',$cmd); // "@local ./composer.phar update" -> "./composer.phar update"
 		}
 		if($location=="remote"){
+			_create_maintenance_file_if_required(); // we are trying to create the maintenance file as late as possible - just before first remote command execution
 			echo _remote_exec($cmd,"gonna execute $name command remotely");
 		}else{
 			echo _exec($cmd,"gonna execute $name command locally");
 		}
 	}
+}
+
+function _create_maintenance_file_if_required(){
+	global $config;
+	static $already_created = false;
+
+	if($already_created){ return; }
+
+	$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create the maintenance file');
+	$already_created = true;
 }
 
