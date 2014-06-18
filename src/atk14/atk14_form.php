@@ -930,7 +930,7 @@ class Atk14Form extends Form
 	// !!!   echo $field->label_tag();
 		$this->_call_super_constructor();
 		if(!$out = parent::get_field($name)){
-			throw new Exception(get_class($this).": there is no such a field $name");
+			throw new Exception(get_class($this).": there is no such field $name");
 		}
 		return $out;
 	}
