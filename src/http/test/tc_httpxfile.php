@@ -40,6 +40,47 @@ class tc_httpxfile extends tc_base{
 		$this->assertEquals(true,$file->lastChunk());
 	}
 
+	function test_getToken(){
+		$req1 = new HTTPRequest();
+		$req1->setMethod("post");
+		$req1->setRemoteAddr("10.20.30.40");
+		$req1->setHeader("Content-Disposition",'attachment; filename="hlava.jpg"');
+		$req1->setHeader("Content-Range","bytes 0-100/256");
+
+		$req2 = new HTTPRequest();
+		$req2->setMethod("post");
+		$req2->setRemoteAddr("10.20.30.40");
+		$req2->setHeader("Content-Disposition",'attachment; filename="hlava.jpg"');
+		$req2->setHeader("Content-Range","bytes 200-255/256");
+
+		$file1 = HTTPXFile::GetInstance(array("request" => $req1));
+		$file2 = HTTPXFile::GetInstance(array("request" => $req2));
+
+		$this->assertEquals(32,strlen($file1->getToken()));
+		$this->assertTrue($file1->getToken()==$file2->getToken());
+
+		$req2->setHeader("Content-Range","bytes 200-255/3000"); // different total size
+		$this->assertTrue($file1->getToken()!=$file2->getToken());
+
+		$req2->setHeader("Content-Range","bytes 200-255/256");
+		$this->assertTrue($file1->getToken()==$file2->getToken());
+
+		$req2->setHeader("Content-Disposition",'attachment; filename="hlava.png"'); // different filename
+		$file2 = HTTPXFile::GetInstance(array("request" => $req2));
+		$this->assertTrue($file1->getToken()!=$file2->getToken());
+
+		$req2->setHeader("Content-Disposition",'attachment; filename="hlava.jpg"');
+		$file2 = HTTPXFile::GetInstance(array("request" => $req2));
+		$this->assertTrue($file1->getToken()==$file2->getToken());
+
+		$req2->setRemoteAddr("11.22.33.44"); // different remote address
+		$this->assertTrue($file1->getToken()!=$file2->getToken());
+		$this->assertTrue($file1->getToken(array("consider_remote_addr" => false))==$file2->getToken(array("consider_remote_addr" => false)));
+
+		$req2->setRemoteAddr("10.20.30.40");
+		$this->assertTrue($file1->getToken()==$file2->getToken());
+	}
+
 	function test_legacy_way(){
 		global $HTTP_REQUEST,$_FILES;
 		$HTTP_REQUEST = new HTTPRequest(); // reset

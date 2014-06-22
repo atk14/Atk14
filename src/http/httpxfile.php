@@ -15,16 +15,24 @@
  */
 class HTTPXFile extends HTTPUploadedFile{
 
-	function __construct(){
+	var $_Request;
+
+	function __construct($options = array()){
 		global $HTTP_REQUEST;
+
+		$options += array(
+			"request" => $HTTP_REQUEST
+		);
 
 		parent::__construct();
 
-		if(preg_match('/\bfilename="(.*?)"/',$HTTP_REQUEST->getHeader("Content-Disposition"),$matches)){ // Content-Disposition:	attachment; filename="DSC_0078.JPG"
+		$this->_Request = $options["request"];
+
+		if(preg_match('/\bfilename="(.*?)"/',$this->_Request->getHeader("Content-Disposition"),$matches)){ // Content-Disposition:	attachment; filename="DSC_0078.JPG"
 			$this->_FileName = $matches[1];
 
 		// legacy way
-		}elseif($filename = $HTTP_REQUEST->getHeader("X-File-Name")){
+		}elseif($filename = $this->_Request->getHeader("X-File-Name")){
 			$this->_FileName = $filename;
 
 		}
@@ -39,14 +47,16 @@ class HTTPXFile extends HTTPUploadedFile{
 	static function GetInstance($options = array()){
 		global $HTTP_REQUEST;
 
-		$options = array_merge(array(
+		$options += array(
 			"name" => "file",
-			"request" => null,
-		),$options);
+			"request" => $HTTP_REQUEST,
+		);
 
-		if($HTTP_REQUEST->post() && (preg_match('/^attachment/',$HTTP_REQUEST->getHeader("Content-Disposition")) || $HTTP_REQUEST->getHeader("X-File-Name"))){
-			$out = new HTTPXFile();
-			$out->_writeTmpFile($HTTP_REQUEST->getRawPostData());
+		$request = $options["request"];
+
+		if($request->post() && (preg_match('/^attachment/',$request->getHeader("Content-Disposition")) || $request->getHeader("X-File-Name"))){
+			$out = new HTTPXFile(array("request" => $request));
+			$out->_writeTmpFile($request->getRawPostData());
 			$out->_Name = $options["name"];
 			return $out;
 		}
@@ -90,18 +100,12 @@ class HTTPXFile extends HTTPUploadedFile{
 	 *
 	 */
 	function _getChunkOrder(){
-		global $HTTP_REQUEST;
+		if($crd = $this->_getContentRangeData()){
+			$start_offset = $crd["start_offset"];
+			$end_offset = $crd["end_offset"];
+			$total_size = $crd["total_size"];
 
-		$content_range = $HTTP_REQUEST->getHeader("Content-Range"); // Content-Range: bytes 0-1048575/2344594
-		if(preg_match('/^bytes (\d+)-(\d+)\/(\d+)$/',$content_range,$matches)){
-			$start_offset = $matches[1];
-			$end_offset = $matches[2];
-			$total_length = $matches[3];
-			if(!($total_length>0 && $end_offset>$start_offset && $end_offset<$total_length)){ // sanitization never hurts
-				return null;
-			}
-
-			if($start_offset==0 && $end_offset+1==$total_length){
+			if($start_offset==0 && $end_offset+1==$total_size){
 				return array(1,1);
 			}
 
@@ -109,11 +113,11 @@ class HTTPXFile extends HTTPUploadedFile{
 				return array(1,3);
 			}
 
-			if($start_offset>0 && $end_offset+1<$total_length){
+			if($start_offset>0 && $end_offset+1<$total_size){
 				return array(2,3);
 			}
 
-			if($start_offset>0 && $end_offset+1==$total_length){
+			if($start_offset>0 && $end_offset+1==$total_size){
 				return array(3,3);
 			}
 
@@ -121,11 +125,28 @@ class HTTPXFile extends HTTPUploadedFile{
 		}
 
 		// legacy way
-		$ch = $HTTP_REQUEST->getHeader("X-File-Chunk");
+		$ch = $this->_Request->getHeader("X-File-Chunk");
 		if(preg_match('/^(\d+)\/(\d+)$/',$ch,$matches)){
 			$order = $matches[1]+0;
 			$total = $matches[2]+0;
 			return array($order,$total);
+		}
+	}
+
+	protected function _getContentRangeData(){
+		$content_range = $this->_Request->getHeader("Content-Range"); // Content-Range: bytes 0-1048575/2344594
+		if(preg_match('/^bytes (\d+)-(\d+)\/(\d+)$/',$content_range,$matches)){
+			$start_offset = $matches[1];
+			$end_offset = $matches[2];
+			$total_size = $matches[3];
+			if(!($total_size>0 && $end_offset>$start_offset && $end_offset<$total_size)){ // sanitization never hurts
+				return null;
+			}
+			return array(
+				"start_offset" => $start_offset,
+				"end_offset" => $end_offset,
+				"total_size" => $total_size,
+			);
 		}
 	}
 
@@ -149,15 +170,27 @@ class HTTPXFile extends HTTPUploadedFile{
 	 * 
 	 * May be useful for proper chunked upload handling.
 	 *
+	 * Returned string can be safely used as a part of a temporary file's name.
+	 *
 	 * @return string
 	 */
-	function getToken(){
-		global $HTTP_REQUEST;
-		if($HTTP_REQUEST->getHeader("X-File-Token")){ // legy way
-			return substr(preg_replace('/[^a-z0-9_-]/i','',$HTTP_REQUEST->getHeader("X-File-Token")),0,20); // little sanitization never harms
+	function getToken($options = array()){
+		$options += array(
+			"consider_remote_addr" => true,
+		);
+
+		if($this->_Request->getHeader("X-File-Token")){ // legacy way
+			return substr(preg_replace('/[^a-z0-9_-]/i','',$this->_Request->getHeader("X-File-Token")),0,20); // little sanitization never harms
 		}
 
-		return md5($HTTP_REQUEST->getHeader("Content-Disposition"));
+		if(!$crd = $this->_getContentRangeData()){
+			return null;
+		}
+
+		$token_data = $this->getFileName().$crd["total_size"];
+		if($options["consider_remote_addr"]){ $token_data .= $this->_Request->getRemoteAddr(); }
+
+		return md5($token_data);
 	}
 
 	/**
