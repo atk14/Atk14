@@ -61,7 +61,7 @@ class Packer{
 	* @param string  	$salt novy salt
 	* @return string  predchozi salt
 	*/
-	function SetSalt($salt){
+	static function SetSalt($salt){
 		settype($salt,"string");
 		$current_salt = Packer::_GetSetSalt(true,$salt);
 		
@@ -74,7 +74,7 @@ class Packer{
 	* $p = Packer::Pack("hello!");
 	* $p = Packer::Packer(array("a","b","c"));
 	*/
-	function Pack($variable,$options = array()){
+	static function Pack($variable,$options = array()){
 		$options = array_merge(array(
 			"use_compress" => PACKER_USE_COMPRESS,
 			"enable_encryption" => PACKER_ENABLE_ENCRYPTION
@@ -112,7 +112,7 @@ class Packer{
 	 *	}
 	 * </code>
 	 */
-	function Unpack($packed,&$out,$options = array()){
+	static function Unpack($packed,&$out,$options = array()){
 		$options += array(
 			"enable_encryption" => PACKER_ENABLE_ENCRYPTION,
 		);
@@ -161,7 +161,7 @@ class Packer{
 	* Vrati null v pripade, ze $packed byla je porusena.
 	* Vrati ovsem null i v pripade, ze do $packed byl zabalen null.
 	*/
-	function Decode($packed){
+	static function Decode($packed){
 		if(Packer::Unpack($packed,$out)){
 			return $out;
 		}
@@ -177,7 +177,7 @@ class Packer{
 	* @param string  &$str 			zabalena promenna
 	* @return string podpis
 	*/
-	function _CalculateSignature(&$str){
+	static function _CalculateSignature(&$str){
 		$_constant_secret_salt = "";
 		if(defined(PACKER_CONSTANT_SECRET_SALT)){
 			$_constant_secret_salt = PACKER_CONSTANT_SECRET_SALT;
@@ -196,7 +196,7 @@ class Packer{
 	* @param string $salt novy salt, $set musi byt nastaven na true, pokud je nutne nastavit novy salt
 	* @return string  aktualni nebo predchozi (pri nastavovani) salt
 	*/
-	function _GetSetSalt($set = false,$salt = ""){
+	static function _GetSetSalt($set = false,$salt = ""){
 		static $_SALT_;
 		settype($set,"boolean");
 		settype($salt,"string");
@@ -220,7 +220,7 @@ class Packer{
 	* @access private
 	* @return array
 	*/
-	function _GetEscape(){
+	static function _GetEscape(){
 
 		//nevim presne, jake znaky muze obsahovat base64, snad to bude stacit
 		return array(
@@ -243,7 +243,7 @@ class Packer{
 	* @param string $data_string
 	* @return string
 	*/
-	function _EncodeDataString($data_string){
+	static function _EncodeDataString($data_string){
 		settype($data_string,"string");
 		
 		$out = array();
@@ -270,7 +270,7 @@ class Packer{
 	* @param string $decoded_data_string
 	* @return string
 	*/
-	function _DecodeDataString($encoded_data_string){
+	static function _DecodeDataString($encoded_data_string){
 		settype($encoded_data_string,"string");
 	
 		if(strlen($encoded_data_string)==0){
@@ -299,13 +299,13 @@ class Packer{
 		return base64_decode($out);
 	}
 
-	function _EncryptData($data){
+	static function _EncryptData($data){
 		// TODO: encyption and decryption has been copy&pastied somwhere from the internet, check out that it's ok
 		$key = PACKER_CONSTANT_SECRET_SALT;
 		return mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $data, MCRYPT_MODE_CBC, md5(md5($key)));
 	}
 
-	function _DecryptData($data){
+	static function _DecryptData($data){
 		$key = PACKER_CONSTANT_SECRET_SALT;
 		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), $data, MCRYPT_MODE_CBC, md5(md5($key))), "\0");
 	}
