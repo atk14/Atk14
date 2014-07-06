@@ -584,7 +584,7 @@ class TableRecord_Base extends inobj{
 	 *
 	 * @return TableRecord_EmptyFinder
 	 */
-	function EmptyFinder(){
+	static function EmptyFinder(){
 		return new TableRecord_EmptyFinder();
 	}
 
