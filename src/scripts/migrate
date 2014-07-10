@@ -16,6 +16,7 @@ Load and process *.sql or *.php files from the migration folder (db/migrations/)
 
 For displaying this help message run
  $ $script -h
+ $ $script --help
 
 To process all pending migrations:
  $ $script
@@ -60,7 +61,7 @@ $previewing = isset($arguments["p"]) || isset($arguments["preview"]);
 $listing = isset($arguments["l"]) || isset($arguments["list"]);
 
 if($listing){
-	$rows = $dbmole->selectRows("SELECT version,created_at FROM schema_migrations ORDER BY created_at");
+	$rows = $dbmole->selectRows("SELECT version,created_at FROM schema_migrations ORDER BY created_at,version");
 	foreach($rows as $row){
 		echo substr($row['created_at'],0,19), ' ', $row['version'], "\n";
 	}
