@@ -7,7 +7,7 @@
  *	$ ./scripts/migrations --help
  */
 
-$arguments = getopt("hpf",array("help","preview","force"));
+$arguments = getopt("hpfl",array("help","preview","force","list"));
 if(isset($arguments["h"]) || isset($arguments["help"])){
 $script = $argv[0];
 echo ltrim("
@@ -17,9 +17,6 @@ Load and process *.sql or *.php files from the migration folder (db/migrations/)
 For displaying this help message run
  $ $script -h
 
-To display migrations waiting for processing:
- $ $script -p
-
 To process all pending migrations:
  $ $script
 
@@ -28,6 +25,15 @@ To process just specific migrations:
 
 Force to process specific migration even when it was already processed:
  $ $script -f 0012_import_sample_data_migration.php
+ $ $script --force 0012_import_sample_data_migration.php
+
+To display migrations waiting for processing:
+ $ $script -p
+ $ $script --preview
+
+To display already executed migrations:
+ $ $script -l
+ $ $script --list
 
 You can run migrate script in different environments:
  $ ATK14_ENV=development $script -p
@@ -36,7 +42,8 @@ You can run migrate script in different environments:
                                                                                   
 Note: table schema_migrations needs to be created in the database.
   CREATE TABLE schema_migrations(
-    version VARCHAR(255) PRIMARY KEY
+    version VARCHAR(255) PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
   );
 You can create it by calling
  $ ./scripts/initialize_database
@@ -50,6 +57,15 @@ require_once(dirname(__FILE__)."/load.php");
 $logger = Atk14Migration::GetLogger();
 
 $previewing = isset($arguments["p"]) || isset($arguments["preview"]);
+$listing = isset($arguments["l"]) || isset($arguments["list"]);
+
+if($listing){
+	$rows = $dbmole->selectRows("SELECT version,created_at FROM schema_migrations ORDER BY created_at");
+	foreach($rows as $row){
+		echo substr($row['created_at'],0,19), ' ', $row['version'], "\n";
+	}
+	exit(0);
+}
 
 // read migrations from command line
 // $ ./scripts/migrate -p 0009_adding_fileds_to_drafts.sql 0010_altering_constraint.sql
