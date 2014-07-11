@@ -55,9 +55,9 @@ var ATK14 = (function( $, window, undefined ) {
 		var href = $link.attr( "href" ),
 			method = $link.data( "method" ),
 			$form = $( "<form method='post' action='" + href + "'></form>" ),
-			metadata_input = "<input name='_method' value='" + method + "' type='hidden' />";
+			metadataInput = "<input name='_method' value='" + method + "' type='hidden' />";
 
-		$form.hide().append( metadata_input ).appendTo( "body" );
+		$form.hide().append( metadataInput ).appendTo( "body" );
 		$form.submit();
 		$form.remove();
 	}
