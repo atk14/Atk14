@@ -30,7 +30,7 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 *
 	 * @var array
 	 */
-	private $_Values = array();
+	protected $_Values = array();
 
 	/**
 	 * By default the constructor initializes empty dictionary. The initial dictionary can be defined by array passed to constructor.
