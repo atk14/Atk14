@@ -27,7 +27,7 @@ while($item = readdir($d_handle)){
 	if($item=='.' || $item=='..'){ continue; }
 	if(preg_match('/^README\./',$item)){ continue; }
 
-	$file = TEMP."$item";
+	$file = "$dirname/$item";
 	if(is_dir($file)){
 		$counter += Files::RecursiveUnlinkDir($file);
 	}
