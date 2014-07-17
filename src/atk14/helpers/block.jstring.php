@@ -33,7 +33,7 @@
 function smarty_block_jstring($params,$content,$template,&$repeat){
 	if($repeat){ return; }
 	$params = array_merge(array(
-		"escsape" => ""
+		"escape" => ""
 	),$params);
 	$content = Atk14Utils::EscapeForJavascript($content);
 	if($params["escape"] == "html"){
