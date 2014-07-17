@@ -74,6 +74,7 @@ if($listing){
 $force_to_execute_migrations = array();
 if(sizeof($argv)>1){
 	$_argv = $argv;
+	array_shift($_argv);
 	while($_argv){
 		$_m = array_pop($_argv);
 		if(preg_match('/^-/',$_m)){ break; }
