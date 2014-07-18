@@ -112,7 +112,7 @@ foreach($config["rsync"] as $file){
 		_remote_exec("mkdir -p $file","gonna create directory $file if doesn't exist"); // creates directory when it is missing
 		!preg_match('/\/$/',$file) && ($file .= "/"); // "public/dist" -> "public/dist/"
 	}
-	echo _exec("rsync -avz --delete $file $config[user]@$config[server]:$config[directory]/$file","gonna synchronize $file");
+	echo _exec("rsync -av --delete $file $config[user]@$config[server]:$config[directory]/$file","gonna synchronize $file");
 }
 
 _run_commands($config["after_deploy"],"after_deploy");
