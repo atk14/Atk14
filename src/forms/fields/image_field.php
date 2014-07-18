@@ -51,7 +51,7 @@ class ImageField extends FileField{
 		// --
 		
 		if($this->file_formats){
-			list(,$file_format) = split('/',$value->getMimeType());
+			list(,$file_format) = explode('/',$value->getMimeType());
 			if(!in_array($file_format,$this->file_formats)){
 				return array($this->messages['file_formats'],null);
 			}
