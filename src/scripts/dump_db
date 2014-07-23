@@ -21,11 +21,8 @@ case "$ARG" in
 		exec `$cmnd`
 		;;
 	"all")
-		cmnd="./_dump_dbschema_command"
-		exec `$cmnd` | cat
-		echo "hello" >&2
-		cmnd="./_dump_dbdata_command"
-		exec `$cmnd` | cat
+		cmnd="./_dump_db_command"
+		exec `$cmnd`
 		;;
 	"help")
 		echo "\nDumps database data, schema or both\n"
