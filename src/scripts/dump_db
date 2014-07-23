@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# Dumps database data and/or schema.
+# May be useful for backup.
+#
+#  $ ./scripts/dump_data
+#  $ ATK14_ENV=PRODUCTION ./scripts/dump_db
+
+if [ $# -eq 0 ]; then
+	echo "\nDumps database data, schema or both\n"
+	echo "$0 data | schema | all\n"
+	exit 0
+fi
+[ $# -gt 1 ] && echo "Wrong number of arguments" && exit 1;
+
+ARG="$1"
+
+cd `dirname $0`
+
+case "$ARG" in
+	"data")
+		cmd="./_dump_dbdata_command"
+		exec `$cmd`
+		;;
+	"schema")
+		cmd="./_dump_dbschema_command"
+		exec `$cmd`
+		;;
+	"all")
+		cmd="./_dump_dbschema_command"
+		exec `$cmd`
+		cmd="./_dump_dbdata_command"
+		exec `$cmd`
+		;;
+	*)
+		echo "Parameter '$ARG' not recognized\n"
+		exit 1;
+		;;
+esac
+
+exit 0;
