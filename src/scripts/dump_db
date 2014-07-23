@@ -3,7 +3,7 @@
 # Dumps database data and/or schema.
 # May be useful for backup.
 #
-#  $ ./scripts/dump_data
+#  $ ./scripts/dump_db
 #  $ ATK14_ENV=PRODUCTION ./scripts/dump_db
 
 [ $# -gt 1 ] && echo "Wrong number of arguments" && exit 1;

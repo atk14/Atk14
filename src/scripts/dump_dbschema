@@ -2,8 +2,8 @@
 
 # Dumps database schema.
 #
-#  $ ./scripts/dump_schema
-#  $ ATK14_ENV=PRODUCTION ./scripts/dump_schema
+#  $ ./scripts/dump_dbschema
+#  $ ATK14_ENV=PRODUCTION ./scripts/dump_dbschema
 
 cd `dirname $0`
 cmd=`./_dump_dbschema_command`
