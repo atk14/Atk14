@@ -219,6 +219,20 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("www.fake.cz",$req->getHttpHost());
 	}
 
+	function test_http_referer(){
+		global $_SERVER;
+
+		$_SERVER["HTTP_REFERER"] = "https://duckduckgo.com/?q=atari";
+
+		$req = new HTTPRequest();
+
+		$this->assertEquals("https://duckduckgo.com/?q=atari",$req->getHttpReferer());
+		
+		$req->setHttpReferer("http://www.fake.cz/index.php");
+
+		$this->assertEquals("http://www.fake.cz/index.php",$req->getHttpReferer());
+	}
+
 	function test_request_uri(){
 		global $_SERVER;
 

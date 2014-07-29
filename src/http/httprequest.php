@@ -58,6 +58,14 @@ class HTTPRequest{
 	protected $_HttpHost = "";
 
 	/**
+	 * HTTP Referer.
+	 *
+	 * @var string
+	 * @ignore
+	 */
+	protected $_HttpReferer = "";
+
+	/**
 	 * Protocol used.
 	 *
 	 * @var string
@@ -188,6 +196,10 @@ class HTTPRequest{
 			$this->_ServerName = $_tmp;
 		}
 
+		if(isset($_SERVER['HTTP_REFERER'])){
+			$this->_HttpReferer = (string)$_SERVER['HTTP_REFERER'];
+		}
+
 		if(isset($_SERVER['SERVER_PROTOCOL'])){
 			$_tmp = $_SERVER['SERVER_PROTOCOL'];
 			settype($_tmp,"string");
@@ -294,7 +306,11 @@ class HTTPRequest{
 	 * @return string
 	 */
 	function getHttpReferer(){
-		return isset($GLOBALS["_SERVER"]["HTTP_REFERER"]) ? $GLOBALS["_SERVER"]["HTTP_REFERER"] : "";
+		return $this->_getForceValue_or_Value("HttpReferer");
+	}
+
+	function setHttpReferer($referer){
+		$this->_setForceValue("HttpReferer",$referer);
 	}
 
 	/**
