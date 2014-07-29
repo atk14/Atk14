@@ -34,16 +34,17 @@
  * @param string $content
  *
  */
-function smarty_block_content($params,$content,$smarty,&$repeat){
+function smarty_block_content($params, $content, $template, &$repeat){
 	if($repeat){ return; }
+	$smarty = atk14_get_smarty_from_template($template);
 
 	$params += array(
 		"for" => "main",
-		"strategy" => "append",
+		"strategy" => "append"
 	);
 
 	$smarty->addAtk14Content($params["for"],$content,array(
-		"strategy" => $params["strategy"]
+		"strategy" => $params["strategy"],
 	));
 	return "";
 }
