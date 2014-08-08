@@ -15,7 +15,7 @@ ATK14 consists of
 * Form framework rewritten from Django by Mr. Valousek
 * A smart template engine - [Smarty](http://www.smarty.net/)
 * Excellent jQuery integration library by Mr. Ganicky (atk14.js)
-* Blueprint - a CSS framework for basic appearence
+* Using Bootstrap 3 - famous (HTML, CSS, JS) framework for developing responsive, mobile first projects
 * A few PHP libraries developed by Mr. Tomek over last years, mainly:
   * DbMole, a database data mining creature
   * TableRecord, an ORM framework
