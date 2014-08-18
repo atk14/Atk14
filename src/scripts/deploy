@@ -104,6 +104,7 @@ _run_commands($config["before_deploy"],"before_deploy");
 _create_maintenance_file_if_required(); // we are trying to create the maintenance file as late as possible
 
 _exec("git push $stage $config[deploy_branch]","gonna push to deployment repo");
+echo _remote_exec("git fetch origin master && git reset --hard origin/master","gonna synchronize source code");
 echo _remote_exec("git submodule init && git submodule update","gonna initialize and update submodules");
 
 foreach($config["rsync"] as $file){
