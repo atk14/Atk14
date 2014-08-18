@@ -599,8 +599,6 @@ class Atk14Controller{
 		if(!isset($class_name)){
 			$class_name = new String("{$this->action}_form");
 		}else{
-			$aPath = preg_split("/\//", $class_name);
-			$class_name = array_pop($aPath);
 			$class_name = new String($class_name);
 		}
 		$class_name = $class_name->camelize();
