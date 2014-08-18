@@ -151,4 +151,12 @@ class TcController extends TcBase{
 		$this->assertEquals(404,$client->getStatusCode());
 		$this->assertEquals("UniverseController",get_class($controller));
 	}
+
+	function test_get_form() {
+		$client = &$this->client;
+		$controller = $client->get("main/hello_world");
+
+		$frm = $controller->_get_form("main/hello_world");
+		$this->assertEquals("form_main_hello_world",$frm->atk14_attrs["id"]);
+	}
 }

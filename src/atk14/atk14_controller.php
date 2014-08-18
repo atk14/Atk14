@@ -606,7 +606,11 @@ class Atk14Controller{
 			$class_name->append("Form");
 		}
 
-		$id = "form_".$this->controller."_".$class_name->underscore();
+		# when a form is specified by its path, we only need its last part
+		$aPath = preg_split("/\//", $class_name->toString());
+		$id = new String(array_pop($aPath));
+
+		$id = "form_".$this->controller."_".$id->underscore();
 		$id = preg_replace("/_form$/","",$id);
 
 		$options["attrs"] = array_merge(array(
