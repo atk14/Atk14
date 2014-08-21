@@ -14,26 +14,54 @@ $robots_dir = $ATK14_GLOBAL->getApplicationPath()."/../robots";
 $robot_name = "";
 if(isset($argv[1])){
 	// ImportUserRobot -> import_user
-	// import_user_robot.php -> import_user_robot
-	// robots/import_user_robot.php -> import_user_robot
+	// import_user_robot.php -> import_user
+	// robots/import_user_robot.php -> import_user
 	$robot_name = String::ToObject($argv[1])->underscore()->gsub('/_robot(\.php|\.inc|)$/','')->gsub('/^.+\/([^\/]+)$/','\1');
 }
 
 if(!$robot_name){
+	echo "This script executes a robot.\n";
+	echo "You can run a given robot by calling:\n";
+	echo "$ $argv[0] robot_name\n\n";
+	echo "Default robot log file is log/robots.log\n";
+	echo "Usually robots create lock files in ".LOCK_DIR."\n";
 	// print help message and exit
-	echo "In this application there are following robots:\n";
+	echo "\n";
+
+	$robots = array();
 	$dir = opendir($robots_dir);
 	while($item = readdir($dir)){
 		if(!preg_match('/^([a-z0-9_]+)_robot\.php$/',$item,$matches)){ continue; }
 		if($matches[1]=="application"){ continue; }
-		echo "$matches[1]\n";
+		$robots[] = $matches[1];
 	}
-	echo "\n";
-	echo "One can run a given robot by calling:\n";
-	echo "$ $argv[0] robot_name\n\n";
-	echo "Default robot log file is log/robots.log\n";
-	echo "Usually robots create lock files in ".LOCK_DIR."\n";
-	exit(1);
+	asort($robots); // !! it keeps indexes
+	$robots = array_values($robots);
+
+	if(!$robots){
+		echo "In this application there is no robot\n";
+	}else{
+		echo "In this application there are following robots:\n";
+		foreach($robots as $i => $robot){
+			echo ($i+1).") $robot\n";
+		}
+
+		if(posix_isatty(STDOUT) && posix_isatty(STDIN)){
+			echo "Enter number of robot to be executed\n";
+			echo "number> ";
+
+			$fh = fopen('php://stdin', 'r');
+			$no = trim(fgets($fh,1024));
+			if(is_numeric($no) && isset($robots[$no-1])){
+				$robot_name = String::ToObject($robots[$no-1]);
+			}
+
+		}
+	}
+	
+	if(!$robot_name){
+		exit(1);
+	}
 }
 
 require_once("$robots_dir/application_robot.php");
