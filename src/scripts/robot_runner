@@ -64,6 +64,11 @@ if(!$robot_name){
 	}
 }
 
+if(!file_exists("$robots_dir/{$robot_name}_robot.php")){
+	echo "Fatal: robot $robot_name doesn't exist\n";
+	exit(1);
+}
+
 require_once("$robots_dir/application_robot.php");
 require_once("$robots_dir/{$robot_name}_robot.php");
 
