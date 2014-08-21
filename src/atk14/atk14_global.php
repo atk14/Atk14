@@ -182,24 +182,47 @@ class Atk14Global{
 
 	/**
 	 * Returns someting like
-	 * array(
-	 *	"database" => "dbname",
-	 *  "host" => "127.0.0.1",
-	 *  "username" => "user",
-	 *  "password" => "funny_boy",
-	 *	"port" => "5432",
-	 * )
+	 *	 array(
+	 *		"database" => "dbname",
+	 *		"host" => "127.0.0.1",
+	 *		"username" => "user",
+	 *		"password" => "funny_boy",
+	 *		"port" => "5432",
+	 *	 )
+	 *
+	 * It searches in config/database.yml for the best suited configuration
+	 * TODO: provide more explanation
+	 *
+	 *	 # configuration_name: "default"
+	 *	 development:
+	 *	 test:
+	 *	 production:
+	 *
+	 *	 # configuration_name: "cinema"
+	 *	 # just one database for every environment
+	 *	 cinema:
+	 *
+	 *	 # configuration_name: "weather"
+	 *	 # a special databse for every environment
+	 *	 weather_development:
+	 *	 weather_test:
+	 *	 weather_production:
 	 *
 	 * @return array
 	 */
-	function getDatabaseConfig(){
+	function getDatabaseConfig($configuration_name = "default"){
 		$database_ar = $this->getConfig("database");
-		if(DEVELOPMENT){
-			$d = $database_ar["development"];
-		}elseif(TEST){
-			$d = $database_ar["test"];
+
+		$env = strtolower($this->getEnvironment()); // "development", "test", "production"
+
+		if($configuration_name=="default" || $configuration_name==""){
+			$d = $database_ar[$env];
+		}elseif(isset($database_ar["{$configuration_name}_$env"])){
+			$d = $database_ar["{$configuration_name}_$env"];
+		}elseif(isset($database_ar["$configuration_name"])){
+			$d = $database_ar["$configuration_name"];
 		}else{
-			$d = $database_ar["production"];
+			return null;
 		}
 		$d["port"] = isset($d["port"]) ? $d["port"] : "5432";
 		return $d;
