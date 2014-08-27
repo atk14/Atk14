@@ -15,7 +15,6 @@ if(isset($arguments["h"]) || isset($arguments["help"])){
 $script = $argv[0];
 echo ltrim("
 Cleares all objects in database.
-This script works in DEVELOPMENT or TESTING environment only.
 
 For displaying this help message run
  $ $script -h
@@ -34,14 +33,20 @@ $dbname = $dbmole->getDatabaseName();
 if(!$previewing){
 
 	if(PRODUCTION){
-		echo "Refuse to purge database objects in PRODUCTION database. Do it by hand. Bye.\n";
-		exit(1);
+		echo "ATTENTION!!! You are on PRODUCTION!\n";
+		echo "Shall I wipe out all objects in the database $dbname?\n";
+		echo "If you are sure, answer PLEASE_DO_SO > ";
+	}else{
+		echo "Shall I wipe out all objects in the database $dbname?\n";
+		echo "Hit y, if so > ";
 	}
 
-	echo "Shall I wipe out all objects in the database $dbname? Hit y, if so... ";
-
 	$fh = fopen('php://stdin', 'r');
-	if(trim(fgets($fh,1024))!="y"){
+	$answer = trim(fgets($fh,1024));
+	if(
+		(!PRODUCTION && $answer!="y") ||
+		(PRODUCTION && $answer!="PLEASE_DO_SO")
+	){
 		echo "Bye, bye\n";
 		exit(1);
 	}
