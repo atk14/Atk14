@@ -143,7 +143,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	// "John Doe <john.doe@example.com>" -> "John Doe", "john.doe@example.com"
 	if(preg_match('/^[\'"]?(.+?)[\'"]?\s+<([^@<>"\']+@[^@<>"\']+)>$/',$FROM,$matches)){
 		$FROM = $matches[2];
-		$FROM_NAME = $matches[1];
+		$FROM_NAME = str_replace('\"','"',$matches[1]); // ?? is this ok? 'John Doe \"aka\" John D.' -> 'John Doe "aka" John D.'
 	}
 
 	$BCC = array();
@@ -218,7 +218,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	
 	$HEADERS = "";
 	if(sizeof($ATTACHMENTS)==0){
-		$_from = $FROM_NAME ? _sendmail_escape_subject($FROM_NAME,$BODY_CHARSET)." <$FROM>" : $FROM;
+		$_from = $FROM_NAME ? _sendmail_escape_email_name($FROM_NAME,$BODY_CHARSET)." <$FROM>" : $FROM;
 		$HEADERS .= "From: $_from\n";
 		$HEADERS .= "Reply-To: $FROM\n";
 		if($BCC!=""){
@@ -411,6 +411,17 @@ function _sendmail_correct_address($addr){
 		$addr = join(", ",$addr);
 	}
 	return (string)$addr;
+}
+
+/**
+ * $headers .= "From: "._sendmail_escape_email_name('John Brus').' <john@brus.com>'; // From: "John Brus" <john@brus.com>
+ */
+function _sendmail_escape_email_name($from_name,$charset = null){
+	$out = _sendmail_escape_subject($from_name);
+	if($out==$from_name){
+		$out = '"'.str_replace('"','\"',$out).'"';
+	}
+	return $out;
 }
 
 function _sendmail_escape_subject($subject,$charset = null){
