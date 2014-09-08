@@ -10,15 +10,12 @@
 		</extensions>
 	</parser>
 	<transformer>
-		<target>output</target>
+		<target>../tmp/documentation</target>
 	</transformer>
 	<transformations>
-		<!--abstract,checkstyle,clean,new-black,old-ocean,responsive,responsive-twig,xml,zend -->
+		<!-- can be one of abstract,checkstyle,clean,new-black,old-ocean,responsive,responsive-twig,xml,zend -->
 		<template name="clean" />
 	</transformations>
-	<plugins>
-		<plugin name="Core" />
-	</plugins>
 	<files>
 		<directory>src/atk14</directory>
 		<directory>src/dates</directory>
