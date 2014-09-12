@@ -61,7 +61,9 @@ $previewing = isset($arguments["p"]) || isset($arguments["preview"]);
 $listing = isset($arguments["l"]) || isset($arguments["list"]);
 
 if($listing){
-	$rows = $dbmole->selectRows("SELECT version,created_at FROM schema_migrations ORDER BY created_at,version");
+	// We need to have records, that have NULLs in created_at, at the beginning of the list.
+	// Currently the query has to be compatible with Postgresql and Oracle.
+	$rows = $dbmole->selectRows("SELECT version,created_at FROM schema_migrations ORDER BY CASE WHEN created_at IS NULL THEN 1 ELSE 2 END, created_at,version");
 	foreach($rows as $row){
 		echo substr($row['created_at'],0,19), ' ', $row['version'], "\n";
 	}
