@@ -38,10 +38,10 @@ if(!defined("SESSION_STORER_COOKIE_NAME_CHECK")){
 
 /**
  * When there isn't a correct session cookie but there is a testing cookie,
- * shall be the session initialize in database?
+ * shall be the session initialize in database? By default it should not.
  */
 if(!defined("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY")){
-	define("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY",true);
+	define("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY",false);
 }
 
 if(!defined("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS")){
