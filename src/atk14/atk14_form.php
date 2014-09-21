@@ -293,6 +293,17 @@ class Atk14Form extends Form
 			return null;
 		}
 		require_once($filename);
+
+		// toto je novinka - TODO: otestovat
+		preg_match('/([^\/]+)\/+[^\/]+$/',$filename,$matches);
+		$_namespace = String::ToObject($matches[1])->camelize()->toString(); // "app/forms/spam_filters/index_form.php" -> "SpamFilters"
+		// pokud existuje SpamFilters\IndexForm, je tento nazev tridy pouzit
+		if(class_exists($_cn = "$_namespace\\$classname",false)){
+			$classname = $_cn;
+		}
+		// TODO: vice urovni namespaces - napr. Admin\SpamFilters\IndexForm
+		// TODO: vyresit (nebo neresit? :)) walking formulare
+
 		$form = new $classname($options,$controller_obj);
 		return $form;
 	}
