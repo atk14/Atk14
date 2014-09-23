@@ -79,6 +79,21 @@ class Cache{
 		$c->_Cache = array();
 	}
 
+	/**
+	 * $ids = Cache::CachedIds("Article"); // array(123,453,223)
+	 */
+	static function CachedIds($class = null){
+		$c = Cache::GetInstance();
+		$class = strtolower($class);
+		$out = isset($c->_Prepare[$class]) ? $c->_Prepare[$class] : array();
+		if(isset($c->_Cache[$class])){
+			foreach($c->_Cache[$class] as $id => &$o){
+				$out[$id] = $id;
+			}
+		}
+		return array_values($out);
+	}
+
 	function _readToCache($class){
 		if(!isset($this->_Prepare[$class]) || !$this->_Prepare[$class]){ return; }
 		$ids = $this->_Prepare[$class];
