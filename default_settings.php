@@ -56,6 +56,9 @@ __defaults__(array(
 
 __defaults__(array(
 	"LOGGER_DEFAULT_LOG_FILE" => TEST ? dirname(__FILE__)."/../log/test.log" : dirname(__FILE__)."/../log/application.log",
+	"LOGGER_DEFAULT_NOTIFY_EMAIL" => ATK14_ADMIN_EMAIL,
+	"LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION" => PRODUCTION ? 4 : 30, // 4 -> error, we don't want to receive emails with something less important than error
+	"LOGGER_NO_LOG_LEVEL" => PRODUCTION ? -1 : -30, // -1 -> debug, we don't want to log debug messages on PRODUCTION
 
 	"LOCK_DIR" => ATK14_DOCUMENT_ROOT . "robots/lock/",
 ));

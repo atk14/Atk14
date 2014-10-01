@@ -6,6 +6,21 @@
  * @subpackage InternalLibraries
  */
 
+@define("LOGGER_DEFAULT_LOG_FILE","/tmp/logger.log");
+@define("LOGGER_DEFAULT_NOTIFY_EMAIL",""); // "john@doe.com"
+
+/**
+ *
+ * 3 .. warn+
+ * 4 .. error
+ */
+@define("LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION",30);
+
+/**
+ * -1 .. debug 
+ */
+@define("LOGGER_NO_LOG_LEVEL",-30);
+
 /**
  * Class for events logging.
  *
@@ -269,8 +284,8 @@ class Logger{
 	 */
 	function _reset_configuration(){
 		$this->_no_log_level = -30;
-		$this->_notify_level = 30;
-		$this->_notify_email = "";
+		$this->_notify_level = LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION;
+		$this->_notify_email = LOGGER_DEFAULT_NOTIFY_EMAIL;
 		$this->_log_file = $this->_default_log_file;
 	}
 
