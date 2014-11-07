@@ -171,6 +171,20 @@ class Atk14Mailer{
 	var $template_name = "";
 
 	/**
+	 * Render message in a layout?
+	 *
+	 * Null stands for auto detection.
+	 */
+	var $render_layout = null;
+
+	/**
+	 * Name of the layout.
+	 *
+	 * e.g. "mailer", "christmas_mailer_theme" (looking for layouts/mailer.tpl, layouts/mailer.html.tpl, layouts/christmas_mailer_theme.tpl, layouts/christmas_mailer_theme.html.tpl)
+	 */
+	var $layout_name = "";
+
+	/**
 	 * Data passed to a template.
 	 *
 	 * @var array
@@ -326,9 +340,7 @@ class Atk14Mailer{
 
 			$this->_before_render();
 
-			foreach($this->tpl_data as $k => $v){	
-				$smarty->assign($k,$v);
-			}
+			$smarty->assign($this->tpl_data);
 
 			$template_name = $this->template_name.".tpl";
 			$html_template_name = $this->template_name.".html.tpl";
@@ -337,8 +349,52 @@ class Atk14Mailer{
 			if($smarty->templateExists($html_template_name)){
 				$this->body_html = $smarty->fetch($html_template_name);
 			}
+
+			$this->body = $this->_find_and_render_layout($smarty,$this->body);
+			$this->body_html = $this->_find_and_render_layout($smarty,$this->body_html,array("suffix" => ".html"));
+
 			$this->_after_render();
 		}
+	}
+
+	protected function _find_and_render_layout($smarty,$body,$options = array()){
+		global $ATK14_GLOBAL;
+
+		$options += array(
+			"suffix" => "", // "" or ".html"
+		);
+
+		if(!strlen($body) || $this->render_layout===false){ return $body; }
+
+		$suffix = $options["suffix"];
+
+		$layout_template = "";
+
+		$_layout_name = $this->layout_name ? $this->layout_name : "mailer";
+		$_layout_name .= "$suffix.tpl"; // e.g. "mailer.html.tpl"
+		foreach(array(
+			"$this->namespace/$_layout_name",
+			"$_layout_name",
+		) as $_path){
+			if(file_exists($_p = $ATK14_GLOBAL->getApplicationPath()."layouts/$_path")){
+				$layout_template = $_p;
+				break;
+			}
+		}
+
+		if(!$layout_template && $this->render_layout){
+			Atk14Utils::ErrorLog("Hey Dude, missing mailer layout template $_layout_name");
+			return $body;
+		}
+
+		if(!$layout_template){
+			return $body;
+		}
+
+		$layout_content = $smarty->fetch($layout_template);
+		
+		$body = str_replace("<%atk14_content[main]%>",$body,$layout_content);
+		return $body;
 	}
 
 	/**

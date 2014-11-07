@@ -36,8 +36,21 @@ class TcMailer extends TcBase{
 		$this->assertContains('From: "Unit Testing" <unit@testing.com>',$controller->mail_ar["headers"]);
 		$this->assertContains("Content-Type: multipart/related",$controller->mail_ar["headers"]);
 		$this->assertContains("The plain part",$controller->mail_ar["body"]);
-		$this->assertContains("<p>The rich part</p>",$controller->mail_ar["body"]);
+		$this->assertTrue(!!preg_match($_pattern_plain = '/Dear Customer\s+The plain part/s',$controller->mail_ar["body"])); // app/layouts/mailer.tpl
+		$this->assertTrue(!!preg_match($_pattern_html = '/<h2>Dear Customer<\/h2>.+<p>The rich part<\/p>.+Best Regards<br>\s*<b>SnakeOil ltd<\/b>/s',$controller->mail_ar["body"])); // app/layouts/mailer.html.tpl
 
+		// layout is not rendered
+		$controller = $this->client->get("testing/send_html_mail_without_layout");
+		$this->assertContains("The plain part",$controller->mail_ar["body"]);
+		$this->assertContains("<p>The rich part</p>",$controller->mail_ar["body"]);
+		$this->assertFalse(!!preg_match($_pattern_plain,$controller->mail_ar["body"]));
+		$this->assertFalse(!!preg_match($_pattern_html,$controller->mail_ar["body"]));
+
+		// layout with christmas theme
+		$controller = $this->client->get("testing/send_html_mail_christmas_theme");
+		$this->assertTrue(!!preg_match('/<h2>Dear Customer<\/h2>.+<p>The rich part<\/p>.+Merry Christmas<br>\s*<b>SnakeOil ltd<\/b>/s',$controller->mail_ar["body"]));
+		$this->assertTrue(!!preg_match('/Dear Customer\s+The plain part\s+Merry Christmas\s+SnakeOil/s',$controller->mail_ar["body"])); // app/layouts/mailer/tpl
+		
 		// TODO: decode email bodies
 	}
 

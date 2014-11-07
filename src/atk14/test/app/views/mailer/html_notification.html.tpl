@@ -1,5 +1,1 @@
-<html>
-<body>
-	<p>The rich part</p>
-</body>
-</html>
+<p>The rich part</p>
