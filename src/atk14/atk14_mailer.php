@@ -392,8 +392,12 @@ class Atk14Mailer{
 		}
 
 		$layout_content = $smarty->fetch($layout_template);
-		
+
 		$body = str_replace("<%atk14_content[main]%>",$body,$layout_content);
+		foreach($smarty->getAtk14ContentKeys() as $c_key){
+			$body = str_replace("<%atk14_content[$c_key]%>",$smarty->getAtk14Content($c_key),$body);
+		}
+
 		return $body;
 	}
 
