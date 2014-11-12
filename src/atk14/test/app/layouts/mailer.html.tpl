@@ -2,7 +2,7 @@
 <head>
 </head>
 <body>
-	<h2>Dear Customer</h2>
+	<h2>{placeholder for=title}</h2>
 	{placeholder}
 	<p>
 	Best Regards<br>

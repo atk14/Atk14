@@ -25,6 +25,10 @@ class Atk14Smarty extends SmartyBC{
 		return $this->atk14_contents[$key];
 	}
 
+	function clearAtk14Contents(){
+		$this->atk14_contents = array();
+	}
+
 	function getAtk14ContentKeys(){ return array_keys($this->atk14_contents); }
 
 }

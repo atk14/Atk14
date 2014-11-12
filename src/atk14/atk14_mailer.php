@@ -347,6 +347,7 @@ class Atk14Mailer{
 
 			$this->body = $smarty->fetch($template_name);
 			if($smarty->templateExists($html_template_name)){
+				$smarty->clearAtk14Contents();
 				$this->body_html = $smarty->fetch($html_template_name);
 			}
 

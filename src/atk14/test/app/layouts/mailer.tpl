@@ -1,4 +1,4 @@
-Dear Customer
+{placeholder for=title}
 
 {placeholder}
 Best Regards
