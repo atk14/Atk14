@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Displays a line intended to be added to the ~/.pgpass file.
+ * By default it displays a line intended to be added to the ~/.pgpass file.
  *
  * If you don't want to be requested for a password in order to access the database console,
  * follow the instructions:
@@ -10,9 +10,43 @@
  *	$ chmod 600 ~/.pgpass
  *  $ ./scripts/pgpass_record  >> ~/.pgpass
  *  $ ATK14_ENV=TEST ./scripts/pgpass_record  >> ~/.pgpass
+ *
+ * Also you can add a pgpass record automatically when it is missing in the ~/.pgpass file:
+ *
+ *  $ ./scripts/pgpass_record -a
+ *	# or
+ *  $ ./scripts/pgpass_record --add-record-automatically
  */
 
 require_once(dirname(__FILE__)."/load.php");
 
 $d = $ATK14_GLOBAL->getDatabaseConfig();
-echo "$d[host]:$d[port]:$d[database]:$d[username]:$d[password]\n";
+$pgpass_record = "$d[host]:$d[port]:$d[database]:$d[username]:$d[password]";
+
+$arguments = getopt("a",array("add-record-automatically"));
+
+if(isset($arguments["a"]) || isset($arguments["add-record-automatically"])){
+	// now we are gonna append the $pgpass_record when it is not present in the ~/.pgpass_record
+	$HOME = getenv("HOME");
+	$pgpass_file = "$HOME/.pgpass";
+	if(!file_exists($pgpass_file)){
+		touch($pgpass_file);
+		chmod($pgpass_file,0600);
+	}
+	$fcontent = Files::GetFileContent($pgpass_file,$err,$err_str);
+	if($err){
+		file_put_contents('php://stderr', "Failed to read from $pgpass_file: $err_str\n");
+		exit(1);
+	}
+	if(strpos($fcontent,trim($pgpass_record))===false){
+		$nl = preg_match('/\n$/s',$fcontent) || $fcontent==="" ? "" : "\n";
+		Files::AppendToFile($pgpass_file,"$nl$pgpass_record\n",$err,$err_str);
+		if($err){
+			file_put_contents('php://stderr',"Failed to write to $pgpass_file: $err_str\n");
+			exit(1);
+		}
+	}
+	exit(0); // quit quietly
+}
+
+echo $pgpass_record,"\n";

@@ -6,5 +6,9 @@
 #  $ ATK14_ENV=PRODUCTION ./scripts/dbconsole
 
 cd `dirname $0`
+
+# add pgpass record to ~/.pgpass file when the record is not present
+exec `./pgpass_record -a`
+
 cmd=`./_dbconsole_command`
 exec $cmd
