@@ -3,7 +3,13 @@
 
 require_once(dirname(__FILE__)."/load.php");
 
-$d = $ATK14_GLOBAL->getDatabaseConfig();
+$configuration_name = isset($argv[1]) ? $argv[1] : "default";
+
+$d = $ATK14_GLOBAL->getDatabaseConfig($configuration_name);
+
+if(!$d){
+	exit(1);
+}
 
 $cmd = "psql -U $d[username] $d[database] -h $d[host] -p $d[port]";
 

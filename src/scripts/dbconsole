@@ -3,12 +3,22 @@
 # Starts a database console.
 #
 #  $ ./scripts/dbconsole
+#  $ ./scripts/dbconsole default
+#  $ ./scripts/dbconsole import
+#  # or
 #  $ ATK14_ENV=PRODUCTION ./scripts/dbconsole
+#  $ ATK14_ENV=PRODUCTION ./scripts/dbconsole default
+#  $ ATK14_ENV=PRODUCTION ./scripts/dbconsole import
 
 cd `dirname $0`
 
 # add pgpass record to ~/.pgpass file when the record is not present
 exec `./pgpass_record -a`
 
-cmd=`./_dbconsole_command`
+configuration_name=$1 # e.g. default, import, see Atk14Global::getDatabaseConfig()
+
+cmd=`./_dbconsole_command "$configuration_name"`
+if [ "$cmd" = "" ]; then
+	exit 1
+fi
 exec $cmd

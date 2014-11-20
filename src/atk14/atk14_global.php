@@ -199,11 +199,11 @@ class Atk14Global{
 	 *	 production:
 	 *
 	 *	 # configuration_name: "cinema"
-	 *	 # just one database for every environment
+	 *	 # just one connection for every environment
 	 *	 cinema:
 	 *
 	 *	 # configuration_name: "weather"
-	 *	 # a special databse for every environment
+	 *	 # a special connection for every environment
 	 *	 weather_development:
 	 *	 weather_test:
 	 *	 weather_production:
