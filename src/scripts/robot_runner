@@ -47,15 +47,18 @@ if(!$robot_name){
 		}
 
 		if(posix_isatty(STDOUT) && posix_isatty(STDIN)){
-			echo "Enter number of robot to be executed\n";
+			echo "Enter number or name of the robot to be executed\n";
 			echo "number> ";
 
 			$fh = fopen('php://stdin', 'r');
 			$no = trim(fgets($fh,1024));
 			if(is_numeric($no) && isset($robots[$no-1])){
 				$robot_name = String::ToObject($robots[$no-1]);
+			}elseif(in_array($no,$robots)){
+				$robot_name = String::ToObject($no);
+			}elseif(strlen($no)){
+				echo "Fatal: unknown robot\n";
 			}
-
 		}
 	}
 	
