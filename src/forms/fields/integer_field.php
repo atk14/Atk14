@@ -12,6 +12,7 @@ class IntegerField extends Field
 		$options = forms_array_merge(array(
 				'max_value' => null,
 				'min_value' => null,
+				'widget' => new NumberInput(),
 			),
 			$options
 		);
