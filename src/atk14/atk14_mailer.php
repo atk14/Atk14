@@ -346,13 +346,13 @@ class Atk14Mailer{
 			$html_template_name = $this->template_name.".html.tpl";
 
 			$this->body = $smarty->fetch($template_name);
-			if($smarty->templateExists($html_template_name)){
-				$smarty->clearAtk14Contents();
-				$this->body_html = $smarty->fetch($html_template_name);
-			}
-
 			$this->body = $this->_find_and_render_layout($smarty,$this->body);
-			$this->body_html = $this->_find_and_render_layout($smarty,$this->body_html,array("suffix" => ".html"));
+
+			if($smarty->templateExists($html_template_name)){
+				$smarty->clearAtk14Contents(); // there are atk14 contents from the plain part
+				$this->body_html = $smarty->fetch($html_template_name);
+				$this->body_html = $this->_find_and_render_layout($smarty,$this->body_html,array("suffix" => ".html"));
+			}
 
 			$this->_after_render();
 		}
