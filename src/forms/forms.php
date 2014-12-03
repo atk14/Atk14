@@ -180,6 +180,10 @@ class BoundField
 		}
 	}
 
+	function is_bound(){
+		return $this->form->is_bound;
+	}
+
 	/**
 	* Vykresli pole (field), budto s pomoci zadaneho widgetu,
 	* nebo s pomoci defaultniho widgetu definovaneho u field.
