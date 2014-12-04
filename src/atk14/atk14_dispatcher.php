@@ -45,7 +45,21 @@ class Atk14Dispatcher{
 
 		if(defined("MAINTENANCE") && MAINTENANCE){
 
-			$ctrl = Atk14Dispatcher::ExecuteAction("application","error503",array("namespace" => "", "request" => $request, "return_controller" => true));
+			$HTTP_RESPONSE->setStatusCode(503);
+			$HTTP_RESPONSE->write("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">
+				<html><head>
+				<title>503: Service Unavailable</title>
+				</head><body>
+				<h1>"._("Service Unavailable")."</h1>
+				<p>"._("This site is in maintenance. Please come back later.")."</p>
+				</body></html>
+			");
+			$HTTP_RESPONSE->flushAll();
+			die;
+
+			// We can't do this here! Routers are not loaded at the time of calling this.
+			// Some errors may occur in before filters.
+			//$ctrl = Atk14Dispatcher::ExecuteAction("application","error503",array("namespace" => "", "request" => $request, "return_controller" => true));
 
 		}else{
 
