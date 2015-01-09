@@ -126,7 +126,7 @@ class Atk14Robot{
 	 *
 	 */
 	function run(){
-		
+		throw new Exception(sprintf("method %s::run() has to be defined",get_class($this)));
 	}
 
 	/**
