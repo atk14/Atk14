@@ -283,7 +283,7 @@ class Logger{
 	 * @access private
 	 */
 	function _reset_configuration(){
-		$this->_no_log_level = -30;
+		$this->_no_log_level = LOGGER_NO_LOG_LEVEL;
 		$this->_notify_level = LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION;
 		$this->_notify_email = LOGGER_DEFAULT_NOTIFY_EMAIL;
 		$this->_log_file = $this->_default_log_file;
