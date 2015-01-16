@@ -107,7 +107,7 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 
 		$this->_add($record,$rank);
 	}
-	
+
 	/**
 	 * Alias for TableRecord_Lister::append().
 	 *
@@ -126,7 +126,7 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	 * Alias for TableRecord_Lister::prepend()
 	 *
 	 * @param TableRecord $record
-	 */	
+	 */
 	function unshift($record){ return $this->prepend($record); }
 
 	/**
@@ -157,7 +157,7 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 			$o["subject_field_name"] => $record,
 			$o["rank_field_name"] => $rank,
 		));
-		
+
 		$this->_correctRanking();
 		unset($this->_items);
 	}
@@ -241,10 +241,17 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	}
 
 	/**
+	 *
+	 */
+	function getClassNameOfRecords(){
+		return $this->_options["class_name"];
+	}
+
+	/**
 	 * Returns records from associated table.
 	 *
 	 *	$lister = $article->getLister("Authors");
-	 *	$authors = $lister->getRecords(); // array of models 
+	 *	$authors = $lister->getRecords(); // array of models
 	 *
 	 * @returns TableRecord[]
 	 */
@@ -538,7 +545,7 @@ class TableRecord_ListerItem{
 		$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[subject_field_name]=:record WHERE $o[id_field_name]=:id",array(
 			":record" => $record,
 			":id" => $this,
-		));	
+		));
 	}
 
 	/**

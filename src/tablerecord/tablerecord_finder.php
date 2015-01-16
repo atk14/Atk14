@@ -55,11 +55,15 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	 *
 	 */
 	function TableRecord_Finder($options,&$dbmole){
+		$options += array(
+			"use_cache" => false,
+		);
 		$this->_Query = $options["query"];
 		$this->_QueryCount = $options["query_count"];
 		$this->_BindAr = $options["bind_ar"];
 		$this->_QueryOptions = $options["options"];
 		$this->_ClassName = $options["class_name"];
+		$this->_UseCache = $options["use_cache"];
 
 		$this->_dbmole = &$dbmole;
 	}
@@ -73,7 +77,11 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	 */
 	function getRecords(){
 		if(!isset($this->_Records)){
-			$this->_Records = call_user_func_array(array($this->_ClassName,"GetInstanceById"),array($this->getRecordIds()));
+			if($this->_UseCache){
+				$this->_Records = Cache::Get($this->_ClassName,$this->getRecordIds());
+			}else{
+				$this->_Records = call_user_func_array(array($this->_ClassName,"GetInstanceById"),array($this->getRecordIds()));
+			}
 		}
 		return $this->_Records;
 	}

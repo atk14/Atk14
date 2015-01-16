@@ -7,10 +7,10 @@
  * Cache::Prepare("Article",10023);
  * Cache::Prepare("Article",10024);
  * Cache::Prepare("Article",array(10025,10026));
- * 
+ *
  * Cache::Get("Article",10023); // reads all the previous declared articles (10023, 10024, 10025 and 10026); returns the 10023
  * Cache::Get("Article",array(10024,10025)); // reads nothing from database as the requested objects are already in cache, returns array(Article#10024,Article#10025)
- * 
+ *
  * Cache::Clear(); // cleares all stored data in the cache
  * Cache::Clear("Article",10023); // cleares only Article#10023 from the cache
  */
@@ -97,7 +97,7 @@ class Cache{
 	function _readToCache($class){
 		if(!isset($this->_Prepare[$class]) || !$this->_Prepare[$class]){ return; }
 		$ids = $this->_Prepare[$class];
-		$objs = call_user_func(array($class,"GetInstanceById"),$ids);
+		$objs = call_user_func(array($class,"GetInstanceById"),$ids,array("use_cache" => false));
 		foreach($objs as $k => $o){
 			$this->_Cache[$class][$k] = $o;
 		}

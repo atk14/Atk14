@@ -31,66 +31,6 @@ class TableRecord extends TableRecord_Base{
 	}
 
 	/**
-	 * Creates an object of a class and reads in values from table.
-	 *
-	 * Method takes record $id, finds corresponding record and reads its values into newly created object.
-	 *
-	 * This method is used in a descendants {@link GetInstanceById()} method.
-	 * <code>
-	 * class Article extends TableRecord{
-	 *	//...
-	 *	function GetInstanceById($id,$options = array()){
-	 *		return TableRecord::_GetInstanceById("Article",$id,$options);
-	 *	}
-	 *	//...
-	 *	}
-	 * </code>
-	 *
-	 *
-	 * @static
-	 * @access protected
-	 * @param string $class_name	ie. "Article"
-	 * @param mixed $id						identifikator zaznamu v tabulce; integer, string nebo pole
-	 * @param array $options
-	 * @return TableRecord	resp. tridu, ktera je urcena v $class_name
-	 */
-	static function _GetInstanceById($class_name,$id,$options = array()){
-		$out = new $class_name();
-		return $out->find($id,$options);
-	}
-
-	/**
-	 * Creates a record in a table
-	 *
-	 * Method takes array of values and creates a record in a table.
-	 * Then returns an object of given class.
-	 *
-	 *
-	 * Tuto metodu pouzijte v implementaci metody CreateNewRecord().
-	 * Pozn. od PHP5.3 toto jiz neni treba (zde uz je k dispozici fce get_called_class()).
-	 * Pouzijte ji nasledujicim zpusobem:
-	 *		class Article extends TableRecord{
-	 *			//...
-	 *			function CreateNewRecord($values,$options = array()){
-	 *				return TableRecord::_CreateNewRecord("Article",$values,$options);
-	 *			}
-	 *			//...
-	 *		}
-	 *
-	 *
-	 * @static
-	 * @access private
-	 * @param string $class_name					id. "Article"
-	 * @param array $values							
-	 * @param array $options
-	 * @return TableRecord
-	 */
-	static function _CreateNewRecord($class_name,$values,$options = array()){
-		$out = new $class_name();
-		return $out->_insertRecord($values,$options);
-	}
-
-	/**
 	 * @ignore
 	 */
 	function _setRecordValues($row){

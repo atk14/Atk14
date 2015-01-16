@@ -58,7 +58,7 @@ class TableRecord_Base extends inobj{
 	 * Type of primary key column.
 	 *
 	 * By default integer is used but can be changed in constructor.
-	 * 
+	 *
 	 * @var string
 	 * @access private
 	 */
@@ -81,7 +81,7 @@ class TableRecord_Base extends inobj{
 	 * @access private
 	 */
 	var $_DoNotReadValues = array(); // pole, jejiz hodnoty se nemaji nacitat behem vytvareni instanci; array("image_body")
-	
+
 	/**
 	 * Values contained in a table record.
 	 *
@@ -157,7 +157,7 @@ class TableRecord_Base extends inobj{
 
 		// all values of the objects should be null
 		// TODO: seems to be useless -> refactoring
-		foreach(array_keys($this->_TableStructure) as $_key){	
+		foreach(array_keys($this->_TableStructure) as $_key){
 			$this->_RecordValues[$_key] = null;
 		}
 
@@ -186,6 +186,36 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
+	 * Creates an object of a class and reads in values from table.
+	 *
+	 * Method takes record $id, finds corresponding record and reads its values into newly created object.
+	 *
+	 * This method is used in a descendants {@link GetInstanceById()} method.
+	 * <code>
+	 * class Article extends TableRecord{
+	 *	//...
+	 *	function GetInstanceById($id,$options = array()){
+	 *		return TableRecord::_GetInstanceById("Article",$id,$options);
+	 *	}
+	 *	//...
+	 *	}
+	 * </code>
+	 *
+	 *
+	 * @static
+	 * @access protected
+	 * @param string $class_name	ie. "Article"
+	 * @param mixed $id						identifikator zaznamu v tabulce; integer, string nebo pole
+	 * @param array $options
+	 * @return TableRecord	resp. tridu, ktera je urcena v $class_name
+	 */
+	static function _GetInstanceById($class_name,$id,$options = array()){
+		$out = new $class_name();
+		return $out->find($id,$options);
+	}
+
+
+	/**
 	 * Creates new record.
 	 *
 	 * Creates new record in database and returns an object of class
@@ -204,6 +234,37 @@ class TableRecord_Base extends inobj{
 	 */
 	static function CreateNewRecord($id,$options = array()){
 		return TableRecord::_CreateNewRecord(get_called_class(),$id,$options);
+	}
+
+	/**
+	 * Creates a record in a table
+	 *
+	 * Method takes array of values and creates a record in a table.
+	 * Then returns an object of given class.
+	 *
+	 *
+	 * Tuto metodu pouzijte v implementaci metody CreateNewRecord().
+	 * Pozn. od PHP5.3 toto jiz neni treba (zde uz je k dispozici fce get_called_class()).
+	 * Pouzijte ji nasledujicim zpusobem:
+	 *		class Article extends TableRecord{
+	 *			//...
+	 *			function CreateNewRecord($values,$options = array()){
+	 *				return TableRecord::_CreateNewRecord("Article",$values,$options);
+	 *			}
+	 *			//...
+	 *		}
+	 *
+	 *
+	 * @static
+	 * @access private
+	 * @param string $class_name					id. "Article"
+	 * @param array $values
+	 * @param array $options
+	 * @return TableRecord
+	 */
+	static function _CreateNewRecord($class_name,$values,$options = array()){
+		$out = new $class_name();
+		return $out->_insertRecord($values,$options);
 	}
 
 	/**
@@ -274,7 +335,7 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Returns a next value of the sequence related to the class.
 	 * It's useful when you need to know $id before creation of an object.
-	 * 
+	 *
 	 * <code>
 	 * 	$id = User::GetSequenceNextval();
 	 * 	User::CreateNewRecord(array(
@@ -304,7 +365,7 @@ class TableRecord_Base extends inobj{
 	 * @return string
 	 */
 	function getTableName(){ return $this->_TableName; }
-	
+
 	/**
 	 * Returns name of table sequence
 	 *
@@ -368,7 +429,7 @@ class TableRecord_Base extends inobj{
 		if(is_null($value = $this->getValue($options["attribute_name"]))){
 			return null;
 		}
-		
+
 		return call_user_func(array($class_name,"GetInstanceById"),$value);
 	}
 
@@ -411,12 +472,20 @@ class TableRecord_Base extends inobj{
 	 * When $id is array method returns array of TableRecord
 	 */
 	function find($id,$options = array()){
+		$options += array(
+			"use_cache" => false,
+		);
+
 		if(!isset($id)){ return null; }
 
 		if(is_object($id)){ $id = $id->getId(); }
 
 		if(is_array($id)){
 			return $this->_FindByArray($id,$options);
+		}
+
+		if($options["use_cache"]){
+			return Cache::Get(get_class($this),$id);
 		}
 
 		settype($id,$this->_IdFieldType);
@@ -518,6 +587,8 @@ class TableRecord_Base extends inobj{
 			"limit" => 20,
 			"offset" => 0,
 
+			"use_cache" => false,
+
 			"query" => null,
 			"query_count" => null,
 		);
@@ -526,6 +597,7 @@ class TableRecord_Base extends inobj{
 		if(is_string($conditions) && strlen($conditions)==0){ $conditions = array(); }
 		if(is_string($conditions)){ $conditions = array($conditions); }
 		$bind_ar = $options["bind_ar"];
+		$use_cache = $options["use_cache"];
 
 		TableRecord_Base::_NormalizeConditions($conditions,$bind_ar);
 
@@ -558,16 +630,23 @@ class TableRecord_Base extends inobj{
 		unset($options["conditions"]);
 		unset($options["query"]);
 		unset($options["query_count"]);
+		unset($options["use_cache"]);
 
 		$finder = new TableRecord_Finder(array(
 			"class_name" => get_class($this),
 			"query" => $query,
 			"query_count" => $query_count,
-			"options" => $options,
+			"options" => $options, // options for querying
 			"bind_ar" => $bind_ar,
+			"use_cache" => $use_cache
 		),$this->_dbmole);
 		$finder->_dbmole = &$this->_dbmole;
-		
+
+		// TODO: toto by melo byt v TableRecord_Finder
+		if($use_cache){
+			Cache::Prepare(get_class($this),$finder->getRecordIds());
+		}
+
 		return $finder;
 
 	}
@@ -646,13 +725,15 @@ class TableRecord_Base extends inobj{
 		$options += array(
 			"order" => $this->_IdFieldName,
 			"conditions" => array(),
-			"bind_ar" => array()
+			"bind_ar" => array(),
+			"use_cache" => false,
 		);
 
 		$conditions = $options["conditions"];
 		if(is_string($conditions) && strlen($conditions)==0){ $conditions = array(); }
 		if(is_string($conditions)){ $conditions = array($conditions); }
 		$bind_ar = $options["bind_ar"];
+		$use_cache = $options["use_cache"];
 
 		TableRecord_Base::_NormalizeConditions($conditions,$bind_ar);
 
@@ -665,8 +746,9 @@ class TableRecord_Base extends inobj{
 		unset($options["order"]);
 		unset($options["bind_ar"]);
 		unset($options["conditions"]);
+		unset($options["use_cache"]);
 
-		return $this->find($this->_dbmole->selectIntoArray($query,$bind_ar,$options));
+		return $this->find($this->_dbmole->selectIntoArray($query,$bind_ar,$options),array("use_cache" => $use_cache));
 	}
 
 	/**
@@ -678,7 +760,7 @@ class TableRecord_Base extends inobj{
 	 * $article = TableRecord::FindFirst(array(
 	 *		"class_name" => "Article",
 	 *		"conditions" => array(
-	 *			"created_at" => "2011-02-01" 
+	 *			"created_at" => "2011-02-01"
 	 *		),
 	 *	));
 	 * </code>
@@ -687,7 +769,7 @@ class TableRecord_Base extends inobj{
 	 * <code>
 	 * $article = Article::FindFirst(array(
 	 *		"conditions" => array(
-	 *			"created_at" => "2011-02-01" 
+	 *			"created_at" => "2011-02-01"
 	 *		),
 	 *	));
 	 * $article = Article::FindFirst("title=:title",array(":title" => "Foo Bar"));
@@ -713,7 +795,7 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
-	 * internal method 
+	 * internal method
 	 *
 	 * @ignore
 	 * @return TableRecord
@@ -825,7 +907,7 @@ class TableRecord_Base extends inobj{
 			"class" => "class_name",
 			"bind" => "bind_ar",
 		) as $alt_key => $right_key){
-			if(array_key_exists($alt_key,$options)){	
+			if(array_key_exists($alt_key,$options)){
 				$options[$right_key] = $options[$alt_key];
 				unset($options[$alt_key]);
 			}
@@ -859,7 +941,8 @@ class TableRecord_Base extends inobj{
 		$ids = TableRecord::ObjToId($ids);
 
 		$options = array_merge(array(
-			"omit_nulls" => false
+			"omit_nulls" => false,
+			"use_cache" => false,
 		),$options);
 
 		$MAX_ELEMENTS = 200;
@@ -868,13 +951,13 @@ class TableRecord_Base extends inobj{
 
 			$part = array();
 			$counter = 0;
-			foreach($ids as $key => $value){	
+			foreach($ids as $key => $value){
 				$part[$key] = $value;
 				$counter ++;
 
 				if($counter == $MAX_ELEMENTS){
 					$_out = $this->_FindByArray($part,$options);
-					foreach($_out as $_key => $_value){	
+					foreach($_out as $_key => $_value){
 						$out[$_key] = $_value;
 					}
 					$part = array();
@@ -883,19 +966,32 @@ class TableRecord_Base extends inobj{
 			}
 
 			$_out = $this->_FindByArray($part,$options);
-			foreach($_out as $_key => $_value){	
+			foreach($_out as $_key => $_value){
 				$out[$_key] = $_value;
 			}
 
 			return $out;
 		}
 
-		$bind_ar = array();
 
 		$class_name = get_class($this);
 
+		if($options["use_cache"]){
+			$out = Cache::Get($class_name,$ids);
+			if($options["omit_nulls"]){
+				$_out = array();
+				foreach($out as $_key => $_value){
+					if(!is_null($_value)){ $_out[$_out] = $_value; }
+				}
+				$out = $_out;
+			}
+			return $out;
+		}
+
+		$bind_ar = array();
+
 		$i = 0;
-		foreach($ids as $_key => $id){	
+		foreach($ids as $_key => $id){
 			if(is_object($id)){ $id = $id->getId(); }
 			if(!isset($id)){ continue; } // v poli se muze klidne nachazet nejaky null
 			settype($id,$this->_IdFieldType);
@@ -909,7 +1005,7 @@ class TableRecord_Base extends inobj{
 			$query = "SELECT ".join(",",$this->_fieldsToRead())." FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
 			$rows = $this->_dbmole->selectRows($query,$bind_ar);
 			if(!is_array($rows)){ return null; }
-			foreach($rows as $row){	
+			foreach($rows as $row){
 				$obj = new $class_name();
 				$obj->_setRecordValues($row);
 				$obj->_Hook_Find();
@@ -918,7 +1014,7 @@ class TableRecord_Base extends inobj{
 		}
 
 		$out = array();
-		foreach($ids as $_key => $_value){	
+		foreach($ids as $_key => $_value){
 			$id = $_value;
 			if(!isset($objs[$id])){
 				if(!$options["omit_nulls"]){ $out[$_key] = null; }
@@ -928,60 +1024,8 @@ class TableRecord_Base extends inobj{
 		}
 
 		return $out;
-
-		/*
-		// a Matyas` try, doesn't work
-		$ids=(array)$ids;
-
-		$options += array(
-			"omit_nulls" => false
-		);
-		$MAX_ELEMENTS = 200;
-		if(sizeof($ids)>$MAX_ELEMENTS){
-		  $out = array();
-		  $parts = array_chunk($MAX_ELEMENTS);
-
-			foreach($parts as $part){	
-					$out = $out + $this->_FindByArray($part,$options);
-			}
-			return $out;
-		}
-
-		
-		$class_name = get_class($this);
-
-		$bind_ar = array();
-		$i=0;
-		foreach($ids as $_key => &$id){	
-			if(is_object($id)){ $id = $id->getId(); }
-			if($id!==null)
-			  {
-			  settype($id,$this->_IdFieldType);
-			  $bind_ar[":id$i"] = $id;
-			  }
-			$i++;
-		}
-		$ids_flip=array_flip($ids);
-		$out=array_fill_keys(array_keys($ids),null);
-		
-		if(sizeof($bind_ar)>0){
-			$query = "SELECT ".join(",",$this->_fieldsToRead())." FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
-			$rows = $this->_dbmole->selectRows($query,$bind_ar);
-			if(!is_array($rows)){ return null; }
-			foreach($rows as $row){	
-				$obj = new $class_name();
-				$obj->_setRecordValues($row);
-				$obj->_Hook_Find();
-				$out[$ids_flip[$obj->getId()]] = $obj;
-			}
-		}
-	  if(!$options["omit_nulls"]){
-		   array_filter($out); 
-	  }
-		return $out;
-		*/
   }
-  
+
 	/**
 	 * Returns value of a column/s.
 	 *
@@ -1015,12 +1059,12 @@ class TableRecord_Base extends inobj{
 
 		/*
 		// a Matyas` try, it doesn't pass tests
-	  if(is_array($field_name))  
+	  if(is_array($field_name))
 	    {
 			$all_fields=$this->_TableStructure;
  			$field_name = array_flip($field_name); // now its in form db field name => required value
  			$diff=array_diff_key($field_name, $all_fields);
- 			$out=array();  
+ 			$out=array();
  			if($diff)
  			  {
  			  foreach($diff as $key => $value)
@@ -1103,9 +1147,9 @@ class TableRecord_Base extends inobj{
 		return array_keys($this->_RecordValues);
 	}
 
-	
-	
-	
+
+
+
 	/**
 	 * Set value in a table column.
 	 *
@@ -1154,7 +1198,7 @@ class TableRecord_Base extends inobj{
                 "do_not_escape" => array(),
                 "validates_updating_of_fields" => null,
               );
-		
+
 		if(!is_array($options["do_not_escape"])){ $options["do_not_escape"] = array($options["do_not_escape"]); }
 
 		foreach($data as $_key => &$value){
@@ -1253,7 +1297,7 @@ class TableRecord_Base extends inobj{
 	function setValuesVirtually($values){
 		$keys = array_keys($this->_RecordValues);
 
-		foreach($values as $_key => $_value){	
+		foreach($values as $_key => $_value){
 			if(in_array($_key,$keys)){
 				$this->_RecordValues[$_key] = $_value;
 			}
@@ -1292,7 +1336,7 @@ class TableRecord_Base extends inobj{
 	function _readValueIfWasNotRead($field){
 		 if(is_array($field)){
  			$this->_DoNotReadValues = array_diff($this->_DoNotReadValues,$field);
- 			$this->_readValues($field);	    
+ 			$this->_readValues($field);
  		  }
  		elseif(in_array($field,$this->_DoNotReadValues)){
 			$this->_DoNotReadValues = array_diff($this->_DoNotReadValues,array($field));
@@ -1317,7 +1361,7 @@ class TableRecord_Base extends inobj{
 	}
 
 	/**
-	 * 
+	 *
 	 * @see TableRecord::_CreateNewRecord()
 	 * @ignore
 	 */
@@ -1340,7 +1384,7 @@ class TableRecord_Base extends inobj{
 		}elseif($this->_dbmole->usesSequencies()){
 			$id = $this->_dbmole->selectSequenceNextval($this->_SequenceName);
 			if(!isset($id)){ return null; }
-			$values[$this->_IdFieldName] = $id;			
+			$values[$this->_IdFieldName] = $id;
 		}
 
 		/*
@@ -1358,7 +1402,7 @@ class TableRecord_Base extends inobj{
 		if(!isset($id)){
 			$id = $this->_dbmole->selectInsertId();
 		}
-		
+
 		$out = TableRecord::_GetInstanceById(get_class($this),$id);
 		$out->_Hook_afterCreateNewRecord();
 		return $out;
@@ -1385,7 +1429,7 @@ class TableRecord_Base extends inobj{
 	 * @access protected
 	 */
 	function _Hook_Find(){
-		
+
 	}
 
 	/**
@@ -1394,12 +1438,12 @@ class TableRecord_Base extends inobj{
 	 * This method is called after a record is successfully updated.
 	 * Can be overriden in descendant.
 	 *
-	 * 
+	 *
 	 * @param array $fields
 	 * @access protected
 	 */
 	function _Hook_setValues($fields){
-		
+
 	}
 
 	/**
@@ -1437,8 +1481,8 @@ class TableRecord_Base extends inobj{
 
 	/**
 	 * Magic method:
-	 * 
-	 * echo "$object"; 
+	 *
+	 * echo "$object";
 	 * @ignore
 	 */
 	function __toString(){
@@ -1447,7 +1491,7 @@ class TableRecord_Base extends inobj{
 
 	/**
 	 * Magic method changes calling to an nonexistent method in this way:
-	 * 
+	 *
 	 * $object->getEmailAddress() -> $object->g("email_address");
 	 *
 	 * $object->getUserId() -> $object->g("user_id");
