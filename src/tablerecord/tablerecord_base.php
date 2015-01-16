@@ -225,6 +225,8 @@ class TableRecord_Base extends inobj{
 	 * Example:
 	 * <code>
 	 * $article = Article::CreateNewRecord(array("title" => "February Highlights")); // there's no need to define CreateNewRecord() in the Article class.
+	 *
+	 * $article = Article::CreateNewRecord($values,array("use_cache" => true));
 	 * </code>
 	 *
 	 * @todo Revise options
@@ -1369,6 +1371,10 @@ class TableRecord_Base extends inobj{
 		$values=(array)$values;
 		$options=(array)$options;
 
+		$options += array(
+			"use_cache" => false,
+		);
+
 		foreach($values as $_key => $value){
 			if(isset($options["validates_inserting_of_fields"]) && !in_array($_key,$options["validates_inserting_of_fields"])){
 				unset($values[$_key]);
@@ -1403,7 +1409,7 @@ class TableRecord_Base extends inobj{
 			$id = $this->_dbmole->selectInsertId();
 		}
 
-		$out = TableRecord::_GetInstanceById(get_class($this),$id);
+		$out = TableRecord::_GetInstanceById(get_class($this),$id,array("use_cache" => $options["use_cache"]));
 		$out->_Hook_afterCreateNewRecord();
 		return $out;
 	}
