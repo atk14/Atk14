@@ -315,9 +315,10 @@ class Atk14Utils{
 			$smarty->setTemplateDir($_template_dir);
 			$smarty->setCompileDir($_compile_dir = "$PATH_SMARTY/$userid/templates_c/"); // the uid of the user owning the current process is involved in the compile_dir, thus some file permission issues are solved
 			$smarty->setConfigDir($PATH_SMARTY."/config/");
-			$smarty->setCacheDir($PATH_SMARTY."/cache/");
+			$smarty->setCacheDir($_cache_dir = "$PATH_SMARTY/$userid/cache/");
 
 			if(!file_exists($_compile_dir)){ Files::Mkdir($_compile_dir); }
+			if(!file_exists($_cache_dir)){ Files::Mkdir($_cache_dir); }
 
 			if(!Files::IsReadableAndWritable($_compile_dir)){
 				//die("$smarty->compile_dir is not writable!!!");
