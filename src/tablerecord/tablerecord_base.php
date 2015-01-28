@@ -983,7 +983,7 @@ class TableRecord_Base extends inobj{
 			if($options["omit_nulls"]){
 				$_out = array();
 				foreach($out as $_key => $_value){
-					if(!is_null($_value)){ $_out[$_out] = $_value; }
+					if(!is_null($_value)){ $_out[$_key] = $_value; }
 				}
 				$out = $_out;
 			}
