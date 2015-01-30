@@ -117,7 +117,17 @@ class Atk14Dispatcher{
 			));
 
 			// ajaxove presmerovani...
-			if(strlen($ctrl->response->getLocation())>0 && $request->xhr()){
+			if(strlen($ctrl->response->getLocation())>0 && $request->xhr() && !preg_match('/^(text|application)\/(html|json|xml)/',$request->getHeader("Accept"))){
+				// tohle by snad melo byt vraceno pokud je v requestu
+				//	Accept: */*
+				//	Accept: text/javascript
+				//	neco dalsiho?
+				//
+				// regularni vyraz ma vyradit toto:
+				//	Accept: text/html, ...
+				//	Accept: text/json, ...
+				//	Accept: application/json, ...
+				//	Accept: text/xml, ...
 				$ctrl->response->write("location.replace('".$ctrl->response->getLocation()."');"); // watch out, it's javascript
 				$ctrl->response->setLocation(null);
 			}
