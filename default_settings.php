@@ -13,6 +13,7 @@ __defaults__(array(
 
 __defaults__(array(
 	"DEFAULT_EMAIL" => "info@example.com",
+	"BCC_EMAIL" => "",
 	"DEFAULT_CHARSET" => "UTF-8",
 ));
 
