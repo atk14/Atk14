@@ -496,8 +496,24 @@ class Atk14Mailer{
 			$email_ar = sendmail($params);
 		}
 		if(DEVELOPMENT){
-			// logging e-mail data as we are developing
-			$this->logger->info(($params["build_message_only"] ? "Building an e-mail (won't be sent in any environment)" : "Sending an e-mail (not for real in DEVELOPMENT)")."\n-----------------------------------------------\nTo: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n\n$email_ar[body]");
+			// Logging email data as we are developing
+			$message = "To: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]\n\n$email_ar[body]";
+			$this->logger->info(($params["build_message_only"] ? "Building an email (won't be sent in any environment)" : "Sending an email (not for real in DEVELOPMENT)")."\n-----------------------------------------------\n$message");
+
+			// Saving email into a file in TEMP/sent_emails/
+			// To:, Cc: and Bcc: headers they will be overwritten
+			$headers = "X-Original-To: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]";
+			$headers = preg_replace('/\nCc:/is',"\nX-Original-Cc:",$headers);
+			$headers = preg_replace('/\nBcc:/is',"\nX-Original-Bcc:",$headers);
+			$message = "$headers\n\n$email_ar[body]";
+
+			$dir = TEMP."/sent_emails";
+			$filename = date("Y-m-d_H_i_s")."_".(uniqid()).".eml";
+			Files::MkDir($dir);
+			Files::WriteToFile("$dir/$filename",$message);
+			if(file_exists("$dir/latest")){ unlink("$dir/latest"); }
+			symlink("$dir/$filename","$dir/latest"); // TODO: use relative path
+			$this->logger->info("You can send the message to yourself by typing this command in shell:\n".sprintf('{ echo "To: %s"; cat %s; } | mutt -H -',ATK14_ADMIN_EMAIL,"$dir/$filename"));
 		}
 		return $email_ar;
 	}
