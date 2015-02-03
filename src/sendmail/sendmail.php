@@ -197,7 +197,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 				putenv("QMAILUSER=$matches[1]");
 				putenv("QMAILHOST=$matches[2]");
 			}
-			$out["accepted_for_delivery"] = mail($TO,$SUBJECT,$BODY,$HEADERS);
+			$out["accepted_for_delivery"] = _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS);
 		}
 		return $out;
 	}
@@ -300,7 +300,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 			putenv("QMAILUSER=$matches[1]");
 			putenv("QMAILHOST=$matches[2]");
 		}
-		$out["accepted_for_delivery"] = mail($TO,$SUBJECT,$BODY,$HEADERS);
+		$out["accepted_for_delivery"] = _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS);
 	}
 
 	return $out;
@@ -516,6 +516,13 @@ function _sendmail_lf_to_crlf($string){
 	$string = str_replace("\r","",$string);
 	$string = str_replace("\n","\r\n",$string);
 	return $string;
+}
+
+function _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS){
+	if(!$TO){
+		throw new Exception("sendmail: No recipients (To:) were specified.");
+	}
+	return mail($TO,$SUBJECT,$BODY,$HEADERS);
 }
 
 /* notes from Dan Potter:
