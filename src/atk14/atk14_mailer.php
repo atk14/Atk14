@@ -505,15 +505,26 @@ class Atk14Mailer{
 			$headers = "X-Original-To: $email_ar[to]\nSubject: $email_ar[subject]\n$email_ar[headers]";
 			$headers = preg_replace('/\nCc:/is',"\nX-Original-Cc:",$headers);
 			$headers = preg_replace('/\nBcc:/is',"\nX-Original-Bcc:",$headers);
+			//$headers = "To: ".ATK14_ADMIN_EMAIL."\n".$headers; // adding new To: address
 			$message = "$headers\n\n$email_ar[body]";
 
 			$dir = TEMP."/sent_emails";
 			$filename = date("Y-m-d_H_i_s")."_".(uniqid()).".eml";
 			Files::MkDir($dir);
 			Files::WriteToFile("$dir/$filename",$message);
+
+			// (Re)creating symlink latest
 			if(file_exists("$dir/latest")){ unlink("$dir/latest"); }
-			symlink("$dir/$filename","$dir/latest"); // TODO: use relative path
-			$this->logger->info("You can send the message to yourself by typing this command in shell:\n".sprintf('{ echo "To: %s"; cat %s; } | mutt -H -',ATK14_ADMIN_EMAIL,"$dir/$filename"));
+			symlink("$filename","$dir/latest");
+
+			//$this->logger->info(
+			//	"You can send the message to yourself by typing this command in shell:\n".
+			//	sprintf('{ echo "To: %s"; cat %s; } | mutt -H -',ATK14_ADMIN_EMAIL,"$dir/$filename")
+			//);
+			$this->logger->info(
+				"You can send the message to yourself by typing this command in shell:\n".
+				sprintf('cat %s | sendmail -f "%s" "%s"',"$dir/$filename",DEFAULT_EMAIL,ATK14_ADMIN_EMAIL)
+			);
 		}
 		return $email_ar;
 	}
