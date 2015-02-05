@@ -5,5 +5,4 @@ require_once(dirname(__FILE__)."/load.php");
 
 $d = $ATK14_GLOBAL->getDatabaseConfig();
 
-echo $d["username"];
-echo "\n";
+echo $d["username"], "\n";

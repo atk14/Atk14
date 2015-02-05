@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+require_once(dirname(__FILE__)."/load.php");
+
+$configurations = array();
+
+foreach(array_keys($ATK14_GLOBAL->getConfig("database")) as $c_name){
+	if(in_array($c_name,array("development","test","production"))){
+		$c_name = "default";
+	}else{
+		$c_name = preg_replace('/_(development|test|production)$/','',$c_name);
+	}
+
+	if(in_array($c_name,$configurations)){ continue; }
+	$configurations[] = $c_name;
+
+	echo $c_name, "\n";
+}
+

@@ -9,6 +9,11 @@
 #  $ ATK14_ENV=PRODUCTION ./scripts/dbconsole
 #  $ ATK14_ENV=PRODUCTION ./scripts/dbconsole default
 #  $ ATK14_ENV=PRODUCTION ./scripts/dbconsole import
+#
+# To list available database configurations
+#
+#  $ ./scripts/dbconsole -l
+#  $ ./scripts/dbconsole --list
 
 cd `dirname $0`
 
@@ -16,6 +21,11 @@ cd `dirname $0`
 exec `./pgpass_record -a`
 
 configuration_name=$1 # e.g. default, import, see Atk14Global::getDatabaseConfig()
+
+if [ "$configuration_name" = "-l" -o "$configuration_name" = "--list" ]; then
+	./_list_database_configurations
+	exit 0
+fi
 
 cmd=`./_dbconsole_command "$configuration_name"`
 if [ "$cmd" = "" ]; then
