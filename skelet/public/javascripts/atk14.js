@@ -27,10 +27,10 @@ var ATK14 = (function( $, window, undefined ) {
 
 	$( document )
 		.ajaxStart(function() {
-			$( this ).addClass( "loading" );
+			$( document.body ).addClass( "loading" );
 		})
 		.ajaxStop(function() {
-			$( this ).removeClass( "loading" );
+			$( document.body ).removeClass( "loading" );
 		});
 
 	$.ajaxSetup({
