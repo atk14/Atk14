@@ -171,12 +171,13 @@ class tc_dictionary extends tc_base{
 		));
 
 		$this->assertEquals(33,$d->getInt("i"));
+		$this->assertEquals(0,$d->getInt("s")); // TODO: Shouldn't this be null?
 		$this->assertEquals("33",$d->getString("i"));
-		$this->assertEquals(array(33),$d->getArray("i")); // Chceme to takto?
+		$this->assertEquals(array(33),$d->getArray("i")); // TODO: Do we really want this? It looks like crap.
 
 		$this->assertEquals(0,$d->getInt("s"));
 		$this->assertEquals("Hello",$d->getString("s"));
-		$this->assertEquals(array("Hello"),$d->getArray("s")); // Chceme to takto?
+		$this->assertEquals(array("Hello"),$d->getArray("s")); // TODO: Another crap?
 
 		$this->assertNull($d->getInt("ii"));
 		$this->assertNull($d->getString("ii"));
