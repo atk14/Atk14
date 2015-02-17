@@ -520,7 +520,7 @@ function _sendmail_lf_to_crlf($string){
 
 function _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS){
 	if(!$TO){
-		throw new Exception("sendmail: No recipients (To:) were specified.");
+		error_log("sendmail: no recipients (To:) were specified in the message \"$SUBJECT\"");
 	}
 	return mail($TO,$SUBJECT,$BODY,$HEADERS);
 }
