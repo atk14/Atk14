@@ -24,7 +24,7 @@ class _HTTPUtils{
 			return;
 		}
 
-		_HTTPUtils::_set_auth($headers["X-Authorization"]);
+		_HTTPUtils::_SetAuthData($headers["X-Authorization"]);
 	}
 
 	/**
