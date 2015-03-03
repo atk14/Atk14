@@ -6,22 +6,25 @@
  */
 
 if (get_magic_quotes_gpc()) {
-	/**
-	 * Strips slashes in strings passed in array.
-	 *
-	 * @param array $array array of strings to strip slashes from
-	 * @return array
-	 */
-	function stripslashes_array($array) {
-			return is_array($array) ? array_map('stripslashes_array', $array) : stripslashes($array);
-	}
-
-	$_COOKIE = stripslashes_array($_COOKIE);
-	//$_FILES = stripslashes_array($_FILES);
-	$_GET = stripslashes_array($_GET);
-	$_POST = stripslashes_array($_POST);
-	//$_REQUEST = stripslashes_array($_REQUEST);
+	$_COOKIE = _HTTPUtils::stripslashes_array($_COOKIE);
+	//$_FILES = _HTTPUtils::stripslashes_array($_FILES);
+	$_GET = _HTTPUtils::stripslashes_array($_GET);
+	$_POST = _HTTPUtils::stripslashes_array($_POST);
+	//$_REQUEST = _HTTPUtils::stripslashes_array($_REQUEST);
 }
+
+/*
+ * If your script is being run as fastcgi, there is no access to to the HTTP Authorization header.
+ * So you can put the following lines into .htaccess
+ * 
+ * <IfModule mod_headers.c>
+ *	RewriteRule (.*) - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+ *	RequestHeader set X-Authorization %{HTTP_AUTHORIZATION}e
+ * </IfModule>
+ *
+ * After then there is a new HTTP header X-Authorization with the original Authorization value.
+ */
+_HTTPUtils::_HandleXAuthorization();
 
 /**
  * HTTPRequest class provides all information about HTTP request.

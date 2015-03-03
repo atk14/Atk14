@@ -1,5 +1,6 @@
 <?php
 $__PATH__ = dirname(__FILE__);
+require_once("$__PATH__/_httputils.php");
 require_once("$__PATH__/httpcookie.php");
 require_once("$__PATH__/httprequest.php");
 require_once("$__PATH__/httpresponse.php");
