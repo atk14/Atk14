@@ -29,6 +29,7 @@ require_once(dirname(__FILE__)."/load.php");
 
 $previewing = isset($arguments["p"]) || isset($arguments["preview"]);
 $dbname = $dbmole->getDatabaseName();
+$schema = "public";
 
 if(!$previewing){
 
@@ -56,8 +57,8 @@ if($previewing){
 	echo "-- database $dbname\n";
 }
 
-foreach($dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemaname='public'") as $table){
-  $q = "DROP TABLE $table CASCADE";
+foreach($dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemaname='$schema'") as $table){
+  $q = "DROP TABLE $schema.$table CASCADE";
 	if($previewing){
 		echo "$q;\n";
 		continue;
@@ -67,13 +68,27 @@ foreach($dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemana
 }
 
 foreach($dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences") as $sequence){
-	$q = "DROP SEQUENCE $sequence CASCADE";
+	$q = "DROP SEQUENCE $schema.$sequence CASCADE";
 	if($previewing){
 		echo "$q;\n";
 		continue;
 	}
 	$dbmole->doQuery($q);
 	echo "sequence $sequence dropped\n";
+}
+
+foreach($dbmole->selectIntoArray("
+	SELECT proname || '(' || oidvectortypes(proargtypes) || ')'
+	FROM pg_proc INNER JOIN pg_namespace ns ON (pg_proc.pronamespace = ns.oid)
+	WHERE ns.nspname = '$schema'  order by proname
+") as $procedure){
+	$q = "DROP FUNCTION $schema.$procedure";
+	if($previewing){
+		echo "$q;\n";
+		continue;
+	}
+	$dbmole->doQuery($q);
+	echo "function $procedure dropped\n";
 }
 
 
