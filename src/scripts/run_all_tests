@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Runs all application`s tests
 # Searches tests in directories:

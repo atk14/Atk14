@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # An interactive ATK14 console.
 # Acts like an Ruby on Rail console.

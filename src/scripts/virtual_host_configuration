@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd `dirname $0` # /home/joe/webapps/myapp/scripts
 cd ..           # /home/joe/webapps/myapp

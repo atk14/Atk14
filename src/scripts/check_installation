@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd `dirname $0`
 ROOT=`./_get_application_path`../
