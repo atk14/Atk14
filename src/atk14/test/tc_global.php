@@ -23,5 +23,8 @@ class TcGlobal extends TcBase{
 		),$global->getConfig("magic_plugin"));
 
 		$this->assertEquals(null,$global->getConfig("not_existing_config"));
+
+		// this must load the config from local_config/fruits.yml
+		$this->assertEquals(array('banana','strawberry'),$global->getConfig("fruits"));
 	}
 }

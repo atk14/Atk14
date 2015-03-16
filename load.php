@@ -13,15 +13,12 @@ require_once(dirname(__FILE__)."/src/http/load.php");
 require_once(dirname(__FILE__)."/src/atk14/atk14_utils.php");
 Atk14Utils::DetermineEnvironment();
 
-// now we are gonna to set up config constants
-if(defined("ATK14_DOCUMENT_ROOT")){
-	require_once(ATK14_DOCUMENT_ROOT."/config/settings.php");
-}else{
-	require_once(dirname(__FILE__)."/../config/settings.php");
-}
+// loading the main configuration file (local_config/settings.php or config/settings.php)
+$_document_root = defined("ATK14_DOCUMENT_ROOT") ? ATK14_DOCUMENT_ROOT : dirname(__FILE__)."/..";
+require_once(file_exists("$_document_root/local_config/settings.php") ? "$_document_root/local_config/settings.php" : "$_document_root/config/settings.php");
 require_once(dirname(__FILE__)."/default_settings.php");
 
-// load the rest...
+// loading the rest...
 require_once(dirname(__FILE__)."/src/string/load.php");
 require_once(dirname(__FILE__)."/src/translate/load.php");
 require_once(dirname(__FILE__)."/src/dictionary/load.php");

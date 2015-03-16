@@ -238,18 +238,23 @@ class Atk14Global{
 	 * @return string|null
 	 */
 	function getConfig($config_name){
-		static $STORE;
-		if(!isset($STORE)){ $STORE = array(); }
+		static $STORE = array();
 		if(in_array($config_name,array_keys($STORE))){ return $STORE[$config_name]; }
 
 		$STORE[$config_name] = null;
 
-		if(!file_exists($path = $this->getApplicationPath()."../config/")){
-			$path = $this->getApplicationPath()."conf/";
-		}
+		// paths in which the configuration file is searched
+		$paths = array(
+			$this->getApplicationPath()."../local_config/",
+			$this->getApplicationPath()."../config/",
+			$this->getApplicationPath()."conf/", // legacy path, TODO: to be removed
+		);
 
-		if(file_exists($_f = $path."$config_name.yml")){
-			$STORE[$config_name] = miniYAML::Load(Files::GetFileContent($_f),array("interpret_php" => true));
+		foreach($paths as $path){
+			if(file_exists($_f = $path."$config_name.yml")){
+				$STORE[$config_name] = miniYAML::Load(Files::GetFileContent($_f),array("interpret_php" => true));
+				break;
+			}
 		}
 
 		return $STORE[$config_name];
