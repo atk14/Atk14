@@ -55,6 +55,11 @@ exit(0);
 define("INOBJ_TABLERECORD_CACHES_STRUCTURES",0); // do not read cached structures during migration
 require_once(dirname(__FILE__)."/load.php");
 
+// loads application_migration.php
+if(file_exists($_f = $ATK14_GLOBAL->getMigrationsPath()."/application_migration.php")){
+	require_once($_f);
+}
+
 $logger = Atk14Migration::GetLogger();
 
 $previewing = isset($arguments["p"]) || isset($arguments["preview"]);
@@ -87,10 +92,11 @@ if(sizeof($argv)>1){
 $forcing = (isset($arguments["f"]) || isset($arguments["force"])) && sizeof($force_to_execute_migrations);
 
 // getting list of migration files
+// a migration file must start with a number
 $migrations = array();
 $dir = opendir($ATK14_GLOBAL->getMigrationsPath());
 while($item = readdir($dir)){
-	if(preg_match("/(.+)\\.(sql|inc|php)$/",$item,$matches)){
+	if(preg_match("/^(\d+_.+)\\.(sql|inc|php)$/",$item,$matches)){
 		$migrations[] = $item;
 	}
 }
