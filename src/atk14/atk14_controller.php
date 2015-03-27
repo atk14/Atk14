@@ -551,7 +551,7 @@ class Atk14Controller{
 
 			$template_name = $this->template_name.".tpl";
 			if(!$this->smarty->templateExists("$template_name")){
-				Atk14Utils::ErrorLog("For controller $this->controller there is no action template $template_name",$this->response);
+				Atk14Utils::ErrorLog("For controller ".($this->namespace ? "$this->namespace/" : "")."$this->controller there is no action template $template_name",$this->response);
 				return $this->_after_render();
 			}
 
