@@ -384,7 +384,7 @@ class Atk14Mailer{
 		}
 
 		if(!$layout_template && $this->render_layout){
-			Atk14Utils::ErrorLog("Hey Dude, missing mailer layout template $_layout_name");
+			Atk14Utils::ErrorLog("Missing mailer layout template $_layout_name");
 			return $body;
 		}
 

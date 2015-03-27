@@ -1,5 +1,6 @@
 <?php
 $__PATH__ = dirname(__FILE__);
+require_once("$__PATH__/atk14_exception.php");
 require_once("$__PATH__/atk14_timer.php");
 require_once("$__PATH__/atk14_controller.php");
 require_once("$__PATH__/atk14_dispatcher.php");

@@ -545,13 +545,13 @@ class Atk14Controller{
 				!file_exists($_layout_template = $ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$layout_template.tpl") &&
 				!file_exists($_layout_template = $ATK14_GLOBAL->getApplicationPath()."layouts/$layout_template.tpl")
 			){
-				Atk14Utils::ErrorLog("Hey Dude, missing layout template: layouts/$this->namespace/$layout_template.tpl or layouts/$layout_template.tpl",$this->response);
+				Atk14Utils::ErrorLog("Missing layout template: layouts/$this->namespace/$layout_template.tpl or layouts/$layout_template.tpl",$this->response);
 				return $this->response;
 			}
 
 			$template_name = $this->template_name.".tpl";
 			if(!$this->smarty->templateExists("$template_name")){
-				Atk14Utils::ErrorLog("Hey Dude, missing action template $template_name",$this->response);
+				Atk14Utils::ErrorLog("For controller $this->controller there is no action template $template_name",$this->response);
 				return $this->_after_render();
 			}
 

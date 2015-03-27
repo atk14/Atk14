@@ -359,13 +359,12 @@ class Atk14Utils{
 	 * @param HTTPResponse $response
 	 */
 	static function ErrorLog($message,&$response){
-		$message = "AK14 error: $message";
-		error_log($message);
-		$response->setStatusCode(500);
-		if(defined("DEVELOPMENT") && DEVELOPMENT){
-			$response->write($message);
+		if(!PRODUCTION){
+			//$response->write($message);
+			throw new Atk14Exception($message);
 		}else{
-			$response->write("AK14 error");
+			error_log("AK14 error: $message");
+			$response->internalServerError();
 		}
 	}
 
