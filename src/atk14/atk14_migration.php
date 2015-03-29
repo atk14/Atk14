@@ -97,6 +97,7 @@ class Atk14Migration{
 	 */
 	function up(){
 		// must be covered by the descendent...
+		throw new Exception(sprintf("method %s::up() has to be defined",get_class($this)));
 	}
 
 	// TODO: to be implemented: migrateDown() and down(), unless it is not needed
