@@ -121,6 +121,8 @@ function dbmole_error_handler($dbmole){
 		echo "</pre>";
 	}
 
+	throw new DbMoleException(get_class($dbmole)." on ".$dbmole->getDatabaseName().": ".$dbmole->getErrorMessage());
+
 	exit(1);
 }
 DbMole::RegisterErrorHandler("dbmole_error_handler");
