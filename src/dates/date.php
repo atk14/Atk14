@@ -10,46 +10,46 @@
  * Class for performing operations on dates.
  *
  * Basic usage
- * <code>
- * $d = new Date("2008-01-01");
- * </code
+ * 	$d = new Date("2008-01-01");
  * Unexpected thing may happen when input date is not valid so the following usage is preferred.
  *
- * <code>
- * $d = Date::ByDate("2008-01-01");
- * </code>
  * This call returns null when input date is not valid.
+ * 	$d = Date::ByDate("2008-01-01");
  *
- * <code>
- * $today = Date::Today();
- * $yesterday = Date::Yesterday();
- * $tomorrow = Date::Tomorrow();
- * </code>
+ * Getting yesterday, today a tommorow date
+ * 	$today = Date::Today();
+ * 	$yesterday = Date::Yesterday();
+ * 	$tomorrow = Date::Tomorrow();
  *
- * <code>
- * $d->getUnixTimestamp();
- * $d->toString();
- * </code>
+ * Getting various output formats.
+ * 	$d = Date::Today();
+ * 	$d->getUnixTimestamp();
+ * 	$d->toString();
  *
- * // nasledujici meni primo instanci
- * $d->addDay();
- * $d->addDays(10);
- * $d->addDays(-2);
+ * Following methods change the instance value
+ * 	$d->addDay();
+ * 	$d->addDays(10);
+ * 	$d->addDays(-2);
  *
- * // nasledujici pracuje nad kopiema instance
- * $d1 = $d->plusDay();
- * $d2 = $d->plusDays(10);
- * $d3 = $d->minusDay();
- * $d4 = $d->minusDays(10);
+ * Following methods return copy of an instance
+ * 	$d1 = $d->plusDay();
+ * 	$d2 = $d->plusDays(10);
+ * 	$d3 = $d->minusDay();
+ * 	$d4 = $d->minusDays(10);
  *
- * if($d->isMonday()){
- *		// mame pondeli
- *	}
+ * Check if the date is monday
+ * 	if($d->isMonday()){
+ * 		ok, it's monday
+ * 	}
  *
- * $next_friday = $d->getNextFriday(); // vrati nesledujici patek vzhledem k tomuto dni; vzdy vrati den v budounosti; tj. muze vratit den v akt. tydnu
- * $current_friday = $d->getCurrentWeekFriday(); // vrati patek v akt. tydnu; muze vratit den v minulosti, v budoucnosti nebo stejny den
- * $next_week_friday = $d->getNextWeekFriday();
- * $prev_week_friday = $d->getPrevWeekFriday();
+ * Returns next monday
+ * vrati nesledujici patek vzhledem k tomuto dni; vzdy vrati den v budounosti; tj. muze vratit den v akt. tydnu
+ * 	$next_friday = $d->getNextFriday();
+ * 	$current_friday = $d->getCurrentWeekFriday();
+ *
+ * vrati patek v akt. tydnu; muze vratit den v minulosti, v budoucnosti nebo stejny den
+ * 	$next_week_friday = $d->getNextWeekFriday();
+ * 	$prev_week_friday = $d->getPrevWeekFriday();
  *
  * @package Atk14
  * @subpackage Date
