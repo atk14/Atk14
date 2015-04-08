@@ -26,6 +26,12 @@ $pgpass_record = "$d[host]:$d[port]:$d[database]:$d[username]:$d[password]";
 $arguments = getopt("a",array("add-record-automatically"));
 
 if(isset($arguments["a"]) || isset($arguments["add-record-automatically"])){
+
+	// the automatic append won't be processed when the id of user and id of file owner doesn't match
+	if(posix_getuid()!==fileowner(__FILE__)){
+		exit(0);
+	}
+
 	// now we are gonna append the $pgpass_record when it is not present in the ~/.pgpass_record
 	$HOME = getenv("HOME");
 	$pgpass_file = "$HOME/.pgpass";
