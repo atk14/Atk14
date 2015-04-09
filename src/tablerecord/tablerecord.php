@@ -43,7 +43,7 @@ class TableRecord extends TableRecord_Base{
 			}elseif(preg_match("/^(numeric|double precision)/",$this->_TableStructure[$_key])){
 				$_value=(float) $_value;
 
-			}elseif(preg_match("/^integer|bigint/",$this->_TableStructure[$_key])){
+			}elseif(preg_match("/^integer|bigint|smallint/",$this->_TableStructure[$_key])){
 				$_real = $_value;
 				#in 32 system integer can overflow, but float can be sufficient 
 				 $_real=(float) $_real;
