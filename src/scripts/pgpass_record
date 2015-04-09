@@ -29,10 +29,11 @@ if(isset($arguments["a"]) || isset($arguments["add-record-automatically"])){
 
 	// the automatic append won't be processed when the id of user and id of file owner doesn't match
 	if(posix_getuid()!==fileowner(__FILE__)){
+		// for some reason I think it's good to exit here quietly and not to store the database password into the .pgpass
 		exit(0);
 	}
 
-	// now we are gonna append the $pgpass_record when it is not present in the ~/.pgpass_record
+	// now we are gonna append the $pgpass_record when it is not present in the ~/.pgpass
 	$HOME = getenv("HOME");
 	$pgpass_file = "$HOME/.pgpass";
 	if(!file_exists($pgpass_file)){
