@@ -14,7 +14,7 @@ class Atk14Router{
 
 	var $redirected_to = null;
 
-	function Atk14Router(){
+	function __construct(){
 		global $ATK14_GLOBAL;
 		$this->default_lang = $ATK14_GLOBAL->getDefaultLang();
 
