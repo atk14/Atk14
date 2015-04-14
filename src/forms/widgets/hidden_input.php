@@ -14,4 +14,12 @@ class HiddenInput extends Input
 {
 	var $input_type = 'hidden';
 	var $is_hidden = true;
+
+	function render($name, $value, $options=array())
+	{
+		$out = parent::render($name, $value, $options);
+		// hack: in a hidden field the "required" attribute has no reason
+		$out = str_replace(' required="required"','',$out);
+		return $out;
+	}
 }
