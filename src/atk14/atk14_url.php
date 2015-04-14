@@ -121,6 +121,7 @@ class Atk14Url{
 		// kontrollery "application" a "atk14" neni mozne zvenku linkovat primo,
 		// stejne tak akce "error404", "error403" a "error500" neni mozne linkovat primo.
 		if(!isset($out) || in_array($out["controller"],array("application","atk14")) || in_array($out["action"],array("error404","error403","error500"))){
+			Atk14Utils::InitializeLocale($out["lang"]);
 			return  Atk14Url::_NotFound($namespace);
 		}
 
@@ -131,11 +132,7 @@ class Atk14Url{
 		}
 
 		// zde muze byt dojit ke zmene $out["lang"]
-		if(function_exists("atk14_initialize_locale")){
-			atk14_initialize_locale($out["lang"]);
-		}else{
-			i18n::init_translation($out["lang"]); // 
-		}
+		Atk14Utils::InitializeLocale($out["lang"]);
 
 		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
 		$get_params = array_merge($_GET,$get_params);
@@ -162,11 +159,7 @@ class Atk14Url{
 	 */
 	static function _FindForceRedirect($out,$requested_uri){
 		// zde muze byt dojit ke zmene $out["lang"]
-		if(function_exists("atk14_initialize_locale")){
-			atk14_initialize_locale($out["lang"]);
-		}else{
-			i18n::init_translation($out["lang"]); // 
-		}
+		Atk14Utils::InitializeLocale($out["lang"]);
 
 		if($out["force_redirect"]){ return $out; }
 		if($out["controller"]=="application" && $out["action"]=="error404"){ return $out; }

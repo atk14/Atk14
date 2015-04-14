@@ -436,6 +436,14 @@ class Atk14Utils{
 		return join('?',$ar);
 	}
 
+	static function InitializeLocale(&$lang){
+		if(function_exists("atk14_initialize_locale")){
+			atk14_initialize_locale($lang);
+		}else{
+			i18n::init_translation($lang);
+		}
+	}
+
 	/**
 	 * @ignore
 	 */ 
