@@ -48,6 +48,35 @@ class TcFinder extends TcBase{
 		$this->assertEquals("Oranges",$records[1]->getTitle());
 		$this->assertEquals("Oranges",$finder[1]->getTitle());
 
+		// -- locating the position
+		$this->assertEquals(false,$finder->atBeginning());
+		$this->assertEquals(true,$finder->atEnd());
+
+		$this->assertEquals(null,$finder->getPrevOffset());
+		$this->assertEquals(null,$finder->getNextOffset());
+
+		$finder = TestTable::Finder(array("limit" => 2, "offset" => 0));
+		$this->assertEquals(true,$finder->atBeginning());
+		$this->assertEquals(false,$finder->atEnd());
+		$this->assertEquals(null,$finder->getPrevOffset());
+		$this->assertEquals(2,$finder->getNextOffset());
+		$this->assertEquals(2,$finder->getRecordsDisplayed());
+
+		$finder = TestTable::Finder(array("limit" => 2, "offset" => 2));
+		$this->assertEquals(false,$finder->atBeginning());
+		$this->assertEquals(true,$finder->atEnd());
+		$this->assertEquals(null,$finder->getPrevOffset());
+		$this->assertEquals(null,$finder->getNextOffset());
+		$this->assertEquals(1,$finder->getRecordsDisplayed());
+
+
+		$finder = TestTable::Finder(array("limit" => 1, "offset" => 1));
+		$this->assertEquals(false,$finder->atBeginning());
+		$this->assertEquals(false,$finder->atEnd());
+		$this->assertEquals(null,$finder->getPrevOffset());
+		$this->assertEquals(2,$finder->getNextOffset());
+		$this->assertEquals(1,$finder->getRecordsDisplayed());
+
 		// --
 		$finder = TestTable::Finder("an_integer",10,array("order_by" => "UPPER(title) DESC"));
 
@@ -90,5 +119,10 @@ class TcFinder extends TcBase{
 		$this->assertEquals(0,sizeof($finder));
 		$this->assertEquals(0,$finder->getTotalAmount());
 		$this->assertEquals(0,$finder->getRecordsDisplayed());
+
+		$this->assertEquals(true,$finder->atBeginning());
+		$this->assertEquals(true,$finder->atEnd());
+		$this->assertEquals(null,$finder->getPrevOffset());
+		$this->assertEquals(null,$finder->getNextOffset());
 	}
 }

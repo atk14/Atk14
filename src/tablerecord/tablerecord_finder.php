@@ -54,7 +54,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	 * @param DbMole $dbmole
 	 *
 	 */
-	function TableRecord_Finder($options,&$dbmole){
+	function __construct($options,&$dbmole){
 		$options += array(
 			"use_cache" => false,
 		);
@@ -167,52 +167,80 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	function getOffset(){
 		return $this->_QueryOptions["offset"];
 	}
-	
+
+	/**
+	 * if(!$finder->atBeginning()){
+	 *	// display prev records link
+	 * }
+	 */
+	function atBeginning(){
+		return $this->getOffset()<=0;
+	}
+
+	/**
+	 * if($function->atEnd()){
+	 *	echo "there are no more records";
+	 * }
+	 */
+	function atEnd(){
+		if($this->getRecordsCount()==0){ return true; }
+		return ($this->getOffset() + $this->getRecordsDisplayed())>=$this->getTotalAmount();
+	}
+
+	/**
+	 * 
+	 */
+	function getNextOffset(){
+		$next_offset = $this->getOffset() + $this->getLimit();
+		return $next_offset>($this->getTotalAmount()-1) ? null : $next_offset;
+	}
+
+	function getPrevOffset(){
+		$prev_offset = $this->getOffset() - $this->getLimit();
+		return $prev_offset<=0 ? null : $prev_offset;
+	}
 	
 	/*** functions implementing array like access ***/
-	function offsetGet($value)
-	{
+	function offsetGet($value){
 		$x=$this->getRecords();
 		return $x[$value];
 	}
 	
-	function offsetSet($value, $name)	{
+	function offsetSet($value, $name){
 		$this->getRecords();
 		$this->_Records[$name]=$value;	
 	}
 	
-	function offsetUnset($value)	{
+	function offsetUnset($value){
 		$this->getRecords();
 		unset($this->_Records[$name]);	
 	}
 	
-	function offsetExists($value) 	{
+	function offsetExists($value){
 		$this->getRecords();
 		return array_key_exists($name, $this->_Records);				
 	}
 	
 	/*** functions implementing iterator like access (foreach cycle)***/
-	public function current()		{
+	public function current(){
 		return current($this->_Records);
 	}
 		
-	public function key()	{
+	public function key(){
 		return key($this->_Records);
 	}
-	public function next() {
+	public function next(){
 		return next($this->_Records);
 	}
-  public function rewind() {
+  public function rewind(){
    $this->getRecords();
  	 return reset($this->_Records);
 	} 
-	public function valid()	{
+	public function valid(){
 		return isset($this->_Records) && current($this->_Records);
 	}
 	
-	public function count()
-	{
-		$this->GetRecords();
-		return count($this->_Records);
+	public function count(){
+		return $this->getRecordsDisplayed();
 	}
 }
