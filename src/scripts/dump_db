@@ -11,6 +11,9 @@
 
 cd `dirname $0`
 
+# add pgpass record to ~/.pgpass file when the record is not present
+exec `./pgpass_record -a`
+
 case "$ARG" in
 	"data")
 		cmnd="./_dump_dbdata_command"

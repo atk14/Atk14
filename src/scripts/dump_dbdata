@@ -7,5 +7,9 @@
 #  $ ATK14_ENV=PRODUCTION ./scripts/dump_dbdata
 
 cd `dirname $0`
+
+# add pgpass record to ~/.pgpass file when the record is not present
+exec `./pgpass_record -a`
+
 cmd=`./_dump_dbdata_command`
 exec $cmd
