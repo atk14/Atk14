@@ -136,7 +136,8 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	$DATE = $params["date"];
 	$SUBJECT = _sendmail_escape_subject($params['subject'],$params["charset"]);
 	$BODY = $params['body'];
-	if(SENDMAIL_BODY_AUTO_PREFIX!=""){
+	if(SENDMAIL_BODY_AUTO_PREFIX!="" && !$options["build_message_only"]){
+		// we don't want to prepend SENDMAIL_BODY_AUTO_PREFIX when the message is just being built
 		$BODY = SENDMAIL_BODY_AUTO_PREFIX.$BODY;
 	}
 	$TO = _sendmail_correct_address($params['to']);
