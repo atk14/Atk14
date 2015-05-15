@@ -46,6 +46,7 @@ CREATE TABLE authors(
 		updated_at DATE
 );
 
+-- No unique constraint in the table
 CREATE SEQUENCE seq_article_authors;
 CREATE TABLE article_authors(
 	id INTEGER DEFAULT NEXTVAL('seq_article_authors') NOT NULL PRIMARY KEY,
@@ -54,4 +55,25 @@ CREATE TABLE article_authors(
 	rank INTEGER DEFAULT 999 NOT NULL,
 	CONSTRAINT fk_article_authors_articles FOREIGN KEY (article_id) REFERENCES articles ON DELETE CASCADE,
 	CONSTRAINT fk_author_authors_authors FOREIGN KEY (author_id) REFERENCES authors ON DELETE CASCADE
+);
+
+CREATE SEQUENCE seq_redactors;
+CREATE TABLE redactors(
+	id INTEGER DEFAULT NEXTVAL('seq_redactors') NOT NULL PRIMARY KEY,
+	name VARCHAR(255),
+	email VARCHAR(255),
+	created_at DATE,
+	updated_at DATE
+);
+
+-- There is a unique constraint
+CREATE SEQUENCE seq_article_redactors;
+CREATE TABLE article_redactors(
+	id INTEGER DEFAULT NEXTVAL('seq_article_redactors') NOT NULL PRIMARY KEY,
+	article_id INTEGER NOT NULL,
+	redactor_id INTEGER NOT NULL,
+	rank INTEGER DEFAULT 999 NOT NULL,
+	CONSTRAINT unq_article_redactor UNIQUE(redactor_id, article_id),
+	CONSTRAINT fk_article_redactors_articles FOREIGN KEY (article_id) REFERENCES articles ON DELETE CASCADE,
+	CONSTRAINT fk_author_redactors_redactors FOREIGN KEY (redactor_id) REFERENCES redactors ON DELETE CASCADE
 );

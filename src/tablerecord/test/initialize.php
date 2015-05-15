@@ -9,6 +9,7 @@ require("./test_table.php");
 require("./article.php");
 require("./image.php");
 require("./author.php");
+require("./redactor.php");
 
 function &dbmole_connection($dbmole){
 	static $connection;

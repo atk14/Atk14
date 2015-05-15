@@ -149,7 +149,11 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	 * @param TableRecord $record
 	 * @param integer $rank
 	 */
-	protected function _add($record,$rank){
+	protected function _add($record,$rank, $options = array()){
+		$options += array(
+			"__auto_correct_ranking__" => true
+		);
+
 		$o = $this->_options;
 		$this->_dbmole->insertIntoTable($o["table_name"],array(
 			$o["id_field_name"] => $this->_dbmole->selectSequenceNextval($o["sequence_name"]),
@@ -157,8 +161,9 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 			$o["subject_field_name"] => $record,
 			$o["rank_field_name"] => $rank,
 		));
-
-		$this->_correctRanking();
+		if($options['__auto_correct_ranking__']) {
+			$this->_correctRanking();
+		}
 		unset($this->_items);
 	}
 
@@ -275,20 +280,36 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	 * @param TableRecord[] $records
 	 */
 	function setRecords($records){
-		reset($records);
+
+		$records = array_map(
+			function($v) {return is_object($v)?$v->getId():$v;},
+		$records);
+		$insert = array();
+
+		$rec = reset($records);
 		foreach($this->getItems() as $item){
-			if(!$rec = array_shift($records)){
+			if($rec === false){
 				$item->destroy(array("__auto_correct_ranking__" => false));
 				continue;
 			}
-			$rec = is_object($rec) ? $rec->getId() : $rec;
-			if($item->getRecordId()!=$rec){ $item->setRecordId($rec); }
-		}
-		while($rec = array_shift($records)){
-			$this->append($rec);
+			if($item->getRecordId()!=$rec) {
+					$insert[] = array($rec, $item->getRank());
+					$item->destroy(array("__auto_correct_ranking__" => false));
+			}
+			$rec = next($records);
 		}
 
-		$this->_correctRanking();
+		foreach($insert as $i) {
+			$this->_add($i[0], $i[1], array("__auto_correct_ranking__" => false));
+		}
+
+		while($rec !== false){
+			$this->append($rec);
+			$rec = next($records);
+		}
+
+		//not need to do - if ranking was correct, it remains correct
+		//$this->_correctRanking();
 	}
 
 	/**

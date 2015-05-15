@@ -1,5 +1,33 @@
 <?php
+class DbException extends Exception {};
+function dbehandler($msg){
+	throw new DbException('DBERROR');
+}
+
 class TcLister extends TcBase{
+	function exceptException($exc, $fce) {
+		$raised = false;
+		try {
+			//Postgres rve, misto "slusneho" jen vyhozeni vyjimky
+			@$fce();
+		} catch (Exception $e) {
+			if(!($e instanceof $exc)) {
+				throw $e;
+			}
+			$raised = true;
+		}
+		$this->assertTrue($raised, "There should be exception $exc raised.");
+	}
+
+	function exceptDbError($fce) {
+		$this->dbmole->setErrorHandler('dbehandler');
+		$this->dbmole->doQuery('savepoint sp_dbmole_errorrr');
+		$this->exceptException('DbException', $fce);
+		$this->dbmole->setErrorHandler(null);
+		$this->dbmole->doQuery('ROLLBACK TO SAVEPOINT sp_dbmole_errorrr; RELEASE sp_dbmole_errorrr');
+		$this->dbmole->_ErrorRaised = false;
+	}
+
 	function test(){
 		$this->article = Article::CreateNewRecord(array(
 			"title" => "Christ's Sheep",
@@ -26,6 +54,26 @@ class TcLister extends TcBase{
 		$tony = Author::CreateNewRecord(array(
 			"name" => "Tony",
 		));
+
+
+		//test unikaniho vlozeni
+		$rjohn = Redactor::CreateNewRecord(array(
+			"name" => "John",
+		));
+
+		$rpeter = Redactor::CreateNewRecord(array(
+			"name" => "Peter",
+		));
+		$rlister = $this->article->getLister('redactors');
+		//tady to nesmi hodit vyjimku
+		$this->_setRecords($rlister,array($rjohn, $rpeter));
+		$this->_setRecords($rlister,array($rpeter, $rjohn));
+		$this->_setRecords($rlister,array($rjohn));
+		$this->_setRecords($rlister,array($rjohn, $rpeter));
+		$this->_setRecords($rlister,array($rpeter));
+		//a tady to pro kontrolu musi
+		$this->exceptDbError(function() use($rlister, $rpeter) { $rlister->setRecords(array($rpeter, $rpeter)); });
+
 
 		$lister2 = $this->article2->getAuthorsLister();
 		$lister2->append($john);
@@ -150,9 +198,21 @@ class TcLister extends TcBase{
 		}
 
 		//
-		 
+
 		$authors2 = $this->article2->getAuthors();
 		$this->assertEquals(2,sizeof($authors2));
 		$this->assertEquals("John",$authors2[0]->getName());
+	}
+
+	function _setRecords($lister,$objects){
+		$lister->setRecords($objects);
+
+		$current_objects = $lister->getRecords();
+
+		$this->assertEquals(sizeof($objects),sizeof($current_objects));
+		foreach($objects as $o){
+			$current_o = array_shift($current_objects);
+			$this->assertEquals($o->getId(),$current_o->getId());
+		}
 	}
 }
