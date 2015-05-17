@@ -70,7 +70,7 @@ __defaults__(array(
 ));
 
 __defaults__(array(
-	"DBMOLE_COLLECT_STATICTICS" => false, // DbMole is able to collect query statistics and then report it (echo $dbmole->getStatistics())
+	"DBMOLE_COLLECT_STATICTICS" => DEVELOPMENT, // DbMole is able to collect query statistics and then report it (echo $dbmole->getStatistics())
 ));
 
 __defaults__(array(
