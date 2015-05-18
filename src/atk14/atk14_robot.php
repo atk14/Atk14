@@ -2,8 +2,6 @@
 /**
  * Base class for by robots, scripts executed from CLI.
  *
- * @package Atk14
- * @subpackage Core
  * @filesource
  */
 
@@ -38,8 +36,7 @@
  * ./scripts/robot_runner some_counting_robot
  * </code>
  *
- * @package Atk14
- * @subpackage Core
+ * @package Atk14\Core
  */
 class Atk14Robot{
 	/**

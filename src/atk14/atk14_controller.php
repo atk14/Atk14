@@ -213,38 +213,41 @@ class Atk14Controller{
 	 * Data are filled in particular form steps and sorted in an array indexed as stated in {@link _walk()} method.
 	 *
 	 * These data are returned at the of a step method:
-	 * <code>
-	 * function registration__get_user_data() {
-	 *  ...
-	 * 	return array(
-	 * 		"login" => "terminator",
-	 * 		"name" => "T1000",
-	 * 	);
-	 * }
-	 * </code>
+	 * ```
+	 *	function registration__get_user_data() {
+	 *	...
+	 *		return array(
+	 *			"login" => "terminator",
+	 *			"name" => "T1000",
+	 *		);
+	 *	}
+	 * ```
 	 *
-	 * function registration__get_user_info() {
-	 *  ...
-	 * 	return array(
-	 * 		"description" => "Came from future",
-	 * 		"special_skills" => "unbreakable",
-	 * 	);
-	 * }
+	 * ```
+	 *	function registration__get_user_info() {
+	 *	...
+	 *		return array(
+	 *			"description" => "Came from future",
+	 *			"special_skills" => "unbreakable",
+	 *		);
+	 *	}
+	 * ```
 	 *
 	 * Then 
-	 * <code>
-	 * function registration__summary() {
-	 * 	var_dump($this->returned_by)
-	 * }
-	 * </code>
+	 * ```
+	 *	function registration__summary() {
+	 *		var_dump($this->returned_by)
+	 *	}
+	 * ```
 	 *
 	 * will show something like this
-	 * <code>
-	 * array(
-	 * 	"get_user_data" = array("login" => "terminator", "name" => "T1000"),
-	 * 	"get_user_info" => array("description" => "Came from future", "special_skills" => "unbreakable"),
-	 * 	)
-	 * </code>
+	 * ```
+	 *	array(
+	 *		"get_user_data" = array("login" => "terminator", "name" => "T1000"),
+	 *		"get_user_info" => array("description" => "Came from future", "special_skills" => "unbreakable"),
+	 *		)
+	 * ```
+	 *
 	 * @var array
 	 *
 	 */
@@ -254,11 +257,12 @@ class Atk14Controller{
 	 * Data filled in multistep forms.
 	 *
 	 * In a method of a multistep form you can use
-	 * <code>
-	 * $this->form_data["get_data"]
-	 * </code>
+	 * ```
+	 *	$this->form_data["get_data"]
+	 * ```
 	 * to get data inserted in a step get_data
 	 *
+	 * @var array
 	 */
 	var $form_data = array();
 
@@ -585,13 +589,15 @@ class Atk14Controller{
 	}
 
 	/**
-	* Creates a form instance if the given class exists.
-	* 
-	* $form = $this->_get_form("CreateNewForm");
-	* $form = $this->_get_form("create_new_form");
-	* $form = $this->_get_form("edit");
-	* $login_form = $this->_get_form("logins/create_new_form");
-	*/
+	 * Creates a form instance if the given class exists.
+	 *
+	 * ```
+	 * $form = $this->_get_form("CreateNewForm");
+	 * $form = $this->_get_form("create_new_form");
+	 * $form = $this->_get_form("edit");
+	 * $login_form = $this->_get_form("logins/create_new_form");
+	 * ```
+	 */
 	function _get_form($class_name = null,$options = array()){
 		$options = array_merge(array(
 			"attrs" => array(),
@@ -625,23 +631,23 @@ class Atk14Controller{
 	 * 
 	 * Note that during _render() call the method _before_render() will not be executed.
 	 *
-	 *		<code> 
-	 *			$content = $this->_render("article_item");
+	 * ```
+	 *	$content = $this->_render("article_item");
 	 *
-	 *			$content = $this->_render("article_item",array("from" => $articles));
+	 *	$content = $this->_render("article_item",array("from" => $articles));
 	 *
-	 *			$content = $this->_render(array(
-	 *				"partial" => "article_item",
-	 *				"from" => $articles
-	 *			));
-	 *	 	</code>
+	 *	$content = $this->_render(array(
+	 *		"partial" => "article_item",
+	 *		"from" => $articles
+	 *	));
+	 * ```
 	 *
 	 *
 	 * Also allows to render a text output to the response.
 	 * 
-	 *		<code>
-	 *			$this->_render(array("text" => "alert('The record has been deleted!');"));
-	 *		</code>
+	 * ```
+	 *	$this->_render(array("text" => "alert('The record has been deleted!');"));
+	 * ```
 	 * 
 	 * Note that no template will be rendered after a text rendering.
 	 */
@@ -879,11 +885,11 @@ class Atk14Controller{
 	 * chybejici $params["action"] bude nahrazen za "index" a
 	 * $params["lang"] bude prip. naplnen $this->lang.
 	 *
-	 * <code>
-	 * $url = $this->_link_to(array("action" => "overview"));
-	 * $url = $this->_link_to(array("action" => "detail", "id" => 2045, "format" => "xml"),array("connector" => "&amp;")); // default connector is "&"
-	 * $url = $this->_link_to(); // link to the current namespace, ncontroller, action and lang
-	 * </code>
+	 * ```
+	 *	$url = $this->_link_to(array("action" => "overview"));
+	 *	$url = $this->_link_to(array("action" => "detail", "id" => 2045, "format" => "xml"),array("connector" => "&amp;")); // default connector is "&"
+	 *	$url = $this->_link_to(); // link to the current namespace, ncontroller, action and lang
+	 * ```
 	 *
 	 * @param array $params
 	 * @param array $options options as described in {@link Atk14Url::BuildLink()}
@@ -910,11 +916,12 @@ class Atk14Controller{
 	/**
 	 * Generates url to an action in current controller.
 	 *
-	 * <code>
-	 * $create_url = $this->_link_to_action("create_new");
-	 * $done_url = $this->_link_to_action("create_new",array("done" => "1"));
-	 * $done_url = $this->_link_to_action("create_new",array(),array("connector" => "&"));
-	 * </code>
+	 *
+	 * ```
+	 *	$create_url = $this->_link_to_action("create_new");
+	 *	$done_url = $this->_link_to_action("create_new",array("done" => "1"));
+	 *	$done_url = $this->_link_to_action("create_new",array(),array("connector" => "&"));
+	 * ```
 	 *
 	 * @param string $action
 	 * @param array $other_params
@@ -936,31 +943,30 @@ class Atk14Controller{
 	 *  - after a POST request the "303 See Other" status is automatically used
 	 *
 	 * Common usage of the method:
-	 * <code>
+	 * ```
 	 *	$this->_redirect_to("http://www.domenka.cz/pricelist.html"); // redirects to a given domain and URI
-	 *  $this->_redirect_to("/en/books/"); // redirects to a given URI (param starts with '/')
-	 *
+	 *	$this->_redirect_to("/en/books/"); // redirects to a given URI (param starts with '/')
+	 * ```
+	 * ```
 	 *	$this->_redirect_to(array("action" => "overview"));
 	 *	$this->_redirect_to("index"); // same like $this->_redirect_to(array("action" => "index"));
 	 *	$this->_redirect_to("main/index"); // same like $this->_redirect_to(array("controller" => "main", "action" => "index"));
-	 * </code>
+	 * ```
 	 *
 	 * This call redirects to the same URL
-	 * <code>
+	 * ```
 	 *	$this->_redirect_to();
-	 * </code>
+	 * ```
 	 *
 	 * Moving permanently
-	 * <code>
-	 * 	$this->_redirect_to(array("action" => "overview"),array("moved_permanently" => true));
-	 * </code>
+	 * ```
+	 *	$this->_redirect_to(array("action" => "overview"),array("moved_permanently" => true));
+	 * ```
 	 *
 	 * or
-	 * <code>
-	 * 	$this->_redirect_to(array("action" => "overview"),array("status" => 301));
-	 * </code>
-	 * 
-	 * 
+	 * ```
+	 *	$this->_redirect_to(array("action" => "overview"),array("status" => 301));
+	 * ```
 	 *
 	 *
 	 * @param array|string $params
@@ -989,11 +995,11 @@ class Atk14Controller{
 	 * Redirect to an action in current controller.
 	 *
 	 * Examples:
-	 * <code>
-	 * $this->_redirect_to_action("overview");
-	 * $this->_redirect_to_action("overview",array("offset" => 10));
-	 * $this->_redirect_to_action("overview",array("offset" => 10),array("moved_permanently" => true));
-	 * </code>
+	 * ```
+	 *	$this->_redirect_to_action("overview");
+	 *	$this->_redirect_to_action("overview",array("offset" => 10));
+	 *	$this->_redirect_to_action("overview",array("offset" => 10),array("moved_permanently" => true));
+	 * ```
 	 */
 
 	function _redirect_to_action($action,$other_params = array(),$options = array()){
@@ -1022,28 +1028,28 @@ class Atk14Controller{
 	 * This method is used for creating actions with multiple steps.
 	 *
 	 *
-	 * <code>
-	 * $this->_walk(array(
-	 * 	"get_domain_name",
-	 * 	"get_data",
-	 * 	"register",
-	 * 	"done"
-	 * 	));
-	 * 	</code>
+	 * ```
+	 *	$this->_walk(array(
+	 *		"get_domain_name",
+	 *		"get_data",
+	 *		"register",
+	 *		"done"
+	 *	));
+	 * ```
 	 *
-	 * 	V $options["extra_params"] mohou byt uvedeny dalsi parametry, ktere sa budou automaticky prevadet pri kazdem presemerovani a
-	 * 	vlozi se automaticky do action atributu formularu.
+	 * V $options["extra_params"] mohou byt uvedeny dalsi parametry, ktere sa budou automaticky prevadet pri kazdem presemerovani a
+	 * vlozi se automaticky do action atributu formularu.
 	 *
-	 * <code>
-	 * 	$this->_walk(array(
-	 * 		"get_password",
-	 * 		"rules_agreement",
-	 * 		"confirm",
-	 * 		"done",
-	 * 		),
-	 * 		array("extra_params" => array( "hashed_id" => $this->password_sender->getHashedId()))
-	 * 	);
-	 * 	</code>
+	 * ```
+	 *	$this->_walk(array(
+	 *		"get_password",
+	 *		"rules_agreement",
+	 *		"confirm",
+	 *		"done",
+	 *		),
+	 *		array("extra_params" => array( "hashed_id" => $this->password_sender->getHashedId()))
+	 *	);
+	 * ```
 	 *
 	 * 	@param array $steps Array with identifiers for each step.
 	 * 	@param array $options Extra options
@@ -1126,9 +1132,9 @@ class Atk14Controller{
 	 * The procedure is done without http redirection.
 	 * Status is saved to session.
 	 *
-	 * <code>
-	 * return $this->_next_step();
-	 * </code>
+	 * ```
+	 *	return $this->_next_step();
+	 * ```
 	 * Use of return is important!!
 	 *
 	 * Custom parameters can be passed, for example values returned from current step.

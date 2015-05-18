@@ -4,18 +4,14 @@
  *
  * Provides static methods for operations on files.
  *
- * @package Atk14
- * @subpackage InternalLibraries
  * @filesource
- * @author Jaromir Tomek
  */
 /**
  * Class for basic file management.
  *
  * Provides static methods for operations on files.
  *
- * @package Atk14
- * @subpackage InternalLibraries
+ * @package Atk14\InternalLibraries
  * @filesource
  *
  */
@@ -29,7 +25,6 @@ class Files{
 	 * When the requested directory exists method returns 0.
 	 * Newly created directories have permissions set to 0777.
 	 *
-	 * @static
 	 * @param string $dirname	Name of directory to be created.
 	 * @param boolean &$error Error flag
 	 * @param string	 &$error_str Error description
@@ -68,11 +63,10 @@ class Files{
 	 *
 	 * When the target file does not exist, it is created with permissions 0666.
 	 *
-	 * @static
-	 * @param string 	$from_file Source file
-	 * @param string 	$to_file Target file
-	 * @param boolean 	&$error Error flag
-	 * @param string 	&$error_str Error message
+	 * @param string $from_file Source file
+	 * @param string $to_file Target file
+	 * @param boolean &$error Error flag
+	 * @param string &$error_str Error message
 	 * @return int Number of copied bytes
 	 *
 	 */
@@ -133,11 +127,12 @@ class Files{
 	 *
 	 * When the target file does not exist it is created with permissions 0666.
 	 *
-	 * @static
-	 * @param string 	$file	Name of a file
-	 * @param string 	$content String to write
-	 * @param boolean 	&$error Error flag
-	 * @param string 	&$error_str Error description
+	 * @param string $file Name of a file
+	 * @param string $content String to write
+	 * @param boolean &$error Error flag
+	 * @param string &$error_str Error description
+	 * @param array $options
+	 * - file_open_mode see PHPs fopen manual
 	 * @return int Number of written bytes
 	 */
 	static function WriteToFile($file,$content,&$error = null,&$error_str = null,$options = array()){
@@ -198,17 +193,25 @@ class Files{
 
 	/**
 	 * Appends content to the given file.
+	 *
+	 * Opens a file in append mode and appends content to the end of it.
+	 *
+	 * @param string $file name of the file to append the $content to
+	 * @param string $content
+	 * @param boolean &$error flag indicating that something went wrong
+	 * @param string &$error_str message describing the error
+	 * @return int number of bytes written to the file
 	 */
 	static function AppendToFile($file,$content,&$error = null,&$error_str = null){
 		return Files::WriteToFile($file,$content,$error,$error_str,array("file_open_mode" => "a"));
 	}
 
 	/**
-	 * Checks if a file was uploaded.
+	 * Checks if a file was uploaded via HTTP POST request.
 	 *
-	 * @static
 	 * @param string 	$filename Name of a file
 	 * @return bool	true => file was securely uploaded; false => file was not uploaded
+	 * @see is_uploaded_file
 	 *
 	 */
 	static function IsUploadedFile($filename){
@@ -236,19 +239,17 @@ class Files{
 	/**
 	 * Moves a file or a directory
 	 *
-	 * <code>
+	 * ```
 	 *	Files::MoveFile("/path/to/file","/path/to/another/file",$error,$error_str);
 	 *	Files::MoveFile("/path/to/file","/path/to/directory/",$error,$error_str);
 	 *	Files::MoveFile("/path/to/directory/","/path/to/another/directory/",$error,$error_str);
-	 * </code>
+	 * ```
 	 *
-	 * @static
-	 * @param string 	$from_file Source file
-	 * @param string 	$to_file Target file
-	 * @param boolean 	&$error Error flag
-	 * @param string 	&$error_str Error description
-	 * @return int	Number of moved files; ie. on success return 1
-	 * @see Files::Unlink()
+	 * @param string $from_file Source file
+	 * @param string $to_file Target file
+	 * @param boolean &$error Error flag
+	 * @param string &$error_str Error description
+	 * @return int number of moved files; ie. on success return 1
 	 */
 	static function MoveFile($from_file,$to_file,&$error = null,&$error_str = null){
 		$error = false;
@@ -287,10 +288,9 @@ class Files{
 	/**
 	 * Removes a file from filesystem.
 	 *
-	 * @static
 	 * @param string $file Name of a file
 	 * @param boolean &$error Error flag
-	 * @param string 	&$error_str Error description
+	 * @param string &$error_str Error description
 	 * @return int Number of deleted files; on success returns 1; otherwise 0
 	 */
 	static function Unlink($file,&$error = null,&$error_str = null){
@@ -317,10 +317,9 @@ class Files{
 	 *
 	 * Removes a directory with its content.
 	 *
-	 * @static
-	 * @param string 	$dir Directory name
-	 * @param boolean 	&$error Error flag
-	 * @param string 	&$error_str Error description
+	 * @param string $dir Directory name
+	 * @param boolean &$error Error flag
+	 * @param string &$error_str Error description
 	 * @return int Number of deleted directories and files
 	 */
 	static function RecursiveUnlinkDir($dir,&$error = null,&$error_str = null){
@@ -331,17 +330,14 @@ class Files{
 	}
 
 	/**
-	 * Smaze rekursivne adresar.
+	 * Internal method making main part of RecursiveUnlinkDir call
 	 *
-	 * Metoda je urcena pro vnitrni rekursivni volani.
-	 *
-	 * @access private
-	 * @static
-	 * @param string 	$dir						jmeno adresare
-	 * @param boolean 	&$error 				priznak chyby
-	 * @param string 	&$error_str 		popis chyby
-	 * @return int											pocet smazanych souboru a adresaru
-	 * @see file::recursive_unlink_dir()
+	 * @param string $dir Directory name
+	 * @param boolean &$error Error flag
+	 * @param string &$error_str Error description
+	 * @return int pocet smazanych souboru a adresaru
+	 * @ignore
+	 * @internal We should consider making this method private
 	 *
 	 */
 	static function _RecursiveUnlinkDir($dir,&$error,&$error_str){
@@ -403,10 +399,9 @@ class Files{
 	/**
 	 * Reads content of a file.
 	 *
-	 * @static
-	 * @param string 	$filename Name of a file
-	 * @param boolean 	&$error Error flag
-	 * @param string 	&$error_str Error description
+	 * @param string $filename Name of a file
+	 * @param boolean &$error Error flag
+	 * @param string &$error_str Error description
 	 * @return string Content of a file
 	 */
 	static function GetFileContent($filename,&$error = null,&$error_str = null){
@@ -441,7 +436,6 @@ class Files{
 	/**
 	 * Checks if a file is both readable and writable.
 	 *
-	 * @static
 	 * @param string 	$filename Name of a file
 	 * @param boolean 	&$error Error flag
 	 * @param string 	&$error_str Error description
@@ -474,9 +468,10 @@ class Files{
 	/**
 	 * Determines width and height of an image in parameter.
 	 *
-	 * <code>
-	 * list($width,$height) = Files::GetImageSize($image_content,$err,$err_str);
-	 * </code>
+	 * Example
+	 * ```
+	 *	list($width,$height) = Files::GetImageSize($image_content,$err,$err_str);
+	 * ```
 	 * 
 	 * @param string $image_content Binary image data
 	 * @param boolean $error Error flag
@@ -497,9 +492,20 @@ class Files{
 	/**
 	 * Write a content to a temporary file.
 	 *
-	 * $tmp_filename = Files::WriteToTemp($hot_content);
-	 * // ... do some work with $tmp_filename
-	 * Files::Unlink($tmp_filename);
+	 * Example
+	 * ```
+	 *	$tmp_filename = Files::WriteToTemp($hot_content);
+	 * ```
+	 *
+	 * ... do some work with $tmp_filename
+	 * ```
+	 *	Files::Unlink($tmp_filename);
+	 * ```
+	 *
+	 * @param string $content content to write to the temporary file
+	 * @param boolean &$error flag indicating a problem when calling this method
+	 * @param string &$error_str
+	 * @return string name of the temporary file
 	 */
 	static function WriteToTemp($content, &$error = null, &$error_str = null){
 		$temp_filename = Files::GetTempFilename();
@@ -512,6 +518,8 @@ class Files{
 
 	/**
 	 * Returns a filename for a new temporary file.
+	 *
+	 * @return string name of the newly created file
 	 */
 	static function GetTempFilename(){
 		$temp_filename = defined("TEMP") ? TEMP : "/tmp";
@@ -521,9 +529,14 @@ class Files{
 
 	/**
 	 * Determines the mime type of the file.
-	 * 
+	 *
 	 * !! Note that it actualy runs the shell command file.
 	 * If it is unable to run the command, 'application/octet-string' is returned.
+	 *
+	 * @param string $filename name of the file to be examined
+	 * @param boolean &$error flag indicating a problem when calling this method
+	 * @param string &$error_str message describing an error
+	 * @return string MIME type of the file
 	 */
 	static function DetermineFileType($filename, &$error = null, &$error_str  = null){
 		$command = "file -i ".escapeshellarg($filename);

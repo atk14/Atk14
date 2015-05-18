@@ -2,7 +2,6 @@
 /**
  * Class for managing sessions.
  *
- * @package Atk14\Core
  * @filesource
  */
 
@@ -10,19 +9,21 @@
  * Class for simple access to sessions.
  *
  * Usage in controller:
- * 	$this->session->setValue("user_id",123);
- * 	$this->session->getValue("user_id");
- * 	$this->session->clearValue("user_id");
- * 	if($this->session->defined("user_id")){
+ * ```
+ *	$this->session->setValue("user_id",123);
+ *	$this->session->getValue("user_id");
+ *	$this->session->clearValue("user_id");
+ *	if($this->session->defined("user_id")){
  *			//...
- * 	}
+ *	}
+ * ```
  *
  * @package Atk14\Core
  */
 class Atk14Session{
 
 	/**
-	 * Instance of SessionStorer.
+	 * Instance of SessionStorer class that is responsible for storing values.
 	 *
 	 * @var SessionStorer
 	 * @access private
@@ -33,12 +34,14 @@ class Atk14Session{
 	 * Constructor
 	 *
 	 * Instantiation examples
-	 * 	$session = Atk14Session::GetInstance();
-	 * 	$session = Atk14Session::GetInstance("eshop");
-	 * 	$secure_session = new Atk14Session(new SessionStorer(array("session" => "secure", "ssl_only" => true)));
-	 * 	$persistent_session = new Atk14Session(new SessionStorer(array("session_name" => "persistent", "cookie_expiration" => 86400*365))); // year
-	 * 	$session = new Atk14Session(); // !! use Atk14Session::GetInstance() instead
-	 * 	$session = new Atk14Session("eshop"); // !! use Atk14Session::GetInstance("eshop") instead
+	 * ```
+	 *	$session = Atk14Session::GetInstance();
+	 *	$session = Atk14Session::GetInstance("eshop");
+	 *	$secure_session = new Atk14Session(new SessionStorer(array("session" => "secure", "ssl_only" => true)));
+	 *	$persistent_session = new Atk14Session(new SessionStorer(array("session_name" => "persistent", "cookie_expiration" => 86400*365))); // year
+	 *	$session = new Atk14Session(); // !! use Atk14Session::GetInstance() instead
+	 *	$session = new Atk14Session("eshop"); // !! use Atk14Session::GetInstance("eshop") instead
+	 * ```
 	 *
 	 * @param mixed $section_or_session_storer
 	 */
@@ -50,10 +53,13 @@ class Atk14Session{
 	 * Static method for getting Atk14Session singleton.
 	 *
 	 * Get default instance
-	 * 	$session = &Atk14Session::GetInstance();
-	 *
+	 * ```
+	 *	$session = &Atk14Session::GetInstance();
+	 * ```
 	 * Get users permanent session. Use his login as a session_key
-	 * 	$permanent_session = &Atk14Session::GetInstance($user->getLogin());
+	 * ```
+	 *	$permanent_session = &Atk14Session::GetInstance($user->getLogin());
+	 * ```
 	 *
 	 * @param string $section
 	 * @return Atk14Session
@@ -105,7 +111,9 @@ class Atk14Session{
 	 * Returns all values stored in the session as an associative array.
 	 *
 	 * It's perfect for inspecting a content of a session.
-	 * 	var_dump($session->toArray());
+	 * ```
+	 *	var_dump($session->toArray());
+	 * ```
 	 */
 	function toArray(){
 		return $this->_SessionStorer->toArray();
@@ -125,10 +133,14 @@ class Atk14Session{
 	 * Clears session value $name. When $name is omited, all values are cleared.
 	 *
 	 * Clear all values
-	 * 	$session->clear();
+	 * ```
+	 *	$session->clear();
+	 * ```
 	 *
 	 * .. or clear only a single value
-	 * 	$session->clear("user_id");
+	 * ```
+	 *	$session->clear("user_id");
+	 * ```
 	 *
 	 * @param string $name
 	 * @uses clearValue()
@@ -167,7 +179,9 @@ class Atk14Session{
 	 * The token is stored in browser in a cookie.
 	 *
 	 * Returns null when cookies are not enabled.
-	 * 	echo $session->getSecretToken(); // 3386.iNWdSQcTGok1COA49ME2JPhU85zHgjRF
+	 * ```
+	 *	echo $session->getSecretToken(); // 3386.iNWdSQcTGok1COA49ME2JPhU85zHgjRF
+	 * ```
 	 *
 	 * @return string
 	 */
