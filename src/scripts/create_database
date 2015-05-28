@@ -12,11 +12,14 @@ ENVIRONMENT=`./_atk14_env`
 ENCODING=`./dump_settings DEFAULT_CHARSET`
 environment=`echo -n  $ENVIRONMENT | tr A-Z a-z`
 
-# ENCODING is being added only for UTF8 (TODO)
+# ENCODING is being added only for UTF8
 sql_encoding=""
-if [ "$ENCODING" = "UTF-8" ]; then
-	sql_encoding=" WITH ENDCODING 'UTF8'"
-fi
+#if [ "$ENCODING" = "UTF-8" ]; then
+#	sql_encoding=" WITH ENCODING 'UTF8'"
+#fi
+# TODO: It doesn't work. It says:
+# ERROR:  new encoding (UTF8) is incompatible with the encoding of the template database (SQL_ASCII)
+# HINT:  Use the same encoding as in the template database, or use template0 as template.
 
 sql=$( cat <<EOF
 -- creating database for $ENVIRONMENT
