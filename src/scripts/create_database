@@ -9,12 +9,18 @@ PG_USER=postgres                          # Postgresql's service account name
 DBNAME=`./_database_username`
 DBPASSWORD=`./_database_password`
 ENVIRONMENT=`./_atk14_env`
+ENCODING=`./dump_settings DEFAULT_CHARSET`
 environment=`echo -n  $ENVIRONMENT | tr A-Z a-z`
 
+# ENCODING is being added only for UTF8 (TODO)
+sql_encoding=""
+if [ "$ENCODING" = "UTF-8" ]; then
+	sql_encoding=" WITH ENDCODING 'UTF8'"
+fi
 
 sql=$( cat <<EOF
 -- creating database for $ENVIRONMENT
-CREATE DATABASE $DBNAME;
+CREATE DATABASE $DBNAME$sql_encoding;
 CREATE USER $DBNAME WITH ENCRYPTED PASSWORD '$DBPASSWORD';
 EOF
 )
