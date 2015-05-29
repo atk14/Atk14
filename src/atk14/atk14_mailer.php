@@ -522,8 +522,8 @@ class Atk14Mailer{
 			//	sprintf('{ echo "To: %s"; cat %s; } | mutt -H -',ATK14_ADMIN_EMAIL,"$dir/$filename")
 			//);
 			$this->logger->info(
-				"You can send the message to yourself by typing this command in shell:\n".
-				sprintf('cat %s | sendmail -f "%s" "%s"',"$dir/$filename",DEFAULT_EMAIL,ATK14_ADMIN_EMAIL)
+				"You can send the last message to yourself by typing this command in shell:\n".
+				sprintf('cat %s | sendmail -f "%s" "%s"',"$dir/latest",DEFAULT_EMAIL,ATK14_ADMIN_EMAIL)
 			);
 		}
 		return $email_ar;
