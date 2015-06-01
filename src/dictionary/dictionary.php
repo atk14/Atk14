@@ -37,7 +37,7 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 *
 	 * @param array $ar initial array
 	 */
-	function Dictionary($ar = array()){
+	function __construct($ar = array()){
 		$this->_Values = $ar;
 	}
 
