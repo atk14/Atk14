@@ -12,9 +12,18 @@ class IntegerField extends Field
 		$options = forms_array_merge(array(
 				'max_value' => null,
 				'min_value' => null,
-				'widget' => new NumberInput(),
-			),
-			$options
+			), $options
+		);
+		$attrs = array();
+		if (isset($options["min_value"])) {
+			$attrs["min"] = $options["min_value"];
+		}
+		if (isset($options["max_value"])) {
+			$attrs["max"] = $options["max_value"];
+		}
+		$options = forms_array_merge(array(
+				'widget' => new NumberInput(array("attrs" => $attrs)),
+			), $options
 		);
 		$this->max_value = $options['max_value'];
 		$this->min_value = $options['min_value'];
