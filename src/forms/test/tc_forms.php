@@ -514,7 +514,7 @@ class TcForms extends TcBase
 
 		$field = $form->get_field('age');
 		$this->assertEquals(
-			'<input type="text" name="age" class="text form-control" id="id_age" value="12" />',
+			'<input type="number" name="age" class="text form-control" id="id_age" value="12" />',
 			$field->as_widget()
 		);
 		$this->assertEquals('Age', $field->label);
@@ -529,7 +529,7 @@ class TcForms extends TcBase
 				array(
 					'<tr><th><label for="id_first_name">First name:</label></th><td><input type="text" name="first_name" class="text form-control" id="id_first_name" value="John" /></td></tr>',
 					'<tr><th><label for="id_last_name">Last name:</label></th><td><input type="text" name="last_name" class="text form-control" id="id_last_name" value="Lennon" /></td></tr>',
-					'<tr><th><label for="id_age">Age:</label></th><td><input type="text" name="age" class="text form-control" id="id_age" value="12" /></td></tr>'
+					'<tr><th><label for="id_age">Age:</label></th><td><input type="number" name="age" class="text form-control" id="id_age" value="12" /></td></tr>'
 				)
 			),
 			$form->as_table()
@@ -564,7 +564,7 @@ class TcForms extends TcBase
 				array(
 					'<tr><th><label for="id_first_name">First name:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="text" name="first_name" class="text form-control" id="id_first_name" /></td></tr>',
 					'<tr><th><label for="id_last_name">Last name:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="text" name="last_name" class="text form-control" id="id_last_name" /></td></tr>',
-					'<tr><th><label for="id_age">Age:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="text" name="age" class="text form-control" id="id_age" /></td></tr>'
+					'<tr><th><label for="id_age">Age:</label></th><td><ul class="errorlist"><li>This field is required.</li></ul><input type="number" name="age" class="text form-control" id="id_age" /></td></tr>'
 				)
 			),
 			$form->as_table()
@@ -575,7 +575,7 @@ class TcForms extends TcBase
 				array(
 					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></li>',
 					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></li>',
-					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /></li>'
+					'<li><ul class="errorlist"><li>This field is required.</li></ul><label for="id_age">Age:</label> <input type="number" name="age" class="text form-control" id="id_age" /></li>'
 				)
 			),
 			$form->as_ul()
@@ -589,7 +589,7 @@ class TcForms extends TcBase
 					'<ul class="errorlist"><li>This field is required.</li></ul>',
 					'<p><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></p>',
 					'<ul class="errorlist"><li>This field is required.</li></ul>',
-					'<p><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /></p>'
+					'<p><label for="id_age">Age:</label> <input type="number" name="age" class="text form-control" id="id_age" /></p>'
 				)
 			),
 			$form->as_p()
@@ -617,7 +617,7 @@ class TcForms extends TcBase
 				array(
 					'<tr><th><label for="id_first_name">First name:</label></th><td><input type="text" name="first_name" class="text form-control" id="id_first_name" /></td></tr>',
 					'<tr><th><label for="id_last_name">Last name:</label></th><td><input type="text" name="last_name" class="text form-control" id="id_last_name" /></td></tr>',
-					'<tr><th><label for="id_age">Age:</label></th><td><input type="text" name="age" class="text form-control" id="id_age" /></td></tr>',
+					'<tr><th><label for="id_age">Age:</label></th><td><input type="number" name="age" class="text form-control" id="id_age" /></td></tr>',
 				)
 			),
 			$form->as_table()
@@ -628,7 +628,7 @@ class TcForms extends TcBase
 				array(
 					'<li><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></li>',
 					'<li><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></li>',
-					'<li><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /></li>',
+					'<li><label for="id_age">Age:</label> <input type="number" name="age" class="text form-control" id="id_age" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -639,7 +639,7 @@ class TcForms extends TcBase
 				array(
 					'<p><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></p>',
 					'<p><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></p>',
-					'<p><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /></p>',
+					'<p><label for="id_age">Age:</label> <input type="number" name="age" class="text form-control" id="id_age" /></p>',
 				)
 			),
 			$form->as_p()
@@ -681,7 +681,7 @@ class TcForms extends TcBase
 		$field = $form->get_field('last_name');
 		$this->assertEquals('<input type="text" name="last_name" class="text form-control" id="id_last_name" />', $field->as_widget());
 		$field = $form->get_field('age');
-		$this->assertEquals('<input type="text" name="age" class="text form-control" id="id_age" />', $field->as_widget());
+		$this->assertEquals('<input type="number" name="age" class="text form-control" id="id_age" />', $field->as_widget());
 	}
 	
 	/**
@@ -748,7 +748,7 @@ class TcForms extends TcBase
 				array(
 					'<tr><th><label for="first_name_id">First name:</label></th><td><input type="text" name="first_name" class="text form-control" id="first_name_id" /></td></tr>',
 					'<tr><th><label for="last_name_id">Last name:</label></th><td><input type="text" name="last_name" class="text form-control" id="last_name_id" /></td></tr>',
-					'<tr><th><label for="age_id">Age:</label></th><td><input type="text" name="age" class="text form-control" id="age_id" /></td></tr>',
+					'<tr><th><label for="age_id">Age:</label></th><td><input type="number" name="age" class="text form-control" id="age_id" /></td></tr>',
 				)
 			),
 			$form->as_table()
@@ -759,7 +759,7 @@ class TcForms extends TcBase
 				array(
 					'<li><label for="first_name_id">First name:</label> <input type="text" name="first_name" class="text form-control" id="first_name_id" /></li>',
 					'<li><label for="last_name_id">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name_id" /></li>',
-					'<li><label for="age_id">Age:</label> <input type="text" name="age" class="text form-control" id="age_id" /></li>',
+					'<li><label for="age_id">Age:</label> <input type="number" name="age" class="text form-control" id="age_id" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -770,7 +770,7 @@ class TcForms extends TcBase
 				array(
 					'<p><label for="first_name_id">First name:</label> <input type="text" name="first_name" class="text form-control" id="first_name_id" /></p>',
 					'<p><label for="last_name_id">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name_id" /></p>',
-					'<p><label for="age_id">Age:</label> <input type="text" name="age" class="text form-control" id="age_id" /></p>',
+					'<p><label for="age_id">Age:</label> <input type="number" name="age" class="text form-control" id="age_id" /></p>',
 				)
 			),
 			$form->as_p()
@@ -792,7 +792,7 @@ class TcForms extends TcBase
 				array(
 					'<li><label for="first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="first_name" /></li>',
 					'<li><label for="last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name" /></li>',
-					'<li><label for="age">Age:</label> <input type="text" name="age" class="text form-control" id="age" /></li>',
+					'<li><label for="age">Age:</label> <input type="number" name="age" class="text form-control" id="age" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -806,7 +806,7 @@ class TcForms extends TcBase
 				array(
 					'<li><label for="first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="first_name" /></li>',
 					'<li><label for="last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name" /></li>',
-					'<li><label for="age">Age:</label> <input type="text" name="age" class="text form-control" id="age" /></li>',
+					'<li><label for="age">Age:</label> <input type="number" name="age" class="text form-control" id="age" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -828,7 +828,7 @@ class TcForms extends TcBase
 				array(
 					'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
 					'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
-					'<li>Age: <input type="text" name="age" class="text form-control" /></li>',
+					'<li>Age: <input type="number" name="age" class="text form-control" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -842,7 +842,7 @@ class TcForms extends TcBase
 				array(
 					'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
 					'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
-					'<li>Age: <input type="text" name="age" class="text form-control" /></li>',
+					'<li>Age: <input type="number" name="age" class="text form-control" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -864,7 +864,7 @@ class TcForms extends TcBase
 				array(
 					'<li><label for="first_name_id">First name:</label> <input id="first_name_id" type="text" name="first_name" class="text form-control" /></li>',
 					'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
-					'<li>Age: <input type="text" name="age" class="text form-control" /></li>',
+					'<li>Age: <input type="number" name="age" class="text form-control" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -886,7 +886,7 @@ class TcForms extends TcBase
 				array(
 					'<li><label for="first_name_id">First name:</label> <input id="first_name_id" type="text" name="first_name" class="text form-control" /></li>',
 					'<li><label for="last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="last_name" /></li>',
-					'<li><label for="age">Age:</label> <input type="text" name="age" class="text form-control" id="age" /></li>',
+					'<li><label for="age">Age:</label> <input type="number" name="age" class="text form-control" id="age" /></li>',
 				)
 			),
 			$form->as_ul()
@@ -1514,7 +1514,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<tr><th>First name:</th><td><input type="text" name="first_name" class="text form-control" /></td></tr>',
 				'<tr><th>Last name:</th><td><input type="text" name="last_name" class="text form-control" /></td></tr>',
-				'<tr><th>Age:</th><td><input type="text" name="age" class="text form-control" /><input type="hidden" name="hidden_text" /></td></tr>'
+				'<tr><th>Age:</th><td><input type="number" name="age" class="text form-control" /><input type="hidden" name="hidden_text" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
@@ -1522,7 +1522,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
 				'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
-				'<li>Age: <input type="text" name="age" class="text form-control" /><input type="hidden" name="hidden_text" /></li>'
+				'<li>Age: <input type="number" name="age" class="text form-control" /><input type="hidden" name="hidden_text" /></li>'
 			)), 
 			$form->as_ul()
 		);
@@ -1530,7 +1530,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<p>First name: <input type="text" name="first_name" class="text form-control" /></p>',
 				'<p>Last name: <input type="text" name="last_name" class="text form-control" /></p>',
-				'<p>Age: <input type="text" name="age" class="text form-control" /><input type="hidden" name="hidden_text" /></p>'
+				'<p>Age: <input type="number" name="age" class="text form-control" /><input type="hidden" name="hidden_text" /></p>'
 			)), 
 			$form->as_p()
 		);
@@ -1541,7 +1541,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<tr><th><label for="id_first_name">First name:</label></th><td><input type="text" name="first_name" class="text form-control" id="id_first_name" /></td></tr>',
 				'<tr><th><label for="id_last_name">Last name:</label></th><td><input type="text" name="last_name" class="text form-control" id="id_last_name" /></td></tr>',
-				'<tr><th><label for="id_age">Age:</label></th><td><input type="text" name="age" class="text form-control" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></td></tr>'
+				'<tr><th><label for="id_age">Age:</label></th><td><input type="number" name="age" class="text form-control" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
@@ -1549,7 +1549,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<li><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></li>',
 				'<li><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></li>',
-				'<li><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></li>'
+				'<li><label for="id_age">Age:</label> <input type="number" name="age" class="text form-control" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></li>'
 			)), 
 			$form->as_ul()
 		);
@@ -1557,7 +1557,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<p><label for="id_first_name">First name:</label> <input type="text" name="first_name" class="text form-control" id="id_first_name" /></p>',
 				'<p><label for="id_last_name">Last name:</label> <input type="text" name="last_name" class="text form-control" id="id_last_name" /></p>',
-				'<p><label for="id_age">Age:</label> <input type="text" name="age" class="text form-control" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></p>'
+				'<p><label for="id_age">Age:</label> <input type="number" name="age" class="text form-control" id="id_age" /><input type="hidden" name="hidden_text" id="id_hidden_text" /></p>'
 			)), 
 			$form->as_p()
 		);
@@ -1570,7 +1570,7 @@ class TcForms extends TcBase
 				'<tr><td colspan="2"><ul class="errorlist"><li>(Hidden field hidden_text) This field is required.</li></ul></td></tr>',
 				'<tr><th>First name:</th><td><input type="text" name="first_name" class="text form-control" value="John" /></td></tr>',
 				'<tr><th>Last name:</th><td><input type="text" name="last_name" class="text form-control" value="Lennon" /></td></tr>',
-				'<tr><th>Age:</th><td><input type="text" name="age" class="text form-control" value="12" /><input type="hidden" name="hidden_text" /></td></tr>'
+				'<tr><th>Age:</th><td><input type="number" name="age" class="text form-control" value="12" /><input type="hidden" name="hidden_text" /></td></tr>'
 			)), 
 			$form->as_table()
 		);
@@ -1579,7 +1579,7 @@ class TcForms extends TcBase
 				'<li><ul class="errorlist"><li>(Hidden field hidden_text) This field is required.</li></ul></li>',
 				'<li>First name: <input type="text" name="first_name" class="text form-control" value="John" /></li>',
 				'<li>Last name: <input type="text" name="last_name" class="text form-control" value="Lennon" /></li>',
-				'<li>Age: <input type="text" name="age" class="text form-control" value="12" /><input type="hidden" name="hidden_text" /></li>'
+				'<li>Age: <input type="number" name="age" class="text form-control" value="12" /><input type="hidden" name="hidden_text" /></li>'
 			)), 
 			$form->as_ul()
 		);
@@ -1588,7 +1588,7 @@ class TcForms extends TcBase
 				'<ul class="errorlist"><li>(Hidden field hidden_text) This field is required.</li></ul>',
 				'<p>First name: <input type="text" name="first_name" class="text form-control" value="John" /></p>',
 				'<p>Last name: <input type="text" name="last_name" class="text form-control" value="Lennon" /></p>',
-				'<p>Age: <input type="text" name="age" class="text form-control" value="12" /><input type="hidden" name="hidden_text" /></p>'
+				'<p>Age: <input type="number" name="age" class="text form-control" value="12" /><input type="hidden" name="hidden_text" /></p>'
 			)), 
 			$form->as_p()
 		);
@@ -1966,7 +1966,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
 				'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
-				'<li>Age: <input type="text" name="age" class="text form-control" /></li>'
+				'<li>Age: <input type="number" name="age" class="text form-control" /></li>'
 			)),
 			$form->as_ul()
 		);
@@ -1975,7 +1975,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<li>First name: <input type="text" name="first_name" class="text form-control" /></li>',
 				'<li>Last name: <input type="text" name="last_name" class="text form-control" /></li>',
-				'<li>Age: <input type="text" name="age" class="text form-control" /></li>',
+				'<li>Age: <input type="number" name="age" class="text form-control" /></li>',
 				'<li>Instrument: <input type="text" name="instrument" class="text form-control" /></li>'
 			)),
 			$form->as_ul()
@@ -1999,7 +1999,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<li><label for="id_person1_first_name">First name:</label> <input type="text" name="person1_first_name" class="text form-control" id="id_person1_first_name" value="John" /></li>',
 				'<li><label for="id_person1_last_name">Last name:</label> <input type="text" name="person1_last_name" class="text form-control" id="id_person1_last_name" value="Lennon" /></li>',
-				'<li><label for="id_person1_age">Age:</label> <input type="text" name="person1_age" class="text form-control" id="id_person1_age" value="12" /></li>'
+				'<li><label for="id_person1_age">Age:</label> <input type="number" name="person1_age" class="text form-control" id="id_person1_age" value="12" /></li>'
 			)),
 			$form->as_ul()
 		);
@@ -2016,7 +2016,7 @@ class TcForms extends TcBase
 		);
 		$field = $form->get_field('age');
 		$this->assertEquals(
-			'<input type="text" name="person1_age" class="text form-control" id="id_person1_age" value="12" />',
+			'<input type="number" name="person1_age" class="text form-control" id="id_person1_age" value="12" />',
 			$field->as_widget()
 		);
 
@@ -2110,7 +2110,7 @@ class TcForms extends TcBase
 			implode("\n", array(
 				'<li><label for="id_foo-prefix-first_name">First name:</label> <input type="text" name="foo-prefix-first_name" class="text form-control" id="id_foo-prefix-first_name" /></li>',
 				'<li><label for="id_foo-prefix-last_name">Last name:</label> <input type="text" name="foo-prefix-last_name" class="text form-control" id="id_foo-prefix-last_name" /></li>',
-				'<li><label for="id_foo-prefix-age">Age:</label> <input type="text" name="foo-prefix-age" class="text form-control" id="id_foo-prefix-age" /></li>'
+				'<li><label for="id_foo-prefix-age">Age:</label> <input type="number" name="foo-prefix-age" class="text form-control" id="id_foo-prefix-age" /></li>'
 			)),
 			$form->as_ul()
 		);
