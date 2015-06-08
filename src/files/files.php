@@ -583,7 +583,7 @@ class Files{
 		$tr_table = array(
 			// most desirable suffix is on the first position
 			// 										the most desirable type is on the first position
-			"xls" =>				array("application/vnd.ms-excel","application/msexcel","application/vnd.ms-office"),
+			"xls" =>				array("application/vnd.ms-excel","application/msexcel","application/vnd.ms-office","application/msword"),
 			"jpg|jpeg" =>		array("image/jpeg","image/jpg"),
 			"svg" =>				array("image/svg+xml","text/plain"),
 			"bmp" =>				array("image/bmp","application/octet-stream"),
