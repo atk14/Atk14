@@ -300,7 +300,9 @@ class HTTPUploadedFile{
 	 * @return string
 	 */
 	private function _determineFileType(){
-		return Files::DetermineFileType($this->getTmpFileName());
+		return Files::DetermineFileType($this->getTmpFileName(),array(
+			"original_filename" => $this->getFileName(),
+		));
 	}
 
 	/**
