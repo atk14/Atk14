@@ -29,7 +29,7 @@ class FileField extends Field{
 
 		$this->update_messages(array(
 			"file_too_big" => _('Ensure this file has at most %max_file_size% bytes (it has %file_size%)'),
-			"disallowed_mime_type" => _('Disallowed file type (%mime_type%)'),
+			"disallowed_mime_type" => _('Unsupported file type: %mime_type%'),
 		));
 	}
 
