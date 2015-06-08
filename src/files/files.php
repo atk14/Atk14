@@ -533,23 +533,72 @@ class Files{
 	 * !! Note that it actualy runs the shell command file.
 	 * If it is unable to run the command, 'application/octet-string' is returned.
 	 *
+	 *		$mime_type = Files::DetermineFileType($_FILES['userfile']['tmp_name'],array(
+	 *			"original_filename" => $_FILES['userfile']['name']) // like "strawber.jpeg"
+	 *		),$preferred_suffix);
+	 *		echo $mime_type; // "image/jpg"
+	 *		echo $preferred_suffix; // "jpg"
+	 *
 	 * @param string $filename name of the file to be examined
-	 * @param boolean &$error flag indicating a problem when calling this method
-	 * @param string &$error_str message describing an error
-	 * @return string MIME type of the file
+	 * @param array $options
+   * @param string &$preferred_suffix
 	 */
-	static function DetermineFileType($filename, &$error = null, &$error_str  = null){
-		$command = "file -i ".escapeshellarg($filename);
-		$out = `$command`;
-		// /tmp/xxsEEws: text/plain charset=us-ascii
-		// -> text/plain
-		// ya.gif: image/gif; charset=binary
-		// -> image/gif
-		if(preg_match("/^.*?:\\s*([^\\s]+\\/[^\\s;]+)/",$out,$matches)){
-			$mime_type = $matches[1];
-		}else{
-			$mime_type = "application/octet-stream";
+	static function DetermineFileType($filename, $options = array(), &$preferred_suffix = null){
+		$options += array(
+			"original_filename" => null,
+		);
+
+		if(!file_exists($filename) || is_dir($filename)){
+			return null;
 		}
+
+		if(function_exists("finfo_open")){
+			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+			$mime_type = finfo_file($finfo, $filename);
+		}else{
+			$command = "file -i ".escapeshellarg($filename);
+			$out = `$command`;
+			// /tmp/xxsEEws: text/plain charset=us-ascii
+			// -> text/plain
+			// ya.gif: image/gif; charset=binary
+			// -> image/gif
+			if(preg_match("/^.*?:\\s*([^\\s]+\\/[^\\s;]+)/",$out,$matches)){
+				$mime_type = $matches[1];
+			}else{
+				$mime_type = "application/octet-stream";
+			}
+		}
+
+		$original_filename = $options["original_filename"];
+		if(!$original_filename){
+			preg_match('/([^\/]+)$/',$filename,$matches); // "/path/to/file.jpg" -> "file.jpg"
+			$original_filename = $matches[1];
+		}
+		$original_suffix = "";
+		if(preg_match('/\.([^.]{1,10})$/i',$original_filename,$matches)){
+			$original_suffix = strtolower($matches[1]); // "FILE.JPG" -> "jpg"
+		}
+		$preferred_suffix = $original_suffix;
+
+		$tr_table = array(
+			// most desirable suffix is on the first position
+			// 										the most desirable type is on the first position
+			"xls" =>				array("application/vnd.ms-excel","application/msexcel","application/vnd.ms-office"),
+			"jpg|jpeg" =>		array("image/jpeg","image/jpg"),
+			"svg" =>				array("image/svg+xml","text/plain"),
+			"bmp" =>				array("image/bmp","application/octet-stream"),
+			"eps" =>				array("application/postscript","application/eps"),
+		);
+
+		foreach($tr_table as $suffixes => $mime_types){
+			$suffixes = explode("|",$suffixes);
+			if(in_array($original_suffix,$suffixes) && in_array($mime_type,$mime_types)){
+				$mime_type = $mime_types[0];
+				$preferred_suffix = $suffixes[0];
+				break;
+			}
+		}
+		
 		return $mime_type;
 	}
 }

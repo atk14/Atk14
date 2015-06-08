@@ -118,4 +118,33 @@ class TcFiles extends TcBase{
 
 		Files::Unlink($filename);
 	}
+
+	function test_DetermineFileType(){
+
+		// http://en.wikipedia.org/wiki/Internet_media_type
+
+		$this->assertEquals(null,Files::DetermineFileType("non_existing_file.dat"));
+		
+		foreach(array(
+			"jpg" => "image/jpeg",
+			"png" => "image/png",
+			"png" => "image/png",
+			"gif" => "image/gif",
+			"tiff" => "image/tiff",
+			"bmp" => "image/bmp",
+
+			"eps" => "application/postscript",
+			"ai" => "application/postscript",
+			"svg" => "image/svg+xml",
+
+			"odt" => "application/vnd.oasis.opendocument.text",
+			"ods" => "application/vnd.oasis.opendocument.spreadsheet",
+
+			"xls" => "application/vnd.ms-excel",
+			"doc" => "application/msword",
+ 		) as $file => $mime_type){
+			$file = __DIR__."/sample_files/sample.$file";
+			$this->assertEquals($mime_type,Files::DetermineFileType($file),$file);
+		}
+	}
 }
