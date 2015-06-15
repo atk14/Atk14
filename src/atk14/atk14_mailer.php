@@ -88,7 +88,7 @@ class Atk14Mailer{
 	 *
 	 * e.g. John Doe
 	 */
-	var $from_name = "";
+	var $from_name = ATK14_APPLICATION_NAME; 
 
 	/**
 	 * if $return_path is not set, $from is used automatically  as $return_path

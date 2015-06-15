@@ -81,7 +81,6 @@ __defaults__(array(
 
 __defaults__(array(
 	"SENDMAIL_DEFAULT_FROM" => DEFAULT_EMAIL,
-	"SENDMAIL_DEFAULT_FROM_NAME" => ATK14_APPLICATION_NAME,
 	"SENDMAIL_DEFAULT_BODY_CHARSET" => DEFAULT_CHARSET,
 	"SENDMAIL_DEFAULT_BODY_MIME_TYPE" => "text/plain",
 	"SENDMAIL_BODY_AUTO_PREFIX" => "", // given text will be prepend to every message
