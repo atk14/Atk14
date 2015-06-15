@@ -1,5 +1,6 @@
 <?php
-@define("SENDMAIL_DEFAULT_FROM","sendmail");
+@define("SENDMAIL_DEFAULT_FROM","sendmail"); // john@doe.com
+@define("SENDMAIL_DEFAULT_FROM_NAME",""); // "John Doe"
 @define("SENDMAIL_DEFAULT_BODY_CHARSET","us-ascii");
 @define("SENDMAIL_DEFAULT_BODY_MIME_TYPE","text/plain");
 @define("SENDMAIL_BODY_AUTO_PREFIX","");
@@ -86,7 +87,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	$orig_params = $params;
 	$params = array_merge(array(
 		"from" => SENDMAIL_DEFAULT_FROM, // john.doe@example.com
-		"from_name" => null, // "John Doe"
+		"from_name" => SENDMAIL_DEFAULT_FROM_NAME, // "John Doe"
 		"to" => $to,
 		"cc" => null,
 		"bcc" => null,
