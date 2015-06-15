@@ -317,6 +317,8 @@ class Atk14Utils{
 			$smarty->setConfigDir($PATH_SMARTY."/config/");
 			$smarty->setCacheDir($_cache_dir = "$PATH_SMARTY/$userid/cache/");
 
+			$smarty->force_compile = !PRODUCTION; // TODO: It seems that there is an issue with usage of an old compiled template...
+
 			if(!file_exists($_compile_dir)){ Files::Mkdir($_compile_dir); }
 			if(!file_exists($_cache_dir)){ Files::Mkdir($_cache_dir); }
 
