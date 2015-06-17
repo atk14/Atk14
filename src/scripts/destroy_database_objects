@@ -58,7 +58,7 @@ if($previewing){
 }
 
 foreach($dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemaname='$schema'") as $table){
-  $q = "DROP TABLE $schema.$table CASCADE";
+  $q = "DROP TABLE IF EXISTS $schema.$table CASCADE";
 	if($previewing){
 		echo "$q;\n";
 		continue;
