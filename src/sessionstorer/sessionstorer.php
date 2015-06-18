@@ -627,8 +627,9 @@ class SessionStorer{
 
 			if($this->_getCurrentTime()-strtotime($row["last_access"])>=60*5){
 				// sessions.last_access is being updated once a 5 minutes
-				$this->_dbmole->doQuery("UPDATE sessions SET last_access=:now WHERE id=:id",array(
+				$this->_dbmole->doQuery("UPDATE sessions SET last_access=:now WHERE id=:id AND last_access=:last_access",array(
 					":id" => $id,
+					":last_access" => $row["last_access"],
 					":now" => $this->_getNow(),
 				));
 				if($this->getCookieExpiration()>0){
