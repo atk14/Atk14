@@ -625,8 +625,7 @@ class SessionStorer{
 			$this->_SessionId = $id;
 			$this->_SessionSecurity = $security;
 
-			if($this->_getCurrentTime()-strtotime($row["last_access"])>=60*5){
-				// sessions.last_access is being updated once a 5 minutes
+			if($this->_isTimeToUpdateLastAccess($row["last_access"])){
 				$this->_dbmole->doQuery("UPDATE sessions SET last_access=:now WHERE id=:id AND last_access=:last_access",array(
 					":id" => $id,
 					":last_access" => $row["last_access"],
@@ -645,6 +644,35 @@ class SessionStorer{
 
 		$this->_clearSessionCookie();
 		return false;
+	}
+
+	function _isTimeToUpdateLastAccess($current_last_access){
+		$min_delta = 60 * 4; // 4 minutes
+		$max_delta = 60 * 6; // 6 minutes
+
+		$delta = $this->_getCurrentTime()-strtotime($current_last_access);
+
+		if($delta>=$max_delta){
+			return true;
+		}
+
+		if($delta<$min_delta){
+			return false;
+		}
+
+		$min = $delta - $min_delta; // min 0, max: ($max_delta-$min_delta-1)
+		$max = $max_delta - $min_delta;
+
+		if(rand($min,$max)>($max-10)){
+			return true;
+		}
+
+		return false;
+
+		// sessions.last_access is being updated once a 5 minutes
+		if($this->_getCurrentTime()-strtotime($current_last_access)>=60*5){
+			return true;
+		}
 	}
 
 	/**
@@ -858,6 +886,7 @@ class SessionStorer{
 	 * Deletes entries from database which are older than $this->_MaxLifetime.
 	 */
 	protected function _garbageCollection(){
+		// if(rand(1,10)!=2){ return; } // TODO: HACK to improve speed
 		$this->_dbmole->doQuery("
 			DELETE FROM sessions WHERE
 				last_access<:min_last_access AND

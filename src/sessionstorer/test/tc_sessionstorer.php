@@ -307,6 +307,24 @@ class TcSessionStorer extends TcBase{
 		$this->assertEquals(null,$session->readValue("logged_user"));
 	}
 
+	function test__isTimeToUpdateLastAccess(){
+		$time = CURRENT_TIME;
+
+		$s = new SessionStorer(array("current_time" => $time));
+
+		$this->assertEquals(false,$s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time)));
+		$this->assertEquals(false,$s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60)));
+		$this->assertEquals(true,$s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60 * 10)));
+
+		$trues = $falses = 0;
+		for($i=0;$i<100;$i++){
+			$ret = $s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60 * 5));
+			if($ret){ $trues++; }else{ $falses++; }
+		}
+		$this->assertTrue($trues>0);
+		$this->assertTrue($falses>0);
+	}
+
 	function _add_cookies($send_cookies,&$store){
 		foreach($send_cookies as $item){
 			$store[$item[0]] = $item[1];
