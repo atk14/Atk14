@@ -588,6 +588,7 @@ class Files{
 			"svg" =>				array("image/svg+xml","text/plain"),
 			"bmp" =>				array("image/bmp","application/octet-stream"),
 			"eps" =>				array("application/postscript","application/eps"),
+			"csv" =>				array("text/csv","text/plain"),
 		);
 
 		foreach($tr_table as $suffixes => $mime_types){
