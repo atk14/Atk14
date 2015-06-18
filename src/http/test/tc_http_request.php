@@ -189,6 +189,10 @@ class tc_http_request extends tc_base{
 		));
 		$this->assertEquals("didaktitk",$req->getPostVar("first_compo"));
 		$this->assertNull($req->getPostVar("second_compo"));
+
+		$req->setPostVar("second_compo","atari_tt");
+		$this->assertEquals("didaktitk",$req->getPostVar("first_compo"));
+		$this->assertEquals("atari_tt",$req->getPostVar("second_compo"));
 	}
 
 	function test_set_request_method(){
@@ -433,6 +437,7 @@ class tc_http_request extends tc_base{
 		$this->assertEquals(array("id" => "123", "format" => "xml"),$request->getGetVars());
 
 		$request->setGetVars(array("fake" => "1"));
+		$this->assertNull($request->getGetVar("id"));
 		$this->assertEquals(array("fake" => "1"),$request->getGetVars());
 	}
 

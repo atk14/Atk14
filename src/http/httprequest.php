@@ -761,8 +761,9 @@ class HTTPRequest{
 	function getGetVar($var_name){
 		settype($var_name,"string");
 		$out = null;
-		if(isset($GLOBALS["_GET"][$var_name])){
-			$out = $GLOBALS["_GET"][$var_name];
+		$vars = $this->getAllGetVars();
+		if(isset($vars[$var_name])){
+			$out = $vars[$var_name];
 		}
 		return $out;
 	}
@@ -786,8 +787,11 @@ class HTTPRequest{
 	 */
 	function getGetVars(){ return $this->getAllGetVars(); }
 
-	function setGetVars($vars){
-		$this->_setForceValue("GetVars",$vars);
+	function setGetVars($vars){ $this->_setForceValue("GetVars",$vars); }
+	function setGetVar($name,$value){
+		$vars = $this->getGetVars();
+		$vars["$name"] = $value;
+		return $this->setGetVars($vars);
 	}
 
 
@@ -827,6 +831,11 @@ class HTTPRequest{
 	function getPostVars(){ return $this->getAllPostVars(); }
 
 	function setPostVars($vars){ $this->_setForceValue("PostVars",$vars); }
+	function setPostVar($name,$value){
+		$vars = $this->getPostVars();
+		$vars["$name"] = $value;
+		return $this->setPostVars($vars);
+	}
 
 	/**
 	 * Returns value of a cookie $var_name.
