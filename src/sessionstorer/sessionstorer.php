@@ -48,6 +48,8 @@ if(!defined("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS")){
 	define("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS",false);
 }
 
+@define("SESSION_STORER_AUTO_GARBAGE_COLLECTION",true);
+
 /**
  * A class for storing and reading values into a session.
  *
@@ -886,6 +888,8 @@ class SessionStorer{
 	 * Deletes entries from database which are older than $this->_MaxLifetime.
 	 */
 	protected function _garbageCollection(){
+		if(!SESSION_STORER_AUTO_GARBAGE_COLLECTION){ return; }
+
 		// if(rand(1,10)!=2){ return; } // TODO: HACK to improve speed
 		$this->_dbmole->doQuery("
 			DELETE FROM sessions WHERE
