@@ -1,9 +1,7 @@
 <?php
-/**
- * A middle layer for Smarty version 3.
- */
-class Atk14Smarty extends SmartyBC{
+class Atk14Smarty extends Atk14SmartyBase{
 	protected $atk14_contents = array();
+
 	/**
 	 * Permissions for smarty directory structure
 	 */
@@ -13,12 +11,6 @@ class Atk14Smarty extends SmartyBC{
 	 * Permissions used for files created by smarty
 	 */
 	var $_file_perms = ATK14_SMARTY_FILE_PERMS;
-
-	function __construct(){
-		parent::__construct();
-
-		$this->setErrorReporting(E_ALL ^ E_NOTICE);
-	}
 
 	/**
 	 * $smarty->addAtk14Content("main","<p>Well...</p>");
@@ -39,5 +31,6 @@ class Atk14Smarty extends SmartyBC{
 	}
 
 	function getAtk14ContentKeys(){ return array_keys($this->atk14_contents); }
+
 
 }

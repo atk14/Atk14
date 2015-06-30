@@ -21,10 +21,11 @@ require_once("$__PATH__/atk14_migration.php");
 require_once("$__PATH__/atk14_robot.php");
 require_once("$__PATH__/atk14_smarty_utils.php");
 if(ATK14_USE_SMARTY3){
-	require_once("$__PATH__/atk14_smarty_v3.php");
+	require_once("$__PATH__/atk14_smarty_base_v3.php");
 }else{
-	require_once("$__PATH__/atk14_smarty_v2.php");
+	require_once("$__PATH__/atk14_smarty_base_v2.php");
 }
+require_once("$__PATH__/atk14_smarty.php");
 
 require_once("$__PATH__/tc_atk14_controller.php");
 require_once("$__PATH__/tc_atk14_model.php");
