@@ -31,6 +31,8 @@ __defaults__(array(
 
 	"ATK14_USE_SMARTY3" => true,
 	"ATK14_SMARTY_DEFAULT_MODIFIER" => 'h', // 'h' is a goog one, see http://www.smarty.net/docs/en/variable.default.modifiers.tpl
+	"ATK14_SMARTY_DIR_PERMS" => 0771, # default Smartys directory permissions
+	"ATK14_SMARTY_FILE_PERMS" => 0644, # default Smartys file permissions
 
 	// By default ATK14 is able to redirect transparently from an old URL form to a new URL form.
 	// This helps to keep every page on it's current URL form.

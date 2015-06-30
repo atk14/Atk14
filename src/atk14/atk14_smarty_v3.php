@@ -4,6 +4,15 @@
  */
 class Atk14Smarty extends SmartyBC{
 	protected $atk14_contents = array();
+	/**
+	 * Permissions for smarty directory structure
+	 */
+	var $_dir_perms  = ATK14_SMARTY_DIR_PERMS;
+
+	/**
+	 * Permissions used for files created by smarty
+	 */
+	var $_file_perms = ATK14_SMARTY_FILE_PERMS;
 
 	function __construct(){
 		parent::__construct();
