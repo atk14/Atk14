@@ -2,14 +2,14 @@
 class tc_dbmole extends tc_base{
 	function test_uses_sequencies(){
 		$this->assertFalse($this->my->usesSequencies());
-		$this->assertTrue($this->ora->usesSequencies());
+		//$this->assertTrue($this->ora->usesSequencies());
 		$this->assertTrue($this->pg->usesSequencies());
 	}
 
 	function test_get_database_type(){
 		$this->assertEquals("mysql",$this->my->getDatabaseType());
 		$this->assertEquals("postgresql",$this->pg->getDatabaseType());
-		$this->assertEquals("oracle",$this->ora->getDatabaseType());
+		//$this->assertEquals("oracle",$this->ora->getDatabaseType());
 		$this->assertEquals("unknown",$this->base->getDatabaseType());
 	}
 
@@ -25,8 +25,8 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals('TRUE',$this->my->escapeBool4Sql(true));
 		$this->assertEquals('FALSE',$this->my->escapeBool4Sql(false));
 
-		$this->assertEquals("Y",$this->ora->escapeBool4Sql(true));
-		$this->assertEquals("N",$this->ora->escapeBool4Sql(false));
+		//$this->assertEquals("Y",$this->ora->escapeBool4Sql(true));
+		//$this->assertEquals("N",$this->ora->escapeBool4Sql(false));
 	}
 
 	function test_parse_bool_from_sql(){
@@ -59,7 +59,7 @@ class tc_dbmole extends tc_base{
 	function test_common_behaviour(){
 		$this->_test_common_behaviour($this->my);
 		$this->_test_common_behaviour($this->pg);
-		$this->_test_common_behaviour($this->ora);
+		//$this->_test_common_behaviour($this->ora);
 	}
 
 	function test_begin_transaction(){
@@ -67,6 +67,7 @@ class tc_dbmole extends tc_base{
 		$this->_test_begin_transaction($this->my);
 
 		// oracle is not tested the same way - in oracle 'BEGIN' means nothing by default
+		/*
 		$this->ora->closeConnection();
 		$this->ora->begin();
 		$this->assertEquals(false,$this->ora->isConnected());
@@ -77,6 +78,7 @@ class tc_dbmole extends tc_base{
 
 		$this->ora->selectFirstRow("SELECT * FROM test_table");
 		$this->assertEquals(true,$this->ora->isConnected());
+		*/
 	}
 
 	function _test_begin_transaction($dbmole){
@@ -129,7 +131,7 @@ class tc_dbmole extends tc_base{
 	function test_caching(){
 		$this->_test_caching($this->pg);
 		$this->_test_caching($this->my);
-		$this->_test_caching($this->ora);
+		//$this->_test_caching($this->ora);
 	}
 
 	function _test_caching($dbmole){
@@ -164,6 +166,7 @@ class tc_dbmole extends tc_base{
 		$this->_test_select_sequence($dbmole);
 	}
 
+	/*
 	function test_oraclemole(){
 		$dbmole = &$this->ora;
 
@@ -195,7 +198,7 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals(1000*256,strlen($row["binary_data2"]));
 		$this->assertEquals($this->_binary_data(1000),$row["binary_data2"]);
 		$this->assertEquals($this->_lorem_ipsum(),$row["text"]);
-	}
+	}*/
 
 	function test_error_handlers(){
 		$dbmole = PgMole::GetInstance();
@@ -215,8 +218,8 @@ class tc_dbmole extends tc_base{
 		$dm = PgMole::GetInstance();
 		$this->assertEquals("session_error_handler",$dbmole_session->getErrorHandler());
 
-		$oracle = OracleMole::GetInstance("session");
-		$this->assertEquals("dbmole_error_handler",$oracle->getErrorHandler());
+		//$oracle = OracleMole::GetInstance("session");
+		//$this->assertEquals("dbmole_error_handler",$oracle->getErrorHandler());
 	}
 
 	function _test_common_behaviour(&$dbmole){

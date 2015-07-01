@@ -4,7 +4,7 @@ class tc_base extends tc_super_base{
 		$m = &$this->_get_moles();
 		$this->my = $m["my"];
 		$this->pg	= $m["pg"];
-		$this->ora = $m["ora"];
+		//$this->ora = $m["ora"];
 		$this->base = $m["base"];
 	}
 
@@ -38,7 +38,7 @@ class tc_base extends tc_super_base{
 		);	
 		$out["my"] = &MysqlMole::GetInstance();
 		$out["pg"] = &PgMole::GetInstance();
-		$out["ora"] = &OracleMole::GetInstance();
+		//$out["ora"] = &OracleMole::GetInstance();
 		return $out;
 	}
 
