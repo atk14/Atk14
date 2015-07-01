@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+dirname=`dirname $0`
+cd $dirname
+base_dir=`pwd -P`
+cd $base_dir
+cd ../..
+
+ret=0
+for dir in `find ./ -type d -name test | sort`; do
+	echo
+	echo
+	echo "###### $dir"
+	$base_dir/run_unit_tests $dir/
+	last_ret_code=$?
+	if [ $last_ret_code -ne 0 ]; then
+		ret=$last_ret_code
+	fi
+done
+
+exit $ret
