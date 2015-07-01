@@ -3,7 +3,7 @@
 A song just for fun
 
 {* Page title *}
-{content for=title strategy=prepend}La Musique{/content}
+{content for=title}La Musique{/content}
 
 {* Greeting *}
 {content for=greeting strategy=replace}Hello{/content}

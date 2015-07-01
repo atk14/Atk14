@@ -18,11 +18,12 @@
  *
  * Consider a block placeholder in a layout like this:
  *
- *	<title>{block_placeholder for=title} | Snake Oil Company{/block_placeholder}</title>
+ *	<title>{block_placeholder for=title default_strategy=prepend} | Snake Oil Company{/block_placeholder}</title>
  *
  * Now you can set the page title this way:
  *
- *	 {content for=title strategy=prepend}Sitemap{/content} {* or *}
+ *	 {content for=title}Sitemap{/content} {* or *}
+ *	 {content for=title strategy=prepend}Sitemap{/content} {* the same as the previous *}
  *	 {content for=title strategy=replace}Brand new Title{/content}
  *
  * @package Atk14
@@ -40,7 +41,7 @@ function smarty_block_content($params, $content, $template, &$repeat){
 
 	$params += array(
 		"for" => "main",
-		"strategy" => "append"
+		"strategy" => null, // default strategy is "append" but it won't be defined here; see Atk14Smarty::getAtk14Content()
 	);
 
 	$smarty->addAtk14Content($params["for"],$content,array(

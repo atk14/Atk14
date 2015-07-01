@@ -1,5 +1,5 @@
 <html>
-	<title>{block_placeholder for=title} | DEMO{/block_placeholder}</title>
+	<title>{block_placeholder for=title default_strategy=prepend} | DEMO{/block_placeholder}</title>
 
 	<body>
 		<greeting>{block_placeholder for=greeting}Good morning{/block_placeholder}</greeting>

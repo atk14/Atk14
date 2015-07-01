@@ -1,6 +1,6 @@
 <?php
 class TcHelpers extends TcBase{
-	function test_javascript_script_tag(){
+	function __test_javascript_script_tag(){
 		$out = $this->_run_action("helpers/javascript_script_tag");
 		$mtime = filemtime("public/javascripts/site.js");
 		$this->assertEquals('<script src="/public/javascripts/site.js?'.$mtime.'" type="text/javascript"></script>
@@ -9,7 +9,7 @@ class TcHelpers extends TcBase{
 
 	}
 
-	function test_sortable(){
+	function __test_sortable(){
 		$out = $this->_run_action("helpers/sortable");
 		$xm = $this->_html2xmole($out);
 		$theads = $xm->get_xmoles("table/thead/tr/th");
@@ -17,14 +17,14 @@ class TcHelpers extends TcBase{
 		$this->assertEquals("name sortable",$theads[1]->get_attribute("th","class")); // trida name je v sablone app/views/helpers/sortable.tpl
 	}
 
-	function test_h(){
+	function __test_h(){
 		$out = $this->_run_action("helpers/h");
 		$this->assertContains('escaped value: The book &lt;strong&gt;is mine!&lt;/strong&gt;',$out);
 		$this->assertContains('plain value: The book <strong>is mine!</strong>',$out);
 		$this->assertContains('escaped value (in a block): The book &lt;strong&gt;is mine!&lt;/strong&gt;',$out);
 	}
 
-	function test_render(){
+	function __test_render(){
 		$out = $this->_run_action("helpers/render");
 		$this->assertContains('<li class="red">ADVENTURE: The Adventures of Tom Sawyer by Mark Twain (index=0, 1/2, first)</li>',$out);
 		$this->assertContains('<li class="red">ADVENTURE: Swallows and Amazons by Arthur Ransome (index=1, 2/2, last)</li>',$out);
@@ -34,7 +34,7 @@ class TcHelpers extends TcBase{
 		$this->assertContains('some_value from the middle: LOWER_VALUE',$out);
 	}
 
-	function test_render_component(){
+	function __test_render_component(){
 		global $ATK14_GLOBAL;
 		$out = $this->_run_action("helpers/render_component");
 		$this->assertContains('<div id="external_content">Hello World from Mars!</div>',$out);
@@ -45,14 +45,14 @@ class TcHelpers extends TcBase{
 		$this->assertEquals("",$ATK14_GLOBAL->getValue("namespace"));
 	}
 
-	function test_a(){
+	function __test_a(){
 		$out = $this->_run_action("helpers/a");
 		$this->assertContains('<a href="/en/books/">List Books</a>',$out);
 		$this->assertContains('<a title="Book info" href="/en/books/detail/?id=123">Book#123</a>',$out);
 		$this->assertContains('<a href="/en/books/detail/?id=456#detail">Book#456</a>',$out);
 	}
 
-	function test_link_to(){
+	function __test_link_to(){
 		// prerequirement
 		global $ATK14_GLOBAL;
 		$ATK14_GLOBAL->setValue("lang","en");
@@ -72,6 +72,8 @@ class TcHelpers extends TcBase{
 		$this->assertContains("<content>A song just for fun</content>",$out);
 		$this->assertContains('<greeting>Hello</greeting>',$out);
 		$this->assertContains('<lyrics>Five little monkeys jumping on the bed. One fell off and bumped his head. Mama called the doctor and the doctor said, "No more monkeys jumping on the bed!"</lyrics>',$out);
+
+		$this->assertContains('<title>La Musique | DEMO</title>',$out);
 
 		//echo $out;
 	}

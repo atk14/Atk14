@@ -78,22 +78,10 @@ function atk14_get_smarty_from_template($template){
 
 function _smarty_addAtk14Content(&$smarty,&$atk14_contents,$key,$content,$options){
 	$options += array(
-		"strategy" => "append", // "append", "prepend", "replace",
+		"strategy" => null, // "append", "prepend", "replace", "_place_initial_content_", "default",
+		"default_strategy" => null,
 			// "_place_initial_content_" // special private purpose
 	);
-	if(!isset($atk14_contents[$key])){ $atk14_contents[$key] = '<%atk14_initial_content%>'; }
-
-	switch($options["strategy"]){
-		case 'prepend':
-			$atk14_contents[$key] = $content.$atk14_contents[$key];
-			break;
-		case 'replace':
-			$atk14_contents[$key] = $content;
-			break;
-		case '_place_initial_content_':
-			$atk14_contents[$key] = str_replace('<%atk14_initial_content%>',$content,$atk14_contents[$key]);
-			break;
-		default: // "append"	
-			$atk14_contents[$key] .= $content;
-	}
+	if(!isset($atk14_contents[$key])){ $atk14_contents[$key] = array(); }
+	$atk14_contents[$key][] = array($content, $options);
 }
