@@ -2,6 +2,19 @@
 /**
  * Class for working with Urls.
  *
+ * Can be used to add a router into application.
+ * A router can be used to create nice urls.
+ *
+ * Add a line into config/routers/load.php
+ * ```
+ *	Atk14Url::AddRouter("ProductsRouter");
+ * ```
+ * Then create a router class in config/routers/products_router.php
+ * ```
+ * class ProductsRouter extends Atk14Router {
+ * }
+ * ```
+ *
  * @package Atk14
  * @subpackage Core
  * @filesource
@@ -21,9 +34,9 @@ class Atk14Url{
 	 *
 	 * When nothing is recognized, returns null.
 	 *
-	 * <code>
-	 * $stat = Atk14Url::RecognizeRoute($HTTP_REQUEST->getRequestURI());
-	 * </code>
+	 * ```
+	 *	$stat = Atk14Url::RecognizeRoute($HTTP_REQUEST->getRequestURI());
+	 * ```
 	 * 
 	 * @param string $requested_uri URI to decode
 	 *
@@ -462,15 +475,21 @@ class Atk14Url{
 	}
 
 	/**
-	 * 
-	 * Atk14Url::AddRouter(new ProductsRouter());
-	 * Atk14Url::AddRouter("ProductsRouter");
 	 *
-	 * Atk14Url::AddRouter("","ProductsRouter");
-	 * Atk14Url::AddRouter("ProductsRouter"); // the same as previous
+	 * Adds a router into application.
 	 *
-	 * Atk14Url::AddRouter("admin","ProductsRouter");
-	 * Atk14Url::AddRouter("*","ProductsRouter");
+	 * ```
+	 *	Atk14Url::AddRouter(new ProductsRouter());
+	 *	Atk14Url::AddRouter("ProductsRouter");
+	 *
+	 *	Atk14Url::AddRouter("","ProductsRouter");
+	 *	Atk14Url::AddRouter("ProductsRouter"); // the same as previous
+	 *
+	 *	Atk14Url::AddRouter("admin","ProductsRouter");
+	 *	Atk14Url::AddRouter("*","ProductsRouter");
+	 * ```
+	 * @param string $namespace_or_router
+	 * @param string|Atk14Router $router
 	 */
 	static function AddRouter($namespace_or_router,$router = null){
 		if(!isset($router)){

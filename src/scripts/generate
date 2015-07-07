@@ -1,0 +1,54 @@
+#!/usr/bin/env php
+<?php
+/**
+ * By default it displays a line intended to be added to the ~/.pgpass file.
+ *
+ * If you don't want to be requested for a password in order to access the database console,
+ * follow the instructions:
+ *
+ *	$ touch ~/.pgpass
+ *	$ chmod 600 ~/.pgpass
+ *  $ ./scripts/pgpass_record  >> ~/.pgpass
+ *  $ ATK14_ENV=TEST ./scripts/pgpass_record  >> ~/.pgpass
+ *
+ * Also you can add a pgpass record automatically when it is missing in the ~/.pgpass file:
+ *
+ *  $ ./scripts/pgpass_record -a
+ *	# or
+ *  $ ./scripts/pgpass_record --add-record-automatically
+ */
+
+require_once(dirname(__FILE__)."/load.php");
+
+$options = getopt("ah:");
+
+
+var_dump($options);
+
+$object_types = array(
+	"controller",
+	"model",
+	"form",
+	"view",
+);
+
+$aGenerate = array(
+	"object_type" => null,
+	"namespace" => null,
+	"object_name" => null,
+);
+
+$_argv = $argv;
+
+array_shift($_argv);
+while ($_arg = array_shift($_argv)) {
+	if (in_array(strtolower($_arg), $object_types)) {
+		$aGenerate["object_type"] = strtolower($_arg);
+		continue;
+	}
+
+	$name = preg_split("/\//", $_arg, null, PREG_SPLIT_NO_EMPTY);
+	$aGenerate["object_name"] = strtolower(array_pop($name));
+	$aGenerate["namespace"] = strtolower(join("_", $name));
+}
+

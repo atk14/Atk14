@@ -546,7 +546,7 @@ class Form implements ArrayAccess
 	 *
 	 * @param string $name name of a field
 	 * @return Field
-	 * {@internal Michaluv vymysl}
+	 * @internal Michaluv vymysl
 	 */
 	function get_field($name)
 	{

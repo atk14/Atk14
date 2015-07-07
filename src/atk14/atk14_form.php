@@ -20,50 +20,62 @@
  * Example of a form
  *
  * forms/users/login_form.php
- * 	class LoginForm extends ApplicationForm{
- * 		function set_up(){
- * 			$this->add_field("login",new CharField(array(
- * 			"label" => _("Login"),
- * 			"help_text" => _("client identification"),
- * 			"min_length" => 1,
- * 			"max_length" => 64
- * 			)));
+ * ```
+ *	class LoginForm extends ApplicationForm{
+ *		function set_up(){
+ *			$this->add_field("login",new CharField(array(
+ *			"label" => _("Login"),
+ *			"help_text" => _("client identification"),
+ *			"min_length" => 1,
+ *			"max_length" => 64
+ *			)));
  *
- * 			$this->add_field("password",new CharField(array(
- * 				"label" => _("Password"),
- * 				"min_length" => 1,
- * 				"max_length" => 64
- * 			)));
- * 		}
- * 	}
+ *			$this->add_field("password",new CharField(array(
+ *				"label" => _("Password"),
+ *				"min_length" => 1,
+ *				"max_length" => 64
+ *			)));
+ *		}
+ *	}
+ * ```
  *
  * Use the form in a controller
  * controllers/users/login_controller.php
- * $this->form is initialized automatically if path of the LoginForm in forms directory matches the path of the controller
  *
- * 	$form = &$this->form;
- * 	$form->set_initial("login","user.name");
- * 	$form->set_hidden_field("action","login");
- * 	if($request->Post() && $form->is_valid($this->params)){
- * 		// data are ok
- * 		$data = $form->cleaned_data;
- * 	}
+ * ```
+ *	# $this->form is initialized automatically if path of the LoginForm in forms directory matches the path of the controller
+ *	$form = &$this->form;
+ *	$form->set_initial("login","user.name");
+ *	$form->set_hidden_field("action","login");
+ *	if($request->Post() && $form->is_valid($this->params)){
+ *		// data are ok
+ *		$data = $form->cleaned_data;
+ *	}
+ * ```
  *
  * Basically you can print a form by using helper {form} in a template:
- * 	{form}
- * 	{render partial=shared/form_field field=last_name}
- * 	{/form}
+ * ```
+ *	{form}
+ *		{render partial=shared/form_field field=last_name}
+ *	{/form}
+ * ```
  *
  * which you can replace with this code (this actually uses {form} helper}:
- * 	{$form->begin()}
+ * ```
+ *	{$form->begin()}
+ * ```
  * prints out beginning of a <form> element
  *
  * Print out closing tag of <form> element
  * with all hidden fields inside added by $form->set_hidden_field() method inside.
- * 	{$form->end()}
+ * ```
+ *	{$form->end()}
+ * ```
  *
  * Print out error summary.
- * 	{$form->get_error_report()}
+ * ```
+ *	{$form->get_error_report()}
+ * ```
  *
  * @package Atk14\Core
  */
@@ -206,14 +218,16 @@ class Atk14Form extends Form
 	 * It is called after set_up() and even after any special field adding.
 	 *
 	 * Example:
-	 * 	$form = new SomeForm();
-	 * // pre_set_up() and set_up() are called somewhere within form`s constructor
-	 * 	$form->add_field("")
+	 * ```
+	 *	$form = new SomeForm();
+	 *	// pre_set_up() and set_up() are called somewhere within form`s constructor
+	 *	$form->add_field("")
 	 *
-	 * 	if($d = $form->validate($param)){
-   * 	...
-	 * 	}
-	 * 
+	 *	if($d = $form->validate($param)){
+	 *	...
+	 *	}
+	 * ```
+	 *
 	 * @ignore
 	 */
 	function post_set_up(){
@@ -227,16 +241,20 @@ class Atk14Form extends Form
 	 *
 	 * <ol>
 	 * <li>With directory name, then the file is expected in current namespace directory.
-	 * 	$form = Atk14Form::GetInstanceByFilename("login/login_form.inc");
+	 *	$form = Atk14Form::GetInstanceByFilename("login/login_form.inc");
 	 * </li>
 	 * <li>
 	 * Without directory name, then the file is expected in current controller directory.
-	 * 	$form = Atk14Form::GetInstanceByFilename("login_form");
+	 * ```
+	 *	$form = Atk14Form::GetInstanceByFilename("login_form");
+	 * ```
 	 * </li>
 	 * </ol>
 	 *
 	 * You don't have to specify the .inc suffix. It will be added automatically.
-	 * 	$form = Atk14Form::GetInstanceByFilename("login/login_form");
+	 * ```
+	 *	$form = Atk14Form::GetInstanceByFilename("login/login_form");
+	 * ```
 	 *
 	 * @param string $filename name of file containing definition of {@link Atk14Form}
 	 * @param Atk14Controller $controller_obj instance of {@link Atk14Controller} using this form
@@ -311,7 +329,9 @@ class Atk14Form extends Form
 	/**
 	 * Get instance of a form by controller name and action name.
 	 *
-	 * 	$form = Atk14Form::GetInstanceByControllerAndAction("login","login");
+	 * ```
+	 *	$form = Atk14Form::GetInstanceByControllerAndAction("login","login");
+	 * ```
 	 *
 	 * @param string $controller name of controller
 	 * @param string $action name of action
@@ -354,7 +374,9 @@ class Atk14Form extends Form
 	 * You specify only its class name. The name is relative to current controller.
 	 *
 	 * In controller:
-	 * 	$form = Atk14Form::GetForm("MoveForm",$this);
+	 * ```
+	 *	$form = Atk14Form::GetForm("MoveForm",$this);
+	 * ```
 	 *
 	 * @param string $class_name
 	 * @param Atk14Controller $controller instance of controller which uses the form
@@ -382,7 +404,9 @@ class Atk14Form extends Form
 	 * Returns an instance of ApplicationForm class if exists or Atk14Form.
 	 *
 	 * Example
-	 * 	$form = Atk14Form::GetDefaultForm($controller);
+	 * ```
+	 *	$form = Atk14Form::GetDefaultForm($controller);
+	 * ```
 	 *
 	 * @param Atk14Controller $controller
 	 * @return Atk14Form
@@ -423,14 +447,18 @@ class Atk14Form extends Form
 	 *
 	 * You can specify data to be checked in methods variable or you can check them in two steps. 
 	 *
-	 * 	if($request->Post() && $form->is_valid($_POST)){
-	 * 	...
-	 * 	}
+	 * ```
+	 *	if($request->Post() && $form->is_valid($_POST)){
+	 *	...
+	 *	}
+	 * ```
 	 *
 	 * This also works. First set data by set_data() method and then use is_valid() method.
-	 * 	if($request->Post() && $form->set_data($_POST) && $form->is_valid()){
-	 * 	...
-	 * 	}
+	 * ```
+	 *	if($request->Post() && $form->set_data($_POST) && $form->is_valid()){
+	 *	...
+	 *	}
+	 * ```
 	 *
 	 * @param array|Dictionary $data data from user to be checked
 	 * @return bool true if data is valid, otherwise returns false
@@ -484,20 +512,26 @@ class Atk14Form extends Form
 	 * Sets forms data.
 	 *
 	 * Data can be passed as array
-	 * 	$_POST = array(
-	 * 		"id" => "143",
-	 * 	)
-	 * 	$form->set_data($_POST);
+	 * ```
+	 *	$_POST = array(
+	 *		"id" => "143",
+	 *	)
+	 *	$form->set_data($_POST);
+	 * ```
 	 *
 	 * or as a Dictionary object
-	 * 	$form->set_data($dictionary);
+	 * ```
+	 *	$form->set_data($dictionary);
+	 * ```
 	 *
 	 * Method returns true so you could use it in conditions:
-	 * 	if($this->request->Post() && $this->form->set_data($this->params) && $form->is_valid()){
-	 *  	$context->setValues($form->cleaned_data);
-	 *  	$this->flash->notice("Zaznam byl ulozen");
-	 *  	$this->_redirect_to_action("index");
-	 * 	}
+	 * ```
+	 *	if($this->request->Post() && $this->form->set_data($this->params) && $form->is_valid()){
+	 *		$context->setValues($form->cleaned_data);
+	 *		$this->flash->notice("Zaznam byl ulozen");
+	 *		$this->_redirect_to_action("index");
+	 *	}
+	 * ```
 	 *
 	 * @param array|Dictionary
 	 * @return true
@@ -515,14 +549,16 @@ class Atk14Form extends Form
 	 *
 	 * Default action is set to current request URI.
 	 *
-	 * 	$form->set_action(array(
-	 * 		"controller" => "customer",
-	 * 		"action" => "login"
-	 * 	));
-	 * 	$form->set_action("index"); // here "index" is considered as action name
-	 * 	$form->set_action("books/index"); // "books/index" is considered as controller and action combination
-	 * 	$form->set_action("/en/articles/detail/?id=123"); // URI
-	 * 	$form->set_action("http://www.example.com/en/articles/detail/?id=123"); // fully specified URL
+	 * ```
+	 *	$form->set_action(array(
+	 *		"controller" => "customer",
+	 *		"action" => "login"
+	 *	));
+	 *	$form->set_action("index"); // here "index" is considered as action name
+	 *	$form->set_action("books/index"); // "books/index" is considered as controller and action combination
+	 *	$form->set_action("/en/articles/detail/?id=123"); // URI
+	 *	$form->set_action("http://www.example.com/en/articles/detail/?id=123"); // fully specified URL
+	 * ```
 	 *
 	 * @param array|string $url
 	 */
@@ -575,10 +611,14 @@ class Atk14Form extends Form
 	 * Returns initial values of fields.
 	 *
 	 * Get value of a specific field:
-	 * 	$email_init = $form->get_initial("email");
+	 * ```
+	 *	$email_init = $form->get_initial("email");
+	 * ```
 	 *
 	 * Get values of all fields:
-	 * 	$initials = $form->get_initial();
+	 * ```
+	 *	$initials = $form->get_initial();
+	 * ```
 	 * In this case method returns array. For example value of field email is available as $initials["email"]
 	 *
 	 * @param string $name name of field to check or nothing to get initial values of all fields
@@ -588,11 +628,11 @@ class Atk14Form extends Form
 	function get_initial($name = null)
 	{
 		if(isset($name)){
-		   $out = parent::get_initial($name);
-		   if(isset($this->atk14_initial_values) && in_array($name,array_keys($this->atk14_initial_values))){
-			  $out = $this->atk14_initial_values[$name];
-		   }
-		   return $out;
+			$out = parent::get_initial($name);
+			if(isset($this->atk14_initial_values) && in_array($name,array_keys($this->atk14_initial_values))){
+				$out = $this->atk14_initial_values[$name];
+			}
+			return $out;
 		}
 
 		if(is_null($this->fields)){
@@ -612,22 +652,29 @@ class Atk14Form extends Form
 	 * Sets initial values in fields.
 	 *
 	 * Set up initial value of single field by using key/value pair
-	 * 	$form->set_initial("login","karel.kulek");
-	 * 	$form->set_initial("password","heslicko");
+	 * ```
+	 *	$form->set_initial("login","karel.kulek");
+	 *	$form->set_initial("password","heslicko");
+	 * ```
 	 *
 	 * You can also set up initial values of more fields by using several types of object.
 	 * - array
-	 *
-	 * 	$form->set_initial(array(
-	 * 		"login" => "karel.kulek",
-	 * 		"password" => "heslicko"
-	 * 	));
+	 * ```
+	 *	$form->set_initial(array(
+	 *		"login" => "karel.kulek",
+	 *		"password" => "heslicko"
+	 *	));
+	 * ```
 	 * - object of class Dictionary, usually variable $params defined in Atk14Controller
 	 *
-	 * 	$this->set_initial($this->params);
+	 * ```
+	 *	$this->set_initial($this->params);
+	 * ```
 	 * - object of class TableRecord
 	 *
-	 * 	$this->set_initial($user);
+	 * ```
+	 *	$this->set_initial($user);
+	 * ```
 	 *
 	 * @param mixed $key_or_values
 	 * @param string $value
@@ -646,14 +693,18 @@ class Atk14Form extends Form
 	 * Sets or initializes a hidden field in a form.
 	 *
 	 * Setting single hidden field:
-	 * 	$form->set_hidden_field("step","1");
-	 * 	$form->set_hidden_field("session_id","33skls");
+	 * ```
+	 *	$form->set_hidden_field("step","1");
+	 *	$form->set_hidden_field("session_id","33skls");
+	 * ```
 	 *
 	 * Setting multiple hidden fields:
-	 * 	$form->set_hidden_field(array(
-	 *       "step" => "1",
-	 *       "session_id" => "33skls"
-	 * 	));
+	 * ```
+	 *	$form->set_hidden_field(array(
+	 *		"step" => "1",
+	 *		"session_id" => "33skls"
+	 *	));
+	 * ```
 	 *
 	 * @param string|array $key_or_values name of attribute or array of key=>value pairs
 	 * @param string $value value of attribute when $key_or_values set as string
@@ -674,13 +725,17 @@ class Atk14Form extends Form
 	 * Sets form attribute(s) to $value(s).
 	 *
 	 * Setting single attribute:
-	 * 	$form->set_attr("enctype","multipart/form-data");
+	 * ```
+	 *	$form->set_attr("enctype","multipart/form-data");
+	 * ```
 	 *
+	 * ```
 	 * Setting multiple attributes:
-	 * 	$form->set_attr(array(
-	 * 		"enctype" => "multipart/form-data",
-	 * 		"class" => "form_common"
-	 * 	));
+	 *	$form->set_attr(array(
+	 *		"enctype" => "multipart/form-data",
+	 *		"class" => "form_common"
+	 *	));
+	 * ```
 	 *
 	 * @param string|array $key_or_values name of attribute or array of key=>value pairs
 	 * @param string $value value of attribute when $key_or_values set as string
@@ -697,9 +752,11 @@ class Atk14Form extends Form
 	 * Get form attribute
 	 *
 	 * Example
-	 * 	echo $form->get_attr("class"); // null
-	 * 	$form->set_attr("class","nice");
-	 * 	echo $form->get_attr("class"); // "nice"
+	 * ```
+	 *	echo $form->get_attr("class"); // null
+	 *	$form->set_attr("class","nice");
+	 *	echo $form->get_attr("class"); // "nice"
+	 * ```
 	 *
 	 * @param string $key name of attribute
 	 * @return attributes value
@@ -802,14 +859,20 @@ class Atk14Form extends Form
 	 * Sets own error message for current form or its field.
 	 *
 	 * Set error message for whole form:
-	 * 	$form->set_error("Prihlasovaci udaje nejsou spravne.");
+	 * ```
+	 *	$form->set_error("Prihlasovaci udaje nejsou spravne.");
+	 * ```
 	 *
 	 * Set error message to a single field
-	 * 	$form->set_error("login","This login is already used");
+	 * ```
+	 *	$form->set_error("login","This login is already used");
+	 * ```
 	 *
 	 * More messages can be attached to a field
-	 * 	$form->set_error("login", "login too short");
-	 * 	$form->set_error("login", "login can contain only alphanumeric characters");
+	 * ```
+	 *	$form->set_error("login", "login too short");
+	 *	$form->set_error("login", "login can contain only alphanumeric characters");
+	 * ```
 	 *
 	 * @param string $error_message_or_field_name
 	 * @param string $error_message error message. Required if $error_message_or_field_name specified is supposed to be field name
@@ -841,10 +904,16 @@ class Atk14Form extends Form
 	 * If not field is specified returns array with messages for all fields.
 	 * When $on_field is specified method returns array for only this field.
 	 *
-	 * 	$error_ar = $form->get_errors();
+	 * ```
+	 *	$error_ar = $form->get_errors();
+	 * ```
+	 *
 	 * Returns array of arrays with all error messages on all fields
 	 *
-	 * 	$error_ar = $form->get_errors("email");
+	 * ```
+	 *	$error_ar = $form->get_errors("email");
+	 * ```
+	 *
 	 * Returns array of error messages on a particular field
 	 *
 	 * @param string $on_field name of a field to read errors from
@@ -929,7 +998,7 @@ class Atk14Form extends Form
 	}
 
 	/**
-	 * Gets instance of a {@link Field} of current form.
+	 * Gets instance of a {@link \Field Field} of current form.
 	 *
 	 * @param string $name identifier of the field
 	 */

@@ -22,39 +22,47 @@
  * Template is a standard Smarty template. Name of the template is composed of the actions name and .tpl suffix and is stored in directory mailer.
  *
  * This is how an action is called in a controller:
- * 	$this->mailer->notify_user_registration($user,$password);
+ * ```
+ *	$this->mailer->notify_user_registration($user,$password);
+ * ```
  *
  * The called action is defined in application_mailer.inc:
- * 	class ApplicationMailer extends Atk14Mailer {
- * 		function notify_user_registration($user,$plain_text_password) {
- * 			$this->from = "info@atk14.net";
- * 			$this->to = $user->getEmail();
- * 			$this->subject = "Welcome to SiliconeWisdom.com";
- * 			...
- * 			$this->tpl_data["user"] = $user;
+ * ```
+ *	class ApplicationMailer extends Atk14Mailer {
+ *		function notify_user_registration($user,$plain_text_password) {
+ *			$this->from = "info@atk14.net";
+ *			$this->to = $user->getEmail();
+ *			$this->subject = "Welcome to SiliconeWisdom.com";
+ *			...
+ *			$this->tpl_data["user"] = $user;
  *			$this->tpl_data["plain_text_password"] = $plain_text_password;
- * 		}
- * 	}
+ *		}
+ *	}
+ * ```
  *
  * Example of template:
  * mailer/notify_user_registration.tpl
- * 	Hello {$user->getFullName()},
- * 	 
+ * ```
+ *	Hello {$user->getFullName()},
+ *	 
  * 	thanks for signing up for SiliconeWisdom.com!
- * 	 
- * 	Your data revision
- * 	login: {$user->getLogin()}
- * 	email: {$user->getEmail()}
- * 	password: {$plain_text_password}
- * 	...
+ *	 
+ *	Your data revision
+ *	login: {$user->getLogin()}
+ *	email: {$user->getEmail()}
+ *	password: {$plain_text_password}
+ *	...
  *
+ * ```
  * Sending the email
  *
- * class UserController extends ApplicationController {
- * 	function register_user() {
- * 		$this->mailer->notify_user_registration()
- * 	}
- * }
+ * ```
+ *	class UserController extends ApplicationController {
+ *		function register_user() {
+ *			$this->mailer->notify_user_registration()
+ *		}
+ *	}
+ * ```
  *
  * Params
  * - from
@@ -269,15 +277,19 @@ class Atk14Mailer{
 	 *
 	 * Method is called in a controller.
 	 *
-	 * 	$this->mailer->execute("notify_user_registration",array(
-	 * 		"user" => $user
-	 * 	));
+	 * ```
+	 *	$this->mailer->execute("notify_user_registration",array(
+	 *		"user" => $user
+	 *	));
+	 * ```
 	 *
 	 *
 	 * New form of sending can be used
-	 * 	$this->mailer->notify_user_registration(array(
-	 * 		"user" => $user
-	 * 	));
+	 * ```
+	 *	$this->mailer->notify_user_registration(array(
+	 *		"user" => $user
+	 *	));
+	 * ```
 	 *
 	 * @param string $action name of action to be executed
 	 * @param mixed other optional param
@@ -296,7 +308,9 @@ class Atk14Mailer{
 	 * The message will not be sent even in production environment.
 	 *
 	 * Method is called in a controller.
-	 * 	$mail_ar = $this->mailer->notify_user_registration($user);
+	 * ```
+	 *	$mail_ar = $this->mailer->notify_user_registration($user);
+	 * ```
 	 *
 	 * @param string $action name of action to be build
 	 * @param mixed other optional param
