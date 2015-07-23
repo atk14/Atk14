@@ -3,7 +3,7 @@
  * Class for converting strings between charsets.
  *
  *
- * {@internal
+ * @internal
  *	updates
  *	3.12.2003 - pridana funkce _TO_windows_1250
  *	4.12.2003 - pridana funkce _TO_ascii pro osmibitove kodovani
@@ -32,46 +32,50 @@
  *
  * It's important to search the code to discover the charset support.
  *
- * The class uses phps' iconv extension.
- * When it is not installed, Translate class uses its own translation methods for some charsets.
+ * The class uses its own conversion methods, but you can use phps` internal iconv extension.
+ * You can force the class to use iconv by defining constant TRANSLATE_USE_ICONV to true.
+ *
+ * When iconv extension is not installed Translate class uses its own translation methods for some charsets.
+ *
  *
  * Usage:
- * <code>
+ * ```
  * $output_text = Translate::Trans($input_text,$from_charset,$to_charset);
- * </code>
+ * ```
  * When it is impossible to convert the string the trans() method returns the input string. 
  *
  * The Translate class is able to change the string to lowercase or uppercase
  * Example:
- * <code>
+ * ```
  * $output_text = Translate::Lower($input_text,"windows-1250");
  * $output_text = Translate::Upper($input_text,"windows-1250");
- * </code>
+ * ```
  *
  * Checking that string is in selected charset.
- * <code>
+ * ```
  * $output_text = Translate::CheckEncoding($input_text,"utf-8");
- * </code>
+ * ```
  *
  * Checking length of a UTF-8 string:
- * <code>
+ * ```
  * $length = Translate::Length($str,"UTF-8");
- * </code>
+ * ```
  *
  * @package Atk14
  * @subpackage Translate
+ * @uses iconv
  * @filesource
  *
  */
 class Translate{
 
 	/**
-	 * Converts string from a charset to another.
+	 * Converts string from source charset to target charset.
 	 *
 	 * Parameter can be an array of string and the method also returns array with all converted strings.
 	 *
-	 * Volitelne parametry v poli $options:
-	 *		"recode_array_keys" ---> pokud je $text pole, budou prekodovany i klice tohoto pole
+	 * $options description
+	 * - "recode_array_keys" - when $text is of type array, also its keys will be converted
 	 * 
 	 * @param string|array $text
 	 * @param string $from_charset input charset
@@ -109,14 +113,14 @@ class Translate{
 			$text = Translate::_RemoveUtf8Headaches($text);
 		}
 
-    if(TRANSLATE_USE_ICONV && function_exists('iconv')){
-       $success=true;
-       ($out=@iconv($from_charset, $to_charset.'//TRANSLIT', $text)) or ($success=false);
-       if($out!==false && $success)
-          return $out;
-       }
-    
-    switch($to_charset){
+		if(TRANSLATE_USE_ICONV && function_exists('iconv')){
+			$success=true;
+			($out=@iconv($from_charset, $to_charset.'//TRANSLIT', $text)) or ($success=false);
+			if($out!==false && $success)
+				return $out;
+		}
+
+		switch($to_charset){
 			case "iso-8859-2":
 				return Translate::_TO_iso_8859_2($text,$from_charset);
 				break;
@@ -466,15 +470,16 @@ class Translate{
 	 * Method can distinguish some characters (or even whole sequencies) that can not appear in the string.
 	 * When they appear method returns false
 	 *
-	 * <code>
+	 * ```
 	 * Translate::CheckEncoding($text, "utf-8", array(".",";","{","}","HUSAK"));
-	 * </code>
+	 * ```
 	 *
 	 * @param string|array $text string or array of strings
 	 * @param string $charset
 	 * @param array $disallowed_char_sequencies		forbidden chars or strings
-	 * @return bool																true -> text is in given charset
-	 *																						false -> text is not in given charset or contains a character or sequence from array $disallowed_char_sequencies
+	 * @return bool
+	 * - true -> text is in given charset
+	 * - false -> text is not in given charset or contains a character or sequence from array $disallowed_char_sequencies
 	 */
 	static function CheckEncoding($text,$charset,$disallowed_char_sequencies = array()){
 		if(is_array($text)){
