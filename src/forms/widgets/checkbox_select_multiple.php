@@ -18,7 +18,7 @@ class CheckboxSelectMultiple extends SelectMultiple
 	function render($name, $value, $options=array())
 	{
 		$options = forms_array_merge(array('attrs'=>null, 'choices'=>array()), $options);
-		if (is_null($value)) {
+		if (is_null($value) || $value==="") {
 			$value = array();
 		}
 		$has_id = is_array($options['attrs']) && isset($options['attrs']['id']);
