@@ -16,22 +16,24 @@
  * Position is defined by default in field 'rank'. Its name can be changed by option 'rank_field_name'.
  * Each item points to associated TableRecord record.
  *
- * 	$article = Article::GetInstanceById(1);
- * 	$lister = $article->getLister("Authors");
- * 	$lister->append($author1);
- * 	$lister->append($author2);
- * 	$lister->getRecords(); // array($author1,$author2);
- * 	$lister->contains($author1); // true
- * 	$lister->contains($author3); // false
- * 	$items = $lister->getItems();
- * 	$items[0]->getRecord(); // $author1
- * 	$items[1]->getRecord(); // $author2
+ * ```
+ *	$article = Article::GetInstanceById(1);
+ *	$lister = $article->getLister("Authors");
+ *	$lister->append($author1);
+ *	$lister->append($author2);
+ *	$lister->getRecords(); // array($author1,$author2);
+ *	$lister->contains($author1); // true
+ *	$lister->contains($author3); // false
+ *	$items = $lister->getItems();
+ *	$items[0]->getRecord(); // $author1
+ *	$items[1]->getRecord(); // $author2
  *
- * 	$items[0]->getRank(); // 0
- * 	$items[1]->setRank(0); //
- * 	$items[0]->getRank(); // 1
+ *	$items[0]->getRank(); // 0
+ *	$items[1]->setRank(0); //
+ *	$items[0]->getRank(); // 1
  *
- * 	$lister->setRecordRank($author2,0);
+ *	$lister->setRecordRank($author2,0);
+ * ```
  *
  * @package Atk14\TableRecord
  * @param TableRecord $owner
@@ -52,8 +54,10 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	 * All the used element names can be changed by options.
 	 *
 	 * Corresponding example
-	 * 	$authors_lister = new TableRecord_Lister($article,"Authors",array(
-	 * 	));
+	 * ```
+	 *	$authors_lister = new TableRecord_Lister($article,"Authors",array(
+	 *	));
+	 * ```
 	 *
 	 * Description $options:
 	 * - class_name
@@ -255,8 +259,10 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	/**
 	 * Returns records from associated table.
 	 *
+	 * ```
 	 *	$lister = $article->getLister("Authors");
 	 *	$authors = $lister->getRecords(); // array of models
+	 * ```
 	 *
 	 * @returns TableRecord[]
 	 */
@@ -273,9 +279,11 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	 *
 	 * Get new lister and associate new records
 	 *
-	 * 	$lister = $article->getLister("Authors");
-	 * 	$lister->setRecords(array(123,124,125));
-	 * 	$lister->setRecords(array($obj1,$obj2,$obj3));
+	 * ```
+	 *	$lister = $article->getLister("Authors");
+	 *	$lister->setRecords(array(123,124,125));
+	 *	$lister->setRecords(array($obj1,$obj2,$obj3));
+	 * ```
 	 *
 	 * @param TableRecord[] $records
 	 */

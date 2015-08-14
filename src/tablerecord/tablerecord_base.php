@@ -173,9 +173,9 @@ class TableRecord_Base extends inobj{
 	 * Works in PHP5.3 and above.
 	 *
 	 * There is no need to define GetInstanceById() in the Article class.
-	 * <code>
+	 * ```
 	 * $article = Article::GetInstanceById($id);
-	 * </code>
+	 * ```
 	 *
 	 * @param mixed $id record ID
 	 * @param array $options
@@ -191,7 +191,7 @@ class TableRecord_Base extends inobj{
 	 * Method takes record $id, finds corresponding record and reads its values into newly created object.
 	 *
 	 * This method is used in a descendants {@link GetInstanceById()} method.
-	 * <code>
+	 * ```
 	 * class Article extends TableRecord{
 	 *	//...
 	 *	function GetInstanceById($id,$options = array()){
@@ -199,11 +199,11 @@ class TableRecord_Base extends inobj{
 	 *	}
 	 *	//...
 	 *	}
-	 * </code>
+	 * ```
 	 *
 	 *
-	 * @static
 	 * @access protected
+	 * @ignore
 	 * @param string $class_name	ie. "Article"
 	 * @param mixed $id						identifikator zaznamu v tabulce; integer, string nebo pole
 	 * @param array $options
@@ -223,11 +223,11 @@ class TableRecord_Base extends inobj{
 	 * Works in PHP5.3 and above.
 	 *
 	 * Example:
-	 * <code>
+	 * ```
 	 * $article = Article::CreateNewRecord(array("title" => "February Highlights")); // there's no need to define CreateNewRecord() in the Article class.
 	 *
 	 * $article = Article::CreateNewRecord($values,array("use_cache" => true));
-	 * </code>
+	 * ```
 	 *
 	 * @todo Revise options
 	 * @param array $id
@@ -248,6 +248,7 @@ class TableRecord_Base extends inobj{
 	 * Tuto metodu pouzijte v implementaci metody CreateNewRecord().
 	 * Pozn. od PHP5.3 toto jiz neni treba (zde uz je k dispozici fce get_called_class()).
 	 * Pouzijte ji nasledujicim zpusobem:
+	 * ```
 	 *		class Article extends TableRecord{
 	 *			//...
 	 *			function CreateNewRecord($values,$options = array()){
@@ -255,10 +256,11 @@ class TableRecord_Base extends inobj{
 	 *			}
 	 *			//...
 	 *		}
+	 * ```
 	 *
 	 *
-	 * @static
 	 * @access private
+	 * @ignore
 	 * @param string $class_name					id. "Article"
 	 * @param array $values
 	 * @param array $options
@@ -272,7 +274,10 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Method to obtain instance of DbMole.
 	 *
-	 * $dbmole = Article::GetDbmole();
+	 * ```
+	 *	$dbmole = Article::GetDbmole();
+	 * ```
+		 @return DbMole
 	 */
 	static function &GetDbmole(){
 		// TODO: ugly solution :(
@@ -290,15 +295,14 @@ class TableRecord_Base extends inobj{
 	 *
 	 * It also converts an array of objects to an array of identifiers.
 	 *
-	 * <code>
-	 * $article = inobj_Article:GetInstanceById(123);
-	 * $id = TableRecord::ObjToId($article); // returns 123
-	 * $id = TableRecord::ObjToId(123); // returns 123
-	 * $id = TableRecord::ObjToId(null); // returns null
-	 * $ids = TableRecord::ObjToId(array($article,$article2)); // returns array(123,124)
-	 * </code>
+	 * ```
+	 *	$article = inobj_Article:GetInstanceById(123);
+	 *	$id = TableRecord::ObjToId($article); // returns 123
+	 *	$id = TableRecord::ObjToId(123); // returns 123
+	 *	$id = TableRecord::ObjToId(null); // returns null
+	 *	$ids = TableRecord::ObjToId(array($article,$article2)); // returns array(123,124)
+	 * ```
 	 *
-	 * @static
 	 * @param TableRecord $object
 	 * @return mixed id of the record from db
 	 */
@@ -315,14 +319,13 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Converts an $id (integer) to instance of a $class_name.
 	 *
-	 * <code>
-	 * $article = TableRecord::IdToObj(123,"inobj_Article");
-	 * $article = TableRecord::IdToObj(null,"inobj_Article"); // returns null
-	 * $article = inobj_Article:GetInstanceById(123);
-	 * $article = TableRecord::IdToObj($article,"inobj_Article"); // returns $article untouched
-	 * </code>
+	 * ```
+	 *	$article = TableRecord::IdToObj(123,"inobj_Article");
+	 *	$article = TableRecord::IdToObj(null,"inobj_Article"); // returns null
+	 *	$article = inobj_Article:GetInstanceById(123);
+	 *	$article = TableRecord::IdToObj($article,"inobj_Article"); // returns $article untouched
+	 * ```
 	 *
-	 * @static
 	 * @param integer $id
 	 * @param string $class_name
 	 * @return TableRecord
@@ -336,15 +339,16 @@ class TableRecord_Base extends inobj{
 
 	/**
 	 * Returns a next value of the sequence related to the class.
+	 *
 	 * It's useful when you need to know $id before creation of an object.
 	 *
-	 * <code>
-	 * 	$id = User::GetSequenceNextval();
-	 * 	User::CreateNewRecord(array(
+	 * ```
+	 *	$id = User::GetSequenceNextval();
+	 *	User::CreateNewRecord(array(
 	 *		"id" => $id,
 	 *		"password" => md5($password.$id),
 	 *	));
-	 * </code>
+	 * ```
 	 */
 	static function GetSequenceNextval(){
 		$class_name = get_called_class();
@@ -394,18 +398,18 @@ class TableRecord_Base extends inobj{
 	/**
 	 * getBelongsTo.
 	 *
-	 * <code>
-	 *	 $article = Article::GetInstanceById(111);
-	 *	 $author = $article->getBelongsTo("author");
-	 *	 $author = $article->getBelongsTo("Author");
-	 * </code>
+	 * ```
+	 *	$article = Article::GetInstanceById(111);
+	 *	$author = $article->getBelongsTo("author");
+	 *	$author = $article->getBelongsTo("Author");
+	 * ```
 	 *
-	 * <code>
-	 * 	$author = $article->getBelongsTo("author",array(
+	 * ```
+	 *	$author = $article->getBelongsTo("author",array(
 	 *		"class_name" => "inobj_Author",
 	 *		"attribute_name" => "author_id"
 	 *	));
-	 * </code>
+	 * ```
 	 *
 	 * @param string $object
 	 * @param array $options
@@ -439,11 +443,11 @@ class TableRecord_Base extends inobj{
 	 * Gets Lister
 	 *
 	 * Example
-	 * <code>
-	 * $lister = $article->getLister("Authors");
-	 * $lister->append($author);
-	 * $authors = $lister->getRecords(); // Author[]
-	 * </code>
+	 * ```
+	 *	$lister = $article->getLister("Authors");
+	 *	$lister->append($author);
+	 *	$authors = $lister->getRecords(); // Author[]
+	 * ```
 	 *
 	 * @param $subjects Name of associated classes
 	 * @param $options array {@link TableRecord_Lister()}
@@ -469,8 +473,8 @@ class TableRecord_Base extends inobj{
 	 * Finds a record by id.
 	 *
 	 * @param mixed $id	integer, string, objekt, pole
-	 * @param $options @
-	 * @return TableRecord|array	returns null, when record with given id does not exist or error occured.
+	 * @param $options
+	 * @return TableRecord|TableRecord[] Can return null, when record with given id does not exist or error occured.
 	 * When $id is array method returns array of TableRecord
 	 */
 	function find($id,$options = array()){
@@ -502,8 +506,8 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Record finder.
 	 *
-	 * <code>
-	 * $finder = TableRecord::Finder(array(
+	 * ```
+	 *	$finder = TableRecord::Finder(array(
 	 *		"class_name" => "Book",
 	 *		"conditions" => array("title LIKE :q"),
 	 *		"bind_ar" => array(":q" => "%Prague%"),
@@ -513,32 +517,32 @@ class TableRecord_Base extends inobj{
 	 *
 	 *	$total_amount = $finder->getTotalAmount();
 	 *	$books = $finder->getRecords();
-	 * </code>
+	 * ```
 	 *
 	 * It is possible to define custom SQL query. Then the counting SQL query should be also specified in "query_count" option.
-	 * <code>
-	 * $finder = TableRecord::Finder(array(
+	 * ```
+	 *	$finder = TableRecord::Finder(array(
 	 *		"class_name" => "Book",
 	 *		"query" => "SELECT books.id FROM books,book_authors WHERE ...",
 	 *		"query_count" => "SELECT COUNT(*) FROM ...",
 	 *		"bind_ar" => $bind_ar,
 	 *		"order" => null, // nekdy je dobre nenechat metodu Finder pripojit ORDER BY automaticky
 	 *	));
-	 * </code>
+	 * ```
 	 *
 	 *
 	 * Conditions can be passed as an associative array:
-	 * <code>
+	 * ```
 	 *	$finder = TableRecord::Finder(array(
 	 *		"class_name" => "Book",
 	 *		"conditions" => array(
 	 *			"author_id" => 123,
 	 *		),
 	 *	));
-	 * </code>
+	 * ```
 	 *
 	 * Since PHP5.3 Finder can be used in context with a specific class. Then the "class_name" option is not needed.
-	 * <code>
+	 * ```
 	 *	$finder = Book::Finder(array(
 	 *		"limit" => 20,
 	 *	));
@@ -549,7 +553,7 @@ class TableRecord_Base extends inobj{
 	 *	$finder = Book::Finder("title","Foo Bar",array(
 	 *		"limit" => 20
 	 *	));
-	 * </code>
+	 * ```
 	 *
 	 * @param array $options
 	 * @todo describe $options
@@ -659,9 +663,9 @@ class TableRecord_Base extends inobj{
 	 * For cases, where it is needed to have finder which behaves as if it was empty.
 	 * For example when error occurs in searching form.
 	 *
-	 * <code>
+	 * ```
 	 * $finder = TableRecord::EmptyFinder();
-	 * </code>
+	 * ```
 	 *
 	 * @return TableRecord_EmptyFinder
 	 */
@@ -673,25 +677,25 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Finds records with conditions.
 	 *
-	 * <code>
-	 * $articles = TableRecord::FindAll(array(
+	 * ```
+	 *	$articles = TableRecord::FindAll(array(
 	 *		"class_name" => "inobj_Article",
 	 *		"conditions" => array("deleted='N'","published='Y'"),
 	 *		"order" => "create_date",
 	 *		"limit" => 20,
 	 *		"offset" => 80,
-	 * ));
-	 * </code>
+	 *	));
+	 * ```
 	 *
 	 * Since PHP 5.3 you can use:
-	 * <code>
-	 * $articles = Article::FindAll(array(
+	 * ```
+	 *	$articles = Article::FindAll(array(
 	 *		"conditions" => array("deleted='N'","published='Y'"),
 	 *		"order" => "create_date",
 	 *		"limit" => 20,
 	 *		"offset" => 80,
-	 * ));
-	 * </code>
+	 *	));
+	 * ```
 	 *
 	 * @todo obsah metody predelat jako implementaci volani TableRecord::Finder()
 	 * @param array $options
@@ -758,27 +762,27 @@ class TableRecord_Base extends inobj{
 	 *
 	 * Method behaves similar to {@link FindAll()} but returns only the first found record.
 	 *
-	 * <code>
-	 * $article = TableRecord::FindFirst(array(
+	 * ```
+	 *	$article = TableRecord::FindFirst(array(
 	 *		"class_name" => "Article",
 	 *		"conditions" => array(
 	 *			"created_at" => "2011-02-01"
 	 *		),
 	 *	));
-	 * </code>
+	 * ```
 	 *
 	 * Since PHP5.3 it's possible call the method in context of a specific class.
-	 * <code>
-	 * $article = Article::FindFirst(array(
+	 * ```
+	 *	$article = Article::FindFirst(array(
 	 *		"conditions" => array(
 	 *			"created_at" => "2011-02-01"
 	 *		),
 	 *	));
-	 * $article = Article::FindFirst("title=:title",array(":title" => "Foo Bar"));
-	 * $article = Article::FindFirst("title","Foo Bar");
-	 * $article = Article::FindFirst("title","Foo Bar",array("order_by" => "created_at DESC"));
-	 * $article = Article::FindFirst("title","Foo Bar","author_id",123,array("order_by" => "created_at DESC"));
-	 * </code>
+	 *	$article = Article::FindFirst("title=:title",array(":title" => "Foo Bar"));
+	 *	$article = Article::FindFirst("title","Foo Bar");
+	 *	$article = Article::FindFirst("title","Foo Bar",array("order_by" => "created_at DESC"));
+	 *	$article = Article::FindFirst("title","Foo Bar","author_id",123,array("order_by" => "created_at DESC"));
+	 * ```
 	 *
 	 * @param array $options
 	 * @return TableRecord
@@ -1033,11 +1037,11 @@ class TableRecord_Base extends inobj{
 	 *
 	 * More fields can be specified by array
 	 *
-	 * <code>
+	 * ```
 	 * $u->getValue("name");
 	 * $u->getValue(array("name","email")); // returns array("Pan Davelka","davelka@gm.com")
 	 * $u->getValue(array("name" => "name","email" => "email")); // returns array("name" => "Pan Davelka", "email" => "davelka@gm.com")
-	 * </code>
+	 * ```
 	 *
 	 * @param string|array $field_name
 	 * @return mixed
@@ -1107,12 +1111,12 @@ class TableRecord_Base extends inobj{
 	 * Passing option return_id=>true forces method to return even column with record id.
 	 *
 	 * Example how to simply create a copy of a record:
-	 * <code>
+	 * ```
 	 * $article = inobj_Articles::GetInstanceById(1000);
 	 * $article_copy = inobj_Articles::CreateNewRecord(
 	 * 	$article->getValues();
 	 * );
-	 * </code>
+	 * ```
 	 *
 	 * @param array $options
 	 * @return array
@@ -1138,9 +1142,9 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Returns array of field names that the record contains.
 	 *
-	 * <code>
+	 * ```
 	 * $rec->getKeys();
-	 * </code>
+	 * ```
 	 * outputs for example array("id","title","body","perex");
 	 *
 	 * @return array
@@ -1180,9 +1184,9 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Sets values in a record.
 	 *
-	 * <code>
+	 * ```
 	 * $this->setValues(array("paid" => "Y","paid_date" => "2007-10-29 15:13", "paid_note" => "zaplaceno"));
-	 * </code>
+	 * ```
 	 *
 	 *
 	 * @param array $data
@@ -1250,23 +1254,23 @@ class TableRecord_Base extends inobj{
 	 * Alias to methods {@link setValue()} a {@link setValues()}.
 	 *
 	 * Example:
-	 * <code>
-	 * $rec->s("name","Jan Novak");
-	 * $rec->s(array(
+	 * ```
+	 *	$rec->s("name","Jan Novak");
+	 *	$rec->s(array(
 	 *		"name" => "Jan Novak",
 	 *		"birth_date" => "2001-01-01"
 	 *	));
-	 * </code>
+	 * ```
 	 *
 	 * Options can be passed to both example calls:
-	 * <code>
-	 * $rec->s("create_at","NOW()",array("do_not_escape" => true));
-	 * $rec->s(array(
+	 * ```
+	 *	$rec->s("create_at","NOW()",array("do_not_escape" => true));
+	 *	$rec->s(array(
 	 *		"name" => "Jan Novak",
 	 *		"birth_date" => "2001-01-01",
 	 *		"create_at" => "NOW()"
 	 *	),array("do_not_escape" => "create_at"));
-	 * </code>
+	 * ```
 	 *
 	 * @param string|array $field_name
 	 * @param mixed $value
@@ -1311,10 +1315,10 @@ class TableRecord_Base extends inobj{
 	 *
 	 * Column fields that will be read can be specified by passing $fields.
 	 *
-	 * <code>
+	 * ```
 	 * $this->_readValues("title");
 	 * $this->_readValues(array("title","create_date"));
-	 * </code>
+	 * ```
 	 *
 	 * @param mixed $fields
 	 * @ignore
@@ -1350,9 +1354,9 @@ class TableRecord_Base extends inobj{
 	/**
 	 * Deletes current record.
 	 *
-	 * <code>
+	 * ```
 	 * $article = $article->destroy();
-	 * </code>
+	 * ```
 	 *
 	 * @return null
 	 */
