@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+require_once(dirname(__FILE__)."/load.php");
+
+$d = $ATK14_GLOBAL->getDatabaseConfig();
+
+# if the configuration contains create_command it is being simply printed out
+if(isset($d["create_command"]) && strlen($d["create_command"])){
+	echo $d["create_command"], "\n";
+	exit(0);
+}
+
+# ENCODING is being added only for UTF8
+$sql_encoding = "";
+#if(DEFAULT_CHARSET=="UTF-8"){
+#	$sql_encoding = " WITH ENCODING 'UTF8'";
+#}
+# TODO: It doesn't work. It says:
+# ERROR:  new encoding (UTF8) is incompatible with the encoding of the template database (SQL_ASCII)
+# HINT:  Use the same encoding as in the template database, or use template0 as template.
+
+echo "CREATE DATABASE $d[database]$sql_encoding;\n";
+exit(0);
