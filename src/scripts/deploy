@@ -19,7 +19,7 @@ chdir(ATK14_DOCUMENT_ROOT);
 $CONFIGS = $ATK14_GLOBAL->getConfig("deploy");
 if(!$CONFIGS){
 	echo file_exists("./config/deploy.yml") ? "It looks like the file ./config/deploy.yml is corrupted (beware of usage of tabulators)\n" : "It looks like there is no file ./config/deploy.yml\n";
-	exit(1);
+	_exit_with_errors();
 }
 $STAGES = array_keys($CONFIGS);
 
@@ -27,7 +27,7 @@ $stage = isset($argv[1]) ? $argv[1] : $STAGES[0];
 
 if(!isset($CONFIGS[$stage])){
 	echo "sorry, in ./config/deploy.yml I have no information about a stage $stage\n";
-	exit(1);
+	_exit_with_errors();
 }
 $default_config = $CONFIGS[$STAGES[0]]; // the first stage
 $default_config += ($raw_def = array(
@@ -60,7 +60,7 @@ $raw_def_keys = array_keys($raw_def);
 foreach($config as $k => $v){
 	if(!in_array($k,$raw_def_keys)){
 		echo "in section $stage there is an unknown key \"$k\" (in config/deploy.yml)\n";
-		exit(1);
+		_exit_with_errors();
 	}
 	// TODO: check mandatory values
 	// TODO: check formats of values
@@ -78,7 +78,7 @@ $current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD","getting name of 
 echo "$current_branch\n";
 if($current_branch=="HEAD"){
 	echo "You are not currently on a branch\n";
-	exit(1);
+	_exit_with_errors();
 }
 
 $out = _exec("git remote -v","checking out existing remote URLs");
@@ -94,7 +94,7 @@ if(sizeof($matches[1])==0){
 	echo "You shall run:\n";
 	echo "  $ git remote rm $stage\n";
 	echo "  $ git remote add $stage $config[deploy_repository]\n";
-	exit(1);
+	_exit_with_errors();
 }
 
 //$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create the maintenance file');
@@ -133,10 +133,11 @@ function _exec($cmd,$options = array()){
 	echo "################\n";
 	if($options["description"]){ echo "# $options[description]\n"; }
 	echo "$ $cmd\n";
-	exec($cmd,$output,$err);
+	exec("($cmd) 2>&1",$output,$err); // we need to redirect std error to std output
 	if($err){
+		echo join("\n",$output),"\n";
 		echo "command execution failed ($err), exiting...\n";
-		exit(1);
+		_exit_with_errors();
 	}
 	$output && ($output[] = "");
 	return join("\n",$output);
@@ -174,3 +175,14 @@ function _create_maintenance_file_if_required(){
 	$already_created = true;
 }
 
+function _exit_with_errors(){
+	echo '
+  _____       _  _   _ 
+ |  ___|__ _ (_)| | | |
+ | |_  / _` || || | | |
+ |  _|| (_| || || | |_|
+ |_|   \__,_||_||_| (_)
+                	
+';
+	exit(1);
+}
