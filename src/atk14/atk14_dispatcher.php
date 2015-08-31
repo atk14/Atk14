@@ -1,5 +1,7 @@
 <?php
 /**
+ * Application dispatcher. Main static method which executes all steps of the application.
+ *
  * @package Atk14
  * @subpackage Core
  * @author Jaromir Tomek
@@ -7,9 +9,13 @@
  */
 
 /**
- * <code>
+ * Application dispatcher. Main static method which executes all steps of the application.
+ *
+ * This si mostly the only line in the main applications' file `dispatcher.php` besides reading required files.
+ *
+ * ```
  * Atk14DispatcherDispatch::Dispatch();
- * </code>
+ * ```
  *
  * @package Atk14
  * @subpackage Core
