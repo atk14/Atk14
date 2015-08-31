@@ -1,10 +1,7 @@
-var ATK14 = (function( $, window, undefined ) {
+var ATK14 = ( function() {
 	"use strict";
 
-	var document = window.document,
-		confirm = window.confirm;
-
-	$( document ).on( "click", "a[data-remote], a[data-method]", function(e) {
+	$( document ).on( "click", "a[data-remote], a[data-method]", function( e ) {
 		var $link = $( this );
 
 		if ( !allowAction( $link ) ) {
@@ -18,27 +15,27 @@ var ATK14 = (function( $, window, undefined ) {
 			handleMethod( $link );
 			e.preventDefault();
 		}
-	});
+	} );
 
-	$( document ).on( "submit", "form[data-remote]", function(e) {
+	$( document ).on( "submit", "form[data-remote]", function( e ) {
 		ATK14.handleRemote( this );
 		e.preventDefault();
-	});
+	} );
 
 	$( document )
-		.ajaxStart(function() {
+		.ajaxStart( function() {
 			$( document.body ).addClass( "loading" );
-		})
-		.ajaxStop(function() {
+		} )
+		.ajaxStop( function() {
 			$( document.body ).removeClass( "loading" );
-		});
+		} );
 
-	$.ajaxSetup({
+	$.ajaxSetup( {
 		converters: {
 			"text conscript": true
 		},
 		dataType: "conscript"
-	});
+	} );
 
 	function fire( obj, name, data ) {
 		var event = new $.Event( name );
@@ -48,7 +45,7 @@ var ATK14 = (function( $, window, undefined ) {
 
 	function allowAction( $element ) {
 		var message = $element.data( "confirm" );
-		return !message || ( fire( $element, "confirm" ) && confirm( message ) );
+		return !message || ( fire( $element, "confirm" ) && window.confirm( message ) );
 	}
 
 	function handleMethod( $link ) {
@@ -71,19 +68,19 @@ var ATK14 = (function( $, window, undefined ) {
 				$element = $( element ),
 				dataType = $element.data( "type" ) || $.ajaxSettings.dataType;
 
-			if ( $element.is("form") ) {
-				$form = $element; // remove later
+			if ( $element.is( "form" ) ) {
+				$form = $element; // Remove later
 				method = $element.attr( "method" );
 				url = $element.attr( "action" );
 				data = $element.serializeArray();
 			} else {
-				$link = $element; // remove later
+				$link = $element; // Remove later
 				method = $element.data( "method" );
 				url = $element.attr( "href" );
 				data = null;
 			}
 
-			$.ajax({
+			$.ajax( {
 				url: url,
 				type: method || "GET",
 				data: data,
@@ -104,8 +101,8 @@ var ATK14 = (function( $, window, undefined ) {
 				error: function( xhr, status, error ) {
 					$element.trigger( "ajax:error", [ xhr, status, error ] );
 				}
-			});
+			} );
 		}
 	};
 
-})( this.jQuery, this );
+} )();
