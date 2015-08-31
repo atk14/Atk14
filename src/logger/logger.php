@@ -25,34 +25,34 @@
  * Class for events logging.
  *
  * New way of usage
- * <code>
+ * ```
  * $logger = new Logger("application_mark");
  * $logger->start();
- * </code>
+ * ```
  *
  *
  * Then in application code
- * <code>
+ * ```
  * $logger->debug("a debug message");
  * $logger->info("some message");
  * $logger->warn("a warning message");
  * $logger->error("an error message");
  * $logger->security("a security concerning message");
- * </code>
+ * ```
  *
  * Finish logging
- * <code>
+ * ```
  * $logger->stop();
- * </code>
+ * ```
  *
  * In case we don't need START and STOP marks to show in the STDOUT, we create the logger instance this way:
- * <code>
+ * ```
  * $logger = new Logger("application_mark",array("disable_start_and_stop_marks" => true));
- * </code>
+ * ```
  *
  *
  * Older way of usage
- * <code>
+ * ```
  * $logger = new Logger();
  * $logger->set_prefix("application_mark");
  *
@@ -60,23 +60,23 @@
  * // sets silent mode - nothing is output to stdout (nepouzije se echo)
  * $logger->set_silent_mode();
  * $logger->prepared_log("start");
- * </code>
+ * ```
  *
  * Then in application:
- * <code>
+ * ```
  * $logger->put_log("some important application message",0);
- * </code>
+ * ```
  *
  * Closing and flushing log
- * <code>
+ * ```
  * $logger->prepared_log("stop");
  * $logger->flush_all();
- * </code>
+ * ```
  *
  * The file where events are logged is defined by constant LOGGER_DEFAULT_LOG_FILE
- * <code>
+ * ```
  * define("LOGGER_DEFAULT_LOG_FILE","/home/yarri/www/gr/sys/log/log");
- * </code>
+ * ```
  *
  * @package Atk14
  * @subpackage InternalLibraries
@@ -246,9 +246,9 @@ class Logger{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
-	function _determin_configuration(){
+	private function _determin_configuration(){
 		$this->_reset_configuration();
 		for($i=0;$i<=strlen($this->_prefix);$i++){
 			$this->_find_configuration(substr($this->_prefix,0,$i)."*");
@@ -257,9 +257,9 @@ class Logger{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
-	function _find_configuration($prefix){
+	private function _find_configuration($prefix){
 		global $LOGGER_CONFIGURATION;
 
 		if(!isset($LOGGER_CONFIGURATION)){ $LOGGER_CONFIGURATION = array();}
@@ -280,9 +280,9 @@ class Logger{
 	/**
 	 * Resets configuration to default values.
 	 *
-	 * @access private
+	 * @ignore
 	 */
-	function _reset_configuration(){
+	private function _reset_configuration(){
 		$this->_no_log_level = LOGGER_NO_LOG_LEVEL;
 		$this->_notify_level = LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION;
 		$this->_notify_email = LOGGER_DEFAULT_NOTIFY_EMAIL;
@@ -292,11 +292,11 @@ class Logger{
 	/**
 	 * Returns specified log level as integer
 	 *
-	 * <code>
+	 * ```
 	 * $l_int = $logger->level_to_int("warn"); // returns 2
 	 * $l_int = $logger->level_to_int(2); // returns 2
 	 * $l_int = $logger->level_to_int(30); // (unknown level) returns 30
-	 * </code>
+	 * ```
 	 *
 	 * @param string $level
 	 * @return int integer representation of log level
@@ -311,11 +311,11 @@ class Logger{
 	/**
 	 * Returns specified log level as its name
 	 *
-	 * <code>
+	 * ```
 	 * $l_str = $logger->level_to_str("info"); // returns "info"
 	 * $l_str = $logger->level_to_str(2); // returns "warn"
 	 * $l_str = $logger->level_to_str("unknown"); // (unknown level) returns "unknown"
-	 * </code>
+	 * ```
 	 *
 	 * @param string|int $level
 	 * @return string name of log level
@@ -399,7 +399,10 @@ class Logger{
 		return 0;
 	}
 
-	function _build_message($rec){
+	/**
+	 * @ignore
+	 */
+	private function _build_message($rec){
 		if(!is_bool(strpos($rec['log'],"\n"))){
 			$_ar = explode("\n",$rec['log']);
 			$rec['log'] = "";
@@ -479,7 +482,10 @@ class Logger{
 		return 0;
 	}
 
-	function _put_log($log,$log_level = 0){
+	/**
+	 * @ignore
+	 */
+	private function _put_log($log,$log_level = 0){
 		settype($log,"string");
 		$log_level = $this->level_to_int($log_level);
 
@@ -555,9 +561,9 @@ class Logger{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
-	function _notify_email(){
+	private function _notify_email(){
 		if($this->_notify_email==""){ return;}
 
 		$output = "";
@@ -575,10 +581,10 @@ class Logger{
 	}
 
 	/**
-	 * @access private
+	 * @ignore
 	 */
-	function _get_microtime(){
-    list($usec, $sec) = explode(" ", microtime());
-    return ((float)$usec + (float)$sec);
+	private function _get_microtime(){
+		list($usec, $sec) = explode(" ", microtime());
+		return ((float)$usec + (float)$sec);
 	}
 }
