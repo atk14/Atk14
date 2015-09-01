@@ -266,6 +266,8 @@ class tc_http_request extends tc_base{
 	}
 
 	function test_get_header(){
+		global $_SERVER;
+
 		$req = new HTTPRequest();
 		$this->assertTrue(is_array($req->getHeaders()));
 		$this->assertEquals(null,$req->getHeader("Non-Existing-Header"));
@@ -290,6 +292,20 @@ class tc_http_request extends tc_base{
 
 		$req->_HTTPRequest_headers = array("x-requXXestedwith" => "XmlHttpRequest");
 		$this->assertEquals(false,$req->xhr());
+
+		// 
+		$this->assertEquals(false,$req->xhr());
+		$_SERVER["X_ORIGINAL_REQUEST_URI"] = "/?__xhr_request=1";
+		$this->assertEquals(true,$req->xhr());
+		$_SERVER["X_ORIGINAL_REQUEST_URI"] = "/?id=12&__xhr_request=1";
+		$this->assertEquals(true,$req->xhr());
+		$_SERVER["X_ORIGINAL_REQUEST_URI"] = "/?__xhr_request=1&id=12";
+		$this->assertEquals(true,$req->xhr());
+		$_SERVER["X_ORIGINAL_REQUEST_URI"] = "/?id=12&__xhr_request=1&format=xml";
+		$this->assertEquals(true,$req->xhr());
+		$_SERVER["X_ORIGINAL_REQUEST_URI"] = "/?___xhr_request=1&id=12";
+		$this->assertEquals(false,$req->xhr());
+
 
 		// test setHeader()
 		$this->assertEquals(null,$req->getHeader("X-User-Id"));

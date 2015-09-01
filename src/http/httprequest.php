@@ -5,27 +5,6 @@
  * @filesource
  */
 
-if (get_magic_quotes_gpc()) {
-	$_COOKIE = _HTTPUtils::stripslashes_array($_COOKIE);
-	//$_FILES = _HTTPUtils::stripslashes_array($_FILES);
-	$_GET = _HTTPUtils::stripslashes_array($_GET);
-	$_POST = _HTTPUtils::stripslashes_array($_POST);
-	//$_REQUEST = _HTTPUtils::stripslashes_array($_REQUEST);
-}
-
-/*
- * If your script is being run as fastcgi, there is no access to to the HTTP Authorization header.
- * So you can put the following lines into .htaccess
- * 
- * <IfModule mod_headers.c>
- *	RewriteRule (.*) - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
- *	RequestHeader set X-Authorization %{HTTP_AUTHORIZATION}e
- * </IfModule>
- *
- * After then there is a new HTTP header X-Authorization with the original Authorization value.
- */
-_HTTPUtils::_HandleXAuthorization();
-
 /**
  * HTTPRequest class provides all information about HTTP request.
  *
@@ -536,7 +515,13 @@ class HTTPRequest{
 	 * @return bool
 	 */
 	function xhr(){
+		global $_SERVER;
+
 		if(!is_null($xhr = $this->_getForceValue("Xhr"))){ return $xhr; }
+
+		if(isset($_SERVER["X_ORIGINAL_REQUEST_URI"]) && preg_match('/(&|\?)__xhr_request=1(|&.*)$/',$_SERVER["X_ORIGINAL_REQUEST_URI"])){
+			return true;
+		}
 		
 		return strtolower($this->getHeader("X-Requested-With"))=="xmlhttprequest";
 	}
