@@ -80,9 +80,15 @@ var ATK14 = ( function() {
 				data = null;
 			}
 
+			method = method || "GET"; // By default the method is GET
+			if ( method.toUpperCase() == "GET" ) {
+				url += url.indexOf("?")>=0 ? "&" : "?";
+				url += "__xhr_request=1";
+			}
+
 			$.ajax( {
 				url: url,
-				type: method || "GET",
+				type: method,
 				data: data,
 				dataType: dataType,
 				beforeSend: function( xhr, settings ) {
