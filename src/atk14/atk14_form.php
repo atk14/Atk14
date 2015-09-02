@@ -39,15 +39,17 @@
  *	}
  * ```
  *
- * Use the form in a controller
- * controllers/users/login_controller.php
+ * ## Using form in a controller
+ *
+ * The class variable $form is available automatically if the name and path of the form matches the controllers _action_.
+ * For example we have a controller UsersController containing action 'login'.
+ * Then if atk14 finds class LoginForm in a file app/forms/users/login_form.php the form will be available through the class variable $form.
  *
  * ```
- *	# $this->form is initialized automatically if path of the LoginForm in forms directory matches the path of the controller
  *	$form = &$this->form;
  *	$form->set_initial("login","user.name");
  *	$form->set_hidden_field("action","login");
- *	if($request->Post() && $form->is_valid($this->params)){
+ *	if($request->post() && $form->is_valid($this->params)){
  *		// data are ok
  *		$data = $form->cleaned_data;
  *	}
@@ -140,9 +142,11 @@ class Atk14Form extends Form
 	var $atk14_super_constructor_called = false;
 
 	/**
-	 * @access private
+	 * Common form error message
+	 *
+	 * @var string
 	 */
-	var $atk14_error_title = "";
+	private $atk14_error_title = "";
 
 	/**
 	 * Array storing error messages set during form validation
@@ -153,10 +157,11 @@ class Atk14Form extends Form
 	var $atk14_errors = array();
 
 	/**
-	 * @access private
+	 * request method to send the form.
+	 *
 	 * @var string
 	 */
-	var $atk14_method = "post";
+	private $atk14_method = "post";
 
 	/**
 	 * @var bool
@@ -239,27 +244,25 @@ class Atk14Form extends Form
 	 *
 	 * File with given name contains definition of form class. You have sevaral ways to specify the filename.
 	 *
-	 * <ol>
-	 * <li>With directory name, then the file is expected in current namespace directory.
+	 * - With directory name, then the file is expected in current namespace directory.
+	 * ```
 	 *	$form = Atk14Form::GetInstanceByFilename("login/login_form.inc");
-	 * </li>
-	 * <li>
-	 * Without directory name, then the file is expected in current controller directory.
+	 * ```
+	 * - Without directory name, then the file is expected in current controller directory.
 	 * ```
 	 *	$form = Atk14Form::GetInstanceByFilename("login_form");
 	 * ```
-	 * </li>
-	 * </ol>
 	 *
 	 * You don't have to specify the .inc suffix. It will be added automatically.
 	 * ```
 	 *	$form = Atk14Form::GetInstanceByFilename("login/login_form");
 	 * ```
 	 *
-	 * @param string $filename name of file containing definition of {@link Atk14Form}
-	 * @param Atk14Controller $controller_obj instance of {@link Atk14Controller} using this form
-	 * @param array $options {@see __construct}
-	 * @return Atk14Form instance of {@link Atk14Form}
+	 * @param string $filename name of file containing definition of a form
+	 * @param Atk14Controller $controller_obj instance of controller using this form
+	 * @param array $options
+	 * @see __construct()
+	 * @return Atk14Form
 	 */
 	static function GetInstanceByFilename($filename,$controller_obj = null,$options = array())
 	{
@@ -545,22 +548,37 @@ class Atk14Form extends Form
 	}
 
 	/**
-	 * Sets forms action.
+	 * Sets forms action attribute.
 	 *
 	 * Default action is set to current request URI.
 	 *
+	 * This method recognizes several formats of the $url parameter:
+	 * - array - here you can specify all parameters recognized by {@link Atk14Url::BuildLink()}
 	 * ```
 	 *	$form->set_action(array(
 	 *		"controller" => "customer",
 	 *		"action" => "login"
 	 *	));
-	 *	$form->set_action("index"); // here "index" is considered as action name
-	 *	$form->set_action("books/index"); // "books/index" is considered as controller and action combination
-	 *	$form->set_action("/en/articles/detail/?id=123"); // URI
-	 *	$form->set_action("http://www.example.com/en/articles/detail/?id=123"); // fully specified URL
+	 * ```
+	 * - only action (controller and namespace are used from current form.
+	 * ```
+	 *	$form->set_action("index");
+	 * ```
+	 * - 'controller/action' combination
+	 * ```
+	 *	$form->set_action("books/index");
+	 * ```
+	 * - URI
+	 * ```
+	 *	$form->set_action("/en/articles/detail/?id=123");
+	 * ```
+	 * - fully specified URL
+	 * ```
+	 *	$form->set_action("http://www.example.com/en/articles/detail/?id=123");
 	 * ```
 	 *
 	 * @param array|string $url
+	 * @see Atk14Url::BuildLink()
 	 */
 	function set_action($url)
 	{
@@ -653,30 +671,28 @@ class Atk14Form extends Form
 	 *
 	 * Set up initial value of single field by using key/value pair
 	 * ```
-	 *	$form->set_initial("login","karel.kulek");
-	 *	$form->set_initial("password","heslicko");
+	 *	$this->form->set_initial("login","karel.kulek");
+	 *	$this->form->set_initial("password","heslicko");
 	 * ```
 	 *
 	 * You can also set up initial values of more fields by using several types of object.
 	 * - array
 	 * ```
-	 *	$form->set_initial(array(
+	 *	$this->set_initial(array(
 	 *		"login" => "karel.kulek",
 	 *		"password" => "heslicko"
 	 *	));
 	 * ```
-	 * - object of class Dictionary, usually variable $params defined in Atk14Controller
-	 *
+	 * - object of class Dictionary, usually variable $params defined in {@link Atk14Controller}
 	 * ```
 	 *	$this->set_initial($this->params);
 	 * ```
 	 * - object of class TableRecord
-	 *
 	 * ```
 	 *	$this->set_initial($user);
 	 * ```
 	 *
-	 * @param mixed $key_or_values
+	 * @param string|array $key_or_values
 	 * @param string $value
 	 */
 	function set_initial($key_or_values,$value = null)
@@ -729,8 +745,8 @@ class Atk14Form extends Form
 	 *	$form->set_attr("enctype","multipart/form-data");
 	 * ```
 	 *
-	 * ```
 	 * Setting multiple attributes:
+	 * ```
 	 *	$form->set_attr(array(
 	 *		"enctype" => "multipart/form-data",
 	 *		"class" => "form_common"
@@ -759,7 +775,7 @@ class Atk14Form extends Form
 	 * ```
 	 *
 	 * @param string $key name of attribute
-	 * @return attributes value
+	 * @return string|null attribute value
 	 */
 	function get_attr($key){
 		return isset($this->atk14_attrs[$key]) ? $this->atk14_attrs[$key] : null;
@@ -794,7 +810,7 @@ class Atk14Form extends Form
 
 	/**
 	 * Render start of form tag.
-	 * 
+	 *
 	 * It detects automatically when multipart encoding is needed for submission and optimizes output markup.
 	 *
 	 * @return string string with form starting HTML code
@@ -951,9 +967,10 @@ class Atk14Form extends Form
 	/**
 	 * Sets error title.
 	 *
-	 * @todo explain
+	 * Common message shown at the top of the form when there are some wrong values.
+	 * Error messages for specifies form fields are set by set_error() method.
+	 *
 	 * @param string $title
-	 * @uses $atk14_error_title
 	 *
 	 */
 	function set_error_title($title){
