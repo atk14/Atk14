@@ -19,9 +19,12 @@ acceptation:
   directory: "/home/deploy/apps/mushoomradar_acc/"
   create_maintenance_file: 0
   deploy_repository: "deploy@zeus.mushoomradar.net:repos/mushoomradar_acc.git"
+  rsync: ""
 
 production:
   url: "http://www.mushoomradar.net"
-  directory: "/home/deploy/apps/mushoomradar/"
+  directory: "/home/deploy/apps/mushoomradar"
   create_maintenance_file: "False"
   deploy_repository: "deploy@zeus.mushoomradar.net:repos/mushoomradar.git"
+
+# vim: set et:

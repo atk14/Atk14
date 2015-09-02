@@ -16,6 +16,8 @@ class Atk14DeploymentStage{
 			$params[$k] = String::ToObject($params[$k])->toBoolean();
 		}
 
+		!preg_match('/\/$/',$params["directory"]) && ($params["directory"] .= "/"); // "projects/myapp" -> "projects/myapp/"
+		
 		$params["name"] = $name;
 
 		$this->data = new Dictionary($params);

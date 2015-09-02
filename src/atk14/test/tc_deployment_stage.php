@@ -27,6 +27,10 @@ class TcDeploymentStage extends TcBase{
 		$this->assertEquals(array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),$production->after_deploy);
 		$this->assertEquals(array("public/dist/","vendor/"),$production->rsync);
 
+		$acceptation = Atk14DeploymentStage::GetStage("acceptation");
+		$this->assertEquals(array(),$acceptation->rsync);
+		$this->assertEquals(false,$acceptation->create_maintenance_file);
+
 		// it is unable to set a value
 		$exception_thrown = false;
 		try{
