@@ -144,6 +144,8 @@ class TcFiles extends TcBase{
 			"doc" => "application/msword",
 
 			"csv" => "text/csv",
+
+			"zip" => "application/zip",
  		) as $file => $mime_type){
 			$file = __DIR__."/sample_files/sample.$file";
 			$this->assertEquals($mime_type,Files::DetermineFileType($file),$file);
