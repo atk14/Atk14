@@ -121,7 +121,7 @@ _run_commands($config["after_deploy"],"after_deploy");
 
 $config["create_maintenance_file"] && _remote_exec("rm config/maintenance.php","gonna remove the maintenance file");
 
-echo "Everything now looks suspiciously good...\n";
+echo "Everything now looks suspiciously good in $stage...\n";
 exit(0);
 
 // ------------- and now some functions...
