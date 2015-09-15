@@ -1,4 +1,45 @@
-﻿ ===== 3.1.24===== (23.05.2015)
+﻿ ===== 3.1.27===== (18.06.2015)
+18.06.2015
+ - bugfix another update on file path normalization failed on path containing something like "/.foo/" https://github.com/smarty-php/smarty/issues/56
+
+ ===== 3.1.26===== (18.06.2015)
+18.06.2015
+ - bugfix file path normalization failed on path containing something like "/.foo/" https://github.com/smarty-php/smarty/issues/56
+
+17.06.2015
+ - bugfix calling a plugin with nocache option but no other attributes like {foo nocache} caused call to undefined function https://github.com/smarty-php/smarty/issues/55
+
+ ===== 3.1.25===== (15.06.2015)
+ 15.06.2015
+  - optimization of smarty_cachereource_keyvaluestore.php code
+
+ 14.06.2015
+  - bugfix a relative sub template path could fail if template_dir path did contain /../ https://github.com/smarty-php/smarty/issues/50
+  - optimization rework of path normalization
+  - bugfix an output tag with variable, modifier followed by an operator like {$foo|modifier+1} did fail https://github.com/smarty-php/smarty/issues/53
+
+ 13.06.2015
+  - bugfix a custom cache resource using smarty_cachereource_keyvaluestore.php did fail if php.ini mbstring.func_overload = 2 (forum topic 25568)
+
+ 11.06.2015
+  - bugfix the lexer could hang on very large quoted strings (forum topic 25570)
+
+ 08.06.2015
+  - bugfix using {$foo} as array index like $bar.{$foo} or in double quoted string like "some {$foo} thing" failed https://github.com/smarty-php/smarty/issues/49
+
+ 04.06.2015
+  - bugfix possible error message on unset() while compiling {block} tags https://github.com/smarty-php/smarty/issues/46
+
+ 01.06.2015
+  - bugfix <?xml ... ?> including template variables broken  since 3.1.22 https://github.com/smarty-php/smarty/issues/47
+  
+ 27.05.2015
+  - bugfix {include} with variable file name must not create by default individual cache file (since 3.1.22) https://github.com/smarty-php/smarty/issues/43
+  
+ 24.05.2015
+  - bugfix if condition string 'neq' broken due to a typo https://github.com/smarty-php/smarty/issues/42
+
+ ===== 3.1.24===== (23.05.2015)
  23.05.2015
   - improvement on php_handling to allow very large PHP sections, better error handling
   - improvement allow extreme large comment sections (forum 25538)

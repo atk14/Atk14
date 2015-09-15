@@ -252,6 +252,13 @@ template_element(res)::= PHP(o). {
     }
 }
 
+                      // nocache code
+template_element(res)::= NOCACHE(c). {
+        $this->compiler->tag_nocache = true;
+        $save = $this->template->has_nocache_code;
+        res = new Smarty_Internal_ParseTree_Tag($this, $this->compiler->processNocacheCode("<?php echo '{c}';?>\n", $this->compiler, true));
+        $this->template->has_nocache_code = $save;
+}
                       // template text
 template_element(res)::= text_content(t). {
         res = $this->compiler->processText(t);
@@ -313,7 +320,7 @@ smartytag(res)   ::= tag(t) RDEL. {
 //
 // output tags start here
 //
-smartytag(res)   ::= SIMPELOUTPUT(i). {
+smartytag(res)   ::= SIMPLEOUTPUT(i). {
     $var = trim(substr(i, $this->lex->ldel_length, -$this->lex->rdel_length), ' $');
     if (preg_match('/^(.*)(\s+nocache)$/', $var, $match)) {
         res = $this->compiler->compileTag('private_print_expression',array('nocache'),array('value'=>$this->compiler->compileVariable('\''.$match[1].'\'')));
@@ -327,26 +334,18 @@ tag(res)   ::= LDEL variable(e). {
     res = $this->compiler->compileTag('private_print_expression',array(),array('value'=>e));
 }
 
-tag(res)   ::= LDEL variable(e) modifierlist(l) attributes(a). {
-    res = $this->compiler->compileTag('private_print_expression',a,array('value'=>e, 'modifierlist'=>l));
-}
-
 tag(res)   ::= LDEL variable(e) attributes(a). {
     res = $this->compiler->compileTag('private_print_expression',a,array('value'=>e));
 }
 tag(res)   ::= LDEL value(e). {
     res = $this->compiler->compileTag('private_print_expression',array(),array('value'=>e));
 }
-tag(res)   ::= LDEL value(e) modifierlist(l) attributes(a). {
-    res = $this->compiler->compileTag('private_print_expression',a,array('value'=>e, 'modifierlist'=>l));
-}
-
 tag(res)   ::= LDEL value(e) attributes(a). {
     res = $this->compiler->compileTag('private_print_expression',a,array('value'=>e));
 }
 
-tag(res)   ::= LDEL expr(e) modifierlist(l) attributes(a). {
-    res = $this->compiler->compileTag('private_print_expression',a,array('value'=>e,'modifierlist'=>l));
+tag(res)   ::= LDEL expr(e). {
+    res = $this->compiler->compileTag('private_print_expression',array(),array('value'=>e));
 }
 
 tag(res)   ::= LDEL expr(e) attributes(a). {
@@ -388,7 +387,7 @@ smartytag(res)::= SIMPLETAG(t). {
             res = $this->compiler->compileTag('private_print_expression',array(),array('value'=>$tag));
         } else {
             if (preg_match('/^(.*)(\s+nocache)$/', $tag, $match)) {
-                res = $this->compiler->compileTag($match[1],array('nocache'));
+                res = $this->compiler->compileTag($match[1],array("'nocache'"));
             } else {
                 res = $this->compiler->compileTag($tag,array());
             }
@@ -941,7 +940,6 @@ indexdef(res)   ::= DOT INTEGER(n). {
     res = '['. n .']';
 }
 
-
 indexdef(res)   ::= DOT LDEL expr(e) RDEL. {
     res = '['. e .']';
 }
@@ -1002,10 +1000,6 @@ varvar(res)      ::= varvar(v1) varvarele(v2). {
                     // fix sections of element
 varvarele(res)   ::= ID(s). {
     res = '\''.s.'\'';
-}
-varvarele(res)   ::= SIMPELOUTPUT(i). {
-    $var = trim(substr(i, $this->lex->ldel_length, -$this->lex->rdel_length), ' $');
-    res = $this->compiler->compileVariable('\''.$var.'\'');
 }
 
                     // variable sections of element
@@ -1237,7 +1231,7 @@ lop(res)        ::= TLOGOP(o). {
         'isoddby' => array('op' => ' / ', 'pre' => '(1 & '),
         'isnotoddby' => array('op' => ' / ', 'pre' => '!(1 & '),
         );
-    $op = strtolower(str_replace(' ', '', o));
+    $op = strtolower(preg_replace('/\s*/', '', o));
     res = $lops[$op];
 }
 
