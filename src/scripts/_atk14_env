@@ -8,9 +8,18 @@
  *
  *  $ ATK14_ENV=production ./scripts/_atk14_env
  *  PRODUCTION
+ *
+ *  $ ./scripts/_atk14_env -l
+ *	development
  */
 
 require_once(dirname(__FILE__)."/load.php");
 
-echo $ATK14_GLOBAL->getEnvironment();
+$env = $ATK14_GLOBAL->getEnvironment();
+
+if(isset($argv[1]) && $argv[1]=='-l'){
+	$env = strtolower($env);
+}
+
+echo $env;
 echo "\n";

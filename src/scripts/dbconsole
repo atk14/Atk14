@@ -14,22 +14,58 @@
 #
 #  $ ./scripts/dbconsole -l
 #  $ ./scripts/dbconsole --list
+#
+# To enable verbose mode
+#
+#  $ ./scripts/dbconsole -v
+#  $ ./scripts/dbconsole --verbose
+#  $ ./scripts/dbconsole -v import
+#  $ ./scripts/dbconsole --verbose import
 
 cd `dirname $0`
 
 # add pgpass record to ~/.pgpass file when the record is not present
 exec `./pgpass_record -a`
 
-configuration_name=$1 # e.g. default, import, see Atk14Global::getDatabaseConfig()
+param=$1 # e.g. default, import, see Atk14Global::getDatabaseConfig()
+configuration_name=$2
+verbose=""
 
-if [ "$configuration_name" = "-l" -o "$configuration_name" = "--list" ]; then
+if [ "$configuration_name" = "" ]; then
+	configuration_name="$param"
+fi
+
+if [ "$configuration_name" = "-l" -o "$configuration_name" = "--list" -o "$configuration_name" = "-v" -o "$configuration_name" = "--verbose" ]; then
+	param="$configuration_name"
+	configuration_name="";
+fi
+
+if [ "$param" = "-v" -o "$param" = "--verbose" ]; then
+	verbose=1
+fi
+
+if [ "$param" = "-l" -o "$param" = "--list" ]; then
 	./_list_database_configurations
 	exit 0
 fi
 
+if [ "$verbose" ]; then
+	echo "verbose: ATK14_ENV=`./_atk14_env -l`"
+fi
+
 cmd=`./_dbconsole_command "$configuration_name"`
+
+if [ "$verbose" ]; then
+	echo "verbose: using configuration name \"$configuration_name\""
+fi
+
 if [ "$cmd" = "" ]; then
 	echo "Sorry bro, I don't know how to connect to the $configuration_name";
 	exit 1
 fi
+
+if [ "$verbose" ]; then
+	echo "verbose: about to execute $cmd"
+fi
+
 exec $cmd
