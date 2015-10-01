@@ -673,7 +673,7 @@ class DbMole{
 	 */
 	function selectFirstRow($query,$bind_ar = array(), $options = array()){
 		$options += array(
-			"limit" => 1,
+			// "limit" => 1, // This is not possible because of: $dbmole->selectInt("UPDATE articles SET title='New title' WHERE id=1 AND updated_at IS NULL RETURNING id");
 		);
 		$records = $this->_selectRows($query,$bind_ar,$options);
 		if(!isset($records) || sizeof($records)==0){

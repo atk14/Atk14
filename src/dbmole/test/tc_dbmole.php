@@ -18,6 +18,15 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals("'o''neil \"da hacker\"'",$this->pg->escapeString4Sql("o'neil \"da hacker\""));
 	}
 
+	function test_update_returning(){
+		$this->pg->insertIntoTable("test_table",array(
+			"id" => 99,
+			"title" => "Nice",
+		));
+		$this->assertEquals(99,$this->pg->selectInt("UPDATE test_table SET title='Very nice' WHERE id=99 RETURNING id"));
+		$this->assertEquals(null,$this->pg->selectInt("UPDATE test_table SET title='Very nice' WHERE id=99 AND title='Nice' RETURNING id"));
+	}
+
 	function test_escape_bool_4_sql(){
 		$this->assertEquals('TRUE',$this->pg->escapeBool4Sql(true));
 		$this->assertEquals('FALSE',$this->pg->escapeBool4Sql(false));
