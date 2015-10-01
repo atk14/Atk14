@@ -41,16 +41,12 @@ class Atk14Url{
 	 * @param string $requested_uri URI to decode
 	 *
 	 * @return array description of URI, contains these parameters:
-	 * <ul>
-	 * 	<li><b>controller</b> - name of controller</li>
-	 * 	<li><b>action</b> - name of action</li>
-	 * 	<li><b>lang</b> - language</li>
-	 * 	<li><b>page_title</b> - </li>
-	 * 	<li><b>page_description</b> - </li>
-	 * 	<li><b>get_params</b> - associative array of params sent in request</li>
-	 * </ul>
-	 *
-	 * @static
+	 * - controller - name of controller
+	 * - action - name of action
+	 * - lang - language
+	 * - page_title
+	 * - page_description
+	 * - get_params - associative array of params sent in request
 	 */
 	static function RecognizeRoute($requested_uri){
 		global $ATK14_GLOBAL,$_GET;
@@ -166,9 +162,11 @@ class Atk14Url{
 	}
 
 	/**
-	 * Zjisti, zda dane REQUEST URI by nahodou nemelo byt v novejsi variante.
-	 * Pokud ano, vyplni se force_redirect a dalsi mechanismy pak zajisti
-	 * presmerovani uzivatele na toto nove URL.
+	 * Checks if a newer uri (using router) should be used.
+	 * When yes, force_redirect parameter is filled and a user is redirected to that newer URL.
+	 *
+	 * @param array $out
+	 * @param string $requested_uri
 	 */
 	static function _FindForceRedirect($out,$requested_uri){
 		// zde muze byt dojit ke zmene $out["lang"]

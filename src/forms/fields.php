@@ -72,17 +72,19 @@ class JsValidator{
  *
  * Here is an example of basic form fields' usage:
  *
- * 	class MessageForm extends ApplicationForm {
- * 		function set_up() {
- * 			$this->add_field("message", new CharField(array(
- * 				"label" => "A word to Atk14 developers",
- * 				"widget" => new TextArea(array(
- * 					"rows" => '5',
- * 					"cols" => '40',
- * 				),
- * 			)));
- * 		}
+ * ```
+ * class MessageForm extends ApplicationForm {
+ * 	function set_up() {
+ * 		$this->add_field("message", new CharField(array(
+ * 			"label" => "A word to Atk14 developers",
+ * 			"widget" => new TextArea(array(
+ * 				"rows" => '5',
+ * 				"cols" => '40',
+ * 			),
+ * 		)));
  * 	}
+ * }
+ * ```
  *
  *
  * This is the base class for all field types and shouldn't be used directly.
@@ -119,8 +121,51 @@ class JsValidator{
  * You can create new subclass by extending the {@link Field Field class}.
  * To create new subclass for a new field type you need at least two basic methods.
  *
- * - {@link Field::__construct() - declaration of input field. Provides information about field type and its attributes}
- * - {@link Field::clean() provides validation of entered values}
+ * - {@link Field::__construct()} - declares input field. Provides information about field type and its attributes
+ * - {@link Field::clean()} - provides validation of entered values
+ *
+ *
+ * Example of field checking zip code.
+ * ```
+ *	class ZipField extends RegexField {
+ *		function __construct($options = array()){
+ *
+ *			$options += array(
+ *				"check_availability" => false,
+ *			);
+ *
+ *			$options["error_messages"] += array(
+ *				"invalid" => _("Toto nevypadá jako PSČ"),
+ *				"unavailable" => _("Vámi zadané PSČ neplatí v ČR, prosím zadejte správnou hodnotu."),
+ *			);
+ *
+ *			parent::__construct('/^\d{3}\s*\d{2}$/',$options);
+ *			$this->update_messages($options["error_messages"]);
+ *		}
+ * ```
+ * See how the option error_messages is handled, because it is not accepted by {@link Field} constructor.
+ *
+ * Example of value validation method.
+ * ```
+ *	var $available_zip_codes = array("10100","10101","10200");
+ *
+ *	function clean($value) {
+ *		$value = trim($value);
+ *		$value = preg_replace('/\s+/',' ',$value); // "756  06" -> "756 06"
+ *		list($err,$val) = parent::clean($value);
+ *		if ($err) {
+ *			return array($err,$val);
+ *		}
+ *
+ *		if ($this->options["check_availability"] && $value && !in_array(preg_replace('/\s+/','',$value), $GLOBALS["available_zip_codes"])) {
+ * 			return array($this->messages["unavailable"], null);
+ *		}
+ *		return parent::clean($value)
+ *	}
+ * ```
+ *
+ *
+ *
  *
  * Additionally it's usually good to use {@link Field::format_initial_data() format_initial_data method} when specifying special formatting of values.
  *
@@ -157,17 +202,15 @@ class Field
 	 * Constructor of this class defines only basic set of options. These can be extended by a subclass.
 	 *
 	 * @param array $options Possible options
-	 * <ul>
-	 * <li><b>required</b> - boolean</li>
-	 * <li><b>widget</b> - {@see Widget}</li>
-	 * <li><b>label</b> - </li>
-	 * <li><b>initial</b> - </li>
-	 * <li><b>help_text</b> - </li>
-	 * <li><b>hint</b> - </li>
-	 * <li><b>hints</b> array of string </li>
-	 * <li><b>error_messages</b> - </li>
-	 * <li><b>disabled boolean</b> - </li>
-	 * </ul>
+	 * - required boolean - determines if the value is mandatory
+	 * - widget - {@link Widget}
+	 * - label - text displayed with the input. When not set, it is generated automatically by field_name.
+	 * - initial -
+	 * - help_text -
+	 * - hint -
+	 * - hints array of string
+	 * - error_messages -
+	 * - disabled boolean -
 	 */
 	function __construct($options=array())
 	{
@@ -250,10 +293,12 @@ class Field
 		);
 	}
 
-	/** 
+	/**
 	 * Modifies definition of error message
 	 *
-	 * 		$field->update_messages("invalid","This doesn't look like a reasonable value...");
+	 * ```
+	 * $field->update_messages("invalid","This doesn't look like a reasonable value...");
+	 * ```
 	 *
 	 * @param string $type
 	 * @param string $message
@@ -267,10 +312,15 @@ class Field
 	 *
 	 * Checks if the field doesn't contain empty value when it is required. Can be overridden in a subclass.
 	 *
-	 * list($error,$cleaned_value) = $field->clean($raw_value); // $error may be null, a string or an array of strings; null or empty array means no error
+	 * $error may be null, a string or an array of strings; null or empty array means no error
+	 * ```
+	 * list($error,$cleaned_value) = $field->clean($raw_value);
+	 * ```
 	 *
 	 * @param mixed $value
-	 * @return array
+	 * @return array contains two values in exact order. only one of them should be set, the other must be set to null
+	 * 1. string|array error_messages
+	 * 2. mixed cleaned value. It can contain whatever you want independently of value put in input field
 	 * @see check_empty_value()
 	 */
 	function clean($value)

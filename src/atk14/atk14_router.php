@@ -1,4 +1,21 @@
 <?php
+/**
+ * Class for processing specific (or nice) URLs.
+ *
+ * @filesource
+ */
+/**
+ * Class for processing specific (or nice) URLs.
+ *
+ * A router should have basically two methods, {@link Atk14Router::recognize()} and {@link Atk14Router::build()}.
+ *
+ * {@link Atk14Router::recognize()} method should examine current url and setup parameters to tell the {@link Atk14Dispatcher} which action in which controller should be executed
+ * and with which parameters.
+ *
+ * {@link Atk14Router::build()} method does the reverse action. By current controller, action etc it generates a URL where should be this resource accessible.
+ *
+ * @package Atk14\Core
+ */
 class Atk14Router{
 	var $namespace = "";
 	var $controller = "";
@@ -51,18 +68,28 @@ class Atk14Router{
 	}
 
 	/**
-	 * Consider an URI like this:
-	 * 	/bookstore/admin/book/123-hobbit?print=true
-	 * where "bookstore" is base href and "admin" is namespace.
-	 * 
-	 * Then the $uri will be
-	 * 	/book/123-hobbit
-	 * 
-	 * It means there's no base href, namespace nor params (the part after question mark; params are accessible through $this->params)
+	 * Method used to examine applications url.
 	 *
-	 * When the $uri is beeing recognized, attributes $this->controller and $this->action must be set - otherwise leave them untouched.
+	 * When the application uses specific urls, this method should break up the url into pieces and setup needed parameters.
+	 * It means namespace, controller, language, action and query parameters.
+	 * Controller and action are mandatory.
+	 *
+	 * Consider an URI like this:
+	 * ```
+	 * /bookstore/admin/book/123-hobbit?print=true
+	 * ```
+	 * where "bookstore" is base href and "admin" is namespace.
+	 *
+	 * Then the $uri will be
+	 * ```
+	 * /book/123-hobbit
+	 * ```
+	 *
+	 * It means there's no base href, namespace nor params (the part after question mark; params are accessible through $this->params)
+	 * After this method is used, attributes $this->controller and $this->action must be set - otherwise leave them untouched.
 	 *
 	 * @abstract
+	 * @param string $uri URI to be examined
 	 */
 	function recognize($uri){
 		// may be covered by a descendent...
