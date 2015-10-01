@@ -414,10 +414,12 @@ class tc_dbmole extends tc_base{
 		$this->_test_integer($dbmole->selectSingleValue($q,"integer"),(int)$expected_count);
 		$this->_test_integer($dbmole->selectSingleValue($q,array(),"integer"),(int)$expected_count);
 		$this->_test_integer($dbmole->selectSingleValue($q,array(),array("type" => "integer")),(int)$expected_count);
+		$this->_test_integer($dbmole->selectInt($q),(int)$expected_count);
 
 		$this->_test_float($dbmole->selectSingleValue($q,"float"),(float)$expected_count);
 		$this->_test_float($dbmole->selectSingleValue($q,array(),"float"),(float)$expected_count);
 		$this->_test_float($dbmole->selectSingleValue($q,array(),array("type" => "float")),(float)$expected_count);
+		$this->_test_float($dbmole->selectFloat($q),(float)$expected_count);
 	}
 
 	function _test_integer($i,$expected_val,$msg = ""){

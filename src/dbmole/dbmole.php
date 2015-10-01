@@ -672,6 +672,9 @@ class DbMole{
 	 * @return array associative array
 	 */
 	function selectFirstRow($query,$bind_ar = array(), $options = array()){
+		$options += array(
+			"limit" => 1,
+		);
 		$records = $this->_selectRows($query,$bind_ar,$options);
 		if(!isset($records) || sizeof($records)==0){
 			return null;
