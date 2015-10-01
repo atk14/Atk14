@@ -223,7 +223,7 @@ class Field
 				'help_text'      => '', // like "In this field you can write down your favourite numbers"
 				'hint'           => '', // value format hint, like "john.doe@example.com"
 				'hints'					 => array(), // array("john.doe","samantha93")
-				'error_messages' => null,
+				'error_messages' => array(), // array("required" => "Hey bro you've just forgot your e-mail")
 				'disabled'       => false,
 			),
 			$options
@@ -231,6 +231,10 @@ class Field
 		if($options["hint"] && !$options["hints"]){
 			$options["hints"] = array($options["hint"]);
 		}
+		$options['error_messages'] = forms_array_merge(array(
+			'required' => _('This field is required.'),
+			'invalid' => _('Enter a valid value.'),
+		),$options['error_messages']);
 
 		if (!isset($this->widget)) {
 			$this->widget = new TextInput();
@@ -239,10 +243,7 @@ class Field
 			$this->hidden_widget = new HiddenInput();
 		}
 		$this->messages = array();
-		$this->update_messages(array(
-			'required' => _('This field is required.'),
-			'invalid' => _('Enter a valid value.'),
-		));
+		$this->update_messages($options['error_messages']);
 
 		// inicializace podle parametru konstruktoru
 		$this->required = $options['required'];

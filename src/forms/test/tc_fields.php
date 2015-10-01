@@ -30,6 +30,11 @@ class TcFields extends TcBase
 		$this->assertFalse($f->check_empty_value(array(0)));
 	}
 
+	function test_error_messages(){
+		$f = new CharField(array("error_messages" => array("required" => "This field is mandatory")));
+		list($error,$value) = $f->clean("");
+		$this->assertEquals("This field is mandatory",$error);
+	}
 
 	/**
 	* Pomocna funkce, ktera overi realny vystup widgetu s ocekavanym dle
