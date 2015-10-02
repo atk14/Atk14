@@ -547,12 +547,9 @@ class UrlFetcher {
 			$this->_Port = $this->_Ssl ? 443 : 80;
 		}
 		
-		//rozpoznani uzivatelskeho jmena a hesla pro HTTP BASIC AUTHentizaci...
-		//	predpokladam, ze jmeno a heslo je v URL ve formatu urlencoded
-		// 	( - pokud ovsem neni, mohou nastat problemy)
 		if(preg_match("/^(.+):(.+)@(.+)$/",$_server,$matches)){
-			$_username = urlencode($matches[1]);
-			$_password = urlencode($matches[2]);
+			$_username = $matches[1];
+			$_password = $matches[2];
 			$_server = $matches[3];
 		}
 		if(strlen($_username)>0){ $this->setAuthorization($_username,$_password); }
