@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+cd `dirname $0`
+cd `./_get_application_path`../
+cwd=`pwd`
+appname=`basename "$cwd"`
+
+echo -n $appname

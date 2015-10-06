@@ -13,5 +13,10 @@ echo "**************************************************************************
 cd `dirname $0`
 cd `./_get_application_path`../
 
-php -S localhost:8000 -t ./ ./scripts/_server.php
+port=8000 # TODO: could be nice to check whether the given port is available
+appname=`./scripts/_shell_safe_appname`
+
+echo -ne "\033]0;ATK14 server for $appname - http://localhost:$port/\007"
+
+php -S localhost:$port -t ./ ./scripts/_server.php
 
