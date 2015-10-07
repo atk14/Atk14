@@ -267,9 +267,9 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	 * @returns TableRecord[]
 	 */
 	function getRecords(){
-		$out = array();
-		foreach($this->getItems() as $item){ $out[] = $item->getRecord(); }
-		return $out;
+		$ids = array();
+		foreach($this->getItems() as $item){ $ids[] = $item->getRecordId(); }
+		return Cache::Get($this->getClassNameOfRecords(), $ids); // TODO: usage of the Cache should be set by an option
 	}
 
 	/**
