@@ -12,7 +12,7 @@ define("URL_FETCHER_VERSION","0.2");
  * UrlFetcher class provides methods to make http requests
  *
  * Basic usage
- * <code>
+ * ```
  * $fetcher = new UrlFetcher();
  * $fetcher->setAuthorization("username","password");
  * //$fetcher->resetAuthorization();
@@ -21,36 +21,36 @@ define("URL_FETCHER_VERSION","0.2");
  * }else{
  * 	echo $fetcher->getErrorMessage();
  * }
- * </code>
+ * ```
  *
  * Make a GET request
- * <code>
+ * ```
  * $fetcher = new UrlFetcher("http://username:password@www.root.cz/");
  * if($f->found()){
  * 	echo $f->getContent();
  * }
- * </code>
+ * ```
  *
  * Make a POST request
- * <code>
+ * ```
  * $f = new UrlFetcher("http://www.root.cz/login/");
  * if($f->post("username=madl&password=krtek")){
  * 	echo $f->getContent();
  * }
- * </code>
+ * ```
  *
  *
  * Some headers can be specified in options:
- * <code>
+ * ```
  * $f = new UrlFetcher("http://www.example.com/data_collector.php");
  * $f->post($xml,array("content_type" => "text/xml"));
- * </code>
+ * ```
  *
  * Specific headers can be added in additional_headers option
- * <code>
+ * ```
  * $f = new UrlFetcher("http://www.example.com/", array("additional_headers" => array("X-App-Version: 1.2")));
  * echo $f->getContent();
- * </code>
+ * ```
  *
  * @package Atk14
  * @subpackage UrlFetcher

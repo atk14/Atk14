@@ -10,46 +10,51 @@
  * Class for performing operations on dates.
  *
  * Basic usage
- * 	$d = new Date("2008-01-01");
+ * ```
+ *	$d = new Date("2008-01-01");
+ * ```
  * Unexpected thing may happen when input date is not valid so the following usage is preferred.
  *
  * This call returns null when input date is not valid.
- * 	$d = Date::ByDate("2008-01-01");
+ * ```
+ *	$d = Date::ByDate("2008-01-01");
+ * ```
  *
  * Getting yesterday, today a tommorow date
- * 	$today = Date::Today();
- * 	$yesterday = Date::Yesterday();
- * 	$tomorrow = Date::Tomorrow();
+ * ```
+ *	$today = Date::Today();
+ *	$yesterday = Date::Yesterday();
+ *	$tomorrow = Date::Tomorrow();
+ * ```
  *
  * Getting various output formats.
- * 	$d = Date::Today();
- * 	$d->getUnixTimestamp();
- * 	$d->toString();
+ * ```
+ *	$d = Date::Today();
+ *	$d->getUnixTimestamp();
+ *	$d->toString();
+ * ```
  *
  * Following methods change the instance value
- * 	$d->addDay();
- * 	$d->addDays(10);
- * 	$d->addDays(-2);
+ * ```
+ *	$d->addDay();
+ *	$d->addDays(10);
+ *	$d->addDays(-2);
+ * ```
  *
  * Following methods return copy of an instance
- * 	$d1 = $d->plusDay();
- * 	$d2 = $d->plusDays(10);
- * 	$d3 = $d->minusDay();
- * 	$d4 = $d->minusDays(10);
+ * ```
+ *	$d1 = $d->plusDay();
+ *	$d2 = $d->plusDays(10);
+ *	$d3 = $d->minusDay();
+ *	$d4 = $d->minusDays(10);
+ * ```
  *
  * Check if the date is monday
- * 	if($d->isMonday()){
- * 		ok, it's monday
- * 	}
- *
- * Returns next monday
- * vrati nesledujici patek vzhledem k tomuto dni; vzdy vrati den v budounosti; tj. muze vratit den v akt. tydnu
- * 	$next_friday = $d->getNextFriday();
- * 	$current_friday = $d->getCurrentWeekFriday();
- *
- * vrati patek v akt. tydnu; muze vratit den v minulosti, v budoucnosti nebo stejny den
- * 	$next_week_friday = $d->getNextWeekFriday();
- * 	$prev_week_friday = $d->getPrevWeekFriday();
+ * ```
+ *	if($d->isMonday()){
+ *		ok, it's monday
+ *	}
+ * ```
  *
  * @package Atk14
  * @subpackage Date
@@ -62,9 +67,9 @@ class Date{
 	 * When input date is invalid, results using the object are unpredictable.
 	 * So recommended initialization is using method ByDate().
 	 *
-	 * <code>
+	 * ```
 	 * $d = new Date("2008-01-01");
-	 * </code
+	 * ```
 	 *
 	 * @param string $date
 	 */
@@ -106,19 +111,19 @@ class Date{
 	 * This method is preferred to using constructor.
 	 *
 	 * Date given as string
-	 * <code>
-	 * $date = Date::ByDate("2001-01-31");
-	 * </code>
+	 * ```
+	 *	$date = Date::ByDate("2001-01-31");
+	 * ```
 	 *
 	 * Input can be given as array with 'year','month','day' fields.
-	 * <code>
-	 * $date = Date::ByDate(array("year" => 2001,"month" => 1, "day" => 31));
-	 * </code>
+	 * ```
+	 *	$date = Date::ByDate(array("year" => 2001,"month" => 1, "day" => 31));
+	 * ```
 	 *
 	 * time information is cut off.
-	 * <code>
-	 * $date = Date::ByDate("2001-01-31 12:30:00");
-	 * </code>
+	 * ```
+	 *	$date = Date::ByDate("2001-01-31 12:30:00");
+	 * ```
 	 *
 	 * @param string|array $date
 	 */
@@ -497,7 +502,7 @@ class Date{
 	/**
 	 * Number of days from today.
 	 *
-	 * <code>
+	 * ```
 	 * $d = Date::Today();
 	 * $d->daysFromToday(); // 0
 	 *
@@ -506,7 +511,7 @@ class Date{
 	 *
 	 * $d = Date::Tomorrow();
 	 * $d->daysFromToday(); // +1
-	 * </code>
+	 * ```
 	 *
 	 * @return integer
 	 */
@@ -621,21 +626,21 @@ class Date{
 	 *
 	 * On invalid input date the method returns false.
 	 *
-	 * <code>
+	 * ```
 	 * $d1 = Date::Today();
 	 * $d2 = Date::Today();
-	 *                                            
+	 *
 	 * $this->assertEquals(0,$d1->compare($d2));
-	 *                                            
+	 *
 	 * $d2 = Date::Tomorrow();
 	 * $this->assertEquals(-1,$d1->compare($d2));
-	 *                                            
+	 *
 	 * $d2 = Date::Yesterday();
 	 * $this->assertEquals(1,$d1->compare($d2));
-	 * </code>
+	 * ```
 	 *
 	 * @param Date $date Date to compare with
-	 * @returns 0 when compared date is equal, -1 when compared date is newer, 1 when compared date is older
+	 * @return integer 0 when compared date is equal, -1 when compared date is newer, 1 when compared date is older
 	 */
 	function compare($date){
 		$date = $this->_toString($date);
@@ -715,6 +720,12 @@ class Date{
 	/**
 	 * Gets date on next monday.
 	 *
+	 * For example on Monday 2 this call returns Friday 9
+	 * ```
+	 * $today = Date::Today();
+	 * echo $today->getNextMonday()->toString();
+	 * ```
+	 *
 	 * @return Date
 	 */
 	function getNextMonday(){ 		return $this->_getNextDay(1);	}
@@ -742,6 +753,12 @@ class Date{
 
 	/**
 	 * Gets date on next friday closest to this date.
+	 *
+	 * For example on Friday 6 this call returns Friday 13
+	 * ```
+	 * $today = Date::Today();
+	 * echo $today->getNextFriday()->toString();
+	 * ```
 	 *
 	 * @return Date
 	 */
@@ -840,6 +857,12 @@ class Date{
 
 	/**
 	 * Gets date of friday next week.
+	 *
+	 * On Thursday 5 this returns Friday 13.
+	 * ```
+	 * $today = Date::Today();
+	 * echo $today->getNextWeekFriday()->toString();
+	 * ```
 	 *
 	 * @return Date
 	 */
