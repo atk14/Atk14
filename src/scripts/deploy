@@ -3,68 +3,63 @@
 /**
  * Provides deployment of the application to production
  *
- * It reads configuration from config/deploy.yml
- *
- * To deploy on the first stage in config/deploy.yml
- *  $ ./scripts/deploy
- *
- * To deploy on the specific stage
- *  $ ./scripts/deploy preview
+ * For more help run
+ *	$ ./scripts/deploy --help
  */
+
+$arguments = getopt("hl",array("help","list"));
+
+if(isset($arguments["h"]) || isset($arguments["help"])){
+$script = $argv[0];
+echo ltrim("
+Provides deployment of the application to production
+                                                     
+It reads configuration from config/deploy.yml
+
+For displaying this help message run
+ $ $script -h
+ $ $script --help
+                                                     
+To deploy on the first stage in config/deploy.yml
+ $ $script
+                                                     
+To deploy on the specific stage
+ $ $script preview
+
+To list available stages
+ $ $script -l
+ $ $script --list
+");
+exit(0);
+}
 
 require_once(dirname(__FILE__)."/load.php");
 $cwd = getcwd();
 chdir(ATK14_DOCUMENT_ROOT);
 
-$CONFIGS = $ATK14_GLOBAL->getConfig("deploy");
-if(!$CONFIGS){
+$STAGES = Atk14DeploymentStage::GetStages();
+$FIRST_STAGE = Atk14DeploymentStage::GetFirstStage();
+
+if(!$STAGES){
 	echo file_exists("./config/deploy.yml") ? "It looks like the file ./config/deploy.yml is corrupted (beware of usage of tabulators)\n" : "It looks like there is no file ./config/deploy.yml\n";
 	_exit_with_errors();
 }
-$STAGES = array_keys($CONFIGS);
 
-$stage = isset($argv[1]) ? $argv[1] : $STAGES[0];
+$stage = isset($argv[1]) ? $argv[1] : $FIRST_STAGE->name;
 
-if(!isset($CONFIGS[$stage])){
+if(isset($arguments["l"]) || isset($arguments["list"])){
+	foreach($STAGES as $name => $stage){
+		echo "$name\n";
+	}
+	exit(0);
+}
+
+if(!isset($STAGES[$stage])){
 	echo "sorry, in ./config/deploy.yml I have no information about a stage $stage\n";
 	_exit_with_errors();
 }
-$default_config = $CONFIGS[$STAGES[0]]; // the first stage
-$default_config += ($raw_def = array(
-	"url" => "http://www.example.com/", // just for information
-	"user" => null,
-	"server" => null,
-	"directory" => null,
-	"create_maintenance_file" => "true",
-	"deploy_via" => "git_push", // there is only one way
-	"deploy_repository" => null,
-	"deploy_branch" => "master",
-	"before_deploy" => array(),
-	"rsync" => array(), // array of directories which have to be synchronized to the server
-	"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
-));
-$config = $CONFIGS[$stage];
-$config += $default_config;
-$config["create_maintenance_file"] = String::ToObject($config["create_maintenance_file"])->toBoolean(); // "false" -> false
 
-// converting string into array on the following options
-foreach(array("before_deploy","rsync","after_deploy") as $k){
-	if(is_string($config[$k])){
-		$config[$k] = $config[$k] ? array($config[$k]) : array();
-	}
-}
-
-!preg_match('/\/$/',$config["directory"]) && ($config["directory"] .= "/"); // "projects/myapp" -> "projects/myapp/"
-
-$raw_def_keys = array_keys($raw_def);
-foreach($config as $k => $v){
-	if(!in_array($k,$raw_def_keys)){
-		echo "in section $stage there is an unknown key \"$k\" (in config/deploy.yml)\n";
-		_exit_with_errors();
-	}
-	// TODO: check mandatory values
-	// TODO: check formats of values
-}
+$config = $STAGES[$stage]->toArray();
 
 echo "gonna deploy to $stage\n";
 echo miniYAML::Dump(array("$stage" => $config));

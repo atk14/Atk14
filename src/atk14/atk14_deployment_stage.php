@@ -11,7 +11,7 @@ class Atk14DeploymentStage{
 			}
 		}
 
-		// converting string into boolean
+		// converting strings into booleans
 		foreach(array("create_maintenance_file") as $k){
 			$params[$k] = String::ToObject($params[$k])->toBoolean();
 		}
@@ -25,6 +25,10 @@ class Atk14DeploymentStage{
 
 	/**
 	 * $stages = Atk14DeploymentStage::GetStages();
+	 *
+	 * foreach($stages as $name => $stage){
+	 *
+	 * }
 	 */
 	static function GetStages(){
 		global $ATK14_GLOBAL;
@@ -52,6 +56,19 @@ class Atk14DeploymentStage{
 			}
 
 			$ar += $defaults;
+
+			/*
+			// TODO: add some checks
+			$raw_def_keys = array_keys($raw_def);
+			foreach($config as $k => $v){
+				if(!in_array($k,$raw_def_keys)){
+					echo "in section $stage there is an unknown key \"$k\" (in config/deploy.yml)\n";
+					_exit_with_errors();
+				}
+				// TODO: check mandatory values
+				// TODO: check formats of values
+			} */
+
 			$out[$name] = new Atk14DeploymentStage($name,$ar);
 		}
 
@@ -65,6 +82,10 @@ class Atk14DeploymentStage{
 		foreach(Atk14DeploymentStage::GetStages() as $s){
 			if($s->name==$name){ return $s; }
 		}
+	}
+
+	static function GetFirstStage(){
+		foreach(Atk14DeploymentStage::GetStages() as $s){ return $s; }
 	}
 
 	function toArray(){
