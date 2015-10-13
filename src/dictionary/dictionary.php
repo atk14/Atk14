@@ -8,18 +8,20 @@
  * Implementation of dictionary to store key => value pairs
  *
  * Basic usage:
+ * ```
  * 	$dict = new Dictionary(array(
- *  	"key1" => "value1",
- *  	"key2" => "value2",
- *  	"key3" => "value3"
+ * 		"key1" => "value1",
+ * 		"key2" => "value2",
+ * 		"key3" => "value3"
  * 	));
  *
  * 	echo $dict->getValue("key1");
  * 	$dict->setValue("key4","new value");
  *
  * 	if($dict->defined("key1")){
- * 	//...
+ * 		//...
  * 	}
+ * ```
  *
  * @package Atk14\Dictionary
  */
@@ -57,7 +59,9 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 * Returns value from the dictionary specified by $key. Returned value can be retyped by passing $type parameter.
 	 * Parameter $type recognizes same values as PHP.
 	 *
+	 * ```
 	 * 	$dictionary->getValue("user_id", "integer");
+	 * ```
 	 *
 	 * @param string $key
 	 * @param string $type
@@ -76,7 +80,7 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	}
 
 	/**
-	 * Alias to method {@link getValue() getValue()}.
+	 * Alias to method getValue().
 	 *
 	 * @param string $key
 	 * @param string $type
@@ -156,7 +160,7 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 * Shortcut to method setValue().
 	 *
 	 * @param string $key
-	 * @param any $value
+	 * @param mixed $value
 	 * @uses setValue()
 	 */
 	function s($key,$value){ return $this->setValue($key,$value); }
@@ -165,7 +169,7 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 * Alias for setValue()
 	 *
 	 * @param string $key
-	 * @param any $value
+	 * @param mixed $value
 	 * @uses setValue()
 	 */
 	function add($key,$value){ return $this->setValue($key,$value); }
@@ -220,7 +224,7 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	}
 
 	/**
-	 * Merges another Dictionary.
+	 * Merges another Dictionary into the current.
 	 *
 	 * Takes another {@link Dictionary Dictionary} or {@link array} and merges its values with values in current {@link Dictionary}.
 	 * Values in the merged/passed Dictionary override values in current Dictionary.
@@ -277,10 +281,14 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/**
 	 * Adds value to the beginning of array.
 	 *
+	 * First element will have the key 'color' and value 'green'
+	 * ```
 	 * 	$dict->unshift("color","green");
+	 * ```
 	 *
-	 * First element will be key 'color' with value 'green'
+	 * ```
 	 * 	$dict->toArray();
+	 * ```
 	 *
 	 *
 	 * @param string $key
