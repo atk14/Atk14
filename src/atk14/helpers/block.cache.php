@@ -2,7 +2,7 @@
 /**
  * Provides caching for the given template block
  *
- * There are 2 main parameters: key and expire.
+ * There are 3 main parameters: key, expire and if.
  * Other paramaters just salt the key.
  * 
  * Basic usage:
@@ -23,17 +23,30 @@
  *	{cache key="top_menu" expire=600 is_admin=($logged_user && $logged_user->isAdmin())}
  *		<ul>...</ul>
  *	{/cache}
+ *
+ * Do not cache for logged user
+ *	{cache if=!$logged_user key="menu"}
+ *		<ul>...</ul>
+ *	{/cache}
  */
 function smarty_block_cache($params,$content,$template,&$repeat){
 	$smarty = atk14_get_smarty_from_template($template);
 
 	$params += array(
+		"if" => true,
 		"key" => null,
 		"expire" => 60, // 60 sec
 	);
 
 	$expire = $params["expire"]; unset($params["expire"]);
 	$key = $params["key"]; unset($params["key"]);
+	$if = $params["if"]; unset($params["if"]);
+
+	if(!$if){
+		// cache is not enabled
+		if($repeat){ return; }
+		return $content;
+	}
 
 	if(!strlen($key)){
 		$current_template = $smarty->_current_file; // "/home/bob/devel/project_x/app/views/shared/_menu.tpl"
