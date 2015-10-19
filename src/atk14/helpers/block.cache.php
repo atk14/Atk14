@@ -2,7 +2,7 @@
 /**
  * Provides caching for the given template block
  *
- * There are 2 main parameters: key and duration.
+ * There are 2 main parameters: key and expire.
  * Other paramaters just salt the key.
  * 
  * Basic usage:
@@ -15,12 +15,12 @@
  *	{/cache}
  *
  * Cached content should be valid for 10 minutes
- *	{cache key="top_menu" duration=600}
+ *	{cache key="top_menu" expire=600}
  *		<ul>...</ul>
  *	{/cache}
  *
  * Cached content differs for admin users
- *	{cache key="top_menu" duration=600 is_admin=($logged_user && $logged_user->isAdmin())}
+ *	{cache key="top_menu" expire=600 is_admin=($logged_user && $logged_user->isAdmin())}
  *		<ul>...</ul>
  *	{/cache}
  */
@@ -29,10 +29,10 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 
 	$params += array(
 		"key" => null,
-		"duration" => 60, // 60 sec
+		"expire" => 60, // 60 sec
 	);
 
-	$duration = $params["duration"]; unset($params["duration"]);
+	$expire = $params["expire"]; unset($params["expire"]);
 	$key = $params["key"]; unset($params["key"]);
 
 	if(!strlen($key)){
@@ -50,7 +50,7 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 
 	// $key sanitization
 	$key = preg_replace('/[^a-zA-Z0-9._]/','_',$key);
-	$key = preg_replace('/^\./','_.',$key);
+	$key = preg_replace('/^\./','_.',$key); // ".en.main.index" -> "_.en.main.index" ; "." -> "_."
 
 	$salt = sizeof($params) ? "_".md5(serialize($params)) : ""; // other parameters make a salt
 
@@ -59,7 +59,7 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 	$cache_file = TEMP."/content_caches/$key$salt";
 
 	if($repeat){
-		if(file_exists($cache_file) && time()-filemtime($cache_file)<$duration){
+		if(file_exists($cache_file) && time()-filemtime($cache_file)<$expire){
 			// reading cache
 			$repeat = false;
 			return Files::GetFileContent($cache_file);
