@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+/**
+ * An experimental script
+ *
+ * It is used in locale/Makefile
+ *
+ *	$ ./scripts/_get_supported_locales
+ *	en_US
+ *	cs_CZ
+ */
+require_once(dirname(__FILE__)."/load.php");
+
+foreach($ATK14_GLOBAL->getConfig("locale") as $l => $item){
+	$LANG = $item["LANG"];
+	echo preg_replace('/\..+/','',$LANG),"\n"; // "en_US.UTF-8" -> "en_US"
+}
+
+exit(0);
