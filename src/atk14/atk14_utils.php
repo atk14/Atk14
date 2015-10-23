@@ -437,6 +437,16 @@ class Atk14Utils{
 		return join('?',$ar);
 	}
 
+	/**
+	 * "/path/to/project/atk14/../public/stylesheets/../dist/admin/application.min.js" -> "/path/to/project/public/dist/admin/application.min.js"
+	 *
+	 * We need to not to check the existence of individual directories.
+	 * For example it doesn't care whether the directory "/path/to/project/public/stylesheets/" exists or not.
+	 */
+	static function NormalizeFilepath($path){
+		return Atk14Utils::NormalizeUri($path);
+	}
+
 	static function InitializeLocale(&$lang){
 		if(function_exists("atk14_initialize_locale")){
 			atk14_initialize_locale($lang);

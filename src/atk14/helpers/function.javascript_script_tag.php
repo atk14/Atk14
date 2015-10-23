@@ -57,13 +57,15 @@ function smarty_function_javascript_script_tag($params,$template){
 	foreach($places as $place){
 		list($root,$base_href) = $place;
 
+		$_filename = Atk14Utils::NormalizeFilepath("$root/$file");
+
 		if(!$filename_default){
-			$filename_default = "$root/$file";
+			$filename_default = $_filename;
 			$src_default = "$base_href/$file";
 		}
 
-		if(file_exists("$root/$file")){
-			$filename = "$root/$file";
+		if(file_exists($_filename)){
+			$filename = $_filename;
 			$src = "$base_href/$file";
 			break;
 		}

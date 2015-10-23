@@ -41,15 +41,46 @@
 function smarty_function_stylesheet_link_tag($params,$template){
 	global $ATK14_GLOBAL;
 
+	// TODO: Refactore common parts with {javascript_script_tag}
+
 	$file = $params["file"];
 	unset($params["file"]);
 
+	// the real file is searched in the following places
+	$places = array(
+		array($ATK14_GLOBAL->getPublicRoot()."/stylesheets/",	$ATK14_GLOBAL->getPublicBaseHref()."/stylesheets/"),	// "/public/stylesheets/"
+		array($ATK14_GLOBAL->getPublicRoot(),									$ATK14_GLOBAL->getPublicBaseHref()),									// "/public/"
+		array($ATK14_GLOBAL->getApplicationPath()."/../",			$ATK14_GLOBAL->getBaseHref())													// "/"
+	);
+
 	if(preg_match('/^\//',$file)){
-		$href = $ATK14_GLOBAL->getBaseHref().preg_replace('/^\//','',$file);
-		$filename = $ATK14_GLOBAL->getApplicationPath()."/../".$file;
-	}else{
-		$href = $ATK14_GLOBAL->getPublicBaseHref()."stylesheets/$file";
-		$filename = $ATK14_GLOBAL->getPublicRoot()."stylesheets/$file";
+		// $file starts with "/", so we will search only in the very last place
+		$places = array(
+			array_pop($places)
+		);
+	}
+
+	$filename = $href = $filename_default = $href_default = "";
+	foreach($places as $place){
+		list($root,$base_href) = $place;
+
+		$_filename = Atk14Utils::NormalizeFilepath("$root/$file");
+
+		if(!$filename_default){
+			$filename_default = $_filename;
+			$href_default = "$base_href/$file";
+		}
+
+		if(file_exists($_filename)){
+			$filename = $_filename;
+			$href = "$base_href/$file";
+			break;
+		}
+	}
+
+	if(!$filename){
+		$filename = $filename_default;
+		$href = $href_default;
 	}
 
 	$href = Atk14Utils::NormalizeUri($href);
@@ -57,7 +88,6 @@ function smarty_function_stylesheet_link_tag($params,$template){
 	if(file_exists($filename)){
 		$href .= "?".filemtime($filename);
 	}
-
 
 	$attribs = Atk14Utils::JoinAttributes($params);
 	return "<link rel=\"stylesheet\" href=\"$href\"$attribs />";
