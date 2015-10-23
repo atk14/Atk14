@@ -7,7 +7,10 @@
  *
  * Udage in a template:
  * <code>
- * 		{javascript_script_tag file="script.js"}
+ * 		{javascript_script_tag file="script.js"} {* or *}
+ * 		{javascript_script_tag file="javascripts/script.js"} {* or *}
+ * 		{javascript_script_tag file="public/javascripts/script.js"} {* or *}
+ * 		{javascript_script_tag file="/public/javascripts/script.js"}
  * </code>
  *
  * This will produce the following output:
@@ -35,12 +38,40 @@ function smarty_function_javascript_script_tag($params,$template){
 	$file = $params["file"];
 	unset($params["file"]);
 
+
+	// the real file is searched in the following places
+	$places = array(
+		array($ATK14_GLOBAL->getPublicRoot()."/javascripts/",	$ATK14_GLOBAL->getPublicBaseHref()."/javascripts/"),	// "/public/javascripts/"
+		array($ATK14_GLOBAL->getPublicRoot(),									$ATK14_GLOBAL->getPublicBaseHref()),									// "/public/"
+		array($ATK14_GLOBAL->getApplicationPath()."/../",			$ATK14_GLOBAL->getBaseHref())													// "/"
+	);
+
 	if(preg_match('/^\//',$file)){
-		$src = $ATK14_GLOBAL->getBaseHref().preg_replace('/^\//','',$file);
-		$filename = $ATK14_GLOBAL->getApplicationPath()."/../".$file;
-	}else{
-		$src = $ATK14_GLOBAL->getPublicBaseHref()."javascripts/$file";
-		$filename = $ATK14_GLOBAL->getPublicRoot()."javascripts/$file";
+		// $file starts with "/", so we will search only in the very last place
+		$places = array(
+			array_pop($places)
+		);
+	}
+
+	$filename = $src = $filename_default = $src_default = "";
+	foreach($places as $place){
+		list($root,$base_href) = $place;
+
+		if(!$filename_default){
+			$filename_default = "$root/$file";
+			$src_default = "$base_href/$file";
+		}
+
+		if(file_exists("$root/$file")){
+			$filename = "$root/$file";
+			$src = "$base_href/$file";
+			break;
+		}
+	}
+
+	if(!$filename){
+		$filename = $filename_default;
+		$src = $src_default;
 	}
 
 	$src = Atk14Utils::NormalizeUri($src);
