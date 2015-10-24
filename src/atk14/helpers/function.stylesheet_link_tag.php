@@ -43,8 +43,13 @@ function smarty_function_stylesheet_link_tag($params,$template){
 
 	// TODO: Refactore common parts with {javascript_script_tag}
 
-	$file = $params["file"];
-	unset($params["file"]);
+	$params += array(
+		"file" => "style.css",
+		"hide_when_file_not_found" => false,
+	);
+
+	$file = $params["file"]; unset($params["file"]);
+	$hide_when_file_not_found = $params["hide_when_file_not_found"]; unset($params["hide_when_file_not_found"]);
 
 	// the real file is searched in the following places
 	$places = array(
@@ -87,6 +92,8 @@ function smarty_function_stylesheet_link_tag($params,$template){
 
 	if(file_exists($filename)){
 		$href .= "?".filemtime($filename);
+	}elseif($hide_when_file_not_found){
+		return "";
 	}
 
 	$attribs = Atk14Utils::JoinAttributes($params);
