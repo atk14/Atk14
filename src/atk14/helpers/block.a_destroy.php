@@ -20,10 +20,26 @@ if(!function_exists("smarty_block_a_remote")){
 }
 function smarty_block_a_destroy($params, $content, $template, &$repeat){
 	if($repeat){ return; }
+	$smarty = atk14_get_smarty_from_template($template);
+
 	$params = array_merge(array(
 		"action" => "destroy",
 		"_confirm" => _("Are you sure?"),
 		"_method" => "post",
 	),$params);
+
+	// building attribute data-destroying_object
+	$object_id = is_object($params["id"]) ? $params["id"]->getId() : $params["id"];
+	if(is_object($params["id"])){
+		$object_class = String::ToObject(get_class($params["id"]))->underscore()->toString();
+	}else{
+		$object_class = String::ToObject($smarty->getTemplateVars("controller"))->singularize()->toString();
+	}
+	$destroying_object = array(
+		"class" => $object_class,
+		"id" => $object_id
+	);
+	$params["_data___destroying_object"] = json_encode($destroying_object);
+
 	return smarty_block_a_remote($params,$content,$template,$repeat);
 }
