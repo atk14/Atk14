@@ -226,6 +226,7 @@ class DbMole{
 	 *
 	 * Registration of an error handler
 	 * 	DbMole::RegisterErrorHandler("dbmole_error_handler");
+	 *	// or DbMole::RegisterErrorHandler(function(){ ... });
 	 *
 	 * Common handler example
 	 *
@@ -234,21 +235,20 @@ class DbMole{
 	 *	 	$dbmole->sendErrorReportToEmail("admin@test.cz");
 	 *	 	$dbmole->logErrorReport();
 	 *	 	exit(1);
-	 * 	}	
+	 * 	}
 	 *
 	 * You can also specify an error handler to a certain $dbmole:
 	 * 	$dbmole->setErrorHandler($function_name);
 	 *
-	 * @param string $function_name
+	 * @param mixed $function_name
 	 * @return string name of previously registered error handler
 	 */
-	static function RegisterErrorHandler($function_name){
-		return DbMole::_GetSetErrorHandlerFunction($function_name,true);
+	static function RegisterErrorHandler($error_handler){
+		return DbMole::_GetSetErrorHandlerFunction($error_handler,true);
 	}
 
 	/**
 	 * Registers an error handler function to a given DbMole instance.
-	 *
 	 *
 	 * Example
 	 * 	$dbmole = PgMole::GetInstance();
@@ -257,11 +257,12 @@ class DbMole{
 	 *
 	 * 	DbMole::RegisterErrorHandler("default_error_handler");
 	 * 	$dbmole_session->setErrorHandler("session_error_handler");
+	 *  // or $dbmole_session->setErrorHandler(function(){ ... });
 	 *
-	 * @param string $function_name
+	 * @param mixed $function_name
 	 */ 
-	function setErrorHandler($function_name){
-		$this->_ErrorHandler = $function_name;
+	function setErrorHandler($error_handler){
+		$this->_ErrorHandler = $error_handler;
 	}
 
 	/**
@@ -344,27 +345,27 @@ class DbMole{
 	/**
 	 *
 	 * @ignore
-	 * @param string $function_name
+	 * @param mixed $function_name
 	 * @param bool $set									true -> ulezeni nazvu fce
 	 * @return string										aktualni jmeno (nebo predchozi pri nastavavovani) error handler funkce 
 	 *																		pokud je vracen prazdny string "", nema se nic volat
 	 */
-	static function _GetSetErrorHandlerFunction($function_name = "",$set = false){
-		static $_FUNCTION_NAME_;
+	static function _GetSetErrorHandlerFunction($error_handler = null,$set = false){
+		static $_ERROR_HANDLER_;
 
 		settype($set,"bool");
-		settype($function_name,"string");
+		//settype($error_handler,"string"); // could be an anonymous function
 
-		$prev_function_name = "";
-		if(isset($_FUNCTION_NAME_)){
-			$prev_function_name = $_FUNCTION_NAME_;
+		$prev_error_handler = null;
+		if(isset($_ERROR_HANDLER_)){
+			$prev_error_handler = $_ERROR_HANDLER_;
 		}
 		
 		if($set){
-			$_FUNCTION_NAME_ = $function_name;
+			$_ERROR_HANDLER_ = $error_handler;
 		}
 
-		return $prev_function_name;
+		return $prev_error_handler;
 	}
 
 	/**
@@ -613,7 +614,7 @@ class DbMole{
 		$this->_ErrorRaised = true;
 
 		$error_handler = $this->getErrorHandler();
-		if(strlen($error_handler)>0){
+		if($error_handler){
 			$error_handler($this);
 		}else{
 			$this->logErrorReport();

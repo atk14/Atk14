@@ -227,8 +227,19 @@ class tc_dbmole extends tc_base{
 		$dm = PgMole::GetInstance();
 		$this->assertEquals("session_error_handler",$dbmole_session->getErrorHandler());
 
-		//$oracle = OracleMole::GetInstance("session");
-		//$this->assertEquals("dbmole_error_handler",$oracle->getErrorHandler());
+		$dbmole_archive->setErrorHandler(function($dbmole){ });
+		$this->assertEquals(true,is_a($dbmole_archive->getErrorHandler(),"Closure"));
+
+		$prev = DbMole::RegisterErrorHandler(function($dbmole_archive){ });
+		$this->assertEquals("dbmole_error_handler",$prev);
+		
+		$this->assertEquals(true,is_a($dbmole_archive->getErrorHandler(),"Closure"));
+		$this->assertEquals(true,is_a($dbmole->getErrorHandler(),"Closure"));
+		$this->assertEquals("session_error_handler",$dbmole_session->getErrorHandler());
+
+		$prev = DbMole::RegisterErrorHandler($prev);
+		$this->assertEquals(true,is_a($prev,"Closure"));
+		$this->assertEquals("dbmole_error_handler",$dbmole->getErrorHandler());
 	}
 
 	function _test_common_behaviour(&$dbmole){
