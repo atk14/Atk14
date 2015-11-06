@@ -40,7 +40,7 @@ class Atk14DeploymentStage{
 			"user" => null,
 			"server" => null,
 			"directory" => null,
-			"create_maintenance_file" => "true",
+			"create_maintenance_file" => "false",
 			"deploy_via" => "git_push", // there is only one way
 			"deploy_repository" => null,
 			"deploy_branch" => "master",

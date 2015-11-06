@@ -3,7 +3,7 @@ devel:
   server: "zeus.mushoomradar.net"
   user: "deploy"
   directory: "/home/deploy/apps/mushoomradar_devel/"
-# create_maintenance_file: "true" # this is default
+# create_maintenance_file: "false" # this is default
   deploy_repository: "deploy@zeus.mushoomradar.net:repos/mushoomradar_devel.git"
   deploy_branch: "master"
   before_deploy:
@@ -17,7 +17,7 @@ devel:
 acceptation:
   url: "http://acceptation.mushoomradar.net"
   directory: "/home/deploy/apps/mushoomradar_acc/"
-  create_maintenance_file: 0
+  create_maintenance_file: 1
   deploy_repository: "deploy@zeus.mushoomradar.net:repos/mushoomradar_acc.git"
   rsync: ""
 

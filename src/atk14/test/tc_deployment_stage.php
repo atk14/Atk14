@@ -17,7 +17,7 @@ class TcDeploymentStage extends TcBase{
 		$this->assertEquals("deployment_stage_devel","$devel");
 		$this->assertEquals("zeus.mushoomradar.net",$devel->server);
 		$this->assertEquals("/home/deploy/apps/mushoomradar_devel/",$devel->directory);
-		$this->assertEquals(true,$devel->create_maintenance_file);
+		$this->assertEquals(false,$devel->create_maintenance_file);
 		$this->assertEquals(array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),$devel->after_deploy);
 		$this->assertEquals(array("public/dist/","vendor/"),$devel->rsync);
 
@@ -32,7 +32,7 @@ class TcDeploymentStage extends TcBase{
 
 		$acceptation = Atk14DeploymentStage::GetStage("acceptation");
 		$this->assertEquals(array(),$acceptation->rsync);
-		$this->assertEquals(false,$acceptation->create_maintenance_file);
+		$this->assertEquals(true,$acceptation->create_maintenance_file);
 
 		// it is unable to set a value
 		$exception_thrown = false;
