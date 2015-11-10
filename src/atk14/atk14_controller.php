@@ -503,7 +503,8 @@ class Atk14Controller{
 		if(
 			$this->request->xhr() && (
 				file_exists($ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$this->controller/$this->template_name.xhr.tpl") ||
-				file_exists($ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$this->template_name.xhr.tpl")
+				file_exists($ATK14_GLOBAL->getApplicationPath()."views/$this->namespace/$this->template_name.xhr.tpl") || 
+				file_exists($ATK14_GLOBAL->getApplicationPath()."views/$this->template_name.xhr.tpl")
 			)
 		){
 				$this->template_name = "$this->template_name.xhr";
