@@ -127,12 +127,12 @@ function dbmole_error_handler($dbmole){
 }
 DbMole::RegisterErrorHandler("dbmole_error_handler");
 
-function atk14_initialize_locale(&$lang){
+function atk14_initialize_locale(&$lang = null){
 	global $ATK14_GLOBAL;
 
 	$locale = $ATK14_GLOBAL->getConfig("locale");
 
-	if(!isset($locale[$lang])){
+	if(is_null($lang) || !isset($locale[$lang])){
 		$_keys = array_keys($locale);
 		$lang = $_keys[0];
 	}
@@ -156,6 +156,9 @@ if(PHP_VERSION_ID < 50600){
 } else {
 	ini_set('default_charset', DEFAULT_CHARSET);
 }
+
+// initializing locale for the default language (i.e. the first one in config/locale.yml)
+atk14_initialize_locale();
 
 // catching up assertion failures
 assert_options(ASSERT_ACTIVE, 1);
