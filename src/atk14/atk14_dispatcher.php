@@ -16,6 +16,14 @@
  * ```
  * Atk14DispatcherDispatch::Dispatch();
  * ```
+ * Processing a request consists of these steps:
+ * - initialization -
+ * - before filters
+ * - action (form initialization, mailer initialization)
+ * - before render
+ * - after render
+ * - after filters
+ * - flush output
  *
  * @package Atk14
  * @subpackage Core

@@ -46,12 +46,13 @@ class Atk14Controller{
 	var $logger = null;
 
 	/**
-	 * Instance of {@link Atk14Mailer} class.
+	 * Instance of Atk14Mailer class.
 	 *
 	 * The $mailer variable can be used to execute mailer actions in a similar way to common controller actions
 	 *
-	 * Note: in fact this is a Atk14MailerProxy member TODO: to be explained
+	 * Note: in fact this is a Atk14MailerProxy member
 	 *
+	 * @todo: to be explained
 	 * @var Atk14Mailer
 	 */
 	var $mailer = null;
@@ -1212,13 +1213,15 @@ class Atk14Controller{
 	}
 	
 	/**
-	* Method _before_walking() will be executed just before step method.
-	* Member variables $this->form_data and $this->returned_by are set.
-	* 
-	* If a non-false value is returned, the certain step method will not be executed
-	* and user will be redirected to the next step.
-	* The returned value will be accessible through $this->returned_by["%step_name%"].
-	*/
+	 * Method _before_walking() will be executed just before step method.
+	 *
+	 * Member variables $this->form_data and $this->returned_by are set.
+	 *
+	 * If a non-false value is returned, the certain step method will not be executed
+	 * and user will be redirected to the next step.
+	 *
+	 * The returned value will be accessible through $this->returned_by["%step_name%"].
+	 */
 	function _before_walking(){
 
 	}

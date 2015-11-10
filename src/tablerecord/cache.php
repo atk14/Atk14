@@ -1,21 +1,53 @@
 <?php
 /**
+ * Caching mechanism
+ * @filesource
+ */
+/**
  * Class for caching mainly TableRecord objects
  *
  * It is possible to cache objects having methods getId() and GetInstanceById()
  *
+ * Put an object into cache.
+ * ```
  * Cache::Prepare("Article",10023);
  * Cache::Prepare("Article",10024);
  * Cache::Prepare("Article",array(10025,10026));
+ * ```
  *
- * Cache::Get("Article",10023); // reads all the previous declared articles (10023, 10024, 10025 and 10026); returns the 10023
- * Cache::Get("Article",array(10024,10025)); // reads nothing from database as the requested objects are already in cache, returns array(Article#10024,Article#10025)
+ * == Retrieving an object from cache
  *
- * Cache::Clear(); // cleares all stored data in the cache
- * Cache::Clear("Article",10023); // cleares only Article#10023 from the cache
+ * This reads all the previously declared articles (10023, 10024, 10025 and 10026); returns only that with id 10023
+ * ```
+ * Cache::Get("Article",10023);
+ * ```
+ *
+ * This call reads nothing from database as the requested objects are already in cache and returns array(Article#10024,Article#10025)
+ * ```
+ * Cache::Get("Article",array(10024,10025));
+ * ```
+ *
+ * This call clears all data stored in the cache
+ * ```
+ * Cache::Clear();
+ * ```
+ *
+ * Clears only Article#10023 from the cache
+ * ```
+ * Cache::Clear("Article",10023);
+ * ```
+ *
+ * @package Atk14\Cache
  */
 class Cache{
+	/**
+	 * @ignore
+	 */
 	var $_Prepare = array();
+
+	/**
+	 * @ignore
+	 */
 	var $_Cache = array();
 
 	static function &GetInstance(){

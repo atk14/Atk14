@@ -101,8 +101,8 @@ class UrlFetcher {
 	 */
 	protected $_MaxRedirections = 5;
 
-	protected $_ConstructorAdditionalHeaders = array(); // this headers never disappear
-	protected $_AdditionalHeaders = array(); // this headers disappear upon every new request, TODO: more explanation & tests
+	protected $_ConstructorAdditionalHeaders = array(); // these headers never disappear
+	protected $_AdditionalHeaders = array(); // these headers disappear upon every new request, TODO: more explanation & tests
 
 	/**
 	 * @ignore
@@ -128,11 +128,12 @@ class UrlFetcher {
 	/**
 	 * Constructor
 	 *
-	 * <code>
-	 *	$f = new UrlFetcher();
-	 *	$f = new UrlFetcher("http://www.example.com/");
-	 *	$f = new UrlFetcher("http://www.example.com/",array("additional_headers" => array("X-Powered-By: Grizzly Lib 1.2")));
-	 *	$f = new UrlFetcher(array("additional_headers" => array("X-Powered-By: Grizzly Lib 1.2")));
+	 * ```
+	 * $f = new UrlFetcher();
+	 * $f = new UrlFetcher("http://www.example.com/");
+	 * $f = new UrlFetcher("http://www.example.com/",array("additional_headers" => array("X-Powered-By: Grizzly Lib 1.2")));
+	 * $f = new UrlFetcher(array("additional_headers" => array("X-Powered-By: Grizzly Lib 1.2")));
+	 * ```
 	 * </code>
 	 *
 	 * @param string $url
@@ -166,15 +167,15 @@ class UrlFetcher {
 	/**
 	 * Returns URL
 	 *
-	 * <code>
-	 * 	$uf = new UrlFetcher("http://example.com/content.html");
-	 * 	echo $uf->getUrl(); // http://example.com/content.html
+	 * ```
+	 * $uf = new UrlFetcher("http://example.com/content.html");
+	 * echo $uf->getUrl(); // http://example.com/content.html
 	 *
-	 *  $uf = new UrlFetcher("http://example.com/to_be_redirected.html");
-	 *	echo $uf->getUrl(); // http://example.com/to_be_redirected.html
-	 *	$uf->getContent();
-	 *	echo $uf->getUrl(); // http://example.com/redirected_address.html
-	 * </code>
+	 * $uf = new UrlFetcher("http://example.com/to_be_redirected.html");
+	 * echo $uf->getUrl(); // http://example.com/to_be_redirected.html
+	 * $uf->getContent();
+	 * echo $uf->getUrl(); // http://example.com/redirected_address.html
+	 * ```
 	 */
 	function getUrl(){ return $this->_Url; }
 
@@ -195,7 +196,7 @@ class UrlFetcher {
 	}
 
 	/**
-	 * Set authentization parameters.
+	 * Set authorization parameters.
 	 *
 	 * @param string $username
 	 * @param string $password
@@ -234,12 +235,12 @@ class UrlFetcher {
 	 * When the request is redirected more times than specified by limit, error is returned.
 	 *
 	 * Recommended usage:
-	 * <code>
+	 * ```
 	 * $f = new UrlFetcher("http://www.domemka.cz/file.dat");
-	 * 	if($f->found()){
-	 *		echo $f->getContent();
-	 *	}
-	 * </code>
+	 * if($f->found()){
+	 * 	echo $f->getContent();
+	 * }
+	 * ```
 	 *
 	 * @param string $url
 	 * @return string content of the url
@@ -424,9 +425,9 @@ class UrlFetcher {
 	/**
 	 * Returns value of given header
 	 *
-	 * <code>
+	 * ```
 	 * $c_type = $uf->getHeaderValue("Content-Type"); // "text/xml"
-	 * </code>
+	 * ```
 	 * 
 	 * @param string $header
 	 * @return string
@@ -437,7 +438,7 @@ class UrlFetcher {
 		if(isset($headers["$header"])){ return $headers["$header"]; }
 	}
 
-	/** 
+	/**
 	 * Alias for UrlFetcher::getHeaderValue().
 	 *
 	 * @param string $name Name of header
