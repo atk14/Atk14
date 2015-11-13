@@ -313,6 +313,8 @@ class Atk14Form extends Form
 		if(strlen($classname)==0 || !file_exists($filename)){
 			return null;
 		}
+		// TODO: pokud je $filename napr. /path/to/a/project/app/forms/articles/create_new_form.php,
+		// melo by dojit i k automatickemu nahrani souboru (jestlize existuje) /path/to/a/project/app/forms/articles/articles.php
 		require_once($filename);
 
 		// toto je novinka - TODO: otestovat
