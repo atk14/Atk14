@@ -13,7 +13,7 @@ class TcBase extends TcSuperBase{
 		$this->dbmole->rollback();
 	}
 
-	function _run_action($path,$options = array()){
+	function _run_action($path,$options = array(),&$response = null){
 		list($controller,$action) = explode("/",$path);
 		$response = Atk14Dispatcher::ExecuteAction($controller,$action);
 		return $response->buffer->toString();

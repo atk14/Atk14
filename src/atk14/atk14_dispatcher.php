@@ -167,6 +167,8 @@ class Atk14Dispatcher{
 	 */
 	static function ExecuteAction($controller_name,$action,$options = array()){
 		global $ATK14_GLOBAL;
+		static $prev_rc_controller; // previous rendering component controller
+
 		$logger = $ATK14_GLOBAL->getLogger();
 
 		$options = array_merge(array(
@@ -185,11 +187,16 @@ class Atk14Dispatcher{
 		$requested_controller = $controller_name;
 		$requested_action = $action;
 
+		if(!$options["apply_render_component_hacks"]){
+			$prev_rc_controller = null;
+		}
+
 		if($options["apply_render_component_hacks"]){
 			$prev_namespace = $ATK14_GLOBAL->getValue("namespace");
 			$prev_controller_name = $ATK14_GLOBAL->getValue("controller");
 			$prev_action = $ATK14_GLOBAL->getValue("action");
 		}
+
 		$ATK14_GLOBAL->setValue("namespace",$namespace);
 		$ATK14_GLOBAL->setValue("controller",$controller_name);
 		$ATK14_GLOBAL->setValue("action",$action);
@@ -263,9 +270,18 @@ class Atk14Dispatcher{
 		$controller->atk14__runAfterFilters();
 
 		if($options["apply_render_component_hacks"]){
+			$prev_rc_controller = $controller;
 			$ATK14_GLOBAL->setValue("namespace",$prev_namespace);
 			$ATK14_GLOBAL->setValue("controller",$prev_controller_name);
 			$ATK14_GLOBAL->setValue("action",$prev_action);
+		}
+
+		if(!$options["apply_render_component_hacks"] && $prev_rc_controller && $controller->response->getStatusCode()==200 && $prev_rc_controller->response->getLocation()){
+			// Beware that a redirection from the previous rendering_component controller is passed to the current controller
+			// (but as you can see higher, a redirection from a before filter is silently discarded)
+			$controller->response->setLocation($prev_rc_controller->response->getLocation());
+			$controller->response->setStatusCode($prev_rc_controller->response->getStatusCode());
+			$controller->response->buffer->clear();
 		}
 
 		return Atk14Dispatcher::_ReturnResponseOrController($controller->response,$controller,$options);
