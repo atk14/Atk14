@@ -5,7 +5,8 @@ require_once(dirname(__FILE__)."/load.php");
 
 $d = $ATK14_GLOBAL->getDatabaseConfig();
 
-$cmd = "pg_dump --schema-only -U $d[username] $d[database] -h $d[host] -p $d[port]";
+array_shift($argv); // removing script name
 
-echo $cmd;
-echo "\n";
+$cmd = "pg_dump --schema-only -U $d[username] $d[database] -h $d[host] -p $d[port]".($argv ? " ".join(" ",$argv) : "");
+
+echo $cmd,"\n";

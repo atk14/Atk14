@@ -3,9 +3,10 @@
 
 require_once(dirname(__FILE__)."/load.php");
 
+array_shift($argv); // removing script name
+
 $d = $ATK14_GLOBAL->getDatabaseConfig();
 
-$cmd = "pg_dump -U $d[username] $d[database] -h $d[host] -p $d[port]";
+$cmd = "pg_dump -U $d[username] $d[database] -h $d[host] -p $d[port]".($argv ? " ".join(" ",$argv) : "");
 
-echo $cmd;
-echo "\n";
+echo $cmd,"\n";

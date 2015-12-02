@@ -4,11 +4,19 @@
 #
 #  $ ./scripts/dump_dbschema
 #  $ ATK14_ENV=PRODUCTION ./scripts/dump_dbschema
+#
+# To dump schema from a specific table:
+#
+#  $ ./scripts/dump_dbdata -t users
+#
+# To make a dump with full inserts:
+#
+#  $ ./scripts/dump_dbdata --column-inserts
 
 cd `dirname $0`
 
 # add pgpass record to ~/.pgpass file when the record is not present
 exec `./pgpass_record -a`
 
-cmd=`./_dump_dbschema_command`
+cmd=`./_dump_dbschema_command "$@"`
 exec $cmd

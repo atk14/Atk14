@@ -5,11 +5,15 @@
 #
 #  $ ./scripts/dump_dbdata
 #  $ ATK14_ENV=PRODUCTION ./scripts/dump_dbdata
+#
+# To dump data from a specific table:
+#
+#  $ ./scripts/dump_dbdata -t users
 
 cd `dirname $0`
 
 # add pgpass record to ~/.pgpass file when the record is not present
 exec `./pgpass_record -a`
 
-cmd=`./_dump_dbdata_command`
+cmd=`./_dump_dbdata_command "$@"`
 exec $cmd

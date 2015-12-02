@@ -5,36 +5,15 @@
 #
 #  $ ./scripts/dump_db
 #  $ ATK14_ENV=PRODUCTION ./scripts/dump_db
-
-[ $# -gt 1 ] && echo "Wrong number of arguments" && exit 1;
-[ $# -eq 0 ] && ARG="all" || ARG="$1"
+#
+# To dump schema and data from a specific table:
+#
+#  $ ATK14_ENV=PRODUCTION ./scripts/dump_db -t users
 
 cd `dirname $0`
 
 # add pgpass record to ~/.pgpass file when the record is not present
 exec `./pgpass_record -a`
 
-case "$ARG" in
-	"data")
-		cmnd="./_dump_dbdata_command"
-		exec `$cmnd`
-		;;
-	"schema")
-		cmnd="./_dump_dbschema_command"
-		exec `$cmnd`
-		;;
-	"all")
-		cmnd="./_dump_db_command"
-		exec `$cmnd`
-		;;
-	"help")
-		echo "\nDumps database data, schema or both\n"
-		echo "$0 [data|schema|all]\n"
-		;;
-	*)
-		echo "Parameter '$ARG' not recognized\n"
-		exit 1;
-		;;
-esac
-
-exit 0;
+cmd=`./_dump_db_command "$@"`
+exec $cmd
