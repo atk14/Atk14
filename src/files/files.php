@@ -589,6 +589,7 @@ class Files{
 			"bmp" =>				array("image/bmp","application/octet-stream"),
 			"eps" =>				array("application/postscript","application/eps"),
 			"csv" =>				array("text/csv","text/plain"),
+			"docx" => 			array("application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/zip"),
 		);
 
 		foreach($tr_table as $suffixes => $mime_types){
