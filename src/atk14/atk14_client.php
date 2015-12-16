@@ -12,16 +12,20 @@
  *
  * Example of testing a GET request
  *
- * 	$controller = $this->client->get("customers/index");
- * 	$this->assertEquals(200, $this->client->getStatusCode());
- * 	$this->assertNotNull($finder = $controller->tpl_data["finder"]);
- * 	$this->assertTrue(sizeof($finder->getRecords())>0);
+ * ```
+ * $controller = $this->client->get("customers/index");
+ * $this->assertEquals(200, $this->client->getStatusCode());
+ * $this->assertNotNull($finder = $controller->tpl_data["finder"]);
+ * $this->assertTrue(sizeof($finder->getRecords())>0);
+ * ```
  *
  * Example of testing a POST request
  *
- * 	$controller = $this->client->post("logins/sign_in", array("username" => "admin", "password" => "SeCrEt.P4ssw0rD"));
- * 	$this->assertEquals(200, $this->client->getStatusCode());
- * 	$this->assertEquals(1, $controller->session->getValue("admin_id"));
+ * ```
+ * $controller = $this->client->post("logins/sign_in", array("username" => "admin", "password" => "SeCrEt.P4ssw0rD"));
+ * $this->assertEquals(200, $this->client->getStatusCode());
+ * $this->assertEquals(1, $controller->session->getValue("admin_id"));
+ * ```
  *
  * @package Atk14\Core
  * @todo Some more explanation
@@ -113,9 +117,9 @@ class Atk14Client{
 	/**
 	 * Set basic HTTP authentization values.
 	 *
-	 * <code>
+	 * ```
 	 * $client->setBasicAuth("robin","the hooded man");
-	 * </code>
+	 * ```
 	 *
 	 * @param string $username
 	 * @param string $password
@@ -125,12 +129,39 @@ class Atk14Client{
 		$this->setBasicAuthPassword($password);
 	}
 
+	/**
+	 * Get username set for basic authentization.
+	 *
+	 * @return string
+	 */
 	function getBasicAuthUsername(){ return $this->_BasicAuthUsername; }
+
+	/**
+	 * Set username for basic authentization.
+	 *
+	 * @param string $username
+	 */
 	function setBasicAuthUsername($username){ $this->_BasicAuthUsername = $username; }
 
+	/**
+	 * Get password set for basic authentization.
+	 *
+	 * @return string
+	 */
 	function getBasicAuthPassword(){ return $this->_BasicAuthPassword; }
+
+	/**
+	 * Set password for basic authentization.
+	 *
+	 * @param string $password
+	 */
 	function setBasicAuthPassword($password){ $this->_BasicAuthPassword = $password; }
 
+	/**
+		* Return complete string for basic authentication
+		*
+		* @return string
+	 */
 	function getBasicAuthString(){
 		$username = $this->getBasicAuthUsername();
 		$password = $this->getBasicAuthPassword();
@@ -139,6 +170,13 @@ class Atk14Client{
 		}
 	}
 
+	/**
+	 * Set username and password for basic authentication.
+	 *
+	 * Both values are sent together separated by colon.
+	 * @param string $string
+	 *
+	 */
 	function setBasicAuthString($string){
 		if(preg_match('/^(.*?):(.*)/',$string,$matches)){
 			$this->setBasicAuthUsername($matches[1]);
@@ -154,30 +192,30 @@ class Atk14Client{
 	 * Sends a GET request.
 	 *
 	 * Example
+	 * ```
+	 * $controller = $client->get("books/index");
+	 * $controller = $client->get("books/index",array("q" => "Mark Twain"));
+	 * ```
 	 *
-	 * {{{
-	 * 	$controller = $client->get("books/index");
-	 * 	$controller = $client->get("books/index",array("q" => "Mark Twain"));
+	 * If you are calling this from tc_books.php file, you can use:
+	 * ```
+	 * $controller = $client->get("index",array("q" => "We Are All Legends"));
+	 * ```
 	 *
-	 *  // If you are calling this from tc_books.php file, you can use:
-	 * 	$controller = $client->get("index",array("q" => "We Are All Legends"));
-	 * }}}
-	 *
-	 * With language
-	 *
-	 * {{{
-	 * 	$controller = $client->get("en/books/index");
-	 * }}}
+	 * With language specification
+	 * ```
+	 * $controller = $client->get("en/books/index");
+	 * ```
 	 *
 	 * With namespace
-	 *
-	 * {{{
-	 * 	$controller = $client->get("admin/en/books/index");
-	 * }}}
+	 * ```
+	 * $controller = $client->get("admin/en/books/index");
+	 * ```
 	 *
 	 * @param string $path
 	 * @param array $params
-	 * @return ApplicationController
+	 * @return Atk14Controller
+	 * @see makeRequest() $options description
 	 */
 	function get($path,$params = array()){
 		return $this->_doRequest("GET",$path,array("params" => $params));
@@ -185,27 +223,27 @@ class Atk14Client{
 
 	/**
 	 * Sends a POST request.
-	 * 
-	 * <code>
-	 * $client->post("books/edit",array(
-	 *	"id" => 123,
-	 *	"title" => "A New Title"
-	 * ));
-	 * 
-	 * // sending raw data
-	 * $code->post("images/create_new",$binary_image_content,array("content_type" => "image/jpg"));
 	 *
-	 * </code>
+	 * ```
+	 * $client->post("books/edit",array(
+	 * 	"id" => 123,
+	 * 	"title" => "A New Title"
+	 * ));
+	 * ```
+	 *
+	 * Sending raw data
+	 * ```
+	 * $code->post("images/create_new",$binary_image_content,array(
+	 * 	"content_type" => "image/jpg"
+	 * ));
+	 * ```
 	 *
 	 * @param string $path
 	 * @param array $params
 	 * @param array $options
-	 * <ul>
-	 * 	<li>raw_post_data</li>
-	 * 	<li>content_type</li>
-	 * </ul>
 	 *
-	 * @return ApplicationController
+	 * @return Atk14Controller
+	 * @see makeRequest() $options description
 	 */
 	function post($path,$params = array(),$options = array()){
 		if(!is_array($params)){
@@ -218,8 +256,28 @@ class Atk14Client{
 	}
 
 	/**
-	 * $client->makeRequest("GET","articles/detail",array("id" => 123)); // same as $client->get("articles/detail",array("id" => 123))
+	 * Common method for making requests.
+	 *
+	 * Example
+	 * ```
+	 * $client->makeRequest("GET","articles/detail",array("id" => 123));
+	 * ```
+	 * is same as
+	 * ```
+	 * $client->get("articles/detail",array("id" => 123))
+	 * ```
+	 * Another - DELETE request
+	 * ```
 	 * $client->makeRequest("DELETE","articles/destroy",array("id" => 123));
+	 * ```
+	 *
+	 * @param string $method HTTP method (GET, POST ...)
+	 * @param string $path
+	 * @param array $params query parameters
+	 * @param array $options
+	 * - raw_post_data
+	 * - content_type
+	 * @return Atk14Controller
 	 */
 	function makeRequest($method,$path,$params = array(),$options = array()){
 		$method = strtoupper($method);
