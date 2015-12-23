@@ -542,4 +542,17 @@ class Atk14Mailer{
 		}
 		return $email_ar;
 	}
+
+	/**
+	 * Generates a URL
+	 *
+	 * It's nearly the same as in a controller
+	 */
+	function _link_to($params = array(), $options = array()){
+		$options += array(
+			"connector" => "&",
+			"with_hostname" => true, // in emails the hostname is expected in URLs by default
+		);
+		return Atk14Url::BuildLink($params,$options);
+	}
 }
