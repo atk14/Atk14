@@ -23,7 +23,6 @@ class TcLogger extends TcBase{
 
 		$this->_test_log_file_creation(new Logger("special_robot"),"special.log");
 		$this->_test_log_file_creation(new Logger("special_robot",array("default_log_file" => __DIR__."/log/another.log")),"special.log");
-
 	}
 
 	function _test_log_file_creation($logger,$log_name){
@@ -45,5 +44,21 @@ class TcLogger extends TcBase{
 		$this->assertContains("STOP",$content);
 
 		unlink($f);
+	}
+
+	function test_levels(){
+		$logger = new Logger();
+
+		$this->assertEquals("error",$logger->level_to_str("4"));
+		$this->assertEquals(4,$logger->level_to_int("error"));
+
+		$this->assertEquals("#d00b00",$logger->level_to_color(4));
+		$this->assertEquals("#d00b00",$logger->level_to_color("4"));
+		$this->assertEquals("#d00b00",$logger->level_to_color("error"));
+
+		$this->assertEquals("#c66905",$logger->level_to_color("warn"));
+		$this->assertEquals("#c66905",$logger->level_to_color("warn++"));
+		$this->assertEquals("#c66905",$logger->level_to_color("2"));
+		$this->assertEquals("#c66905",$logger->level_to_color("3"));
 	}
 }

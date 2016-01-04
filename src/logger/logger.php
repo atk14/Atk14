@@ -189,6 +189,14 @@ class Logger{
 		"6" => "security++",
 	);
 
+	var $_colors = array(
+		"debug" => "#555555",
+		"info" => "#000000",
+		"warn" => "#c66905",
+		"error" => "#d00b00",
+		"security" => "#d00b00",
+	);
+
 	/**
 	 * Constructor
 	 *
@@ -327,6 +335,18 @@ class Logger{
 		return "$level";
 	}
 
+	/**
+	 * $color = $this->level_to_color("error");
+	 * $color = $this->level_to_color(4);
+	 *
+	 * echo $color; // "#d00b00"
+	 */
+	function level_to_color($level){
+		if(is_numeric($level)){ $level = $this->level_to_str($level); }
+		$level = preg_replace('/\+*$/','',$level); // "warn++" -> "warn"
+		return $this->_colors[$level];
+	}
+
 
 	/**
 	 * Sets silent mode.
@@ -402,7 +422,9 @@ class Logger{
 	/**
 	 * @ignore
 	 */
-	private function _build_message($rec){
+	private function _build_message($rec,&$html_output = ""){
+		$html_output = "";
+
 		if(!is_bool(strpos($rec['log'],"\n"))){
 			$_ar = explode("\n",$rec['log']);
 			$rec['log'] = "";
@@ -418,7 +440,11 @@ class Logger{
 			$log_level = strtoupper($this->level_to_str($rec['log_level'])).": ";
 		}
 
-		return "$rec[date] $rec[prefix][$this->_my_pid]: $log_level$rec[log]\n";
+		$out = "$rec[date] $rec[prefix][$this->_my_pid]: $log_level$rec[log]";
+
+		$html_output = sprintf('<code style="color: %s;">%s</code>',$this->level_to_color($rec["log_level"]),htmlentities($out))."\n";
+
+		return $out."\n";
 	}
 
 	/**
@@ -570,14 +596,24 @@ class Logger{
 		$output .= "prefix: $this->_prefix\n";
 		$output .= "pid: $this->_my_pid\n";
 		$output .= "\n";
+
+		$html = '<html><body><pre>'.$output;
 		
 		foreach($this->_log_store_whole as $rec){	
 			// TODO: vymyslet tady nejaky uspornejsi format (bez prefixu a pidu)
-			$output .= $this->_build_message($rec);
+			$output .= $this->_build_message($rec,$html_snippet);
+			$html .= $html_snippet;
 		}
 
-		// TODO: prepsat na volani sendmail()
-		mail($this->_notify_email,"log report: $this->_prefix, ".date("Y-m-d H:i:s"),$output);
+		$html .= '</pre></body></html>';
+
+		$ar = sendhtmlmail(array(
+			"plain" => $output,
+			"html" => $html,
+			"subject" => "log report: $this->_prefix, ".date("Y-m-d H:i:s"),
+			"to" => $this->_notify_email,
+			"charset" => "UTF-8",
+		));
 	}
 
 	/**
