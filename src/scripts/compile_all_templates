@@ -10,6 +10,20 @@
  */
 
 require_once(dirname(__FILE__)."/load.php");
+chdir(ATK14_DOCUMENT_ROOT);
+
+function my_exit(){
+	global $templates_are_ok;
+
+	if($templates_are_ok){
+		echo "\nTEMPLATES ARE OK\n";
+		exit(0);
+	}else{
+		echo "\n!!!THERE ARE COMPILE ERRORS!!!\n";
+		exit(1);
+	}
+}
+register_shutdown_function("my_exit"); // there is exit() in $smarty->compileAllTemplates()
 
 $path = $ATK14_GLOBAL->getApplicationPath();
 $smarty = Atk14Utils::GetSmarty(
@@ -21,12 +35,11 @@ $smarty = Atk14Utils::GetSmarty(
 );
 
 try{
-	$smarty->compileAllTemplates(".tpl",true,null,1);
+	$templates_are_ok = false;
+	$stat = $smarty->compileAllTemplates(".tpl",true,null,1);
+	$templates_are_ok = true;
 }catch(Exception $e){
-	echo "\n";
-	echo "Exception cought: ".$e->getMessage();
-	echo "\n!!!THERE ARE COMPILE ERRORS!!!\n";
-	die;
+	exit(1);
 }
 
-echo "\nTEMPLATES ARE OK\n";
+exit(0);
