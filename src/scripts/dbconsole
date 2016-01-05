@@ -22,10 +22,11 @@
 #  $ ./scripts/dbconsole -v import
 #  $ ./scripts/dbconsole --verbose import
 
-dir=`dirname $0`
+dirname=`dirname $0`
+cd $dirname;
 
 # add pgpass record to ~/.pgpass file when the record is not present
-exec `$dir/pgpass_record -a`
+exec `./pgpass_record -a`
 
 param=$1 # e.g. default, import, see Atk14Global::getDatabaseConfig()
 configuration_name=$2
@@ -50,10 +51,10 @@ if [ "$param" = "-l" -o "$param" = "--list" ]; then
 fi
 
 if [ "$verbose" ]; then
-	echo "verbose: ATK14_ENV=`$dir/_atk14_env -l`"
+	echo "verbose: ATK14_ENV=`./_atk14_env -l`"
 fi
 
-cmd=`$dir/_dbconsole_command "$configuration_name"`
+cmd=`./_dbconsole_command "$configuration_name"`
 
 if [ "$verbose" ]; then
 	echo "verbose: using configuration name \"$configuration_name\""
