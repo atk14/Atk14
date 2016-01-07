@@ -13,7 +13,7 @@
  *
  * @todo Write better explanation
  */
-@define('NON_FIELD_ERRORS', '__all__');
+defined('NON_FIELD_ERRORS') || define('NON_FIELD_ERRORS', '__all__');
 
 /**
  * Class managing javascript validators for each input field

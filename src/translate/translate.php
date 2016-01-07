@@ -25,7 +25,7 @@
  * Unfortunately iconv doesn't work correctly on all systems though is is installed.
  * Enable iconv if you are sure that it works (passes tests)
  */
-@define("TRANSLATE_USE_ICONV",false);
+defined("TRANSLATE_USE_ICONV") || define("TRANSLATE_USE_ICONV",false);
 
 /**
  * This class converts strings between charsets.

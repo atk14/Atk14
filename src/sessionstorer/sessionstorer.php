@@ -48,7 +48,7 @@ if(!defined("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS")){
 	define("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS",false);
 }
 
-@define("SESSION_STORER_AUTO_GARBAGE_COLLECTION",true);
+defined("SESSION_STORER_AUTO_GARBAGE_COLLECTION") || define("SESSION_STORER_AUTO_GARBAGE_COLLECTION",true);
 
 /**
  * A class for storing and reading values into a session.
