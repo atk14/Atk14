@@ -518,7 +518,7 @@ class Atk14Controller{
 		$this->action_executed = true;
 
 		if($this->render_template && strlen($this->response->getLocation())==0){
-			if(is_null($this->smarty)){ $this->smarty = $this->_get_smarty(array("assing_data" => false)); }
+			if(is_null($this->smarty)){ $this->smarty = $this->_get_smarty(array("assign_data" => false)); }
 			$this->_before_render();
 			$this->smarty->assign($this->tpl_data);
 		}
@@ -679,7 +679,7 @@ class Atk14Controller{
 		global $ATK14_GLOBAL;
 
 		$options = array_merge(array(
-			"assing_data" => true,
+			"assign_data" => true,
 		),$options);
 
 		$smarty = Atk14Utils::GetSmarty(array(
@@ -717,7 +717,7 @@ class Atk14Controller{
 		if(!isset($this->tpl_data["sorting"])){
 			$smarty->assignByRef("sorting",$this->sorting);
 		}
-		$options["assing_data"] && $smarty->assign($this->tpl_data);
+		$options["assign_data"] && $smarty->assign($this->tpl_data);
 		return $smarty;
 	}
 
