@@ -343,17 +343,10 @@ class Atk14Mailer{
 		if(strlen($this->body)==0){
 			$namespace = $this->namespace;
 
-			$smarty = Atk14Utils::GetSmarty(array(
-				$ATK14_GLOBAL->getApplicationPath()."views/$namespace/mailer/",
-				$ATK14_GLOBAL->getApplicationPath()."views/$namespace/",
-				$ATK14_GLOBAL->getApplicationPath()."views/",
-			),array(
-				"namespace" => $namespace,
-				"compile_id_salt" => "mailer",
-			));
+			$smarty = $this->_get_smarty(array("assign_data" => false));
 
 			$this->_before_render();
-
+			
 			$smarty->assign($this->tpl_data);
 
 			$template_name = $this->template_name.".tpl";
@@ -370,6 +363,29 @@ class Atk14Mailer{
 
 			$this->_after_render();
 		}
+	}
+
+	protected function _get_smarty($options = array()){
+		global $ATK14_GLOBAL;
+
+		$options += array(
+			"assign_data" => true,
+		);
+
+		$namespace = $this->namespace;
+
+		$smarty = Atk14Utils::GetSmarty(array(
+			$ATK14_GLOBAL->getApplicationPath()."views/$namespace/mailer/",
+			$ATK14_GLOBAL->getApplicationPath()."views/$namespace/",
+			$ATK14_GLOBAL->getApplicationPath()."views/",
+		),array(
+			"namespace" => $namespace,
+			"compile_id_salt" => "mailer",
+		));
+	
+		$options["assign_data"] && $smarty->assign($this->tpl_data);
+
+		return $smarty;
 	}
 
 	protected function _find_and_render_layout($smarty,$body,$options = array()){
