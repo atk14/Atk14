@@ -592,9 +592,15 @@ class Logger{
 	private function _notify_email(){
 		if($this->_notify_email==""){ return;}
 
+		$max_level = null;
+		foreach($this->_log_store_whole as $rec){
+			if(!isset($max_level) || $rec["log_level"]>$max_level){ $max_level = $rec["log_level"]; }
+		}
+
 		$output = "";
 		$output .= "prefix: $this->_prefix\n";
 		$output .= "pid: $this->_my_pid\n";
+		$output .= sprintf("max_level: %s (%s)\n",$this->level_to_str($max_level),$max_level);
 		$output .= "\n";
 
 		$html = '<html><body><pre>'.$output;
