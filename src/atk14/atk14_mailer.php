@@ -382,6 +382,16 @@ class Atk14Mailer{
 			"namespace" => $namespace,
 			"compile_id_salt" => "mailer",
 		));
+
+		// environment constants
+		$smarty->assign("DEVELOPMENT",DEVELOPMENT);
+		$smarty->assign("PRODUCTION",PRODUCTION);
+		$smarty->assign("TEST",TEST);
+
+		$smarty->assign("namespace",$this->namespace);
+		$smarty->assign("lang",$ATK14_GLOBAL->getLang());
+		$smarty->assign("public",$ATK14_GLOBAL->getPublicBaseHref());
+		$smarty->assign("root",$ATK14_GLOBAL->getBaseHref());
 	
 		$options["assign_data"] && $smarty->assign($this->tpl_data);
 
