@@ -34,6 +34,8 @@ class Textarea extends Widget
 		$final_attrs = forms_array_merge($this->attrs,$options['attrs'],array(
 			'name' => $name,
 		));
-		return '<textarea'.flatatt($final_attrs).'>'.forms_htmlspecialchars($value).'</textarea>';
+		
+		// note that there is an extra lf character
+		return '<textarea'.flatatt($final_attrs).">\n".forms_htmlspecialchars($value).'</textarea>';
 	}
 }
