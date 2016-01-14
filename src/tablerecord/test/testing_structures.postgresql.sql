@@ -1,21 +1,40 @@
 -- postgresql
 
+-- $ cat testing_structures.postgresql.sql | psql -U test test
+
+DROP TABLE IF EXISTS article_redactors;
+DROP TABLE IF EXISTS redactors;
+DROP TABLE IF EXISTS article_authors;
+DROP TABLE IF EXISTS authors;
+DROP TABLE IF EXISTS articles;
+DROP TABLE IF EXISTS images;
+DROP TABLE IF EXISTS test_table;
+
+DROP SEQUENCE IF EXISTS seq_article_redactors;
+DROP SEQUENCE IF EXISTS seq_redactors;
+DROP SEQUENCE IF EXISTS seq_article_authors;
+DROP SEQUENCE IF EXISTS seq_authors;
+DROP SEQUENCE IF EXISTS seq_articles;
+DROP SEQUENCE IF EXISTS seq_images;
+DROP SEQUENCE IF EXISTS test_table_id_seq;
+
 CREATE SEQUENCE test_table_id_seq;
 CREATE TABLE test_table (
-    id integer DEFAULT nextval('test_table_id_seq') NOT NULL PRIMARY KEY,
-    title character varying(255),
-    znak character(1),
-    an_integer integer,
-    price numeric(20,2),
-    cena numeric(12,2),
-    cena2 double precision,
-    text text,
-    perex text,
-		flag boolean,
-    binary_data bytea,
-    binary_data2 bytea,
-    create_date date,
-    create_time timestamp without time zone DEFAULT now()
+    id integer DEFAULT NEXTVAL('test_table_id_seq') NOT NULL PRIMARY KEY,
+    title VARCHAR(255),
+    znak CHARACTER(1),
+    an_integer INTEGER,
+    a_big_integer BIGINT,
+    price NUMERIC(20,2),
+    cena NUMERIC(12,2),
+    cena2 DOUBLE PRECISION,
+    text TEXT,
+    perex TEXT,
+    flag BOOLEAN,
+    binary_data BYTEA,
+    binary_data2 BYTEA,
+    create_date DATE,
+    create_time TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
 
 CREATE SEQUENCE seq_images;
