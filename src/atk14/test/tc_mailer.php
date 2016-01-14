@@ -54,6 +54,14 @@ class TcMailer extends TcBase{
 		// TODO: decode email bodies
 	}
 
+	function test_rendering(){
+		$controller = $this->client->get("en/testing/test_email_rendering");
+		$body = $controller->mail_ar["body"];
+		$this->assertContains("Hello, this is email for rendering test",$body);
+		$this->assertContains("lang: en",$body);
+		$this->assertContains("environment: TEST",$body);
+	}
+
 	function testing_hooks(){
 		$controller = $this->client->get("testing/testing_hooks");
 

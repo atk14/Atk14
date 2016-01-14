@@ -41,6 +41,10 @@ class ApplicationMailer extends Atk14Mailer {
 		
 	}
 
+	function test_rendering(){
+
+	}
+
 	function _before_filter(){
 		$this->tpl_data["value_added_in_before_filter"] = "OK (bf)";
 	}
