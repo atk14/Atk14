@@ -1,17 +1,17 @@
 development:
-  database: atk14_demo
+  database: test
   host: 127.0.0.1
-  username: atk14_demo
-  password: demo
+  username: test
+  password: test
 
 test:
-  database: atk14_demo
+  database: test
   host: 127.0.0.1
-  username: atk14_demo
-  password: demo
+  username: test
+  password: test
 
 production:
-  database: atk14_demo
+  database: test
   host: 127.0.0.1
-  username: atk14_demo
-  password: demo
+  username: test
+  password: test
