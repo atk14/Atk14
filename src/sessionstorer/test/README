@@ -3,5 +3,5 @@ There are tests for SessionStorer - a low level session layer
 
 In order to run tests, the session tables has to be created in test database.
 
-See ../sessionstorer.inc for SQL structures.
+See ../sessionstorer.php for SQL structures.
 See ../../dbmole/test/connections_and_handler.php for database connection details.
