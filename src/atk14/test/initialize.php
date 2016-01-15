@@ -15,3 +15,6 @@ $GLOBALS["_SERVER"]["SERVER_PORT"] = "80";
 $_GET = array();
 
 require("../../../load.php");
+
+$dbmole = PgMole::GetInstance();
+$dbmole->doQuery(file_get_contents(__DIR__ . "/../../sessionstorer/structures.postgresql.sql"));
