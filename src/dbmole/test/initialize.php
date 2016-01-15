@@ -1,9 +1,23 @@
 <?php
-require(dirname(__FILE__)."/../dbmole.php");
-require(dirname(__FILE__)."/../pgmole.php");
-require(dirname(__FILE__)."/../oraclemole.php");
-require(dirname(__FILE__)."/../mysqlmole.php");
-require(dirname(__FILE__)."/../../stopwatch/stopwatch.php");
-require(dirname(__FILE__)."/../../files/load.php");
+require(__DIR__."/../dbmole.php");
+require(__DIR__."/../pgmole.php");
+require(__DIR__."/../oraclemole.php");
+require(__DIR__."/../mysqlmole.php");
+require(__DIR__."/../../stopwatch/stopwatch.php");
+require(__DIR__."/../../files/load.php");
 
-require(dirname(__FILE__)."/connections_and_handler.php");
+require(__DIR__."/connections_and_handler.php");
+
+// === Creating testing table in postgresql
+$pg = PgMole::GetInstance();
+$pg->doQuery(file_get_contents(__DIR__."/testing_structure_postgresql.sql"));
+
+// === Creating testing table in mysql
+$my = MysqlMole::GetInstance();
+$script = file_get_contents(__DIR__."/testing_structure_mysql.sql");
+// dropping table
+preg_match('/\n(DROP TABLE.*?);/s',$script,$matches);
+$my->doQuery($matches[1]);
+// creating table
+preg_match('/\n(CREATE TABLE.*?);/s',$script,$matches);
+$my->doQuery($matches[1]);

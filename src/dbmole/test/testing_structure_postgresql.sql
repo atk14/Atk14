@@ -1,5 +1,4 @@
 -- $ cat testing_structure_postgresql.sql | psql -U test test 
-
 DROP TABLE IF EXISTS test_table;
 DROP SEQUENCE IF EXISTS test_table_id_seq;
 
