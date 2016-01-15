@@ -11,14 +11,15 @@ php:
 before_install:
   - sudo apt-get update && travis_retry sudo apt-get --reinstall install -qq language-pack-cs
   - locale -a
+  - sudo apt-get install php-pear
 
 before_script:
   - phpenv rehash
   - pear config-set auto_discover 1
-  - pear install --alldeps PHPUnit2
-  - sudo pear install --alldeps PHPUnit2
   - pear config-show
   - sudo pear config-show
+  - pear install --alldeps PHPUnit2
+  - sudo pear install --alldeps PHPUnit2
   - pear list
   - ls -la /home/travis/.phpenv/versions/5.5.31/share/pear/
   - psql -c "CREATE DATABASE test;" -U postgres
