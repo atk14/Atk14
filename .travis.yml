@@ -12,7 +12,6 @@ php:
 before_install:
   - sudo apt-get update && travis_retry sudo apt-get --reinstall install -qq language-pack-cs
   - locale -a
-  - ./src/scripts/check_installation
 
 before_script:
   - pear install --alldeps PHPUnit2
