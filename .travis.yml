@@ -13,7 +13,9 @@ before_install:
   - locale -a
 
 before_script:
+  - pear config-set auto_discover 1
   - pear install --alldeps PHPUnit2
+  - phpenv rehash
   - psql -c "CREATE DATABASE test;" -U postgres
   - psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres
@@ -23,4 +25,4 @@ before_script:
   - mysql -e "GRANT ALL PRIVILEGES ON test.* TO 'test'@'::1' IDENTIFIED BY 'test';" -uroot
 
 script:
-  - ./src/scripts/run_all_tests_on_atk14
+  - ./src/scripts/run_all_tests_on_atk14 && echo "EVERYTHING IS FINE"
