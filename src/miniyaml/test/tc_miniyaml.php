@@ -245,9 +245,9 @@ contact-tech:
 	function test_interpret_php(){
 $data = '
 ---
-key1: <?= "value 1"?>
+key1: <?php echo "value 1"?>
 
-key2: <?= "value 2"?>';
+key2: <?php echo "value 2"?>';
 		$yaml = miniYAML::InterpretPHP($data);
 		$this->assertEquals("---\nkey1: value 1\nkey2: value 2",$yaml);
 
@@ -255,10 +255,10 @@ key2: <?= "value 2"?>';
 		$this->assertEquals(array("key1" => "value 1", "key2" => "value 2"),$ar);
 $data = '
 ---
-<? for($i=1;$i<5;$i++){ ?>
-<? echo "key$i: value $i";?>
+<?php for($i=1;$i<5;$i++){ ?>
+<?php echo "key$i: value $i";?>
 
-<? } ?>
+<?php } ?>
 ';
 		$ar = miniYAML::Load($data,array("interpret_php" => true));
 		$this->assertEquals(array(
@@ -270,10 +270,10 @@ $data = '
 
 $data = '
 ---
-key1: <?= $hodnota_1?>
+key1: <?php echo $hodnota_1?>
 
 
-key2: <?= $hodnota_2?>
+key2: <?php echo $hodnota_2?>
 ';
 		$ar = miniYAML::Load($data,array("interpret_php" => true));
 		$this->assertEquals(array(
