@@ -13,9 +13,12 @@ before_install:
   - locale -a
 
 before_script:
+  - phpenv rehash
   - pear config-set auto_discover 1
   - pear install --alldeps PHPUnit2
-  - phpenv rehash
+  - sudo pear install --alldeps PHPUnit2
+  - pear config-show
+  - sudo pear config-show
   - pear list
   - ls -la /home/travis/.phpenv/versions/5.5.31/share/pear/
   - psql -c "CREATE DATABASE test;" -U postgres
