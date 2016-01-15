@@ -74,7 +74,9 @@ function smarty_gettext_strarg($str/*, $varargs... */) {
  * @link http://www.smarty.net/docs/en/plugins.block.functions.tpl
  * @return string
  */
-function smarty_block_t($params, $text) {
+function smarty_block_t($params, $text, $template, &$repeat) {
+	if($repeat){ return; } // only output on the closing tag
+
 	if (!isset($text)) {
 		return $text;
 	}
@@ -139,7 +141,7 @@ function smarty_block_t($params, $text) {
 
 	switch ($escape) {
 	case 'html':
-		$text = nl2br(htmlspecialchars($text));
+		$text = nl2br(h($text));
 		break;
 	case 'javascript':
 	case 'js':
