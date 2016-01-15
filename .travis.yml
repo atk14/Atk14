@@ -14,14 +14,7 @@ before_install:
   - sudo apt-get install php-pear
 
 before_script:
-  - phpenv rehash
-  - pear config-set auto_discover 1
-  - pear config-show
-  - sudo pear config-show
-  - pear install --alldeps PHPUnit2
   - sudo pear install --alldeps PHPUnit2
-  - pear list
-  - ls -la /home/travis/.phpenv/versions/5.5.31/share/pear/
   - psql -c "CREATE DATABASE test;" -U postgres
   - psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres
