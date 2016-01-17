@@ -23,4 +23,4 @@ function &dbmole_connection($dbmole){
 
 // Creating testing structures
 $pg = PgMole::GetInstance();
-$pg->doQuery(file_get_contents(__DIR__."/testing_structures.postgresql.sql"));
+$pg->doQuery(file_get_contents(__DIR__."/structures.postgresql.sql"));

@@ -1,9 +1,3 @@
--- drop commands are required by tests (see tests/initialize.php)
-DROP TABLE IF EXISTS session_values;
-DROP SEQUENCE IF EXISTS seq_session_values;
-DROP TABLE IF EXISTS sessions;
-DROP SEQUENCE IF EXISTS seq_sessions;
-
 CREATE SEQUENCE seq_sessions;
 CREATE TABLE sessions(
         id INT NOT NULL PRIMARY KEY DEFAULT NEXTVAL('seq_sessions'),
