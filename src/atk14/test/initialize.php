@@ -17,4 +17,5 @@ $_GET = array();
 require("../../../load.php");
 
 $dbmole = PgMole::GetInstance();
+$dbmole->doQuery(file_get_contents(__DIR__ . "/../../sessionstorer/test/drop_structures.postgresql.sql"));
 $dbmole->doQuery(file_get_contents(__DIR__ . "/../../sessionstorer/structures.postgresql.sql"));

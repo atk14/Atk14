@@ -39,8 +39,11 @@ if(preg_match("/^4/",phpversion())){
 	exit(1);
 }
 if(preg_match("/^5/",phpversion())){
-	define("PHP4",false);
 	define("PHP5",true);
+	define("PHP7",false);
+}elseif(preg_match("/^7/",phpversion())){
+	define("PHP5",false);
+	define("PHP7",true);
 }else{
 	echo "Sorry! Your version of PHP is not supported\n";
 	exit(1);
