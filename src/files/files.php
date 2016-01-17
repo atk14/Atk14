@@ -586,7 +586,7 @@ class Files{
 			"xls" =>				array("application/vnd.ms-excel","application/msexcel","application/vnd.ms-office","application/msword"),
 			"jpg|jpeg" =>		array("image/jpeg","image/jpg"),
 			"svg" =>				array("image/svg+xml","text/plain"),
-			"bmp" =>				array("image/bmp","application/octet-stream"),
+			"bmp" =>				array("image/bmp","image/x-bmp","image/x-ms-bmp","application/octet-stream"),
 			"eps" =>				array("application/postscript","application/eps"),
 			"csv" =>				array("text/csv","text/plain"),
 			"docx" => 			array("application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/zip"),
