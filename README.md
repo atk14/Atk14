@@ -1,6 +1,8 @@
 ATK14 is a PHP Framework for fearless guys
 ------------------------------------------
 
+[![Build Status](https://travis-ci.org/atk14/Atk14.svg?branch=master)](https://travis-ci.org/atk14/Atk14)
+
 ATK14 is a framework helping to build websites of any kind. If one dares to dip into ATK14, she or he gains:
 
 * funny modelling, templating and controlling
