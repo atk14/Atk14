@@ -62,8 +62,9 @@ class OracleMole extends DbMole{
 	* @param string $configuration_name		"default" nebo "ov"
 	* @return DbMole									nebo null
 	*/
-	static function &GetInstance($configuration_name = "default"){
-		return parent::GetInstance($configuration_name,"OracleMole");
+	static function &GetInstance($configuration_name = "default",$options = array()){
+		$options["class_name"] = "OracleMole";
+		return parent::GetInstance($configuration_name,$options);
 	}
 
 	function _disconnectFromDatabase(){

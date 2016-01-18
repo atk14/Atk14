@@ -41,14 +41,25 @@ class HTTPXFile extends HTTPUploadedFile{
 	/**
 	 * Initialize instance with uploaded file
 	 *
+	 * <code>
+	 * $f = HTTPXFile::GetInstance();
+	 * $f = HTTPXFile::GetInstance("image");
+	 * </code>
+	 *
 	 * @param array $options
+	 * @param string $name
 	 * @return HTTPXFile
 	 */
-	static function GetInstance($options = array()){
+	static function GetInstance($options = array(),$name = "file",$_ignore = array()){
 		global $HTTP_REQUEST;
 
+		if(is_string($options)){
+			$name = $options;
+			$options = array();
+		}
+
 		$options += array(
-			"name" => "file",
+			"name" => $name,
 			"request" => $HTTP_REQUEST,
 		);
 

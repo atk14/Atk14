@@ -1,6 +1,6 @@
 <?php
 /**
- * I needed an Inflector to do String::pluralize() and String::singularize().
+ * I needed an Inflector to do String4::pluralize() and String4::singularize().
  * I've found some at:
  * http://kuwamoto.org/2007/12/17/improved-pluralizing-in-php-actionscript-and-ror/
  *

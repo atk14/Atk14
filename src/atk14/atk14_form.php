@@ -184,7 +184,7 @@ class Atk14Form extends Form
 	{
 		global $HTTP_REQUEST;
 
-		$class_name = new String(get_class($this));
+		$class_name = new String4(get_class($this));
 
 		$options = array_merge(array(
 			"call_set_up" => true, // is this really used somewhere? TODO: to be removed
@@ -319,7 +319,7 @@ class Atk14Form extends Form
 
 		// toto je novinka - TODO: otestovat
 		preg_match('/([^\/]+)\/+[^\/]+$/',$filename,$matches);
-		$_namespace = String::ToObject($matches[1])->camelize()->toString(); // "app/forms/spam_filters/index_form.php" -> "SpamFilters"
+		$_namespace = String4::ToObject($matches[1])->camelize()->toString(); // "app/forms/spam_filters/index_form.php" -> "SpamFilters"
 		// pokud existuje SpamFilters\IndexForm, je tento nazev tridy pouzit
 		if(class_exists($_cn = "$_namespace\\$classname",false)){
 			$classname = $_cn;
@@ -391,7 +391,7 @@ class Atk14Form extends Form
 	static function GetForm($class_name,$controller = null,$options = array()){
 		global $ATK14_GLOBAL;
 
-		$s = new String($class_name);
+		$s = new String4($class_name);
 		$filename = $s->underscore()->lower()->toString();
 
 		$controller_name = $ATK14_GLOBAL->getValue("controller");
@@ -418,7 +418,7 @@ class Atk14Form extends Form
 	 */
 	static function GetDefaultForm($controller = null){
 		if($controller && $controller->namespace){
-			$class_name = new String($controller->namespace);
+			$class_name = new String4($controller->namespace);
 			$class_name = $class_name->camelize()."Form";
 			if($form = Atk14Form::GetForm($class_name)){
 				return $form;
@@ -1117,7 +1117,7 @@ class Atk14Form extends Form
 	}
 
 	function __call($name,$arguments){
-		$underscore_name = String::ToObject($name)->underscore()->toString();
+		$underscore_name = String4::ToObject($name)->underscore()->toString();
 		if(method_exists($this,$underscore_name)){
 			return call_user_func_array(array($this,$underscore_name),$arguments);
 		}

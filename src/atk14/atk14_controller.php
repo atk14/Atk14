@@ -605,9 +605,9 @@ class Atk14Controller{
 			"attrs" => array(),
 		),$options);
 		if(!isset($class_name)){
-			$class_name = new String("{$this->action}_form");
+			$class_name = new String4("{$this->action}_form");
 		}else{
-			$class_name = new String($class_name);
+			$class_name = new String4($class_name);
 		}
 		$class_name = $class_name->camelize();
 		if(!preg_match('/Form$/i',$class_name)){
@@ -616,7 +616,7 @@ class Atk14Controller{
 
 		# when a form is specified by its path, we only need its last part
 		$aPath = preg_split("/\//", $class_name->toString());
-		$id = new String(array_pop($aPath));
+		$id = new String4(array_pop($aPath));
 
 		$id = "form_".$this->controller."_".$id->underscore();
 		$id = preg_replace("/_form$/","",$id);

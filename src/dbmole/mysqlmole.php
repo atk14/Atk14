@@ -1,7 +1,8 @@
 <?php
 class MysqlMole extends DbMole{
-	static function &GetInstance($configuration_name = "default"){
-		return parent::GetInstance($configuration_name,"MysqlMole");
+	static function &GetInstance($configuration_name = "default",$options = array()){
+		$options["class_name"] = "MysqlMole";
+		return parent::GetInstance($configuration_name,$options);
 	}
 
 	// MySQL doesn't use sequencies, therefore methods selectSequenceNextval and selectSequenceCurrval are not covered and return nulls.
@@ -39,40 +40,41 @@ class MysqlMole extends DbMole{
 
 		$out = array();
 
-		while($row = mysql_fetch_assoc($result)){
+		while($row = mysqli_fetch_assoc($result)){
 			$out[] = $row;
 		}
-		mysql_free_result($result);
+		mysqli_free_result($result);
 		reset($out);
 		return $out;
 	}
 
 	function escapeString4Sql($s){
-		return "'".mysql_escape_string($s)."'";
+		$connection = $this->_getDbConnect();
+		return "'".mysqli_real_escape_string($connection,$s)."'";
 	}
 
 	function _getDbLastErrorMessage(){
 		$connection = $this->_getDbConnect();
-		return "mysql_error: ".mysql_error($connection);
+		return "mysqli_error: ".mysqli_error($connection);
 	}
 
 	function _freeResult(&$result){
 		if(is_bool($result)){ return true; }
-		return mysql_free_result($result);
+		return mysqli_free_result($result);
 	}
 
 	function _runQuery($query){
 		$connection = $this->_getDbConnect();
-		return mysql_query($query,$connection);	
+		return mysqli_query($connection,$query);
 	}
 
 	function _disconnectFromDatabase(){
 		$connection = $this->_getDbConnect();
-		mysql_close($connection);
+		mysqli_close($connection);
 	}
 
 	function getAffectedRows(){
 		$connection = $this->_getDbConnect();
-		return mysql_affected_rows($connection);
+		return mysqli_affected_rows($connection);
 	}
 }

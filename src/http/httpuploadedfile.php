@@ -80,7 +80,7 @@ class HTTPUploadedFile{
 	 * @return HTTPUploadedFile
 	 * @static
 	 */
-	static function GetInstance($FILE,$name,$options = array()){
+	static function GetInstance($FILE,$name = "file",$options = array()){
 		$options = array_merge(array(
 			"testing_mode" => false
 		),$options);

@@ -31,9 +31,9 @@ function smarty_block_a_destroy($params, $content, $template, &$repeat){
 	// building attribute data-destroying_object
 	$object_id = is_object($params["id"]) ? $params["id"]->getId() : $params["id"];
 	if(is_object($params["id"])){
-		$object_class = String::ToObject(get_class($params["id"]))->underscore()->toString();
+		$object_class = String4::ToObject(get_class($params["id"]))->underscore()->toString();
 	}else{
-		$object_class = String::ToObject($smarty->getTemplateVars("controller"))->singularize()->toString();
+		$object_class = String4::ToObject($smarty->getTemplateVars("controller"))->singularize()->toString();
 	}
 	$destroying_object = array(
 		"class" => $object_class,

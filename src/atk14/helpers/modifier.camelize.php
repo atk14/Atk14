@@ -9,7 +9,7 @@
  * </code>
  */
 function smarty_modifier_camelize($str,$lower_or_upper = "upper"){
-	$str = new String($str,array());
+	$str = new String4($str,array());
 	return (string)$str->camelize(array(
 		"lower" => $lower_or_upper=="lower"
 	));

@@ -173,12 +173,18 @@ class DbMole{
 	 * @param string $class_name
 	 * @return DbMole
 	 */
-	static function &GetInstance($configuration_name = "default",$class_name = null){
+	static function &GetInstance($configuration_name = "default",$options = array()){
 		static $instance_store_ar;
 
-		if(!$class_name){
-			$class_name = get_called_class();
+		if(is_string($options)){
+			$options = array("class_name" => $options);
 		}
+
+		$options += array(
+			"class_name" => get_called_class()
+		);
+
+		$class_name = $options["class_name"];
 
 		settype($configuration_name,"string");
 		settype($class_name,"string");

@@ -37,7 +37,7 @@
  *
  * @package Atk14\TableRecord
  * @param TableRecord $owner
- * @param String $subjects
+ * @param String4 $subjects
  * @param array $options
  */
 class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countable {
@@ -74,9 +74,9 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	 * @todo comment options
 	 */
 	function TableRecord_Lister($owner,$subjects,$options = array()){
-		$owner_class = new String(get_class($owner));
+		$owner_class = new String4(get_class($owner));
 		$owner_class_us = $owner_class->underscore();
-		$subjects = new String($subjects);
+		$subjects = new String4($subjects);
 		$subjects_us = $subjects->underscore();
 		$subject = $subjects->singularize();
 		$subject_us = $subject->underscore();

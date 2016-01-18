@@ -3,7 +3,7 @@
  * Class for headaches free string manipulation.
  *
  * @package Atk14
- * @subpackage String
+ * @subpackage String4
  * @filesource
  */
 
@@ -11,27 +11,27 @@
  * Class for headaches free string manipulation.
  *
  * Here is an inspiration:
- * http://api.rubyonrails.org/classes/String.html
+ * http://api.rubyonrails.org/classes/String4.html
  *
  * @package Atk14
- * @subpackage String
+ * @subpackage String4
  */
-class String{
+class String4{
 
 	/**
 	 * Constructor
 	 *
 	 * Setup new instance.
 	 *
-	 * 	$str = new String();
-	 * 	$str = new String("Hello");
-	 * 	$str2 = new String($str);
+	 * 	$str = new String4();
+	 * 	$str = new String4("Hello");
+	 * 	$str2 = new String4($str);
 	 *
 	 *
-	 * @param string $string String to store
+	 * @param string $string String4 to store
 	 * @param string $encoding Charset in which is the $string stored
 	 */
-	function String($string = "",$encoding = null){
+	function __construct($string = "",$encoding = null){
 		if(!isset($encoding) && is_object($string) && method_exists($string,"getEncoding")){
 			$encoding = $string->getEncoding();
 		}
@@ -39,27 +39,27 @@ class String{
 			$encoding = defined("DEFAULT_CHARSET") ? DEFAULT_CHARSET : "UTF-8";
 		}
 
-		$this->_String = "$string";
+		$this->_String4 = "$string";
 		$this->_Encoding = $encoding;
 	}
 
 	/**
-	 * Converts a string to a String class object.
+	 * Converts a string to a String4 class object.
 	 *
 	 * Example
 	 *
-	 * 		$str = String::ToObject("Hello");
-	 * 		$str = String::ToObject($str);
+	 * 		$str = String4::ToObject("Hello");
+	 * 		$str = String4::ToObject($str);
 	 *
 	 * @param string $string
 	 * @param string $encoding
-	 * @return String
+	 * @return String4
 	 */
 	static function ToObject($string,$encoding = null){
 		if(is_object($string) && strtolower(get_class($string))=="string"){
 			return $string;
 		}
-		return new String($string,$encoding);
+		return new String4($string,$encoding);
 	}
 
 	/**
@@ -68,17 +68,17 @@ class String{
 	 * Generates a random string that contains only alfanumeric characters ([A-Za-z0-9]).
 	 * Special chars can be passed in $options.
 	 *
-	 * 	echo String::RandomString();
-	 * 	echo String::RandomString(8);
-	 * 	echo String::RandomString(array("length" => 8));
-	 * 	echo String::RandomString(array("length" => 8, "extra_chars" => "#$!%^")); 
+	 * 	echo String4::RandomString();
+	 * 	echo String4::RandomString(8);
+	 * 	echo String4::RandomString(array("length" => 8));
+	 * 	echo String4::RandomString(array("length" => 8, "extra_chars" => "#$!%^")); 
 	 *
 	 * @param int $length
 	 * @param array $options
 	 * - length -
 	 * - extra_chars -
 	 *
-	 * @return String
+	 * @return String4
 	 */
 	static function RandomString($length = 32,$options = array()){
 		if(is_array($length)){
@@ -118,7 +118,7 @@ class String{
 	 * Like zero and capital O: 0 versus O.
 	 *
 	 * @param integer $length
-	 * @return String
+	 * @return String4
 	 */
 	static function RandomPassword($length = 10){
 		settype($length,"integer");
@@ -171,7 +171,7 @@ class String{
 		if(strlen($password)>$length){
 			$password = substr($password,0,$length);
 		}
-		return new String($password);
+		return new String4($password);
 	}
 
 	/**
@@ -205,8 +205,8 @@ class String{
 	 * @return integer length of the string
 	 */
 	function length(){
-		//return strlen($this->_String);
-		return Translate::Length($this->_String,$this->getEncoding());
+		//return strlen($this->_String4);
+		return Translate::Length($this->_String4,$this->getEncoding());
 	}
 	
 	/**
@@ -215,7 +215,7 @@ class String{
 	 *
 	 * Replaces a portion of string in the stored string.
 	 *
-	 * 		$str = new String("Hello World");
+	 * 		$str = new String4("Hello World");
 	 * 		$str->replace("World","Guys");
 	 *
 	 * or
@@ -229,7 +229,7 @@ class String{
 	 *
 	 * @param string|array $search
 	 * @param string|array $replace
-	 * @return String 
+	 * @return String4 
 	 */
 	function replace($search,$replace = null){
 		if(is_array($search)){
@@ -243,10 +243,10 @@ class String{
 			if(sizeof($_replaces_keys)==0){
 				return $this;
 			}   
-			$this->_String = str_replace($_replaces_keys,$_replaces_values,$this->_String);
+			$this->_String4 = str_replace($_replaces_keys,$_replaces_values,$this->_String4);
 			return $this;
 		}
-		$this->_String = str_replace($search,$replace,$this->_String);
+		$this->_String4 = str_replace($search,$replace,$this->_String4);
 		return $this;
 	}
 
@@ -256,29 +256,29 @@ class String{
 	 * Part of a string that should be replaced is specified by a regexp pattern.
 	 *
 	 * Hello World => Hexxo Worxd
-	 * 		$string = new String("Hello World");
+	 * 		$string = new String4("Hello World");
 	 * 		$string = $string->gsub("/l/","x");
 	 *
 	 * @param string $pattern regexp string
 	 * @param string $replace string replacement
-	 * @return String Object of String class with replaced content
+	 * @return String4 Object of String4 class with replaced content
 	 */
 	function gsub($pattern,$replace){
-		return $this->_copy(preg_replace($pattern,$replace,$this->_String));
+		return $this->_copy(preg_replace($pattern,$replace,$this->_String4));
 	}
 
 	/**
 	 * Prepends a string to the object.
 	 *
 	 * Prepend 'Hello' to 'World'
-	 * 		$string = new String("World");
+	 * 		$string = new String4("World");
 	 * 		$string->prepend("Hello ");
 	 *
 	 * @param $content
-	 * @return String
+	 * @return String4
 	 */
 	function prepend($content){
-		$this->_String = "$content".$this->_String;
+		$this->_String4 = "$content".$this->_String4;
 		return $this;
 	}
 
@@ -286,30 +286,30 @@ class String{
 	 * Appends a string to the end of stored string.
 	 *
 	 * Append 'World' to 'Hello'
-	 * 		$string = new String("Hello");
+	 * 		$string = new String4("Hello");
 	 * 		$string->append(" World");
 	 *
 	 * @param string $content string to append to end of the stored string
-	 * @return String
+	 * @return String4
 	 */
 	function append($content){
-		$this->_String .= "$content";
+		$this->_String4 .= "$content";
 		return $this;
 	}
 
 	/**
 	 * Removes all whitespace.
 	 *
-	 * @return String
+	 * @return String4
 	 */
 	function trim(){
-		return $this->_copy(trim($this->_String));
+		return $this->_copy(trim($this->_String4));
 	}
 
 	/**
 	 * First removes all whitespace on both ends of the string, and then changes remaining consecutive whitespace groups into one space each.
 	 *
-	 * @return String
+	 * @return String4
 	 */
 	function squish(){
 		$out = $this->trim();
@@ -319,17 +319,17 @@ class String{
 	/**
 	 * Removes HTML tags
 	 *
-	 * @return String
+	 * @return String4
 	 */
 	function stripTags(){
-		return $this->_copy(strip_tags($this->_String));
+		return $this->_copy(strip_tags($this->_String4));
 	}
 
 	/**
 	 * Returns the number of times pattern matches the string.
 	 *
 	 * When the pattern matches the string it returns these matches in $matches array as if it was returned by preg_match
-	 * but strings are instantiated to String objects.
+	 * but strings are instantiated to String4 objects.
 	 *
 	 * @param string $pattern Regular expression
 	 * @param $matches
@@ -339,7 +339,7 @@ class String{
 		$out = preg_match($pattern,$this,$matches);
 		if(is_array($matches)){
 			foreach($matches as &$m){
-				$m = new String($m);
+				$m = new String4($m);
 			}
 		}
 		return $out;
@@ -350,11 +350,11 @@ class String{
 	 *
 	 * Position starts from 0.
 	 *
-	 * 		$str = new String("Hello");
+	 * 		$str = new String4("Hello");
 	 * 		$str->at(1); // 'e'
 	 *
 	 * @param integer $position in string starting from 0
-	 * @return String
+	 * @return String4
 	 */
 	function at($position){
 		return $this->_copy($this->substr($position,1));
@@ -363,26 +363,26 @@ class String{
 	/**
 	 * Returns substring of the stored string.
 	 *
-	 * 		$str = new String("Lorem Ipsum");
+	 * 		$str = new String4("Lorem Ipsum");
 	 * 		echo $str->substr(0,5); // "Lorem"
 	 * 		echo $str->substr(-5); // "Ipsum"
 	 *
 	 * @param integer $start
 	 * @param integer $length
-	 * @return String
+	 * @return String4
 	 */
 	function substr($start,$length = null){
 		if(is_null($length)){
-			return $this->_copy(substr($this->_String,$start));
+			return $this->_copy(substr($this->_String4,$start));
 		}
-		return $this->_copy(substr($this->_String,$start,$length));
+		return $this->_copy(substr($this->_String4,$start,$length));
 	}
 
 	/**
 	 * Returns the first character of the string or the first $limit characters.
 	 * 
 	 * @param integer $limit
-	 * @return String new instance that contains the first characters of the stored string
+	 * @return String4 new instance that contains the first characters of the stored string
 	 */
 	function first($limit = 1){
 		return $this->substr(0,$limit);
@@ -392,7 +392,7 @@ class String{
 	 * Checks if the string contains another string.
 	 *
 	 * Example
-	 * 		$str = new String("Hello World");
+	 * 		$str = new String4("Hello World");
 	 * 		$str->contains("Hello"); // true
 	 * 		$str->contains(array("Hello","World")); // true
 	 * 
@@ -406,7 +406,7 @@ class String{
 			}
 			return true;
 		}
-		return !is_bool(strpos($this->_String,(string)$needle));
+		return !is_bool(strpos($this->_String4,(string)$needle));
 	}
 
 	/**
@@ -452,15 +452,15 @@ class String{
 	 *
 	 * @param array $options
 	 * - lower - leave first character lowercase
-	 * @return String
+	 * @return String4
 	 */
 	function camelize($options = array()){
 		$options = array_merge(array(
 			"lower" => false,
 		),$options);
 		$out = $this->_copy();
-		$s = &$out->_String;
-		$s = preg_replace_callback("/_([a-z0-9])/i",function($matches){ return strtoupper($matches[1]); },$this->_String);
+		$s = &$out->_String4;
+		$s = preg_replace_callback("/_([a-z0-9])/i",function($matches){ return strtoupper($matches[1]); },$this->_String4);
 
 		if(isset($s[0])){
 			$s[0] = $options["lower"] ? strtolower($s[0]) : strtoupper($s[0]);
@@ -475,10 +475,10 @@ class String{
 	 * Example
 	 * Book => books
 	 *
-	 * 		$class = new String("Book");
+	 * 		$class = new String4("Book");
 	 * 		echo $class->tableize();
 	 *
-	 * @return String
+	 * @return String4
 	 */
 	function tableize(){
 		$table_name = $this->pluralize();
@@ -491,10 +491,10 @@ class String{
 	 *
 	 * Example
 	 * apple => apples
-	 * 		$apple = new String("apple");
+	 * 		$apple = new String4("apple");
 	 * 		echo $apple->pluralize();
 	 *
-	 * @return String
+	 * @return String4
 	 */
 	function pluralize(){
 		return $this->_copy(_Inflect::pluralize((string)$this));
@@ -504,10 +504,10 @@ class String{
 	 * Makes singular form of a word.
 	 *
 	 * Example
-	 * 		$apples = new String("Rotten Apples");
+	 * 		$apples = new String4("Rotten Apples");
 	 * 		echo $apples->singularize(); // "Rotten Apple"
 	 *
-	 * @return String
+	 * @return String4
 	 */
 	function singularize(){
 		return $this->_copy(_Inflect::singularize((string)$this));
@@ -520,11 +520,11 @@ class String{
 	 * HelloWorld => hello_world
 	 * 		$underscore = $camel_case->underscore();
 	 * 
-	 * @return String
+	 * @return String4
 	 */
 	function underscore(){
 		$out = $this->_copy();
-		$out->_String = strtolower(preg_replace("/([a-z0-9])([A-Z])/","\\1_\\2",$this->_String));
+		$out->_String4 = strtolower(preg_replace("/([a-z0-9])([A-Z])/","\\1_\\2",$this->_String4));
 		return $out;
 	}
 
@@ -541,14 +541,14 @@ class String{
 	/**
 	 * Converts string to ASCII
 	 * 
-	 * @return String object containing string converted to ASCII
+	 * @return String4 object containing string converted to ASCII
 	 */
 	function toAscii(){
 		return $this->_copy(Translate::Trans($this->toString(),$this->getEncoding(),"ASCII"),"ASCII");
 	}
 
 	/**
-	 * $s = new String("Amazing facts about foxes!");
+	 * $s = new String4("Amazing facts about foxes!");
 	 * echo $s->toSlug(); // "amazing-facts-about-foxes"
 	 */
 	function toSlug($max_length = null){
@@ -562,7 +562,7 @@ class String{
 		),$options);
 
 		$text = $this->_copy();
-		$omission = new String($options["omission"]);
+		$omission = new String4($options["omission"]);
 
 		$length_with_room_for_omission = $length - $omission->length();
 
@@ -586,7 +586,7 @@ class String{
 	}
 
 	/**
-	 * @return String
+	 * @return String4
 	 */
 	function copy(){ return $this->_copy(); }
 
@@ -594,9 +594,9 @@ class String{
 	 * @ignore
 	 */
 	function _copy($string = null,$encoding = null){
-		if(!isset($string)){ $string = $this->_String; }
+		if(!isset($string)){ $string = $this->_String4; }
 		if(!isset($encoding)){ $encoding = $this->_Encoding; }
-		return new String($string,$encoding);
+		return new String4($string,$encoding);
 	}
 
 	/**
@@ -605,7 +605,7 @@ class String{
 	 * @return string
 	 */
 	function toString(){
-		return $this->_String;
+		return $this->_String4;
 	}
 
 	/**
@@ -622,7 +622,7 @@ class String{
 	 * Magic method
 	 *
 	 * Example
-	 * 		$s = new String("Hello");
+	 * 		$s = new String4("Hello");
 	 * 		echo "$s"; // prints Hello
 	 *
 	 * @return string

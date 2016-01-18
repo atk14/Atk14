@@ -19,7 +19,7 @@ require_once(file_exists("$_document_root/local_config/settings.php") ? "$_docum
 require_once(dirname(__FILE__)."/default_settings.php");
 
 // loading the rest...
-require_once(dirname(__FILE__)."/src/string/load.php");
+require_once(dirname(__FILE__)."/src/string4/load.php");
 require_once(dirname(__FILE__)."/src/translate/load.php");
 require_once(dirname(__FILE__)."/src/dictionary/load.php");
 require_once(dirname(__FILE__)."/src/miniyaml/load.php");

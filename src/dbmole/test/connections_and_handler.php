@@ -10,8 +10,8 @@ function &dbmole_connection(&$dbmole){
 
 	switch($dbmole->getDatabaseType()){
 		case "mysql":
-			$out = mysql_connect("localhost","test","test");
-			mysql_select_db("test",$out);
+			$out = mysqli_connect("127.0.0.1","test","test","test");
+			mysqli_select_db($out,"test");
 			break;
 
 		case "postgresql":

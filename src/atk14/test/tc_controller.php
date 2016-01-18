@@ -107,17 +107,17 @@ class TcController extends TcBase{
 	function test_layout(){
 		$controller = $this->client->get("testing/default_layout");
 
-		$page = new String($controller->response->buffer->toString());
+		$page = new String4($controller->response->buffer->toString());
 		$this->assertEquals(true,$page->contains("This is a template"));
 		$this->assertEquals(true,$page->contains("<!-- default layout -->"));
 
 		$controller = $this->client->get("testing/custom_layout");
-		$page = new String($controller->response->buffer->toString());
+		$page = new String4($controller->response->buffer->toString());
 		$this->assertEquals(true,$page->contains("This is a template"));
 		$this->assertEquals(true,$page->contains("<!-- custom layout -->"));
 
 		$controller = $this->client->get("testing/no_layout");
-		$page = new String($controller->response->buffer->toString());
+		$page = new String4($controller->response->buffer->toString());
 		$this->assertEquals(true,(bool)$page->match("/^This is a template$/"));
 	}
 

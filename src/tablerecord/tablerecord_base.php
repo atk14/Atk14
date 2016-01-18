@@ -127,12 +127,12 @@ class TableRecord_Base extends inobj{
 		$options += $defaults;
 
 		if(is_null($options["table_name"])){
-			$options["table_name"] = new String($class_name);
+			$options["table_name"] = new String4($class_name);
 			$options["table_name"] = $options["table_name"]->tableize();
 		}
 		$options["table_name"] = (string)$options["table_name"];
 
-		$this->_TableName = $options["table_name"]; // could be member of String
+		$this->_TableName = $options["table_name"]; // could be member of String4
 
 		if(is_null($options["sequence_name"])){
 			$options["sequence_name"] = $this->_DetermineSequenceName();
@@ -419,7 +419,7 @@ class TableRecord_Base extends inobj{
 	function getBelongsTo($object,$options = array()){
 		TableRecord::_NormalizeOptions(array($options),$options);
 
-		$str = new String($object);
+		$str = new String4($object);
 
 		$guessed_class_name = str_replace("_","",$object);
 		if(class_exists("inobj_$guessed_class_name")){ $guessed_class_name = "inobj_$guessed_class_name"; }
@@ -1529,7 +1529,7 @@ class TableRecord_Base extends inobj{
 			return $this->g($CACHE["fields"][$name]);
 		}
 
-		$name = new String($name);
+		$name = new String4($name);
 		if($name->match("/^get(.+)/",$matches)){
 			$field = $matches[1]->underscore();
 			if($this->hasKey($field)){
@@ -1554,7 +1554,7 @@ class TableRecord_Base extends inobj{
 
 		if(preg_match('/^Find(|First|All)By(.+)/',$name,$matches)){
 			$method = $matches[1]=="All" ? "FindAll" : "FindFirst";
-			$field = new String($matches[2]);
+			$field = new String4($matches[2]);
 			$field = $field->underscore();
 			$params = array("$field",$arguments[0],isset($arguments[1]) ? $arguments[1] : array());
 			return call_user_func_array(array($class_name,$method),$params);

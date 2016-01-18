@@ -206,14 +206,14 @@ class Atk14Dispatcher{
 		$_base_controller_class_name = "ApplicationController";
 		$_controller_name = "application";
 		if($namespace!=""){
-			$_s = String::ToObject("{$namespace}_controller")->camelize()->toString();
+			$_s = String4::ToObject("{$namespace}_controller")->camelize()->toString();
 			if(class_exists($_s)){
 				$_base_controller_class_name = $_s;
 				$_controller_name = $namespace;
 			}
 		}
 
-		$_class_name = String::ToObject("{$controller_name}_controller")->camelize()->toString();
+		$_class_name = String4::ToObject("{$controller_name}_controller")->camelize()->toString();
 		if(!class_exists($_class_name) || preg_match("/__/",$controller_name)){
 			DEVELOPMENT && $logger->error("controller class $_class_name doesn't exist");
 			$controller_name = $_controller_name;

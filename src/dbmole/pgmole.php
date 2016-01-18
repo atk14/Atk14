@@ -10,8 +10,9 @@ class PgMole Extends DbMole{
 	* @param string $configuration_name		"default"
 	* @return PgMole									nebo null
 	*/
-	static function &GetInstance($configuration_name = "default"){
-		return parent::GetInstance($configuration_name,"PgMole");
+	static function &GetInstance($configuration_name = "default",$options = array()){
+		$options["class_name"] = "PgMole";
+		return parent::GetInstance($configuration_name,$options);
 	}
 
 	function getDatabaseType(){ return "postgresql"; }

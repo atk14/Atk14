@@ -13,7 +13,7 @@ class Atk14DeploymentStage{
 
 		// converting strings into booleans
 		foreach(array("create_maintenance_file") as $k){
-			$params[$k] = String::ToObject($params[$k])->toBoolean();
+			$params[$k] = String4::ToObject($params[$k])->toBoolean();
 		}
 
 		!preg_match('/\/$/',$params["directory"]) && ($params["directory"] .= "/"); // "projects/myapp" -> "projects/myapp/"

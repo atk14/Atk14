@@ -8,7 +8,7 @@ define("SESSION_STORER_SESSION_MAX_LIFETIME",60 * 60 * 24 * 1);  // a day
 define("CURRENT_TIME",time());
 require("../../stringbuffer/stringbuffer.php");
 require("../../http/load.php");
-require("../../string/load.php");
+require("../../string4/load.php");
 require("../sessionstorer.php");
 
 // UF! we need dbmole

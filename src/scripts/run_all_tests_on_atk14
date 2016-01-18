@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+#
+# This scripts performs all tests on the framework
+#
+# $ ./scripts/run_all_tests_on_atk14
+# $ PHP_BIN=/path/to/php7 ./scripts/run_all_tests_on_atk14
 
 dirname=`dirname $0`
 cd $dirname
@@ -6,12 +11,16 @@ base_dir=`pwd -P`
 cd $base_dir
 cd ../..
 
+if [ "x$PHP_BIN" = "x" ]; then
+	PHP_BIN=`which php`
+fi
+
 ret=0
 for dir in `find ./ -type d -name test | sort`; do
 	echo
 	echo
 	echo "###### $dir"
-	$base_dir/run_unit_tests $dir/
+	$PHP_BIN $base_dir/run_unit_tests $dir/
 	last_ret_code=$?
 	if [ $last_ret_code -ne 0 ]; then
 		ret=$last_ret_code

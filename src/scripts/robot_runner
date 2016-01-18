@@ -16,7 +16,7 @@ if(isset($argv[1])){
 	// ImportUserRobot -> import_user
 	// import_user_robot.php -> import_user
 	// robots/import_user_robot.php -> import_user
-	$robot_name = String::ToObject($argv[1])->underscore()->gsub('/_robot(\.php|\.inc|)$/','')->gsub('/^.+\/([^\/]+)$/','\1');
+	$robot_name = String4::ToObject($argv[1])->underscore()->gsub('/_robot(\.php|\.inc|)$/','')->gsub('/^.+\/([^\/]+)$/','\1');
 }
 
 if(!$robot_name){
@@ -53,9 +53,9 @@ if(!$robot_name){
 			$fh = fopen('php://stdin', 'r');
 			$no = trim(fgets($fh,1024));
 			if(is_numeric($no) && isset($robots[$no-1])){
-				$robot_name = String::ToObject($robots[$no-1]);
+				$robot_name = String4::ToObject($robots[$no-1]);
 			}elseif(in_array($no,$robots)){
-				$robot_name = String::ToObject($no);
+				$robot_name = String4::ToObject($no);
 			}elseif(strlen($no)){
 				echo "Fatal: unknown robot\n";
 			}

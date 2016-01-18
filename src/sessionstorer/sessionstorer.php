@@ -461,7 +461,7 @@ class SessionStorer{
 	 * @access protected
 	 */
 	static function _RandomString($length = 32){
-		return (string)String::RandomString($length);
+		return (string)String4::RandomString($length);
 	}
 
 	/**
