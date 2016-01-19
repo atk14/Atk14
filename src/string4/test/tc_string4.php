@@ -291,10 +291,20 @@ class TcString4 extends TcBase{
 
 	function test_substr(){
 		$s = new String4("Lorem Ipsum");
-
 		$this->assertEquals("Lorem",(string)$s->substr(0,5));
 		$this->assertEquals("Ipsum",(string)$s->substr(-5));
 		$this->assertEquals("Lorem Ipsum",(string)$s->substr(0));
+
+		$s = new String4("Špuntíček");
+		$this->assertEquals("Š",(string)$s->substr(0,1));
+		$this->assertEquals("Špunt",(string)$s->substr(0,5));
+		$this->assertEquals("ček",(string)$s->substr(-3));
+		$this->assertEquals("Špuntíček",(string)$s->substr(0));
+		$this->assertEquals("puntíč",(string)$s->substr(1,6));
+
+		// giving invalid encoding leads to a strange behaviour
+		$s = new String4("Špuntíček","latin2");
+		$this->assertEquals("Špun",(string)$s->substr(0,5));
 	}
 
 	function test_toSlug(){

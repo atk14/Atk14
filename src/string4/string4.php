@@ -372,6 +372,10 @@ class String4{
 	 * @return String4
 	 */
 	function substr($start,$length = null){
+		if(function_exists("mb_substr")){
+			return $this->_copy(mb_substr($this->_String4,$start,$length,$this->getEncoding()));
+		}
+
 		if(is_null($length)){
 			return $this->_copy(substr($this->_String4,$start));
 		}
