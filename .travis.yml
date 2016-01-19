@@ -13,7 +13,9 @@ php:
   - 7.0
 
 before_install:
-  - sudo apt-get update && travis_retry sudo apt-get --reinstall install -qq language-pack-cs
+  - echo 'en_US.UTF-8 UTF-8' | sudo tee --append /var/lib/locales/supported.d/local
+  - echo 'cs_CZ.UTF-8 UTF-8' | sudo tee --append /var/lib/locales/supported.d/local
+  - sudo locale-gen
   - locale -a
   - sudo apt-get install php-pear
 
