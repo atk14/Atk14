@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+# This scripts checks for requirements in the host system
+
+cd `dirname $0`
+exit_val=0
+
+assert_command_exists () {
+	cmd=$1
+	echo -n "command $cmd exists... "
+	if [ "`which $cmd`" = "" ]; then
+		echo "fail"
+		echo "!!  command $cmd is not installed"
+		exit_val=1
+	else	
+		echo "ok"
+	fi
+}
+
+assert_php_function_exists () {
+	fn=$1
+	echo -n "php function $fn exists... "
+	src="echo function_exists('$fn') ? 'yes' : 'no';"
+	if [ `/usr/bin/env php -r "$src"` != "yes" ]; then
+		echo "fail"
+		echo "!!  in PHP there is no function $fn"
+		exit_val=1
+	else	
+		echo "ok"
+	fi
+}
+
+assert_php_constant_defined () {
+	constant=$1
+	echo -n "php constant $constant defined... "
+	src="echo defined('$constant') ? 'yes' : 'no';"
+	if [ `/usr/bin/env php -r "$src"` != "yes" ]; then
+		echo "fail"
+		echo "!!  in PHP there is no constant $constant defined"
+		exit_val=1
+	else	
+		echo "ok"
+	fi
+}
+
+# version of php must be >= 5.3
+echo -n "version of php is 5.3 or newer... "
+php_version=`php -v | head -1 | cut -d ' ' -f 2`
+if [ ! "$php_version" \> "5.3." ]; then
+	echo "fail"
+	echo "!!  version of currently installed php is $php_version"
+	exit_val=1
+else	
+	echo "ok"
+fi
+
+assert_command_exists 'env'
+assert_command_exists 'wget'
+assert_command_exists 'php'
+assert_command_exists 'pear'
+assert_command_exists 'psql'
+assert_command_exists 'git'
+assert_command_exists 'fgrep'
+assert_command_exists 'tee'
+assert_command_exists 'msgconv'
+assert_command_exists 'msgfmt'
+assert_command_exists 'msgmerge'
+assert_command_exists 'xgettext'
+
+assert_php_function_exists 'pg_connect'
+assert_php_function_exists 'gettext'
+assert_php_function_exists '_'
+assert_php_function_exists 'posix_getpid'
+assert_php_function_exists 'get_called_class'
+assert_php_function_exists 'spl_autoload_register'
+assert_php_function_exists 'mb_strlen'
+assert_php_function_exists 'mcrypt_encrypt'
+assert_php_function_exists 'gzcompress'
+assert_php_function_exists 'json_encode'
+
+assert_php_constant_defined 'MCRYPT_RIJNDAEL_256'
+
+# version of php must be >= 5.3
+echo -n "version of php is 5.3 or newer... "
+php_version=`php -v | head -1 | cut -d ' ' -f 2`
+if [ ! "$php_version" \> "5.3." ]; then
+	echo "fail"
+	echo "!!  version of currently installed php is $php_version"
+	exit_val=1
+else	
+	echo "ok"
+fi
+
+echo -n "PHPUnit2 is installed... "
+cat << EOF | php
+<?php
+@include_once 'PHPUnit2/Framework/TestSuite.php';
+@include_once 'PHPUnit2/Framework/TestCase.php';
+@include_once 'PHPUnit2/TextUI/ResultPrinter.php';
+@include_once 'Benchmark/Timer.php';
+if(class_exists('PHPUnit2_Framework_TestCase')){
+	echo "ok\n";
+	exit(0);
+}else{
+	echo "fail\n";
+	echo "!!  do the following:\n";
+	echo "!!  $ sudo pear install --alldeps PHPUnit2\n";
+	exit(1);
+}
+EOF
+
+if [ "$?" != "0" ]; then
+	exit_val=1
+fi
+
+exit $exit_val
