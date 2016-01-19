@@ -373,6 +373,9 @@ class String{
 	 */
 	function substr($start,$length = null){
 		if(function_exists("mb_substr")){
+			if(PHP_VERSION_ID<50408 && is_null($length)){
+				return $this->_copy(mb_substr($this->_String,$start));
+			}
 			return $this->_copy(mb_substr($this->_String,$start,$length,$this->getEncoding()));
 		}
 
