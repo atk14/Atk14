@@ -321,7 +321,23 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	}
 
 	/**
-	 * Sets position of a record in the list.
+	 * Gets the position of a given record in the list.
+	 *
+	 *	echo $lister->getRecordRank($author); // 0
+	 */
+	function getRecordRank($record){
+		$record = $this->_objToId($record);
+		$rank = 0;
+		foreach($this->getItems() as $item){
+			if($item->getRecordId()==$record){
+				return $rank;
+			}
+			$rank++;
+		}
+	}
+
+	/**
+	 * Sets the position of a given record in the list.
 	 *
 	 * Move the given author to beginnig of collection
 	 * 	$lister->setRecordRank($author,0);

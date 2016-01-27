@@ -108,18 +108,30 @@ class TcLister extends TcBase{
 		// move John to the begin
 		$items[1]->setRank(0);
 		$this->_test_authors(array($john,$paul,$peter));
+		$this->assertEquals(0,$lister->getRecordRank($john));
 
 		$lister->setRecordRank($john,1);
 		$this->_test_authors(array($paul,$john,$peter));
+		$this->assertEquals(1,$lister->getRecordRank($john));
 
 		$lister->setRecordRank($john,1);
 		$this->_test_authors(array($paul,$john,$peter));
 
 		$lister->setRecordRank($john,2);
 		$this->_test_authors(array($paul,$peter,$john));
+		$this->assertEquals(2,$lister->getRecordRank($john));
 
 		$lister->setRecordRank($john,0);
 		$this->_test_authors(array($john,$paul,$peter));
+		$this->assertEquals(0,$lister->getRecordRank($john));
+
+		$lister->setRecordRank($john,10);
+		$this->_test_authors(array($paul,$peter,$john));
+		$this->assertEquals(2,$lister->getRecordRank($john));
+
+		$lister->setRecordRank($john,-10);
+		$this->_test_authors(array($john,$paul,$peter));
+		$this->assertEquals(0,$lister->getRecordRank($john));
 
 		$lister->remove($john);
 		$this->_test_authors(array($paul,$peter));
