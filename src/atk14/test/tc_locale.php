@@ -33,4 +33,28 @@ class TcLocale extends TcBase{
 		$this->assertEquals(null,Atk14Locale::ParseDateTimeWithSeconds("nonsence"));
 	}
 
+	function test_InitializeLocale(){
+		global $ATK14_GLOBAL;
+
+		$this->assertEquals("cs",$ATK14_GLOBAL->getLang());
+
+		$lang = "sk";
+		$previous = Atk14Utils::InitializeLocale($lang);
+		$this->assertEquals("sk",$lang);
+		$this->assertEquals("cs",$previous);
+		$this->assertEquals("sk",$ATK14_GLOBAL->getLang());
+
+		$lang = "en";
+		$previous = Atk14Utils::InitializeLocale($lang);
+		$this->assertEquals("en",$lang);
+		$this->assertEquals("sk",$previous);
+		$this->assertEquals("en",$ATK14_GLOBAL->getLang());
+
+		$lang = "xy"; // nonsence -> it must be changed automatically to the default language
+		$previous = Atk14Utils::InitializeLocale($lang);
+		$this->assertEquals("cs",$lang);
+		$this->assertEquals("en",$previous);
+		$this->assertEquals("cs",$ATK14_GLOBAL->getLang());
+	}
+
 }
