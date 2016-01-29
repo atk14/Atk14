@@ -7,6 +7,12 @@ PWD=`pwd`                                            # /home/joe/webapps/myapp
 HOSTNAME="`./scripts/dump_settings ATK14_HTTP_HOST`" # myapp.localhost
 FORCE=
 
+if [[ ${ATK14_ENV^^} == 'TEST' ]] ; then
+    ADD_CONF=$'SetEnv ATK14_ENV TEST\n'
+else
+    ADD_CONF=''
+fi
+
 while [ -n "$1" ] ; do
   case $1 in
     "-f") FORCE=1 ;;
@@ -33,6 +39,7 @@ APACHE_CONF=`cat <<EOF
     #Order deny,allow
     #Allow from all
    </Directory>
+   $ADD_CONF
   </VirtualHost>
 EOF`
 
