@@ -9,8 +9,7 @@
  *
  * Class containing several useful methods
  *
- * @package Atk14
- * @subpackage Core
+ * @package Atk14\Core
  *
  */
 class Atk14Utils{
@@ -98,7 +97,9 @@ class Atk14Utils{
 	 * Loads resources for a controller and also the controller.
 	 *
 	 * Load HelpController
-	 * 	Atk14Utils::LoadControllers("help_controller");
+	 * ```
+	 * Atk14Utils::LoadControllers("help_controller");
+	 * ```
 	 *
 	 * This code loads all resources needed by HelpController and in the end loads the HelpController
 	 *
@@ -144,8 +145,6 @@ class Atk14Utils{
 				break;
 			}
 		}
-
-
 	}
 
 	/**
@@ -165,7 +164,7 @@ class Atk14Utils{
 	 *
 	 *		$params["_connector"]
 	 *		$params["_anchor"]
-	 * 		$params["_with_hostname"]
+	 *		$params["_with_hostname"]
 	 *		$params["_ssl"]
 	 *
 	 * When building a link parameters beginning with underscore are used as parameters of the &lt;a&gt; tag.
@@ -217,15 +216,20 @@ class Atk14Utils{
 	/**
 	 * Extracts attributes from $params beginning with underscore.
 	 *
+	 * This method is mostly used in helpers to distinguish values that should be rendered as attributes of a tag.
+	 *
 	 * In this example $params will contain array("id" => "20"), $attrs will contain array("class" => "red","id" => "red_link").
-	 * 	$params = array("id" => "20", "_class" => "red", "_id" => "red_link");
-	 * 	$attrs = Atk14Utils::ExtractAttributes($params);
+	 * ```
+	 *	$params = array("id" => "20", "_class" => "red", "_id" => "red_link");
+	 *	$attrs = Atk14Utils::ExtractAttributes($params);
+	 * ```
 	 *
 	 * or
-	 * 	$attrs = array("data-message" => "Hello guys!");
-	 * 	Atk14Utils::ExtractAttributes($params,$attrs);
+	 * ```
+	 *	$attrs = array("data-message" => "Hello guys!");
+	 *	Atk14Utils::ExtractAttributes($params,$attrs);
+	 * ```
 	 * the attribute data-message will be preserved
-	 *
 	 *
 	 *
 	 * @param array $params
@@ -249,9 +253,11 @@ class Atk14Utils{
 	 * Joins attributes to a string.
 	 *
 	 * Example
-	 * 	$attrs -> array("href" => "http://www.link.cz/", "class" => "red");
-	 * 	$attrs = Atk14Utils::JoinAttributes($attrs);
-	 * 	echo "<a$attrs>text linku</a>"
+	 * ```
+	 *	$attrs -> array("href" => "http://www.link.cz/", "class" => "red");
+	 *	$attrs = Atk14Utils::JoinAttributes($attrs);
+	 *	echo "<a$attrs>text linku</a>"
+	 * ```
 	 *
 	 * @param array $attributes
 	 * @return string joined attributes
@@ -354,7 +360,9 @@ class Atk14Utils{
 	 * Writes a message to error log and to the output defined by HTTPResponse
 	 *
 	 * Example
-	 * 	Atk14Utils::ErrorLog("chybi sablona _item.tpl",$http_response);
+	 * ```
+	 *	Atk14Utils::ErrorLog("chybi sablona _item.tpl",$http_response);
+	 * ```
 	 *
 	 * @param string $message
 	 * @param HTTPResponse $response
@@ -389,8 +397,11 @@ class Atk14Utils{
 	/**
 	 * Joins arrays
 	 *
-	 * Result of this will be array("a","b","c","d")
-	 * 	Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d"));
+	 * Result of this call
+	 * ```
+	 *	Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d"));
+	 * ```
+	 * will be array("a","b","c","d")
 	 *
 	 * @return array joined arrays
 	 */
@@ -410,8 +421,13 @@ class Atk14Utils{
 	/**
 	 * Normalizes a URI, removes unnecessary path elements.
 	 *
-	 * '/public/stylesheets/../dist/css/app.css?1384766775' => /public/dist/css/app.css?1384766775
-	 * 	echo Atk14Utils::NormalizeUri('/public/stylesheets/../dist/css/app.css?1384766775');
+	 * It does not check the existence of individual directories.
+	 *
+	 * "/path/to/project/atk14/../public/stylesheets/../dist/admin/application.min.js" -> "/path/to/project/public/dist/admin/application.min.js"
+	 * "/public/stylesheets/../dist/css/app.css?1384766775" => "/public/dist/css/app.css?1384766775"
+	 * ```
+	 *	echo Atk14Utils::NormalizeUri('/public/stylesheets/../dist/css/app.css?1384766775');
+	 * ```
 	 *
 	 * @param string $uri uri to normalize
 	 * @return string normalized uri
@@ -438,10 +454,13 @@ class Atk14Utils{
 	}
 
 	/**
-	 * "/path/to/project/atk14/../public/stylesheets/../dist/admin/application.min.js" -> "/path/to/project/public/dist/admin/application.min.js"
+	 * Normalizes filepath.
 	 *
-	 * We need to not to check the existence of individual directories.
-	 * For example it doesn't care whether the directory "/path/to/project/public/stylesheets/" exists or not.
+	 * Alias to {@see Atk14Utils::NormalizeUri() NormalizeUri()}
+	 *
+	 *
+	 * @param string $path
+	 * @return string normalized path
 	 */
 	static function NormalizeFilepath($path){
 		return Atk14Utils::NormalizeUri($path);
@@ -451,8 +470,14 @@ class Atk14Utils{
 	 *
 	 * An alias for Atk14Locale::Initialize()
 	 *
+	 * ```
 	 * $new_lang = "cs";
 	 * $prev_lang = Atk14Utils::InitializeLocale($new_lang);
+	 * ```
+	 *
+	 * @param string new locale
+	 * @return string previous locale
+	 * @see Atk14Locale::Initialize()
 	 */
 	static function InitializeLocale(&$lang){
 		return Atk14Locale::Initialize($lang);

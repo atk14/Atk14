@@ -2,14 +2,7 @@
 /**
  * Smarty block plugin
  *
- * Obfuscates email address in a string to protect it from collecting by robots.
- *
- * <code>
- * {no_spam}Napiste nam na adresu info@domena.cz.{/no_spam}
- * </code>
- *
- * @package Atk14
- * @subpackage Helpers
+ * @package Atk14\Helpers
  */
 
 /**
@@ -17,6 +10,17 @@
  *
  * Obfuscates an email address in a string to protect it from collecting by robots.
  * Does not recognize any parameters.
+ *
+ * ```
+ * {no_spam}Contact us at email info@domena.cz.{/no_spam}
+ * ```
+ *
+ * @param array $params parameters
+ * @param string $content string with an email address to be obfuscated
+ * @param Smarty_Internal_Template $template
+ * @param boolean &$repeat repeat flag
+ *
+ * @return string obfuscated string
  *
  */
 function smarty_block_no_spam($params, $content, $template, &$repeat){

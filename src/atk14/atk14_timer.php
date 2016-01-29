@@ -2,18 +2,13 @@
 /**
  * Class for measuring time.
  *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
  * @filesource
  */
 
 /**
  * Class for measuring time.
  *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
+ * @package Atk14\Core
  * @todo Write some explanation
  */
 class Atk14Timer {

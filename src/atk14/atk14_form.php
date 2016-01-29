@@ -132,9 +132,11 @@ class Atk14Form extends Form
 	private $atk14_initial_values = null;
 
 	/**
-	 * @access private
+	 * Options passed to constructor
+	 *
+	 * @var array
 	 */
-	var $atk14_constructor_options = array();
+	private $atk14_constructor_options = array();
 
 	/**
 	 * @access private
@@ -164,18 +166,18 @@ class Atk14Form extends Form
 	private $atk14_method = "post";
 
 	/**
+	 * Flag signalling that form is protected against csrf attack.
+	 *
 	 * @var bool
 	 */
 	var $atk14_csrf_protection_enabled = false;
 
 	/**
-	 * Constructor 
+	 * Constructor
 	 *
 	 * @param array $options valid options:
-	 * <ul>
-	 * 	<li><b>call_set_up</b> -</li>
-	 * 	<li><b>attrs</b> -</li>
-	 * </ul>
+	 * - call_set_up
+	 * - attrs
 	 * @param Atk14Controller $controller
 	 *
 	 * @todo complete options
@@ -1116,6 +1118,16 @@ class Atk14Form extends Form
 		return $out;
 	}
 
+	/**
+	 * Method allowing to use CamelCase method names.
+	 *
+	 * When a called method does not exist, this magical method is executed instead.
+	 * It converts the called name to underscore format and tries to call this one.
+	 *
+	 * @param string $name
+	 * @param array $arguments
+	 * @return mixed
+	 */
 	function __call($name,$arguments){
 		$underscore_name = String4::ToObject($name)->underscore()->toString();
 		if(method_exists($this,$underscore_name)){

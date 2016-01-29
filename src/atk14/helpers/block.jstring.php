@@ -2,33 +2,29 @@
 /**
  * Smarty block plugin
  *
- * Escapes string for use in javascript.
- * Output string is surrounded with quotes.
- *
- * <code>
- * <script type="text/javascript">
- * 	var message={jstring}Zprava pro tebe: {render partial="message"}{/jstring};
- * </script>
- * </code>
- *
- * @package Atk14
- * @subpackage Helpers
+ * @package Atk14\Helpers
  */
 
 /**
- * Smarty block function
+ * Smarty block plugin
  *
- * Reserved parameters:
- * <ul>
- * 	<li>escape  escaping mode
- * 	<ul>
- * 		<li>html - escapes some html code</li>
- * 	</ul>
- * 	</li>
- * </ul>
+ * Escapes string for use in javascript.
+ * Output string is surrounded with quotes.
  *
- * @param array $params some options
+ * ```
+ * <script type="text/javascript">
+ *	var message={jstring}Zprava pro tebe: {render partial="message"}{/jstring};
+ * </script>
+ * ```
+ *
+ * @param array $params parameters
+ * - escape string escaping mode
+ *  - html escape some html code
  * @param string $content string to be escaped
+ * @param Smarty_Internal_Template $template
+ * @param boolean &$repeat repeat flag
+ *
+ * @return string escaped string
  */
 function smarty_block_jstring($params,$content,$template,&$repeat){
 	if($repeat){ return; }

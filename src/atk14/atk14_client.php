@@ -22,7 +22,10 @@
  * Example of testing a POST request
  *
  * ```
- * $controller = $this->client->post("logins/sign_in", array("username" => "admin", "password" => "SeCrEt.P4ssw0rD"));
+ * $controller = $this->client->post("logins/sign_in", array(
+ * 	"username" => "admin",
+ * 	"password" => "SeCrEt.P4ssw0rD",
+ * ));
  * $this->assertEquals(200, $this->client->getStatusCode());
  * $this->assertEquals(1, $controller->session->getValue("admin_id"));
  * ```

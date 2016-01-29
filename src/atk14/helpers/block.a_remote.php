@@ -1,33 +1,33 @@
 <?php
 /**
- * Smarty plugin that generates remote link
+ * Smarty block plugin that generates remote link
  *
- * The generated link is handled with javascript and sent as remote. When javascript is not present, click on the link is sent as normal request.
  *
- * @package Atk14
- * @subpackage Helpers
- * @see smarty_block_a
- *
+ * @package Atk14\Helpers
  */
 
 /**
+ * Smarty plugin that generates remote link
  *
- * @param array $params Uses same parameters as {@link smarty_block_a}. Here is description of additional parameters:
+ * The generated link is handled with javascript and sent as remote. When javascript is not present, click on the link is sent as normal HTTP request.
+ *
  *
  * Usage:
- * <code>
- * 		{a_remote action=detail id=$product}Product detail{/a_remote}
+ * ```
+ * {a_remote action=detail id=$product}Product detail{/a_remote}
  *
- * 		{a_remote action=detail id=$product _data-type=json}Product detail{/a_remote}
- * 
- *    {a_remote action=destroy id=$product _method=delete _confirm="Are you sure to delete the product?"}Delete product{/a_remote}
- * </code>
+ * {a_remote action=detail id=$product _data-type=json}Product detail{/a_remote}
  *
- * <ul>
- * 	<li><b>_method</b> - method for sending the request. Defaults to GET
- * </ul>
- * @param string $content content of the Smarty block
+ * {a_remote action=destroy id=$product _method=delete _confirm="Are you sure to delete the product?"}Delete product{/a_remote}
+ * ```
  *
+ * @param array $params Uses same parameters as {@link smarty_block_a}. Here is description of additional parameters:
+ * - <b>_method</b> - method for sending the request. Defaults to GET
+ * @param string $content link content
+ * @param Smarty_Internal_Template $template
+ * @param boolean &$repeat repeat flag
+ *
+ * @return string html a tag with proper url
  */
 function smarty_block_a_remote($params, $content, $template, &$repeat){
 	if($repeat){ return; }

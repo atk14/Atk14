@@ -20,6 +20,7 @@ class Atk14Global{
 	 * Array to store values.
 	 *
 	 * @var array
+	 * @ignore
 	 */
 	private $_Store = array();
 
@@ -63,9 +64,11 @@ class Atk14Global{
 	 * Returns reference to a value.
 	 *
 	 * Get reference to variable routes
-	 * 	$routes = &$ATK14_GLOBAL->getValue("routes");
-	 * 	$routes = &$ATK14_GLOBAL->getValue("routes",array());
-	 * 
+	 * ```
+	 * $routes = &$ATK14_GLOBAL->getValue("routes");
+	 * $routes = &$ATK14_GLOBAL->getValue("routes",array());
+	 * ```
+	 *
 	 * @param string $name name of global variable
 	 * @param string $initial initial value to initialize value when the variable does not exist.
 	 * @return reference to global variable
@@ -100,6 +103,7 @@ class Atk14Global{
 
 	/**
 	 * Returns value of HTTP_HOST.
+	 *
 	 * @return string HTTP_HOST
 	 */
 	function getHttpHost(){
@@ -112,7 +116,7 @@ class Atk14Global{
 
 	/**
 	 * Returns current application language code.
-	 * 
+	 *
 	 * If it is not set, returns default 
 	 *
 	 * @return string
@@ -125,7 +129,17 @@ class Atk14Global{
 	}
 
 	/**
-	 * print_r($ATK14_GLOBAL->getSupportedLangs()); // array("en","cs","de");
+	 * Return list of language codes used by the application.
+	 *
+	 * This call
+	 * ```
+	 * print_r($ATK14_GLOBAL->getSupportedLangs());
+	 * ```
+	 * should return 
+	 * ```
+	 * array("en","cs","de");
+	 * ```
+	 * @return array set of language codes
 	 */
 	function getSupportedLangs(){
 		if($locales = $this->getConfig("locale")){
@@ -181,18 +195,22 @@ class Atk14Global{
 	}
 
 	/**
+	 * Returns database configuration.
+	 *
 	 * Returns someting like
-	 *	 array(
-	 *		"database" => "dbname",
-	 *		"host" => "127.0.0.1",
-	 *		"username" => "user",
-	 *		"password" => "funny_boy",
-	 *		"port" => "5432",
-	 *	 )
+	 * ```
+	 * array(
+	 * 	"database" => "dbname",
+	 * 	"host" => "127.0.0.1",
+	 * 	"username" => "user",
+	 * 	"password" => "funny_boy",
+	 * 	"port" => "5432",
+	 * )
+	 * ```
 	 *
-	 * It searches in config/database.yml for the best suited configuration
-	 * TODO: provide more explanation
+	 * It searches in `config/database.yml` for the best suited configuration
 	 *
+	 * ```
 	 *	 # configuration_name: "default"
 	 *	 development:
 	 *	 test:
@@ -207,8 +225,11 @@ class Atk14Global{
 	 *	 weather_development:
 	 *	 weather_test:
 	 *	 weather_production:
+	 * ```
 	 *
+	 * @param string $configuration_name matches one of configurations found in `config/database.yml`
 	 * @return array
+	 * @todo provide more explanation
 	 */
 	function getDatabaseConfig($configuration_name = "default"){
 		$database_ar = $this->getConfig("database");
@@ -231,7 +252,7 @@ class Atk14Global{
 	/**
 	 * Loads and returns configuration from conf/$config_name.yml
 	 * Returns null when there is no such configuration file
-	 * 
+	 *
 	 * $ATK14_GLOBAL->getConfig("database");
 	 *
 	 * @param string $config_name
@@ -319,18 +340,16 @@ class Atk14Global{
 	 *
 	 * It is possible to filter information for specific lang/controller/action
 	 *
-	 * <code>
+	 * ```
 	 * $routes = $ATK14_GLOBAL->getPreparedRoutes("",array("path" => "en/product/detail"));
-	 * </code>
+	 * ```
 	 *
 	 * @param string $namespace
 	 * @param array $options possible options:
-	 * <ul>
-	 * 	<li>lang</li>
-	 * 	<li>controller</li>
-	 * 	<li>action</li>
-	 * 	<li>path</li>
-	 * </ul>
+	 * - lang
+	 * - controller
+	 * - action
+	 * - path
 	 * @return array
 	 */
 	function getPreparedRoutes($namespace = "",$options = array()){
@@ -477,9 +496,11 @@ class Atk14Global{
 	/**
 	 * Returns reference to the global Logger instance
 	 *
+	 * ```
 	 * $logger = $ATK14_GLOBAL->getLogger();
 	 * $logger->info("Captain, it's Houston. We have a problem. We have a phone call. It's your wife on the phone.");
 	 * $logger->info("Just forget it. Hanging up the phone...");
+	 * ```
 	 */
 	function &getLogger(){
 		global $ATK14_LOGGER;
@@ -493,6 +514,8 @@ class Atk14Global{
 
 	/**
 	 * Sets the global Logger variable
+	 *
+	 * @param Logger $logger
 	 */
 	function setLogger($logger){
 		global $ATK14_LOGGER;

@@ -4,20 +4,26 @@
  *
  * The generated link will lead to destroy action. Thanks to 'post' class the link will be handled with javascript and request sent as remote with POST method.
  *
- * @package Atk14
- * @subpackage Helpers
+ * @package Atk14\Helpers
  */
 
+if(!function_exists("smarty_block_a_remote")){
+	require_once(dirname(__FILE__)."/block.a_remote.php");
+}
+
 /**
+ * Smarty plugin that generates link for destroy action.
+ *
+ * The generated link will lead to destroy action. Thanks to 'post' class the link will be handled with javascript and request sent as remote with POST method.
+ *
  * @param string $content Content of the {a_destroy}{/a_destroy} block.
  * @param array $params params
+ * @param Smarty_Internal_Template $template
+ * @param boolean &$repeat  repeat flag
  * @uses smarty_block_a_remote
  *
  *
  */
-if(!function_exists("smarty_block_a_remote")){
-	require_once(dirname(__FILE__)."/block.a_remote.php");
-}
 function smarty_block_a_destroy($params, $content, $template, &$repeat){
 	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);

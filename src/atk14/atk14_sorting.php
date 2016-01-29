@@ -14,31 +14,34 @@
  * Here is example of use.
  *
  * Within a controller's method:
+ * ```
+ * $sorting = new Atk14Sorting($this->params);
+ * $sorting->add("name");
+ * $sorting->add("created",array("reverse" => true));
+ * $sorting->add("rank",array(
+ * 	"ascending_ordering" => "rank DESC, id ASC",
+ * 	"descending_ordering" => "rank ASC, id DESC",
+ * ));
+ * $finder = TableRecord::Finder(array(
+ * 	"class_name" => "Book",
+ * 	"order" => $sorting->getOrder(),
+ * ));
+ * $this->tpl_data["finder"] = $finder;
+ * $this->sorting = $sorting;
+ * ```
  *
- * 	$sorting = new Atk14Sorting($this->params);
- * 	$sorting->add("name");
- * 	$sorting->add("created",array("reverse" => true));
- * 	$sorting->add("rank",array("ascending_ordering" => "rank DESC, id ASC", "descending_ordering" => "rank ASC, id DESC"));
- * 	$finder = TableRecord::Finder(array(
- * 		"class_name" => "Book",
- * 		"order" => $sorting->getOrder(),
- * 	));
- * 	$this->tpl_data["finder"] = $finder;
- * 	$this->sorting = $sorting;
- *
- * Within a template:
- * 	<table>
- * 		<thead>
- * 			<tr>
- * 				{sortable key=name}<th>Name</th>{/sortable}
- * 				{sortable key=created}<th>Create date</th>{/sortable}
- * 				...
- * 			</tr>
- * 		</thead>
- * 	</table>
- *
- * @package Atk14\Core
- * 
+ * In a template:
+ * ```
+ * <table>
+ * 	<thead>
+ * 		<tr>
+ * 			{sortable key=name}<th>Name</th>{/sortable}
+ * 			{sortable key=created}<th>Create date</th>{/sortable}
+ * 			...
+ * 		</tr>
+ * 	</thead>
+ * </table>
+ * ```
  */
 class Atk14Sorting{
 
@@ -68,31 +71,30 @@ class Atk14Sorting{
 	 * First added key is the default sorting key.
 	 *
 	 * Basic usage
-	 * 	$sorting->add("create_date");
-	 * 	$sorting->add("create_date",array("reverse" => true));
-	 * 	$sorting->add("title",array("order_by" => "UPPER(title)"));
-	 * 	$sorting->add("title",array(
-	 * 		"asc" => "UPPER(title), id",
-	 * 		"desc" => "UPPER(title) DESC, id DESC"
-	 * 	));
-	 * 	$sorting->add("title",array(
-	 * 		"ascending_ordering" => "UPPER(title), id",
-	 * 		"descending_ordering" => "UPPER(title) DESC, id DESC"
-	 * 	));
-	 * 	$sorting->add("title","UPPER(title), id", "UPPER(title) DESC, id DESC");
+	 * ```
+	 * $sorting->add("create_date");
+	 * $sorting->add("create_date",array("reverse" => true));
+	 * $sorting->add("title",array("order_by" => "UPPER(title)"));
+	 * $sorting->add("title",array(
+	 * 	"asc" => "UPPER(title), id",
+	 * 	"desc" => "UPPER(title) DESC, id DESC"
+	 * ));
+	 * $sorting->add("title",array(
+	 * 	"ascending_ordering" => "UPPER(title), id",
+	 * 	"descending_ordering" => "UPPER(title) DESC, id DESC"
+	 * ));
+	 * $sorting->add("title","UPPER(title), id", "UPPER(title) DESC, id DESC");
+	 * ```
 	 *
 	 * @param string $key Name of the key which can then be used in a template by {sortable} helper.
 	 * @param string|array $options_or_asc_ordering string for sql definition of ascending ordering or array for options. see description of $options below.
 	 * @param string $desc_ordering sql definition of descending ordering
 	 * @param array $options Options to customize sorting
-	 * <ul>
-	 * 	<li>order_by - </li>
-	 * 	<li>ascending_ordering - specifies custom ascending ordering, eg. 'created,id asc'</li>
-	 * 	<li>descending_ordering - specifies custom descending ordering, eg. 'created,id desc'</li>
-	 * 	<li>reverse - used only in conjunction with 'order_by'. Reverts order for both descending and ascending ordering</li>
-	 * 	<li>title - string for the title attribute of the generated <a /> tag.</li>
-	 * </ul>
-	 *
+	 * - order_by -
+	 * - ascending_ordering - specifies custom ascending ordering, eg. 'created,id asc'
+	 * - descending_ordering - specifies custom descending ordering, eg. 'created,id desc'
+	 * - reverse - used only in conjunction with 'order_by'. Reverts order for both descending and ascending ordering
+	 * - title - string for the title attribute of the generated &lt;a /&gt; tag.
 	 */
 	function add($key,$options_or_asc_ordering = array(), $desc_ordering = null, $options = array()){
 		$asc_ordering = null;
@@ -146,6 +148,7 @@ class Atk14Sorting{
 
 	/**
 	 * Returns the ordering key.
+	 *
 	 * It is a string and this form is suitable for usage in any finding method used by {@link DbMole}.
 	 *
 	 * @return string the ordering key
@@ -198,6 +201,7 @@ class Atk14Sorting{
 	 * Magical method to get string representation of the objects' instance.
 	 *
 	 *
+	 * @return string
 	 */
 	function __toString(){ return $this->toString(); }
 }

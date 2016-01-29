@@ -2,31 +2,27 @@
 /**
  * Class for simple including of files.
  *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
+ * @package Atk14\Core
  * @filesource
  */
 
 /**
  * Class for simple including of files.
  *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
- *
  */
 class Atk14Require{
 	/**
-	 * Loads forms by pattern.
+	 * Loads form files by pattern.
 	 *
 	 * It automatically uses current namespace.
 	 *
 	 * This example loads all forms for controller article:
-	 * 	Atk14Require::Forms("article/*");
+	 * ```
+	 * Atk14Require::Forms("article/*");
+	 * ```
 	 *
-	 * @param string $pattern
-	 * @return array
+	 * @param string $pattern pattern specifying filename
+	 * @return string[] array with filenames of loaded forms
 	 */
 	static function Forms($pattern){
 		global $ATK14_GLOBAL;
@@ -40,18 +36,24 @@ class Atk14Require{
 	 *
 	 * Namespace doesn't have to be specified, it is used automatically.
 	 * - classname
-	 * 		Atk14Require::Controller("ApplicationController");
-	 * 		Atk14Require::Controller("HelpController");
+	 * ```
+	 * Atk14Require::Controller("ApplicationController");
+	 * Atk14Require::Controller("HelpController");
+	 * ```
 	 *
 	 * - filename. You don't have to specify suffix, it will be added automatically.
-	 * 		Atk14Require::Controller("help_controller");
-	 * 		Atk14Require::Controller("help_controller.php");
+	 * ```
+	 * Atk14Require::Controller("help_controller");
+	 * Atk14Require::Controller("help_controller.php");
+	 * ```
 	 *
 	 * - other
-	 * 		Atk14Require::Controller("_*");
+	 * ```
+	 * Atk14Require::Controller("_*");
+	 * ```
 	 *
 	 * @param string $controller_name 
-	 * @return array
+	 * @return string[]
 	 */
 	static function Controller($controller_name){
 		global $ATK14_GLOBAL;
@@ -79,15 +81,16 @@ class Atk14Require{
 	 * Loads a helper
 	 *
 	 * Loading a helper examples
-	 *
-	 * 		Atk14Require::Helper("function.paginator");
-	 * 		Atk14Require::Helper("block.message");
-	 * 		Atk14Require::Helper("modifier.format_datetime",$smarty);
-	 * 		Atk14Require::Helper("modifier.format_datetime.php",$smarty);
+	 * ```
+	 * Atk14Require::Helper("function.paginator");
+	 * Atk14Require::Helper("block.message");
+	 * Atk14Require::Helper("modifier.format_datetime",$smarty);
+	 * Atk14Require::Helper("modifier.format_datetime.php",$smarty);
+	 * ```
 	 *
 	 * @param string $filename name of helper. extension doesn't have to be specified, it will be added automatically
 	 * @param Atk14Smarty $smarty
-	 * @return array
+	 * @return string[]
 	 */
 	static function Helper($filename,$smarty = null){
 		!preg_match("/\\.php$/",$filename) && ($filename .= ".php");
@@ -105,11 +108,13 @@ class Atk14Require{
 	 * Loads filename specified by pattern.
 	 *
 	 * Alias of {@link _Files()} method.
-	 * 	Atk14Require::Load("controllers/application_mailer.inc");
-	 * 	Atk14Require::Load("controllers/*.inc");
+	 * ```
+	 * Atk14Require::Load("controllers/application_mailer.inc");
+	 * Atk14Require::Load("controllers/*.inc");
+	 * ```
 	 *
 	 * @param string $pattern
-	 * @return array
+	 * @return string[]
 	 */
 	static function Load($pattern){
 		return Atk14Require::_Files($pattern);

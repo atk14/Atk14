@@ -2,10 +2,6 @@
 /**
  * Class for managing database migrations.
  *
- *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
  * @filesource
  */
 
@@ -16,7 +12,7 @@
  * If you want to use an SQL in a migration step look at the {@link Atk14MigrationBySqlFile} class.
  *
  * Example of migration file(db/migrations/0001_content_for_creatures.php):
- * <code>
+ * ```
  * class ContentForCreatures extends Atk14Migration{
  * 	function up(){
  * 		$data_ar = array(
@@ -34,18 +30,15 @@
  * 		}
  * 	}
  * }
- * </code>
+ * ```
  *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
- * @filesource
+ * @package Atk14\Core
  */
 class Atk14Migration{
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param string $version Migration file
 	 */
 	function Atk14Migration($version){
@@ -112,10 +105,21 @@ class Atk14Migration{
 		$this->_failed = true;
 	}
 
+	/**
+	 * Checks if table schema_migrations exists.
+	 *
+	 * @param DbMole $dbmole
+	 * @return boolean
+	 */
 	static function SchemaMigrationsTableExists($dbmole){
 		return 1==$dbmole->selectInt("SELECT COUNT(*) FROM pg_tables WHERE LOWER(tablename)='schema_migrations'");
 	}
 
+	/**
+	 * Creates table for storing information about executed migrations.
+	 *
+	 * @param DbMole $dbmole
+	 */
 	static function CreateSchemaMigrationsTable($dbmole){
 		$dbmole->doQuery("CREATE TABLE schema_migrations(
 			version VARCHAR(255) PRIMARY KEY,
@@ -127,10 +131,10 @@ class Atk14Migration{
 /**
  * Allows using sql in migration scripts.
  *
- * <code>
+ * ```
  * $migration = Atk14MigrationBySqlScript("0000_sessions.sql");
  * $migration->migrateUp();
- * </code>
+ * ```
  *
  * @package Atk14
  * @subpackage Core
