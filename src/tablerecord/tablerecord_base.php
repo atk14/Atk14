@@ -7,9 +7,8 @@
  * @filesource
  */
 
-/**
-* define("INOBJ_TABLERECORD_CACHES_STRUCTURES",60 * 60); // cachovani struktur po dobu 1 hodiny
-*/
+// Structures of tables will be cached for the given amount of seconds
+defined("INOBJ_TABLERECORD_CACHES_STRUCTURES") || define("INOBJ_TABLERECORD_CACHES_STRUCTURES",0);
 
 /**
  * Basic class for manipulating records.
@@ -1057,42 +1056,9 @@ class TableRecord_Base extends inobj{
 		settype($field_name,"string");
 		if(!in_array($field_name,$this->getKeys())){
 			throw new Exception(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name");
-			//error_log(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name, returning null");
-			//return null;
 		}
 		$this->_readValueIfWasNotRead($field_name);
 		return $this->_RecordValues[$field_name];
-
-		/*
-		// a Matyas` try, it doesn't pass tests
-	  if(is_array($field_name))
-	    {
-			$all_fields=$this->_TableStructure;
- 			$field_name = array_flip($field_name); // now its in form db field name => required value
- 			$diff=array_diff_key($field_name, $all_fields);
- 			$out=array();
- 			if($diff)
- 			  {
- 			  foreach($diff as $key => $value)
-			    {
- 			    $out[$key]=null;
- 			    error_log(get_class($this)."::getValue() accesses non existing field $this->_TableName.$key, returning null");
- 			    }
- 			  $field_name=array_intersect_key($field_name, $all_fields);
- 				}
- 			$this->_readValueIfWasNotRead($field_name);
- 			foreach(array_intersect_key($this->_RecordValues, $field_name) as $k => $v)
- 			  $out[$field_name[$k]]=$v;
- 		  return $out;
- 			}
-		$field_name=(string) $field_name;
-		if(!$this->hasKey($field_name)){
-			error_log(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name, returning null");
-			return null;
-		}
-		$this->_readValueIfWasNotRead($field_name);
-		return $this->_RecordValues[$field_name];
-		*/
 	}
 	/**
 	 * Alias to method getValue().
@@ -1396,16 +1362,6 @@ class TableRecord_Base extends inobj{
 			if(!isset($id)){ return null; }
 			$values[$this->_IdFieldName] = $id;
 		}
-
-		/*
-		if(!isset($values[$this->_IdFieldName])){
-			$id = $this->_dbmole->selectSequenceNextval($this->_SequenceName);
-			if(!isset($id)){ return null; }
-			$values[$this->_IdFieldName] = $id;
-		}else{
-			$id = $values[$this->_IdFieldName];
-		}
-		*/
 
 		if(!$this->_dbmole->insertIntoTable($this->_TableName,$values,$options)){ return null; }
 
