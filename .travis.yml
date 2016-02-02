@@ -18,10 +18,10 @@ before_install:
   - sudo locale-gen
   - locale -a
   - sudo apt-get install php-pear
+  - sudo pear install --alldeps PHPUnit2
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
 
 before_script:
-  - sudo pear install --alldeps PHPUnit2
   - psql -c "CREATE DATABASE test;" -U postgres
   - psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres
