@@ -94,6 +94,7 @@ fi
 echo -n "PHPUnit2 is installed... "
 cat << EOF | php
 <?php
+set_include_path(get_include_path().":/usr/share/php"); // In Travis environment there are some difficulties to load the PHPUnit2... TODO: to be removed
 @include_once 'PHPUnit2/Framework/TestSuite.php';
 @include_once 'PHPUnit2/Framework/TestCase.php';
 @include_once 'PHPUnit2/TextUI/ResultPrinter.php';

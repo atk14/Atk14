@@ -52,7 +52,7 @@ if(preg_match("/^5/",phpversion())){
 // v PHP5.3 neexistuje $_ENV["PWD"] ??
 isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 
-set_include_path(get_include_path().":/usr/share/php"); // In Travis environment there are some difficulties to load the PHPUnit2...
+set_include_path(get_include_path().":/usr/share/php"); // In Travis environment there are some difficulties to load the PHPUnit2... TODO: to be removed
 
 include_once 'PHPUnit2/Framework/TestSuite.php';
 include_once 'PHPUnit2/Framework/TestCase.php';
