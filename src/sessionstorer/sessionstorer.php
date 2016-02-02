@@ -310,7 +310,7 @@ class SessionStorer{
 	 * @return bool
 	 */
 	function cookiesEnabled(){
-		return isset($GLOBALS["_COOKIE"]) && sizeof($GLOBALS["_COOKIE"])>0;
+		return $this->_request->cookiesEnabled();
 	}
 
 	/**
@@ -590,8 +590,8 @@ class SessionStorer{
 		$id = null;
 		$security = null;
 
-		if(!isset($GLOBALS["_COOKIE"][$this->getCookieName()])){ return false; }
-		if(!is_string($cookie_val = $GLOBALS["_COOKIE"][$this->getCookieName()])){ return false; }
+		$cookie_val = $this->_request->getCookieVar($this->getCookieName());
+		if(!$cookie_val || !is_string($cookie_val)) { return false; }
 
 		if(preg_match('/^([1-9][0-9]{0,20})\.([a-z0-9]{32})$/i',$cookie_val,$matches)){
 			$id = $matches[1];
