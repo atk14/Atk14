@@ -143,6 +143,8 @@ class SessionStorer{
 	 */
 	protected $_request = null;
 
+	protected $_response = null;
+
 	/**
 	 * DbMole instance with connection to database.
 	 *
@@ -218,6 +220,8 @@ class SessionStorer{
 
 		$options = array_merge(array(
 			"request" => $GLOBALS["HTTP_REQUEST"],
+			"response" => $GLOBALS["HTTP_RESPONSE"],
+
 			"dbmole" => null,
 
 			"session_name" => SESSION_STORER_DEFAULT_SESSION_NAME,
@@ -242,6 +246,7 @@ class SessionStorer{
 		$this->_SessionName = (string)$options["session_name"];
 		$this->_Section = (string)$options["section"];
 		$this->_request = $options["request"];
+		$this->_response = $options["response"];
 
 		$this->_MaxLifetime = $options["max_lifetime"];
 		$this->_SslOnly = $options["ssl_only"];
@@ -806,13 +811,21 @@ class SessionStorer{
 	 * @param string $domain
 	 * @param boolean $secure
 	 * @param boolean $http_only
-	 * @return boolean result of operation. can fail in case there is output before calling this method
 	 */
 	protected function __setCookie($name , $value, $expire, $path , $domain = null, $secure = false, $httponly = false){
+		$this->_response->addCookie(new HTTPCookie($name,$value,array(
+			"expire" => $expire,
+			"path" => $path,
+			"domain" => $domain,
+			"secure" => $secure,
+			"httponly" => $httponly,
+		)));
+
+		/*
 		if(defined("TEST") && TEST){
 			return @setcookie($name , $value, $expire, $path , $domain, $secure, $httponly);
 		}
-		return setcookie($name , $value, $expire, $path , $domain, $secure, $httponly);
+		return setcookie($name , $value, $expire, $path , $domain, $secure, $httponly); */
 	}
 
 	/**
