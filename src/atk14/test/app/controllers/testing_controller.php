@@ -65,6 +65,11 @@ class TestingController extends ApplicationController{
 		$this->mail_ar = $this->mailer->test_rendering();
 	}
 
+	function cookies_dumper(){
+		$this->render_template = false;
+		$this->response->write(var_export($this->request->getCookieVars(),true));
+	}
+
 	function _before_filter(){
 	}
 

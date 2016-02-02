@@ -31,7 +31,7 @@
  * @todo Some more explanation
  */
 class Atk14Client{
-	
+
 	/**
 	 * Instance of session storer.
 	 *
@@ -95,23 +95,110 @@ class Atk14Client{
 	var $_BasicAuthPassword = null;
 
 	/**
+	 * Store for cookies
+	 *
+	 * @var ignore
+	 */
+	var $_Cookies = array();
+
+	/**
+	 * Flag whether cookies are enabled
+	 *
+	 * @var boolean
+	 */
+	var $_CookiesEnabled = true;
+
+	/**
 	 * Constructor
 	 */
-	function Atk14Client(){
+	function __construct(){
 		global $ATK14_GLOBAL;
 		$this->session = $ATK14_GLOBAL->getSession();
 		$this->flash = Atk14Flash::GetInstance();
 
-		if(!isset($GLOBALS["_COOKIE"])){ $GLOBALS["_COOKIE"] = array(); }
 		$GLOBALS["_SERVER"]["REMOTE_ADDR"] = "0.0.0.0";
-		$GLOBALS["_COOKIE"][SESSION_STORER_COOKIE_NAME_CHECK] = "1";
+		$this->setCookie(SESSION_STORER_COOKIE_NAME_CHECK,"1");
 	}
 
 	/**
 	 * Disables cookies.
+	 *
+	 * <code>
+	 *	$client->setCookie("cookie_1","val");
+	 * 	echo sizeof($client->getCookies()); // 1
+	 *	//
+	 * 	$client->disableCookies();
+	 * 	echo sizeof($client->getCookies()); // 0
+	 *	$client->setCookie("cookie_2","val");
+	 * 	echo sizeof($client->getCookies()); // 0
+	 * </code>
 	 */
 	function disableCookies(){
-		$GLOBALS["_COOKIE"] = array();
+		$this->setCookies(array());
+		$this->_CookiesEnabled = false;
+	}
+
+	/**
+	 * Enables cookies.
+	 */
+	function enableCookies(){
+		$this->_CookiesEnabled = true;
+	}
+
+	/**
+	 *
+	 * <code>
+	 *	var_dump($client->getCookies()); // array("cookie1" => "value")
+	 * </code>
+	 */
+	function getCookies(){
+		if(!$this->_CookiesEnabled){ return array(); }
+		return $this->_Cookies;
+	}
+
+	/**
+	 *
+	 * <code>
+	 *	if($client->cookiesEnabled()){
+	 *		// cookies are enabled
+	 *	}
+	 * </code>
+	 */
+	function cookiesEnabled(){ return $this->_CookiesEnabled; }
+
+	/**
+	 *
+	 * <code>
+	 *	$client->setCookies(array(
+	 *		"check" => "1"
+	 *		"cookie1" => "value",
+	 *	);
+	 * </code>
+	 */
+	function setCookies($cookies){
+		$this->_Cookies = $cookies;
+		return true;
+	}
+
+	/**
+	 *
+	 * <code>
+	 *	$client->setCookie("cookie1","value");
+	 * </code>
+	 */
+	function setCookie($name,$value){
+		$this->_Cookies[$name] = $value;
+		return true;
+	}
+
+	/**
+	 *
+	 * <code>
+	 *	$client->clearCookie("cookie1");
+	 * </code>
+	 */
+	function clearCookie($name){
+		unset($this->_Cookies[$name]);
 	}
 
 	/**
@@ -293,7 +380,7 @@ class Atk14Client{
 	 * @ignore
 	 */
 	private function _doRequest($method,$path,$options = array()){
-		global $ATK14_GLOBAL;
+		global $ATK14_GLOBAL, $HTTP_REQUEST, $HTTP_RESPONSE;
 
 		$options = array_merge(array(
 			"params" => array(),
@@ -303,11 +390,15 @@ class Atk14Client{
 
 		$params = $options["params"];
 
+		$HTTP_REQUEST->setCookieVars(array()); // !! danger !! global variable manipulation
+
 		$request = new HTTPRequest();
+		$HTTP_REQUEST = &$request; // !! danger !! changing global variable manipulation
 		$request->setUserAgent($this->_UserAgent);
 		$request->setRemoteAddr($this->_RemoteAddr);
 		$request->setHttpHost($ATK14_GLOBAL->getHttpHost());
 		$request->setServerPort(80);
+		$request->setCookieVars($this->getCookies());
 
 		if($options["content_type"]){
 			$request->setContentType($options["content_type"]);
@@ -381,6 +472,15 @@ class Atk14Client{
 		));
 
 		$this->controller = $ctrl;
+
+		foreach($HTTP_RESPONSE->getCookies() as $cookie){
+			$_expire = $cookie->getExpire();
+			if($_expire>0 && $_expire<time()){
+				$this->clearCookie($cookie->getName());
+				continue;
+			}
+			$this->setCookie($cookie->getName(),$cookie->getValue());
+		}
 
 		return $ctrl;
 	}

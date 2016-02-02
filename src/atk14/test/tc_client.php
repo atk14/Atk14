@@ -42,12 +42,37 @@ class TcClient extends TcBase{
 		$controller = $client->post("testing/test","<xml></xml>",array("content_type" => "text/xml"));
 		$this->assertEquals("john:aMagic",$controller->request->getBasicAuthString());
 
-
 		$client->setBasicAuthString("");
 		$controller = $client->post("testing/test","<xml></xml>",array("content_type" => "text/xml"));
 		$this->assertEquals(null,$controller->request->getBasicAuthString());
 		$this->assertEquals(null,$client->getBasicAuthString());
 		$this->assertEquals(null,$client->getBasicAuthUsername());
 		$this->assertEquals(null,$client->getBasicAuthPassword());
+
+		// Cookies
+		$controller = $client->get("testing/cookies_dumper");
+		$cookies = $this->_parse_cookies($controller);
+		$this->assertEquals(1,sizeof($cookies));
+		$this->assertTrue(isset($cookies["check"]));
+
+		$client->disableCookies();
+		$controller = $client->get("testing/cookies_dumper");
+		$cookies = $this->_parse_cookies($controller);
+		$this->assertEquals(array(),$cookies);
+
+		$client->enableCookies();
+		$client->setCookie("login_id","123");
+		$controller = $client->get("testing/cookies_dumper");
+		$cookies = $this->_parse_cookies($controller);
+		$this->assertEquals(2,sizeof($cookies));
+		$this->assertTrue(isset($cookies["check"]));
+		$this->assertEquals("123",$cookies["login_id"]);
+	}
+
+	function _parse_cookies($controller){
+		// see app/controllers/testing_controller.php, method cookies_dumper
+		$src = '$cookies = '.$controller->response->buffer->toString().';';
+		eval($src);
+		return $cookies;
 	}
 }
