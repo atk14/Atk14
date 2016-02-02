@@ -864,6 +864,21 @@ class HTTPRequest{
 	function getCookies(){ return $this->getCookieVars(); }
 
 	/**
+	 * Checks whether cookies are enabled in the browser.
+	 *
+	 * Technically it just returns true when there is some cookie set.
+	 *
+	 * <code>
+	 * 	if(!$request->cookiesEnabled()){
+	 *		die("Please, enable cookies in your browser");
+	 *	}
+	 * </code>
+	 *
+	 * @return boolean
+	 */
+	function cookiesEnabled(){ return sizeof($this->getCookieVars())>0; }
+
+	/**
 	 * Returns all variables of specified type from request.
 	 *
 	 *
