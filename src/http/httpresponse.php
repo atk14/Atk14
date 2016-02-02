@@ -562,6 +562,10 @@ class HTTPResponse{
 		$this->_HTTPCookies[] = $http_cookie;
 	}
 
+	function getCookies(){
+		return $this->_HTTPCookies;
+	}
+
 	/**
 	 * Writes a string to output buffer.
 	 *
@@ -666,11 +670,8 @@ class HTTPResponse{
 			header("$_key: $_value");
 		}
 
-		for($i=0;$i<sizeof($this->_HTTPCookies);$i++){
-			$cookie = &$this->_HTTPCookies[$i];
-			$_secure = 0;
-			if($cookie->isSecure()){ $_secure = 1; }
-			setcookie($cookie->getName(),$cookie->getValue(),$cookie->getExpire(),$cookie->getPath(),$cookie->getDomain(),$_secure);
+		foreach($this->getCookies() as $cookie){
+			setcookie($cookie->getName(),$cookie->getValue(),$cookie->getExpire(),$cookie->getPath(),$cookie->getDomain(),$cookie->isSecure(),$cookie->isHttponly());
 		}
 	}
 
@@ -685,32 +686,35 @@ class HTTPResponse{
 	function concatenate($http_response){
 		$this->_OutputBuffer->addStringBuffer($http_response->_OutputBuffer);
 
-		//kopirovani presmerovani
+		// Redirection
 		$_location = $http_response->getLocation();
 		if(isset($_location) && strlen($_location)>0){
 			$this->setLocation($_location,array("moved_permanently" => $http_response->_LocationMovedPermanently, "status" => $this->_LocationMovedWithStatus));
 		}
 
-		//HTTP status code
+		// HTTP status code
 		if($http_response->_StatusCode_Redefined){
 			$this->setStatusCode($http_response->getStatusCode(),$http_response->_StatusMessage);
 		}
 
-		//Content-Type
+		// Content-Type
 		if($http_response->_ContentType_Redefined){
 			$this->setContentType($http_response->getContentType());
 		}
 
-		//Charset
+		// Charset
 		if($http_response->_ContentCharset_Redefined){
 			$this->setContentCharset($http_response->getContentCharset());
 		}
 
-		//HTTP hlavicky
-		$headers = $http_response->getHeaders();
-		reset($headers);
-		while(list($_key,$_value) = each($headers)){
+		// HTTP headers
+		foreach($http_response->getHeaders() as $_key => $_value){
 			$this->setHeader($_key,$_value);
+		}
+
+		// Cookies
+		foreach($http_response->getCookies() as $c){
+			$this->addCookie($c);
 		}
 	}
 }

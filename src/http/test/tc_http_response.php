@@ -100,17 +100,42 @@ class tc_http_response extends tc_base{
 
 	function test_concatenate(){
 		$final_resp = new HTTPResponse();
-
-		$resp = new HTTPResponse();
-		$resp->setStatusCode("299 You Found a Treasure");
-
+		$final_resp->setContentType("text/html");
+		//
+		$final_resp->addCookie(new HTTPCookie("check","1"));
+		$final_resp->setHeader("X-Powered-By","PHP");
+		//
+		$this->assertEquals("text/html",$final_resp->getContentType());
+		$this->assertEquals(1,sizeof($final_resp->getCookies()));
+		$this->assertEquals(1,sizeof($final_resp->getHeaders()));
 		$this->assertEquals(200,$final_resp->getStatusCode());
 		$this->assertEquals("OK",$final_resp->getStatusMessage());
+
+		$resp = new HTTPResponse();
+		$resp->setContentType("text/plain");
+		$resp->setStatusCode("299 You Found a Treasure");
+		$resp->addCookie(new HTTPCookie("secret","daisy"));
+		$resp->setHeader("X-Powered-By","ATK14 Framework");
+		$resp->setHeader("X-Forwarded-For","1.2.3.4");
 
 		$final_resp->concatenate($resp);
 
 		$this->assertEquals(299,$final_resp->getStatusCode());
 		$this->assertEquals("You Found a Treasure",$final_resp->getStatusMessage());
+		//
+		$this->assertEquals("text/plain",$final_resp->getContentType());
+		//
+		$cookies = $final_resp->getCookies();
+		$this->assertEquals(2,sizeof($cookies));
+		$this->assertEquals($cookies[0]->getName(),"check");
+		$this->assertEquals($cookies[1]->getName(),"secret");
+		//
+		$headers = $final_resp->getHeaders();
+		$this->assertEquals(2,sizeof($headers));
+		$this->assertEquals(array(
+			"X-Powered-By" => "ATK14 Framework",
+			"X-Forwarded-For" => "1.2.3.4",
+		),$headers);
 	}
 
 

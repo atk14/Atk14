@@ -10,6 +10,7 @@ define("DEFAULT_CHARSET","UTF-8");
 
 include("../httpuploadedfile.php");
 include("../../stringbuffer/stringbuffer.php");
+include("../../string4/load.php");
 include("../../url_fetcher/url_fetcher.php");
 include("../../files/load.php");
 include("../../miniyaml/miniyaml.php");

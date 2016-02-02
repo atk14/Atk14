@@ -23,41 +23,48 @@ class HTTPCookie{
 	 * 
 	 * @var string
 	 */
-	private $_Name = null;
+	private $_Name;
 
 	/**
 	 * Cookie value
 	 *
 	 */
-	private $_Value = null;
+	private $_Value;
 
 	/**
 	 * Expiration of cookie
 	 *
 	 * @var integer
 	 */
-	private $_Expire = 0;
+	private $_Expire;
 
 	/**
 	 * Cookie path
 	 *
 	 * @var string
 	 */
-	private $_Path = "/";
+	private $_Path;
 
 	/**
 	 * Cookie domain
 	 *
 	 * @var string
 	 */
-	private $_Domain = "";
+	private $_Domain;
 
 	/**
 	 * Flag if the cookie is used on ssl
 	 *
 	 * @var boolean
 	 */
-	private $_Secure = false;	
+	private $_Secure;
+
+	/**
+	 * Flag for HTTP only
+	 *
+	 * @var boolean
+	 */
+	private $_Httponly;
 	
 	/**
 	 * Creates instantiated cookie object.
@@ -65,12 +72,26 @@ class HTTPCookie{
 	 * @param string $cookie_name
 	 * @param string $cookie_value
 	 */
-	function HTTPCookie($cookie_name,$cookie_value){
+	function __construct($cookie_name,$cookie_value,$options = array()){
 		settype($cookie_name,"string");
 		settype($cookie_value,"string");
 
+		$options += array(
+			"expire" => 0,
+			"path" => "/",
+			"domain" => "",
+			"secure" => false,
+			"httponly" => false
+		);
+
 		$this->_Name = $cookie_name;
 		$this->_Value = $cookie_value;
+
+		$this->_Expire = $options["expire"];
+		$this->_Path = $options["path"];
+		$this->_Domain = $options["domain"];
+		$this->_Secure = $options["secure"];
+		$this->_Httponly = $options["httponly"];
 	}
 
 	/**
@@ -148,8 +169,8 @@ class HTTPCookie{
 	 *
 	 * Secured cookie is then used only when a browser is visiting a server via HTTPS protocol and encrypted.
 	 */
-	function setSecure(){
-		$this->_Secure = true;
+	function setSecure($secure = true){
+		$this->_Secure = $secure;
 	}
 
 	/**
@@ -158,4 +179,15 @@ class HTTPCookie{
 	 * @return boolean
 	 */
 	function isSecure(){ return $this->_Secure; }
+
+	function setHttponly($httponly = true){
+		$this->_Httponly = $httponly;
+	}
+
+	/**
+	 * Checks whether the given cookie is for HTTP only (not readable for Javascript)
+	 *
+	 * @return boolean
+	 */
+	function isHttponly(){ return $this->_Httponly; }
 }
