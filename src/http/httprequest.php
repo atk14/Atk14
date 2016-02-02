@@ -206,16 +206,6 @@ class HTTPRequest{
 			$this->_HTTPRequest_scriptFilename = $_tmp;
 		}
 
-		//if(isset($GLOBALS['_COOKIE'])){
-		//	$this->_HTTPRequest_paramsCookie = $GLOBALS['_COOKIE'];
-		//}
-		//if(isset($GLOBALS['_GET'])){
-		//	$this->_HTTPRequest_paramsGet = $GLOBALS['_GET'];
-		//}
-		//if(isset($GLOBALS['_POST'])){
-		//	$this->_HTTPRequest_paramsPost = $GLOBALS['_POST'];
-		//}
-
 		if(isset($GLOBALS['_SERVER']['PHP_AUTH_USER']) && isset($GLOBALS['_SERVER']['PHP_AUTH_PW'])){
 			$_username = $GLOBALS['_SERVER']['PHP_AUTH_USER'];
 			$_password = $GLOBALS['_SERVER']['PHP_AUTH_PW'];
@@ -822,19 +812,47 @@ class HTTPRequest{
 		return $this->setPostVars($vars);
 	}
 
+
 	/**
-	 * Returns value of a cookie $var_name.
+	 * Gets a particular cookie
 	 *
-	 * @param string $var_name
-	 * @return string value of cookie $var_name
+	 * @param string $cookie_name
+	 * @return string
 	 */
-	function getCookieVar($var_name){
-		settype($var_name,"string");
+	function getCookieVar($cookie_name){
+		settype($cookie_name,"string");
 		$out = null;
-		if(isset($GLOBALS["_COOKIE"][$var_name])){
-			$out = $GLOBALS["_COOKIE"][$var_name];
+		$vars = $this->getAllCookieVars();
+		if(isset($vars[$cookie_name])){
+			$out = $vars[$cookie_name];
 		}
 		return $out;
+	}
+
+	/**
+	 * Returns all cookies
+	 *
+	 * @return array
+	 */
+	function getAllCookieVars(){
+		if(!is_null($vars = $this->_getForceValue("CookieVars"))){ return $vars; }
+		return $GLOBALS["_COOKIE"];
+	}
+
+	/**
+	 * Returns all cookies
+	 *
+	 * Alias to {@link getAllCookieVars()}
+	 *
+	 * @return array
+	 */
+	function getCookieVars(){ return $this->getAllCookieVars(); }
+
+	function setCookieVars($vars){ $this->_setForceValue("CookieVars",$vars); }
+	function setCookieVar($name,$value){
+		$vars = $this->getCookieVars();
+		$vars["$name"] = $value;
+		return $this->setCookieVars($vars);
 	}
 
 	/**
@@ -846,13 +864,6 @@ class HTTPRequest{
 	 * @return string value of cookie $var_name
 	 */
 	function getCookie($name){ return $this->getCookieVar($name); }
-
-	/**
-	 * Returns all variables in cookies.
-	 *
-	 * @return array
-	 */
-	function getCookieVars(){ return $GLOBALS["_COOKIE"]; }
 
 	/**
 	 * Returns all variables in cookies.

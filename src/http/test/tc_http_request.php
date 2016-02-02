@@ -477,6 +477,21 @@ class tc_http_request extends tc_base{
 		$this->assertEquals($type == "PUT",$req->put());
 	}
 
+	function test_getCookieVar(){
+		global $_COOKIE;
+		$_COOKIE = array("session" => "123456abcd", "lang" => "en");
+
+		$request = new HTTPRequest();
+		$this->assertEquals(array("session" => "123456abcd", "lang" => "en"),$request->getCookieVars());
+		$this->assertEquals("en",$request->getCookie("lang"));
+
+		$request->setCookieVar("lang","fi");
+		$request->setCookieVar("check","1");
+		$this->assertEquals("fi",$request->getCookie("lang"));
+		$this->assertEquals(array("session" => "123456abcd", "lang" => "fi","check" => "1"),$request->getCookieVars());
+
+	}
+
 	/**
 	* Porovna dve asociativni pole bez ohledu na poradi klicu.
 	*/
