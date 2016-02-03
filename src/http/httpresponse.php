@@ -583,8 +583,18 @@ class HTTPResponse{
 		$this->addCookie($cookie_or_name,$value,$options);
 	}
 
+	/**
+	 * @return HTTPCookie[]
+	 */
 	function getCookies(){
 		return $this->_HTTPCookies;
+	}
+
+	/**
+	 * Cleares all previously set cookies.
+	 */
+	function clearCookies(){
+		$this->_HTTPCookies = array();
 	}
 
 	/**

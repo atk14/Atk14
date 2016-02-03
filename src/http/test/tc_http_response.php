@@ -127,6 +127,11 @@ class tc_http_response extends tc_base{
 		$this->assertEquals("last_logged_as",$cookies[3]->getName());
 		$this->assertEquals("bob",$cookies[3]->getValue());
 		$this->assertEquals($far_future + $day,$cookies[3]->getExpire());
+
+		// clearing cookies
+		$this->assertEquals(4,sizeof($resp->getCookies()));
+		$resp->clearCookies();
+		$this->assertEquals(0,sizeof($resp->getCookies()));
 	}
 
 	function test_concatenate(){
