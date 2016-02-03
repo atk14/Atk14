@@ -70,6 +70,11 @@ class TestingController extends ApplicationController{
 		$this->response->write(var_export($this->request->getCookieVars(),true));
 	}
 
+	function set_cookie(){
+		$this->render_template = false;
+		$this->response->addCookie(new HTTPCookie("user_name","John Doe"));
+	}
+
 	function _before_filter(){
 	}
 

@@ -67,6 +67,23 @@ class TcClient extends TcBase{
 		$this->assertEquals(2,sizeof($cookies));
 		$this->assertTrue(isset($cookies["check"]));
 		$this->assertEquals("123",$cookies["login_id"]);
+
+		// testing clearing cookies in cookies disabled mode
+		$client->disableCookies();
+		$this->assertEquals(0,sizeof($client->getCookies()));
+		$client->enableCookies();
+		$this->assertEquals(2,sizeof($client->getCookies()));
+		$client->disableCookies();
+		$client->clearCookies();
+		$this->assertEquals(0,sizeof($client->getCookies()));
+		$client->enableCookies();
+		$this->assertEquals(0,sizeof($client->getCookies()));
+
+		// setting new cookie
+		$client->get("testing/set_cookie");
+		$cookies = $client->getCookies();
+		$this->assertEquals(true,sizeof($cookies)>0);
+		$this->assertEquals("John Doe",$cookies["user_name"]);
 	}
 
 	function _parse_cookies($controller){

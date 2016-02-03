@@ -134,7 +134,6 @@ class Atk14Client{
 	 * </code>
 	 */
 	function disableCookies(){
-		$this->setCookies(array());
 		$this->_CookiesEnabled = false;
 	}
 
@@ -176,6 +175,7 @@ class Atk14Client{
 	 * </code>
 	 */
 	function setCookies($cookies){
+		if(!$this->cookiesEnabled()){ return false; }
 		$this->_Cookies = $cookies;
 		return true;
 	}
@@ -187,6 +187,7 @@ class Atk14Client{
 	 * </code>
 	 */
 	function setCookie($name,$value){
+		if(!$this->cookiesEnabled()){ return false; }
 		$this->_Cookies[$name] = $value;
 		return true;
 	}
@@ -199,6 +200,15 @@ class Atk14Client{
 	 */
 	function clearCookie($name){
 		unset($this->_Cookies[$name]);
+	}
+
+	/**
+	 * Cleares all cookies
+	 *
+	 * It's not depend on the cookies-enabled flag.
+	 */
+	function clearCookies(){
+		$this->_Cookies = array();
 	}
 
 	/**
@@ -473,13 +483,15 @@ class Atk14Client{
 
 		$this->controller = $ctrl;
 
-		foreach($HTTP_RESPONSE->getCookies() as $cookie){
-			$_expire = $cookie->getExpire();
-			if($_expire>0 && $_expire<time()){
-				$this->clearCookie($cookie->getName());
-				continue;
+		if($this->cookiesEnabled()){
+			foreach($HTTP_RESPONSE->getCookies() as $cookie){
+				if(!$cookie->isDesignatedFor($request)){ continue; }
+				if($cookie->isExpired()){
+					$this->clearCookie($cookie->getName());
+					continue;
+				}
+				$this->setCookie($cookie->getName(),$cookie->getValue());
 			}
-			$this->setCookie($cookie->getName(),$cookie->getValue());
 		}
 
 		return $ctrl;
