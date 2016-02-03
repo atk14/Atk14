@@ -390,7 +390,7 @@ class Atk14Client{
 	 * @ignore
 	 */
 	private function _doRequest($method,$path,$options = array()){
-		global $ATK14_GLOBAL, $HTTP_REQUEST, $HTTP_RESPONSE;
+		global $ATK14_GLOBAL;
 
 		$options = array_merge(array(
 			"params" => array(),
@@ -400,10 +400,9 @@ class Atk14Client{
 
 		$params = $options["params"];
 
-		$HTTP_REQUEST->setCookieVars(array()); // !! danger !! global variable manipulation
+		$GLOBALS["HTTP_RESPONSE"]->clearCookies(); // !! danger !! global variable manipulation
 
 		$request = new HTTPRequest();
-		$HTTP_REQUEST = &$request; // !! danger !! changing global variable manipulation
 		$request->setUserAgent($this->_UserAgent);
 		$request->setRemoteAddr($this->_RemoteAddr);
 		$request->setHttpHost($ATK14_GLOBAL->getHttpHost());
@@ -465,6 +464,7 @@ class Atk14Client{
 		$request->setMethod($method);
 		if($method=="POST"){
 			$request->setPostVars($params);
+			$request->setPostVar("_csrf_token_","testing_csrf_token"); // TODO: this is a nasty hack; originally this was in test/controller/tc_logins.php in method setUp()
 		}else{
 			$request->setGetVars($params);
 		}
@@ -475,6 +475,8 @@ class Atk14Client{
 			"lang" => $lang
 		),array("connector" => "&")));
 
+		$GLOBALS["HTTP_REQUEST"] = $request; // !! danger !! changing global variable manipulation
+
 		$ctrl = Atk14Dispatcher::Dispatch(array(
 			"display_response" => false,
 			"request" => $request,
@@ -484,7 +486,7 @@ class Atk14Client{
 		$this->controller = $ctrl;
 
 		if($this->cookiesEnabled()){
-			foreach($HTTP_RESPONSE->getCookies() as $cookie){
+			foreach($GLOBALS["HTTP_RESPONSE"]->getCookies() as $cookie){
 				if(!$cookie->isDesignatedFor($request)){ continue; }
 				if($cookie->isExpired()){
 					$this->clearCookie($cookie->getName());
