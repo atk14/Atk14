@@ -141,7 +141,7 @@ class SessionStorer{
 	 *
 	 * @var HttpRequest
 	 */
-	protected $_request = null;
+	protected $_ExtraRequest = null;
 
 	protected $_response = null;
 
@@ -219,7 +219,7 @@ class SessionStorer{
 		if(!$section){ $section = SESSION_STORER_DEFAULT_SECTION; }
 
 		$options = array_merge(array(
-			"request" => $GLOBALS["HTTP_REQUEST"],
+			"request" => null,
 			"response" => $GLOBALS["HTTP_RESPONSE"],
 
 			"dbmole" => null,
@@ -245,7 +245,7 @@ class SessionStorer{
 
 		$this->_SessionName = (string)$options["session_name"];
 		$this->_Section = (string)$options["section"];
-		$this->_request = $options["request"];
+		$this->_ExtraRequest = $options["request"];
 		$this->_response = $options["response"];
 
 		$this->_MaxLifetime = $options["max_lifetime"];
@@ -310,7 +310,8 @@ class SessionStorer{
 	 * @return bool
 	 */
 	function cookiesEnabled(){
-		return $this->_request->cookiesEnabled();
+		$request = $this->_getRequest();
+		return $request->cookiesEnabled();
 	}
 
 	/**
@@ -459,6 +460,11 @@ class SessionStorer{
 		return $this->_SentCookies;
 	}
 
+	function _getRequest(){
+		if($this->_ExtraRequest){ return $this->_ExtraRequest; }
+		return $GLOBALS["HTTP_REQUEST"];
+	}
+
 	/**
 	 * Generates a random string
 	 *
@@ -482,10 +488,12 @@ class SessionStorer{
 			return;
 		}
 
+		$request = $this->_getRequest();
+
 		if(
-			!isset($this->_request) ||
-			!$this->_request->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C") ||
-			$this->_getCurrentTime()-(int)$this->_request->getCookieVar(SESSION_STORER_COOKIE_NAME_CHECK)>60*60*24*365*2 // the check cookie is older than 2 years
+			!isset($request) ||
+			!$request->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C") ||
+			$this->_getCurrentTime()-(int)$request->getCookieVar(SESSION_STORER_COOKIE_NAME_CHECK)>60*60*24*365*2 // the check cookie is older than 2 years
 		){
 			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,$this->_getCurrentTime(),$this->_getCurrentTime()+60*60*24*365*5,array(
 				"ssl_only" => false, // value of $this->_SslOnly does not matter
@@ -547,12 +555,13 @@ class SessionStorer{
 	 */
 	function _readCookieData(){
 		$out = array();
+		$request = $this->_getRequest();
 
 		for($i=0;$i<100;$i+=2){
-			if($this->_request->getCookie($this->getCookieName().$i)!="check"){ break; }
+			if($request->getCookie($this->getCookieName().$i)!="check"){ break; }
 			// well on the current index there is a check cookie, so the next one must contain a data or something is terribly wrong!
 
-			$item = $this->_request->getCookie($this->getCookieName().($i+1));
+			$item = $request->getCookie($this->getCookieName().($i+1));
 			if(!Packer::Unpack($item,$val)){ return array(); }
 			if(!is_array($val) || array_keys($val)!=array("key","data")){ return array(); }
 			$out[] = $val;
@@ -589,8 +598,10 @@ class SessionStorer{
 	function _obtainSessionIdAndSecurity(&$id = null,&$security = null){
 		$id = null;
 		$security = null;
+		
+		$request = $this->_getRequest();
 
-		$cookie_val = $this->_request->getCookieVar($this->getCookieName());
+		$cookie_val = $request->getCookieVar($this->getCookieName());
 		if(!$cookie_val || !is_string($cookie_val)) { return false; }
 
 		if(preg_match('/^([1-9][0-9]{0,20})\.([a-z0-9]{32})$/i',$cookie_val,$matches)){
@@ -647,7 +658,7 @@ class SessionStorer{
 			return true;
 		}
 
-		//error_log("non existing session cookie found: $id.$security (".$this->_request->getRemoteAddr().", ".$this->_request->getUserAgent().")");
+		//error_log("non existing session cookie found: $id.$security (".$request->getRemoteAddr().", ".$request->getUserAgent().")");
 
 		$this->_clearSessionCookie();
 		return false;
@@ -692,6 +703,7 @@ class SessionStorer{
 	function _createNewDatabaseSession(){
 		$id = $this->_dbmole->selectSequenceNextval("seq_sessions");
 		$security = SessionStorer::_RandomString();
+		$request = $this->_getRequest();
 
 		$stat = $this->_dbmole->doQuery("
 			INSERT INTO sessions(
@@ -713,7 +725,7 @@ class SessionStorer{
 			":id" => $id,
 			":session_name" => $this->getSessionName(),
 			":security" => $security,
-			":remote_addr" => $this->_request->getRemoteAddr(),
+			":remote_addr" => $request->getRemoteAddr(),
 			":now" => $this->_getNow(),
 		));
 
@@ -736,14 +748,16 @@ class SessionStorer{
 	 * @return bool
 	 */
 	function _setSessionCookie(){
+		$request = $this->_getRequest();
+
 		$_expire_time = $this->getCookieExpiration()==0 ? 0 : $this->_getCurrentTime() + $this->getCookieExpiration();
 		$_cokie_value = $this->getSecretToken();
-		$cookie = $this->_request->getCookie($this->getCookieName());
+		$cookie = $request->getCookie($this->getCookieName());
 		if(is_string($cookie) && $cookie==$_cokie_value && $this->getCookieExpiration()==0){
 			return true;
 		}
 
-		if($this->_SslOnly && (!$this->_request || !$this->_request->ssl())){
+		if($this->_SslOnly && (!$request || !$request->ssl())){
 			return false;
 		}
 
@@ -769,9 +783,11 @@ class SessionStorer{
 			"document_root" => $this->_getWebDocumentRoot(),
 		);
 
+		$request = $this->_getRequest();
+
 		$this->_SentCookies[] = array($name,$value,$time);
 		if(strlen($value)>4000){
-			error_log("SessionStorer: there is a long cookie! ".strlen($value)." chars, url: ".$this->_request->getRequestAddress().", consider to reduce size of stored data");
+			error_log("SessionStorer: there is a long cookie! ".strlen($value)." chars, url: ".$request->getRequestAddress().", consider to reduce size of stored data");
 		}
 		if($value==""){
 			// when it`s about to delete a cookie, 2 setcookie() calls are realized -
@@ -787,7 +803,7 @@ class SessionStorer{
 				$value,
 				$time,
 				$options["document_root"],
-				$this->_request->getHttpHost()
+				$request->getHttpHost()
 			);
 		}
 		return $this->__setCookie(
@@ -836,7 +852,10 @@ class SessionStorer{
 	 */
 	function _getCookieDomain($share_cookies_on_subdomains = null){
 		if(!isset($share_cookies_on_subdomains)){ $share_cookies_on_subdomains = SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS; }
-		$domain = $this->_request->getHttpHost();
+
+		$request = $this->_getRequest();
+
+		$domain = $request->getHttpHost();
 		$domain = preg_replace('/:\d+$/','',$domain); // localhost:8080 -> localhost
 		if($share_cookies_on_subdomains){
 			$domain = preg_replace('/^.*\.([^.]+\.[a-z]+)$/','\1',$domain); // www.example.com -> example.com
@@ -1112,18 +1131,20 @@ class SessionStorer{
 	 * @access protected
 	 */
 	function _clearDataCookies(){
+		$request = $this->_getRequest();
+
 		$counter = 0;
 
 		// deleting data cookies if there are any
 		for($i=0;$i<100;$i++){
-			if($this->_request->getCookie($this->getCookieName().$i)){
+			if($request->getCookie($this->getCookieName().$i)){
 				$this->_clearCookie($this->getCookieName().$i);
 				$counter++;
 			}
 		}
 
 		// deleting data cookies - the old way
-		if(($cookie = $this->_request->getCookie($this->getCookieName())) && is_array($cookie)){
+		if(($cookie = $request->getCookie($this->getCookieName())) && is_array($cookie)){
 			foreach(array_keys($cookie) as $key){
 				$this->_clearCookie($this->getCookieName()."[$key]");
 				$counter++;
