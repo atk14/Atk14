@@ -190,4 +190,26 @@ class HTTPCookie{
 	 * @return boolean
 	 */
 	function isHttponly(){ return $this->_Httponly; }
+
+	/**
+	 * Does this cookie expire?
+	 */
+	function isExpired(){
+		$expire = $this->getExpire();
+		return $expire>0 && $expire<time();
+	}
+
+	/**
+	 * Is the cookie acceptable for the given HTTP request?
+	 *
+	 * <code>
+	 *	if($cookie->isDesignatedFor($request)){
+	 *		// cool, this cookie is for you
+	 *	}
+	 * </code>
+	 */
+	function isDesignatedFor($request){
+		if($this->isSecure() && !$request->sslActive()){ return false; }
+		return true;
+	}
 }

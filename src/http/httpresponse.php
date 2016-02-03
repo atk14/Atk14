@@ -554,12 +554,33 @@ class HTTPResponse{
 	 *
 	 * Adds a cookie to the internal cookies array. They are sent to the output by {@link flush()} or {@link flushAll()} methods.
 	 *
-	 * @param HTTPCookie $http_cookie
+	 * <code>
+	 *	$response->addCookie(new HTTPCookie("last_login","bob",array("secure" => true)));
+	 *	// or
+	 *	$response->addCookie("last_login","bob",array("secure" => true)));
+	 * </code>
+	 *
+	 * @param mixed $cookie_or_name
+	 * @param string $value
+	 * @param array $options
 	 */
-	function addCookie($http_cookie){
-		if(!isset($http_cookie)){ return; }
+	function addCookie($cookie_or_name,$value = null,$options = array()){
+		if(is_a($cookie_or_name,"HTTPCookie")){
+			$cookie = $cookie_or_name;
+		}else{
+			$cookie = new HTTPCookie((string)$cookie_or_name,(string)$value,$options);
+		}
 
-		$this->_HTTPCookies[] = $http_cookie;
+		if(!isset($cookie)){ return; }
+
+		$this->_HTTPCookies[] = $cookie;
+	}
+
+	/**
+	 * Alias for addCookie()
+	 */
+	function setCookie($cookie_or_name,$value = null,$options = array()){
+		$this->addCookie($cookie_or_name,$value,$options);
 	}
 
 	function getCookies(){

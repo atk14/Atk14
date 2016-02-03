@@ -98,6 +98,37 @@ class tc_http_response extends tc_base{
 		$this->assertEquals("789",$response->getHeader("x-user-id"));
 	}
 
+	function test_cookies(){
+		$day = 60 * 60 * 24;
+		$far_future = time() + $day * 365 * 20;
+		$resp = new HTTPResponse();
+
+		// setting cookies
+		$resp->addCookie(new HTTPCookie("check","1"));
+		$resp->addCookie("last_logged_at","2016-02-03",array("expire" => $far_future));
+		// using alias
+		$resp->setCookie(new HTTPCookie("login","john"));
+		$resp->setCookie("last_logged_as","bob",array("expire" => $far_future + $day));
+
+		//
+		$cookies = $resp->getCookies();
+		$this->assertEquals(4,sizeof($cookies));
+
+		$this->assertEquals("check",$cookies[0]->getName());
+		$this->assertEquals("1",$cookies[0]->getValue());
+
+		$this->assertEquals("last_logged_at",$cookies[1]->getName());
+		$this->assertEquals("2016-02-03",$cookies[1]->getValue());
+		$this->assertEquals($far_future,$cookies[1]->getExpire());
+
+		$this->assertEquals("login",$cookies[2]->getName());
+		$this->assertEquals("john",$cookies[2]->getValue());
+
+		$this->assertEquals("last_logged_as",$cookies[3]->getName());
+		$this->assertEquals("bob",$cookies[3]->getValue());
+		$this->assertEquals($far_future + $day,$cookies[3]->getExpire());
+	}
+
 	function test_concatenate(){
 		$final_resp = new HTTPResponse();
 		$final_resp->setContentType("text/html");
@@ -137,7 +168,6 @@ class tc_http_response extends tc_base{
 			"X-Forwarded-For" => "1.2.3.4",
 		),$headers);
 	}
-
 
 	// TODO: this test is stupid and fails -> rewrite it
 	function _test_set_location(){
