@@ -34,16 +34,18 @@ class TableRecord extends TableRecord_Base{
 	 * @ignore
 	 */
 	function _setRecordValues($row){
+
+		$structure = $this->_getTableStructure();
 	  
 		// pretypovani hodnot hodnot...
 		foreach($row as $_key => $_value){
 			if($_value===null){
 				// hodnota je NULL, nemusime nic typovat
 
-			}elseif(preg_match("/^(numeric|double precision)/",$this->_TableStructure[$_key])){
+			}elseif(preg_match("/^(numeric|double precision)/",$structure[$_key])){
 				$_value=(float) $_value;
 
-			}elseif(preg_match("/^integer|bigint|smallint/",$this->_TableStructure[$_key])){
+			}elseif(preg_match("/^integer|bigint|smallint/",$structure[$_key])){
 				$_real = $_value;
 				#in 32 system integer can overflow, but float can be sufficient 
 				 $_real=(float) $_real;
@@ -51,10 +53,10 @@ class TableRecord extends TableRecord_Base{
 				if($_value!=$_real){
 					$_value = $_real;
 				}
-			}elseif(preg_match("/^timestamp/",$this->_TableStructure[$_key])){
+			}elseif(preg_match("/^timestamp/",$structure[$_key])){
 				$_value = substr($_value,0,19);
 
-			}elseif(preg_match("/^bool/",$this->_TableStructure[$_key])){
+			}elseif(preg_match("/^bool/",$structure[$_key])){
 				$_value=$this->_dbmole->parseBoolFromSql($_value);
 
 			}
@@ -66,15 +68,11 @@ class TableRecord extends TableRecord_Base{
 	}
 
 	/**
-	 * Reads table structure.
+	 * Reads (physically) table structure from the database
 	 *
 	 * @ignore
 	 */
 	function _readTableStructure($options = array()){
-		static $STORE;
-
-		if(!isset($STORE)){ $STORE = array(); }
-		if(isset($STORE[$this->_TableName])){ $this->_TableStructure = $STORE[$this->_TableName]; return; }
 		$query = "
 			SELECT
 				a.attname,
@@ -89,10 +87,6 @@ class TableRecord extends TableRecord_Base{
 				a.attisdropped = false AND
 				a.attnum > 0
 		";
-		$result = $this->_dbmole->selectRows($query,array(":table_name" => $this->_TableName),$options);
-		foreach($result as $row){
-			$this->_TableStructure[$row["attname"]] = $row["format"];
-		}
-		$STORE[$this->_TableName] = $this->_TableStructure;
+		return $this->_dbmole->selectIntoAssociativeArray($query,array(":table_name" => $this->getTableName()),$options);
 	}
 }

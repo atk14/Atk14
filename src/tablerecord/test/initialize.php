@@ -3,6 +3,7 @@
 require("../../dbmole/dbmole.php");
 require("../../dbmole/pgmole.php");
 require("../../string4/load.php");
+require("../../files/load.php");
 
 require("../load.php");
 require("./test_table.php");

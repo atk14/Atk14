@@ -7,7 +7,7 @@
  * @filesource
  */
 
-// Structures of tables will be cached for the given amount of seconds
+// Structures of tables will be cached for the given amount of seconds, in production it should be greater than 0
 defined("INOBJ_TABLERECORD_CACHES_STRUCTURES") || define("INOBJ_TABLERECORD_CACHES_STRUCTURES",0);
 
 /**
@@ -17,6 +17,11 @@ defined("INOBJ_TABLERECORD_CACHES_STRUCTURES") || define("INOBJ_TABLERECORD_CACH
  * @subpackage TableRecord
  */
 class TableRecord_Base extends inobj{
+
+	static $_TableStructuresCache = array();
+
+	static $TableStructuresCacheDuration = INOBJ_TABLERECORD_CACHES_STRUCTURES;
+
 	/**
 	 * Name of database table.
 	 *
@@ -62,14 +67,6 @@ class TableRecord_Base extends inobj{
 	 * @access private
 	 */
 	var $_IdFieldType = "integer";
-
-	/**
-	 * Structure of table
-	 *
-	 * @var array
-	 * @access private
-	 */
-	var $_TableStructure = null;
 
 	/**
 	 * Columns which values shouldn't be read in during instantiation of object.
@@ -129,9 +126,9 @@ class TableRecord_Base extends inobj{
 			$options["table_name"] = new String4($class_name);
 			$options["table_name"] = $options["table_name"]->tableize();
 		}
-		$options["table_name"] = (string)$options["table_name"];
+		$options["table_name"] = (string)$options["table_name"]; // could be member of String4
 
-		$this->_TableName = $options["table_name"]; // could be member of String4
+		$this->_TableName = $options["table_name"];
 
 		if(is_null($options["sequence_name"])){
 			$options["sequence_name"] = $this->_DetermineSequenceName();
@@ -139,24 +136,18 @@ class TableRecord_Base extends inobj{
 		$this->_SequenceName = $options["sequence_name"];
 		$this->_DoNotReadValues = $options["do_not_read_values"];
 
-		$cache = defined("INOBJ_TABLERECORD_CACHES_STRUCTURES") ? INOBJ_TABLERECORD_CACHES_STRUCTURES : 0;
-		if(defined("DEVELOPMENT") && DEVELOPMENT){ $cache = 0; }
-		$this->_readTableStructure(array("cache" => $cache));
-
-		if(!$this->_TableStructure){
-			throw new Exception("There is not table $options[table_name] in the database ".$this->_dbmole->getDatabaseName());
-		}
+		$structure = $this->_getTableStructure();
 
 		$this->_IdFieldName = $options["id_field_name"];
 		if(is_null($options["id_field_type"])){
 			// autodetection
-			$options["id_field_type"] = preg_match('/char/i',$this->_TableStructure[$this->_IdFieldName]) ? "string" : "integer";
+			$options["id_field_type"] = preg_match('/char/i',$structure[$this->_IdFieldName]) ? "string" : "integer";
 		}
 		$this->_IdFieldType = $options["id_field_type"];
 
 		// all values of the objects should be null
 		// TODO: seems to be useless -> refactoring
-		foreach(array_keys($this->_TableStructure) as $_key){
+		foreach(array_keys($structure) as $_key){
 			$this->_RecordValues[$_key] = null;
 		}
 
@@ -465,7 +456,7 @@ class TableRecord_Base extends inobj{
 	 * @access private
 	 */
 	function _DetermineSequenceName(){
-		return "seq_$this->_TableName";
+		return sprintf('seq_%s',$this->getTableName());
 	}
 
 	/**
@@ -615,7 +606,7 @@ class TableRecord_Base extends inobj{
 			}
 
 		}else{
-			$query = $this->_dbmole->escapeTableName4Sql($this->_TableName);
+			$query = $this->_dbmole->escapeTableName4Sql($this->getTableName());
 			if(sizeof($conditions)>0){
 				$query .= " WHERE (".join(") AND (",$conditions).")";
 			}
@@ -742,7 +733,7 @@ class TableRecord_Base extends inobj{
 
 		TableRecord_Base::_NormalizeConditions($conditions,$bind_ar);
 
-		$query = "SELECT $this->_IdFieldName FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName);
+		$query = "SELECT $this->_IdFieldName FROM ".$this->_dbmole->escapeTableName4Sql($this->getTableName());
 		if(sizeof($conditions)>0){
 			$query .= " WHERE (".join(") AND (",$conditions).")";
 		}
@@ -1007,7 +998,7 @@ class TableRecord_Base extends inobj{
 		$objs = array();
 
 		if(sizeof($bind_ar)>0){
-			$query = "SELECT ".join(",",$this->_fieldsToRead())." FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
+			$query = "SELECT ".join(",",$this->_fieldsToRead())." FROM ".$this->_dbmole->escapeTableName4Sql($this->getTableName())." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
 			$rows = $this->_dbmole->selectRows($query,$bind_ar);
 			if(!is_array($rows)){ return null; }
 			foreach($rows as $row){
@@ -1055,7 +1046,7 @@ class TableRecord_Base extends inobj{
 		}
 		settype($field_name,"string");
 		if(!in_array($field_name,$this->getKeys())){
-			throw new Exception(get_class($this)."::getValue() accesses non existing field $this->_TableName.$field_name");
+			throw new Exception(get_class($this)."::getValue() accesses non existing field ".$this->getTableName().".$field_name");
 		}
 		$this->_readValueIfWasNotRead($field_name);
 		return $this->_RecordValues[$field_name];
@@ -1089,7 +1080,7 @@ class TableRecord_Base extends inobj{
 	 */
 	function getValues($options = array()){
 	  $options += array("return_id" => false);
-		$this->_readValueIfWasNotRead(array_keys($this->_TableStructure));
+		$this->_readValueIfWasNotRead(array_keys($this->_getTableStructure()));
 		$out = $this->_RecordValues;
 		if(!$options["return_id"]){
 			unset($out[$this->_IdFieldName]);
@@ -1211,7 +1202,7 @@ class TableRecord_Base extends inobj{
 		}
 		$bind_ar[":id"] = $this->getId();
 
-		return $this->_dbmole->doQuery("UPDATE ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." SET\n  ".join(",\n  ",$updates)."\nWHERE\n  $this->_IdFieldName=:id",$bind_ar);
+		return $this->_dbmole->doQuery("UPDATE ".$this->_dbmole->escapeTableName4Sql($this->getTableName())." SET\n  ".join(",\n  ",$updates)."\nWHERE\n  $this->_IdFieldName=:id",$bind_ar);
 	}
 
 	/**
@@ -1294,7 +1285,7 @@ class TableRecord_Base extends inobj{
 		if(!isset($fields)){ $fields = $this->_fieldsToRead(); }
 		if(is_array($fields))
 		  $fields = join(",",$fields);
-		if(!$row = $this->_dbmole->selectFirstRow("SELECT $fields FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName=:id",array(":id" => $this->_Id))){
+		if(!$row = $this->_dbmole->selectFirstRow("SELECT $fields FROM ".$this->_dbmole->escapeTableName4Sql($this->getTableName())." WHERE $this->_IdFieldName=:id",array(":id" => $this->_Id))){
 			return null;
 		}
 		$this->_setRecordValues($row);
@@ -1328,7 +1319,7 @@ class TableRecord_Base extends inobj{
 	 */
 	function destroy(){
 		$this->_Hook_BeforeDestroy();
-		$this->_dbmole->doQuery("DELETE FROM ".$this->_dbmole->escapeTableName4Sql($this->_TableName)." WHERE $this->_IdFieldName=:id",array(":id" => $this->_Id));
+		$this->_dbmole->doQuery("DELETE FROM ".$this->_dbmole->escapeTableName4Sql($this->getTableName())." WHERE $this->_IdFieldName=:id",array(":id" => $this->_Id));
 		return null;
 	}
 
@@ -1363,7 +1354,7 @@ class TableRecord_Base extends inobj{
 			$values[$this->_IdFieldName] = $id;
 		}
 
-		if(!$this->_dbmole->insertIntoTable($this->_TableName,$values,$options)){ return null; }
+		if(!$this->_dbmole->insertIntoTable($this->getTableName(),$values,$options)){ return null; }
 
 		if(!isset($id)){
 			$id = $this->_dbmole->selectInsertId();
@@ -1379,7 +1370,7 @@ class TableRecord_Base extends inobj{
 	 */
 	function _fieldsToRead(){
 		$out = array();
-		foreach($this->_TableStructure as $field => $vals){
+		foreach($this->_getTableStructure() as $field => $vals){
 			if(in_array($field,$this->_DoNotReadValues)){ continue; }
 			$out[] = $field;
 		}
@@ -1519,4 +1510,45 @@ class TableRecord_Base extends inobj{
 		throw new Exception("TableRecord_Base::__callStatic(): unknown static method $class_name::$name()");
 	}
 
+	/**
+	 *
+	 * It must be covered by a descendant.
+	 */
+	function _readTableStructure($options = array()){
+	
+	}
+
+	/**
+	 * Returns table structure of the given table in a associative array
+	 *
+	 * $structure = $this->_getTableStructure();
+	 */
+	function _getTableStructure(){
+		$key = sprintf("%s.%s.%s",$this->_dbmole->getDatabaseType(),$this->_dbmole->getConfigurationName(),$this->getTableName()); // e.g. "postgresql.default.articles"
+
+		if(!isset(self::$_TableStructuresCache[$key])){
+			$structure = $this->_readTableStructure(array("cache" => self::$TableStructuresCacheDuration));
+
+			if(!$structure){
+				throw new Exception("There is not table ".$this->getTableName()." in the database ".$this->_dbmole->getDatabaseName());
+			}
+			
+			self::$_TableStructuresCache[$key] = $structure;
+		}
+
+		return self::$_TableStructuresCache[$key];
+	}
+
+	/**
+	 * Flushes out all data from the table structure cache
+	 *
+	 * It may be useful in tasks like db schema migration...
+	 *
+	 * <code>
+	 *	TableRecord::FlushTableStructureCache();
+	 * </code>
+	 */
+	static function FlushTableStructureCache(){
+		self::$_TableStructuresCache = array();
+	}
 }
