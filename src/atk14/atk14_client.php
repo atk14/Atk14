@@ -109,6 +109,13 @@ class Atk14Client{
 	var $_CookiesEnabled = true;
 
 	/**
+	 * The most recent request
+	 *
+	 * @var HTTPRequest
+	 */
+	var $_RecentRequest = null;
+
+	/**
 	 * Constructor
 	 */
 	function __construct(){
@@ -402,7 +409,7 @@ class Atk14Client{
 
 		$GLOBALS["HTTP_RESPONSE"]->clearCookies(); // !! danger !! global variable manipulation
 
-		$request = new HTTPRequest();
+		$request = clone($GLOBALS["HTTP_REQUEST"]);
 		$request->setUserAgent($this->_UserAgent);
 		$request->setRemoteAddr($this->_RemoteAddr);
 		$request->setHttpHost($ATK14_GLOBAL->getHttpHost());
@@ -464,7 +471,6 @@ class Atk14Client{
 		$request->setMethod($method);
 		if($method=="POST"){
 			$request->setPostVars($params);
-			$request->setPostVar("_csrf_token_","testing_csrf_token"); // TODO: this is a nasty hack; originally this was in test/controller/tc_logins.php in method setUp()
 		}else{
 			$request->setGetVars($params);
 		}
@@ -474,8 +480,6 @@ class Atk14Client{
 			"controller" => $controller,
 			"lang" => $lang
 		),array("connector" => "&")));
-
-		$GLOBALS["HTTP_REQUEST"] = $request; // !! danger !! changing global variable manipulation
 
 		$ctrl = Atk14Dispatcher::Dispatch(array(
 			"display_response" => false,
@@ -495,6 +499,8 @@ class Atk14Client{
 				$this->setCookie($cookie->getName(),$cookie->getValue());
 			}
 		}
+
+		$this->_RecentRequest = $request;
 
 		return $ctrl;
 	}
@@ -570,5 +576,14 @@ class Atk14Client{
 	 */
 	function setRemoteAddr($addr){
 		$this->_RemoteAddr = $addr;
+	}
+
+	/**
+	 * Returns the most recent request
+	 *
+	 * @request HTTPRequest
+	 */
+	function getRecentRequest(){
+		return $this->_RecentRequest;
 	}
 }
