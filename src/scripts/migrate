@@ -135,6 +135,11 @@ foreach($migrations as $m){
 	$logger->info("about to start migration $m"); $logger->flush();
 	
 	if(preg_match("/^[0-9]+_(.*)\\.(inc|php)$/",$m,$matches)){
+
+		// these two lines enforces TableRecord to reread table structures
+		TableRecord::$TableStructuresCacheDuration = 0;
+		TableRecord::FlushTableStructureCache();
+
 		require_once($ATK14_GLOBAL->getMigrationsPath().$m);
 		$class_name = preg_replace("/_/","",$matches[1]);
 		$migr = new $class_name($m);
