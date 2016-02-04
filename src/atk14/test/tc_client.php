@@ -61,7 +61,7 @@ class TcClient extends TcBase{
 		$this->assertEquals(array(),$cookies);
 
 		$client->enableCookies();
-		$client->setCookie("login_id","123");
+		$client->addCookie(new HTTPCookie("login_id","123"));
 		$controller = $client->get("testing/cookies_dumper");
 		$cookies = $this->_parse_cookies($controller);
 		$this->assertEquals(2,sizeof($cookies));
@@ -78,6 +78,19 @@ class TcClient extends TcBase{
 		$this->assertEquals(0,sizeof($client->getCookies()));
 		$client->enableCookies();
 		$this->assertEquals(0,sizeof($client->getCookies()));
+
+		// set cookie
+		$client->addCookie(new HTTPCookie("language","cs"));
+		$cookies = $client->getCookies();
+		$this->assertEquals("cs",$cookies["language"]);
+		// set cookie with a different value
+		$client->addCookie(new HTTPCookie("language","en"));
+		$cookies = $client->getCookies();
+		$this->assertEquals("en",$cookies["language"]);
+		// set deleting cookie
+		$client->addCookie(new HTTPCookie("language","",array("expire" => time() - 60 * 60 * 24)));
+		$cookies = $client->getCookies();
+		$this->assertTrue(!isset($cookies["language"]));
 
 		// setting new cookie
 		$client->get("testing/set_cookie");

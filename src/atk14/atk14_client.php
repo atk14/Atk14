@@ -97,7 +97,8 @@ class Atk14Client{
 	/**
 	 * Store for cookies
 	 *
-	 * @var ignore
+	 * @var HTTPCookie[]
+	 * @ignore
 	 */
 	var $_Cookies = array();
 
@@ -105,6 +106,7 @@ class Atk14Client{
 	 * Flag whether cookies are enabled
 	 *
 	 * @var boolean
+	 * @ignore
 	 */
 	var $_CookiesEnabled = true;
 
@@ -112,6 +114,7 @@ class Atk14Client{
 	 * The most recent request
 	 *
 	 * @var HTTPRequest
+	 * @ignore
 	 */
 	var $_RecentRequest = null;
 
@@ -124,7 +127,7 @@ class Atk14Client{
 		$this->flash = Atk14Flash::GetInstance();
 
 		$GLOBALS["_SERVER"]["REMOTE_ADDR"] = "0.0.0.0";
-		$this->setCookie(SESSION_STORER_COOKIE_NAME_CHECK,"1");
+		$this->addCookie(new HTTPCookie(SESSION_STORER_COOKIE_NAME_CHECK,"1"));
 	}
 
 	/**
@@ -154,17 +157,6 @@ class Atk14Client{
 	/**
 	 *
 	 * <code>
-	 *	var_dump($client->getCookies()); // array("cookie1" => "value")
-	 * </code>
-	 */
-	function getCookies(){
-		if(!$this->_CookiesEnabled){ return array(); }
-		return $this->_Cookies;
-	}
-
-	/**
-	 *
-	 * <code>
 	 *	if($client->cookiesEnabled()){
 	 *		// cookies are enabled
 	 *	}
@@ -175,38 +167,41 @@ class Atk14Client{
 	/**
 	 *
 	 * <code>
-	 *	$client->setCookies(array(
-	 *		"check" => "1"
-	 *		"cookie1" => "value",
-	 *	);
+	 *	$client->addCookie(new HTTPCookie("cookie1","value"));
 	 * </code>
 	 */
-	function setCookies($cookies){
-		if(!$this->cookiesEnabled()){ return false; }
-		$this->_Cookies = $cookies;
-		return true;
+	function addCookie($cookie){
+		$this->_Cookies[] = $cookie;
 	}
 
 	/**
+	 * Returns cookies valid for the given HTTP request
 	 *
 	 * <code>
-	 *	$client->setCookie("cookie1","value");
+	 *	var_dump($client->getCookies()); // array("cookie1" => "value")
 	 * </code>
+	 *
+	 * @param HTTPRequest $request
+	 * @return array
 	 */
-	function setCookie($name,$value){
-		if(!$this->cookiesEnabled()){ return false; }
-		$this->_Cookies[$name] = $value;
-		return true;
-	}
+	function getCookies($request = null){
+		if(!$this->cookiesEnabled()){ return array(); }
 
-	/**
-	 *
-	 * <code>
-	 *	$client->clearCookie("cookie1");
-	 * </code>
-	 */
-	function clearCookie($name){
-		unset($this->_Cookies[$name]);
+		if(!$request){
+			$request = $this->getRecentRequest() ? $this->getRecentRequest() : $GLOBALS["HTTP_REQUEST"];
+		}
+
+		$out = array();
+		foreach($this->_Cookies as $cookie){
+			if(!$cookie->isDesignatedFor($request)){ continue; }
+			if($cookie->isExpired()){
+				unset($out[$cookie->getName()]);
+				continue;
+			}
+			$out[$cookie->getName()] = $cookie->getValue();
+		}
+
+		return $out;
 	}
 
 	/**
@@ -489,16 +484,7 @@ class Atk14Client{
 
 		$this->controller = $ctrl;
 
-		if($this->cookiesEnabled()){
-			foreach($GLOBALS["HTTP_RESPONSE"]->getCookies() as $cookie){
-				if(!$cookie->isDesignatedFor($request)){ continue; }
-				if($cookie->isExpired()){
-					$this->clearCookie($cookie->getName());
-					continue;
-				}
-				$this->setCookie($cookie->getName(),$cookie->getValue());
-			}
-		}
+		foreach($GLOBALS["HTTP_RESPONSE"]->getCookies() as $cookie){ $this->addCookie($cookie); }
 
 		$this->_RecentRequest = $request;
 
