@@ -39,4 +39,24 @@ class TcSession extends TcBase{
 			"vegetables" => array("Cauliflower","Cucumber")
 		),$session->toArray());
 	}
+
+	function test_initialization(){
+		global $HTTP_REQUEST;
+
+		$HTTP_REQUEST->setCookieVars(array());
+
+		$this->client->get("main/index");
+		$req = $this->client->getRecentRequest();
+		$cookies = $this->client->getCookies();
+		$this->assertEquals(1,sizeof($cookies));
+		$this->assertEquals(array("check"),array_keys($cookies));
+
+		$ctrl = $this->client->get("main/writing_to_session");
+		$req = $this->client->getRecentRequest();
+		$cookies = $this->client->getCookies();
+		$this->assertEquals(2,sizeof($cookies));
+		$this->assertEquals(array("check","session"),array_keys($cookies));
+		$this->assertTrue(strlen($ctrl->session->getSecretToken())>0); // only session initialized in database has a secret token
+		$this->assertEquals("pineapple",$ctrl->session->g("fruit"));
+	}
 }

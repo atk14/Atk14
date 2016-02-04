@@ -409,7 +409,10 @@ class Atk14Client{
 		$request->setRemoteAddr($this->_RemoteAddr);
 		$request->setHttpHost($ATK14_GLOBAL->getHttpHost());
 		$request->setServerPort(80);
-		$request->setCookieVars($this->getCookies());
+
+		$cookies = $this->getCookies($request);
+		$request->setCookieVars($this->getCookies($request));
+		$GLOBALS["HTTP_REQUEST"]->setCookieVars($this->getCookies($request)); // !! danger !! global variable manipulation; currently this is needed for SessionStorer (I'm sorry)
 
 		if($options["content_type"]){
 			$request->setContentType($options["content_type"]);
