@@ -79,6 +79,9 @@ class Atk14Require{
 	 * Loads a helper
 	 *
 	 * Loading a helper examples
+	 *
+	 * 		Atk14Require::Helper("function.paginator");
+	 * 		Atk14Require::Helper("block.message");
 	 * 		Atk14Require::Helper("modifier.format_datetime",$smarty);
 	 * 		Atk14Require::Helper("modifier.format_datetime.php",$smarty);
 	 *
@@ -86,8 +89,9 @@ class Atk14Require{
 	 * @param Atk14Smarty $smarty
 	 * @return array
 	 */
-	static function Helper($filename,&$smarty){
+	static function Helper($filename,$smarty = null){
 		!preg_match("/\\.php$/",$filename) && ($filename .= ".php");
+		if(!$smarty){ $smarty = Atk14Utils::GetSmarty(); }
 		$plugins_dir = $smarty->plugins_dir;
 		foreach($plugins_dir as $dir){
 			if(file_exists("$dir/$filename")){
