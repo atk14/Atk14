@@ -136,8 +136,7 @@ foreach($migrations as $m){
 	
 	if(preg_match("/^[0-9]+_(.*)\\.(inc|php)$/",$m,$matches)){
 
-		// these two lines enforces TableRecord to reread table structures
-		TableRecord::$TableStructuresCacheDuration = 0;
+		// the next line enforces TableRecord to reread table structures
 		TableRecord::FlushTableStructureCache();
 
 		require_once($ATK14_GLOBAL->getMigrationsPath().$m);

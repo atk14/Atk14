@@ -1549,6 +1549,7 @@ class TableRecord_Base extends inobj{
 	 * </code>
 	 */
 	static function FlushTableStructureCache(){
+		self::$TableStructuresCacheDuration = 0;
 		self::$_TableStructuresCache = array();
 	}
 }
