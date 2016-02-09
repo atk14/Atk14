@@ -360,7 +360,7 @@ class TableRecord_Base extends inobj{
 	 *
 	 * @return string
 	 */
-	function getTableName(){ return $this->_TableName; }
+	final function getTableName(){ return $this->_TableName; }
 
 	/**
 	 * Returns name of table sequence
@@ -1442,7 +1442,7 @@ class TableRecord_Base extends inobj{
 	 * echo "$object";
 	 * @ignore
 	 */
-	function __toString(){
+	final function __toString(){
 		return $this->toString();
 	}
 
