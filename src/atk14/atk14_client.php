@@ -513,6 +513,15 @@ class Atk14Client{
 	}
 
 	/**
+	 * Returns length of the content
+	 *
+	 * @return int
+	 */
+	function getContentLength(){
+		return $this->controller->response->getContentLength();
+	}
+
+	/**
 	 * Returns redirection of the request
 	 *
 	 * @return string content of Location response header.
