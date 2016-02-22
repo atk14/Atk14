@@ -159,4 +159,60 @@ class TcController extends TcBase{
 		$frm = $controller->_get_form("main/hello_world");
 		$this->assertEquals("form_main_hello_world",$frm->atk14_attrs["id"]);
 	}
+
+	function test_caching(){
+		$client = &$this->client;
+
+		//
+
+		$client->get("testing/test_caching");
+		$this->assertEquals("text/html",$client->getContentType());
+		$this->assertEquals("utf-8",$client->getContentCharset());
+		$this->assertEquals(200,$client->getStatusCode());
+		$content_1 = $client->getContent();
+
+		$client->get("testing/test_caching");
+		$this->assertEquals("text/html",$client->getContentType());
+		$this->assertEquals("utf-8",$client->getContentCharset());
+		$this->assertEquals(200,$client->getStatusCode());
+		$content_2 = $client->getContent();
+
+		$this->assertContains("random_value: ",$content_1);
+		$this->assertEquals($content_1,$content_2);
+
+		$client->get("testing/test_caching",array("disable_cache" => "1"));
+		$this->assertEquals("text/html",$client->getContentType());
+		$this->assertEquals("utf-8",$client->getContentCharset());
+		$this->assertEquals(200,$client->getStatusCode());
+		$content_3 = $client->getContent();
+		$this->assertContains("random_value: ",$content_3);
+		$this->assertNotEquals($content_1,$content_3);
+
+		//
+
+		$client->get("testing/test_caching_without_template");
+		$this->assertEquals("text/plain",$client->getContentType());
+		$this->assertEquals("us-ascii",$client->getContentCharset());
+		$this->assertEquals(222,$client->getStatusCode());
+		$content_1 = $client->getContent();
+		$this->assertTrue(!!preg_match('/^random_value: /',$content_1));
+
+		$client->get("testing/test_caching_without_template");
+		$this->assertEquals("text/plain",$client->getContentType());
+		$this->assertEquals("us-ascii",$client->getContentCharset());
+		$this->assertEquals(222,$client->getStatusCode());
+		$content_2 = $client->getContent();
+		$this->assertTrue(!!preg_match('/^random_value: /',$content_2));
+
+		$this->assertEquals($content_1,$content_2);
+
+		$client->get("testing/test_caching_without_template",array("disable_cache" => "1"));
+		$this->assertEquals("text/plain",$client->getContentType());
+		$this->assertEquals("us-ascii",$client->getContentCharset());
+		$this->assertEquals(222,$client->getStatusCode());
+		$content_3 = $client->getContent();
+		$this->assertTrue(!!preg_match('/^random_value: /',$content_3));
+
+		$this->assertNotEquals($content_1,$content_3);
+	}
 }

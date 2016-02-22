@@ -498,6 +498,12 @@ class Atk14Controller{
 			foreach($cache["controller_state"] as $_key => $_val){
 				$this->$_key = $_val;
 			}
+			$this->response->setContentType($cache["response_state"]["content_type"]);
+			isset($cache["response_state"]["content_charset"]) && $this->response->setContentCharset($cache["response_state"]["content_charset"]);
+			$this->response->setStatusCode($cache["response_state"]["status_code"]);
+			foreach($cache["response_state"]["headers"] as $_k => $_v){
+				$this->response->setHeader($_k,$_v);
+			}
 		}
 
 		// az po provedeni akce se v pripade XHR requestu doplni .xhr do nazvu sablony
@@ -587,6 +593,14 @@ class Atk14Controller{
 			}
 
 			return $this->_after_render();
+		}
+
+		if(!$this->render_template && strlen($this->response->getLocation())==0){
+			if(!$cache){
+				$this->_atk14_write_action_cache($this->response->buffer);
+			}else{
+				$this->response->write($cache["content"]);
+			}
 		}
 	}
 
@@ -811,13 +825,28 @@ class Atk14Controller{
 	function _atk14_write_action_cache(&$content){
 		if(!$recipe = $this->_atk14_get_action_cache_recipe()){ return; }
 
-		$serialized = serialize(array("content" => $content,"controller_state" => array(
-			"page_title" => $this->page_title,
-			"page_description" => $this->page_description,
-			"render_layout" => $this->render_layout,
-			"layout_name" => $this->layout_name,
-			"template_name" => $this->template_name,
-		)));
+		if(is_a($content,"StringBuffer")){
+			$content_str = $content->toString();
+			return $this->_atk14_write_action_cache($content_str);
+		}
+
+		$serialized = serialize(array(
+			"content" => $content,
+			"controller_state" => array(
+				"page_title" => $this->page_title,
+				"page_description" => $this->page_description,
+				"render_layout" => $this->render_layout,
+				"render_template" => $this->render_template,
+				"layout_name" => $this->layout_name,
+				"template_name" => $this->template_name,
+			),
+			"response_state" => array(
+				"content_type" => $this->response->getContentType(),
+				"content_charset" => $this->response->getContentCharset(),
+				"status_code" => $this->response->getStatusCode(),
+				"headers" => $this->response->getHeaders(),
+			),
+		));
 
 		Files::Mkdir($recipe["dir"],$err,$err_msg);
 		Files::WriteToFile($recipe["filename"],$serialized,$err,$err_msg);

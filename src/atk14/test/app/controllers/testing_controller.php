@@ -75,7 +75,25 @@ class TestingController extends ApplicationController{
 		$this->response->addCookie(new HTTPCookie("user_name","John Doe"));
 	}
 
+	function test_caching(){
+		$this->response->setcontentcharset("utf-8");
+		$this->tpl_data["random_value"] = uniqid();
+	}
+
+	function test_caching_without_template(){
+		$this->render_template = false;
+		$this->response->setContentType("text/plain");
+		$this->response->setContentCharset("us-ascii");
+		$this->response->setStatusCode(222);
+		$this->response->write("random_value: ".uniqid());
+	}
+
 	function _before_filter(){
+		if(!$this->params->defined("disable_cache")){
+			$this->_caches_action(array(
+				"action" => array("test_caching","test_caching_without_template"),
+			));
+		}
 	}
 
 	function _before_render(){

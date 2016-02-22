@@ -513,6 +513,18 @@ class Atk14Client{
 	}
 
 	/**
+	 *
+	 * <code>
+	 *	echo $client->getContentType(); // "UTF-8"
+	 * </code>
+	 * 
+	 * @return string
+	 */
+	function getContentCharset(){
+		return $this->controller->response->getContentCharset();
+	}
+
+	/**
 	 * Returns length of the content
 	 *
 	 * @return int
