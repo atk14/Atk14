@@ -95,7 +95,7 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 		),$options);
 
 		$this->_owner = &$owner;
-		$this->_dbmole = &$owner->_dbmole;
+		$this->_dbmole = &$owner->dbmole;
 		$this->_options = $options;
 	}
 
