@@ -1,5 +1,5 @@
 <?php
 interface iTableRecord_DatabaseAccessor {
-	function setRecordValues($data_row,&$record_values,$record);
-	function readTableStructure($record,$options);
+	static function SetRecordValues($data_row,&$record_values,$record);
+	static function ReadTableStructure($record,$options);
 }

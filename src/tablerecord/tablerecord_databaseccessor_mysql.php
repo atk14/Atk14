@@ -1,5 +1,5 @@
 <?php
-class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAccessor {
+class TableRecord_DatabaseAccessor_Mysql implements iTableRecord_DatabaseAccessor {
 
 	/**
 	 * @ignore
@@ -13,10 +13,10 @@ class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAc
 			if($_value===null){
 				// hodnota je NULL, nemusime nic typovat
 
-			}elseif(preg_match("/^(numeric|double precision)/",$structure[$_key])){
+			}elseif(preg_match("/^(decimal|float)/",$structure[$_key])){
 				$_value=(float) $_value;
 
-			}elseif(preg_match("/^integer|bigint|smallint/",$structure[$_key])){
+			}elseif(preg_match("/^int|bigint|tinyint/",$structure[$_key])){
 				$_real = $_value;
 				#in 32 system integer can overflow, but float can be sufficient 
 				 $_real=(float) $_real;
@@ -41,20 +41,15 @@ class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAc
 	 * @ignore
 	 */
 	static function ReadTableStructure($record,$options = array()){
-		$query = "
-			SELECT
-				a.attname,
-				format_type(a.atttypid, a.atttypmod) AS format
-			FROM
-				pg_catalog.pg_class c INNER JOIN
-				pg_catalog.pg_namespace n ON (c.relnamespace = n.oid) INNER JOIN
-				pg_catalog.pg_attribute a ON (a.attrelid = c.oid)
-			WHERE
-				n.nspname = 'public' AND
-				c.relname = :table_name AND
-				a.attisdropped = false AND
-				a.attnum > 0
-		";
-		return $record->dbmole->selectIntoAssociativeArray($query,array(":table_name" => $record->getTableName()),$options);
+		$dbmole = $record->dbmole;
+
+		$rows = $dbmole->selectRows(sprintf("DESCRIBE %s",$dbmole->escapeTableName4Sql($record->getTableName())));
+
+		$out = array();
+		foreach($rows as $row){
+			$out[$row["Field"]] = $row["Type"];
+		}
+
+		return $out;
 	}
 }

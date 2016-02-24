@@ -16,17 +16,13 @@ defined("INOBJ_TABLERECORD_CACHES_STRUCTURES") || define("INOBJ_TABLERECORD_CACH
  * @package Atk14
  * @subpackage TableRecord
  */
-class TableRecord extends inobj{
+class TableRecord {
 
 	static $TableStructuresCacheDuration = INOBJ_TABLERECORD_CACHES_STRUCTURES;
-
-	static $DatabaseType = "postgresql";
 
 	static protected $_TableStructuresCache = array();
 
 	public $dbmole = null;
-
-	protected $_DatabaseAccessor = null;
 
 	/**
 	 * Name of database table.
@@ -107,8 +103,6 @@ class TableRecord extends inobj{
 	function __construct($table_name_or_options = null,$options = array()){
 		static $DEFAULT_OPTIONS = array();
 
-		parent::__construct();
-
 		if(is_array($table_name_or_options)){
 			$options = $table_name_or_options;
 			$table_name = null;
@@ -124,15 +118,12 @@ class TableRecord extends inobj{
 			"id_field_name" => "id",
 			"id_field_type" => null, // "integer", "string"
 			"sequence_name" => null,
-			"dbmole" => $class_name::GetDbmole(),
+			"dbmole" => PgMole::GetInstance(),
 		);
 
 		$options += $defaults;
 
 		$this->dbmole = $options["dbmole"];
-
-		$accessor_class = "TableRecord_DatabaseAccessor_".$this->dbmole->getDatabaseType();
-		$this->_DatabaseAccessor = new $accessor_class;
 
 		if(is_null($options["table_name"])){
 			$options["table_name"] = new String4($class_name);
@@ -283,10 +274,8 @@ class TableRecord extends inobj{
 	 */
 	static function &GetDbmole(){
 		$class = get_called_class();
-		$db_type = $class::$DatabaseType;
-		if($db_type=="postgresql"){ $db_type = "pg"; }
-		$dbmole_class = String4::ToObject("{$db_type}_mole")->camelize()->toString(); // "pg_mole" -> "PgMole"
-		return $dbmole_class::GetInstance();
+		$o = new $class();
+		return $o->dbmole;
 	}
 
 	/**
@@ -354,8 +343,8 @@ class TableRecord extends inobj{
 	 */
 	static function GetSequenceNextval(){
 		$class_name = get_called_class();
+		$dbmole = $class_name::GetDbmole();
 		$obj = new $class_name;
-		$dbmole = &TableRecord::GetDbmole();
 		return $dbmole->selectSequenceNextval($obj->getSequenceName());
 	}
 
@@ -1464,6 +1453,10 @@ class TableRecord extends inobj{
 	 * @ignore
 	 */
 	function __sleep(){
+		$this->_dbmole_wakeup_data_ = array(
+			"class_name" => get_class($this->dbmole),
+			"configuration" => $this->dbmole->getConfigurationName(),
+		);
 		$vars = get_object_vars($this);
 		unset($vars["dbmole"]);
 		return array_keys($vars);
@@ -1476,7 +1469,9 @@ class TableRecord extends inobj{
 	 */
 	function __wakeup(){
 		$class_name = get_class($this);
-		$this->dbmole = $class_name::GetDbmole();
+		$dbmole_class_name = $this->_dbmole_wakeup_data_["class_name"];
+		$dbmole_configuration = $this->_dbmole_wakeup_data_["configuration"];
+		$this->dbmole = $dbmole_class_name::GetInstance($dbmole_configuration);
 	}
 
 	/**
@@ -1548,7 +1543,8 @@ class TableRecord extends inobj{
 	 * It must be covered by a descendant.
 	 */
 	function _readTableStructure($options = array()){
-		return $this->_DatabaseAccessor->readTableStructure($this,$options);
+		$accessor_class = "TableRecord_DatabaseAccessor_".$this->dbmole->getDatabaseType();
+		return $accessor_class::ReadTableStructure($this,$options);
 	}
 
 	/**
@@ -1563,7 +1559,7 @@ class TableRecord extends inobj{
 			$structure = $this->_readTableStructure(array("cache" => self::$TableStructuresCacheDuration));
 
 			if(!$structure){
-				throw new Exception("There is not table ".$this->getTableName()." in the database ".$this->dbmole->getDatabaseName());
+				throw new Exception("There is not table ".$this->getTableName()." in the database ".$this->dbmole->getDatabaseName()." (".$this->dbmole->getDatabaseType().")");
 			}
 			
 			self::$_TableStructuresCache[$key] = $structure;
@@ -1573,7 +1569,8 @@ class TableRecord extends inobj{
 	}
 
 	function _setRecordValues($row){
-		$this->_DatabaseAccessor->setRecordValues($row,$this->_RecordValues,$this);
+		$accessor_class = "TableRecord_DatabaseAccessor_".$this->dbmole->getDatabaseType();
+		$accessor_class::SetRecordValues($row,$this->_RecordValues,$this);
 		$this->_Id = $this->_RecordValues[$this->_IdFieldName];
 	}
 

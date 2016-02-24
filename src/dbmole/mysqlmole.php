@@ -8,6 +8,11 @@ class MysqlMole extends DbMole{
 	// MySQL doesn't use sequencies, therefore methods selectSequenceNextval and selectSequenceCurrval are not covered and return nulls.
 	function usesSequencies(){ return false; }
 
+	function selectInsertId(){
+		$connection = $this->_getDbConnect();
+		return mysqli_insert_id($connection);
+	}
+
 	function selectRows($query,$bind_ar = array(), $options = array()){
 		$options = array_merge(array(
 			"limit" => null,

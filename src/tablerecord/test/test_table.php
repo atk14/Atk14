@@ -13,15 +13,4 @@ class TestTable extends TableRecord{
 		));
 	}
 
-	/*
-	static function GetInstanceById($id){
-		return TableRecord::_GetInstanceById("TestTable",$id);
-	}
-
-	static function CreateNewRecord($values,$options = array()){
-		return TestTable::_CreateNewRecord("TestTable",$values,$options);
-	}
-
-	function getTitle(){ return $this->g("title"); }
-	*/
 }
