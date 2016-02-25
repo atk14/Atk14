@@ -25,7 +25,7 @@ Why not to try the following command?
 EOF
 
 cd $base_dir
-for d in `find test -maxdepth 2 -type d | egrep -v ^test$ | egrep -v '/\.' | sort` ; do
+for d in `find -L test -maxdepth 2 -type d | egrep -v ^test$ | egrep -v '/\.' | sort` ; do
 	# in a directory with tests there should be initialize.php (or initialize.inc)
 	if [ -e $d/initialize.php ] || [ -e $d/initialize.inc ]; then
 		echo "--- [$d] ---"
