@@ -21,6 +21,10 @@
 require_once(dirname(__FILE__)."/load.php");
 
 $d = $ATK14_GLOBAL->getDatabaseConfig();
+if($d["adapter"]!="postgresql"){
+	exit(0);
+}
+
 $pgpass_record = "$d[host]:$d[port]:$d[database]:$d[username]:$d[password]";
 
 $arguments = getopt("a",array("add-record-automatically"));

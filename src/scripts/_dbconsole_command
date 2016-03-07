@@ -11,7 +11,16 @@ if(!$d){
 	exit(1);
 }
 
-$cmd = "psql -U $d[username] $d[database] -h $d[host] -p $d[port]";
+switch($d["adapter"]){
+	case "postgresql":
+		$cmd = "psql -U $d[username] $d[database] -h $d[host] -p $d[port]";
+		break;
+	case "mysql":
+		$cmd = "mysql --user=$d[username] --host=$d[host] --port=$d[port] --host=$d[host] --password=$d[password] $d[database]";
+		break;
+	default:
+		exit(1);
+}
 
 echo $cmd;
 echo "\n";

@@ -64,9 +64,9 @@ foreach(array("app/models","app/fields","app/widgets","lib") as $_d_){
 }
 
 // global variable $dbmole holds database connection
-// at the moment only postgresql is supported (why don't just support the best open source database worldwide?)
-global $dbmole;
-$dbmole = PgMole::GetInstance("default");
+$__db_config__ = $ATK14_GLOBAL->getDatabaseConfig();
+$dbmole = DbMole::GetInstance("default",$__db_config__["adapter"]); // $dbmole = DbMole::GetInstance("default","postgresql");
+unset($__db_config__);
 
 function &dbmole_connection(&$dbmole){
 	global $ATK14_GLOBAL;
@@ -83,7 +83,7 @@ function &dbmole_connection(&$dbmole){
 
 	switch($dbmole->getDatabaseType()){
 		case "mysql":
-			//TODO
+			$out = mysqli_connect($d["host"], $d["username"], $d["password"], $d["database"] , $d["port"]);
 			break;
 
 		case "postgresql":

@@ -224,7 +224,21 @@ class Atk14Global{
 		}else{
 			return null;
 		}
-		$d["port"] = isset($d["port"]) ? $d["port"] : "5432";
+		$d += array(
+			"adapter" => "postgresql"
+		);
+
+		if(!isset($d["port"])){
+			switch($d["adapter"]){
+				case "postgresql":
+					$d["port"] = "5432";
+					break;
+				case "mysql":
+					$d["port"] = "3306";
+					break;
+			}
+		}
+
 		return $d;
 	}
 

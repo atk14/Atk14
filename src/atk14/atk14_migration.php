@@ -113,10 +113,19 @@ class Atk14Migration{
 	}
 
 	static function SchemaMigrationsTableExists($dbmole){
-		return 1==$dbmole->selectInt("SELECT COUNT(*) FROM pg_tables WHERE LOWER(tablename)='schema_migrations'");
+		switch($dbmole->getDatabaseType()){
+			case "postgresql":
+				$query = "SELECT COUNT(*) FROM pg_tables WHERE LOWER(tablename)='schema_migrations'";
+				break;
+			case "mysql":
+				$query = "SELECT COUNT(*) FROM information_schema.tables WHERE LOWER(table_name)='schema_migrations' LIMIT 1";
+				break;
+		}
+		return 1==$dbmole->selectInt($query);
 	}
 
 	static function CreateSchemaMigrationsTable($dbmole){
+		// it's ok for postgresql and mysql
 		$dbmole->doQuery("CREATE TABLE schema_migrations(
 			version VARCHAR(255) PRIMARY KEY,
 			created_at TIMESTAMP NOT NULL DEFAULT NOW()
