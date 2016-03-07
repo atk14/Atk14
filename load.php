@@ -145,7 +145,7 @@ function atk14_initialize_locale(&$lang = null){
 	setlocale(LC_CTYPE,$l);
 	setlocale(LC_COLLATE,$l);
 	setlocale(LC_NUMERIC,"C"); // we need to display float like 123.456
-	bindtextdomain("messages",dirname(__FILE__)."/../locale/");
+	bindtextdomain("messages",$ATK14_GLOBAL->getApplicationPath()."/../locale/");
 	bind_textdomain_codeset("messages", DEFAULT_CHARSET);
 	textdomain("messages");
 }
