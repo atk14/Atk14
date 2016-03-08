@@ -140,6 +140,7 @@ function atk14_initialize_locale(&$lang = null){
 	$l = $locale[$lang]["LANG"];
 
 	putenv("LANG=$l");
+	putenv("LANGUAGE=");
 	setlocale(LC_MESSAGES,$l);
 	setlocale(LC_ALL,$l);
 	setlocale(LC_CTYPE,$l);

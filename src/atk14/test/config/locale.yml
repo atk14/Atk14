@@ -1,8 +1,8 @@
 cs:
-  LANG: cs_CZ
+  LANG: cs_CZ.UTF-8
 
 en:
-  LANG: en_US
+  LANG: en_US.UTF-8
 
 sk:
-  LANG: sk_SK
+  LANG: sk_SK.UTF-8

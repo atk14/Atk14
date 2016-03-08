@@ -21,6 +21,26 @@
 class Atk14Locale{
 
 	/**
+	 * Initializes locale
+	 *
+	 * $new_lang = "cs";
+	 * $prev_lang = Atk14Locale::Initialize($new_lang);
+	 */
+	static function Initialize(&$lang){
+		global $ATK14_GLOBAL;
+		$previous_lang = $ATK14_GLOBAL->getLang();
+
+		if(function_exists("atk14_initialize_locale")){
+			atk14_initialize_locale($lang);
+		}else{
+			i18n::init_translation($lang);
+		}
+		$ATK14_GLOBAL->setValue("lang",$lang);
+
+		return $previous_lang;
+	}
+
+	/**
 	 * Formats Date
 	 * 
 	 * <code>

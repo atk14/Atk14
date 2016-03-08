@@ -448,21 +448,14 @@ class Atk14Utils{
 	}
 
 	/**
+	 *
+	 * An alias for Atk14Locale::Initialize()
+	 *
 	 * $new_lang = "cs";
 	 * $prev_lang = Atk14Utils::InitializeLocale($new_lang);
 	 */
 	static function InitializeLocale(&$lang){
-		global $ATK14_GLOBAL;
-		$previous_lang = $ATK14_GLOBAL->getLang();
-
-		if(function_exists("atk14_initialize_locale")){
-			atk14_initialize_locale($lang);
-		}else{
-			i18n::init_translation($lang);
-		}
-		$ATK14_GLOBAL->setValue("lang",$lang);
-
-		return $previous_lang;
+		return Atk14Locale::Initialize($lang);
 	}
 
 	/**

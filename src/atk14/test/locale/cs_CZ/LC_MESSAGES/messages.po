@@ -1,0 +1,233 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-08 10:35+0100\n"
+"PO-Revision-Date: 2016-03-08 10:35+0100\n"
+"Last-Translator: Yarri <do-not-write-me@ever.com>\n"
+"Language-Team: Team <team@email.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: ../atk14/src/atk14/test/tc_locale.php:5
+#: ../atk14/src/atk14/test/tc_locale.php:8
+msgid "Password"
+msgstr "Heslo"
+
+#: ../atk14/src/atk14/helpers/function.to_sentence.php:13
+msgid "and"
+msgstr "a"
+
+#: ../atk14/src/atk14/helpers/function.paginator.php:89
+#: ../atk14/src/atk14/helpers/function.paginator.php:152
+#, php-format
+msgid "%s items total"
+msgstr "%s položek celkem"
+
+#: ../atk14/src/atk14/helpers/function.paginator.php:103
+msgid "prev"
+msgstr "předchozí"
+
+#: ../atk14/src/atk14/helpers/function.paginator.php:147
+msgid "next"
+msgstr "následující"
+
+#: ../atk14/src/atk14/helpers/block.a_destroy.php:27
+msgid "Are you sure?"
+msgstr "Jste si jistý?"
+
+#: ../atk14/src/atk14/atk14_sorting.php:131
+msgid "Sort table by this column"
+msgstr "Třídit tabulku podle tohoto sloupce"
+
+#: ../atk14/src/atk14/atk14_locale.php:57
+msgid "atk14.date_format"
+msgstr "j.n.Y"
+
+#: ../atk14/src/atk14/atk14_locale.php:76
+msgid "atk14.parse_date_pattern"
+msgstr "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4})$/"
+
+#: ../atk14/src/atk14/atk14_locale.php:110
+msgid "atk14.datetime_format"
+msgstr "j.n.Y H:i"
+
+#: ../atk14/src/atk14/atk14_locale.php:123
+msgid "atk14.parse_datetime_pattern"
+msgstr ""
+"/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
+"<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"
+
+#: ../atk14/src/atk14/atk14_locale.php:136
+msgid "atk14.datetime_with_seconds_format"
+msgstr "j.n.Y H:i:s"
+
+#: ../atk14/src/atk14/atk14_locale.php:148
+msgid "atk14.parse_datetime_with_seconds_pattern"
+msgstr ""
+"/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
+"<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})$/"
+
+#: ../atk14/src/atk14/atk14_dispatcher.php:67
+msgid "Service Unavailable"
+msgstr "Služba je nedostupná"
+
+#: ../atk14/src/atk14/atk14_dispatcher.php:68
+msgid "This site is in maintenance. Please come back later."
+msgstr "Probíhá údržba této stránky. Přijďte prosím později."
+
+#: ../atk14/src/atk14/atk14_form.php:203
+msgid "The form contains errors, therefore it cannot be processed."
+msgstr "Formulář obsahuje chyby, proto nemůže být zpracován."
+
+#: ../atk14/src/atk14/atk14_form.php:488
+msgid "Please, submit the form again"
+msgstr "Prosím, odešlete formulář znovu."
+
+#: ../atk14/src/forms/fields/email_field.php:20
+msgid "Enter a valid e-mail address."
+msgstr "Zadejte platnou e-mailovou adresu."
+
+#: ../atk14/src/forms/fields/regex_field.php:25
+#: ../atk14/src/forms/fields/char_field.php:24
+msgid "Ensure this value has at most %max% characters (it has %length%)."
+msgstr "Hodnota musí být dlouhá nejvýše %max% znaků (teď má %length%)."
+
+#: ../atk14/src/forms/fields/regex_field.php:26
+#: ../atk14/src/forms/fields/char_field.php:25
+msgid "Ensure this value has at least %min% characters (it has %length%)."
+msgstr "Hodnota musí mít alespoň %min% znaků (teď má %length%)."
+
+#: ../atk14/src/forms/fields/image_field.php:22
+msgid "Ensure this file is image."
+msgstr "Ověřte, že tento soubor je obrázek."
+
+#: ../atk14/src/forms/fields/image_field.php:24
+msgid "Ensure this image is %width_required% pixels wide (it is %width%)."
+msgstr ""
+"Ujistěte se, že je šířka obrázku %width_required% bodů (teď je šířoký %width"
+"%)."
+
+#: ../atk14/src/forms/fields/image_field.php:25
+msgid "Ensure this image is %height_required% pixels high (it is %height%)."
+msgstr ""
+"Ujistěte se, že výška obrázku je %height_required% bodů (teď je vysoký "
+"%height%)."
+
+#: ../atk14/src/forms/fields/image_field.php:27
+msgid "Ensure this image is at most %max% pixels wide (it is %width%)."
+msgstr ""
+"Ujistěte se, že šířka obrázku nepřekročí %max% bodů (teď je šíroký %width%)."
+
+#: ../atk14/src/forms/fields/image_field.php:28
+msgid "Ensure this image is at most %max% pixels high (it is %height%)."
+msgstr ""
+"Ujistěte se, že výška obrázku nepřekročí %max% bodů (teď je vysoký %height%)."
+
+#: ../atk14/src/forms/fields/image_field.php:29
+msgid "Ensure this image is at least %min% pixels wide (it is %width%)."
+msgstr "Obrázek musí mít alespoň %min% bodů na šířku (nyní má %width%). "
+
+#: ../atk14/src/forms/fields/image_field.php:30
+msgid "Ensure this image is at least %min% pixels high (it is %height%)."
+msgstr "Obrázek musí mít alespoň %min% bodů na výšku (nyní má %height%). "
+
+#: ../atk14/src/forms/fields/image_field.php:32
+msgid "Ensure this image is in a required format"
+msgstr "Ujistěte se, že je obrázek v požadovaném formátu"
+
+#: ../atk14/src/forms/fields/integer_field.php:32
+msgid "Enter a whole number."
+msgstr "Zadejte celé číslo."
+
+#: ../atk14/src/forms/fields/integer_field.php:33
+#: ../atk14/src/forms/fields/float_field.php:23
+msgid "Ensure this value is less than or equal to %value%."
+msgstr "Hodnota musí být rovna nebo  menší než %value%."
+
+#: ../atk14/src/forms/fields/integer_field.php:34
+#: ../atk14/src/forms/fields/float_field.php:24
+msgid "Ensure this value is greater than or equal to %value%."
+msgstr "Hodnota musí být rovna nebo větší než %value%."
+
+#: ../atk14/src/forms/fields/date_time_with_seconds_field.php:14
+msgid "Enter a valid date, hours, minutes and seconds."
+msgstr "Zadejte platné datum, hodiny, minuty a sekundy."
+
+#: ../atk14/src/forms/fields/ip_address_field.php:26
+msgid "Enter a valid IP address."
+msgstr "Vložte platnou IP adresu."
+
+#: ../atk14/src/forms/fields/choice_field.php:19
+msgid "Select a valid choice. That choice is not one of the available choices."
+msgstr ""
+"Vyberte platnou hodnotu. Vybraná hodnota není ani jedna z nabízených hodnot."
+
+#: ../atk14/src/forms/fields/choice_field.php:20
+msgid "Please, choose the right option."
+msgstr "Prosím, vyberte správnou možnost."
+
+#: ../atk14/src/forms/fields/char_field.php:26
+msgid "Ensure this value has at most %max% characters."
+msgstr "Tato hodnota "
+
+#: ../atk14/src/forms/fields/char_field.php:27
+msgid "Ensure this value has at least %min% characters."
+msgstr "Hodnota musí mít alespoň %min% znaků."
+
+#: ../atk14/src/forms/fields/char_field.php:28
+msgid "Ensure this value has between %min% and %max% characters."
+msgstr "Délka řetězce musí být mezi %min% a %max% znaky."
+
+#: ../atk14/src/forms/fields/file_field.php:31
+msgid "Ensure this file has at most %max_file_size% bytes (it has %file_size%)"
+msgstr ""
+"Ujistěte se, že velikost souboru nepřekročí %max_file_size% bytů (teď má "
+"%file_size%)"
+
+#: ../atk14/src/forms/fields/file_field.php:32
+msgid "Unsupported file type: %mime_type%"
+msgstr "Nepodporovaný typ souboru: %mime_type%"
+
+#: ../atk14/src/forms/fields/float_field.php:22
+msgid "Enter a number."
+msgstr "Zadejte číslo."
+
+#: ../atk14/src/forms/fields/date_field.php:17
+msgid "Enter a valid date."
+msgstr "Zadejde platné datum."
+
+#: ../atk14/src/forms/fields/date_time_field.php:14
+msgid "Enter a valid date, hours and minutes."
+msgstr "Zadejte platné datum, hodiny a minuty."
+
+#: ../atk14/src/forms/fields/multiple_choice_field.php:21
+msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgstr "Vyberte platnou hodnotu. %(value) není jedna z nabízených možností."
+
+#: ../atk14/src/forms/fields/multiple_choice_field.php:22
+msgid "Enter a list of values."
+msgstr "Zadejte seznam hodnot."
+
+#: ../atk14/src/forms/fields/multiple_choice_field.php:23
+msgid "Please, choose the right options."
+msgstr "Prosím, vyberte správné možnosti."
+
+#: ../atk14/src/forms/test/custom_fields/url_field.php:12
+msgid "This doesn't look like an URL"
+msgstr "Toto nevypadá jako URL"
+
+#: ../atk14/src/forms/fields.php:235
+msgid "This field is required."
+msgstr "Toto pole je povinné"
+
+#: ../atk14/src/forms/fields.php:236
+msgid "Enter a valid value."
+msgstr "Vložta správnou hodnotu."
