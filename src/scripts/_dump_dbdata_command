@@ -2,11 +2,6 @@
 <?php
 
 require_once(dirname(__FILE__)."/load.php");
+require_once(dirname(__FILE__)."/__dump_db_utils.php");
 
-$d = $ATK14_GLOBAL->getDatabaseConfig();
-
-array_shift($argv); // removing script name
-
-$cmd = "pg_dump --data-only -U $d[username] $d[database] -h $d[host] -p $d[port]".($argv ? " ".join(" ",$argv) : "");
-
-echo $cmd,"\n";
+echo dump_db_command("data"),"\n";
