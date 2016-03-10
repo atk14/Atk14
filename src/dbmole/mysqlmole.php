@@ -82,4 +82,27 @@ class MysqlMole extends DbMole{
 		$connection = $this->_getDbConnect();
 		return mysqli_affected_rows($connection);
 	}
+
+	/**
+	 * HACK for Atk14Migration
+	 *
+	 * TODO: to be removed or rewritten somehow
+	 */
+	function multiQuery($query){
+		$connection = $this->_getDbConnect();
+		$result = mysqli_multi_query($connection,$query);
+
+		if(!$result){
+			$this->_raiseDBError("failed to execute SQL query");
+			return null;
+		}
+
+		do {
+			if ($result = $connection->store_result()) {
+				$result->free();
+			}
+		} while ($connection->next_result());
+
+		return $result;
+	}
 }

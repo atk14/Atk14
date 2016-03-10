@@ -118,7 +118,7 @@ class TableRecord {
 			"id_field_name" => "id",
 			"id_field_type" => null, // "integer", "string"
 			"sequence_name" => null,
-			"dbmole" => PgMole::GetInstance(),
+			"dbmole" => $GLOBALS["dbmole"],
 		);
 
 		$options += $defaults;

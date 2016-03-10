@@ -168,7 +168,8 @@ class Atk14MigrationBySqlFile extends Atk14Migration{
 				$q = trim($q); if(!$q){ continue; }
 				$this->dbmole->doQuery($q);
 			}
-
+		}elseif($this->dbmole->getDatabaseType()=='mysql'){
+			$this->dbmole->multiQuery($content);
 		}else{
 			$this->dbmole->doQuery($content);
 		}
