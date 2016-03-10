@@ -117,7 +117,7 @@ function get_list_of_sequencies($dbmole,$schema){
 	if(!$dbmole->usesSequencies()){
 		return array();
 	}
-	$dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences");
+	return $dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences");
 }
 
 function drop_table_sql($dbmole,$schema,$table){
