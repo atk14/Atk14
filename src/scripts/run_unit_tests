@@ -107,7 +107,8 @@ if(class_exists("dbmole")){
 	// pokud uz byl nejaky error_handler nastaven, vratime ho
 	if($_prev_error_handler){ DbMole::RegisterErrorHandler($_prev_error_handler); }
 }
-if(class_exists("inobj")){
+if(class_exists("inobj") && method_exists("inobj","RegisterErrorCallback")){
+	// TODO: in future it should be removed
 	inobj::RegisterErrorCallback("_test_inobj_error_handler");
 }
 
