@@ -16,7 +16,7 @@ defined("INOBJ_TABLERECORD_CACHES_STRUCTURES") || define("INOBJ_TABLERECORD_CACH
  * @package Atk14
  * @subpackage TableRecord
  */
-class TableRecord {
+class TableRecord extends inobj {
 
 	static $TableStructuresCacheDuration = INOBJ_TABLERECORD_CACHES_STRUCTURES;
 
@@ -158,6 +158,8 @@ class TableRecord {
 			// things may be a little faster next time
 			$DEFAULT_OPTIONS[$class_name] = $options;
 		}
+
+		parent::__construct();
 	}
 
 	/**
