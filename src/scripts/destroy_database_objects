@@ -57,8 +57,8 @@ if($previewing){
 	echo "-- database $dbname\n";
 }
 
-foreach($dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemaname='$schema'") as $table){
-  $q = "DROP TABLE IF EXISTS $schema.$table CASCADE";
+foreach(get_list_of_tables($dbmole,$schema) as $table){
+	$q = drop_table_sql($dbmole,$schema,$table);
 	if($previewing){
 		echo "$q;\n";
 		continue;
@@ -67,7 +67,7 @@ foreach($dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemana
 	echo "table $table dropped\n";
 }
 
-foreach($dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences") as $sequence){
+foreach(get_list_of_sequencies($dbmole,$schema) as $sequence){
 	$q = "DROP SEQUENCE $schema.$sequence CASCADE";
 	if($previewing){
 		echo "$q;\n";
@@ -77,6 +77,7 @@ foreach($dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences")
 	echo "sequence $sequence dropped\n";
 }
 
+if($dbmole->getDatabaseType()=="postgresql"){ // TODO: MySQL
 foreach($dbmole->selectIntoArray("
 	SELECT proname || '(' || oidvectortypes(proargtypes) || ')'
 	FROM pg_proc INNER JOIN pg_namespace ns ON (pg_proc.pronamespace = ns.oid)
@@ -90,6 +91,7 @@ foreach($dbmole->selectIntoArray("
 	$dbmole->doQuery($q);
 	echo "function $procedure dropped\n";
 }
+}
 
 
 if(!$previewing){
@@ -102,3 +104,25 @@ echo " $ ATK14_ENV=$env ./scripts/migrate\n";
 }
 
 exit(0);
+
+
+function get_list_of_tables($dbmole,$schema){
+	if($dbmole->getDatabaseType()=="mysql"){
+		return $dbmole->selectIntoArray("SHOW TABLES");
+	}
+	return $dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemaname='$schema'");
+}
+
+function get_list_of_sequencies($dbmole,$schema){
+	if(!$dbmole->usesSequencies()){
+		return array();
+	}
+	return $dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences");
+}
+
+function drop_table_sql($dbmole,$schema,$table){
+	if($dbmole->getDatabaseType()=="mysql"){
+  	return "DROP TABLE IF EXISTS $table CASCADE";
+	}
+  return "DROP TABLE IF EXISTS $schema.$table CASCADE";
+}

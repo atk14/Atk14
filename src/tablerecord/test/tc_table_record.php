@@ -595,10 +595,30 @@ class TcTableRecord extends TcBase{
 		));
 
 		$ser = serialize($rec);
-		$this->assertTrue(!preg_match('/dbmole/',$ser)); // see inobj::__sleep()
+		$this->assertTrue(!preg_match('/[^_]dbmole/',$ser)); // see inobj::__sleep()
 
 		$rec2 = unserialize($ser);
 		$this->assertEquals($rec->toArray(),$rec2->toArray());
+
+		$this->assertEquals("postgresql",$rec2->dbmole->getDatabaseType());
+		$this->assertEquals("default",$rec2->dbmole->getConfigurationName());
+
+		// --
+
+		$my_rec = MyTestTable::CreateNewRecord(array(
+			"title" => "My Title",
+			"price" => 456,
+			"an_integer" => 3,
+		));
+
+		$ser = serialize($my_rec);
+		$this->assertTrue(!preg_match('/[^_]dbmole/',$ser)); // see inobj::__sleep()
+
+		$my_rec2 = unserialize($ser);
+		$this->assertEquals($my_rec->toArray(),$my_rec2->toArray());
+
+		$this->assertEquals("mysql",$my_rec2->dbmole->getDatabaseType());
+		$this->assertEquals("default",$my_rec2->dbmole->getConfigurationName());
 	}
 
 	function test_GetSequenceNextval(){

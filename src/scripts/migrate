@@ -91,17 +91,32 @@ if(sizeof($argv)>1){
 
 $forcing = (isset($arguments["f"]) || isset($arguments["force"])) && sizeof($force_to_execute_migrations);
 
+$db_type = $dbmole->getDatabaseType(); // "postgresql", "mysql"...
+
 // getting list of migration files
 // a migration file must start with a number
 $migrations = array();
 $dir = opendir($ATK14_GLOBAL->getMigrationsPath());
 while($item = readdir($dir)){
 	if(preg_match("/^(\d+_.+)\\.(sql|inc|php)$/",$item,$matches)){
+
+		if(preg_match('/\.(postgresql|mysql)\.(sql|inc|php)$/',$item,$matches)){
+			if($matches[1]!=$db_type){ continue; } // skipping e.g. 0001_articles.mysql.sql when postgresql is used
+		}
+
 		$migrations[] = $item;
 	}
 }
 closedir($dir);
 asort($migrations);
+
+$_migrations = array();
+foreach($migrations as $m){
+	$_m = preg_replace('/\.([^.]+)$/',".$db_type.\\1",$m); // 0001_articles.sql -> 0001_articles.postgresql.sql
+	if(in_array($_m,$migrations)){ continue; } // 0001_articles.sql needs to be skipped when there is also 0001_articles.postgresql.sql
+	$_migrations[] = $m;
+}
+$migrations = $_migrations;
 
 foreach($force_to_execute_migrations as $_m){
 	if(!in_array($_m,$migrations)){
@@ -134,7 +149,7 @@ foreach($migrations as $m){
 
 	$logger->info("about to start migration $m"); $logger->flush();
 	
-	if(preg_match("/^[0-9]+_(.*)\\.(inc|php)$/",$m,$matches)){
+	if(preg_match("/^[0-9]+_(.*?)(\\.(postgresql|mysql)|)\\.(inc|php)$/",$m,$matches)){
 
 		// the next line enforces TableRecord to reread table structures
 		TableRecord::FlushTableStructureCache();

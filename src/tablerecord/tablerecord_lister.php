@@ -40,7 +40,7 @@
  * @param String4 $subjects
  * @param array $options
  */
-class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countable {
+class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Constructor
 	 *
@@ -95,7 +95,7 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 		),$options);
 
 		$this->_owner = &$owner;
-		$this->_dbmole = &$owner->_dbmole;
+		$this->_dbmole = &$owner->dbmole;
 		$this->_options = $options;
 	}
 
@@ -326,7 +326,7 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	 *	echo $lister->getRecordRank($author); // 0
 	 */
 	function getRecordRank($record){
-		$record = $this->_objToId($record);
+		$record = TableRecord::ObjToId($record);
 		$rank = 0;
 		foreach($this->getItems() as $item){
 			if($item->getRecordId()==$record){
@@ -346,7 +346,7 @@ class TableRecord_Lister extends inobj implements ArrayAccess, Iterator, Countab
 	 * @param integer $rank
 	 */
 	function setRecordRank($record,$rank){
-		$record = $this->_objToId($record);
+		$record = TableRecord::ObjToId($record);
 		foreach($this->getItems() as $item){
 			if($item->getRecordId()==$record){
 				$item->setRank($rank);

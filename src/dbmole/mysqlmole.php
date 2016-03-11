@@ -8,6 +8,11 @@ class MysqlMole extends DbMole{
 	// MySQL doesn't use sequencies, therefore methods selectSequenceNextval and selectSequenceCurrval are not covered and return nulls.
 	function usesSequencies(){ return false; }
 
+	function selectInsertId(){
+		$connection = $this->_getDbConnect();
+		return mysqli_insert_id($connection);
+	}
+
 	function selectRows($query,$bind_ar = array(), $options = array()){
 		$options = array_merge(array(
 			"limit" => null,
@@ -76,5 +81,28 @@ class MysqlMole extends DbMole{
 	function getAffectedRows(){
 		$connection = $this->_getDbConnect();
 		return mysqli_affected_rows($connection);
+	}
+
+	/**
+	 * HACK for Atk14Migration
+	 *
+	 * TODO: to be removed or rewritten somehow
+	 */
+	function multiQuery($query){
+		$connection = $this->_getDbConnect();
+		$result = mysqli_multi_query($connection,$query);
+
+		if(!$result){
+			$this->_raiseDBError("failed to execute SQL query");
+			return null;
+		}
+
+		do {
+			if ($result = $connection->store_result()) {
+				$result->free();
+			}
+		} while ($connection->next_result());
+
+		return $result;
 	}
 }

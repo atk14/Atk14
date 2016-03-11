@@ -159,13 +159,18 @@ class DbMole{
 	 *
 	 * Basic call:
 	 * ```
-	 * $dbmole = &DbMole::GetInstance("default","OracleMole");
+	 * $dbmole = DbMole::GetInstance("default","OracleMole");
+	 * $dbmole = DbMole::GetInstance("default","oracle");
+	 *
+	 * $dbmole = DbMole::GetInstance("default","PgMole");
+	 * $dbmole = DbMole::GetInstance("default","postgresql");
 	 * ```
 	 *
 	 *
 	 * This call using a subclass is better:
 	 * ```
-	 * $dbmole = &OracleMole::GetInstance("default");
+	 * $dbmole = OracleMole::GetInstance("default");
+	 * $dbmole = PgMole::GetInstance("default");
 	 * ```
 	 *
 	 *
@@ -183,6 +188,15 @@ class DbMole{
 		$options += array(
 			"class_name" => get_called_class()
 		);
+
+		$tr = array(
+			"oracle" => "OracleMole",
+			"mysql" => "MysqlMole",
+			"postgresql" => "PgMole",
+		);
+		if(isset($tr[$options["class_name"]])){
+			$options["class_name"] = $tr[$options["class_name"]]; // "postgresql" -> "PgMole"
+		}
 
 		$class_name = $options["class_name"];
 

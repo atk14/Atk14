@@ -112,7 +112,15 @@ class Atk14Migration{
 	 * @return boolean
 	 */
 	static function SchemaMigrationsTableExists($dbmole){
-		return 1==$dbmole->selectInt("SELECT COUNT(*) FROM pg_tables WHERE LOWER(tablename)='schema_migrations'");
+		switch($dbmole->getDatabaseType()){
+			case "postgresql":
+				$query = "SELECT COUNT(*) FROM pg_tables WHERE LOWER(tablename)='schema_migrations'";
+				break;
+			case "mysql":
+				$query = "SELECT COUNT(*) FROM information_schema.tables WHERE LOWER(table_name)='schema_migrations' LIMIT 1";
+				break;
+		}
+		return 1==$dbmole->selectInt($query);
 	}
 
 	/**
@@ -121,6 +129,7 @@ class Atk14Migration{
 	 * @param DbMole $dbmole
 	 */
 	static function CreateSchemaMigrationsTable($dbmole){
+		// it's ok for postgresql and mysql
 		$dbmole->doQuery("CREATE TABLE schema_migrations(
 			version VARCHAR(255) PRIMARY KEY,
 			created_at TIMESTAMP NOT NULL DEFAULT NOW()
@@ -163,7 +172,8 @@ class Atk14MigrationBySqlFile extends Atk14Migration{
 				$q = trim($q); if(!$q){ continue; }
 				$this->dbmole->doQuery($q);
 			}
-
+		}elseif($this->dbmole->getDatabaseType()=='mysql'){
+			$this->dbmole->multiQuery($content);
 		}else{
 			$this->dbmole->doQuery($content);
 		}
