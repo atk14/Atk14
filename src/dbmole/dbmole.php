@@ -1484,4 +1484,22 @@ class DbMole{
 		}
 		return in_array(strtolower($value),array("t","true","y"));
 	}
+
+	/**
+	 *
+	 * @ignore
+	 */
+	function __sleep(){
+		$vars = get_object_vars($this);
+		unset($vars["_DbConnect"]); // the database connection should not be serialized
+		return array_keys($vars);
+	}
+
+	/**
+	 *
+	 * @ignore
+	 */
+	function __wakeup(){
+		$this->_DbConnect = null;
+	}
 }

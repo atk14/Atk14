@@ -90,6 +90,27 @@ class tc_dbmole extends tc_base{
 		*/
 	}
 
+	function test_serialize(){
+		$dbmole = $this->pg;
+
+		$count = $dbmole->selectInt("SELECT COUNT(*) FROM test_table");
+		$queries_executed = $dbmole->getQueriesExecuted();
+
+		$this->assertTrue(is_int($count));
+		$this->assertTrue($queries_executed>0);
+
+		$ser = serialize($dbmole);
+
+		$dbmole2 = unserialize($ser);
+
+		$count2 = $dbmole2->selectInt("SELECT COUNT(*) FROM test_table");
+		$queries_executed2 = $dbmole2->getQueriesExecuted();
+
+		$this->assertTrue(is_int($count2));
+		$this->assertTrue($queries_executed2>0);
+		$this->assertTrue($queries_executed2>$queries_executed);
+	}
+
 	function _test_begin_transaction($dbmole){
 		$dbmole->closeConnection();
 		$this->assertEquals(false,$dbmole->isConnected());
