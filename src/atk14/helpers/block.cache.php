@@ -41,6 +41,8 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 	$expire = $params["expire"]; unset($params["expire"]);
 	$key = $params["key"]; unset($params["key"]);
 	$if = $params["if"]; unset($params["if"]);
+	$lang = $smarty->getTemplateVars("lang");
+	$namespace = $smarty->getTemplateVars("namespace");
 
 	if(!$if){
 		// cache is not enabled
@@ -52,13 +54,15 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 		$current_template = $smarty->_current_file; // "/home/bob/devel/project_x/app/views/shared/_menu.tpl"
 		assert(strlen($current_template)>0);
 
-		$lang = $smarty->getTemplateVars("lang");
-		$namespace = $smarty->getTemplateVars("namespace");
 		$controller = $smarty->getTemplateVars("controller");
 		$action = $smarty->getTemplateVars("action");
 
 		$tpl_nice_name = preg_replace('/.*\/([^\/]+)$/','\1',$current_template); // "/home/bob/devel/project_x/app/views/shared/_menu.tpl" -> _menu.tpl
 		$key = "$namespace.$lang.$controller.$action.$tpl_nice_name.".md5($current_template);
+	}else{
+		// Even when there is a key specified,
+		// there is need to distinguish the key for different languages
+		$key = "$lang.$key";
 	}
 
 	// $key sanitization
