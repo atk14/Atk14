@@ -28,6 +28,11 @@
  *	{cache if=!$logged_user key="menu"}
  *		<ul>...</ul>
  *	{/cache}
+ *
+ * If a content distinguish for different languages, don't forget to add a salting parameter lang along with the specific key.
+ *	{cache key="menu" lang=$lang}
+ *		<ul>...</ul>
+ *	{/cache}
  */
 function smarty_block_cache($params,$content,$template,&$repeat){
 	$smarty = atk14_get_smarty_from_template($template);
