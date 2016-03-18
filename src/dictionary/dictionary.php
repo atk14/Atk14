@@ -9,18 +9,18 @@
  *
  * Basic usage:
  * ```
- * 	$dict = new Dictionary(array(
- * 		"key1" => "value1",
- * 		"key2" => "value2",
- * 		"key3" => "value3"
- * 	));
+ * $dict = new Dictionary(array(
+ * 	"key1" => "value1",
+ * 	"key2" => "value2",
+ * 	"key3" => "value3"
+ * ));
  *
- * 	echo $dict->getValue("key1");
- * 	$dict->setValue("key4","new value");
+ * echo $dict->getValue("key1");
+ * $dict->setValue("key4","new value");
  *
- * 	if($dict->defined("key1")){
- * 		//...
- * 	}
+ * if($dict->defined("key1")){
+ * 	//...
+ * }
  * ```
  *
  * @package Atk14\Dictionary
@@ -60,7 +60,7 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 * Parameter $type recognizes same values as PHP.
 	 *
 	 * ```
-	 * 	$dictionary->getValue("user_id", "integer");
+	 * $dictionary->getValue("user_id", "integer");
 	 * ```
 	 *
 	 * @param string $key
@@ -283,11 +283,11 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	 *
 	 * First element will have the key 'color' and value 'green'
 	 * ```
-	 * 	$dict->unshift("color","green");
+	 * $dict->unshift("color","green");
 	 * ```
 	 *
 	 * ```
-	 * 	$dict->toArray();
+	 * $dict->toArray();
 	 * ```
 	 *
 	 *

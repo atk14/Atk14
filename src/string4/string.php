@@ -13,8 +13,6 @@
  * Here is an inspiration:
  * http://api.rubyonrails.org/classes/String.html
  *
- * @package Atk14
- * @subpackage String
  */
 class String{
 
@@ -23,10 +21,11 @@ class String{
 	 *
 	 * Setup new instance.
 	 *
-	 * 	$str = new String();
-	 * 	$str = new String("Hello");
-	 * 	$str2 = new String($str);
-	 *
+	 * ```
+	 * $str = new String();
+	 * $str = new String("Hello");
+	 * $str2 = new String($str);
+	 * ```
 	 *
 	 * @param string $string String to store
 	 * @param string $encoding Charset in which is the $string stored
@@ -48,8 +47,10 @@ class String{
 	 *
 	 * Example
 	 *
-	 * 		$str = String::ToObject("Hello");
-	 * 		$str = String::ToObject($str);
+	 * ```
+	 * $str = String::ToObject("Hello");
+	 * $str = String::ToObject($str);
+	 * ```
 	 *
 	 * @param string $string
 	 * @param string $encoding
@@ -68,10 +69,12 @@ class String{
 	 * Generates a random string that contains only alfanumeric characters ([A-Za-z0-9]).
 	 * Special chars can be passed in $options.
 	 *
-	 * 	echo String::RandomString();
-	 * 	echo String::RandomString(8);
-	 * 	echo String::RandomString(array("length" => 8));
-	 * 	echo String::RandomString(array("length" => 8, "extra_chars" => "#$!%^")); 
+	 * ```
+	 * echo String::RandomString();
+	 * echo String::RandomString(8);
+	 * echo String::RandomString(array("length" => 8));
+	 * echo String::RandomString(array("length" => 8, "extra_chars" => "#$!%^")); 
+	 * ```
 	 *
 	 * @param int $length
 	 * @param array $options
@@ -171,13 +174,13 @@ class String{
 		if(strlen($password)>$length){
 			$password = substr($password,0,$length);
 		}
-		return new String($password);
+		return new self($password);
 	}
 
 	/**
 	 * ATK14 sometimes converts objects into their scalar representation automatically by calling getId() method.
 	 * Due to it we need this silly looking method here.
-	 * 
+	 *
 	 * @return string
 	 */
 	function getId(){ return $this->toString(); }
@@ -215,15 +218,19 @@ class String{
 	 *
 	 * Replaces a portion of string in the stored string.
 	 *
-	 * 		$str = new String("Hello World");
-	 * 		$str->replace("World","Guys");
+	 * ```
+	 * $str = new String("Hello World");
+	 * $str->replace("World","Guys");
+	 * ```
 	 *
 	 * or
 	 *
-	 * 		$str->replace(array(
-	 * 			"Hello" => "Hi",
-	 * 			"World" => "Guys",
-	 * 		));
+	 * ```
+	 * $str->replace(array(
+	 * 	"Hello" => "Hi",
+	 * 	"World" => "Guys",
+	 * ));
+	 * ```
 	 *
 	 * !! Changes the object state
 	 *
@@ -256,8 +263,10 @@ class String{
 	 * Part of a string that should be replaced is specified by a regexp pattern.
 	 *
 	 * Hello World => Hexxo Worxd
-	 * 		$string = new String("Hello World");
-	 * 		$string = $string->gsub("/l/","x");
+	 * ```
+	 * $string = new String("Hello World");
+	 * $string = $string->gsub("/l/","x");
+	 * ```
 	 *
 	 * @param string $pattern regexp string
 	 * @param string $replace string replacement
@@ -271,8 +280,10 @@ class String{
 	 * Prepends a string to the object.
 	 *
 	 * Prepend 'Hello' to 'World'
-	 * 		$string = new String("World");
-	 * 		$string->prepend("Hello ");
+	 * ```
+	 * $string = new String("World");
+	 * $string->prepend("Hello ");
+	 * ```
 	 *
 	 * @param $content
 	 * @return String
@@ -286,8 +297,10 @@ class String{
 	 * Appends a string to the end of stored string.
 	 *
 	 * Append 'World' to 'Hello'
-	 * 		$string = new String("Hello");
-	 * 		$string->append(" World");
+	 * ```
+	 * $string = new String("Hello");
+	 * $string->append(" World");
+	 * ```
 	 *
 	 * @param string $content string to append to end of the stored string
 	 * @return String
@@ -339,7 +352,7 @@ class String{
 		$out = preg_match($pattern,$this,$matches);
 		if(is_array($matches)){
 			foreach($matches as &$m){
-				$m = new String($m);
+				$m = new self($m);
 			}
 		}
 		return $out;
@@ -350,8 +363,10 @@ class String{
 	 *
 	 * Position starts from 0.
 	 *
-	 * 		$str = new String("Hello");
-	 * 		$str->at(1); // 'e'
+	 * ```
+	 * $str = new String("Hello");
+	 * $str->at(1); // 'e'
+	 * ```
 	 *
 	 * @param integer $position in string starting from 0
 	 * @return String
@@ -363,9 +378,11 @@ class String{
 	/**
 	 * Returns substring of the stored string.
 	 *
-	 * 		$str = new String("Lorem Ipsum");
-	 * 		echo $str->substr(0,5); // "Lorem"
-	 * 		echo $str->substr(-5); // "Ipsum"
+	 * ```
+	 * $str = new String("Lorem Ipsum");
+	 * echo $str->substr(0,5); // "Lorem"
+	 * echo $str->substr(-5); // "Ipsum"
+	 * ```
 	 *
 	 * @param integer $start
 	 * @param integer $length
@@ -387,7 +404,7 @@ class String{
 
 	/**
 	 * Returns the first character of the string or the first $limit characters.
-	 * 
+	 *
 	 * @param integer $limit
 	 * @return String new instance that contains the first characters of the stored string
 	 */
@@ -399,10 +416,12 @@ class String{
 	 * Checks if the string contains another string.
 	 *
 	 * Example
-	 * 		$str = new String("Hello World");
-	 * 		$str->contains("Hello"); // true
-	 * 		$str->contains(array("Hello","World")); // true
-	 * 
+	 * ```
+	 * $str = new String("Hello World");
+	 * $str->contains("Hello"); // true
+	 * $str->contains(array("Hello","World")); // true
+	 * ```
+	 *
 	 * @param string|array $needle
 	 * @return bool
 	 */
@@ -420,13 +439,17 @@ class String{
 	 * Does contains at least one of the given strings?
 	 *
 	 * Example
-	 * 		if($breakfast->containsOneOf("orange","lemon","apple"){
-	 * 			// sort of vitamin stuff
-	 * 		}
+	 * ```
+	 * if($breakfast->containsOneOf("orange","lemon","apple"){
+	 * 	// sort of vitamin stuff
+	 * }
+	 * ```
 	 *
-	 * 		if($breakfast->containsOneOf(array("orange","lemon","apple"))){
-	 * 			// just for sure...
-	 * 		}
+	 * ```
+	 * if($breakfast->containsOneOf(array("orange","lemon","apple"))){
+	 * 	// just for sure...
+	 * }
+	 * ```
 	 *
 	 * @param array $needles array of string
 	 * @return bool
@@ -452,10 +475,14 @@ class String{
 	 * Example
 	 *
 	 * "hello_world" -> "HelloWorld"
-	 * 		$camel_case = $string->camelize();
+	 * ```
+	 * $camel_case = $string->camelize();
+	 * ```
 	 *
 	 * "hello_world" -> "helloWorld"
-	 * 		$camel_case = $string->camelize(array("lower" => true));
+	 * ```
+	 * $camel_case = $string->camelize(array("lower" => true));
+	 * ```
 	 *
 	 * @param array $options
 	 * - lower - leave first character lowercase
@@ -482,8 +509,10 @@ class String{
 	 * Example
 	 * Book => books
 	 *
-	 * 		$class = new String("Book");
-	 * 		echo $class->tableize();
+	 * ```
+	 * $class = new String("Book");
+	 * echo $class->tableize();
+	 * ```
 	 *
 	 * @return String
 	 */
@@ -498,8 +527,10 @@ class String{
 	 *
 	 * Example
 	 * apple => apples
-	 * 		$apple = new String("apple");
-	 * 		echo $apple->pluralize();
+	 * ```
+	 * $apple = new String("apple");
+	 * echo $apple->pluralize();
+	 * ```
 	 *
 	 * @return String
 	 */
@@ -511,8 +542,10 @@ class String{
 	 * Makes singular form of a word.
 	 *
 	 * Example
-	 * 		$apples = new String("Rotten Apples");
-	 * 		echo $apples->singularize(); // "Rotten Apple"
+	 * ```
+	 * $apples = new String("Rotten Apples");
+	 * echo $apples->singularize(); // "Rotten Apple"
+	 * ```
 	 *
 	 * @return String
 	 */
@@ -522,11 +555,13 @@ class String{
 
 	/**
 	 * Converts string into underscore format.
-	 * 
+	 *
 	 * Example
 	 * HelloWorld => hello_world
-	 * 		$underscore = $camel_case->underscore();
-	 * 
+	 * ```
+	 * $underscore = $camel_case->underscore();
+	 * ```
+	 *
 	 * @return String
 	 */
 	function underscore(){
@@ -535,19 +570,41 @@ class String{
 		return $out;
 	}
 
+	/**
+		* Returns instance with string in lower case
+		*
+		* @return String
+	 */
 	function downcase(){
 		return $this->_copy(Translate::Lower($this->toString(),$this->getEncoding()));
 	}
+
+	/**
+	 * Alias to downcase()
+	 *
+	 * @return String
+	 */
 	function lower(){ return $this->downcase(); }
 
+	/**
+		* Returns instance with string in upper case
+		*
+		* @return String
+	 */
 	function upcase(){
 		return $this->_copy(Translate::Upper($this->toString(),$this->getEncoding()));
 	}
+
+	/**
+	 * Alias to upcase()
+	 *
+	 * @return String
+	 */
 	function upper(){ return $this->upcase(); }
 
 	/**
 	 * Converts string to ASCII
-	 * 
+	 *
 	 * @return String object containing string converted to ASCII
 	 */
 	function toAscii(){
@@ -555,13 +612,34 @@ class String{
 	}
 
 	/**
+	 * Returns string as slug.
+	 *
+	 * ```
 	 * $s = new String("Amazing facts about foxes!");
-	 * echo $s->toSlug(); // "amazing-facts-about-foxes"
+	 * echo $s->toSlug();
+	 * ```
+	 * this example outputs "amazing-facts-about-foxes"
+	 *
+	 * @param integer $max_length
+	 * @return string
 	 */
 	function toSlug($max_length = null){
 		return $this->toAscii()->lower()->gsub('/[^a-z0-9]+/',' ')->substr(0,$max_length)->trim()->replace(' ','-');
 	}
 
+	/**
+	 * Returns a string shortened to given length.
+	 *
+	 * When a string is shortened a sequence of characters can be appended. By default '...' is appended
+	 * It can also detect certain characters and limit the string to this character.
+	 * So you can take care of split words.
+	 *
+	 * @param integer $length
+	 * @param array $options
+	 * - omission
+	 * - separator
+	 * @return string
+	 */
 	function truncate($length,$options = array()){
 		$options = array_merge(array(
 			"omission" => "...",
@@ -569,7 +647,7 @@ class String{
 		),$options);
 
 		$text = $this->_copy();
-		$omission = new String($options["omission"]);
+		$omission = new self($options["omission"]);
 
 		$length_with_room_for_omission = $length - $omission->length();
 
@@ -603,7 +681,7 @@ class String{
 	function _copy($string = null,$encoding = null){
 		if(!isset($string)){ $string = $this->_String; }
 		if(!isset($encoding)){ $encoding = $this->_Encoding; }
-		return new String($string,$encoding);
+		return new self($string,$encoding);
 	}
 
 	/**
@@ -629,8 +707,10 @@ class String{
 	 * Magic method
 	 *
 	 * Example
-	 * 		$s = new String("Hello");
-	 * 		echo "$s"; // prints Hello
+	 * ```
+	 * $s = new String("Hello");
+	 * echo "$s"; // prints Hello
+	 * ```
 	 *
 	 * @return string
 	 */
