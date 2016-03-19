@@ -333,25 +333,30 @@ class TableRecord extends inobj {
 	/**
 	 * Returns a next value of the sequence related to the class.
 	 *
-	 * It's useful when you need to know $id before creation of an object.
-	 *
-	 * ```
-	 *	$id = User::GetSequenceNextval();
-	 *	User::CreateNewRecord(array(
-	 *		"id" => $id,
-	 *		"password" => md5($password.$id),
-	 *	));
-	 * ```
 	 */
 	static function GetSequenceNextval(){
 		$class_name = get_called_class();
 		$dbmole = $class_name::GetDbmole();
+		if(!$dbmole->usesSequencies()){ return; } // e.g. MySQL
 		$obj = new $class_name;
 		return $dbmole->selectSequenceNextval($obj->getSequenceName());
 	}
 
 	/**
-	 * An alias for GetSequenceNextval()
+	 * Generates a new id for a new record.
+	 *
+	 * Naturally it looks like an alias of self::GetSequenceNextval()
+	 * but it's logic can be changed in a descendant.
+	 *
+	 * It's useful when you need to know $id before creation of an object.
+	 *
+	 * ```
+	 *	$id = User::GetNextId();
+	 *	User::CreateNewRecord(array(
+	 *		"id" => $id,
+	 *		"password" => md5($password.$id),
+	 *	));
+	 * ```
 	 */
 	static function GetNextId(){
 		$class_name = get_called_class();
@@ -1351,10 +1356,11 @@ class TableRecord extends inobj {
 		$id = null;
 		if(isset($values[$this->_IdFieldName])){
 			$id = $values[$this->_IdFieldName];
-		}elseif($this->dbmole->usesSequencies()){
-			$id = $this->dbmole->selectSequenceNextval($this->_SequenceName);
-			if(!isset($id)){ return null; }
-			$values[$this->_IdFieldName] = $id;
+		}else{
+			$id = self::GetNextId();
+			if(!is_null($id)){
+				$values[$this->_IdFieldName] = $id;
+			}
 		}
 
 		if(!$this->dbmole->insertIntoTable($this->getTableName(),$values,$options)){ return null; }
