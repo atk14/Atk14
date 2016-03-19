@@ -1339,6 +1339,7 @@ class TableRecord extends inobj {
 	function _insertRecord($values,$options = array()){
 		$values=(array)$values;
 		$options=(array)$options;
+		$class_name = get_class($this);
 
 		$options += array(
 			"use_cache" => false,
@@ -1357,7 +1358,7 @@ class TableRecord extends inobj {
 		if(isset($values[$this->_IdFieldName])){
 			$id = $values[$this->_IdFieldName];
 		}else{
-			$id = self::GetNextId();
+			$id = call_user_func(array($class_name,"GetNextId"));
 			if(!is_null($id)){
 				$values[$this->_IdFieldName] = $id;
 			}
