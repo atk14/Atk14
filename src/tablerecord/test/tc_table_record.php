@@ -635,6 +635,11 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals((int)$id2,$id1+1);
 		$this->assertEquals((int)$id3,$id2+1);
 		$this->assertEquals((int)$id4,$id3+1);
+
+		// Article has it's own implementation of GetNextId()
+		$seq_nextval = Article::GetSequenceNextval();
+		$next_id = Article::GetNextId();
+		$this->assertEquals($next_id,($seq_nextval+1) * 1000);
 	}
 
 	function test_ObjToId(){
