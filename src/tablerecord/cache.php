@@ -97,8 +97,10 @@ class ObjectCacher {
 	 * Returns ids of all cached and prepared records
 	 */
 	function cachedIds() {
-		$cached = array_keys($this->cache);
-		$out = $this->prepare + array_combine($cached,$cached);
+		$out = $this->prepare;
+		if($cached = array_keys($this->cache)){
+			$out += array_combine($cached,$cached);
+		}
 		return array_values($out);
 	}
 
