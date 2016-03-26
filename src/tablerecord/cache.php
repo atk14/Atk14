@@ -3,6 +3,145 @@
  * Caching mechanism
  * @filesource
  */
+
+/**
+ * An ObjectCacher is a object which is caching instance of one specific class
+ *
+ * <code>
+ *	// Instantiating
+ *	$article_cacher = Cache::GetObjectCacher("Article");
+ * </code>
+ */
+class ObjectCacher {
+
+	var $class;
+	var $cache = array();
+	var $prepare = array();
+
+	/**
+	 * Constructor
+	 *
+	 * @access protected
+	 */
+	protected function __construct($class) {
+		$this->class = $class;
+	}
+
+	static function &GetInstance($class,$create = true){
+		static $object_cachers = array();
+
+		assert(class_exists($class)); // this needs to be called before lowering the name of the class (autoload issue)
+		$class = strtolower($class);
+		if(!key_exists($class, $object_cachers)) {
+			if(!$create) { $null = null; return $null; }
+			$object_cachers[$class] = new ObjectCacher($class);
+		}
+		return $object_cachers[$class];
+	}
+
+	/**
+	 * Reads records that should be read (from $this->prepare) to cache.
+	 *
+	 * @access protected
+	 */
+	protected function _readToCache() {
+		if(!$this->prepare) { return; }
+		$cname = $this->class;
+		$this->cache += $cname::GetInstanceById($this->prepare,array("use_cache" => false));
+		$this->prepare = array();
+	}
+
+	/**
+	 * Prepare the given $id or $ids to be read into cache
+	 * 
+	 * When first $cacher->get() is called, all previously prepared ids are automatically read to cache
+	 */
+	function prepare($ids) {
+		$ids = self::_ToIds($ids);
+		foreach($ids as $id){
+			if(	$id == null ||
+					key_exists($id, $this->prepare) ||
+					key_exists($id, $this->cache)
+			){ continue; }
+			$this->prepare[$id] = $id;
+		}
+	}
+
+	/**
+	 * Returns records from cache, instantiate (i.e. read from db) not yet cached records.
+	 */
+	function get($ids) {
+		$array_given = false;
+		$ids = self::_ToIds($ids, $array_given);
+		$this->prepare($ids);
+		$this->_readToCache();
+		$out = $this->getCached($ids);
+		if(!$array_given){ $out = $out[0]; }
+		return $out;
+	}
+
+	/**
+	 * Returns only records (by ids), which have been already read to cache.
+	 *
+	 * Returns nulls instead of all unread.
+	 */
+	function getCached($ids) {
+		$out = array();
+		foreach($ids as $k => $id){
+			$out[$k] = $id === null || !key_exists($id, $this->cache) ? null : $this->cache[$id];
+		}
+		return $out;
+	}
+
+	/**
+	 * Returns ids of all cached and prepared records
+	 */
+	function cachedIds() {
+		$cached = array_keys($this->cache);
+		$out = $this->prepare + array_combine($cached,$cached);
+		return array_values($out);
+	}
+
+	/**
+	 * Clears whole cache, or (by id) selected record(s) from cache
+	 */
+	function clear($ids = null) {
+		if($ids === null) {
+			$this->cache = array();
+		} else {
+			$ids = self::_ToIds($ids);
+			$this->cache = array_diff_key($this->cache, array_flip($ids));
+		}
+	}
+
+	/**
+	 * Is given record in cache?
+	 */
+	function inCache($id) {
+		if(is_object($id)) {$id = $id->getId();};
+		return key_exists($id, $this->cache);
+	}
+
+	/**
+	 * Creates array of ids from argument.
+	 *
+	 * Just auxiliary method.
+	 */
+	static protected function _ToIds($ids, &$array_given = true){
+		if(!is_array($ids)){
+			$ids = array($ids);
+			$array_given = false;
+		} else {
+			$array_given = true;
+		}
+
+		foreach($ids as &$v){
+			if(is_object($v)){ $v = $v->getId(); }
+		}
+		return $ids;
+	}
+}
+
 /**
  * Class for caching mainly TableRecord objects
  *
@@ -37,19 +176,39 @@
  * Cache::Clear("Article",10023);
  * ```
  *
+ * Multiple cache operations with one class
+ * ```
+ *	$cacher = Cache::GetObjectCacher('Card');
+ *	$cacher->prepare(1);
+ *	$cacher->prepare(3);
+ *	$cacher->get(2);
+ *  ```
  * @package Atk14\Cache
  */
 class Cache{
-	/**
-	 * @ignore
-	 */
-	var $_Prepare = array();
+
+	protected $_initilizedCachers = array();
 
 	/**
-	 * @ignore
+	 * Constructor
+	 *
+	 * @access protected
 	 */
-	var $_Cache = array();
+	protected function __construct(){ }
 
+	/**
+	 * Returns a object that caches instances of the given class
+	 *
+	 */
+	function &getCacher($class,$create = true) {
+		$class = (string)$class;
+		$this->_initilizedCachers[$class] = $class;
+		return ObjectCacher::GetInstance($class,$create);
+	}
+
+	/**
+	 * Get global cache instance
+	 */
 	static function &GetInstance(){
 		static $instance;
 		if(!isset($instance)){
@@ -58,93 +217,80 @@ class Cache{
 		return $instance;
 	}
 
-	static function Prepare($class,$ids){
-		$ids = Cache::_Deobjectilize($ids);
-		assert(class_exists($class)); // this needs to be called before lowering the name of the class (autoload issue)
-		$class = strtolower($class);
-		$c = Cache::GetInstance();
-		!is_array($ids) && ($ids = array($ids));
-		!isset($c->_Prepare[$class]) && ($c->_Prepare[$class] = array());
-		!isset($c->_Cache[$class]) && ($c->_Cache[$class] = array());
-		$cached_ids = array_keys($c->_Cache[$class]);
-		foreach($ids as $id){
-			if(!isset($id)){ continue; }
-			!in_array($id,$c->_Prepare[$class]) && !in_array($id,$cached_ids) && ($c->_Prepare[$class][$id] = $id);
-		}
-	}
-
-	static function Get($class,$ids){
-		$ids = Cache::_Deobjectilize($ids);
-		assert(class_exists($class)); // this needs to be called before lowering the name of the class (autoload issue)
-		$class = strtolower($class);
-		Cache::Prepare($class,$ids);
-		$c = Cache::GetInstance();
-		$c->_readToCache($class);
-		$array_given = true;
-		if(!is_array($ids)){ $ids = array($ids);  $array_given = false; }
-		$out = array();
-		foreach($ids as $k => $id){
-			if(!isset($id)){ $out[$k] = null; continue; }
-			$out[$k] = $c->_Cache[$class][$id];
-		}
-		if(!$array_given){ return $out[0]; }
-		return $out;
+	/**
+	 * Get an object that caches instances of the given class
+	 *
+	 * <code>
+	 *	$cache = Cache::GetObjectCacher('Article');
+	 *	$cache->prepare(1);
+	 *	$cache->prepare(2);
+	 *	$cache->prepare(array(1,2));
+	 *	$cache->get(2);
+	 *	// .....
+	 * </code>
+	 */
+	static function &GetObjectCacher($class){
+		return self::GetInstance()->getCacher($class);
 	}
 
 	/**
-	 * Cache::Clear(); // flushes every object in cache
-	 * Cache::Clear("Article"); // flushes every Article member in cache, if there are any
-	 * Cache::Clear("Article",123); // flushes just Article#123, if there is such object
+	 * Prepares the given $id(s) to be read at once into cache in the future
+	 *
+	 * <code>
+	 * 	Cache::Prepare("Article",123);
+	 * 	Cache::Prepare("Article",124);
+	 * 	Cache::Prepare("Article",array(125,126));
+	 * </code>
+	 */
+	static function Prepare($class,$ids){
+		self::GetInstance()->getCacher($class)->prepare($ids);
+	}
+
+	/**
+	 * Gets the given object(s) from cache
+	 *
+	 * <code>
+	 * 	$article = Cache::Get("Article",123); // Article#123
+	 * 	$articles = Cache::Get("Article",array(123,124)); // array(Article#123,Article#124)
+	 * </code>
+	 */
+	static function Get($class,$ids){
+		return self::GetInstance()->getCacher($class)->get($ids);
+	}
+
+	/**
+	 * Flushes out content of cache
+	 *
+	 * <code>
+	 *	Cache::Clear(); // flushes every object in cache
+	 *	Cache::Clear("Article"); // flushes every Article instance in cache, if there are any
+	 *	Cache::Clear("Article",123); // flushes just Article#123, if there is such object in cache
+	 *	Cache::Clear("Article",array(123,124)); // flushes just Article#123 and Article#124, if there are such objects in cache
+	 * </code>
 	 */
 	static function Clear($class = null,$id = null){
-		$id = Cache::_Deobjectilize($id);
-		$c = Cache::GetInstance();
-		if(isset($class)){
-			$class = strtolower($class);
-			if(isset($id)){
-				unset($c->_Cache[$class][$id]);
-			}else{
-				$c->_Cache[$class] = array();
+		$c = self::GetInstance();
+		$c->clearCache($class, $id);
+	}
+
+	function clearCache($class = null, $ids = null) {
+		if($class == null) {
+			foreach($this->_initilizedCachers as $class){
+				$cacher = $this->getCacher($class);
+				$cacher->clear();
 			}
-			return;
+		} else {
+			$cacher = $this->getCacher($class);
+			$cacher->clear($ids);
 		}
-		$c->_Cache = array();
 	}
 
 	/**
 	 * $ids = Cache::CachedIds("Article"); // array(123,453,223)
 	 */
-	static function CachedIds($class = null){
-		$c = Cache::GetInstance();
-		$class = strtolower($class);
-		$out = isset($c->_Prepare[$class]) ? $c->_Prepare[$class] : array();
-		if(isset($c->_Cache[$class])){
-			foreach($c->_Cache[$class] as $id => &$o){
-				$out[$id] = $id;
-			}
-		}
-		return array_values($out);
-	}
-
-	function _readToCache($class){
-		if(!isset($this->_Prepare[$class]) || !$this->_Prepare[$class]){ return; }
-		$ids = $this->_Prepare[$class];
-		$objs = call_user_func(array($class,"GetInstanceById"),$ids,array("use_cache" => false));
-		foreach($objs as $k => $o){
-			$this->_Cache[$class][$k] = $o;
-		}
-		//$this->_Cache[$class] = $objs + $this->_Cache[$class]; // TODO: does this equal to the previous foreach loop?
-		$this->_Prepare[$class] = array();
-	}
-
-	static function _Deobjectilize($id){
-		if(is_array($id)){
-			foreach($id as &$v){
-				if(is_object($v)){ $v = $v->getId(); }
-			}
-			return $id;
-		}
-		if(is_object($id)){ $id = $id->getId(); }
-		return $id;
+	static function CachedIds($class){
+		return self::GetInstance()->getCacher($class)->cachedIds();
 	}
 }
+
+

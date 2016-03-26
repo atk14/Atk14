@@ -60,14 +60,54 @@ class TcCache extends TcBase{
 		//
 		Cache::Clear();
 		$this->assertEquals(array(),Cache::CachedIds("TestTable"));
-		$cached_r3 = Cache::Get("TestTable",$record2);
+		$cached_r2b = Cache::Get("TestTable",$record2);
 		$this->assertEquals(array($record2->getId()),Cache::CachedIds("TestTable"));
 
+		$this->assertEquals(array($record2, null),Cache::GetObjectCacher("TestTable")->getCached( array($record2->getId(), $record1->getId() ) ));
+		$cached_r1b = Cache::Get("TestTable",$record1);
+		$this->assertEquals(array($cached_r2b, $cached_r1b),Cache::GetObjectCacher("TestTable")->getCached( array($record2->getId(), $record1->getId() ) ));
+		Cache::Clear("TestTable",$record2);
+		$this->assertEquals(array(null, $cached_r1b),Cache::GetObjectCacher("TestTable")->getCached( array($record2->getId(), $record1->getId() ) ));
+		Cache::Clear("TestTable");
+		$this->assertFalse(Cache::GetObjectCacher('TestTable')->inCache($record2));
+
+		$this->assertEquals(array(),Cache::CachedIds("TestTable"));
+		Cache::Prepare('TestTable', $record1);
+		$this->assertEquals(array($record1->getId()),Cache::CachedIds("TestTable"));
+		$this->assertEquals(array(null, null),Cache::GetObjectCacher("TestTable")->getCached( array($record2->getId(), $record1->getId() ) ));
+		$this->assertFalse(is_array(Cache::Get('TestTable', $record2)));
+		$this->assertTrue(is_array(Cache::Get('TestTable', array($record2))));
+		$this->assertEquals(7,key(Cache::Get('TestTable', array(7 => $record2))));
+
+		$this->assertTrue(Cache::GetObjectCacher('TestTable')->inCache($record2));
+
+
+		foreach(array($record1, $record2) as $rec) {
+			$out = Cache::GetObjectCacher("TestTable")->getCached(array($rec->getId()));
+			$this->assertNotNull($out[0]);
+		}
+
 		$this->assertEquals("The_Crocodile_Singing",$record2->getTitle());
+		$this->assertEquals("The_Crocodile_Singing",$cached_r2b->getTitle());
 		$this->assertEquals("The_Elephant_Song",$record3->getTitle());
 		$this->assertEquals("The_Squirrel_Dance",$cached_r1->getTitle());
 		$this->assertEquals("The_Squirrel_Dance",$cached_r2->getTitle());
-		$this->assertEquals("The_Crocodile_Singing",$cached_r3->getTitle());
+	}
 
+	function test_caching_non_existing_record(){
+		$queries_executed = $this->dbmole->getQueriesExecuted();
+		Cache::Prepare("TestTable",11233);
+		$this->assertEquals($queries_executed,$this->dbmole->getQueriesExecuted());
+		
+		$this->assertEquals(null,Cache::Get("TestTable",11233));
+		$this->assertEquals($queries_executed+1,$this->dbmole->getQueriesExecuted());
+
+		$this->assertEquals(null,Cache::Get("TestTable",11233));
+		$this->assertEquals($queries_executed+1,$this->dbmole->getQueriesExecuted());
+
+		Cache::Clear("TestTable");
+
+		$this->assertEquals(null,Cache::Get("TestTable",11233));
+		$this->assertEquals($queries_executed+2,$this->dbmole->getQueriesExecuted());
 	}
 }
