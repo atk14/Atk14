@@ -1,7 +1,6 @@
 <?php
 class TcSorting extends TcBase{
 	function test(){
-
 		// -- default
 		$sorting = $this->_get_sorting();
 		$this->assertEquals("id ASC",$sorting->getOrder());
@@ -69,6 +68,28 @@ class TcSorting extends TcBase{
 
 		$sorting = $this->_get_sorting("subtitle-desc");
 		$this->assertEquals("articles.subtitle DESC",$sorting->getOrder());
+	}
+
+	function test_ArrayAccess(){
+		$sorting = $this->_get_sorting();
+
+		$this->assertEquals(null,$sorting["rank"]);
+
+		$sorting["rank"] = "rank";
+		$this->assertEquals(array("rank","rank DESC"),$sorting["rank"]);
+		//
+		$this->assertEquals("rank",$sorting->getOrder("rank"));
+		$this->assertEquals("rank",$sorting->getOrder("rank-asc"));
+		$this->assertEquals("rank DESC",$sorting->getOrder("rank-desc"));
+
+		$sorting["rank"] = array("rank ASC, id ASC", "rank DESC, id DESC");
+		$this->assertEquals(array("rank ASC, id ASC","rank DESC, id DESC"),$sorting["rank"]);
+		//
+		$this->assertEquals("rank ASC, id ASC",$sorting->getOrder("rank"));
+		$this->assertEquals("rank ASC, id ASC",$sorting->getOrder("rank-asc"));
+		$this->assertEquals("rank DESC, id DESC",$sorting->getOrder("rank-desc"));
+
+		$this->assertEquals("id ASC",$sorting->getOrder()); // default
 	}
 
 	function _get_sorting($order = null){

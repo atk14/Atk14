@@ -11,49 +11,59 @@
  * It's closely connected from any template by {sortable} smarty helper.
  *
  *
- * Here is example of use.
+ * Here is an example of usage.
  *
  * Within a controller's method:
- * ```
- * $sorting = new Atk14Sorting($this->params);
- * $sorting->add("name");
- * $sorting->add("created",array("reverse" => true));
- * $sorting->add("rank",array(
- * 	"ascending_ordering" => "rank DESC, id ASC",
- * 	"descending_ordering" => "rank ASC, id DESC",
- * ));
- * $finder = TableRecord::Finder(array(
- * 	"class_name" => "Book",
- * 	"order" => $sorting->getOrder(),
- * ));
- * $this->tpl_data["finder"] = $finder;
- * $this->sorting = $sorting;
- * ```
+ * <code>
+ *	 $sorting = new Atk14Sorting($this->params);
+ *	 $sorting->add("name");
+ *	 $sorting->add("created",array("reverse" => true));
+ *	 $sorting->add("rank",array(
+ *		"ascending_ordering" => "rank DESC, id ASC",
+ *		"descending_ordering" => "rank ASC, id DESC",
+ *	 ));
+ *	 $finder = TableRecord::Finder(array(
+ *		"class_name" => "Book",
+ *		"order" => $sorting->getOrder(),
+ *	 ));
+ *	 $this->tpl_data["finder"] = $finder;
+ *	 $this->sorting = $sorting;
+ * </code>
  *
  * In a template:
- * ```
- * <table>
- * 	<thead>
- * 		<tr>
- * 			{sortable key=name}<th>Name</th>{/sortable}
- * 			{sortable key=created}<th>Create date</th>{/sortable}
- * 			...
- * 		</tr>
- * 	</thead>
- * </table>
- * ```
+ * <code>
+ *	 <table>
+ *		<thead>
+ *			<tr>
+ *				{sortable key=name}<th>Name</th>{/sortable}
+ *				{sortable key=created}<th>Create date</th>{/sortable}
+ *				...
+ *			</tr>
+ *		</thead>
+ *	 </table>
+ * </code>
+ *
+ * Atk14Sorting implements ArrayAccess which helps to simplify the configuration:
+ * <code>
+ * 	$sorting = new Atk14Sorting($params);
+ * 	$sorting["name"] = "name";
+ * 	$sorting["title"] = "UPPER(name)";
+ * 	$sorting["year"] = array("year ASC, id ASC", "year DESC, id DESC");
+ * </code>
  */
-class Atk14Sorting{
+class Atk14Sorting implements ArrayAccess{
+
+	protected $_Params;
 
 	/**
 	 * @ignore
 	 */
-	private $_Ordering = array();
+	protected $_Ordering = array();
 
 	/**
 	 * @ignore
 	 */
-	private $_OrderingStrings = array();
+	protected $_OrderingStrings = array();
 
 	/**
 	 * Constructor
@@ -61,7 +71,10 @@ class Atk14Sorting{
 	 * @param Dictionary $params Parameters from request
 	 * @param array $options
 	 */
-	function __construct($params,$options = array()){
+	function __construct($params = null,$options = array()){
+		if(is_null($params)){
+			$params = new Dictionary($GLOBALS["HTTP_REQUEST"]->getVars("PG"));
+		}
 		$this->_Params = $params;
 	}
 
@@ -71,20 +84,20 @@ class Atk14Sorting{
 	 * First added key is the default sorting key.
 	 *
 	 * Basic usage
-	 * ```
-	 * $sorting->add("create_date");
-	 * $sorting->add("create_date",array("reverse" => true));
-	 * $sorting->add("title",array("order_by" => "UPPER(title)"));
-	 * $sorting->add("title",array(
-	 * 	"asc" => "UPPER(title), id",
-	 * 	"desc" => "UPPER(title) DESC, id DESC"
-	 * ));
-	 * $sorting->add("title",array(
-	 * 	"ascending_ordering" => "UPPER(title), id",
-	 * 	"descending_ordering" => "UPPER(title) DESC, id DESC"
-	 * ));
-	 * $sorting->add("title","UPPER(title), id", "UPPER(title) DESC, id DESC");
-	 * ```
+	 * <code>
+	 *	 $sorting->add("create_date");
+	 *	 $sorting->add("create_date",array("reverse" => true));
+	 *	 $sorting->add("title",array("order_by" => "UPPER(title)"));
+	 *	 $sorting->add("title",array(
+	 *		"asc" => "UPPER(title), id",
+	 *		"desc" => "UPPER(title) DESC, id DESC"
+	 *	 ));
+	 *	 $sorting->add("title",array(
+	 *		"ascending_ordering" => "UPPER(title), id",
+	 *		"descending_ordering" => "UPPER(title) DESC, id DESC"
+	 *	 ));
+	 *	 $sorting->add("title","UPPER(title), id", "UPPER(title) DESC, id DESC");
+	 * </code>
 	 *
 	 * @param string $key Name of the key which can then be used in a template by {sortable} helper.
 	 * @param string|array $options_or_asc_ordering string for sql definition of ascending ordering or array for options. see description of $options below.
@@ -154,8 +167,12 @@ class Atk14Sorting{
 	 *
 	 * @return string the ordering key
 	 */
-	function getOrder(){
-		(($key = $this->_Params->g(ATK14_SORTING_PARAM_NAME,"string")) && isset($this->_OrderingStrings[$key])) || ($key = $this->_getDefaultKey());
+	function getOrder($key = null){
+		if(is_null($key)){
+			$key = $this->_Params->g(ATK14_SORTING_PARAM_NAME,"string");
+		}
+
+		(isset($this->_OrderingStrings[$key])) || ($key = $this->_getDefaultKey());
 
 		$this->_ActiveKey = $key;
 		
@@ -205,4 +222,38 @@ class Atk14Sorting{
 	 * @return string
 	 */
 	function __toString(){ return $this->toString(); }
+
+	function offsetExists($key){
+		return isset($this->_Ordering[$key]);
+	}
+
+	/**
+	 * $sorting["rank"] = "rank";
+	 * $sorting["rank"] = array("rank ASC","rank DESC");
+	 */
+	function offsetSet($key,$value){
+		if(is_array($value) && isset($value[0]) && isset($value[1])){
+			$value = array(
+				"ascending_ordering" => $value[0],
+				"descending_ordering" => $value[1],
+			);
+		}
+		return $this->add($key,$value);
+	}
+
+	function offsetGet($key){
+		if(isset($this->_Ordering[$key])){
+			return array(
+				$this->_Ordering[$key]["ascending_ordering"],
+				$this->_Ordering[$key]["descending_ordering"],
+			);
+		}
+	}
+
+	function offsetUnset($key){
+		unset($this->_Ordering[$key]);
+		unset($this->_OrderingStrings["$key"]);
+		unset($this->_OrderingStrings["$key-asc"]);
+		unset($this->_OrderingStrings["$key-dec"]);
+	}
 }
