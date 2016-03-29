@@ -11,42 +11,60 @@ class TcSorting extends TcBase{
 		$this->assertEquals("id DESC",$sorting->getOrder());
 
 		// --
-		$sorting = $this->_get_sorting("created_at-asc");
+		$sorting = $this->_get_sorting("created_at");
+		$this->assertEquals("created_at DESC",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("created_at-asc"); // obsolete key format
 		$this->assertEquals("created_at DESC",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("created_at-desc");
 		$this->assertEquals("created_at ASC",$sorting->getOrder());
 
 		// --
-		$sorting = $this->_get_sorting("title-asc");
+		$sorting = $this->_get_sorting("title");
+		$this->assertEquals("title ASC, id ASC",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("title-asc"); // obsolete key format
 		$this->assertEquals("title ASC, id ASC",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("title-desc");
 		$this->assertEquals("title DESC, id DESC",$sorting->getOrder());
 
 		// --
-		$sorting = $this->_get_sorting("author-asc");
+		$sorting = $this->_get_sorting("author");
+		$this->assertEquals("author ASC, id ASC",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("author-asc"); // obsolete key format
 		$this->assertEquals("author ASC, id ASC",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("author-desc");
 		$this->assertEquals("author DESC, id DESC",$sorting->getOrder());
 
 		// --
-		$sorting = $this->_get_sorting("shelf_mark-asc");
+		$sorting = $this->_get_sorting("shelf_mark");
+		$this->assertEquals("UPPER(shelf_mark) ASC, title ASC",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("shelf_mark-asc"); // obsolete key format
 		$this->assertEquals("UPPER(shelf_mark) ASC, title ASC",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("shelf_mark-desc");
 		$this->assertEquals("UPPER(shelf_mark) DESC, title DESC",$sorting->getOrder());
 
 		// --
-		$sorting = $this->_get_sorting("url-asc");
+		$sorting = $this->_get_sorting("url");
+		$this->assertEquals("articles.url",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("url-asc"); // obsolete key format
 		$this->assertEquals("articles.url",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("url-desc");
 		$this->assertEquals("articles.url DESC",$sorting->getOrder());
 
 		// --
-		$sorting = $this->_get_sorting("subtitle-asc");
+		$sorting = $this->_get_sorting("subtitle");
+		$this->assertEquals("articles.subtitle ASC",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("subtitle-asc"); // obsolete key format
 		$this->assertEquals("articles.subtitle ASC",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("subtitle-desc");

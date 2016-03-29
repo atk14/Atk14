@@ -69,7 +69,7 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 	$sorting = $smarty->getTemplateVars("sorting");
 	$_params = $smarty->getTemplateVars("params")->copy();
 	$_params->delete(ATK14_PAGINATOR_OFFSET_PARAM_NAME); // smazani parametru pro strankovani
-	$_key = "$key-asc";
+	$_key = "$key";
 	if($sorting->getActiveKey()==$_key){
 		$_key = "$key-desc";
 	}
@@ -77,7 +77,7 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 	$href = Atk14Url::BuildLink($_params->toArray(),array("connector" => "&amp;"));
 	$_active = "";
 	$_arrow = "";
-	if($sorting->getActiveKey()=="$key-asc"){
+	if(in_array($sorting->getActiveKey(),array("$key","$key-asc"))){
 		$_active = " active";
 		$_arrow = " <span class=\"arrow-up\">&uArr;</span>";
 	}elseif($sorting->getActiveKey()=="$key-desc"){

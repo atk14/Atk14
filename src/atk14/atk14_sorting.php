@@ -142,7 +142,8 @@ class Atk14Sorting{
 		}
 
 		$this->_Ordering[$key] = $options;
-		$this->_OrderingStrings["$key-asc"] = $options["ascending_ordering"];
+		$this->_OrderingStrings["$key"] = $options["ascending_ordering"];
+		$this->_OrderingStrings["$key-asc"] = $options["ascending_ordering"]; // obsolete ascendant key, TODO: to be removed in the future
 		$this->_OrderingStrings["$key-desc"] = $options["descending_ordering"];
 	}
 
@@ -166,7 +167,7 @@ class Atk14Sorting{
 	 */
 	private function _getDefaultKey(){
 		$_ar = array_keys($this->_Ordering);
-		return "$_ar[0]-asc";
+		return "$_ar[0]";
 	}
 
 	/**
