@@ -10,13 +10,24 @@
  * <code>
  *	// Instantiating
  *	$article_cacher = Cache::GetObjectCacher("Article");
+ *
+ *  // preparing & retriewing objects
+ *	$article_cacher->preparing(123);
+ *	$article_cacher->preparing(124);
+ *	$article_cacher->preparing(array(125,126));
+ *	//
+ *	$article = $article_cacher->get(123);
+ *	$articles = $article_cacher->get(array(124,125));
  * </code>
+ *
+ * For more information see Cache.
  */
 class ObjectCacher {
+	protected static $InitilizedCachers = array();
 
-	var $class;
-	var $cache = array();
-	var $prepare = array();
+	protected $class;
+	protected $cache = array();
+	protected $prepare = array();
 
 	/**
 	 * Constructor
@@ -32,11 +43,15 @@ class ObjectCacher {
 
 		assert(class_exists($class)); // this needs to be called before lowering the name of the class (autoload issue)
 		$class = strtolower($class);
-		if(!key_exists($class, $object_cachers)) {
+		if(!key_exists($class, self::$InitilizedCachers)) {
 			if(!$create) { $null = null; return $null; }
-			$object_cachers[$class] = new ObjectCacher($class);
+			self::$InitilizedCachers[$class] = new ObjectCacher($class);
 		}
-		return $object_cachers[$class];
+		return self::$InitilizedCachers[$class];
+	}
+
+	static function &GetAllInitializedCachers(){
+		return self::$InitilizedCachers;
 	}
 
 	/**
@@ -180,16 +195,15 @@ class ObjectCacher {
  *
  * Multiple cache operations with one class
  * ```
- *	$cacher = Cache::GetObjectCacher('Card');
+ *	$cacher = Cache::GetObjectCacher('Article');
  *	$cacher->prepare(1);
  *	$cacher->prepare(3);
- *	$cacher->get(2);
+ *	$cacher->prepare(array(4,5));
+ *	$article = $cacher->get(2);
  *  ```
  * @package Atk14\Cache
  */
 class Cache{
-
-	protected $_initilizedCachers = array();
 
 	/**
 	 * Constructor
@@ -204,7 +218,6 @@ class Cache{
 	 */
 	function &getCacher($class,$create = true) {
 		$class = (string)$class;
-		$this->_initilizedCachers[$class] = $class;
 		return ObjectCacher::GetInstance($class,$create);
 	}
 
@@ -277,8 +290,7 @@ class Cache{
 
 	function clearCache($class = null, $ids = null) {
 		if($class == null) {
-			foreach($this->_initilizedCachers as $class){
-				$cacher = $this->getCacher($class);
+			foreach(ObjectCacher::GetAllInitializedCachers() as $cacher){
 				$cacher->clear();
 			}
 		} else {
