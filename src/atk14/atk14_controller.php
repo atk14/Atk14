@@ -438,27 +438,32 @@ class Atk14Controller{
 	/**
 	 * Executes another action defined in current controller.
 	 *
+	 * The action is executed including all before/after filters and before/after render filters.
+	 *
 	 * The action executed inside of current action uses its template default to the executed action.
 	 * Option force_to_set_template_name forces usage of template set in current action.
+	 *
 	 * Note that $this->form is set to instance defaulting to the calling action.
-	 * If you want the controller to use the form belonging to called action set $this->null;
+	 * If you want the controller to use the form belonging to called action set $this->form to null;
 	 *
-	 * 	function index() {
-	 * 		$this->form = null;
-	 * 		$this->_execute_action("overview");
-	 * 	}
+	 * ```
+	 * function index() {
+	 * 	$this->form = null;
+	 * 	$this->_execute_action("overview");
+	 * }
+	 * ```
 	 *
-	 * 	function overview() {
-	 * 	}
+	 * function overview() {
+	 * }
 	 *
 	 * If such a case happens, it's better use redirection
-	 * 	return $this->_redirect_to_action("overview");
+	 * ```
+	 * return $this->_redirect_to_action("overview");
+	 * ```
 	 *
 	 * @param string $action name of action executed
 	 * @param array $options
-	 * <ul>
-	 * 	<li><b>force_to_set_template_name</b> - use template set in current action</li>
-	 * </ul>
+	 * - <b>force_to_set_template_name</b> - use template set in current action (default: true)
 	 * @access protected
 	 *
 	 * @uses Atk14Mailer::GetInstanceByController()
@@ -631,12 +636,29 @@ class Atk14Controller{
 	/**
 	 * Creates a form instance if the given class exists.
 	 *
+	 * Name of the class can be passed in various ways.
+	 * When the $class_name is not passed it is derived from current controller and action
+	 *
+	 * - full CamelCase string
 	 * ```
 	 * $form = $this->_get_form("CreateNewForm");
+	 * ```
+	 * - full underscored string
+	 * ```
 	 * $form = $this->_get_form("create_new_form");
+	 * ```
+	 * - short name without the _form suffix
+	 * ```
 	 * $form = $this->_get_form("edit");
+	 * ```
+	 * - relative path - the path is relative to ATK14_DOCUMENT_ROOT/app/forms. The .php extension is not needed.
+	 * ```
 	 * $login_form = $this->_get_form("logins/create_new_form");
 	 * ```
+	 *
+	 * @param string $class_name
+	 * @param array $options
+	 * @return Atk14Form
 	 */
 	function _get_form($class_name = null,$options = array()){
 		$options = array_merge(array(
@@ -667,29 +689,37 @@ class Atk14Controller{
 
 	/**
 	 * Allows to render a partial template from an action method.
-	 * The rendered output is returned. So it's pretty usable for producing JSONs with HTML snippets.
-	 * 
-	 * Note that during _render() call the method _before_render() will not be executed.
+	 *
+	 * Depending on variables passed the rendered output is either returned by the method or rendered directly to the response.
+	 *
+	 * When using the method to return output to a variable, it can be for example usable for producing JSONs with HTML snippets.
+	 *
+	 * Note that if you call _render() explicitly the method _before_render() will not be executed.
 	 *
 	 * ```
-	 *	$content = $this->_render("article_item");
+	 * $content = $this->_render("article_item");
+	 * $content = $this->_render("article_item",array(
+	 * 	"from" => $articles,
+	 * ));
 	 *
-	 *	$content = $this->_render("article_item",array("from" => $articles));
-	 *
-	 *	$content = $this->_render(array(
-	 *		"partial" => "article_item",
-	 *		"from" => $articles
-	 *	));
+	 * $content = $this->_render(array(
+	 * 	"partial" => "article_item",
+	 * 	"from" => $articles
+	 * ));
 	 * ```
-	 *
 	 *
 	 * Also allows to render a text output to the response.
-	 * 
 	 * ```
-	 *	$this->_render(array("text" => "alert('The record has been deleted!');"));
+	 * $this->_render(array(
+	 * 	"text" => "alert('The record has been deleted!');",
+	 * ));
 	 * ```
-	 * 
+	 *
 	 * Note that no template will be rendered after a text rendering.
+	 *
+	 * @param string|array $params_or_partial either template name or params if you want to render output directly to the response
+	 * @param array $params
+	 * @return string
 	 */
 	function _render($params_or_partial,$params = array()){
 		if(is_string($params_or_partial)){
@@ -713,6 +743,13 @@ class Atk14Controller{
 		}
 	}
 
+	/**
+	 * Returns instance of Smarty.
+	 *
+	 * @param array $options
+	 * - assign_data - takes smarty variables from current controller's tpl_data and sets them in the new Atk14Smarty instance. [default is true]
+	 * @return Atk14Smarty
+	 */
 	function _get_smarty($options = array()){
 		global $ATK14_GLOBAL;
 

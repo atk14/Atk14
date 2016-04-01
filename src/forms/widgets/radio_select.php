@@ -1,32 +1,44 @@
 <?php
 /**
+ * Widget rendering select input as radio buttons.
+ *
+ * @package Atk14
+ * @subpackage Forms
+ */
+/**
  * Renders radio buttons as unordered list.
  *
  * Usage in a form:
  *
- *	// a boolean field
- *	$this->add_field("agreement",new BooleanField(array(
- *	 "label" => "Do you agree?",
- *	 "widget" => new RadioSelect(array(
- *	 	"choices" => array(
- *	 		"on" => "Yes, I do",
- *	 		"off" => "No, I don't"
- *	 	)
- *	 ))
- *	)));
+ * A boolean field
+ * ```
+ * $this->add_field("agreement",new BooleanField(array(
+ * 	"label" => "Do you agree?",
+ * 	"widget" => new RadioSelect(array(
+ * 		"choices" => array(
+ * 			"on" => "Yes, I do",
+ * 			"off" => "No, I don't"
+ * 		)
+ * 	))
+ * )));
+ * ```
  *
- *	// a choice field
- *	$choices = array("single" => "Single", "married" => "Married", "divorced" => "Divorced", "widow" => "Widow, widower");
- *	$this->add_field("family_status",new ChoiceField(array(
- *		"label" => "Family Status",
- *		"choices" => $choices,
- *		"widget" => new RadioSelect(array(
- *			"choices" => $choices
- *		))
- *	)));
- *
- * @package Atk14
- * @subpackage Forms
+ * A choice field
+ * ```
+ * $choices = array(
+ * 	"single" => "Single",
+ * 	"married" => "Married",
+ * 	"divorced" => "Divorced",
+ * 	"widow" => "Widow, widower"
+ * );
+ * $this->add_field("family_status",new ChoiceField(array(
+ * 	"label" => "Family Status",
+ * 	"choices" => $choices,
+ * 	"widget" => new RadioSelect(array(
+ * 		"choices" => $choices
+ * 	))
+ * )));
+ * ```
  */
 class RadioSelect extends Select
 {

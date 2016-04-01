@@ -30,6 +30,11 @@ class TableRecord extends inobj {
 
 	static protected $_TableStructuresCache = array();
 
+	/**
+	 * Database interface.
+	 *
+	 * @var DbMole
+	 */
 	public $dbmole = null;
 
 	/**
@@ -290,7 +295,7 @@ class TableRecord extends inobj {
 	}
 
 	/**
-	 * Converts object to in id.
+	 * Converts object to its id.
 	 *
 	 * Takes instantiated object and returns its database id.
 	 * Can be a string of course if the id is of char type
@@ -479,10 +484,16 @@ class TableRecord extends inobj {
 	/**
 	 * Finds a record by id.
 	 *
-	 * @param mixed $id	integer, string, objekt, pole
+	 * Finds one or more records.
+	 * In the first parameter the method accepts id of the record or array of ids.
+	 * It also accepts objects, they are internally converted to integers.
+	 * When one integer or object is passed, returns one object. In case array is passed, also returns array.
+	 *
+	 * Can return null, when record with given id does not exist or error occured.
+	 *
+	 * @param (integer|TableRecord)[]|integer|TableRecord $id
 	 * @param $options
-	 * @return TableRecord|TableRecord[] Can return null, when record with given id does not exist or error occured.
-	 * When $id is array method returns array of TableRecord
+	 * @return TableRecord|TableRecord[] single TableRecord object or array of objects.
 	 */
 	function find($id,$options = array()){
 		$options += array(

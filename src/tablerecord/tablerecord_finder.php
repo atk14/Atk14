@@ -2,8 +2,6 @@
 /**
  * Class for finding records.
  *
- * @package Atk14
- * @subpackage TableRecord
  * @filesource
  *
  */
@@ -12,37 +10,33 @@
  * Class for finding records.
  *
  * Initialization of Finder:
- * <code>
+ * ```
  * $finder = TableRecord::Finder(array(
- *		"class_name" => "Books",
- *		"conditions" => array("title LIKE :title"),
- *		"bind_ar" => array(":title" => "%British%"),
- *		"limit" => 10,
- *		"offset" => 0,
- *	));
- * </code>
+ * 	"class_name" => "Books",
+ * 	"conditions" => array("title LIKE :title"),
+ * 	"bind_ar" => array(":title" => "%British%"),
+ * 	"limit" => 10,
+ * 	"offset" => 0,
+  *	));
+ * ```
  *
  * This call returns total number of found records:
- * <code>
+ * ```
  * $finder->getRecordsCount();
- * </code>
+ * ```
  *
  * Get records. Number of records is limited by option limit
- * <code>
+ * ```
  * $finder->getRecords(); // pole objektu, max velikost je omezena nastavenim "limit"
- * </code>
+ * ```
  *
- *
- * @package Atk14
- * @subpackage TableRecord
- *
+ * @package Atk14\TableRecord
  */
 class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 
 	/**
 	 * Constructor
 	 *
-	 * @access private 
 	 * @param array $options
 	 * <ul>
 	 * 	<li><b>query</b> - custom query</li>

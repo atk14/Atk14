@@ -11,14 +11,14 @@
  * Basic robot is created as descendant of Atk14Robot and must contain one run method.
  *
  * Example of minimal robot. Name of the script should be '...application_dir/robots/some_counting_robot'.
- * <code>
+ * ```
  * class SomeCountingRobot extends Atk14Robot {
  * 	function run() {
  * 		$count = $this->dbmole->selectSingleValue("SELECT count(*) FROM customers");
  * 		...
  * 	}
  * }
- * </code>
+ * ```
  *
  * There are two more methods that are used once each robot is executed.
  *
@@ -27,14 +27,14 @@
  *
  *
  * Run the robot with command robot_runner
- * <code>
+ * ```
  * ./scripts/robot_runner some_counting
- * </code>
+ * ```
  *
  * or
- * <code>
+ * ```
  * ./scripts/robot_runner some_counting_robot
- * </code>
+ * ```
  *
  * @package Atk14\Core
  */
@@ -58,8 +58,9 @@ class Atk14Robot{
 	 *
 	 * Using this variable emails can be sent from a robot.
 	 *
-	 * Note: in fact this is a Atk14MailerProxy member TODO: to be explained
+	 * Note: in fact this is a Atk14MailerProxy member
 	 *
+	 * @todo explain
 	 * @var Atk14Mailer
 	 */
 	var $mailer = null;

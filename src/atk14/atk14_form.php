@@ -139,9 +139,11 @@ class Atk14Form extends Form
 	protected $atk14_constructor_options = array();
 
 	/**
-	 * @access private
+	 * Just a flag to prevent repeated call of _call_super_constructor() method
+	 *
+	 * @var boolean
 	 */
-	var $atk14_super_constructor_called = false;
+	private $atk14_super_constructor_called = false;
 
 	/**
 	 * Common form error message
@@ -559,10 +561,10 @@ class Atk14Form extends Form
 	 * This method recognizes several formats of the $url parameter:
 	 * - array - here you can specify all parameters recognized by {@link Atk14Url::BuildLink()}
 	 * ```
-	 *	$form->set_action(array(
-	 *		"controller" => "customer",
-	 *		"action" => "login"
-	 *	));
+	 * $form->set_action(array(
+	 * 	"controller" => "customer",
+	 * 	"action" => "login"
+	 * ));
 	 * ```
 	 * - only action (controller and namespace are used from current form.
 	 * ```

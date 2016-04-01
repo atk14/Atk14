@@ -848,7 +848,19 @@ class HTTPRequest{
 	 */
 	function getCookieVars(){ return $this->getAllCookieVars(); }
 
+	/**
+	 * Sets multiple cookies
+	 *
+	 * @param array $vars
+	 */
 	function setCookieVars($vars){ $this->_setForceValue("CookieVars",$vars); }
+
+	/**
+	 * Sets a cookie.
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 */
 	function setCookieVar($name,$value){
 		$vars = $this->getCookieVars();
 		$vars["$name"] = $value;
@@ -879,11 +891,11 @@ class HTTPRequest{
 	 *
 	 * Technically it just returns true when there is some cookie set.
 	 *
-	 * <code>
-	 * 	if(!$request->cookiesEnabled()){
-	 *		die("Please, enable cookies in your browser");
-	 *	}
-	 * </code>
+	 * ```
+	 * if(!$request->cookiesEnabled()){
+	 * 	die("Please, enable cookies in your browser");
+	 * }
+	 * ```
 	 *
 	 * @return boolean
 	 */
@@ -895,11 +907,9 @@ class HTTPRequest{
 	 *
 	 * You specify type of variables in $order param. 
 	 * It also specifies order in which are the types searched.
-	 * <ul>
-	 * 	<li><b>G</b> - GET parameters</li>
-	 * 	<li><b>P</b> - POST parameters</li>
-	 * 	<li><b>C</b> - Cookies</li>
-	 * </ul>
+	 * - <b>G</b> - GET parameters
+	 * - <b>P</b> - POST parameters
+	 * - <b>C</b> - Cookies
 	 *
 	 * If there is parameter specified in more than one types then value from the later specified type overrides the first one.
 	 *
@@ -967,22 +977,27 @@ class HTTPRequest{
 	 *
 	 * Method returns uploaded file specified by $name.
 	 *
-	 * 	$file = $request->getUploadedFile("userfile");
-	 *
+	 * ```
+	 * $file = $request->getUploadedFile("userfile");
+	 * ```
 	 *
 	 * When no $name is passed it returns first uploaded file:
-	 * 	$file = $request->getUploadedFile();
+	 * ```
+	 * $file = $request->getUploadedFile();
+	 * ```
 	 *
 	 *
 	 * You can perform various operations on the returned object
-	 * 	echo "filename: ".$file->getFileName()."\n";
-	 * 	echo "size: ".$file->getFileSize()."\n";
-	 * 	echo $file->getContent();
-	 * 	$file->moveTo("data/store/path/");
-	 * 	$file->moveTo("data/store/path/data.txt");
+	 * ```
+	 * echo "filename: ".$file->getFileName()."\n";
+	 * echo "size: ".$file->getFileSize()."\n";
+	 * echo $file->getContent();
+	 * $file->moveTo("data/store/path/");
+	 * $file->moveTo("data/store/path/data.txt");
+	 * ```
 	 *
 	 * Notice: When no file is found it tries to find a file uploaded as XmlHttpRequest.
-	 * 
+	 *
 	 * @param string $name
 	 * @param array $options
 	 * @return HTTPUploadedFile|HTTPXFile
@@ -1007,17 +1022,17 @@ class HTTPRequest{
 	/**
 	 * Return error code for uploaded file.
 	 *
-	 * It necessarily means that there was an error during upload. 
+	 * It necessarily means that there was an error during upload.
 	 * Value 0 means OK.
 	 *
 	 * Example
-	 * <code>
+	 * ```
 	 * if($request->getUploadedFileError("userfile")>0){
-	 *		echo "There was an error during file upload";
-	 *	}
-	 * </code>
+	  *	echo "There was an error during file upload";
+	 * }
+	 * ```
 	 *
-	 * @see http://php.net/manual/en/features.file-upload.errors.php Description of error codes 
+	 * @see http://php.net/manual/en/features.file-upload.errors.php Description of error codes
 	 * @param string $name name of input field used to upload the file
 	 * @return integer
 	 */

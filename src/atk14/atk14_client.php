@@ -136,15 +136,15 @@ class Atk14Client{
 	/**
 	 * Disables cookies.
 	 *
-	 * <code>
-	 *	$client->setCookie("cookie_1","val");
-	 * 	echo sizeof($client->getCookies()); // 1
-	 *	//
-	 * 	$client->disableCookies();
-	 * 	echo sizeof($client->getCookies()); // 0
-	 *	$client->setCookie("cookie_2","val");
-	 * 	echo sizeof($client->getCookies()); // 0
-	 * </code>
+	 * ```
+	 * $client->setCookie("cookie_1","val");
+	 * echo sizeof($client->getCookies()); // 1
+	 *
+	 * $client->disableCookies();
+	 * echo sizeof($client->getCookies()); // 0
+	 * $client->setCookie("cookie_2","val");
+	 * echo sizeof($client->getCookies()); // 0
+	 * ```
 	 */
 	function disableCookies(){
 		$this->_CookiesEnabled = false;
@@ -158,20 +158,26 @@ class Atk14Client{
 	}
 
 	/**
+	 * Tests if we have cookies enabled.
 	 *
-	 * <code>
-	 *	if($client->cookiesEnabled()){
-	 *		// cookies are enabled
-	 *	}
-	 * </code>
+	 * ```
+	 * if($client->cookiesEnabled()){
+	 * 	// cookies are enabled
+	 * }
+	 * ```
+	 *
+	 * @return boolean
 	 */
 	function cookiesEnabled(){ return $this->_CookiesEnabled; }
 
 	/**
+	 * Adds a cookie.
 	 *
-	 * <code>
-	 *	$client->addCookie(new HTTPCookie("cookie1","value"));
-	 * </code>
+	 * ```
+	 * $client->addCookie(new HTTPCookie("cookie1","value"));
+	 * ```
+	 *
+	 * @param HTTPCookie $cookie
 	 */
 	function addCookie($cookie){
 		$this->_Cookies[] = $cookie;
@@ -180,9 +186,10 @@ class Atk14Client{
 	/**
 	 * Returns cookies valid for the given HTTP request
 	 *
-	 * <code>
-	 *	var_dump($client->getCookies()); // array("cookie1" => "value")
-	 * </code>
+	 * ```
+	 * var_dump($client->getCookies());
+	 * ```
+	 * returns array("cookie1" => "value")
 	 *
 	 * @param HTTPRequest $request
 	 * @return array
@@ -208,9 +215,9 @@ class Atk14Client{
 	}
 
 	/**
-	 * Cleares all cookies
+	 * Clears all cookies
 	 *
-	 * It's not depend on the cookies-enabled flag.
+	 * It's not dependent on the cookies-enabled flag.
 	 */
 	function clearCookies(){
 		$this->_Cookies = array();

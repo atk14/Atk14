@@ -2,8 +2,7 @@
 /**
  * Class for events logging.
  *
- * @package Atk14
- * @subpackage InternalLibraries
+ * @filesource
  */
 
 defined("LOGGER_DEFAULT_LOG_FILE") || define("LOGGER_DEFAULT_LOG_FILE","/tmp/logger.log");
@@ -78,8 +77,7 @@ defined("LOGGER_NO_LOG_LEVEL") || define("LOGGER_NO_LOG_LEVEL",-30);
  * define("LOGGER_DEFAULT_LOG_FILE","/home/yarri/www/gr/sys/log/log");
  * ```
  *
- * @package Atk14
- * @subpackage InternalLibraries
+ * @package Atk14\InternalLibraries
  * @filesource
  */
 
@@ -101,7 +99,10 @@ class Logger{
 	var $_log_file;
 
 	/**
+	 * Default filename where to output log messages
 	 *
+	 * @todo should be private.
+	 * @todo correct tests in atk14/test/tc_robot.php. they use this property
 	 */
 	var $_default_log_file;
 
@@ -141,9 +142,11 @@ class Logger{
 	var $_notify_level;
 
 	/**
-	 * @access private
+	 * Email address for sending logged messages
+	 *
+	 * @var string
 	 */
-	var $_notify_email;
+	private $_notify_email;
 
 	/**
 	 * @access private
@@ -158,11 +161,11 @@ class Logger{
 	/**
 	 * Timestamp of logging start
 	 *
-	 * Value is set during {@link prepared_log("start")} call
+	 * Value is set during {@link prepared_log("start") prepared_log()} call
 	 *
-	 * @access private
+	 * @var internal
 	 */
-	var $_started_at_time = null;	
+	private $_started_at_time = null;	
 
 	/**
 	 * @access private
@@ -170,14 +173,20 @@ class Logger{
 	var $_log_to_stdout = false;
 
 	/**
-	 * @access private
+	 * Flag determining if the logged messages are also sent to stdout when a calling script is executed in command line
+	 *
+	 * Default value is false
+	 *
+	 * @var boolean
 	 */
-	var $_automatically_log_to_stdout_on_terminal = false;
+	private $_automatically_log_to_stdout_on_terminal = false;
 
 	/**
-	 * @access private
+	 * Table with recognized error levels where string labels are assigned to its integer values.
+	 *
+	 * @var array
 	 */
-	var $_levels = array(
+	private $_levels = array(
 		"-2" => "debug++",
 		"-1" => "debug",
 		"0" => "info",
@@ -189,7 +198,12 @@ class Logger{
 		"6" => "security++",
 	);
 
-	var $_colors = array(
+	/**
+	 * Color hex code assigned to recognized error levels
+	 *
+	 * @var array
+	 */
+	private $_colors = array(
 		"debug" => "#555555",
 		"info" => "#000000",
 		"warn" => "#c66905",
@@ -202,11 +216,10 @@ class Logger{
 	 *
 	 * @param string $prefix application_mark
 	 * @param array $options
-	 * <ul>
-	 * <li>disable_start_and_stop_marks (false) - whether start and stop marks show up in output</li>
-	 * <li>log_to_stdout (false) - log messages to STDOUT instead of a log file</li>
-	 * <li>automatically_log_to_stdout_on_terminal (false) - log messages to a log file and also to STDOUT when we are on TERMINAL</li>
-	 * </ul>
+	 * - disable_start_and_stop_marks (false) - whether start and stop marks show up in output
+	 * - default_log_file - filename where to write logs
+	 * - log_to_stdout (false) - log messages to STDOUT instead of a log file
+	 * - automatically_log_to_stdout_on_terminal (false) - log messages to a log file and also to STDOUT when we are on TERMINAL
 	 */
 	function __construct($prefix = "",$options = array()){
 		$options = array_merge(array(
@@ -234,9 +247,19 @@ class Logger{
 	 * @return string
 	 */
 	function get_log_file(){ return $this->_log_file; }
-	
+	/**
+	 * Return log level priority
+	 *
+	 * @return integer
+	 */
 	function get_no_log_level(){ return $this->_no_log_level; }
 	function get_notify_level(){ return $this->_notify_level; }
+
+	/**
+	 * Get email address for email notifications.
+	 *
+	 * @return string
+	 */
 	function get_notify_email(){ return $this->_notify_email; }
 
 	/**
@@ -288,7 +311,6 @@ class Logger{
 	/**
 	 * Resets configuration to default values.
 	 *
-	 * @ignore
 	 */
 	private function _reset_configuration(){
 		$this->_no_log_level = LOGGER_NO_LOG_LEVEL;
@@ -336,10 +358,21 @@ class Logger{
 	}
 
 	/**
+	 * Returns rgb color hex code that is associated with an error level
+	 *
+	 * ```
 	 * $color = $this->level_to_color("error");
 	 * $color = $this->level_to_color(4);
-	 *
+	 * ```
+	 * This
+	 * ```
 	 * echo $color; // "#d00b00"
+	 * ```
+	 * returns #d00b00
+	 *
+	 * @param integer|string $level
+	 * @return string color hex code
+	 * @see $_colors
 	 */
 	function level_to_color($level){
 		if(is_numeric($level)){ $level = $this->level_to_str($level); }
@@ -462,36 +495,52 @@ class Logger{
 		return 0;
 	}
 
+	/**
+	 * Alias to flush_all
+	 *
+	 * @return 0
+	 * @see flush_all()
+	 */
 	function flushAll(){ return $this->flush_all(); }
 
 	/**
-	 * Alias method for outputing message to specified level.
+	 * Alias method for outputing message debug level.
 	 *
+	 * @see put_log()
 	 * @param string $log message to output
 	 */
 	function debug($log){ $this->put_log($log,-1); }
 
 	/**
-	 * Alias method for outputing message to specified level.
+	 * Alias method for outputing message with info level.
 	 *
+	 * @see put_log()
 	 * @param string $log message to output
 	 */
 	function info($log){ $this->put_log($log,0); }
 	
 	/**
-	 * Alias method for outputing message to specified level.
+	 * Alias method for outputing message with warning level.
 	 *
+	 * @see put_log()
 	 * @param string $log message to output
 	 */
 	function warn($log){ $this->put_log($log,2); }
 
 	/**
-	 * Alias method for outputing message to specified level.
+	 * Alias method for outputing message with error level.
 	 *
+	 * @see put_log()
 	 * @param string $log message to output
 	 */
 	function error($log){ $this->put_log($log,4); }
 
+	/**
+	 * Alias method for outputing message with security level.
+	 *
+	 * @see put_log()
+	 * @param string $log message to output
+	 */
 	function security($log){ $this->put_log($log,5); }
 
 	/**
@@ -557,6 +606,7 @@ class Logger{
 	 *
 	 * Preferred methods to call are {@link start()} and {@link stop()}
 	 *
+	 * @todo explain @param $style
 	 * @return int 0
 	 */
 	function prepared_log($style){
