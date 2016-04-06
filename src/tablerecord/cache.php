@@ -34,7 +34,7 @@ class ObjectCacher {
 	 *
 	 * @access protected
 	 */
-	protected function __construct($class) {
+	function __construct($class) {
 		$this->class = $class;
 	}
 
@@ -45,7 +45,7 @@ class ObjectCacher {
 		$class = strtolower($class);
 		if(!key_exists($class, self::$InitilizedCachers)) {
 			if(!$create) { $null = null; return $null; }
-			self::$InitilizedCachers[$class] = new ObjectCacher($class);
+			self::$InitilizedCachers[$class] = $class::CreateObjectCacher();
 		}
 		return self::$InitilizedCachers[$class];
 	}

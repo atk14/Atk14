@@ -1596,4 +1596,13 @@ class TableRecord extends inobj {
 		self::$TableStructuresCacheDuration = 0;
 		self::$_TableStructuresCache = array();
 	}
+
+	/**
+	 * Instantiates ObjectCacher for caching objects of the given class
+	 *
+	 * @return ObjectCacher
+	 */
+	static function CreateObjectCacher(){
+		return new ObjectCacher(get_called_class());
+	}
 }
