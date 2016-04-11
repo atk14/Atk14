@@ -8,7 +8,7 @@ class TcCache extends TcBase{
 		$rec = Cache::Get("TestTable",$record1->getId());
 		$this->assertEquals($record1->getId(),$rec->getId());
 
-		$this->assertEquals(array($rec->getId()),Cache::CachedIds("TestTable"));
+		$this->assertEquals(array($rec->getId() => $rec->getId()),Cache::CachedIds("TestTable"));
 
 		$rec = Cache::Get("TestTable",$record1);
 		$this->assertEquals($record1->getId(),$rec->getId());
@@ -55,13 +55,13 @@ class TcCache extends TcBase{
 		$this->assertEquals("The_Squirrel_Dance",$cached_r1->getTitle());
 		$this->assertEquals("The_Squirrel_Dance",$cached_r2->getTitle());
 
-		$this->assertEquals(array($record1->getId(),$record2->getId()),Cache::CachedIds("TestTable"));
+		$this->assertEquals(array($record1->getId() => $record1->getId(),$record2->getId() => $record2->getId()),Cache::CachedIds("TestTable"));
 
 		//
 		Cache::Clear();
 		$this->assertEquals(array(),Cache::CachedIds("TestTable"));
 		$cached_r2b = Cache::Get("TestTable",$record2);
-		$this->assertEquals(array($record2->getId()),Cache::CachedIds("TestTable"));
+		$this->assertEquals(array($record2->getId() => $record2->getId()),Cache::CachedIds("TestTable"));
 
 		$this->assertEquals(array($record2, null),Cache::GetObjectCacher("TestTable")->getCached( array($record2->getId(), $record1->getId() ) ));
 		$cached_r1b = Cache::Get("TestTable",$record1);
@@ -73,8 +73,12 @@ class TcCache extends TcBase{
 
 		$this->assertEquals(array(),Cache::CachedIds("TestTable"));
 		Cache::Prepare('TestTable', $record1);
-		$this->assertEquals(array($record1->getId()),Cache::CachedIds("TestTable"));
+		$this->assertEquals(array($record1->getId() => $record1->getId()),Cache::CachedIds("TestTable"));
 		$this->assertEquals(array(null, null),Cache::GetObjectCacher("TestTable")->getCached( array($record2->getId(), $record1->getId() ) ));
+
+		$this->assertFalse(is_array(Cache::Get('TestTable', $record2)));
+		$this->assertEquals(array($record1->getId() => $record1->getId(), $record2->getId() => $record2->getId()),Cache::CachedIds("TestTable"));
+
 		$this->assertFalse(is_array(Cache::Get('TestTable', $record2)));
 		$this->assertTrue(is_array(Cache::Get('TestTable', array($record2))));
 		$this->assertEquals(7,key(Cache::Get('TestTable', array(7 => $record2))));
@@ -98,7 +102,7 @@ class TcCache extends TcBase{
 		$queries_executed = $this->dbmole->getQueriesExecuted();
 		Cache::Prepare("TestTable",11233);
 		$this->assertEquals($queries_executed,$this->dbmole->getQueriesExecuted());
-		
+
 		$this->assertEquals(null,Cache::Get("TestTable",11233));
 		$this->assertEquals($queries_executed+1,$this->dbmole->getQueriesExecuted());
 

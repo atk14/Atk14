@@ -68,18 +68,13 @@ class ObjectCacher {
 
 	/**
 	 * Prepare the given $id or $ids to be read into cache
-	 * 
+	 *
 	 * When first $cacher->get() is called, all previously prepared ids are automatically read to cache
 	 */
 	function prepare($ids) {
-		$ids = self::_ToIds($ids);
-		foreach($ids as $id){
-			if(	$id == null ||
-					key_exists($id, $this->prepare) ||
-					key_exists($id, $this->cache)
-			){ continue; }
-			$this->prepare[$id] = $id;
-		}
+		$ids = array_filter(self::_ToIds($ids));
+		$ids = array_diff_key(array_combine($ids, $ids), $this->cache);
+		$this->prepare += $ids;
 	}
 
 	/**
@@ -116,7 +111,7 @@ class ObjectCacher {
 		if($cached = array_keys($this->cache)){
 			$out += array_combine($cached,$cached);
 		}
-		return array_values($out);
+		return $out;
 	}
 
 	/**
