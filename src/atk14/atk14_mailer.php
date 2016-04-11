@@ -220,6 +220,9 @@ class Atk14Mailer{
 	 */
 	var $logger = null;
 
+
+	private $defaults = array();
+
 	/**
 	 * Creates instance of Atk14Mailer depending on a controller.
 	 *
@@ -297,6 +300,8 @@ class Atk14Mailer{
 	 * @return array sendmail() output
 	 */
 	function execute(){
+		$this->_save_or_restore_default_state();
+
 		$args = func_get_args();
 		call_user_func_array(array($this,"_render_message"),$args);
 		return $this->_send();
@@ -580,5 +585,24 @@ class Atk14Mailer{
 			"with_hostname" => true, // in emails the hostname is expected in URLs by default
 		);
 		return Atk14Url::BuildLink($params,$options);
+	}
+
+	/**
+	 * Resets the mailer to the default state
+	 * 
+	 */
+	private function _save_or_restore_default_state(){
+		if(!$this->defaults){
+			// saving
+			$vars = get_object_vars($this);
+			unset($vars["defaults"]);
+			$this->defaults = $vars;
+			return;
+		}
+
+		// restoring
+		foreach($this->defaults as $key => $value){
+			$this->$key = $value;
+		}
 	}
 }

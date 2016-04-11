@@ -42,7 +42,12 @@ class ApplicationMailer extends Atk14Mailer {
 	}
 
 	function test_rendering(){
+		
+	}
 
+	function simple_message_without_layout(){
+		$this->render_layout = false;
+		$this->cc = "big@brother.com";
 	}
 
 	function _before_filter(){

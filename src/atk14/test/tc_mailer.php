@@ -77,4 +77,19 @@ class TcMailer extends TcBase{
 		$this->assertContains("email: john@doe.com",$controller->mail_ar["body"]);
 		$this->assertContains("password: krefERE34",$controller->mail_ar["body"]);
 	}
+
+	function test_resetting_to_default_state(){
+		$controller = $this->client->get("testing/test");
+		$mailer = $controller->mailer;
+
+		// inside the method send_user_data_summary() the $render_layout is set to false
+		$mail = $mailer->simple_message_without_layout();
+		$this->assertEquals("Hello from simple message!",trim($mail["body"]));
+		$this->assertEquals("big@brother.com",$mail["cc"]);
+
+		// now it is expected that the layout should be automatically rendered
+		$mail = $mailer->ordinary_notification();
+		$this->assertContains("Best Regards",$mail["body"]); // a string from the layout
+		$this->assertEquals("",$mail["cc"]);
+	}
 }
