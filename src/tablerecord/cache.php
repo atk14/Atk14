@@ -73,6 +73,7 @@ class ObjectCacher {
 	 */
 	function prepare($ids) {
 		$ids = array_filter(self::_ToIds($ids));
+		if(!$ids){ return; } // PHP5.3 workaround
 		$ids = array_diff_key(array_combine($ids, $ids), $this->cache);
 		$this->prepare += $ids;
 	}
