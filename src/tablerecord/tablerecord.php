@@ -1178,7 +1178,7 @@ class TableRecord extends inobj {
 				continue;
 			}
 			if(is_object($value)){
-				$value = $data[$_key]->getId();
+				$value = $this->_objectToScalar($data[$_key]);
 			}
 		}
 
@@ -1351,7 +1351,7 @@ class TableRecord extends inobj {
 				continue;
 			}
 
-			if(is_object($values[$_key])){ $values[$_key] = $values[$_key]->getId(); }
+			if(is_object($values[$_key])){ $values[$_key] = $this->_objectToScalar($values[$_key]); }
 		}
 
 		$id = null;
@@ -1581,6 +1581,25 @@ class TableRecord extends inobj {
 		$accessor_class = "TableRecord_DatabaseAccessor_".$this->dbmole->getDatabaseType();
 		$accessor_class::SetRecordValues($row,$this->_RecordValues,$this);
 		$this->_Id = $this->_RecordValues[$this->_IdFieldName];
+	}
+
+	/**
+	 * Convert an object into a scalar value
+	 *
+	 * $scalar_value = $this->_objectToScalar($object);
+	 *
+	 * @ignore
+	 */
+	private function _objectToScalar($object){
+		if(!is_object($object)){
+			return $object;
+		}
+
+		if(method_exists($object,"getId")){ return $object->getId(); }
+		if(method_exists($object,"toString")){ return $object->toString(); }
+		if(method_exists($object,"__toString")){ return $object->__toString(); }
+
+		throw new Exception(sprintf("Can't convert %s object into a scalar value",get_class($object)));
 	}
 
 	/**

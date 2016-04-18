@@ -13,6 +13,9 @@ require("./article.php");
 require("./image.php");
 require("./author.php");
 require("./redactor.php");
+require("./string_like.php");
+require("./string_much_like.php");
+require("./int_like.php");
 
 function &dbmole_connection($dbmole){
 	static $connections = array();

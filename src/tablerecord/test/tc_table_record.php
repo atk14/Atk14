@@ -102,7 +102,7 @@ class TcTableRecord extends TcBase{
 		$qe_2 = $this->dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+1,$qe_2); // one query for searching ids
 
-		// CreateNewRecord; not using cached while creating record
+		// eceateNewRecord; not using cached while creating record
 		$qe = $this->dbmole->getQueriesExecuted();
 		$rec = TestTable::CreateNewRecord(array(
 			"id" => 221,
@@ -237,6 +237,30 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals(array("La Fabrique", 200.0),$rec->getValue(array("title","price")));
 		$this->assertEquals(array("title" => "La Fabrique", "price" => 200.0),$rec->getValue(array("title" => "title", "price" => "price")));
 		$this->assertEquals(array("a" => "La Fabrique", "b" => 200.0),$rec->getValue(array("a" => "title", "b" => "price")));
+	}
+
+	function test_converting_objects_into_scalars(){
+		// __toString
+		$title = new StringLike("Hello World!");
+		$rec = TestTable::CreateNewRecord(array(
+			"title" => $title
+		));
+		$this->assertEquals("Hello World!",$rec->getTitle());
+
+		// toString
+		$title = new StringMuchLike("Hello World from Prague!");
+		$rec = TestTable::CreateNewRecord(array(
+			"title" => $title
+		));
+		$this->assertEquals("Hello World from Prague!",$rec->getTitle());
+		$this->assertEquals("Hello World from Prague! (__toString)","$title"); // __toString
+
+		// toId
+		$integer = new IntLike(133);
+		$rec = TestTable::CreateNewRecord(array(
+			"an_integer" => $integer
+		));
+		$this->assertEquals(133,$rec->getAnInteger());
 	}
 
 	function test_validates_updating_of_fields(){
