@@ -581,8 +581,13 @@ class DbMole{
 			$out[] = "";
 			$out[] = "server vars";
 			$out[] = "-----------";
-			$out[] = print_r($GLOBALS["_SERVER"],true);
-			// TODO: remove $_SERVER["PHP_AUTH_PW"] it may contains password in plain text
+
+			// $_SERVER["PHP_AUTH_PW"] may contain username and password in a plain text form
+			$server_vars = $GLOBALS["_SERVER"];
+			if(isset($server_vars["PHP_AUTH_PW"])){
+				$server_vars["PHP_AUTH_PW"] = "*************";
+			}
+			$out[] = print_r($server_vars,true);
 		}
 		if(isset($GLOBALS["_GET"]));{
 			$out[] = "";
