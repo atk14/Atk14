@@ -591,7 +591,7 @@ class Atk14Controller{
 				!file_exists($_layout_template = $ATK14_GLOBAL->getApplicationPath()."layouts/$this->namespace/$layout_template.tpl") &&
 				!file_exists($_layout_template = $ATK14_GLOBAL->getApplicationPath()."layouts/$layout_template.tpl")
 			){
-				Atk14Utils::ErrorLog("Missing layout template: layouts/$this->namespace/$layout_template.tpl or layouts/$layout_template.tpl",$this->response);
+				Atk14Utils::ErrorLog($this->namespace ? "Missing layout template layouts/$this->namespace/$layout_template.tpl or layouts/$layout_template.tpl" : "Missing layout template layouts/$layout_template.tpl",$this->response);
 				return $this->response;
 			}
 
