@@ -839,8 +839,9 @@ class Atk14Controller{
 	function _atk14_write_action_cache(&$content,$extra_values = array()){
 		if(!$recipe = $this->_atk14_get_action_cache_recipe()){ return; }
 
-		if(is_a($content,"StringBuffer")){
-			$content = $content->toString();
+		if(is_object($content)){ // StringBuffer obviously
+			$content_str = $content->toString();
+			return $this->_atk14_write_action_cache($content_str);
 		}
 
 		$serialized = serialize(array(
