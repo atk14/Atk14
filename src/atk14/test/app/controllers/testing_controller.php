@@ -25,6 +25,9 @@ class TestingController extends ApplicationController{
 		$this->layout_name = "custom";
 	}
 
+	function custom_layout_set_from_template(){
+	}
+
 	function send_ordinary_mail(){
 		$this->render_template = false;
 		$this->mail_ar = $this->mailer->execute("ordinary_notification","ORIGINAL_WAY");
@@ -76,7 +79,7 @@ class TestingController extends ApplicationController{
 	}
 
 	function test_caching(){
-		$this->response->setcontentcharset("utf-8");
+		$this->response->setContentCharset("utf-8");
 		$this->tpl_data["random_value"] = uniqid();
 	}
 
@@ -88,10 +91,14 @@ class TestingController extends ApplicationController{
 		$this->response->write("random_value: ".uniqid());
 	}
 
+	function test_caching_with_layout_set_in_action(){
+		$this->tpl_data["random_value"] = uniqid();
+	}
+
 	function _before_filter(){
 		if(!$this->params->defined("disable_cache")){
 			$this->_caches_action(array(
-				"action" => array("test_caching","test_caching_without_template"),
+				"action" => array("test_caching","test_caching_without_template","test_caching_with_layout_set_in_action"),
 			));
 		}
 	}

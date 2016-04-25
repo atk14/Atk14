@@ -523,17 +523,51 @@ class Atk14Controller{
 
 		$this->action_executed = true;
 
-		if($this->render_template && strlen($this->response->getLocation())==0){
-			if(is_null($this->smarty)){ $this->smarty = $this->_get_smarty(array("assign_data" => false)); }
-			$this->_before_render();
-			$this->smarty->assign($this->tpl_data);
+		if(strlen($this->response->getLocation())>0){
+			return;
 		}
 
-		if($this->render_template && strlen($this->response->getLocation())==0){
-			$controller_name = $this->controller;
+		if(!$this->render_template){
+			if(!$cache){
+				$this->_atk14_write_action_cache($this->response->buffer);
+			}else{
+				$this->response->write($cache["content"]);
+			}
+			return;
+		}
 
-			$layout_template = $this->layout_name;
-			if($this->render_layout && $layout_template==""){
+
+		if(is_null($this->smarty)){ $this->smarty = $this->_get_smarty(array("assign_data" => false)); }
+		$this->_before_render();
+		$this->smarty->assign($this->tpl_data);
+
+		//if($this->render_template && strlen($this->response->getLocation())==0){
+		$controller_name = $this->controller;
+		$layout_template = $this->layout_name;
+		$explicit_layout_name = "";
+
+
+		$template_name = $this->template_name.".tpl";
+		if(!$this->smarty->templateExists("$template_name")){
+			Atk14Utils::ErrorLog("For controller ".($this->namespace ? "$this->namespace/" : "")."$this->controller there is no action template $template_name",$this->response);
+			return $this->_after_render();
+		}
+
+		if(!$cache){
+			$GLOBALS["__explicit_layout_name__"] = ""; // TODO: avoid using global variable
+			$action_content = array(
+				"main" => $this->smarty->fetch($template_name)
+			);
+			$explicit_layout_name = $GLOBALS["__explicit_layout_name__"];
+		}else{
+			$action_content = $cache["content"];
+			$explicit_layout_name = isset($cache["extra_values"]["explicit_layout_name"]) ? $cache["extra_values"]["explicit_layout_name"] : "";
+		}
+
+		if($this->render_layout){
+
+			$layout_template = $explicit_layout_name ? $explicit_layout_name : $this->layout_name;
+			if($layout_template==""){
 				// default layout is expected in app/layouts/namespace/default.tpl
 				// prior it was app/layouts/namespace/_default.tpl
 				foreach(array(
@@ -561,47 +595,27 @@ class Atk14Controller{
 				return $this->response;
 			}
 
-			$template_name = $this->template_name.".tpl";
-			if(!$this->smarty->templateExists("$template_name")){
-				Atk14Utils::ErrorLog("For controller ".($this->namespace ? "$this->namespace/" : "")."$this->controller there is no action template $template_name",$this->response);
-				return $this->_after_render();
+			$layout_content = $this->smarty->fetch($_layout_template);
+			$layout_content = str_replace("<%atk14_content[main]%>",$action_content["main"],$layout_content);
+			foreach($this->smarty->getAtk14ContentKeys() as $c_key){
+				// TODO: toto nahrazeni uz provadim rovnou v helperu placeholder...
+				// facha to? vyhodime to?
+				$layout_content = str_replace("<%atk14_content[$c_key]%>",$this->smarty->getAtk14Content($c_key),$layout_content);
 			}
+			$this->response->write($layout_content);
 
-			if(!$cache){
-				$action_content = array(
-					"main" => $this->smarty->fetch($template_name)
-				);
-			}else{
-				$action_content = $cache["content"];
-			}
+		}else{
 
-			if($this->render_layout){
-				$layout_content = $this->smarty->fetch($_layout_template);
-				$layout_content = str_replace("<%atk14_content[main]%>",$action_content["main"],$layout_content);
-				foreach($this->smarty->getAtk14ContentKeys() as $c_key){
-					// TODO: toto nahrazeni uz provadim rovnou v helperu placeholder...
-					// facha to? vyhodime to?
-					$layout_content = str_replace("<%atk14_content[$c_key]%>",$this->smarty->getAtk14Content($c_key),$layout_content);
-				}
-				$this->response->write($layout_content);
-			}else{
-				$this->response->write($action_content["main"]);
-			}
+			$this->response->write($action_content["main"]);
 
-			if(!$cache){
-				$this->_atk14_write_action_cache($action_content);
-			}
-
-			return $this->_after_render();
 		}
 
-		if(!$this->render_template && strlen($this->response->getLocation())==0){
-			if(!$cache){
-				$this->_atk14_write_action_cache($this->response->buffer);
-			}else{
-				$this->response->write($cache["content"]);
-			}
+		if(!$cache){
+			$this->_atk14_write_action_cache($action_content,array("explicit_layout_name" => $explicit_layout_name));
 		}
+
+		$this->_after_render();
+		//}
 	}
 
 	/**
@@ -822,12 +836,11 @@ class Atk14Controller{
 	 * @access private
 	 *
 	 */
-	function _atk14_write_action_cache(&$content){
+	function _atk14_write_action_cache(&$content,$extra_values = array()){
 		if(!$recipe = $this->_atk14_get_action_cache_recipe()){ return; }
 
 		if(is_a($content,"StringBuffer")){
-			$content_str = $content->toString();
-			return $this->_atk14_write_action_cache($content_str);
+			$content = $content->toString();
 		}
 
 		$serialized = serialize(array(
@@ -846,6 +859,7 @@ class Atk14Controller{
 				"status_code" => $this->response->getStatusCode(),
 				"headers" => $this->response->getHeaders(),
 			),
+			"extra_values" => $extra_values,
 		));
 
 		Files::Mkdir($recipe["dir"],$err,$err_msg);

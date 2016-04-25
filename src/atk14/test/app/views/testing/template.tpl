@@ -1,1 +1,1 @@
-This is a template
+This is template

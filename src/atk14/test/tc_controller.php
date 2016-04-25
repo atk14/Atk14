@@ -108,17 +108,22 @@ class TcController extends TcBase{
 		$controller = $this->client->get("testing/default_layout");
 
 		$page = new String4($controller->response->buffer->toString());
-		$this->assertEquals(true,$page->contains("This is a template"));
+		$this->assertEquals(true,$page->contains("This is template"));
 		$this->assertEquals(true,$page->contains("<!-- default layout -->"));
 
 		$controller = $this->client->get("testing/custom_layout");
 		$page = new String4($controller->response->buffer->toString());
-		$this->assertEquals(true,$page->contains("This is a template"));
+		$this->assertEquals(true,$page->contains("This is template"));
 		$this->assertEquals(true,$page->contains("<!-- custom layout -->"));
 
 		$controller = $this->client->get("testing/no_layout");
 		$page = new String4($controller->response->buffer->toString());
-		$this->assertEquals(true,(bool)$page->match("/^This is a template$/"));
+		$this->assertEquals(true,(bool)$page->match("/^This is template$/"));
+
+		$controller = $this->client->get("testing/custom_layout_set_from_template");
+		$page = new String4($controller->response->buffer->toString());
+		$this->assertEquals(true,$page->contains("This is custom_layout_set_from_template"));
+		$this->assertEquals(true,$page->contains("<!-- custom layout -->"));
 	}
 
 	function test_before_filter(){
@@ -163,7 +168,7 @@ class TcController extends TcBase{
 	function test_caching(){
 		$client = &$this->client;
 
-		//
+		// caching
 
 		$client->get("testing/test_caching");
 		$this->assertEquals("text/html",$client->getContentType());
@@ -188,7 +193,7 @@ class TcController extends TcBase{
 		$this->assertContains("random_value: ",$content_3);
 		$this->assertNotEquals($content_1,$content_3);
 
-		//
+		// no template
 
 		$client->get("testing/test_caching_without_template");
 		$this->assertEquals("text/plain",$client->getContentType());
@@ -212,6 +217,27 @@ class TcController extends TcBase{
 		$this->assertEquals(222,$client->getStatusCode());
 		$content_3 = $client->getContent();
 		$this->assertTrue(!!preg_match('/^random_value: /',$content_3));
+
+		$this->assertNotEquals($content_1,$content_3);
+		
+		// layout set in action
+
+		$client->get("testing/test_caching_with_layout_set_in_action");
+		$content_1 = $client->getContent();
+		$this->assertTrue(!!preg_match('/random_value: /',$content_1));
+		$this->assertContains("<!-- custom layout -->",$content_1);
+
+		$client->get("testing/test_caching_with_layout_set_in_action");
+		$content_2 = $client->getContent();
+		$this->assertTrue(!!preg_match('/random_value: /',$content_2));
+		$this->assertContains("<!-- custom layout -->",$content_2);
+
+		$this->assertEquals($content_1,$content_2);
+
+		$client->get("testing/test_caching_with_layout_set_in_action",array("disable_cache" => "1"));
+		$content_3 = $client->getContent();
+		$this->assertTrue(!!preg_match('/random_value: /',$content_3));
+		$this->assertContains("<!-- custom layout -->",$content_3);
 
 		$this->assertNotEquals($content_1,$content_3);
 	}
