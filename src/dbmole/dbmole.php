@@ -582,7 +582,7 @@ class DbMole{
 			$out[] = "server vars";
 			$out[] = "-----------";
 
-			// $_SERVER["PHP_AUTH_PW"] may contain username and password in a plain text form
+			// $_SERVER["PHP_AUTH_PW"] may contain a password in plain text form
 			$server_vars = $GLOBALS["_SERVER"];
 			if(isset($server_vars["PHP_AUTH_PW"])){
 				$server_vars["PHP_AUTH_PW"] = "*************";
