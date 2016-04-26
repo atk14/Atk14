@@ -241,4 +241,20 @@ class TcController extends TcBase{
 
 		$this->assertNotEquals($content_1,$content_3);
 	}
+
+	function test_render_template(){
+		$client = &$this->client;
+
+		// rendering is disabled in the action
+		$client->get("main/hello_from_earth");
+		$this->assertEquals("Hello from Earth!",$client->getContent());
+
+		// rendering is disabled in the _before_render
+		$client->get("main/hello_from_mars");
+		$this->assertEquals("Hello from Mars!",$client->getContent());
+
+		// rendering is disabled in the _before_filter
+		$client->get("main/hello_from_venus");
+		$this->assertEquals("Hello from Venus!",$client->getContent());
+	}
 }
