@@ -536,9 +536,19 @@ class Atk14Controller{
 			return;
 		}
 
-
 		if(is_null($this->smarty)){ $this->smarty = $this->_get_smarty(array("assign_data" => false)); }
 		$this->_before_render();
+
+		// $this->render_template may be set to false in _before_render()!
+		if(!$this->render_template){
+			if(!$cache){
+				$this->_atk14_write_action_cache($this->response->buffer);
+			}else{
+				$this->response->write($cache["content"]);
+			}
+			return;
+		}
+
 		$this->smarty->assign($this->tpl_data);
 
 		//if($this->render_template && strlen($this->response->getLocation())==0){
