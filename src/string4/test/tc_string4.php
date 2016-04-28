@@ -90,8 +90,10 @@ class TcString4 extends TcBase{
 
 	function test_sub(){
 		$str = new String4("hello");
-
 		$this->assertEquals("hexxo",(string)$str->gsub("/l/","x"));
+
+		$str = new String4("Hello_World!");
+		$this->assertEquals("Hello World!",(string)$str->gsub("/[^A-Z!]/i"," "));
 	}
 
 	function test_prepend_and_append(){
