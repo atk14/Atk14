@@ -110,7 +110,9 @@ function get_list_of_tables($dbmole,$schema){
 	if($dbmole->getDatabaseType()=="mysql"){
 		return $dbmole->selectIntoArray("SHOW TABLES");
 	}
-	return $dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemaname='$schema'");
+
+	// only owner can drop his tables
+	return $dbmole->selectIntoArray("SELECT tablename FROM pg_tables WHERE schemaname=:schema AND tableowner=:tableowner",array(":schema" => $schema, ":tableowner" => get_database_user($dbmole)));
 }
 
 function get_list_of_sequencies($dbmole,$schema){
@@ -125,4 +127,11 @@ function drop_table_sql($dbmole,$schema,$table){
   	return "DROP TABLE IF EXISTS $table CASCADE";
 	}
   return "DROP TABLE IF EXISTS $schema.$table CASCADE";
+}
+
+function get_database_user($dbmole){
+	global $ATK14_GLOBAL;
+	if($d = $ATK14_GLOBAL->getDatabaseConfig($dbmole->getConfigurationName())){
+		return $d["username"];
+	}
 }
