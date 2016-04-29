@@ -78,18 +78,22 @@ foreach(get_list_of_sequencies($dbmole,$schema) as $sequence){
 }
 
 if($dbmole->getDatabaseType()=="postgresql"){ // TODO: MySQL
-foreach($dbmole->selectIntoArray("
-	SELECT proname || '(' || oidvectortypes(proargtypes) || ')'
+foreach($dbmole->selectRows("
+	SELECT
+		proisagg AS is_aggregate,
+		proname || '(' || oidvectortypes(proargtypes) || ')' AS function_name
 	FROM pg_proc INNER JOIN pg_namespace ns ON (pg_proc.pronamespace = ns.oid)
-	WHERE ns.nspname = '$schema'  order by proname
-") as $procedure){
-	$q = "DROP FUNCTION $schema.$procedure";
+	WHERE ns.nspname = '$schema' AND pg_proc.proowner=:userid ORDER BY proname
+",array(":userid" => get_database_userid($dbmole))) as $row){
+	$subject = $row["is_aggregate"]=='t' ? "AGGREGATE" : "FUNCTION";
+	$q = "DROP $subject $schema.$row[function_name]";
 	if($previewing){
 		echo "$q;\n";
 		continue;
 	}
 	$dbmole->doQuery($q);
-	echo "function $procedure dropped\n";
+	$subject = strtolower($subject);
+	echo "$subject $row[function_name] dropped\n";
 }
 }
 
@@ -131,4 +135,9 @@ function drop_table_sql($dbmole,$schema,$table){
 
 function get_database_user($dbmole){
 	return $dbmole->selectString("SELECT user");
+}
+
+function get_database_userid($dbmole){
+	$user = get_database_user($dbmole);
+	return $dbmole->selectString("SELECT usesysid FROM pg_user WHERE usename=:user",array(":user" => $user));
 }
