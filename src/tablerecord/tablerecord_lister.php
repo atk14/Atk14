@@ -41,6 +41,12 @@
  * @param array $options
  */
 class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
+
+	static protected $CACHE = array();
+	static protected $PREPARE = array();
+
+	protected $iterator_offset = 0;
+
 	/**
 	 * Constructor
 	 *
@@ -73,7 +79,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @todo comment options
 	 */
-	function TableRecord_Lister($owner,$subjects,$options = array()){
+	function __construct($owner,$subjects,$options = array()){
 		$owner_class = new String4(get_class($owner));
 		$owner_class_us = $owner_class->underscore();
 		$subjects = new String4($subjects);
@@ -97,6 +103,46 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		$this->_owner = &$owner;
 		$this->_dbmole = &$owner->dbmole;
 		$this->_options = $options;
+	}
+
+	/**
+	 * Prereads data for given set of objects
+	 *
+	 * It helps to lower database usage.
+	 *
+	 * Usage:
+	 *
+	 * <code>
+	 *	 $lister->prereadFor($article);
+	 *	 $lister->prereadFor(array($article,$article2));
+	 * </code>
+	 *
+	 * Explanation:
+	 * 
+	 * <code>
+	 *	 $lister = $article1->getLister("Authors");
+	 *	 $lister->prereadFor(array($article2,$article3));
+	 *	 $authors = $lister->getRecords(); // data are being read for $article1, $article2 and $article3
+	 *
+	 *	 // and then there is no need to read data
+	 *	 $authors2 = $article2->getLister("Authors")->getRecords();
+	 *	 $authors3 = $article3->getLister("Authors")->getRecords();
+	 * </code>
+	 */
+	function prereadFor($owners){
+		if(!is_array($owners)){ $owners = array($owners); }
+		$owners = TableRecord::ObjToId($owners);
+		$c_key = $this->_getCacheKey();
+
+		if(!isset(self::$CACHE[$c_key])){ self::$CACHE[$c_key] = array(); }
+		if(!isset(self::$PREPARE[$c_key])){ self::$PREPARE[$c_key] = array(); }
+		$cached_ids = array_keys(self::$CACHE[$c_key]);
+
+		foreach($owners as $o_id){
+			if(!isset($o_id)){ continue; }
+			if(in_array($o_id,$cached_ids)){ continue; }
+			self::$PREPARE[$c_key][$o_id] = $o_id;
+		}
 	}
 
 	/**
@@ -168,7 +214,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		if($options['__auto_correct_ranking__']) {
 			$this->_correctRanking();
 		}
-		unset($this->_items);
+		$this->_clearCache();
 	}
 
 	/**
@@ -183,7 +229,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 			$o[subject_field_name]=:record
 		",array(":owner" => $this->_owner,":record" => $record));
 		$this->_correctRanking();
-		unset($this->_items);
+		$this->_clearCache();
 	}
 
 	/**
@@ -194,7 +240,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		$this->_dbmole->doQuery("DELETE FROM $o[table_name] WHERE
 			$o[owner_field_name]=:owner
 		",array(":owner" => $this->_owner));
-		unset($this->_items);
+		$this->_clearCache();
 	}
 
 	/**
@@ -233,9 +279,40 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @returns TableRecord_ListerItem[]
 	 */
-	function getItems(){
-		$this->_readItems();
-		return $this->_items;
+	function &getItems(){
+		$o = $this->_options;
+		$c_key = $this->_getCacheKey();
+		$owner_id = $this->_getOwnerId();
+
+		if(isset(self::$CACHE[$c_key][$owner_id])){
+			return self::$CACHE[$c_key][$owner_id];
+		}
+
+		$ids_to_read = isset(self::$PREPARE[$c_key]) ? self::$PREPARE[$c_key] : array();
+		$ids_to_read[$owner_id] = $owner_id;
+		unset(self::$PREPARE[$c_key]);
+
+		foreach($ids_to_read as $id){
+			self::$CACHE[$c_key][$id] = array();
+		}
+
+		$rows = $this->_dbmole->selectRows("
+			SELECT
+				$o[id_field_name] AS id,
+				$o[owner_field_name] AS owner_id,
+				$o[subject_field_name] AS record_id,
+				$o[rank_field_name] AS rank
+			FROM $o[table_name] WHERE
+				$o[owner_field_name] IN :ids_to_read ORDER BY $o[rank_field_name], $o[id_field_name]
+		",array(
+			":ids_to_read" => $ids_to_read
+		));
+		foreach($rows as $row){
+			self::$CACHE[$c_key][$row["owner_id"]][] = new TableRecord_ListerItem($this,$row);
+			Cache::Prepare($this->getClassNameOfRecords(),$row["record_id"]);
+		}
+
+		return self::$CACHE[$c_key][$owner_id];
 	}
 
 	/**
@@ -316,8 +393,10 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 			$rec = next($records);
 		}
 
-		//not need to do - if ranking was correct, it remains correct
+		// there is no need to correct ranking 
 		//$this->_correctRanking();
+
+		$this->_clearCache();
 	}
 
 	/**
@@ -362,7 +441,9 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @todo make it protected
 	 */
-	function _correctRanking(){
+	function _correctRanking($owner = null){
+		if(!isset($owner)){ $owner = $this->_owner; }
+
 		$o = $this->_options;
 		$rows = $this->_dbmole->selectRows("
 			SELECT
@@ -371,7 +452,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 			FROM $o[table_name] WHERE
 				$o[owner_field_name]=:owner ORDER BY $o[rank_field_name], $o[id_field_name]
 		",array(
-			":owner" => $this->_owner
+			":owner" => $owner
 		));
 		$expected_rank = 0;
 		foreach($rows as $row){
@@ -383,53 +464,48 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 			}
 			$expected_rank++;
 		}
-		unset($this->_items);
+		$this->_clearCache($owner);
 	}
 
-	/**
-	 * Internal method to read items from table to internal memory.
-	 *
-	 * @returns TableRecord_ListerItem[]
-	 */
-	private function _readItems(){
-		$o = $this->_options;
-		if(isset($this->_items)){ return; }
-		$rows = $this->_dbmole->selectRows("
-			SELECT
-				$o[id_field_name] AS id,
-				$o[subject_field_name] AS record_id,
-				$o[rank_field_name] AS rank
-			FROM $o[table_name] WHERE
-				$o[owner_field_name]=:owner ORDER BY $o[rank_field_name], $o[id_field_name]
-		",array(
-			":owner" => $this->_owner
-		));
-		$this->_items = array();
-		foreach($rows as $row){
-			$this->_items[] = new TableRecord_ListerItem($this,$row);
+	protected function _getOwnerId(){
+		return $this->_owner->getId();
+	}
+
+	protected function _clearCache($owner = null){
+		if(!isset($owner)){ $owner = $this->_owner; }
+		$owner_id = TableRecord::ObjToId($owner);
+
+		$c_key = $this->_getCacheKey($owner);
+		if(isset(self::$CACHE[$c_key])){
+			unset(self::$CACHE[$c_key][$owner_id]);
 		}
+	}
+
+	protected function _getCacheKey(){
+		$options = $this->_options;
+		return serialize($options);
 	}
 
 	/*** functions implementing array like access ***/
 	/**
 	 * @ignore
 	 */
-	function offsetGet($value) {
-		$x=$this->getItems();
-		return $x[$value]->getRecord();
+	function offsetGet($offset) {
+		$items = $this->getItems();
+		return $items[$offset]->getRecord();
 	}
 
 	/**
 	 * @ignore
 	 */
 	function offsetSet($offset, $record)	{
-		$this->getItems();
+		$items = $this->getItems();
 		if (is_null($offset)) {
 			$this->append($record);
 		} else {
 			settype($offset,"integer");
-			if (isset($this->_items[$offset])) {
-				$this->_items[$offset]->destroy();
+			if (isset($items[$offset])) {
+				$items[$offset]->destroy();
 			}
 			$this->append($record);
 			$this->setRecordRank($record,$offset);
@@ -439,54 +515,57 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	function offsetUnset($value) {
-		$this->getItems();
-		$this->_items[$value]->destroy();
+	function offsetUnset($offset) {
+		$items = $this->getItems();
+		$items[$offset]->destroy();
+		$this->_clearCache();
 	}
 
 	/**
 	 * @ignore
 	 */
-	function offsetExists($value) {
-		$this->getItems();
-		return array_key_exists($name, $this->_items);
+	function offsetExists($offset) {
+		$items = $this->getItems();
+		return array_key_exists($offset, $items);
 	}
 
 	/*** functions implementing iterator like access (foreach cycle)***/
+
 	/**
 	 * @ignore
 	 */
 	public function current() {
-		return current($this->_items)->getRecord();
+		$items = $this->getItems();
+		return $items[$this->iterator_offset]->getRecord();
 	}
 
 	/**
 	 * @ignore
 	 */
 	public function key() {
-		return key($this->_items);
+		return $this->iterator_offset;
 	}
 
 	/**
 	 * @ignore
 	 */
 	public function next() {
-		return next($this->_items);
+		++$this->iterator_offset;
 	}
 
 	/**
 	 * @ignore
 	 */
 	public function rewind() {
-		$this->getItems();
-		return reset($this->_items);
+		$this->iterator_offset = 0;
 	}
 
 	/**
 	 * @ignore
 	 */
 	public function valid()	{
-		return isset($this->_items) && current($this->_items);
+		$items = $this->getItems();
+		return isset($items[$this->iterator_offset]);
 	}
 
 	/**
@@ -494,8 +573,8 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 */
 	public function count()
 	{
-		$this->getItems();
-		return count($this->_items);
+		$items = $this->getItems();
+		return count($items);
 	}
 }
 
@@ -565,7 +644,7 @@ class TableRecord_ListerItem{
 			":rank" => $rank,
 			":id" => $this,
 		));
-		$this->_lister->_correctRanking();
+		$this->_lister->_correctRanking($this->_g("owner_id"));
 		$this->_s("rank",$rank);
 	}
 
@@ -617,7 +696,7 @@ class TableRecord_ListerItem{
 		));
 
 		if($options["__auto_correct_ranking__"]){
-			$this->_lister->_correctRanking();
+			$this->_lister->_correctRanking($this->_g("owner_id"));
 		}
 	}
 
