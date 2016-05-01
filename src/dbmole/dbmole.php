@@ -1244,9 +1244,11 @@ class DbMole{
 		foreach($bind_ar as $key => $value){
 			if(is_array($value)){
 				$replace = array();
-				foreach($value as $_k => $_v){
-					$b_ar["{$key}_$_k"] = $_v;
-					$replace[] = "{$key}_$_k";
+				$i = 0;
+				foreach($value as $_v){
+					$b_ar["{$key}_$i"] = $_v;
+					$replace[] = "{$key}_$i";
+					$i++;
 				}
 				$query = str_replace($key,"(".join(", ",$replace).")",$query);
 				continue;
