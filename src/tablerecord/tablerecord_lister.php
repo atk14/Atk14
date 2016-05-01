@@ -106,22 +106,23 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	}
 
 	/**
-	 * Prereads data for given set of objects
+	 * Prefetches data for given set of objects
 	 *
 	 * It helps to lower database usage.
 	 *
 	 * Usage:
 	 *
 	 * <code>
-	 *	 $lister->prereadFor($article);
-	 *	 $lister->prereadFor(array($article,$article2));
+	 *	 $lister = $article1->getLister("Authors");
+	 *	 $lister->prefetchDataFor($article2);
+	 *	 $lister->prefetchDataFor(array($article3,$article4));
 	 * </code>
 	 *
 	 * Explanation:
 	 * 
 	 * <code>
 	 *	 $lister = $article1->getLister("Authors");
-	 *	 $lister->prereadFor(array($article2,$article3));
+	 *	 $lister->prefetchDataFor(array($article2,$article3));
 	 *	 $authors = $lister->getRecords(); // data are being read for $article1, $article2 and $article3
 	 *
 	 *	 // and then there is no need to read data
@@ -129,7 +130,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *	 $authors3 = $article3->getLister("Authors")->getRecords();
 	 * </code>
 	 */
-	function prereadFor($owners){
+	function prefetchDataFor($owners){
 		if(!is_array($owners)){ $owners = array($owners); }
 		$owners = TableRecord::ObjToId($owners);
 		$c_key = $this->_getCacheKey();
@@ -287,6 +288,9 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		if(isset(self::$CACHE[$c_key][$owner_id])){
 			return self::$CACHE[$c_key][$owner_id];
 		}
+
+		$cacher = Cache::GetObjectCacher($this->_getOwnerClass());
+		$this->prefetchDataFor($cacher->cachedIds());
 
 		$ids_to_read = isset(self::$PREPARE[$c_key]) ? self::$PREPARE[$c_key] : array();
 		$ids_to_read[$owner_id] = $owner_id;
@@ -469,6 +473,10 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 
 	protected function _getOwnerId(){
 		return $this->_owner->getId();
+	}
+
+	protected function _getOwnerClass(){
+		return get_class($this->_owner);
 	}
 
 	protected function _clearCache($owner = null){
