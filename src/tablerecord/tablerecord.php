@@ -7,8 +7,16 @@
  * @filesource
  */
 
+// An obsolete constant
+if(defined("INOBJ_TABLERECORD_CACHES_STRUCTURES")){
+	define("TABLERECORD_CACHES_STRUCTURES",INOBJ_TABLERECORD_CACHES_STRUCTURES);
+}
+
 // Structures of tables will be cached for the given amount of seconds, in production it should be greater than 0
-defined("INOBJ_TABLERECORD_CACHES_STRUCTURES") || define("INOBJ_TABLERECORD_CACHES_STRUCTURES",0);
+defined("TABLERECORD_CACHES_STRUCTURES") || define("TABLERECORD_CACHES_STRUCTURES",0);
+
+// Use the caching infrastructure whenever it is possible?
+defined("TABLERECORD_USE_CACHE_BY_DEFAULT") || define("TABLERECORD_USE_CACHE_BY_DEFAULT",false);
 
 /**
  * Basic class for manipulating records.
@@ -18,7 +26,7 @@ defined("INOBJ_TABLERECORD_CACHES_STRUCTURES") || define("INOBJ_TABLERECORD_CACH
  */
 class TableRecord extends inobj {
 
-	static $TableStructuresCacheDuration = INOBJ_TABLERECORD_CACHES_STRUCTURES;
+	static $TableStructuresCacheDuration = TABLERECORD_CACHES_STRUCTURES;
 
 	static protected $_TableStructuresCache = array();
 
@@ -477,7 +485,7 @@ class TableRecord extends inobj {
 	 */
 	function find($id,$options = array()){
 		$options += array(
-			"use_cache" => false,
+			"use_cache" => TABLERECORD_USE_CACHE_BY_DEFAULT,
 		);
 
 		if(!isset($id)){ return null; }
@@ -591,7 +599,7 @@ class TableRecord extends inobj {
 			"limit" => 20,
 			"offset" => 0,
 
-			"use_cache" => false,
+			"use_cache" => TABLERECORD_USE_CACHE_BY_DEFAULT,
 
 			"query" => null,
 			"query_count" => null,
@@ -730,7 +738,7 @@ class TableRecord extends inobj {
 			"order" => $this->_IdFieldName,
 			"conditions" => array(),
 			"bind_ar" => array(),
-			"use_cache" => false,
+			"use_cache" => TABLERECORD_USE_CACHE_BY_DEFAULT,
 		);
 
 		$conditions = $options["conditions"];
@@ -946,7 +954,7 @@ class TableRecord extends inobj {
 
 		$options = array_merge(array(
 			"omit_nulls" => false,
-			"use_cache" => false,
+			"use_cache" => TABLERECORD_USE_CACHE_BY_DEFAULT,
 		),$options);
 
 		$MAX_ELEMENTS = 200;
@@ -1342,7 +1350,7 @@ class TableRecord extends inobj {
 		$class_name = get_class($this);
 
 		$options += array(
-			"use_cache" => false,
+			"use_cache" => TABLERECORD_USE_CACHE_BY_DEFAULT,
 		);
 
 		foreach($values as $_key => $value){

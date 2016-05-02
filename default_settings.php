@@ -67,7 +67,7 @@ __defaults__(array(
 ));
 
 __defaults__(array(
-	"INOBJ_TABLERECORD_CACHES_STRUCTURES" => PRODUCTION ? 60*60 : 0, // caches table structures for the given amount of seconds
+	"TABLERECORD_CACHES_STRUCTURES" => PRODUCTION ? 60*60 : 0, // caches table structures for the given amount of seconds
 
 ));
 
