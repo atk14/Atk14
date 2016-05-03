@@ -130,7 +130,10 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *	 $authors3 = $article3->getLister("Authors")->getRecords();
 	 * </code>
 	 */
-	function prefetchDataFor($owners){
+	function prefetchDataFor($owners,$options = array()){
+		$options += array(
+			"force_read" => false,
+		);
 		if(!is_array($owners)){ $owners = array($owners); }
 		$owners = TableRecord::ObjToId($owners);
 		$c_key = $this->_getCacheKey();
@@ -141,9 +144,29 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 
 		foreach($owners as $o_id){
 			if(!isset($o_id)){ continue; }
-			if(in_array($o_id,$cached_ids)){ continue; }
+
+			if($options["force_read"]){
+				unset(self::$CACHE[$c_key][$o_id]);
+			}elseif(in_array($o_id,$cached_ids)){
+				continue;
+			}
+
 			self::$PREPARE[$c_key][$o_id] = $o_id;
 		}
+	}
+
+	/**
+	 * Flushes out cache for the current owner
+	 *
+	 * <code>
+	 *	$records = $lister->getRecords();
+	 * 	$lister->flushCache();
+	 *	$records2 = $lister->getRecords();
+	 *	// $records and $records2 may vary according to a cache state
+	 * </code>
+	 */
+	function flushCache(){
+		$this->prefetchDataFor($this->_owner,array("force_read" => true));
 	}
 
 	/**
@@ -280,7 +303,15 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @returns TableRecord_ListerItem[]
 	 */
-	function &getItems(){
+	function &getItems($options = array()){
+		$options += array(
+			"force_read" => false,
+		);
+
+		if($options["force_read"]){
+			$this->flushCache();
+		}
+
 		$o = $this->_options;
 		$c_key = $this->_getCacheKey();
 		$owner_id = $this->_getOwnerId();
@@ -322,11 +353,16 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Returns record ids of associated table.
 	 *
+	 * ```
+	 *	$ids = $lister->getRecordIds(); // integer[]
+	 *	$ids = $lister->getRecordIds(array("force_read" => true)); // If the cache state could be stale
+	 * ```
+	 *
 	 * @returns integer[]
 	 */
-	function getRecordIds(){
+	function getRecordIds($options = array()){
 		$out = array();
-		foreach($this->getItems() as $item){ $out[] = $item->getRecordId(); }
+		foreach($this->getItems($options) as $item){ $out[] = $item->getRecordId(); }
 		return $out;
 	}
 
@@ -343,13 +379,14 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * ```
 	 *	$lister = $article->getLister("Authors");
 	 *	$authors = $lister->getRecords(); // array of models
+	 *	$authors = $lister->getRecords(array("force_read" => true)); // If the cache state could be stale
 	 * ```
 	 *
 	 * @returns TableRecord[]
 	 */
-	function getRecords(){
+	function getRecords($options = array()){
 		$ids = array();
-		foreach($this->getItems() as $item){ $ids[] = $item->getRecordId(); }
+		foreach($this->getItems($options) as $item){ $ids[] = $item->getRecordId(); }
 		return Cache::Get($this->getClassNameOfRecords(), $ids); // TODO: usage of the Cache should be set by an option
 	}
 
