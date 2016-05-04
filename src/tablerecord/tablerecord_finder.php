@@ -114,6 +114,13 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	function getRecordsCount(){
 		if(!isset($this->_RecordsCount)){
 			$options = $this->_QueryOptions;
+			if(
+				isset($this->_Records) &&
+				$options["offset"] == 0 &&
+				(count($this->_Records) < $options["limit"] || !$options["limit"])
+			){
+				return $this->_RecordsCount = count($this->_Records);
+			}
 			unset($options["limit"]);
 			unset($options["offset"]);
 			$options["type"] = "integer";
