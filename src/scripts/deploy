@@ -109,7 +109,8 @@ foreach($config["rsync"] as $file){
 		_remote_exec("mkdir -p $file","gonna create directory $file if doesn't exist"); // creates directory when it is missing
 		!preg_match('/\/$/',$file) && ($file .= "/"); // "public/dist" -> "public/dist/"
 	}
-	echo _exec("rsync -av --delete $file $config[user]@$config[server]:$config[directory]/$file","gonna synchronize $file");
+	$port_spec = $config["port"] ? " -e 'ssh -p $config[port]'" : "";
+	echo _exec("rsync -av --delete$port_spec $file $config[user]@$config[server]:$config[directory]/$file","gonna synchronize $file");
 }
 
 _run_commands($config["after_deploy"],"after_deploy");
@@ -141,7 +142,8 @@ function _exec($cmd,$options = array()){
 
 function _remote_exec($cmd,$options = array()){
 	global $config;
-	$cmd = "ssh $config[user]@$config[server] \"cd $config[directory] && export ATK14_ENV=production && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
+	$port_spec = $config["port"] ? " -p $config[port]" : "";
+	$cmd = "ssh $config[user]@$config[server]$port_spec \"cd $config[directory] && export ATK14_ENV=production && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
 	return _exec($cmd,$options);
 }
 
