@@ -168,6 +168,8 @@ class Atk14Sorting implements ArrayAccess{
 	 * @return string the ordering key
 	 */
 	function getOrder($key = null){
+		if(!$this->_Ordering){ return null; } // not even one ordering is set
+
 		if(is_null($key)){
 			$key = $this->_Params->g(ATK14_SORTING_PARAM_NAME,"string");
 		}
@@ -184,6 +186,7 @@ class Atk14Sorting implements ArrayAccess{
 	 */
 	private function _getDefaultKey(){
 		$_ar = array_keys($this->_Ordering);
+		if(!$_ar){ return null; }
 		return "$_ar[0]";
 	}
 
@@ -213,7 +216,7 @@ class Atk14Sorting implements ArrayAccess{
 	 * Returns the string representation of the objects' instance.
 	 *
 	 */
-	function toString(){ return $this->getOrder(); }
+	function toString(){ return (string)$this->getOrder(); }
 
 	/**
 	 * Magical method to get string representation of the objects' instance.

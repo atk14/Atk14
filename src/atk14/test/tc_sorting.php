@@ -1,6 +1,9 @@
 <?php
 class TcSorting extends TcBase{
 	function test(){
+		$sorting = new Atk14Sorting();
+		$this->assertEquals("","$sorting");
+
 		// -- default
 		$sorting = $this->_get_sorting();
 		$this->assertEquals("id ASC",$sorting->getOrder());

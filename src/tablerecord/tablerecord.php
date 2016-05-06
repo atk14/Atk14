@@ -633,7 +633,7 @@ class TableRecord extends inobj {
 			$query = "SELECT $this->_IdFieldName FROM $query";
 		}
 
-		if(isset($options["order"])){
+		if(strlen($options["order"])>0){
 			$query .= " ORDER BY $options[order]";
 		}
 
