@@ -58,12 +58,12 @@ $stage = isset($stage_explicit) ? $stage_explicit : $FIRST_STAGE->name;
 
 if($stage_explicit && !isset($STAGES[$stage_explicit])){
 	echo "sorry, in ./config/deploy.yml I have no information about a stage $stage_explicit\n";
-	exit(1);
+	_exit_with_errors();
 }
 
 if(!isset($STAGES[$stage])){
 	echo "sorry, in ./config/deploy.yml I have no information about a stage $stage\n";
-	exit(1);
+	_exit_with_errors();
 }
 
 // Listing all stages
