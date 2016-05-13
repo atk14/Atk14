@@ -53,7 +53,7 @@ if(!$STAGES){
 	_exit_with_errors();
 }
 
-$stage_explicit = !preg_match('/^-/',$argv[sizeof($argv)-1]) ? $argv[sizeof($argv)-1] : null;
+$stage_explicit = (sizeof($argv)>1 && !preg_match('/^-/',$argv[sizeof($argv)-1])) ? $argv[sizeof($argv)-1] : null; // the last parameter without '-' at the beginning
 $stage = isset($stage_explicit) ? $stage_explicit : $FIRST_STAGE->name;
 
 if($stage_explicit && !isset($STAGES[$stage_explicit])){
