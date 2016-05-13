@@ -39,6 +39,7 @@ class Atk14DeploymentStage{
 			"url" => "", // e.g. http://www.example.com; just for information
 			"user" => null,
 			"server" => null,
+			"port" => null, // ssh port, e.g. "2222"
 			"directory" => null,
 			"create_maintenance_file" => "false",
 			"deploy_via" => "git_push", // there is only one way
