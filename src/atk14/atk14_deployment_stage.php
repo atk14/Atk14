@@ -36,10 +36,9 @@ class Atk14DeploymentStage{
 		$out = array();
 	
 		$very_very_defauls = array(
-			"url" => "", // just for information; e.g. "http://www.example.com/"
+			"url" => "", // e.g. http://www.example.com; just for information
 			"user" => null,
 			"server" => null,
-			"port" => null, // ssh port, e.g. "2222"
 			"directory" => null,
 			"create_maintenance_file" => "false",
 			"deploy_via" => "git_push", // there is only one way
@@ -90,7 +89,11 @@ class Atk14DeploymentStage{
 	}
 
 	function toArray(){
-		return $this->data->toArray();
+		// it's fine to have the name on the first position :)
+		$data = $this->data->toArray();
+		$out = array("name" => $data["name"]);
+		unset($data["name"]);
+		return $out + $data;
 	}
 
 	function __toString(){

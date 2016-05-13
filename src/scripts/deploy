@@ -7,7 +7,7 @@
  *	$ ./scripts/deploy --help
  */
 
-$arguments = getopt("hl",array("help","list"));
+$arguments = getopt("hld",array("help","list","dump"));
 
 if(isset($arguments["h"]) || isset($arguments["help"])){
 $script = $argv[0];
@@ -29,6 +29,14 @@ To deploy on the specific stage
 To list available stages
  $ $script -l
  $ $script --list
+
+To dump deployment recipes for all stages
+ $ $script -d
+ $ $script --dump
+
+To dump the deployment recipe for a given stage
+ $ $script -d production
+ $ $script --dump production
 ");
 exit(0);
 }
@@ -45,18 +53,35 @@ if(!$STAGES){
 	_exit_with_errors();
 }
 
-$stage = isset($argv[1]) ? $argv[1] : $FIRST_STAGE->name;
+$stage_explicit = !preg_match('/^-/',$argv[sizeof($argv)-1]) ? $argv[sizeof($argv)-1] : null;
+$stage = isset($stage_explicit) ? $stage_explicit : $FIRST_STAGE->name;
 
-if(isset($arguments["l"]) || isset($arguments["list"])){
-	foreach($STAGES as $name => $stage){
-		echo "$name\n";
-	}
-	exit(0);
+if($stage_explicit && !isset($STAGES[$stage_explicit])){
+	echo "sorry, in ./config/deploy.yml I have no information about a stage $stage_explicit\n";
+	exit(1);
 }
 
 if(!isset($STAGES[$stage])){
 	echo "sorry, in ./config/deploy.yml I have no information about a stage $stage\n";
-	_exit_with_errors();
+	exit(1);
+}
+
+// Listing all stages
+if(isset($arguments["l"]) || isset($arguments["list"])){
+	foreach($STAGES as $_stage){
+		if($stage_explicit && $_stage->name!=$stage_explicit){ continue; }
+		echo "$_stage->name\n";
+	}
+	exit(0);
+}
+
+// Dumping a certain stage or all stages
+if(isset($arguments["d"]) || isset($arguments["dump"])){
+	foreach($STAGES as $_stage){
+		if($stage_explicit && $_stage->name!=$stage_explicit){ continue; }
+		echo miniYAML::Dump($_stage->toArray());
+	}
+	exit(0);
 }
 
 $config = $STAGES[$stage]->toArray();
