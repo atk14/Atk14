@@ -129,14 +129,14 @@ class Atk14Form extends Form
 	 *
 	 * Must be null when values are not set
 	 */
-	private $atk14_initial_values = null;
+	protected $atk14_initial_values = null;
 
 	/**
 	 * Options passed to constructor
 	 *
 	 * @var array
 	 */
-	private $atk14_constructor_options = array();
+	protected $atk14_constructor_options = array();
 
 	/**
 	 * @access private
@@ -163,7 +163,7 @@ class Atk14Form extends Form
 	 *
 	 * @var string
 	 */
-	private $atk14_method = "post";
+	protected $atk14_method = "post";
 
 	/**
 	 * Flag signalling that form is protected against csrf attack.
