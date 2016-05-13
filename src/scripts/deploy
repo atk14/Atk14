@@ -77,10 +77,12 @@ if(isset($arguments["l"]) || isset($arguments["list"])){
 
 // Dumping a certain stage or all stages
 if(isset($arguments["d"]) || isset($arguments["dump"])){
+	$dump_data = array();
 	foreach($STAGES as $_stage){
 		if($stage_explicit && $_stage->name!=$stage_explicit){ continue; }
-		echo miniYAML::Dump($_stage->toArray());
+		$dump_data[$_stage->name] = $_stage->toArray();
 	}
+	echo miniYAML::Dump($dump_data);
 	exit(0);
 }
 
