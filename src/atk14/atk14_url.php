@@ -48,9 +48,13 @@ class Atk14Url{
 	 * - page_description
 	 * - get_params - associative array of params sent in request
 	 */
-	static function RecognizeRoute($requested_uri){
-		global $ATK14_GLOBAL,$_GET;
-		settype($uri,"string");
+	static function RecognizeRoute($requested_uri,$options = array()){
+		global $ATK14_GLOBAL;
+
+		$requested_uri = (string)$requested_uri;
+		$options = array(
+			"get_params" => $GLOBALS["_GET"],
+		);
 
 		// /domain-examination/plovarna.cz/?small=1 --> domain-examination/plovarna.cz
 		// /domain-examination/plovarna.cz?small=1 --> domain-examination/plovarna.cz
@@ -78,7 +82,7 @@ class Atk14Url{
 		$_uri = $uri;
 		if($trailing_slash){ $_uri .= "/"; }
 		if(!preg_match('/^\//',$_uri)){ $_uri = "/$_uri"; }
-		$_params = new Dictionary($_GET);
+		$_params = new Dictionary($options["get_params"]);
 		foreach(Atk14Url::GetRouters($namespace) as $router){
 			$router->namespace = $namespace;
 			$router->params = $_params;
@@ -144,7 +148,7 @@ class Atk14Url{
 		Atk14Locale::Initialize($out["lang"]);
 
 		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
-		$get_params = array_merge($_GET,$get_params);
+		$get_params = array_merge($options["get_params"],$get_params);
 
 		return Atk14Url::_FindForceRedirect(array(
 			"namespace" => $namespace,
@@ -168,7 +172,7 @@ class Atk14Url{
 	 * @param array $out
 	 * @param string $requested_uri
 	 */
-	static function _FindForceRedirect($out,$requested_uri){
+	static protected function _FindForceRedirect($out,$requested_uri){
 		// zde muze byt dojit ke zmene $out["lang"]
 		Atk14Locale::Initialize($out["lang"]);
 
@@ -201,7 +205,7 @@ class Atk14Url{
 		return $out;
 	}
 
-	static function _NotFound($namespace){
+	static protected function _NotFound($namespace){
 		global $ATK14_GLOBAL;
 		return array(
 			"namespace" => $namespace,
@@ -442,7 +446,7 @@ class Atk14Url{
 		return $out;
 	}
 
-	static function _EncodeUrlParam($_key,$_value,$options = array()){
+	static protected function _EncodeUrlParam($_key,$_value,$options = array()){
 		if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
 		if(is_array($_value)){
 			// zatim se tu uvazuje pouze s jednorozmernym indexovanym polem
@@ -509,7 +513,7 @@ class Atk14Url{
 		return Atk14Url::_SetRouter_GetRouters($namespace);
 	}
 
-	static function _SetRouter_GetRouters($namespace,$router = null){
+	static protected function _SetRouter_GetRouters($namespace,$router = null){
 		static $ROUTERS;
 		if(!isset($ROUTERS)){ $ROUTERS = array(); }
 		if(!isset($ROUTERS["*"])){ $ROUTERS["*"] = array(); }	
@@ -527,16 +531,29 @@ class Atk14Url{
 	}
 	
 	/**
-	 * @access private
 	 *
 	 */
-	static function _ParamMatches($rule,&$param){
+	static protected function _ParamMatches($rule,&$param){
 		return
 			isset($param) &&
 			(
 				(!$rule["regexp"] && "$rule[value]"==="$param") ||
 				($rule["regexp"] && preg_match($rule["value"],$param))
 			);
+	}
+
+	/**
+	 * $params = Atk14Url::ParseParamsFromUri("/?id=123&format=xml"); // array("id" => "123", "format" => "xml");
+	 */
+	static function ParseParamsFromUri($uri){
+		$out = array();
+		if(preg_match('/\?(.+)$/',$uri,$matches)){
+			foreach(explode('&',$matches[1]) as $item){
+				list($key,$value) = explode("=",$item);
+				$out[urldecode($key)] = urldecode($value);
+			}
+		}
+		return $out;
 	}
 
 }

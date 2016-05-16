@@ -227,6 +227,13 @@ class TcUrl extends TcBase{
 		$this->assertEquals("/sk/fables/detail/?id=22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22, "lang" => "sk"))); // in the router there is no support for sk
 	}
 
+	function test_ParseParamsFromUri(){
+		$this->assertEquals(array(),Atk14Url::ParseParamsFromUri('/'));
+		$this->assertEquals(array(),Atk14Url::ParseParamsFromUri('/cs/main/'));
+		$this->assertEquals(array("id" => "123", "format" => "xml"),Atk14Url::ParseParamsFromUri('/cs/articles/detail/?id=123&format=xml'));
+		$this->assertEquals(array("q" => "klobouček", "offset" => "20"),Atk14Url::ParseParamsFromUri('/cs/articles/?q=klobou%C4%8Dek&offset=20'));
+	}
+
 	function _test_route($request_uri,$expected_ar,$expected_params = array()){
 		$route = atk14url::recognizeroute($request_uri);
 		foreach($expected_ar as $k => $v){
