@@ -234,6 +234,20 @@ class TcUrl extends TcBase{
 		$this->assertEquals(array("q" => "klobouček", "offset" => "20"),Atk14Url::ParseParamsFromUri('/cs/articles/?q=klobou%C4%8Dek&offset=20'));
 	}
 
+	function test_RecognizeRoute(){
+		$GLOBALS["_GET"] = array();
+
+		$data = Atk14Url::RecognizeRoute('/cs/articles/');
+		$this->assertEquals("articles",$data["controller"]);
+		$this->assertEquals("index",$data["action"]);
+		$this->assertEquals(array(),$data["get_params"]);
+
+		$data = Atk14Url::RecognizeRoute('/cs/articles/',array("get_params" => array("q" => "cat", "offset" => "20")));
+		$this->assertEquals("articles",$data["controller"]);
+		$this->assertEquals("index",$data["action"]);
+		$this->assertEquals(array("q" => "cat", "offset" => "20"),$data["get_params"]);
+	}
+
 	function _test_route($request_uri,$expected_ar,$expected_params = array()){
 		$route = atk14url::recognizeroute($request_uri);
 		foreach($expected_ar as $k => $v){

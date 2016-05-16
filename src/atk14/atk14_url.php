@@ -52,7 +52,7 @@ class Atk14Url{
 		global $ATK14_GLOBAL;
 
 		$requested_uri = (string)$requested_uri;
-		$options = array(
+		$options += array(
 			"get_params" => $GLOBALS["_GET"],
 		);
 
