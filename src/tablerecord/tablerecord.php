@@ -279,6 +279,7 @@ class TableRecord extends inobj {
 	 *
 	 * ```
 	 *	$dbmole = Article::GetDbmole();
+	 *	$dbmole_users = User::GetDbmole(); // The DbMole of another class may be different, e.g. it may be connectect to a database of different type
 	 * ```
 		 @return DbMole
 	 */
