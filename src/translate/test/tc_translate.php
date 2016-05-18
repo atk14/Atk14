@@ -180,6 +180,8 @@ class TcTranslate extends TcBase{
 		$str = "Hello".chr(0xC2).chr(0xA0)."world český";
 		$this->assertEquals("Hello world cesky",Translate::Trans($str,"UTF-8","ASCII"));
 
+		$this->assertEquals("4 Giro's passage",Translate::Trans("4 Giro’s passage","UTF-8","ASCII"));
+
 		// TODO: otestovat locale
 		$_LANG_LC_ALL = "cs_CZ.UTF-8";
 		$_LANG_LC_ALL = "en_US.UTF-8";
