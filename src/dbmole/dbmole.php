@@ -1241,20 +1241,23 @@ class DbMole{
 
 		// prevod prip. poli v $bind_ar
 		$b_ar = array();
+		$tr = array();
 		foreach($bind_ar as $key => $value){
 			if(is_array($value)){
-				$replace = array();
+				$new_keys = array();
 				$i = 0;
 				foreach($value as $_v){
 					$b_ar["{$key}_$i"] = $_v;
-					$replace[] = "{$key}_$i";
+					$new_keys[] = "{$key}_$i";
 					$i++;
 				}
-				$query = str_replace($key,"(".join(", ",$replace).")",$query);
+				$tr[$key] = "(".join(", ",$new_keys).")";
 				continue;
 			}
+			$tr[$key] = $key;
 			$b_ar[$key] = $value;
 		}
+		$query = strtr($query,$tr);
 		$bind_ar = $b_ar;
 
 		$this->_reset();

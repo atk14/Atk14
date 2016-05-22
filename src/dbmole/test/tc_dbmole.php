@@ -46,6 +46,19 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals(false,$this->my->parseBoolFromSql("0"));
 	}
 
+	// test for https://github.com/atk14/Atk14/issues/3
+	function test_binding(){
+		$dbmole = $this->pg;
+
+		$dbmole->selectRow("SELECT title FROM test_table WHERE title IN :title OR title=:title_t",array(":title" => array("test","test2"), ":title_t" => "test3"));
+		$this->assertEquals("SELECT title FROM test_table WHERE title IN (:title_0, :title_1) OR title=:title_t",$dbmole->getQuery());
+		$this->assertEquals(array(
+			":title_0" => "'test'",
+			":title_1" => "'test2'",
+			":title_t" => "'test3'",
+		),$dbmole->getBindAr());
+	}
+
 	function test_invalid_bind_ar(){
 		$dbmoles = $this->_get_moles();
 
