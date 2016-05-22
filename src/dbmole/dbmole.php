@@ -1242,8 +1242,10 @@ class DbMole{
 		// prevod prip. poli v $bind_ar
 		$b_ar = array();
 		$tr = array();
+		$arrays_in_bind_ar = false;
 		foreach($bind_ar as $key => $value){
 			if(is_array($value)){
+				$arrays_in_bind_ar = true;
 				$new_keys = array();
 				$i = 0;
 				foreach($value as $_v){
@@ -1257,8 +1259,10 @@ class DbMole{
 			$tr[$key] = $key;
 			$b_ar[$key] = $value;
 		}
-		$query = strtr($query,$tr);
-		$bind_ar = $b_ar;
+		if($arrays_in_bind_ar){
+			$query = strtr($query,$tr);
+			$bind_ar = $b_ar;
+		}
 
 		$this->_reset();
 
