@@ -20,8 +20,12 @@ class TextInput extends Input
 	{
 		if(!isset($this->attrs["class"])){ // pokud nebylo class definovano v konstruktoru
 			!isset($options["attrs"]) && ($options["attrs"] = array());
+			$class = "text form-control"; // form-control is there for Bootstrap
+			if($this->input_type!="text"){
+				$class = "$this->input_type $class"; // "number text form-control"
+			}
 			$options["attrs"] = forms_array_merge(array(
-				"class" => "text form-control" // form-control is there for Bootstrap
+				"class" => $class,
 			),$options["attrs"]);
 		}
 		return parent::render($name, $value, $options);
