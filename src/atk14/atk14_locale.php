@@ -44,18 +44,21 @@ class Atk14Locale{
 	 * Formats Date
 	 * 
 	 * <code>
-	 * Atk14Locale::FormatDate("1982-12-31"); // "31.12.1982"
+	 * Atk14Locale::FormatDate("1982-12-31"); // "31.12.1982", according to the currently set language
+	 * Atk14Locale::FormatDate("1982-12-31","j.n."); // "31.12."
 	 * </code>
 	 *
 	 * @param string $iso_date date in ISO format
 	 * @return string date in localized format
 	 * @static
 	 */
-	static function FormatDate($iso_date){
+	static function FormatDate($iso_date,$pattern = ""){
 		if(strlen($iso_date)==0){ return ""; }
 
-		$pattern = _("atk14.date_format");
-		if($pattern == "atk14.date_format"){ $pattern = "j.n.Y"; }
+		if(!strlen($pattern)){
+			$pattern = _("atk14.date_format");
+			if($pattern == "atk14.date_format"){ $pattern = "j.n.Y"; }
+		}
 
 		return date($pattern,strtotime($iso_date));
 	}
