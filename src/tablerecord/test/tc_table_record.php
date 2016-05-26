@@ -1,7 +1,7 @@
 <?php
 class TcTableRecord extends TcBase{
 
-	function _test_vytvareni_zaznamu(){
+	function test_record_creation(){
 		$this->_empty_test_table();
 
 		$record = TestTable::CreateNewRecord(array());
@@ -21,6 +21,21 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals("test",$record->getValue("title"));
 		$this->assertNull($record->getValue("price"));
 		$this->assertEquals(10,$record->getValue("an_integer"));
+	}
+
+	function test_exports(){
+		$this->_prepare_test_record();
+		$rec = TestTable::GetInstanceById(2);
+
+		$values = $rec->getValues();
+		$array = $rec->toArray();
+
+		$this->assertEquals($values,$array);
+
+		$values = $rec->getValues(array("return_id" => false));
+
+		$this->assertEquals(false,isset($values["id"]));
+		$this->assertEquals(true,isset($array["id"]));
 	}
 
 	function test_use_cache(){

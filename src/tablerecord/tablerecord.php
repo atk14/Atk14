@@ -1096,7 +1096,7 @@ class TableRecord extends inobj {
 	 * @return array
 	 */
 	function getValues($options = array()){
-	  $options += array("return_id" => false);
+	  $options += array("return_id" => true);
 		$this->_readValueIfWasNotRead(array_keys($this->_getTableStructure()));
 		$out = $this->_RecordValues;
 		if(!$options["return_id"]){
