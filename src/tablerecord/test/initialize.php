@@ -5,17 +5,10 @@ require("../../dbmole/pgmole.php");
 require("../../dbmole/mysqlmole.php");
 require("../../string4/load.php");
 require("../../files/load.php");
+require("../../class_autoload/load.php");
 
 require("../load.php");
-require("./test_table.php");
-require("./my_test_table.php");
-require("./article.php");
-require("./image.php");
-require("./author.php");
-require("./redactor.php");
-require("./string_like.php");
-require("./string_much_like.php");
-require("./int_like.php");
+class_autoload(__DIR__ . "/models/");
 
 function &dbmole_connection($dbmole){
 	static $connections = array();

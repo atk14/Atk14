@@ -42,12 +42,12 @@ class ObjectCacher {
 		static $object_cachers = array();
 
 		assert(class_exists($class)); // this needs to be called before lowering the name of the class (autoload issue)
-		$class = strtolower($class);
-		if(!key_exists($class, self::$InitilizedCachers)) {
+		$class_lo = strtolower($class);
+		if(!key_exists($class_lo, self::$InitilizedCachers)) {
 			if(!$create) { $null = null; return $null; }
-			self::$InitilizedCachers[$class] = $class::CreateObjectCacher();
+			self::$InitilizedCachers[$class_lo] = $class::CreateObjectCacher();
 		}
-		return self::$InitilizedCachers[$class];
+		return self::$InitilizedCachers[$class_lo];
 	}
 
 	static function &GetAllInitializedCachers(){
