@@ -862,6 +862,20 @@ class Atk14Controller{
 
 	}
 
+	/**
+	 * Caches output of the given action(s)
+	 *
+	 * It's meant to be called in _before_filter()
+	 *
+	 * <code>
+	 *		function _before_filter(){
+	 * 			// caches index action only when there is no parameter in URL
+	 *			if($this->action=="index" && $this->params->isEmpty()){
+	 *				$this->_caches_action();
+	 *			}
+	 *		}
+	 * </code>
+	 */
 	function _caches_action($options = array()){
 		$options = array_merge(array(
 			"action" => $this->action,
