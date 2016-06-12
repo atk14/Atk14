@@ -104,6 +104,8 @@ class UrlFetcher {
 	protected $_ConstructorAdditionalHeaders = array(); // these headers never disappear
 	protected $_AdditionalHeaders = array(); // these headers disappear upon every new request, TODO: more explanation & tests
 
+	protected $_UserAgent = "UrlFetcher";
+
 	/**
 	 * @ignore
 	 */
@@ -154,6 +156,7 @@ class UrlFetcher {
 		$options = array_merge(array(
 			"additional_headers" => array(),
 			"max_redirections" => $this->_MaxRedirections,
+			"user_agent" => "UrlFetcher ".URL_FETCHER_VERSION // "UrlFetcher 0.2"
 		),$options);
 
 		if(strlen($url)>0){
@@ -162,6 +165,7 @@ class UrlFetcher {
 
 		$this->_ConstructorAdditionalHeaders = $options["additional_headers"];
 		$this->_MaxRedirections = $options["max_redirections"];
+		$this->_UserAgent = $options["user_agent"];
 	}
 	
 	/**
@@ -569,7 +573,7 @@ class UrlFetcher {
 		if((!$this->_Ssl && $this->_Port!=80) || ($this->_Ssl && $this->_Port!=443)){ $_server.":$this->_Port"; }
 		$out[] = "Host: $_server";
 		$out[] = "Connection: close";
-		$out[] = "User-Agent: UrlFetcher ".URL_FETCHER_VERSION;
+		$out[] = "User-Agent: $this->_UserAgent";
 		if($this->_AuthType=="basic"){
 			$out[] = "Authorization: Basic ".base64_encode("$this->_Username:$this->_Password");
 		}

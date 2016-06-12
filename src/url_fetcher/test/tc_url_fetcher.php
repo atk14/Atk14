@@ -1,11 +1,11 @@
 <?php
 class tc_url_fetcher extends tc_base{
-	function ___test(){
+	function test(){
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/dungeon-master.png");
 		$this->assertTrue($f->fetchContent());
 		$this->assertFalse($f->errorOccurred());
 		$this->assertTrue($f->found());
-		$this->assertEquals("http://jarek.plovarna.cz/unit-testing/dungeon-master.png");
+		$this->assertEquals("http://jarek.plovarna.cz/unit-testing/dungeon-master.png",$f->getUrl());
 		$this->assertEquals(11462,strlen($f->getContent()));
 		$this->assertEquals("c4f99bdb6a4feb3b41b1bcd56a4d7aa3",md5($f->getContent()));
 		$this->assertEquals("image/png",$f->getContentType());
@@ -31,7 +31,7 @@ class tc_url_fetcher extends tc_base{
 
 		// notice: connecting to port 8124 causes warning messages appearance 
 		$f = new UrlFetcher("http://127.0.0.1:8124/pretty-stupid-port");
-		$this->assertFalse($f->found());
+		@$this->assertFalse($f->found());
 		$this->assertEquals(null,$f->getStatusCode());
 		$this->assertEquals(null,$f->getContent());
 
@@ -42,9 +42,23 @@ class tc_url_fetcher extends tc_base{
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/zero_data_zero.dat");
 		$this->assertEquals(6,strlen($f->getContent()));
 		$this->assertEquals(chr(0)."data".chr(0),$f->getContent());
+
+		// Default User-Agent
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/dungeon-master.png");
+		$this->assertTrue($f->found());
+		$headers = $f->getRequestHeaders();
+		$this->assertContains("User-Agent: UrlFetcher",$headers);
+		$this->assertNotContains("User-Agent: curl",$headers);
+		
+		// Custom User-Agent
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/dungeon-master.png",array("user_agent" => "curl/7.35.0"));
+		$this->assertTrue($f->found());
+		$headers = $f->getRequestHeaders();
+		$this->assertNotContains("User-Agent: UrlFetcher",$headers);
+		$this->assertContains("User-Agent: curl",$headers);
 	}
 
-	function ___test_authorization(){
+	function test_authorization(){
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/private/");
 		//$this->assertFalse($f->fetchContent());
 		$this->assertFalse($f->found());
@@ -69,14 +83,14 @@ class tc_url_fetcher extends tc_base{
 		$this->assertTrue((bool)preg_match("/Welcome in private area!/",$f->getContent()));
 	}
 
-	function ___test_ssl(){
+	function test_ssl(){
 		$f = new UrlFetcher("https://admin.plovarna.cz/unit-testing.php");
 		$this->assertTrue($f->found());
 		$this->assertTrue((bool)preg_match("/You are on the ssl/",$f->getContent()));
 		$this->assertTrue((bool)preg_match("/Request method is GET/",$f->getContent()));
 	}
 
-	function ___test_post(){
+	function test_post(){
 		$this->_test_post("foo=bar&foo_2=bar_too");
 		$this->_test_post(array(
 			"foo" => "bar",
@@ -84,7 +98,7 @@ class tc_url_fetcher extends tc_base{
 		));
 	}
 
-	function ___test_additiona_headers(){
+	function test_additiona_headers(){
 		$f = new UrlFetcher("http://jarek.plovarna.cz/",array(	
 			"additional_headers" => array(
 				"X-App-Version: 1.2",
@@ -101,11 +115,13 @@ class tc_url_fetcher extends tc_base{
 		$this->assertTrue((bool)preg_match("/Request method is POST/",$f->getContent()));
 
 		$headers = $f->getRequestHeaders();
+		$this->assertContains("User-Agent: UrlFetcher",$headers);
+		$this->assertNotContains("User-Agent: curl",$headers);
 		$this->assertTrue((bool)preg_match("/Content-Length: 21/",$headers));
 		$this->assertTrue((bool)preg_match("/Content-Type: application\\/x-www-form-urlencoded/",$headers));
 	}
 
-	function ___test_get_content_charset(){
+	function test_get_content_charset(){
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/latin2.php");
 		$this->assertTrue($f->found());
 		$this->assertEquals("text/html",$f->getContentType());
