@@ -602,10 +602,16 @@ class UrlFetcher {
 	 */
 	protected function _fwriteStream(&$fp, &$string) {
 		$fwrite = 0;
-		for ($written = 0; $written < strlen($string); $written += $fwrite) {
+		for($written = 0; $written < strlen($string); $written += $fwrite){
 			$fwrite = fwrite($fp, substr($string, $written));
-			if ($fwrite === false) {
+
+			if($fwrite === false){
 				return $written;
+			}
+
+			if(!$fwrite){ // 0 bytes written; error code  11:  Resource temporarily unavailable
+				usleep(10000);
+				continue;
 			}
 		}
 		return $written;
