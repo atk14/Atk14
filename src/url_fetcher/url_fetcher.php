@@ -268,7 +268,7 @@ class UrlFetcher {
 		stream_set_blocking($f,0);
 		$_data = $this->_RequestHeaders;
 		if($this->_RequestMethod=="POST"){ $_data .= $this->_PostData; }
-		$stat = fwrite($f,$_data,strlen($_data));
+		$stat = $this->_fwriteStream($f,$_data);
 
 		if(!$stat || $stat!=strlen($_data)){
 			fclose($f);
@@ -517,7 +517,7 @@ class UrlFetcher {
 	/**
 	 * @ignore
 	 */
-	function _setError($error_message){
+	protected function _setError($error_message){
 		$this->_ErrorMessage = $error_message;
 		$this->_Fetched = false;
 		return false;
@@ -526,7 +526,7 @@ class UrlFetcher {
 	/**
 	 * @ignore
 	 */
-	function _setUrl($url){
+	protected function _setUrl($url){
 		settype($url,"string");
 	
 		$this->_reset();
@@ -566,7 +566,7 @@ class UrlFetcher {
 	/**
 	 * @ignore
 	 */
-	function _buildRequestHeaders(){
+	protected function _buildRequestHeaders(){
 		$out = array();
 		$out[] = "$this->_RequestMethod $this->_Uri HTTP/1.0";
 		$_server = $this->_Server;
@@ -589,5 +589,25 @@ class UrlFetcher {
 		$out[] = "";
 		$out[] = "";
 		$this->_RequestHeaders = join("\r\n",$out);
+	}
+
+
+	/**
+	 * Writes string to a network socket
+	 *
+	 * See http://php.net/fwrite
+	 * Note: Writing to a network stream may end before the whole string is written. Return value of fwrite() may be checked:
+	 *
+	 * @ignore
+	 */
+	protected function _fwriteStream(&$fp, &$string) {
+		$fwrite = 0;
+		for ($written = 0; $written < strlen($string); $written += $fwrite) {
+			$fwrite = fwrite($fp, substr($string, $written));
+			if ($fwrite === false) {
+				return $written;
+			}
+		}
+		return $written;
 	}
 }
