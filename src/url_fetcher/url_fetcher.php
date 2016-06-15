@@ -260,8 +260,15 @@ class UrlFetcher {
 
 		$errno = null;
 		$errstr = "";
-		$_ssl = $this->_Ssl ? "ssl://" : "";
-		$f = fsockopen("$_ssl$this->_Server",$this->_Port,$errno,$errstr,$this->_SocketTimeout);
+		$_proto = "tcp";
+		$context_options = array();
+		if($this->_Ssl){
+			$_proto = "ssl";
+			$context_options["ssl"] = array('verify_peer' => false);
+		}
+		$context = stream_context_create($context_options);
+		$f = stream_socket_client("$_proto://$this->_Server:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);
+
 		if(!$f){
 			return $this->_setError("failed to open socket: $errstr [$errno]");
 		}
