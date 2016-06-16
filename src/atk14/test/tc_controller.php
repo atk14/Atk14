@@ -182,8 +182,40 @@ class TcController extends TcBase{
 		$this->assertEquals(200,$client->getStatusCode());
 		$content_2 = $client->getContent();
 
+		$client->get("testing/test_caching",array("alt" => "alt_cache"));
+		$this->assertEquals("text/html",$client->getContentType());
+		$this->assertEquals("utf-8",$client->getContentCharset());
+		$this->assertEquals(200,$client->getStatusCode());
+		$content_3 = $client->getContent();
+
+		$client->get("testing/test_caching",array("alt" => "alt_cache"));
+		$this->assertEquals("text/html",$client->getContentType());
+		$this->assertEquals("utf-8",$client->getContentCharset());
+		$this->assertEquals(200,$client->getStatusCode());
+		$content_4 = $client->getContent();
+
+		$client->get("testing/test_caching",array("alt" => "////\\////"));
+		$this->assertEquals("text/html",$client->getContentType());
+		$this->assertEquals("utf-8",$client->getContentCharset());
+		$this->assertEquals(200,$client->getStatusCode());
+		$content_5 = $client->getContent();
+
+		$client->get("testing/test_caching",array("alt" => "////\\////"));
+		$this->assertEquals("text/html",$client->getContentType());
+		$this->assertEquals("utf-8",$client->getContentCharset());
+		$this->assertEquals(200,$client->getStatusCode());
+		$content_6 = $client->getContent();
+
 		$this->assertContains("random_value: ",$content_1);
 		$this->assertEquals($content_1,$content_2);
+		$this->assertContains("random_value: ",$content_3);
+		$this->assertEquals($content_3,$content_4);
+		$this->assertContains("random_value: ",$content_5);
+		$this->assertEquals($content_5,$content_6);
+
+		$this->assertNotEquals($content_1,$content_3);
+		$this->assertNotEquals($content_1,$content_5);
+		$this->assertNotEquals($content_3,$content_5);
 
 		$client->get("testing/test_caching",array("disable_cache" => "1"));
 		$this->assertEquals("text/html",$client->getContentType());

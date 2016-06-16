@@ -963,7 +963,15 @@ class Atk14Controller{
 		$dir = TEMP."/atk14_caches/actions/$namespace/$this->controller/$this->action/$this->lang";
 		if($this->request->xhr()){ $dir .= "_xhr"; }
 		$filename = "$dir/cache";
-		if($ar["salt"]){ $filename .= "_$ar[salt]"; }
+		if($ar["salt"]){
+			if((is_string($ar["salt"]) || is_numeric($ar["salt"])) && preg_match('/^[a-zA-Z0-9_\.-]{1,60}$/',$ar["salt"])){
+				$suffix = $ar["salt"];
+			}else{
+				// the salt just can't be fit directly into a filename
+				$suffix = md5(serialize($ar["salt"]));
+			}
+			$filename .= "_$suffix";
+		}
 
 		return array(
 			"dir" => $dir,
