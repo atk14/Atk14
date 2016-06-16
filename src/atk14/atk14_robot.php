@@ -73,6 +73,13 @@ class Atk14Robot{
 	var $default_log_file = "";
 
 	/**
+	 * Whether lock the current process to prevent another start of the same robot or not
+	 *
+	 * @var boolean
+	 */
+	var $locking_enabled = true;
+
+	/**
 	 * Constructor
 	 *
 	 */
@@ -99,13 +106,13 @@ class Atk14Robot{
 
 		$this->logger->start();
 
-		Lock::Mklock($robot_name,$this->logger);
+		$this->locking_enabled && Lock::Mklock($robot_name,$this->logger);
 
 		$this->beforeRun();
 		$this->run();
 		$this->afterRun();
 
-		Lock::Unlock($robot_name,$this->logger);
+		$this->locking_enabled && Lock::Unlock($robot_name,$this->logger);
 
 		$this->logger->stop();
 		$this->logger->flush_all();
