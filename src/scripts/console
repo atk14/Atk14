@@ -33,5 +33,5 @@ if [ -t 0 ]; then
 else
 	# STDIN is attached to a pipe
 	# An opening php tag needs to be added before the content of the STDIN
-	exec cat - | sed  '1 i\<?php' | php --php-ini "./scripts/_console/php.ini"
+	(echo -n '<?php ' && cat) | exec php --php-ini "./scripts/_console/php.ini"
 fi
