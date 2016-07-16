@@ -176,10 +176,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 */
 	function append($record){
 		$o = $this->_options;
-		$rank = $this->_dbmole->selectSingleValue("SELECT MAX($o[rank_field_name]) FROM $o[table_name] WHERE $o[owner_field_name]=:owner",array(":owner" => $this->_owner));
-		$rank = isset($rank) ? $rank+1 : 0;
-
-		$this->_add($record,$rank);
+		$this->_add($record);
 	}
 
 	/**
@@ -223,21 +220,30 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * @param TableRecord $record
 	 * @param integer $rank
 	 */
-	protected function _add($record,$rank, $options = array()){
-		$options += array(
-			"__auto_correct_ranking__" => true
-		);
+	protected function _add($record,$rank = null){
+		$o = $this->_options;
+
+		if(is_null($rank)){
+			$_rank = $this->_dbmole->selectSingleValue("SELECT MAX($o[rank_field_name])+1 FROM $o[table_name] WHERE $o[owner_field_name]=:owner",array(":owner" => $this->_owner));
+			$_rank = isset($_rank) ? $_rank+1 : 0;
+		}else{
+			$_rank = $rank;
+			$this->_correctRanking();
+		}
 
 		$o = $this->_options;
+		if(!is_null($rank)){
+			$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=$o[rank_field_name]+1 WHERE $o[owner_field_name]=:owner AND $o[rank_field_name]>=:rank",array(
+				":owner" => $this->_owner,
+				":rank" => $rank,
+			));
+		}
 		$this->_dbmole->insertIntoTable($o["table_name"],array(
 			$o["id_field_name"] => $this->_dbmole->selectSequenceNextval($o["sequence_name"]),
 			$o["owner_field_name"] => $this->_owner,
 			$o["subject_field_name"] => $record,
-			$o["rank_field_name"] => $rank,
+			$o["rank_field_name"] => $_rank,
 		));
-		if($options['__auto_correct_ranking__']) {
-			$this->_correctRanking();
-		}
 		$this->_clearCache();
 	}
 
@@ -252,7 +258,6 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 			$o[owner_field_name]=:owner AND
 			$o[subject_field_name]=:record
 		",array(":owner" => $this->_owner,":record" => $record));
-		$this->_correctRanking();
 		$this->_clearCache();
 	}
 
@@ -342,9 +347,11 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		",array(
 			":ids_to_read" => $ids_to_read
 		));
+		$rank = 0;
 		foreach($rows as $row){
-			self::$CACHE[$c_key][$row["owner_id"]][] = new TableRecord_ListerItem($this,$row);
+			self::$CACHE[$c_key][$row["owner_id"]][] = new TableRecord_ListerItem($this,$row,$rank);
 			Cache::Prepare($this->getClassNameOfRecords(),$row["record_id"]);
+			$rank++;
 		}
 
 		return self::$CACHE[$c_key][$owner_id];
@@ -408,34 +415,31 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	function setRecords($records){
 
 		$records = array_map(
-			function($v) {return is_object($v)?$v->getId():$v;},
+			function($v) { return is_object($v)?$v->getId():$v; },
 		$records);
 		$insert = array();
 
 		$rec = reset($records);
 		foreach($this->getItems() as $item){
 			if($rec === false){
-				$item->destroy(array("__auto_correct_ranking__" => false));
+				$item->destroy();
 				continue;
 			}
 			if($item->getRecordId()!=$rec) {
 					$insert[] = array($rec, $item->getRank());
-					$item->destroy(array("__auto_correct_ranking__" => false));
+					$item->destroy();
 			}
 			$rec = next($records);
 		}
 
 		foreach($insert as $i) {
-			$this->_add($i[0], $i[1], array("__auto_correct_ranking__" => false));
+			$this->_add($i[0], $i[1]);
 		}
 
 		while($rec !== false){
 			$this->append($rec);
 			$rec = next($records);
 		}
-
-		// there is no need to correct ranking 
-		//$this->_correctRanking();
 
 		$this->_clearCache();
 	}
@@ -635,12 +639,13 @@ class TableRecord_ListerItem{
 	 * @param array $row_data
 	 * @access private
 	 */
-	function TableRecord_ListerItem(&$lister,$row_data){
+	function __construct(&$lister,$row_data,$rank){
 		$this->_lister = &$lister;
 		$this->_options = $lister->_options;
 		$this->_row_data = $row_data;
 		$this->_owner = &$lister->_owner;
 		$this->_dbmole = &$lister->_dbmole;
+		$this->_rank = (int)$rank;
 	}
 
 	/**
@@ -649,7 +654,8 @@ class TableRecord_ListerItem{
 	 * @return integer
 	 */
 	function getRank(){
-		return (int)$this->_g("rank");
+		return $this->_rank;
+		//return (int)$this->_g("rank");
 	}
 
 	/**
@@ -669,9 +675,16 @@ class TableRecord_ListerItem{
 	 * @param integer $rank
 	 */
 	function setRank($rank){
-		$o = $this->_options;
 		settype($rank,"integer");
+		$o = $this->_options;
+
 		if($rank==$this->getRank()){ return; }
+
+		if($rank<0){ $rank = 0; }
+		if($rank>=($c = $this->_lister->count())){ $rank = $c-1; }
+
+		$this->_lister->_correctRanking();
+
 		if($rank>$this->getRank()){
 			$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=$o[rank_field_name]-1 WHERE $o[rank_field_name]<=:rank AND $o[owner_field_name]=:owner AND $o[id_field_name]!=:id",array(
 				":rank" => $rank,
@@ -689,8 +702,11 @@ class TableRecord_ListerItem{
 			":rank" => $rank,
 			":id" => $this,
 		));
-		$this->_lister->_correctRanking($this->_g("owner_id"));
+
+		$this->_lister->_correctRanking();
+
 		$this->_s("rank",$rank);
+		$this->_rank = $rank;
 	}
 
 	/**
@@ -728,21 +744,12 @@ class TableRecord_ListerItem{
 
 	/**
 	 * Destroys item with associated record.
-	 *
-	 * @param array $options only __auto_correct_ranking__  can be set to (not) correct ranking of other items. Defaults to true
 	 */
-	function destroy($options = array()){
-		$options = array_merge(array(
-			"__auto_correct_ranking__" => true,
-		),$options);
+	function destroy(){
 		$o = $this->_options;
 		$this->_dbmole->doQuery("DELETE FROM $o[table_name] WHERE $o[id_field_name]=:id",array(
 			":id" => $this,
 		));
-
-		if($options["__auto_correct_ranking__"]){
-			$this->_lister->_correctRanking($this->_g("owner_id"));
-		}
 	}
 
 	/**
