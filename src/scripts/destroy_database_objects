@@ -123,7 +123,27 @@ function get_list_of_sequencies($dbmole,$schema){
 	if(!$dbmole->usesSequencies()){
 		return array();
 	}
-	return $dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences WHERE schemaname=:schema",array(":schema" => $schema));
+
+	//return $dbmole->selectIntoArray("SELECT relname FROM pg_statio_user_sequences WHERE schemaname=:schema",array(":schema" => $schema));
+
+	// https://github.com/atk14/Atk14/issues/4
+	return $dbmole->selectIntoArray("
+		SELECT c.relname
+		FROM pg_class c, pg_user u
+		WHERE
+			c.relowner = u.usesysid AND
+			c.relkind = 'S' AND
+			u.usename=:owner AND
+			relnamespace IN (
+				SELECT oid
+				FROM pg_namespace
+				WHERE
+					nspname = :schema
+			)
+	",array(
+		":owner" => get_database_user($dbmole),
+		":schema" => $schema,
+	));
 }
 
 function drop_table_sql($dbmole,$schema,$table){
