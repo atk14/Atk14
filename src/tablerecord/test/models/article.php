@@ -1,7 +1,10 @@
 <?php
 class Article extends TableRecord{
+
 	function __construct(){
-		parent::__construct("articles");
+		parent::__construct("articles",array(
+			"do_not_read_values" => array("body")
+		));
 	}
 
 	static function GetNextId(){

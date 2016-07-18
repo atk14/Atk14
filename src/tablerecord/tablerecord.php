@@ -91,7 +91,7 @@ class TableRecord extends inobj {
 	 * @var array
 	 * @access private
 	 */
-	protected $_DoNotReadValues = array(); // pole, jejiz hodnoty se nemaji nacitat behem vytvareni instanci; array("image_body")
+	static protected $_DoNotReadValues = array(); // pole, jejiz hodnoty se nemaji nacitat behem vytvareni instanci; array("image_body")
 
 	/**
 	 * Values contained in a table record.
@@ -150,7 +150,7 @@ class TableRecord extends inobj {
 			$options["sequence_name"] = $this->_DetermineSequenceName();
 		}
 		$this->_SequenceName = $options["sequence_name"];
-		$this->_DoNotReadValues = $options["do_not_read_values"];
+		self::$_DoNotReadValues = $options["do_not_read_values"];
 
 		$structure = $this->_getTableStructure();
 
@@ -160,12 +160,6 @@ class TableRecord extends inobj {
 			$options["id_field_type"] = preg_match('/char/i',$structure[$this->_IdFieldName]) ? "string" : "integer";
 		}
 		$this->_IdFieldType = $options["id_field_type"];
-
-		// all values of the objects should be null
-		// TODO: seems to be useless -> refactoring
-		foreach(array_keys($structure) as $_key){
-			$this->_RecordValues[$_key] = null;
-		}
 
 		if(!isset($DEFAULT_OPTIONS[$class_name])){
 			// things may be a little faster next time
@@ -405,7 +399,7 @@ class TableRecord extends inobj {
 	 * @param string $key
 	 * @return bool
 	 */
-	function hasKey($key){ return in_array((string)$key,array_keys($this->_RecordValues)); }
+	function hasKey($key){ return in_array((string)$key,array_keys($this->_getTableStructure())); }
 
 	/**
 	 * getBelongsTo.
@@ -1135,7 +1129,7 @@ class TableRecord extends inobj {
 	 * @return array
 	 */
 	function getKeys(){
-		return array_keys($this->_RecordValues);
+		return array_keys($this->_getTableStructure());
 	}
 
 
@@ -1322,16 +1316,18 @@ class TableRecord extends inobj {
 	}
 
 	/**
+	 * $this->_readValueIfWasNotRead("image_body");
+	 * $this->_readValueIfWasNotRead("body","perex");
+	 *
 	 * @ignore
 	 */
 	function _readValueIfWasNotRead($field){
-		 if(is_array($field)){
- 			$this->_DoNotReadValues = array_diff($this->_DoNotReadValues,$field);
- 			$this->_readValues($field);
- 		  }
- 		elseif(in_array($field,$this->_DoNotReadValues)){
-			$this->_DoNotReadValues = array_diff($this->_DoNotReadValues,array($field));
-			$this->_readValues($field);
+		$fields = is_array($field) ? $field : array($field);
+
+		$fields_to_be_read = array_diff($fields,array_keys($this->_RecordValues));
+
+		if($fields_to_be_read){
+			$this->_readValues($fields_to_be_read);
 		}
 	}
 
@@ -1401,7 +1397,7 @@ class TableRecord extends inobj {
 	function _fieldsToRead(){
 		$out = array();
 		foreach($this->_getTableStructure() as $field => $vals){
-			if(in_array($field,$this->_DoNotReadValues)){ continue; }
+			if(in_array($field,self::$_DoNotReadValues)){ continue; }
 			$out[] = $field;
 		}
 		return $out;

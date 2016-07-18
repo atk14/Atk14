@@ -21,14 +21,23 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals("test",$record->getValue("title"));
 		$this->assertNull($record->getValue("price"));
 		$this->assertEquals(10,$record->getValue("an_integer"));
+
+		$this->assertEquals(true,$record->hasKey("title"));
+		$this->assertEquals(false,$record->hasKey("subtitle"));
 	}
 
 	function test_exports(){
+		$dbmole = $this->dbmole;
+
 		$this->_prepare_test_record();
 		$rec = TestTable::GetInstanceById(2);
 
+		$q_cnt = $dbmole->getQueriesExecuted();
+
 		$values = $rec->getValues();
 		$array = $rec->toArray();
+
+		$this->assertEquals($q_cnt,$dbmole->getQueriesExecuted());
 
 		$this->assertEquals($values,$array);
 
@@ -36,6 +45,25 @@ class TcTableRecord extends TcBase{
 
 		$this->assertEquals(false,isset($values["id"]));
 		$this->assertEquals(true,isset($array["id"]));
+
+		// Article has do_not_read_values to ["body"]
+
+		$article = Article::CreateNewRecord(array("title" => "La Title", "body" => "La Body"));
+		$article = Article::GetInstanceById($article->getId());
+
+		$this->assertNotContains("body",$dbmole->getQuery());
+
+		$q_cnt = $dbmole->getQueriesExecuted();
+
+		$array = $article->toArray();
+		$this->assertEquals("La Body",$array["body"]);
+
+		$this->assertEquals($q_cnt+1,$dbmole->getQueriesExecuted());
+		$this->assertContains("body",$dbmole->getQuery());
+
+		$array = $article->toArray();
+
+		$this->assertEquals($q_cnt+1,$dbmole->getQueriesExecuted());
 	}
 
 	function test_use_cache(){
@@ -433,6 +461,40 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals($before_2_days,$record->getValue("create_date"));
 	}
 
+	function test_do_not_read_values(){
+		// Article has set do_not_read_values to ["body"]
+		// see models/article.php
+
+		$dbmole = $this->dbmole;
+
+		$article = Article::CreateNewRecord(array(
+			"title" => "La Title",
+			"body" => "La Body",
+		));
+
+		$article = Article::GetInstanceById($article->getId());
+
+		$this->assertNotContains("body",$dbmole->getQuery()); // ensure that body was not read
+		$q_cnt = $dbmole->getQueriesExecuted();
+
+		$this->assertEquals("La Title",$article->getTitle());
+
+		$this->assertEquals($q_cnt,$dbmole->getQueriesExecuted());
+
+		$this->assertEquals(null,$article->getImageId());
+
+		$this->assertEquals($q_cnt,$dbmole->getQueriesExecuted());
+
+		$this->assertEquals("La Body",$article->getBody());
+
+		$this->assertContains("body",$dbmole->getQuery());
+		$this->assertEquals($q_cnt+1,$dbmole->getQueriesExecuted());
+
+		$this->assertEquals("La Body",$article->getBody());
+
+		$this->assertEquals($q_cnt+1,$dbmole->getQueriesExecuted());
+	}
+
 	function test_vytvareni_vice_instanci_najednou(){
 		$this->_empty_test_table();
 
@@ -503,6 +565,16 @@ class TcTableRecord extends TcBase{
 			"title",
 			"znak",
 		),$keys);
+
+		$article = Article::CreateNewRecord(array());
+		$this->assertEquals(array(
+			"id",
+			"title",
+			"body",
+			"image_id",
+			"created_at",
+			"updated_at"
+		),$article->getKeys());
 	}
 
 	function test_find_all(){
