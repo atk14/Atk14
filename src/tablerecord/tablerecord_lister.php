@@ -520,7 +520,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		return get_class($this->_owner);
 	}
 
-	protected function _clearCache($owner = null){
+	function _clearCache($owner = null){
 		if(!isset($owner)){ $owner = $this->_owner; }
 		$owner_id = TableRecord::ObjToId($owner);
 
@@ -655,7 +655,15 @@ class TableRecord_ListerItem{
 	 */
 	function getRank(){
 		return $this->_rank;
-		//return (int)$this->_g("rank");
+	}
+
+	/**
+	 * Get the rank of a record save in the database
+	 *
+	 * It's useful for testing purposes
+	 */
+	function _getSavedRank(){
+		return (int)$this->_g("rank");
 	}
 
 	/**
@@ -675,35 +683,35 @@ class TableRecord_ListerItem{
 	 * @param integer $rank
 	 */
 	function setRank($rank){
-		settype($rank,"integer");
+		$rank = (integer)$rank;
 		$o = $this->_options;
 
 		if($rank==$this->getRank()){ return; }
 
 		if($rank<0){ $rank = 0; }
 		if($rank>=($c = $this->_lister->count())){ $rank = $c-1; }
+		$current_rank = $this->getRank();
 
 		$this->_lister->_correctRanking();
 
-		if($rank>$this->getRank()){
-			$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=$o[rank_field_name]-1 WHERE $o[rank_field_name]<=:rank AND $o[owner_field_name]=:owner AND $o[id_field_name]!=:id",array(
-				":rank" => $rank,
-				":owner" => $this->_owner,
-				":id" => $this,
-			));
-		}else{
-			$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=$o[rank_field_name]+1 WHERE $o[rank_field_name]>=:rank AND $o[owner_field_name]=:owner AND $o[id_field_name]!=:id",array(
-				":rank" => $rank,
-				":owner" => $this->_owner,
-				":id" => $this,
-			));
-		}
+		$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=$o[rank_field_name]-1 WHERE $o[rank_field_name]>:current_rank AND $o[owner_field_name]=:owner AND $o[id_field_name]!=:id",array(
+			":current_rank" => $current_rank,
+			":owner" => $this->_owner,
+			":id" => $this,
+		));
+
 		$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=:rank WHERE $o[id_field_name]=:id",array(
 			":rank" => $rank,
 			":id" => $this,
 		));
 
-		$this->_lister->_correctRanking();
+		$this->_dbmole->doQuery("UPDATE $o[table_name] SET $o[rank_field_name]=$o[rank_field_name]+1 WHERE $o[rank_field_name]>=:rank AND $o[owner_field_name]=:owner AND $o[id_field_name]!=:id",array(
+			":rank" => $rank,
+			":owner" => $this->_owner,
+			":id" => $this,
+		));
+
+		$this->_lister->_clearCache();
 
 		$this->_s("rank",$rank);
 		$this->_rank = $rank;

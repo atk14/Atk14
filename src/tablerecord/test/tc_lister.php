@@ -112,50 +112,50 @@ class TcLister extends TcBase{
 		// testing setRank
 		$items = $lister->getItems();
 		$items[0]->setRank(1);
-		$this->_test_authors(array($john,$paul,$peter));
+		$this->_test_authors(array($john,$paul,$peter),true);
 		$this->assertEquals(1,$lister->getRecordRank($paul));
 
 		$items = $lister->getItems();
 		$items[2]->setRank(1);
-		$this->_test_authors(array($john,$peter,$paul));
+		$this->_test_authors(array($john,$peter,$paul),true);
 		$this->assertEquals(1,$lister->getRecordRank($peter));
 
 		$items = $lister->getItems();
 		$items[2]->setRank(-100);
-		$this->_test_authors(array($paul,$john,$peter));
+		$this->_test_authors(array($paul,$john,$peter),true);
 		$this->assertEquals(0,$lister->getRecordRank($paul));
 
 		$items = $lister->getItems();
 		$items[1]->setRank(+100);
-		$this->_test_authors(array($paul,$peter,$john));
+		$this->_test_authors(array($paul,$peter,$john),true);
 		$this->assertEquals(2,$lister->getRecordRank($john));
 
 		$items = $lister->getItems();
 		$items[2]->setRank(0);
-		$this->_test_authors(array($john,$paul,$peter));
+		$this->_test_authors(array($john,$paul,$peter),true);
 		$this->assertEquals(0,$lister->getRecordRank($john));
 
 		$lister->setRecordRank($john,1);
-		$this->_test_authors(array($paul,$john,$peter));
+		$this->_test_authors(array($paul,$john,$peter),true);
 		$this->assertEquals(1,$lister->getRecordRank($john));
 
 		$lister->setRecordRank($john,1);
-		$this->_test_authors(array($paul,$john,$peter));
+		$this->_test_authors(array($paul,$john,$peter),true);
 
 		$lister->setRecordRank($john,2);
-		$this->_test_authors(array($paul,$peter,$john));
+		$this->_test_authors(array($paul,$peter,$john),true);
 		$this->assertEquals(2,$lister->getRecordRank($john));
 
 		$lister->setRecordRank($john,0);
-		$this->_test_authors(array($john,$paul,$peter));
+		$this->_test_authors(array($john,$paul,$peter),true);
 		$this->assertEquals(0,$lister->getRecordRank($john));
 
 		$lister->setRecordRank($john,10);
-		$this->_test_authors(array($paul,$peter,$john));
+		$this->_test_authors(array($paul,$peter,$john),true);
 		$this->assertEquals(2,$lister->getRecordRank($john));
 
 		$lister->setRecordRank($john,-10);
-		$this->_test_authors(array($john,$paul,$peter));
+		$this->_test_authors(array($john,$paul,$peter),true);
 		$this->assertEquals(0,$lister->getRecordRank($john));
 
 		$lister->remove($john);
@@ -195,7 +195,7 @@ class TcLister extends TcBase{
 		$this->_test_authors(array($john, $tony, $paul));
 	}
 
-	function _test_authors($expected_authors){
+	function _test_authors($expected_authors,$test_saved_ranks = false){
 		$authors = $this->article->getAuthors();
 
 		$this->assertEquals(sizeof($expected_authors),sizeof($authors));
@@ -210,6 +210,9 @@ class TcLister extends TcBase{
 
 		for($i=0;$i<sizeof($authors);$i++){
 			$this->assertEquals($i,$items[$i]->getRank());
+			if($test_saved_ranks){
+				$this->assertEquals($i,$items[$i]->_getSavedRank());
+			}
 			$this->assertEquals($expected_authors[$i]->getId(),$items[$i]->getRecordId());
 
 			# test that lister behaves the same as array
