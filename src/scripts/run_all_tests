@@ -12,14 +12,14 @@ cd $dirname
 base_dir=`./_get_application_path`../
 exit_val=0
 
-[  -z "`ATK14_ENV=TEST ./migrate -p`" ] || (cat << EOF && sleep 2)
+[  -z "`ATK14_ENV=TEST ./migrate -p`" ] || (cat << EOF && sleep 2 && ATK14_ENV=TEST ./migrate)
 **************************************************************************
 **                                                                      **
 **                   There are pending migrations!                      **
 **                                                                      **
 **************************************************************************
 
-Why not to try the following command?
+I am about to run the following command in 2 secs
   $ ATK14_ENV=TEST $dirname/migrate
 
 EOF
