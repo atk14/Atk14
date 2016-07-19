@@ -388,10 +388,11 @@ class TableRecord extends inobj {
 	/**
 	 * Returns record id.
 	 *
+	 * TODO: make this function final
+	 *
 	 * @return mixed
 	 */
 	function getId(){ return isset($this->_RecordValues[$this->_IdFieldName]) ? $this->_RecordValues[$this->_IdFieldName] : null; }
-
 
 	/**
 	 * Checks presence of a column.
@@ -1070,7 +1071,7 @@ class TableRecord extends inobj {
 		if(!in_array($field_name,$this->getKeys())){
 			throw new Exception(get_class($this)."::getValue() accesses non existing field ".$this->getTableName().".$field_name");
 		}
-		$this->_readValueIfWasNotRead($field_name);
+		$this->_readValuesIfWasNotRead($field_name);
 		return isset($this->_RecordValues[$field_name]) ? $this->_RecordValues[$field_name] : null;
 	}
 
@@ -1104,10 +1105,10 @@ class TableRecord extends inobj {
 	function getValues($options = array()){
 	  $options += array("return_id" => true);
 		$keys = $this->getKeys();
-		$this->_readValueIfWasNotRead($keys);
+		$this->_readValuesIfWasNotRead($keys);
 		$out = $this->_RecordValues;
 
-		if(is_null($this->getId())){ // HACK for a virtual object
+		if(!isset($this->_RecordValues[$this->_IdFieldName])){ // HACK for a virtual object (for some reason we couldn't call $this->getId(), unless the method getId() is marked final)
 			foreach($keys as $k){
 				if(!isset($out[$k])){ $out[$k] = null; }
 			}
@@ -1325,15 +1326,15 @@ class TableRecord extends inobj {
 	}
 
 	/**
-	 * $this->_readValueIfWasNotRead("image_body");
-	 * $this->_readValueIfWasNotRead("body","perex");
+	 * $this->_readValuesIfWasNotRead("image_body");
+	 * $this->_readValuesIfWasNotRead(array("body","perex"));
 	 *
 	 * @ignore
 	 */
-	function _readValueIfWasNotRead($field){
-		if(is_null($this->getId())){ return; } // HACK for a virtual object
+	function _readValuesIfWasNotRead($fields){
+		if(!isset($this->_RecordValues[$this->_IdFieldName])){ return; } // HACK for a virtual object (for some reason we couldn't call $this->getId(), unless the method getId() is marked final)
 
-		$fields = is_array($field) ? $field : array($field);
+		if(!is_array($fields)){ $fields = array($fields); }
 
 		$fields_to_be_read = array_diff($fields,array_keys($this->_RecordValues));
 
