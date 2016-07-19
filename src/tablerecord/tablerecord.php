@@ -390,7 +390,7 @@ class TableRecord extends inobj {
 	 *
 	 * @return mixed
 	 */
-	function getId(){ return $this->_RecordValues[$this->_IdFieldName]; }
+	function getId(){ return isset($this->_RecordValues[$this->_IdFieldName]) ? $this->_RecordValues[$this->_IdFieldName] : null; }
 
 
 	/**
@@ -1071,8 +1071,9 @@ class TableRecord extends inobj {
 			throw new Exception(get_class($this)."::getValue() accesses non existing field ".$this->getTableName().".$field_name");
 		}
 		$this->_readValueIfWasNotRead($field_name);
-		return $this->_RecordValues[$field_name];
+		return isset($this->_RecordValues[$field_name]) ? $this->_RecordValues[$field_name] : null;
 	}
+
 	/**
 	 * Alias to method getValue().
 	 *
@@ -1102,8 +1103,16 @@ class TableRecord extends inobj {
 	 */
 	function getValues($options = array()){
 	  $options += array("return_id" => true);
-		$this->_readValueIfWasNotRead(array_keys($this->_getTableStructure()));
+		$keys = $this->getKeys();
+		$this->_readValueIfWasNotRead($keys);
 		$out = $this->_RecordValues;
+
+		if(is_null($this->getId())){ // HACK for a virtual object
+			foreach($keys as $k){
+				if(!isset($out[$k])){ $out[$k] = null; }
+			}
+		}
+		
 		if(!$options["return_id"]){
 			unset($out[$this->_IdFieldName]);
 		}
@@ -1280,7 +1289,7 @@ class TableRecord extends inobj {
 	 * @param array $values
 	 */
 	function setValuesVirtually($values){
-		$keys = array_keys($this->_RecordValues);
+		$keys = array_keys($this->_getTableStructure());
 
 		foreach($values as $_key => $_value){
 			if(in_array($_key,$keys)){
@@ -1322,6 +1331,8 @@ class TableRecord extends inobj {
 	 * @ignore
 	 */
 	function _readValueIfWasNotRead($field){
+		if(is_null($this->getId())){ return; } // HACK for a virtual object
+
 		$fields = is_array($field) ? $field : array($field);
 
 		$fields_to_be_read = array_diff($fields,array_keys($this->_RecordValues));
@@ -1526,7 +1537,7 @@ class TableRecord extends inobj {
 		$CACHE = &$CACHES[$class_name];
 
 		if(isset($CACHE["fields"][$name])){
-			return $this->g($CACHE["fields"][$name]);
+			return $this->getValue($CACHE["fields"][$name]);
 		}
 
 		$name = new String4($name);
@@ -1534,12 +1545,12 @@ class TableRecord extends inobj {
 			$field = $matches[1]->underscore();
 			if($this->hasKey($field)){
 				$CACHE["fields"][(string)$name] = (string)$field;
-				return $this->g($field);
+				return $this->getValue($field);
 			}
 
 			// Looking for ClassName or inobj_ClassName. The prefix inobj_ (which means internal object) exists on my legacy classes.
 			if($this->hasKey("{$field}_id") && (class_exists($c = (string)$field->camelize()) || class_exists($c = "inobj_$c"))){
-				return call_user_func_array(array($c,"GetInstanceById"),array($this->g("{$field}_id")));
+				return call_user_func_array(array($c,"GetInstanceById"),array($this->getValue("{$field}_id")));
 			}
 		}
 

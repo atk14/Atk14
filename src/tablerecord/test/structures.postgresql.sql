@@ -51,8 +51,8 @@ CREATE TABLE articles(
 		title VARCHAR(255),
 		body TEXT,
 		image_id INT,
-		created_at DATE,
-		updated_at DATE,
+		created_at TIMESTAMP,
+		updated_at TIMESTAMP,
 		CONSTRAINT fk_articles_images FOREIGN KEY (image_id) REFERENCES images
 );
 
@@ -61,8 +61,8 @@ CREATE TABLE authors(
    	id INTEGER DEFAULT NEXTVAL('seq_authors') NOT NULL PRIMARY KEY,
 		name VARCHAR(255),
 		email VARCHAR(255),
-		created_at DATE,
-		updated_at DATE
+		created_at TIMESTAMP,
+		updated_at TIMESTAMP
 );
 
 -- No unique constraint in the table
@@ -81,8 +81,8 @@ CREATE TABLE redactors(
 	id INTEGER DEFAULT NEXTVAL('seq_redactors') NOT NULL PRIMARY KEY,
 	name VARCHAR(255),
 	email VARCHAR(255),
-	created_at DATE,
-	updated_at DATE
+	created_at TIMESTAMP,
+	updated_at TIMESTAMP
 );
 
 -- There is a unique constraint

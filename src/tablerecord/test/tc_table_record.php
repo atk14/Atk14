@@ -827,6 +827,63 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals(2,$record->getAnInteger());
 	}
 
+	function test_virtual_behaviour(){
+		$dbmole = $this->dbmole;
+
+		// a fully virtual instance
+
+		$q_cnt = $dbmole->getQueriesExecuted();
+
+		$a = new Article();
+		$this->assertEquals(null,$a->getId());
+		$this->assertEquals(null,$a->getTitle());
+		$this->assertEquals(null,$a->getBody());
+
+		$a->setValuesVirtually(array(
+			"title" => "Summer Breeze",
+		));
+		$this->assertEquals("Summer Breeze",$a->getTitle());
+
+		$array = $a->toArray();
+		$keys = array_keys($array);
+		sort($keys);
+		$this->assertEquals("Summer Breeze",$array["title"]);
+		$this->assertEquals("body,created_at,id,image_id,title,updated_at",join(",",$keys));
+		$this->assertEquals(null,$a->getBody());
+
+		$a->setValueVirtually("body","La Body");
+		$this->assertEquals("La Body",$a->getBody());
+
+		$this->assertEquals($q_cnt,$dbmole->getQueriesExecuted());
+
+		$a = new Article();
+
+		// values set virtually are not saved into the database
+
+		$a = Article::CreateNewRecord(array(
+			"title" => "Blood & Fire",
+			"created_at" => "2016-07-19 15:17:00",
+		));
+		
+		$q_cnt = $dbmole->getQueriesExecuted();
+
+		$a->setValuesVirtually(array(
+			"body" => "No more nights...",
+			"title" => "Blood & Fire (Reprise)",
+		));
+
+		$this->assertEquals("No more nights...",$a->getBody());
+		$this->assertEquals("Blood & Fire (Reprise)",$a->getTitle());
+		$this->assertEquals("2016-07-19 15:17:00",$a->getCreatedAt());
+
+		$this->assertEquals($q_cnt,$dbmole->getQueriesExecuted());
+
+		$a2 = Article::GetInstanceById($a->getId());
+		$this->assertEquals(null,$a2->getBody());
+		$this->assertEquals("Blood & Fire",$a2->getTitle());
+		$this->assertEquals("2016-07-19 15:17:00",$a2->getCreatedAt());
+	}
+
 	function _test_fall($recs){
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals("Fall",$recs[0]->getTitle());
