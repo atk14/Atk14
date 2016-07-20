@@ -52,6 +52,16 @@ class Atk14Timer {
 	}
 
 	/**
+	 * Returns a lap time
+	 *
+	 * @return float
+	 */
+	static function Lap($mark = ""){
+		$timer = &Atk14Timer::_GetTimer();
+		return $timer->lap($mark);
+	}
+
+	/**
 	 * Outputs list of all timers with measured times,
 	 *
 	 * @param array $options

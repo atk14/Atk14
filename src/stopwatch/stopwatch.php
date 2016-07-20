@@ -1,22 +1,31 @@
 <?php
 /**
-* $s = new StopWatch();
-*
-* $s->start();
-*	// do something 
-* echo $s->stop();
-*
-* $s->start("rendering");
-* // do something 
-* echo $s->stop("rendering");
-*
-* echo $s->getPrintableOutput();
-*/
+ * Stowatch
+ *
+ * <code>
+ *	$s = new StopWatch();
+ *	
+ *	$s->start();
+ *	
+ *	// do something
+ *	echo $s->lap();
+ *
+ *	// do something more
+ *
+ *	echo $s->stop();
+ *	
+ *	$s->start("rendering");
+ *	// do something 
+ *	echo $s->stop("rendering");
+ *	
+ *	echo $s->getPrintableOutput();
+ * </code>
+ */
 class StopWatch{
 
 	var $_ResultsStore = array();
 
-	function StopWatch(){
+	function __construct(){
 		$this->start("_auto_start_");
 	}
 
@@ -33,11 +42,15 @@ class StopWatch{
 	}
 
 	/**
-	* Spusti stopky pro danou znacku
-	* 
-	* @access public
-	* @param string $mark				jmeno znacky
-	*/
+	 * Starts the stopwatch for the given mark
+	 * <code>
+	 *	$time->start();
+	 *	$time->start("total_time");
+	 * </code>
+	 * 
+	 * @access public
+	 * @param string $mark
+	 */
 	function start($mark = ""){
 		settype($mark,"string");
 		$this->_ResultsStore[] = array(
@@ -48,11 +61,17 @@ class StopWatch{
 	}
 
 	/**
-	* Zastavi stopky pro danou znacku
-	* 
-	* @access public
-	* @param string $mark				jmeno znacky
-	*/
+	 * Stops the stopwatch for the given mark
+	 *
+	 * <code>
+	 *	$time->stop();
+	 *	$time->stop("total_time");
+	 * </code>
+	 * 
+	 * @access public
+	 * @param string $mark
+	 * @return float
+	 */
 	function stop($mark = ""){
 		settype($mark,"string");
 		$_stop = $this->_getMicroTime();
@@ -66,11 +85,32 @@ class StopWatch{
 	}
 
 	/**
-	* 
-	* @access public
-	* @param string $mark					jmeno znacky
-	* @return float								nebo null, v pripade, ze cas nelze urcit
-	*/
+	 * Get a lap time for the given mark
+	 *
+	 * Stopwatch for the given mark must be started and must not be stopped, otherwise it will return null
+	 *
+	 * @access public
+	 * @param string $mark
+	 * @return float
+	 */
+	function lap($mark = ""){
+		settype($mark,"string");
+		$_current = $this->_getMicroTime();
+		for($i=sizeof($this->_ResultsStore)-1;$i>=0;$i--){
+			if($this->_ResultsStore[$i]["mark"]==$mark){
+				if(isset($this->_ResultsStore[$i]["stop"])){ return null; }
+				return $_current - $this->_ResultsStore[$i]["start"];
+			}
+		}
+	}
+
+	/**
+	 * Returns stop time for the given mark
+	 *
+	 * @access public
+	 * @param string $mark
+	 * @return float
+	 */
 	function getResult($mark = ""){
 		settype($mark,"string");
 		$out = null;
@@ -89,11 +129,11 @@ class StopWatch{
 	function result($mark = ""){ return $this->getResult($mark); }
 
 	/**
-	* Vytvori sestavu se vsemi vysledky.
-	*
-	* @access public
-	* @return string
-	*/
+   * Vytvori sestavu se vsemi vysledky.
+ 	 *
+	 * @access public
+	 * @return string
+	 */
 	function getPrintableOutput($options = array()){
 		$options = array_merge(array(
 			"total_results_only" => false
