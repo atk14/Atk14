@@ -25,12 +25,9 @@ class FileInput extends Input{
 		global $HTTP_REQUEST,$_FILES;
 		$out = $HTTP_REQUEST->getUploadedFile($name); // HTTPUploadedFile
 		if(!$out){
-			if(isset($_FILES[$name]) && isset($_FILES[$name]["error"])){
-				$error = $_FILES[$name]["error"];
-				$error = (int)$error;
-				if($error>0 && $error!=4){ // 4 means "No file was uploaded" which is OK for us
-					$out = $error;
-				}
+			$error = $HTTP_REQUEST->getUploadedFileError($name);
+			if($error>0 && $error!=4){ // 4 means "No file was uploaded" which is OK for us
+				$out = $error;
 			}
 		}
 		return $out;

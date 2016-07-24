@@ -111,6 +111,22 @@ class tc_http_request extends tc_base{
 		$this->assertEquals(448,$file->getImageHeight());
 	}
 
+	function test_getUploadedFileError(){
+		$this->_init_FILES();
+
+		$req = new HTTPRequest();
+
+		$this->assertEquals(0,$req->getUploadedFileError("hlava"));
+		$this->assertEquals(0,$req->getUploadedFileError("dousi"));
+		$this->assertEquals(null,$req->getUploadedFileError("strange_name"));
+
+		$GLOBALS["_FILES"]["hlava"]["error"] = 1;
+
+		$this->assertEquals(1,$req->getUploadedFileError("hlava"));
+		$this->assertEquals(0,$req->getUploadedFileError("dousi"));
+		$this->assertEquals(null,$req->getUploadedFileError("strange_name"));
+	}
+
 	function test_get_reuqest_method(){
 		$GLOBALS["_SERVER"]["REQUEST_METHOD"] = "GET";
 		$GLOBALS["_POST"] = array();
@@ -489,7 +505,6 @@ class tc_http_request extends tc_base{
 		$request->setCookieVar("check","1");
 		$this->assertEquals("fi",$request->getCookie("lang"));
 		$this->assertEquals(array("session" => "123456abcd", "lang" => "fi","check" => "1"),$request->getCookieVars());
-
 	}
 
 	/**

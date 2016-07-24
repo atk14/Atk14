@@ -1037,8 +1037,8 @@ class HTTPRequest{
 	 */
 	function getUploadedFileError($name){
 		global $_FILES;
-		if(isset($_FILES["$name"])){ return $_FILES["$name"]["error"]; }
-		return 0;
+		if(isset($_FILES["$name"])){ return (int)$_FILES["$name"]["error"]; }
+		return null;
 	}
 
 	/**
