@@ -1006,8 +1006,7 @@ class HTTPRequest{
 	function getUploadedFile($name = null,$options = array()){
 		$out = null;
 		$files = $this->getUploadedFiles($options);
-		reset($files);
-		while(list(,$file) = each($files)){
+		foreach($files as $file){
 			if(!isset($name) || $file->getName()==$name){
 				$out = $file;
 				break;

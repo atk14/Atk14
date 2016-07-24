@@ -56,8 +56,7 @@ class HTTPUploadedFile{
 		
 		if(!isset($_FILES)){ return $out; }
 
-		reset($_FILES);
-		while(list($name,$FILE) = each($_FILES)){
+		foreach($_FILES as $name => $FILE){
 			if($obj = HTTPUploadedFile::GetInstance($FILE,$name,$options)){
 				$out[] = $obj;
 			}
@@ -84,7 +83,10 @@ class HTTPUploadedFile{
 		$options = array_merge(array(
 			"testing_mode" => false
 		),$options);
-		if(!$options["testing_mode"] && !is_uploaded_file($FILE["tmp_name"])){
+		if(isset($FILE["error"]) && $FILE["error"]>0){
+			return null;
+		}
+		if(!is_uploaded_file($FILE["tmp_name"]) && !$options["testing_mode"]){
 			return null;
 		}
 		$out = new HTTPUploadedFile();

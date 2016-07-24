@@ -13,9 +13,26 @@ class FileInput extends Input{
 		// zde je $value objekt tridy HTTPUploadedFile -> pro rendering z toho udelame prazdny string
 		return parent::render($name, "", $options);
 	}
+
+	/**
+	 *
+	 * Return an HTTPUploadedFile object when the file was uploaded successfully.
+	 * Returns null when no file was uploaded.
+	 * Return an integer (error code) when an upload error occurred (see http://php.net/manual/en/features.file-upload.errors.php)
+	 */
 	function value_from_datadict($data, $name)
 	{
-		global $HTTP_REQUEST;
-		return $HTTP_REQUEST->getUploadedFile($name);
+		global $HTTP_REQUEST,$_FILES;
+		$out = $HTTP_REQUEST->getUploadedFile($name); // HTTPUploadedFile
+		if(!$out){
+			if(isset($_FILES[$name]) && isset($_FILES[$name]["error"])){
+				$error = $_FILES[$name]["error"];
+				$error = (int)$error;
+				if($error>0 && $error!=4){ // 4 means "No file was uploaded" which is OK for us
+					$out = $error;
+				}
+			}
+		}
+		return $out;
 	}
 }

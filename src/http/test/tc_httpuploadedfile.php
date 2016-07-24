@@ -21,6 +21,12 @@ class tc_httpuploadedfile extends tc_base{
 		$hlava = $files[0];
 		$this->assertTrue($hlava->isImage());
 		$this->assertFalse($hlava->chunkedUpload());
+
+		$GLOBALS["_FILES"]["hlava"]["error"] = 3; // The uploaded file was only partially uploaded.
+
+		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
+		$this->assertEquals(1,sizeof($files));
+		$this->assertEquals("Dousi.pdf",$files[0]->getFileName());
 	}
 
 	function test_image_processing(){

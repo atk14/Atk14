@@ -30,10 +30,39 @@ class FileField extends Field{
 		$this->update_messages(array(
 			"file_too_big" => _('Ensure this file has at most %max_file_size% bytes (it has %file_size%)'),
 			"disallowed_mime_type" => _('Unsupported file type: %mime_type%'),
+
+			"ini_size" => _('The uploaded file exceeds the max file size value that is set on the server (%upload_max_filesize%)'),
+			"form_size" => _('The uploaded file exceeds the max file size directive that was specified in the HTML form (%MAX_FILE_SIZE%)'),
+			"partial" => _('The uploaded file was only partially uploaded'),
+			"no_tmp_dir" => _('Missing a temporary folder'),
+			"cant_write" => _('Failed to write file to disk'),
+			"extension" => _('File upload stopped by an extension installed on the server'),
+			"unknown_error" => _('Unknown upload error'),
 		));
 	}
 
 	function clean($value){
+		if(is_numeric($value)){ // file upload error code! http://php.net/manual/en/features.file-upload.errors.php
+			foreach(array(
+				"UPLOAD_ERR_INI_SIZE",
+				"UPLOAD_ERR_FORM_SIZE",
+				"UPLOAD_ERR_PARTIAL",
+				"UPLOAD_ERR_NO_TMP_DIR",
+				"UPLOAD_ERR_CANT_WRITE",
+				"UPLOAD_ERR_EXTENSION",
+			) as $err_code_name){
+				if($value==constant($err_code_name)){
+					$_k = strtolower(preg_replace('/^UPLOAD_ERR_/','',$err_code_name)); // UPLOAD_ERR_INI_SIZE -> ini_size
+					$_message = strtr($this->messages[$_k],array(
+						"%upload_max_filesize%" => h(ini_get("upload_max_filesize")),
+						"%MAX_FILE_SIZE%" => h(isset($_POST["MAX_FILE_SIZE"]) ? $_POST["MAX_FILE_SIZE"] : ""),
+					));
+					return array($_message,null);
+				}
+				return array($this->messages["unknown_error"],null);
+			}
+		}
+
 		list($err,$value) = parent::clean($value);
 		if($err || !$value){ return array($err,$value); }
 		if($this->max_file_size && $value->getFileSize()>$this->max_file_size){
