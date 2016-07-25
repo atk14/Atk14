@@ -37,7 +37,7 @@ class FileField extends Field{
 			"no_tmp_dir" => _('Missing a temporary folder'),
 			"cant_write" => _('Failed to write file to disk'),
 			"extension" => _('File upload stopped by an extension installed on the server'),
-			"unknown_error" => _('Unknown upload error'),
+			"unknown_error" => _('An error occurred during file upload'),
 		));
 	}
 
@@ -53,14 +53,17 @@ class FileField extends Field{
 			) as $err_code_name){
 				if($value==constant($err_code_name)){
 					$_k = strtolower(preg_replace('/^UPLOAD_ERR_/','',$err_code_name)); // UPLOAD_ERR_INI_SIZE -> ini_size
-					$_message = strtr($this->messages[$_k],array(
-						"%upload_max_filesize%" => h(ini_get("upload_max_filesize")),
-						"%MAX_FILE_SIZE%" => h(isset($_POST["MAX_FILE_SIZE"]) ? $_POST["MAX_FILE_SIZE"] : ""),
-					));
+					$_message = $this->messages[$_k];
+					if($_k=="ini_size"){
+						$_message = str_replace("%upload_max_filesize%",h(ini_get("upload_max_filesize")),$_message);
+					}
+					if($_k=="form_size"){
+						$_message = str_replace("%MAX_FILE_SIZE%",h(isset($_POST["MAX_FILE_SIZE"]) ? $_POST["MAX_FILE_SIZE"] : ""),$_message);
+					}
 					return array($_message,null);
 				}
-				return array($this->messages["unknown_error"],null);
 			}
+			return array($this->messages["unknown_error"],null);
 		}
 
 		list($err,$value) = parent::clean($value);

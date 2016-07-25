@@ -22,13 +22,4 @@ class TcImageField extends TcBase{
 		$this->assertNull($value);
 		$this->assertEquals($field->messages["file_formats"],$err);
 	}
-
-	function _get_uploaded_jpeg(){
-		return HTTPUploadedFile::GetInstance(array(
-			"tmp_name" => dirname(__FILE__)."/../../http/test/hlava.jpg", // just borrowing a testing image :)
-			"name" => "hlava.jpg",
-		),
-		"image",
-		array("testing_mode" => true));
-	}
 }
