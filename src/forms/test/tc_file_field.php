@@ -30,6 +30,36 @@ class TcFileField extends TcBase{
 		$this->assertEquals("An error occurred during file upload",$err);
 	}
 
+	function test_allowed_mime_types(){
+		$image = $this->_get_uploaded_jpeg();
+		$this->assertEquals("image/jpeg",$image->getMimeType());
+
+		$field = new FileField(array("allowed_mime_types" => array()));
+		list($err,$value) = $field->clean($image);
+		$this->assertEquals(null,$err);
+		$this->assertTrue(!!$value);
+
+		$field = new FileField(array("allowed_mime_types" => array("image/jpeg")));
+		list($err,$value) = $field->clean($image);
+		$this->assertEquals(null,$err);
+		$this->assertTrue(!!$value);
+
+		$field = new FileField(array("allowed_mime_types" => array("image/jpeg","application/pdf")));
+		list($err,$value) = $field->clean($image);
+		$this->assertEquals(null,$err);
+		$this->assertTrue(!!$value);
+
+		$field = new FileField(array("allowed_mime_types" => array("application/pdf")));
+		list($err,$value) = $field->clean($image);
+		$this->assertEquals("Unsupported file type: image/jpeg",$err);
+		$this->assertEquals(null,$value);
+
+		$field = new FileField(array("allowed_mime_types" => array("application/pdf","/^image\/.*/")));
+		list($err,$value) = $field->clean($image);
+		$this->assertEquals(null,$err);
+		$this->assertTrue(!!$value);
+	}
+
 	function test__fileSize2Int(){
 		$f = new FileField(array());
 

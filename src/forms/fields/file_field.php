@@ -4,14 +4,22 @@
  *
  * Uploaded file is accessible as {@link HTTPUploadedFile}
  *
+ * <code>
+ *	$f = new FileField(array(
+ *		"max_file_size" => "5M", // 1024 * 1024, "1M", "2MB", "10kB", "20KB"
+ *		"allowed_mime_types" => array("application/pdf","/^image\//"), // regular expressions are possible
+ *	));
+ * </code>
+ *
  * @package Atk14
  * @subpackage Forms
  */
 class FileField extends Field{
+
 	function __construct($options = array()){
 		$options += array(
 			"max_file_size" => null, // 1024, "1.5MB",
-			"allowed_mime_types" => array(), // array("application/pdf","image/svg+xml")
+			"allowed_mime_types" => array(), // array("application/pdf","/^image\/.*/")
 			"widget" => new FileInput(),
 		);
 
@@ -74,7 +82,7 @@ class FileField extends Field{
 				null
 			);
 		}
-		if($this->allowed_mime_types && !in_array($value->getMimeType(),$this->allowed_mime_types)){
+		if(!$this->_mimeTypeMatched($value->getMimeType(),$this->allowed_mime_types)){
 			return array(
 				strtr($this->messages["disallowed_mime_type"],array("%mime_type%" => h($value->getMimeType()))),
 				null
@@ -84,6 +92,7 @@ class FileField extends Field{
 	}
 
 	/**
+	 *
 	 * $f->_fileSize2Int(null); // null
 	 * $f->_fileSize2Int(""); // null
 	 * $f->_fileSize2Int("1000"); // 1000
@@ -93,13 +102,38 @@ class FileField extends Field{
 	function _fileSize2Int($size){
 		$size = preg_replace('/\s/','',$size);
 		if(is_numeric($size)){ return (int)$size; }
-		if(preg_match('/([0-9\.]+)(M|k)B?/',$size,$matches)){
+		if(preg_match('/([0-9\.]+)(M|k|K)B?/',$size,$matches)){
 			$multipliers = array(
 				"k" => 1024,
+				"K" => 1000,
 				"M" => 1024 * 1024
 			);
 			return (int)($matches[1] * $multipliers[$matches[2]]);
 		}
 		return null; // Is there a need to throwing an exception?
+	}
+
+	/**
+	 *
+	 * $f->_mimeTypeMatched("image/jpeg",array("image/jpeg","image/png")); // true
+	 * $f->_mimeTypeMatched("image/jpeg",array("/^image\//")); // true
+	 */
+	function _mimeTypeMatched($mime_type,$allowed_mime_types){
+		if(!is_array($allowed_mime_types)){ $allowed_mime_types = array($allowed_mime_types); }
+		if(sizeof($allowed_mime_types)==0){ return true; }
+		$matched = false;
+		foreach($allowed_mime_types as $amt){
+			if(preg_match('/^\//',$amt)){
+				if(preg_match($amt,$mime_type)){
+					$matched = true; break;
+				}
+				continue;
+			}
+			if($amt==$mime_type){
+				$matched = true; break;
+			}
+		}
+
+		return $matched;
 	}
 }
