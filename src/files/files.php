@@ -585,7 +585,7 @@ class Files{
 			// 										the most desirable type is on the first position
 			"xls" =>				array("application/vnd.ms-excel","application/msexcel","application/vnd.ms-office","application/msword"),
 			"doc" =>				array("application/msword","application/vnd.ms-office"),
-			"ppt" =>				array("application/vnd.ms-powerpoint","application/vnd.ms-office"),
+			"ppt" =>				array("application/vnd.ms-powerpoint","application/vnd.ms-office","application/msword"),
 			"jpg|jpeg" =>		array("image/jpeg","image/jpg"),
 			"svg" =>				array("image/svg+xml","text/plain"),
 			"bmp" =>				array("image/bmp","image/x-bmp","image/x-ms-bmp","application/octet-stream"),
