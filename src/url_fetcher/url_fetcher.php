@@ -282,28 +282,35 @@ class UrlFetcher {
 			return $this->_setError("cannot write to socket");
 		}
 
-		$content = "";
+		$headers = "";
 		$_buffer_ar = array();
 		while(!feof($f) && $f){
-			$_b = fread($f,4096);
-			(strlen($_b)>0) && ($_buffer_ar[] = $_b);
-			usleep(20000);
+			$_b = fread($f,4095);
+			if(strlen($_b)==0){
+				usleep(20000);
+				continue;
+			}
+			$_buffer_ar[] = $_b;
+
+			if(!strlen($headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",join("",$_buffer_ar),$matches)){
+				$headers = $matches[1];
+				$_b = $matches[2];
+				$_buffer_ar = array();
+				(strlen($_b)>0) && ($_buffer_ar[] = $_b);
+			}
 		}
-		$content = join("",$_buffer_ar);
 		fclose($f);
 
-		if(strlen($content)==0){
+		if(!strlen($headers)){
 			return $this->_setError("failed to read from socket");
 		}
 
-		//echo $content;
-
-		if(preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$content,$matches)){
-			$this->_ResponseHeaders = $matches[1];
-			$this->_Content = $matches[2];
-		}else{
+		if(!strlen($headers)){
 			return $this->_setError("can't find response headers");
 		}
+
+		$this->_ResponseHeaders = $headers;
+		$this->_Content = join("",$_buffer_ar);
 
 		$this->_Fetched = true;
 
