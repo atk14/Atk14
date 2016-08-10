@@ -49,25 +49,40 @@ if(preg_match("/^5/",phpversion())){
 	exit(1);
 }
 
+$HOME = getenv("HOME"); // "/home/yarri"
+
 // v PHP5.3 neexistuje $_ENV["PWD"] ??
 isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 
-set_include_path(get_include_path().":/usr/share/php"); // In Travis environment there are some difficulties to load the PHPUnit2... TODO: to be removed
+if(0 && file_exists("$HOME/.composer/vendor/phpunit")){
 
-include_once 'PHPUnit2/Framework/TestSuite.php';
-include_once 'PHPUnit2/Framework/TestCase.php';
-include_once 'PHPUnit2/TextUI/ResultPrinter.php';
-include_once 'Benchmark/Timer.php';
+	// $ composer global require "phpunit/phpunit=4.8.*"
+	require("$HOME/.composer/vendor/autoload.php");
+	define('PHPUNIT2',false);
+	define('PHPUNIT',true);
 
-if(!class_exists("PHPUnit2_Framework_TestCase")){
-	echo "************************************************************\n";
-	echo "*  Missing dependency: class PHPUnit2_Framework_TestCase   *\n";
-	echo "*  The following command may help you                      *\n";
-	echo "*                                                          *\n";
-	echo "*  $ sudo pear install --alldeps PHPUnit2                  *\n";
-	echo "*                                                          *\n";
-	echo "************************************************************\n";
-	exit(1);
+}else{
+
+	define('PHPUNIT2',true);
+	define('PHPUNIT',false);
+
+	set_include_path(get_include_path().":/usr/share/php"); // In Travis environment there are some difficulties to load the PHPUnit2... TODO: to be removed
+
+	include_once 'PHPUnit2/Framework/TestSuite.php';
+	include_once 'PHPUnit2/Framework/TestCase.php';
+	include_once 'PHPUnit2/TextUI/ResultPrinter.php';
+	include_once 'Benchmark/Timer.php';
+
+	if(!class_exists("PHPUnit2_Framework_TestCase")){
+		echo "************************************************************\n";
+		echo "*  Missing dependency: class PHPUnit2_Framework_TestCase   *\n";
+		echo "*  The following command may help you                      *\n";
+		echo "*                                                          *\n";
+		echo "*  $ sudo pear install  PHPUnit2                           *\n";
+		echo "*                                                          *\n";
+		echo "************************************************************\n";
+		exit(1);
+	}
 }
 
 isset($argv) || ($argv = array());
@@ -84,8 +99,13 @@ if($DIR){
 	chdir($DIR);
 }
 
-eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
-eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
+if(PHPUNIT2){
+	eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
+	eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
+}else{
+	eval("class tc_super_base extends PHPUnit_Framework_TestCase{ }");
+	eval("class TcSuperBase extends PHPUnit_Framework_TestCase{ }");
+}
 
 if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
 
@@ -94,22 +114,6 @@ if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
 }else{
 	eval("class tc_base extends tc_super_base{ }");
 	eval("class TcBase extends TcSuperBase{ }");
-}
-
-if(class_exists("pgmole")){	
-	$dbmole = &PgMole::GetInstance();
-}
-if(class_exists("oraclemole")){
-	$dbmole = &OracleMole::GetInstance();
-}
-if(class_exists("dbmole")){
-	$_prev_error_handler = DbMole::RegisterErrorHandler("_test_dbmole_error_handler");
-	// pokud uz byl nejaky error_handler nastaven, vratime ho
-	if($_prev_error_handler){ DbMole::RegisterErrorHandler($_prev_error_handler); }
-}
-if(class_exists("inobj") && method_exists("inobj","RegisterErrorCallback")){
-	// TODO: in future it should be removed
-	inobj::RegisterErrorCallback("_test_inobj_error_handler");
 }
 
 $ALLOWED_TESTS = array();
@@ -174,24 +178,6 @@ foreach($tests_to_execute as $_f){
 }
 exit($exit_code);
 
-function _test_dbmole_error_handler($dbmole){
-	echo "An error comes from DbMole\n";
-	echo "database type: ".$dbmole->getDatabaseType()."\n";
-	echo "message ".$dbmole->getErrorMessage()."\n";
-	echo "query: ".$dbmole->getQuery()."\n";
-	echo "bind_ar:\n";
-	print_r($dbmole->getBindAr());
-	echo "options:\n";
-	print_r($dbmole->getOptions());
-	exit(1);
-}
-
-function _test_inobj_error_handler($values){
-	echo "An error comes from inobj\n";
-	print_r($values);
-	exit(1);
-}
-
 /**
  * @return PHPUnit2_Framework_TestResult
  */
@@ -216,17 +202,33 @@ function _test_runner($filename,$DIR){
 		return;
 	}
 
-	$timer  = new Benchmark_Timer;
-	$printer = new PHPUnit2_TextUI_ResultPrinter;
+	if(PHPUNIT2){
 
-	$suite  = new PHPUnit2_Framework_TestSuite(
-		new ReflectionClass($classname)
-	);
+		$timer  = new Benchmark_Timer;
+		$printer = new PHPUnit2_TextUI_ResultPrinter;
 
-	$timer->start();
-	$result = $suite->run();
-	$timer->stop();
-	$printer->printResult($result, $timer->timeElapsed());
+		$suite  = new PHPUnit2_Framework_TestSuite(
+			new ReflectionClass($classname)
+		);
 
-	return $result;
+		$timer->start();
+		$result = $suite->run();
+		$timer->stop();
+		$printer->printResult($result, $timer->timeElapsed());
+		return $result;
+
+	}else{
+
+		$printer = new PHPUnit_TextUI_ResultPrinter;
+
+		$suite  = new PHPUnit_Framework_TestSuite(
+			new ReflectionClass($classname)
+		);
+
+		$result = $suite->run();
+		$printer->printResult($result);
+		return $result;
+
+	}
+
 }
