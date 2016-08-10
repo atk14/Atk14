@@ -7,7 +7,7 @@ key1: value1
 key2: value2
 		";
 		$ar = miniYAML::Load($data);
-		$this->assertType("array",$ar);
+		$this->assertTrue(is_array($ar));
 		$this->assertEquals(2,sizeof($ar));
 		$this->assertEquals("value1",$ar["key1"]);
 		$this->assertEquals("value2",$ar["key2"]);
@@ -22,7 +22,7 @@ key2: value2
 - tri
 		";
 		$ar = miniYAML::Load($data);
-		$this->assertType("array",$ar);
+		$this->assertTrue(is_array($ar));
 		$this->assertEquals(3,sizeof($ar));
 		$this->assertEquals("jedna",$ar[0]);
 		$this->assertEquals("dve",$ar[1]);
@@ -43,15 +43,15 @@ vegetables:
 animals: none
 		";
 		$ar = miniYAML::Load($data);
-		$this->assertType("array",$ar);
+		$this->assertTrue(is_array($ar));
 		$this->assertEquals(4,sizeof($ar));
 		$this->assertEquals("everyone",$ar["people"]);
-		$this->assertType("array",$ar["fruits"]);
+		$this->assertTrue(is_array($ar["fruits"]));
 		$this->assertEquals(3,sizeof($ar["fruits"]));
 		$this->assertEquals("apple",$ar["fruits"][0]);
 		$this->assertEquals("orange",$ar["fruits"][1]);
 		$this->assertEquals("lemon",$ar["fruits"][2]);
-		$this->assertType("array",$ar["vegetables"]);
+		$this->assertTrue(is_array($ar["vegetables"]));
 		$this->assertEquals(2,sizeof($ar["vegetables"]));
 		$this->assertEquals("potatoe",$ar["vegetables"][0]);
 		$this->assertEquals("carrot",$ar["vegetables"][1]);
@@ -160,8 +160,8 @@ empty_array: []
 
 ";
 		$ar = miniYAML::Load($data);
-		$this->assertType("array",$ar);
-		$this->assertType("array",$ar["empty_array"]);
+		$this->assertTrue(is_array($ar));
+		$this->assertTrue(is_array($ar["empty_array"]));
 		$this->assertEquals(0,sizeof($ar["empty_array"]));
 								
 	}

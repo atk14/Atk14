@@ -20,7 +20,7 @@ data:
 		$ar = miniYAML::Load($data);
 		$this->assertEquals("success",$ar["status"]);
 		$this->assertEquals("Ok",$ar["message"]);
-		$this->assertType("array",$ar["data"]);
+		$this->assertTrue(is_array($ar["data"]));
 		$this->assertEquals(2,sizeof($ar["data"]));
 		$this->assertEquals("581.22",$ar["data"]["CZK"]);
 		$this->assertEquals("0",$ar["data"]["EUR"]);
@@ -36,7 +36,7 @@ params: []";
 		$ar = miniYAML::Load($data);
 
 		$this->assertEquals("list domains",$ar["command"]);
-		$this->assertType("array",$ar["params"]);
+		$this->assertTrue(is_array($ar["params"]));
 		$this->assertEquals(0,sizeof($ar["params"]));
 
 		$data = '
@@ -75,7 +75,7 @@ data:
 
 		$this->assertEquals("success",$ar["status"]);
 		$this->assertEquals("Ok",$ar["message"]);
-		$this->assertType("array",$ar["data"]);
+		$this->assertTrue(is_array($ar["data"]));
 		$this->assertEquals(5,sizeof($ar["data"]));
 
 		$this->assertEquals(4,sizeof($ar["data"]["2.5.0.6.9.2.3.0.6.0.2.4.e164.arpa"]));
@@ -105,9 +105,9 @@ params:
 ";
 		$ar = miniYAML::Load($data);
 		$this->assertEquals("check domains availability",$ar["command"]);
-		$this->assertType("array",$ar["params"]);
+		$this->assertTrue(is_array($ar["params"]));
 		$this->assertEquals(1,sizeof($ar["params"]));
-		$this->assertType("array",$ar["params"]["domains"]);
+		$this->assertTrue(is_array($ar["params"]["domains"]));
 		$this->assertEquals(5,sizeof($ar["params"]["domains"]));
 		$this->assertEquals(array("domainmaster.cz","generalregistry.cz","surely-free-domain.cz","wole.com","x"),$ar["params"]["domains"]);
 
@@ -170,7 +170,7 @@ data:
 	 $this->assertEquals("NSS:DS-S-02001:1",$ar["data"]["nsset"]);
 	 $this->assertEquals("TOMEK-JAROMIR",$ar["data"]["admin"][0]);
 	 $this->assertEquals("DS-C-02001",$ar["data"]["admin"][1]);
-	 $this->assertType("array",$ar["data"]["tempcontact"]);
+	 $this->assertTrue(is_array($ar["data"]["tempcontact"]));
 	 $this->assertEquals(0,sizeof($ar["data"]["tempcontact"]));
 	 $this->assertEquals("REG-GENREG",$ar["data"]["registrar"]);
 	 $this->assertEquals("2001-01-10",$ar["data"]["create_date"]);

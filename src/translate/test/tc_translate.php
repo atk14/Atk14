@@ -11,7 +11,7 @@ class TcTranslate extends TcBase{
 		);
 
 		$ar_iso = Translate::Trans($ar_utf8,"UTF-8","ISO-8859-2");
-		$this->assertType("array",$ar_iso);
+		$this->assertTrue(is_array($ar_iso));
 		$this->assertEquals(2,sizeof($ar_iso));
 		reset($ar_iso);
 		while(list($_key,$_value) = each($ar_iso)){
@@ -21,7 +21,7 @@ class TcTranslate extends TcBase{
 		}
 
 		$ar_iso = Translate::Trans($ar_utf8,"UTF-8","ISO-8859-2",array("recode_array_keys" => true));
-		$this->assertType("array",$ar_iso);
+		$this->assertTrue(is_array($ar_iso));
 		$this->assertEquals(2,sizeof($ar_iso));
 		reset($ar_iso);
 		while(list($_key,$_value) = each($ar_iso)){

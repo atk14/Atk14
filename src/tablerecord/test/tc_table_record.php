@@ -506,14 +506,14 @@ class TcTableRecord extends TcBase{
 
 		// int[]
 		$records = TestTable::GetInstanceById(array($id2,$id1));
-		$this->assertType("array",$records);
+		$this->assertTrue(is_array($records));
 		$this->assertEquals(2,sizeof($records));
 		$this->assertEquals($id2,$records[0]->getId());
 		$this->assertEquals($id1,$records[1]->getId());
 
 		// obj[]
 		$records = TestTable::GetInstanceById(array($record2->getId(),$record1->getId()));
-		$this->assertType("array",$records);
+		$this->assertTrue(is_array($records));
 		$this->assertEquals(2,sizeof($records));
 		$this->assertEquals($id2,$records[0]->getId());
 		$this->assertEquals($id1,$records[1]->getId());
@@ -527,7 +527,7 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals($records,$records_by_mixed);
 
 		$records = TestTable::GetInstanceById(array($id1,-1000,$id2));
-		$this->assertType("array",$records);
+		$this->assertTrue(is_array($records));
 		$this->assertEquals(3,sizeof($records));
 		$this->assertEquals($id1,$records[0]->getId());
 		$this->assertNull($records[1]);

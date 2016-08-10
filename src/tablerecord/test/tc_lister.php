@@ -216,12 +216,12 @@ class TcLister extends TcBase{
 			$this->assertEquals($expected_authors[$i]->getId(),$items[$i]->getRecordId());
 
 			# test that lister behaves the same as array
-			$this->assertType("Author", $lister[$i]);
+			$this->assertTrue(is_a($lister[$i],"Author"));
 			$this->assertEquals($expected_authors[$i]->getId(),$lister[$i]->getId());
 		}
 
 		foreach($lister as $key => $record) {
-			$this->assertType("Author", $record);
+			$this->assertTrue(is_a($record,"Author"));
 			$this->assertEquals($expected_authors[$key]->getId(), $record->getId());
 
 		}

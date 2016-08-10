@@ -95,11 +95,11 @@ class tc_xmole extends tc_base{
     $this->assertTrue($xmole->parse($this->_test_xml));
     
     $xmoles = $xmole->get_xmoles_by_all_matching_branches("/nonexisting/branf");
-    $this->assertType("array",$xmoles);
+    $this->assertTrue(is_array($xmoles));
     $this->assertEquals(0,sizeof($xmoles));
 
     $xmoles = $xmole->get_xmoles_by_all_matching_branches("/data/user");
-    $this->assertType("array",$xmoles);
+    $this->assertTrue(is_array($xmoles));
     $this->assertEquals(2,sizeof($xmoles));
 
     $this->assertEquals("honza lenivy",$xmoles[0]->get_element_data("/user"));

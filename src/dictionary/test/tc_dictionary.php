@@ -74,13 +74,16 @@ class tc_dictionary extends tc_base{
 
 		$dict->setValue("klic","33.4");
 		$this->assertEquals("33.4",$dict->getValue("klic"));
-		$this->assertType("string",$dict->getValue("klic"));
+		$this->assertTrue(is_string($dict->getValue("klic")));
+		$this->assertFalse(is_int($dict->getValue("klic")));
 
 		$this->assertEquals(33,$dict->getValue("klic","integer"));
-		$this->assertType("integer",$dict->getValue("klic","integer"));
+		$this->assertFalse(is_string($dict->getValue("klic","integer")));
+		$this->assertTrue(is_int($dict->getValue("klic","integer")));
 
 		$this->assertEquals("33.4",$dict->getValue("klic"));
-		$this->assertType("string",$dict->getValue("klic"));
+		$this->assertTrue(is_string($dict->getValue("klic")));
+		$this->assertFalse(is_int($dict->getValue("klic")));
 	}
 
 	function test_to_array(){
