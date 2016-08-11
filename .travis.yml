@@ -19,6 +19,7 @@ before_install:
   - locale -a
   - sudo apt-get install php-pear
   - sudo pear install --alldeps PHPUnit2
+  - composer global require "phpunit/phpunit=4.8.*"
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
 
 before_script:
