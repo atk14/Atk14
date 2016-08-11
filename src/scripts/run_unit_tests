@@ -51,10 +51,24 @@ if(preg_match("/^5/",phpversion())){
 
 $HOME = getenv("HOME"); // "/home/yarri"
 
-// v PHP5.3 neexistuje $_ENV["PWD"] ??
+// in PHP5.3 there is no $_ENV["PWD"] ??
 isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 
-if(0 && file_exists("$HOME/.composer/vendor/phpunit")){
+isset($argv) || ($argv = array());
+
+$SCRIPT = array_shift($argv);
+$DIR = "";
+$RUN_TESTS_ONLY = array();
+while($_a = array_shift($argv)){
+	if(is_dir($_a)){ $DIR = $_a; continue; }
+	$RUN_TESTS_ONLY[] = $_a;
+}
+if($DIR){
+	$DIR = preg_replace('/([^\/])$/','\1/',$DIR);
+	chdir($DIR);
+}
+
+if(1 && file_exists("$HOME/.composer/vendor/phpunit")){
 
 	// $ composer global require "phpunit/phpunit=4.8.*"
 	require("$HOME/.composer/vendor/autoload.php");
@@ -83,20 +97,6 @@ if(0 && file_exists("$HOME/.composer/vendor/phpunit")){
 		echo "************************************************************\n";
 		exit(1);
 	}
-}
-
-isset($argv) || ($argv = array());
-
-$SCRIPT = array_shift($argv);
-$DIR = "";
-$RUN_TESTS_ONLY = array();
-while($_a = array_shift($argv)){
-	if(is_dir($_a)){ $DIR = $_a; continue; }
-	$RUN_TESTS_ONLY[] = $_a;
-}
-if($DIR){
-	$DIR = preg_replace('/([^\/])$/','\1/',$DIR);
-	chdir($DIR);
 }
 
 if(PHPUNIT2){
@@ -179,7 +179,7 @@ foreach($tests_to_execute as $_f){
 exit($exit_code);
 
 /**
- * @return PHPUnit2_Framework_TestResult
+ * @return PHPUnit_Framework_TestResult
  */
 function _test_runner($filename,$DIR){
 	$classname = preg_replace('/\.[^.]*$/',"",$filename);
@@ -215,7 +215,6 @@ function _test_runner($filename,$DIR){
 		$result = $suite->run();
 		$timer->stop();
 		$printer->printResult($result, $timer->timeElapsed());
-		return $result;
 
 	}else{
 
@@ -227,8 +226,8 @@ function _test_runner($filename,$DIR){
 
 		$result = $suite->run();
 		$printer->printResult($result);
-		return $result;
 
 	}
 
+	return $result;
 }
