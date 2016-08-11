@@ -99,19 +99,21 @@ class TcCache extends TcBase{
 	}
 
 	function test_caching_non_existing_record(){
-		$queries_executed = $this->dbmole->getQueriesExecuted();
+		$dbmole = TestTable::GetDbmole();
+
+		$queries_executed = $dbmole->getQueriesExecuted();
 		Cache::Prepare("TestTable",11233);
-		$this->assertEquals($queries_executed,$this->dbmole->getQueriesExecuted());
+		$this->assertEquals($queries_executed,$dbmole->getQueriesExecuted());
 
 		$this->assertEquals(null,Cache::Get("TestTable",11233));
-		$this->assertEquals($queries_executed+1,$this->dbmole->getQueriesExecuted());
+		$this->assertEquals($queries_executed+1,$dbmole->getQueriesExecuted());
 
 		$this->assertEquals(null,Cache::Get("TestTable",11233));
-		$this->assertEquals($queries_executed+1,$this->dbmole->getQueriesExecuted());
+		$this->assertEquals($queries_executed+1,$dbmole->getQueriesExecuted());
 
 		Cache::Clear("TestTable");
 
 		$this->assertEquals(null,Cache::Get("TestTable",11233));
-		$this->assertEquals($queries_executed+2,$this->dbmole->getQueriesExecuted());
+		$this->assertEquals($queries_executed+2,$dbmole->getQueriesExecuted());
 	}
 }

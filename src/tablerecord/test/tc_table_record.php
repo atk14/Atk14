@@ -67,6 +67,8 @@ class TcTableRecord extends TcBase{
 	}
 
 	function test_use_cache(){
+		$dbmole = TestTable::GetDbmole();
+
 		$this->_empty_test_table();
 		$this->_prepare_test_record();
 
@@ -75,100 +77,100 @@ class TcTableRecord extends TcBase{
 		$c_rec->cached = true;
 
 		// not using caching
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$rec = TestTable::GetInstanceById(2);
 		$this->assertFalse(isset($rec->cached));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertTrue($qe_2==$qe+1);
 
 		// using cache
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$rec = TestTable::GetInstanceById(2,array("use_cache" => true));
 		$this->assertTrue(isset($rec->cached));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe,$qe_2);
 
 		// get instances by array; not using cache
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$recs = TestTable::GetInstanceById(array(2));
 		$this->assertFalse(isset($recs[0]->cached));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+1,$qe_2);
 
 		// get instances by array; using cache
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$recs = TestTable::GetInstanceById(array(2),array("use_cache" => true));
 		$this->assertTrue(isset($recs[0]->cached));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe,$qe_2);
 
 		// FindAll, not using cache
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$recs = TestTable::FindAll("title","titulek");
 		$this->assertFalse(isset($recs[0]->cached));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+2,$qe_2); // one query for searching ids, second query for getting objects data
 
 		// FindAll, using cache
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$recs = TestTable::FindAll("title","titulek",array("use_cache" => true));
 		$this->assertTrue(isset($recs[0]->cached));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+1,$qe_2); // one query for searching ids
 
 		// FindFirst, not using cache
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$rec = TestTable::FindFirst("title","titulek");
 		$this->assertFalse(isset($rec->cached));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+2,$qe_2); // one query for searching ids, second query for getting objects data
 
 		// FindFirst, using cache
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$rec = TestTable::FindFirst("title","titulek",array("use_cache" => true));
 		$this->assertTrue(isset($rec->cached));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+1,$qe_2); // one query for searching ids
 
 		// Finder, not using cache
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$finder = TestTable::Finder(array("conditions" => "title='titulek'"));
 		$recs = $finder->getRecords();
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+2,$qe_2); // one query for searching ids, second query for getting objects data
 
 		// Finder, using cache
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$finder = TestTable::Finder(array("conditions" => "title='titulek'", "use_cache" => true));
 		$recs = $finder->getRecords();
 		$this->assertTrue(isset($recs[0]->cached));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+1,$qe_2); // one query for searching ids
 
 		// eceateNewRecord; not using cached while creating record
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$rec = TestTable::CreateNewRecord(array(
 			"id" => 221,
 			"title" => "La test"
 		));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+2,$qe_2);
 		// --
 		$rec = TestTable::GetInstanceById($rec->getId(),array("use_cache" => true));
-		$qe_3 = $this->dbmole->getQueriesExecuted();
+		$qe_3 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe_2+1,$qe_3);
 
 		// CreateNewRecord; using cached while creating record
-		$qe = $this->dbmole->getQueriesExecuted();
+		$qe = $dbmole->getQueriesExecuted();
 		$rec = TestTable::CreateNewRecord(array(
 			"id" => 223,
 			"title" => "La cache"
 		),array("use_cache" => true));
-		$qe_2 = $this->dbmole->getQueriesExecuted();
+		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+2,$qe_2);
 		// --
 		$rec = TestTable::GetInstanceById($rec->getId(),array("use_cache" => true));
-		$qe_3 = $this->dbmole->getQueriesExecuted();
+		$qe_3 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe_2,$qe_3);
 	}
 
@@ -465,7 +467,7 @@ class TcTableRecord extends TcBase{
 		// Article has set do_not_read_values to ["body"]
 		// see models/article.php
 
-		$dbmole = $this->dbmole;
+		$dbmole = Article::GetDbmole();
 
 		$article = Article::CreateNewRecord(array(
 			"title" => "La Title",
