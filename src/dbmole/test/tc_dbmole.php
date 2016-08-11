@@ -115,6 +115,8 @@ class tc_dbmole extends tc_base{
 		$ser = serialize($dbmole);
 
 		$dbmole2 = unserialize($ser);
+		
+		$this->assertTrue($dbmole2->isConnected());
 
 		$count2 = $dbmole2->selectInt("SELECT COUNT(*) FROM test_table");
 		$queries_executed2 = $dbmole2->getQueriesExecuted();

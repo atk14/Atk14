@@ -1504,6 +1504,11 @@ class DbMole{
 	 * @ignore
 	 */
 	function __sleep(){
+		if($this->isConnected()){
+			$connection_swap_variable = "sleeping_dbmole_connection_".$this->getConfigurationName()."_".uniqid(); // "sleeping_dbmole_connection_default_57ac2e67d620e"
+			$GLOBALS[$connection_swap_variable] = &$this->_DbConnect;
+			$this->_connection_swap_variable = $connection_swap_variable;
+		}
 		$vars = get_object_vars($this);
 		unset($vars["_DbConnect"]); // the database connection should not be serialized
 		return array_keys($vars);
@@ -1515,5 +1520,14 @@ class DbMole{
 	 */
 	function __wakeup(){
 		$this->_DbConnect = null;
+
+		if(isset($this->_connection_swap_variable)){
+			$connection_swap_variable = $this->_connection_swap_variable;
+			if(isset($GLOBALS[$connection_swap_variable]) && $GLOBALS[$connection_swap_variable]){
+				$this->_DbConnect = $GLOBALS[$connection_swap_variable];
+				unset($GLOBALS[$connection_swap_variable]);
+			}
+			unset($this->_connection_swap_variable);
+		}
 	}
 }
