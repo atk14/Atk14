@@ -1,5 +1,9 @@
 <?php
 class TcBase extends TcSuperBase{
+
+	// Without this the test TcSession::test_initialization() fails in PHPUnit 4.8
+	protected $backupGlobals = false;
+
 	function setUp(){
 		global $dbmole;
 
