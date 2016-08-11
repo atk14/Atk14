@@ -6,19 +6,33 @@
  * 
  * $ ./scripts/recognize_route /en/books/?offset=10
  * $ ./scripts/recognize_route http://myapp.localhost/en/books/?offset=10
+ * disable redirectig
+ * $ ./scripts/recognize_route -r http://myapp.localhost/en/books/?offset=10
  */
 
 
 require_once(dirname(__FILE__)."/load.php");
 
-$uri = isset($argv[1]) ? $argv[1] : "/";
+$redirect = true;
+
+$i = 1;
+while(true) {
+	$uri = isset($argv[$i]) ? $argv[$i] : "/";
+	if( $uri == '-r' ) {
+		$redirect = false;
+	} else {
+		break;
+	}
+	$i++;
+}
+
 $uri = preg_replace('/^(https?:\/\/[^\/]+)/','',$uri);
 
 $_GET = Atk14Url::ParseParamsFromUri($uri);
 
 $route_ar = Atk14Url::RecognizeRoute($uri);
 
-if($route_ar["force_redirect"]){
+while($route_ar["force_redirect"] && $redirect){
 	echo "URI: $uri\n";
 	$uri = $route_ar["force_redirect"];
 	echo "  ... redirecting ...\n\n";
@@ -34,16 +48,33 @@ _dump_data($uri,$route_ar);
 function _dump_data($uri,$route_ar){
 	echo "URI: $uri\n";
 	echo "page_title: $route_ar[page_title]\n";
-	echo "page_description: $route_ar[page_description]\n\n";
+	echo "page_description: $route_ar[page_description]\n";
+	if(isset($route_ar['router']) && is_object($route_ar['router'])) {
+		echo "router: ", get_class($route_ar['router']), "\n";
+	}
+	echo "\n";
 	$params = $route_ar;
 	unset($params["page_title"]);
 	unset($params["page_description"]);
 	unset($params["get_params"]);
+	unset($params["router"]);
 	unset($params["force_redirect"]);
 	$params = array_merge($params,$route_ar["get_params"]);
 	$items = array();
-	foreach($params as $key => $value){
-		echo "$key=$value\n";
+
+	$output = array();
+	foreach($params as $key => $value) {
+		if(is_array($value)) {
+			foreach($value as $k => $v) {
+				$output["{$key}[$k]"] = $v;
+			}
+		} else {
+			$output[$key] = $value;
+		}
+	}
+
+	foreach($output as $key => $value){
+		echo "$key=", $value, "\n";
 		if(in_array($key,array("namespace","lang"))){ continue; }
 		$_v = str_replace('"','\"',$value);
 		$items[] = "$key=\"$_v\"";
@@ -51,4 +82,11 @@ function _dump_data($uri,$route_ar){
 	echo "\n";
 	echo "{a ".join(" ",$items)."}link{/a}";
 	echo "\n";
+
+	echo "\n";
+	echo "Given link    : ", $uri, "\n";
+	echo "Build link    : ", ($new_uri = Atk14Url::BuildLink($params, array('connector' => '&'))), "\n";
+	if($route_ar["force_redirect"]) {
+		echo "Force redirect: ", $route_ar["force_redirect"], "\n";
+	}
 }

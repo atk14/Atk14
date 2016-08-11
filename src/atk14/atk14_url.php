@@ -47,6 +47,7 @@ class Atk14Url{
 	 * - page_title
 	 * - page_description
 	 * - get_params - associative array of params sent in request
+	 * - router - route object that catches the url
 	 */
 	static function RecognizeRoute($requested_uri,$options = array()){
 		global $ATK14_GLOBAL;
@@ -97,6 +98,7 @@ class Atk14Url{
 					"page_description" => $router->page_description,
 					"get_params" => $router->params->toArray(),
 					"force_redirect" => $router->redirected_to,
+					"router" => $router
 				),$requested_uri);
 			}
 		}
@@ -546,13 +548,8 @@ class Atk14Url{
 	 * $params = Atk14Url::ParseParamsFromUri("/?id=123&format=xml"); // array("id" => "123", "format" => "xml");
 	 */
 	static function ParseParamsFromUri($uri){
-		$out = array();
-		if(preg_match('/\?(.+)$/',$uri,$matches)){
-			foreach(explode('&',$matches[1]) as $item){
-				list($key,$value) = explode("=",$item);
-				$out[urldecode($key)] = urldecode($value);
-			}
-		}
+		$params = parse_url($uri, PHP_URL_QUERY);
+		parse_str( $params, $out );
 		return $out;
 	}
 

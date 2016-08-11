@@ -230,8 +230,13 @@ class TcUrl extends TcBase{
 	function test_ParseParamsFromUri(){
 		$this->assertEquals(array(),Atk14Url::ParseParamsFromUri('/'));
 		$this->assertEquals(array(),Atk14Url::ParseParamsFromUri('/cs/main/'));
+
 		$this->assertEquals(array("id" => "123", "format" => "xml"),Atk14Url::ParseParamsFromUri('/cs/articles/detail/?id=123&format=xml'));
 		$this->assertEquals(array("q" => "klobouček", "offset" => "20"),Atk14Url::ParseParamsFromUri('/cs/articles/?q=klobou%C4%8Dek&offset=20'));
+
+		//recognize both escaped and unescaped arrays
+		$this->assertEquals(array("a" => "1", "b" => array( "3", 4=>"6")),Atk14Url::ParseParamsFromUri('/cs/main/?a=1&b%5B%5D=3&b%5B4%5D=6'));
+		$this->assertEquals(array("a" => "1", "b" => array( "3", 4=>"6")),Atk14Url::ParseParamsFromUri('/cs/main/?a=1&b[]=3&b[4]=6'));
 	}
 
 	function test_RecognizeRoute(){
