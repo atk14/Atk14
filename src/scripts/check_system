@@ -91,20 +91,27 @@ else
 	echo "ok"
 fi
 
-echo -n "PHPUnit2 is installed... "
+echo -n "PHPUnit or PHPUnit2 is installed... "
 cat << EOF | php
 <?php
+// PHPUnit should be installed globally by the composer
+@include_once getenv("HOME")."/.composer/vendor/autoload.php";
+
+// PHPUnit2
 set_include_path(get_include_path().":/usr/share/php"); // In Travis environment there are some difficulties to load the PHPUnit2... TODO: to be removed
 @include_once 'PHPUnit2/Framework/TestSuite.php';
 @include_once 'PHPUnit2/Framework/TestCase.php';
 @include_once 'PHPUnit2/TextUI/ResultPrinter.php';
 @include_once 'Benchmark/Timer.php';
-if(class_exists('PHPUnit2_Framework_TestCase')){
+if(class_exists('PHPUnit2_Framework_TestCase') || class_exists('PHPUnit_Framework_TestCase')){
 	echo "ok\n";
 	exit(0);
 }else{
 	echo "fail\n";
 	echo "!!  do the following:\n";
+	echo "!!  $ composer global require \"phpunit/phpunit=4.8.*\"\n";
+	echo "!!\n";
+	echo "!!  or for installation of the very old PHPUnit2 execute:\n";
 	echo "!!  $ sudo pear install --alldeps PHPUnit2\n";
 	exit(1);
 }
