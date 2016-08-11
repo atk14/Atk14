@@ -88,13 +88,17 @@ if(1 && file_exists("$HOME/.composer/vendor/phpunit")){
 	include_once 'Benchmark/Timer.php';
 
 	if(!class_exists("PHPUnit2_Framework_TestCase")){
-		echo "************************************************************\n";
-		echo "*  Missing dependency: class PHPUnit2_Framework_TestCase   *\n";
-		echo "*  The following command may help you                      *\n";
-		echo "*                                                          *\n";
-		echo "*  $ sudo pear install  PHPUnit2                           *\n";
-		echo "*                                                          *\n";
-		echo "************************************************************\n";
+		echo "***************************************************************\n";
+		echo "*  Missing dependency: class PHPUnit_Framework_TestCase       *\n";
+		echo "*  The following command may help you:                        *\n";
+		echo "*                                                             *\n";
+		echo "*  $ composer global require \"phpunit/phpunit=4.8.*\"          *\n";
+		echo "*                                                             *\n";
+		echo "*  or for the installation of the very old PHPUnit2 execute:  *\n";
+		echo "*                                                             *\n";
+		echo "*  $ sudo pear install --alldeps PHPUnit2                     *\n";
+		echo "*                                                             *\n";
+		echo "***************************************************************\n";
 		exit(1);
 	}
 }
