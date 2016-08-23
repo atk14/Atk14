@@ -183,24 +183,40 @@ class Atk14Controller{
 	var $_atk14_caches_action = array();
 
 	/**
-	 * @access private
+	 * List of before_filters added by {@link _prepend_before_filter()}
+	 *
+	 * These are executed before controllers _before_filter() method.
+	 *
+	 * @var array
 	 */
-	var $_atk14_prepended_before_filters = array();
+	private $_atk14_prepended_before_filters = array();
 
 	/**
-	 * @access private
+	 * List of before_filters added by {@link _append_before_filter()}
+	 *
+	 * These are executed after controllers _before_filter() method.
+	 *
+	 * @var array
 	 */
-	var $_atk14_appended_before_filters = array();
+	private $_atk14_appended_before_filters = array();
 
 	/**
-	 * @access private
+	 * List of after_filters added by {@link _prepend_after_filter()}
+	 *
+	 * These are executed before controllers _after_filter() method.
+	 *
+	 * @var array
 	 */
-	var $_atk14_prepended_after_filters = array();
+	private $_atk14_prepended_after_filters = array();
 
 	/**
-	 * @access private
+	 * List of after_filters added by {@link _append_after_filter()}
+	 *
+	 * These are executed after controllers _after_filter() method.
+	 *
+	 * @var array
 	 */
-	var $_atk14_appended_after_filters = array();
+	private $_atk14_appended_after_filters = array();
 
 	/**
 	 * Data for Smarty templates
@@ -1115,6 +1131,12 @@ class Atk14Controller{
 	 *	$this->_redirect_to_action("overview",array("offset" => 10));
 	 *	$this->_redirect_to_action("overview",array("offset" => 10),array("moved_permanently" => true));
 	 * ```
+	 * @param string $action
+	 * @param array $other_params parameters to build url query part
+	 * @param array $options control redirection attributes (status code ...)
+	 * - status - force set http status code to this value. otherwise it is set automatically (see {@link _redirect_to()})
+	 * - moved_permanently - causes redirect to generate 301 status code
+	 * - connector - character joining query parameters
 	 */
 
 	function _redirect_to_action($action,$other_params = array(),$options = array()){

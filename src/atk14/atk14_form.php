@@ -17,6 +17,8 @@
  * - methods begin() and end() for rendering of the form to template
  * - method set_method() to change the value of forms method attribute
  *
+ * ## Defining a form
+ *
  * Example of a form
  *
  * forms/users/login_form.php
@@ -39,7 +41,7 @@
  *	}
  * ```
  *
- * ## Using form in a controller
+ * ## Using a form in a controller
  *
  * The class variable $form is available automatically if the name and path of the form matches the controllers _action_.
  * For example we have a controller UsersController containing action 'login'.
@@ -54,6 +56,19 @@
  *		$data = $form->cleaned_data;
  *	}
  * ```
+ * ### Accessing fields in a controller
+ *
+ * - Using {@see get_field()} method
+ * ```
+ * echo $form->get_field("login");
+ * ```
+ *
+ * - Access it as an array
+ * ```
+ * echo $form["login"];
+ * ```
+ *
+ * ## Using a form in a template
  *
  * Basically you can print a form by using helper {form} in a template:
  * ```

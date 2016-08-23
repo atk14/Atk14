@@ -328,9 +328,11 @@ class BoundField
 	function id_for_label(){ return $this->field->widget->id_for_label($this->get_id()); }
 
 	/**
-	* Vrati true, pokud je pouzity widget HiddenInput.
-	* NOTE: tohle je Djangu property
-	*/
+	 * Checks if the used widget is of class HiddenInput.
+	 *
+	 * @internal tohle je v Djangu property
+	 * @return bool
+	 */
 	function is_hidden()
 	{
 		return $this->field->widget->is_hidden;
@@ -354,8 +356,10 @@ class BoundField
 	}
 
 	/**
-	* Vrati initial hodnotu tohoto pole.
-	*/
+	 * Returns initial value of the field.
+	 *
+	 * @return mixed
+	 */
 	function get_initial()
 	{
 	   if(isset($this->form->initial[$this->name])){ return $this->form->initial[$this->name]; }
@@ -387,24 +391,26 @@ class Form implements ArrayAccess
 	/**
 	 * @var string
 	 * @access private
+	 * @todo make the attribute private and fix tests
 	 */
 	var $prefix = null;
 
 	/**
 	 * @var string
-	 * @access private
 	 */
-	var $label_suffix = "";
+	private $label_suffix = "";
 
 	/**
 	 * @var string
 	 * @access private
+	 * @todo make the attribute private and fix tests
 	 */
 	var $auto_id = "";
 
 	/**
 	 * @var bool
 	 * @access private
+	 * @todo make the attribute private and fix tests
 	 */
 	var $is_bound;
 
@@ -533,6 +539,7 @@ class Form implements ArrayAccess
 	 * @param string $name
 	 * @param Field $field
 	 *
+	 * @return Field
 	 * @internal muj vymysl
 	 */
 	function add_field($name, $field)
@@ -582,6 +589,11 @@ class Form implements ArrayAccess
 		return $out;
 	}
 
+	/**
+	 * Checks if the form requires multipart emcoding.
+	 *
+	 * @return bool
+	 */
 	function is_multipart(){
 		foreach($this->fields as $f){
 			if($f->widget->multipart_encoding_required){ return true; }
@@ -918,8 +930,19 @@ class Form implements ArrayAccess
 	}
 
 	// The ArrayAccess interface functions
+	/**
+	 * @ignore
+	 */
 	function offsetExists($offset){ return isset($this->fields[$offset]); }
+
+	/**
+	 * @ignore
+	 */
 	function offsetGet($offset){ return $this->get_field($offset); }
+
+	/**
+	 * @ignore
+	 */
 	function offsetSet($offset,$value){
 		if(!$value){
 			// $form["firstname"] = null;
@@ -928,5 +951,9 @@ class Form implements ArrayAccess
 		}
 		$this->add_field($offset,$value);
 	}
+
+	/**
+	 * @ignore
+	 */
 	function offsetUnset($offset){ unset($this->fields[$offset]); }
 }
