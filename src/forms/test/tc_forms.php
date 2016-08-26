@@ -1211,19 +1211,19 @@ class TcForms extends TcBase
 		$form = new SongForm3(array('auto_id'=>false));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<ul class="checkboxes">', '<li><label><input name="composers[]" type="checkbox" value="J" /> John Lennon</label></li>', '<li><label><input name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
+			implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input name="composers[]" type="checkbox" value="J" /> John Lennon</label></li>', '<li class="checkbox"><label><input name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
 			$field->as_widget()
 		);
 		$form = new SongForm3(array('data'=>array('composers'=>array('J')), 'auto_id'=>false));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<ul class="checkboxes">', '<li><label><input name="composers[]" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li><label><input name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
+			implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input name="composers[]" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li class="checkbox"><label><input name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
 			$field->as_widget()
 		);
 		$form = new SongForm3(array('data'=>array('composers'=>array('J', 'P')), 'auto_id'=>false));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<ul class="checkboxes">', '<li><label><input name="composers[]" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li><label><input name="composers[]" type="checkbox" checked="checked" value="P" /> Paul McCartney</label></li>', '</ul>')),
+			implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input name="composers[]" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li class="checkbox"><label><input name="composers[]" type="checkbox" checked="checked" value="P" /> Paul McCartney</label></li>', '</ul>')),
 			$field->as_widget()
 		);
 		// id jednotlivych checkboxu jsou specialni pripad -- jsou k nim
@@ -1231,7 +1231,7 @@ class TcForms extends TcBase
 		$form = new SongForm3(array('auto_id'=>'%s_id'));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<ul class="checkboxes">', '<li><label><input id="composers_id_0" name="composers[]" type="checkbox" value="J" /> John Lennon</label></li>', '<li><label><input id="composers_id_1" name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
+			implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input id="composers_id_0" name="composers[]" type="checkbox" value="J" /> John Lennon</label></li>', '<li class="checkbox"><label><input id="composers_id_1" name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
 			$field->as_widget()
 		);
 		// spravne zadana data a prazdne error pole
