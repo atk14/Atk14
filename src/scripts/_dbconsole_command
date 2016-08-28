@@ -3,6 +3,14 @@
 
 require_once(dirname(__FILE__)."/load.php");
 
+if( isset($argv[1]) && $argv[1] == '--gui' ) {
+	$gui = true;
+	array_splice($argv, 1, 1);
+	$argc-= 1;
+} else {
+	$gui = false;
+}
+
 $configuration_name = isset($argv[1]) ? $argv[1] : "default";
 
 $d = $ATK14_GLOBAL->getDatabaseConfig($configuration_name);
@@ -13,7 +21,11 @@ if(!$d){
 
 switch($d["adapter"]){
 	case "postgresql":
-		$cmd = "psql -U $d[username] $d[database] -h $d[host] -p $d[port]";
+		if( $gui ) {
+			$cmd = "pgadmin3 -qc 'host=$d[host] port=$d[port] dbname=$d[database] user=$d[username]'";
+		} else {
+			$cmd = "psql -U $d[username] $d[database] -h $d[host] -p $d[port]";
+		}
 		break;
 	case "mysql":
 		$cmd = "mysql --user=$d[username] --host=$d[host] --port=$d[port] --host=$d[host] --password=$d[password] $d[database]";
