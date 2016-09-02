@@ -57,10 +57,10 @@ class Atk14Utils{
 			define("PRODUCTION",true);
 
 		// At last there is an auto detection.
-		// If there is an internal remote address or there is no remote address at all (i.e. a script is running from a console),
+		// If there is an internal remote address or the script is running from a console,
 		// environment is treat as DEVELOPMENT.
 		}else{
-			define("DEVELOPMENT",in_array($HTTP_REQUEST->getRemoteAddr(),array("127.0.0.1","::1")) || preg_match("/^(192\\.168\\.|10\\.|172\\.16\\.)/",$HTTP_REQUEST->getRemoteAddr()) || $HTTP_REQUEST->getRemoteAddr()=="");
+			define("DEVELOPMENT",in_array($HTTP_REQUEST->getRemoteAddr(),array("127.0.0.1","::1")) || php_sapi_name()=="cli");
 			define("PRODUCTION",!DEVELOPMENT);
 			define("TEST",false);
 		}
