@@ -27,4 +27,11 @@ for dir in `find ./ -type d -name test | sort`; do
 	fi
 done
 
+echo ""
+if [ "$ret" = "1" ]; then
+	echo "There were errors"
+else
+	echo "Everything looks fine"
+fi
+
 exit $ret

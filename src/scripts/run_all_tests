@@ -36,4 +36,11 @@ for d in `find -L test -maxdepth 2 -type d | egrep -v ^test$ | egrep -v '/\.' | 
 	fi
 done
 
+echo ""
+if [ "$exit_val" = "1" ]; then
+	echo "There were errors"
+else
+	echo "Everything looks fine"
+fi
+
 exit $exit_val
