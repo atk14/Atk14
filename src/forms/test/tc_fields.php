@@ -141,6 +141,9 @@ class TcFields extends TcBase
 					array(
 						'clean'=>'1234567890a', 'error'=>'Ensure this value has at most 10 characters (it has 11).', 'result'=>null
 					),
+					array(
+						'clean'=>'1234567890ěšč', 'error'=>'Ensure this value has at most 10 characters (it has 13).', 'result'=>null
+					),
 				)
 			),
 			array(
