@@ -39,6 +39,7 @@
  * @package Atk14\Core
  */
 class Atk14Robot{
+
 	/**
 	 * Connection to database
 	 *
@@ -80,6 +81,13 @@ class Atk14Robot{
 	var $locking_enabled = true;
 
 	/**
+	 * Whether this robot may be executed or not
+	 *
+	 * For instance in the beforeRun() this variable can be set to false in certain circumstances.
+	 */
+	var $execute_robot = true;
+
+	/**
 	 * Constructor
 	 *
 	 */
@@ -109,7 +117,7 @@ class Atk14Robot{
 		$this->locking_enabled && Lock::Mklock($robot_name,$this->logger);
 
 		$this->beforeRun();
-		$this->run();
+		$this->execute_robot && $this->run();
 		$this->afterRun();
 
 		$this->locking_enabled && Lock::Unlock($robot_name,$this->logger);
