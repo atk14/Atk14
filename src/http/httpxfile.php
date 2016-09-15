@@ -29,7 +29,9 @@ class HTTPXFile extends HTTPUploadedFile{
 		$this->_Request = $options["request"];
 
 		if(preg_match('/\bfilename="(.*?)"/',$this->_Request->getHeader("Content-Disposition"),$matches)){ // Content-Disposition:	attachment; filename="DSC_0078.JPG"
-			$this->_FileName = $matches[1];
+			$filename = $matches[1];
+			$filename = urldecode($filename);
+			$this->_FileName = $filename;
 
 		// legacy way
 		}elseif($filename = $this->_Request->getHeader("X-File-Name")){

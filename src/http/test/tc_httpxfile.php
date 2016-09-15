@@ -12,10 +12,11 @@ class tc_httpxfile extends tc_base{
 
 		$this->assertNull(HTTPXFile::GetInstance());
 
-		$request->setHeader("Content-Disposition",'attachment; filename="hlava.jpg"');
+		$request->setHeader("Content-Disposition",sprintf('attachment; filename="%s"',rawurlencode("hlavička.jpg")));
 
 		$this->assertNotNull($file = HTTPXFile::GetInstance());
-		$this->assertEquals("hlava.jpg",$file->getFileName());
+		$this->assertEquals("hlavicka.jpg",$file->getFileName());
+		$this->assertEquals("hlavička.jpg",$file->getFileName(array("sanitize" => false)));
 		$this->assertEquals(false,$file->chunkedUpload());
 
 		$request->setHeader("Content-Range","bytes 0-100/256");
