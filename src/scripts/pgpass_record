@@ -25,6 +25,9 @@ if($d["adapter"]!="postgresql"){
 	exit(0);
 }
 
+if($d["host"]==""){ $d["host"] = "localhost"; }
+if($d["port"]==""){ $d["port"] = "5432"; }
+
 $pgpass_record = "$d[host]:$d[port]:$d[database]:$d[username]:$d[password]";
 
 $arguments = getopt("a",array("add-record-automatically"));

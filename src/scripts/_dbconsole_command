@@ -21,10 +21,17 @@ if(!$d){
 
 switch($d["adapter"]){
 	case "postgresql":
+		$host = $host_gui = $port = $port_gui = "";
+		if($d["host"]){
+			$host = " -h $d[host]";
+			$port = " -p $d[port]";
+			$host_gui = " host=$d[host]";
+			$port_gui = " port=$d[port]";
+		}
 		if( $gui ) {
-			$cmd = "pgadmin3 -qc 'host=$d[host] port=$d[port] dbname=$d[database] user=$d[username]'";
+			$cmd = "pgadmin3 -qc 'dbname=$d[database] user=$d[username]$host_gui$port_gui'";
 		} else {
-			$cmd = "psql -U $d[username] $d[database] -h $d[host] -p $d[port]";
+			$cmd = "psql -U $d[username] $d[database]$host$port";
 		}
 		break;
 	case "mysql":

@@ -245,11 +245,21 @@ class Atk14Global{
 		}else{
 			return null;
 		}
+
 		$d += array(
-			"adapter" => "postgresql"
+			"adapter" => "postgresql",
+			"host" => "",
+			"port" => "",
+			"database" => "",
+			"username" => "",
+			"password" => "",
 		);
 
-		if(!isset($d["port"])){
+		if($d["port"] && !$d["host"]){
+			$d["host"] = "localhost";
+		}
+
+		if(!$d["port"] && $d["host"]){
 			switch($d["adapter"]){
 				case "postgresql":
 					$d["port"] = "5432";
