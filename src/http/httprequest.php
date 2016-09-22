@@ -589,9 +589,16 @@ class HTTPRequest{
 	function getRawPostData(){
 		if(!is_null($data = $this->_getForceValue("RawPostData"))){ return $data; }
 
+		// $HTTP_RAW_POST_DATA removed in PHP7.0
 		if(isset($GLOBALS["HTTP_RAW_POST_DATA"])){
 			return $GLOBALS["HTTP_RAW_POST_DATA"];
 		}
+
+		$postdata = file_get_contents("php://input");
+		if(is_string($postdata)){
+			return $postdata;
+		}
+
 		return null;
 	}
 
