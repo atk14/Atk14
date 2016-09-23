@@ -41,7 +41,8 @@ class ObjectCacher {
 	static function &GetInstance($class,$create = true){
 		static $object_cachers = array();
 
-		assert(class_exists($class)); // this needs to be called before lowering the name of the class (autoload issue)
+		$stat = class_exists($class); // this needs to be called before lowering the name of the class (autoload issue)
+		assert($stat);
 		$class_lo = strtolower($class);
 		if(!key_exists($class_lo, self::$InitilizedCachers)) {
 			if(!$create) { $null = null; return $null; }
