@@ -27,7 +27,9 @@ function pg_dump_command($d,$arguments = array(),$dump){
 	$dump_options = "";
 	if($dump=="schema"){ $dump_options = " --schema-only"; }
 	elseif($dump=="data"){ $dump_options = " --data-only"; }
-	$cmd = "pg_dump$dump_options -U $d[username] $d[database] -h $d[host] -p $d[port]".($arguments ? " ".join(" ",$arguments) : "");
+	if($d["port"]){ array_unshift($arguments,"-p $d[port]"); }
+	if($d["host"]){ array_unshift($arguments,"-h $d[host]"); }
+	$cmd = "pg_dump$dump_options -U $d[username] $d[database]".($arguments ? " ".join(" ",$arguments) : "");
 	return $cmd;
 }
 
