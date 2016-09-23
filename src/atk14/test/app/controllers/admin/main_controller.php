@@ -4,6 +4,8 @@ class MainController extends AdminController{
 	}
 
 	function _before_filter(){
-		assert(class_exists("AdminForm"));
+		if(!class_exists("AdminForm")){
+			throw new Exception("MainController: class AdminForm doesn't exist");
+		}
 	}
 }

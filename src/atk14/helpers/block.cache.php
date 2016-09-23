@@ -55,7 +55,9 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 
 	if(!strlen($key)){
 		$current_template = $smarty->_current_file; // "/home/bob/devel/project_x/app/views/shared/_menu.tpl"
-		assert(strlen($current_template)>0);
+		if(strlen($current_template)==0){
+			throw new Exception('smarty_block_cache: $current_template is empty string');
+		}
 
 		$lang = $smarty->getTemplateVars("lang");
 		$namespace = $smarty->getTemplateVars("namespace");
