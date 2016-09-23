@@ -134,7 +134,7 @@ class HTTPXFile extends HTTPUploadedFile{
 				return array(3,3);
 			}
 
-			assert(false);
+			throw new Exception("HTTPXFile: Content range values out of expectations");
 		}
 
 		// legacy way
