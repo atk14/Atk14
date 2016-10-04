@@ -115,7 +115,7 @@ function dbmole_error_handler($dbmole){
 			$ATK14_LOGGER->error($dbmole->getErrorReport());
 			$ATK14_LOGGER->flush();
 		}
-	}else{
+	}elseif(!TEST){
 		echo "<pre>";
 		echo h($dbmole->getErrorReport());
 		echo "</pre>";
