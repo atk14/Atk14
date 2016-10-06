@@ -6,6 +6,9 @@ require_once(dirname(__FILE__)."/load.php");
 $d = $ATK14_GLOBAL->getDatabaseConfig();
 
 # if the configuration contains create_command it is being simply printed out
+if(isset($d["create_command"]) && is_array($d["create_command"])){
+	$d["create_command"] = join("\n",$d["create_command"]);
+}
 if(isset($d["create_command"]) && strlen($d["create_command"])){
 	echo $d["create_command"], "\n";
 	exit(0);
