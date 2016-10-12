@@ -10,6 +10,7 @@ require_once("$__PATH__/atk14_router.php");
 require_once("$__PATH__/atk14_url.php");
 require_once("$__PATH__/atk14_session.php");
 require_once("$__PATH__/atk14_flash.php");
+require_once("$__PATH__/atk14_flash_message.php");
 require_once("$__PATH__/atk14_form.php");
 require_once("$__PATH__/atk14_utils.php");
 require_once("$__PATH__/atk14_require.php");

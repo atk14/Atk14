@@ -192,16 +192,29 @@ class Atk14Flash{
 	 * @param string $key
 	 * @return string
 	 */
-	function getMessage($key = "notice"){
+	function getMessage($key = null){
 		$session = $GLOBALS["ATK14_GLOBAL"]->getSession();
 
-		$out = "";
 		$flash_ar = $session->getValue("__flash__");
-		if(isset($flash_ar) && isset($flash_ar[$key])){
-			$out = $flash_ar[$key];
-		}
-
 		$this->_FlashRead = true;
+		
+		$out = null;
+
+		if(!$flash_ar){
+	
+			// nothing...
+
+		}elseif(!$key){
+
+			$types = array_keys($flash_ar);
+			$messages = array_values($flash_ar);
+			$out = new Atk14FlashMessage(array_shift($messages),array_shift($types));
+
+		}elseif(isset($flash_ar[$key])){
+
+			$out = new Atk14FlashMessage($flash_ar[$key],$key);
+
+		}
 
 		return $out;
 	}
