@@ -168,6 +168,15 @@ class Atk14Flash{
 	 *
 	 * If the $message param is omitted the $key is used as $param as <strong>notice</strong>.
 	 *
+	 * <code>
+	 *	$flash->setMessage("You are so great");
+	 *	$flash->setMessage("warning","Don't touch the button");
+	 *
+	 *	// clearing message
+	 *	$flash->setMessage("");
+	 *	$flash->setMessage("warning","");
+	 * </code>
+	 *
 	 * @param string $key
 	 * @param string $message
 	 */
@@ -182,7 +191,17 @@ class Atk14Flash{
 
 		if(!($flash_ar = $session->getValue("__flash__"))){ $flash_ar = array(); }
 
-		$flash_ar["$key"] = $message;
+		if(!strlen($message)){
+			unset($flash_ar["$key"]);
+		}else{
+			$flash_ar["$key"] = $message;
+		}
+
+		if(!$flash_ar){
+			$session->clearValue("__flash__");
+			return;
+		}
+
 		$session->setValue("__flash__",$flash_ar);
 	}
 

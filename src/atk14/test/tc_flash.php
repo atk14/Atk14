@@ -18,6 +18,11 @@ class TcFlash extends TcBase{
 		$this->assertEquals("Changes have been saved",$message->getMessage());
 		$this->assertEquals("Changes have been saved",(string)$message);
 		$this->assertEquals("notice",$message->getType());
+
+		$flash->setMessage("");
+
+		$this->assertNull($flash->getMessage("notice"));
+		$this->assertNull($flash->getMessage());
 	}
 
 }
