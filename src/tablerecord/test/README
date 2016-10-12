@@ -4,7 +4,16 @@ Create a database test accessible with user test identified with password test.
 
 template1=# CREATE DATABASE test ENCODING 'UTF-8';
 template1=# CREATE USER test WITH ENCRYPTED PASSWORD 'test';
+template1=# GRANT ALL PRIVILEGES ON DATABASE test TO test;
 
-Create there Postgresql`s structures from the file testing_structures.postgresql.sql
+Create there Postgresql`s structures from the file structures.postgresql.sql
 
 $ psql -U test test < testing_structures.postgresql.sql
+
+You can do it with one command:
+
+(cat <<EOF && echo 'CONNECT TO test USER test' && cat structures.postgresql.sql) | sudo -u postgres -s psql template1
+CREATE DATABASE test ENCODING 'UTF-8';
+CREATE USER test WITH ENCRYPTED PASSWORD 'test';
+GRANT ALL PRIVILEGES ON DATABASE test TO test;
+EOF
