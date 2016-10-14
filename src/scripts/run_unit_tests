@@ -68,10 +68,21 @@ if($DIR){
 	chdir($DIR);
 }
 
-if(file_exists($_f = "$HOME/.composer/vendor/phpunit") || file_exists($_f = "$HOME/.config/composer/vendor/phpunit")){
+$exists = false;
+foreach(array(
+		"$HOME/.composer/vendor/phpunit" => "../autoload.php",
+		"$HOME/.config/composer/vendor/phpunit" => "../autoload.php",
+		"/usr/share/php/PHPUnit" => "Autoload.php"
+	) as $dir => $autoload) {
+	if(file_exists($dir)) {
+		$exists = true;
+		break;
+	}
+}
 
+if($exists) {
 	// $ composer global require "phpunit/phpunit=4.8.*"
-	require("$_f/../autoload.php");
+	require("$dir/$autoload");
 	define('PHPUNIT2',false);
 	define('PHPUNIT',true);
 
