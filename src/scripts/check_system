@@ -57,7 +57,6 @@ fi
 assert_command_exists 'env'
 assert_command_exists 'wget'
 assert_command_exists 'php'
-assert_command_exists 'pear'
 assert_command_exists 'psql'
 assert_command_exists 'git'
 assert_command_exists 'fgrep'
