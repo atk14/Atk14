@@ -3,6 +3,27 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.2] - 2016-11-10
+
+### Added
+
+- [Akt14] Added Atk14Robot::locking_enabled, Atk14Robot::execute_robot
+- ./scripts/dbconsole can run pgadmin3 (with -g|--gui parameter)
+- The create_command key in config/database.yml may contain an array of SQL commands
+- Connecting to a postgresql database through a local unix socket enabled
+- The interactive console acts like non-interactive console when STDIN is attached to a pipe
+
+### Changed
+
+- [Testing] The script run_unit_tests uses PHPUnit instead of PHPUnit2. PHPUnit could be installed eitheir using Composer or using a package system.
+- [Forms] Added class number to NumberInput; added class email to EmailInput; on every <li> in the widget CheckboxSelectMultiple there is class="checkbox"
+- [UrlFetcher] On ssl the peer verification was disabled
+- [TableRecord] TableRecord::getValues() has now option return_id set to true by default
+
+### Fixed
+
+- There are many fixes
+
 ## [1.1] - 2016-05-22
 
 ### Added
