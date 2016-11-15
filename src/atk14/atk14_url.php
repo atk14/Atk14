@@ -146,8 +146,12 @@ class Atk14Url{
 			$get_params[$key] = $out[$key];
 		}
 
-		// zde muze byt dojit ke zmene $out["lang"]
-		Atk14Locale::Initialize($out["lang"]);
+		$lang_orig = $out["lang"];
+		Atk14Locale::Initialize($out["lang"]); // zde muze byt dojit ke zmene $out["lang"]
+		if($out["lang"]!=$lang_orig){
+			// In the URI there is a language which is not supported by the configuration
+			return  Atk14Url::_NotFound($namespace);
+		}
 
 		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
 		$get_params = array_merge($options["get_params"],$get_params);

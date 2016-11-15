@@ -225,6 +225,24 @@ class TcUrl extends TcBase{
 		$this->assertEquals("/fable/a-very-good-fable-22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22)));
 		$this->assertEquals("/bajka/a-very-good-fable-22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22, "lang" => "cs")));
 		$this->assertEquals("/sk/fables/detail/?id=22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22, "lang" => "sk"))); // in the router there is no support for sk
+
+		//
+		$this->_test_route("/en/",array(
+			"namespace" => "",
+			"lang" => "en",
+			"controller" => "main",
+			"action" => "index",
+		));
+		$this->_test_route("/universe/en/",array(
+			"namespace" => "universe",
+			"lang" => "en",
+			"controller" => "main",
+			"action" => "index",
+		));
+
+		// there is no Hungarian language in the config/locale.yml
+		$this->_test_404_route("/hu/");
+		$this->_test_404_route("/universe/hu/");
 	}
 
 	function test_ParseParamsFromUri(){
