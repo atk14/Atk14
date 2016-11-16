@@ -10,7 +10,6 @@
 dirname=`dirname $0`
 cd $dirname
 base_dir=`./_get_application_path`../
-exit_val=0
 
 [  -z "`ATK14_ENV=TEST ./migrate -p`" ] || (cat << EOF && sleep 2 && ATK14_ENV=TEST ./migrate)
 **************************************************************************
@@ -24,7 +23,19 @@ I am about to run the following command in 2 secs
 
 EOF
 
+migrate_exit=$?
+if [ "$migrate_exit" != "0" ]; then
+	echo "Migration failed"
+	exit $migrate_exit
+fi
+
 cd $base_dir
+if [ ! -d test ]; then
+	echo "Directory test does not exist"
+	exit 1
+fi
+
+exit_val=0
 for d in `find -L test -maxdepth 2 -type d | egrep -v ^test$ | egrep -v '/\.' | sort` ; do
 	# in a directory with tests there should be initialize.php (or initialize.inc)
 	if [ -e $d/initialize.php ] || [ -e $d/initialize.inc ]; then
