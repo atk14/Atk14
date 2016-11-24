@@ -145,7 +145,7 @@ class UrlFetcher {
 	 * <li><b>max_redirections</b> 5</li>
 	 * </ul>
 	 */
-	function UrlFetcher($url = "", $options = array()){
+	function __construct($url = "", $options = array()){
 		$this->_reset();
 
 		if(is_array($url)){
