@@ -17,7 +17,7 @@
 * This function changes a template source in some ways to make this possible.
 * Smarty calls it automatically before a template compilation.
 */
-function atk14_smarty_prefilter($tpl_source, &$smarty = null){
+function atk14_smarty_prefilter($tpl_source, $smarty = null){
 	// \{HELLO\} -> {literal}{{/literal}HELLO{literal}}{/literal}
 	$tpl_source = strtr($tpl_source,array(
 		"\\{" => "{literal}{{/literal}",
