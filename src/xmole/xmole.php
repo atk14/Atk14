@@ -161,7 +161,7 @@ class XMole{
 	 * @param string $xml_data
 	 * @param array $options
 	 */
-	function XMole($xml_data = null,$options = array()){
+	function __construct($xml_data = null,$options = array()){
 		$options = array_merge(array(
 			"trim_data" => XMOLE_AUTO_TRIM_ALL_DATA
 		),$options);
