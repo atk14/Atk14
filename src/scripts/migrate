@@ -131,12 +131,15 @@ if(!Atk14Migration::SchemaMigrationsTableExists($dbmole)){
 }
 
 // getting list of done migrations
-$already_done_migrations = $dbmole->selectIntoArray("SELECT version FROM schema_migrations ORDER BY version");
+#$already_done_migrations = $dbmole->selectIntoArray("SELECT version FROM schema_migrations ORDER BY version");
 
 $counter = 0;
 $ret = 0;
 foreach($migrations as $m){
-	if(in_array($m,$already_done_migrations) && !$forcing){ continue; }
+	if(
+		!$forcing &&
+		$dbmole->selectBool("SELECT EXISTS(SELECT * FROM schema_migrations WHERE version=:version)", array(":version" => $m))
+	){ continue; }
 
 	if($force_to_execute_migrations && !in_array($m,$force_to_execute_migrations)){ continue; }
 
