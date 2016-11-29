@@ -138,7 +138,7 @@ $ret = 0;
 foreach($migrations as $m){
 	if(
 		!$forcing &&
-		$dbmole->selectBool("SELECT EXISTS(SELECT * FROM schema_migrations WHERE version=:version)", array(":version" => $m))
+		0!=$dbmole->selectInt("SELECT COUNT(*) FROM schema_migrations WHERE version=:version", array(":version" => $m))
 	){ continue; }
 
 	if($force_to_execute_migrations && !in_array($m,$force_to_execute_migrations)){ continue; }
