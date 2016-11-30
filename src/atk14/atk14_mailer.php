@@ -250,13 +250,14 @@ class Atk14Mailer{
 	 * @param array $options
 	 */
 	static function GetInstance($options = array()){
+		global $ATK14_LOGGER;
 		$options = array_merge(array(
 			"namespace" => "",
 			"logger" => null
 		),$options);
 
 		$namespace = $options["namespace"];
-		$logger = isset($options["logger"]) ? $options["logger"] : $GLOBALS["ATK14_LOGGER"];
+		$logger = isset($options["logger"]) ? $options["logger"] : $ATK14_LOGGER;
 
 		$mailer = null;
 		if(Atk14Require::Load("controllers/$namespace/application_mailer.*")){
