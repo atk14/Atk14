@@ -542,7 +542,7 @@ class _CMailFile {
 	
 	//2009-01-06: konstruktor byl predelan
 	//$subject,$to,$from,$cc,$bcc,$msg,$msg_mimetype,$msg_charset,$filename,&$file_content,$mimetype = "application/octet-stream", $mime_filename = false) 
-	function _CMailFile(&$file_content,$options = array()){
+	function __construct(&$file_content,$options = array()){
 		$this->mime_boundary = _sendmail_get_boundary();
 		$options = array_merge(array(
 			"subject" => "",

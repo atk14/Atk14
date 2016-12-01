@@ -73,7 +73,7 @@ class Date{
 	 *
 	 * @param string $date
 	 */
-	function Date($date){
+	function __construct($date){
 		if(!Dates::CheckDate($date)){ $date = null; }
 		$this->_Date = $date;
 	}
