@@ -118,7 +118,7 @@ class HTTPRequest{
 	 * Constructor
 	 *
 	 */
-	function HTTPRequest(){
+	function __construct(){
 		$this->_autoInitialize();
 	}
 

@@ -124,7 +124,7 @@ class HTTPResponse{
 	/**
 	 * Constructor.
 	 */
-	function HTTPResponse(){
+	function __construct(){
 		$this->_OutputBuffer = new StringBuffer();
 		$this->buffer = &$this->_OutputBuffer;
 	}
