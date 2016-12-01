@@ -68,9 +68,9 @@ class HTTPUploadedFile{
 	/**
 	 * Returns instance of file object.
 	 *
-	 * <code>
+	 * ```
 	 * $file = HTTPUploadedFile::GetInstance($_FILE["userfile"],"userfile");
-	 * </code>
+	 * ```
 	 * 
 	 * @param $FILE
 	 * @param string $name

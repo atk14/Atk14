@@ -218,16 +218,18 @@ class Atk14Utils{
 	 *
 	 * This method is mostly used in helpers to distinguish values that should be rendered as attributes of a tag.
 	 *
+	 * Recognizes only parameters which names begin with '_'.
+	 *
 	 * In this example $params will contain array("id" => "20"), $attrs will contain array("class" => "red","id" => "red_link").
 	 * ```
-	 *	$params = array("id" => "20", "_class" => "red", "_id" => "red_link");
-	 *	$attrs = Atk14Utils::ExtractAttributes($params);
+	 * $params = array("id" => "20", "_class" => "red", "_id" => "red_link");
+	 * $attrs = Atk14Utils::ExtractAttributes($params);
 	 * ```
 	 *
 	 * or
 	 * ```
-	 *	$attrs = array("data-message" => "Hello guys!");
-	 *	Atk14Utils::ExtractAttributes($params,$attrs);
+	 * $attrs = array("data-message" => "Hello guys!");
+	 * Atk14Utils::ExtractAttributes($params,$attrs);
 	 * ```
 	 * the attribute data-message will be preserved
 	 *

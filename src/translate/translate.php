@@ -74,9 +74,6 @@ class Translate{
 	 *
 	 * Parameter can be an array of string and the method also returns array with all converted strings.
 	 *
-	 * $options description
-	 * - "recode_array_keys" - when $text is of type array, also its keys will be converted
-	 * 
 	 * @param string|array $text
 	 * @param string $from_charset input charset
 	 * @param string $to_charset output charset
@@ -715,22 +712,22 @@ class Translate{
 	 */
 	static function _LengthUtf8(&$str){
 		$i = 0;
-    $count = 0;
-    $len = strlen($str);
-    while ($i < $len) {
+		$count = 0;
+		$len = strlen($str);
+		while ($i < $len) {
 			$chr = ord ($str[$i]);
 			$count++;
 			$i++;
 			if ($i >= $len){ break; }
 
 			if ($chr & 0x80){
+				$chr <<= 1;
+				while ($chr & 0x80) {
+					$i++;
 					$chr <<= 1;
-					while ($chr & 0x80) {
-						$i++;
-						$chr <<= 1;
-					}
+				}
 			}
-    }
-    return $count;
+		}
+		return $count;
 	}
 }

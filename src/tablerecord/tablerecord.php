@@ -1,9 +1,8 @@
 <?php
 /**
- * Basic class for manipulating records.
+ * Base class for manipulating records.
  *
- * @package Atk14
- * @subpackage TableRecord
+ * @package Atk14\TableRecord
  * @filesource
  */
 
@@ -19,15 +18,23 @@ defined("TABLERECORD_CACHES_STRUCTURES") || define("TABLERECORD_CACHES_STRUCTURE
 defined("TABLERECORD_USE_CACHE_BY_DEFAULT") || define("TABLERECORD_USE_CACHE_BY_DEFAULT",false);
 
 /**
- * Basic class for manipulating records.
+ * Base class for manipulating records.
  *
- * @package Atk14
- * @subpackage TableRecord
  */
 class TableRecord extends inobj {
 
+	/**
+	 * Time interval to store table structures cached
+	 *
+	 * @var integer
+	 */
 	static $TableStructuresCacheDuration = TABLERECORD_CACHES_STRUCTURES;
 
+	/**
+	 * Storage for table structures
+	 *
+	 * @var array
+	 */
 	static protected $_TableStructuresCache = array();
 
 	/**
@@ -91,7 +98,7 @@ class TableRecord extends inobj {
 	 * @var array
 	 * @access private
 	 */
-	static protected $_DoNotReadValues = array(); // pole, jejiz hodnoty se nemaji nacitat behem vytvareni instanci; array("image_body")
+	static protected $_DoNotReadValues = array();
 
 	/**
 	 * Values contained in a table record.
@@ -106,12 +113,10 @@ class TableRecord extends inobj {
 	 *
 	 * @param mixed $table_name_or_options
 	 * @param array $options
-	 * <ul>
-	 * 	<li><b>do_not_read_values</b> - list of columns that shouldn't be fetched at the moment of object instantiation. It can increase performance. Typically when reading from tables cotaining binary objects</li>
-	 * 	<li><b>id_field_name</b> - name of field containing primary key</li>
-	 * 	<li><b>id_field_type</b> - type of field containing primary key</li>
-	 * 	<li><b>sequence_name</b> - </li>
-	 * </ul>
+	 * - <b>do_not_read_values</b> - list of columns that shouldn't be fetched at the moment of object instantiation. It can increase performance. Typically when reading from tables containing binary objects
+	 * - <b>id_field_name</b> - name of field containing primary key (default: id)
+	 * - <b>id_field_type</b> - type of field containing primary key. When not set, it is guessed from database type of the primary key field.
+	 * - <b>sequence\_name</b> - set the sequence name in case it doesn't suit atk14s pattern 'seq_' + $table_name
 	 */
 	function __construct($table_name_or_options = null,$options = array()){
 		static $DEFAULT_OPTIONS = array();
@@ -220,7 +225,7 @@ class TableRecord extends inobj {
 	/**
 	 * Creates new record.
 	 *
-	 * Creates new record in database and returns an object of class
+	 * Creates new record in database and returns an instance of class.
 	 *
 	 * Works in PHP5.3 and above.
 	 *
@@ -1142,20 +1147,17 @@ class TableRecord extends inobj {
 		return array_keys($this->_getTableStructure());
 	}
 
-
-
-
 	/**
 	 * Set value in a table column.
 	 *
+	 * When $value is an object, it will be converted to its id.
+	 *
 	 * @param string $field_name name of table column
-	 * @param mixed $value							hodnota (cislo, string...)
-	 * @param array $options
-	 * <ul>
-	 * 	<li><b>do_not_escape</b> - </li>
-	 * </ul>
-	 * @return boolean									true -> uspesne nastaveno
-	 *																	false -> nenestaveno, doslo k chybe
+	 * @param mixed $value number, string, object ...
+	 * @param array $options {@see setValues()}
+	 * @return boolean
+	 * - true - successfully set,
+	 * - false - not set and error occured
 	 */
 	function setValue($field_name,$value,$options = array()){
 		$field_name = (string) $field_name;
@@ -1174,25 +1176,47 @@ class TableRecord extends inobj {
 	 * Sets values in a record.
 	 *
 	 * ```
-	 * $this->setValues(array("paid" => "Y","paid_date" => "2007-10-29 15:13", "paid_note" => "zaplaceno"));
+	 * $this->setValues(array(
+	 * 	"paid" => "Y",
+	 * 	"paid_date" => "2007-10-29 15:13",
+	 * 	 "paid_note" => "paid fast"
+	 * ));
 	 * ```
 	 *
+	 * In case a value should not be escaped, (for example db function is passed as value), it can be passed in option 'do_not_escape'.
+	 *
+	 * In this call no values will be escaped
+	 * ```
+	 * $rec->s("create_at","NOW()",array(
+	 * 	"do_not_escape" => true
+	 * ));
+	 * ```
+	 * In this call only value 'create_at' will not be escaped
+	 * ```
+	 * $rec->s(array(
+	 * 	"name" => "Jan Novak",
+	 * 	"birth_date" => "2001-01-01",
+	 * 	"create_at" => "NOW()"
+	 * ),array("do_not_escape" => "create_at"));
+	 * ```
+	 * Pass array of values to the option when more values are not to be escaped
 	 *
 	 * @param array $data
 	 * @param array $options
-	 * <ul>
-	 * 	<li><b>do_not_escape</b> - </li>
-	 * 	<li><b>validates_updating_of_fields</b> - </li>
-	 * </ul>
-	 * @return boolean true if successfully set, false when not set or error occured
+	 * - <b>do_not_escape</b> - string|array - values that will not be escaped
+	 * - <b>validates_updating_of_fields</b>
+	 *
+	 * @return boolean
+	 * - true - successfully set,
+	 * - false - not set and error occured
 	 */
 	function setValues($data,$options = array()){
 		$data = (array) $data;
 		$options = ((array ) $options) +
-                array(
-                "do_not_escape" => array(),
-                "validates_updating_of_fields" => null,
-              );
+			array(
+				"do_not_escape" => array(),
+				"validates_updating_of_fields" => null,
+			);
 
 		if(!is_array($options["do_not_escape"])){ $options["do_not_escape"] = array($options["do_not_escape"]); }
 
@@ -1238,33 +1262,16 @@ class TableRecord extends inobj {
 	}
 
 	/**
-	 * Alias to methods setValue() a setValues().
+	 * Alias to methods setValue() and setValues().
 	 *
-	 * Alias to methods {@link setValue()} a {@link setValues()}.
-	 *
-	 * Example:
-	 * ```
-	 *	$rec->s("name","Jan Novak");
-	 *	$rec->s(array(
-	 *		"name" => "Jan Novak",
-	 *		"birth_date" => "2001-01-01"
-	 *	));
-	 * ```
-	 *
-	 * Options can be passed to both example calls:
-	 * ```
-	 *	$rec->s("create_at","NOW()",array("do_not_escape" => true));
-	 *	$rec->s(array(
-	 *		"name" => "Jan Novak",
-	 *		"birth_date" => "2001-01-01",
-	 *		"create_at" => "NOW()"
-	 *	),array("do_not_escape" => "create_at"));
-	 * ```
-	 *
+	 * @see TableRecord::setValues()
+	 * @see setValue()
 	 * @param string|array $field_name
 	 * @param mixed $value
-	 * @param array $options
-	 * @return boolean true - values successfully set, false - values not set and error
+	 * @param array $options {@link setValues()}
+	 * @return boolean
+	 * - true - successfully set,
+	 * - false - not set and error occured
 	 */
 	function s($field_name,$value = null,$options = array()){
 		if(is_array($field_name)){
@@ -1576,8 +1583,11 @@ class TableRecord extends inobj {
 	}
 
 	/**
+	 * Reads physical database table structure into internal structure
 	 *
 	 * It must be covered by a descendant.
+	 * @param array $options standard dbmole options
+	 * @see DbMole::selectIntoAssociativeArray() to see options
 	 */
 	function _readTableStructure($options = array()){
 		$accessor_class = "TableRecord_DatabaseAccessor_".$this->dbmole->getDatabaseType();
@@ -1605,6 +1615,11 @@ class TableRecord extends inobj {
 		return self::$_TableStructuresCache[$key];
 	}
 
+	/**
+	 * Sets record values into internal structures.
+	 *
+	 * @param array $row raw data read from table
+	 */
 	function _setRecordValues($row){
 		$accessor_class = "TableRecord_DatabaseAccessor_".$this->dbmole->getDatabaseType();
 		$accessor_class::SetRecordValues($row,$this->_RecordValues,$this);

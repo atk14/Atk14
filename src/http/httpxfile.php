@@ -15,8 +15,17 @@
  */
 class HTTPXFile extends HTTPUploadedFile{
 
+	/**
+	 * Request used to process uploaded files
+	 *
+	 * @var HTTPRequest
+	 */
 	var $_Request;
 
+	/**
+	 * @param array $options
+	 * - request HTTPRequest
+	 */
 	function __construct($options = array()){
 		global $HTTP_REQUEST;
 
@@ -43,13 +52,14 @@ class HTTPXFile extends HTTPUploadedFile{
 	/**
 	 * Initialize instance with uploaded file
 	 *
-	 * <code>
+	 * ```
 	 * $f = HTTPXFile::GetInstance();
 	 * $f = HTTPXFile::GetInstance("image");
-	 * </code>
+	 * ```
 	 *
 	 * @param array $options
 	 * @param string $name
+	 * @param array $_ignore ignore it. it's present just for PHP7 compatibility because parent class has the same method with three params
 	 * @return HTTPXFile
 	 */
 	static function GetInstance($options = array(),$name = "file",$_ignore = array()){
@@ -146,6 +156,11 @@ class HTTPXFile extends HTTPUploadedFile{
 		}
 	}
 
+	/**
+	 * Decodes Content-Range http header if present
+	 *
+	 * @return array
+	 */
 	protected function _getContentRangeData(){
 		$content_range = $this->_Request->getHeader("Content-Range"); // Content-Range: bytes 0-1048575/2344594
 		if(preg_match('/^bytes (\d+)-(\d+)\/(\d+)$/',$content_range,$matches)){
@@ -180,11 +195,13 @@ class HTTPXFile extends HTTPUploadedFile{
 	/**
 	 * An unique string for every chunked upload.
 	 * All chunks in the same upload has the same token.
-	 * 
+	 *
 	 * May be useful for proper chunked upload handling.
 	 *
 	 * Returned string can be safely used as a part of a temporary file's name.
 	 *
+	 * @param array $options
+	 * - consider_remote_addr
 	 * @return string
 	 */
 	function getToken($options = array()){

@@ -135,10 +135,11 @@ class Atk14Global{
 	 * ```
 	 * print_r($ATK14_GLOBAL->getSupportedLangs());
 	 * ```
-	 * should return 
+	 * should return
 	 * ```
 	 * array("en","cs","de");
 	 * ```
+	 *
 	 * @return array set of language codes
 	 */
 	function getSupportedLangs(){
@@ -182,7 +183,9 @@ class Atk14Global{
 	 *
 	 * There are three types of environment: DEVELOPMENT, TEST, PRODUCTION
 	 *
+	 * ```
 	 * echo $ATK14_GLOBAL->getEnvironment(); // DEVELOPMENT
+	 * ```
 	 *
 	 * @return string name of environment
 	 */
@@ -275,9 +278,13 @@ class Atk14Global{
 
 	/**
 	 * Loads and returns configuration from conf/$config_name.yml
+	 *
 	 * Returns null when there is no such configuration file
 	 *
+	 * Example
+	 * ```
 	 * $ATK14_GLOBAL->getConfig("database");
+	 * ```
 	 *
 	 * @param string $config_name
 	 * @return string|null
