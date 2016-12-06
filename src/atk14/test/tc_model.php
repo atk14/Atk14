@@ -3,6 +3,8 @@ class TcUnitBase extends TcAtk14Model {}
 
 class TcModel extends TcUnitBase {
 	/**
+	 * Otestovani, ze funguje pouzivani datovych sad pomoci anotace @dataProvider
+	 *
 	 * @dataProvider provideNumbers
 	 */
 	function testSomething($a, $b) {

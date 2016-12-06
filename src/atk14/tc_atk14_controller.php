@@ -14,9 +14,8 @@ class TcAtk14Controller extends TcSuperBase{
 	var $dbmole = null;
 	var $client = null;
 
-	function __construct(){
-		$ref = new ReflectionClass("TcSuperBase");
-		$ref->newInstance(func_get_args());
+	function __construct($name = NULL, array $data = array(), $dataName = ''){
+		parent::__construct($name, $data, $dataName);
 
 		$this->session = $GLOBALS["ATK14_GLOBAL"]->getSession();
 		$this->dbmole = $GLOBALS["dbmole"];
