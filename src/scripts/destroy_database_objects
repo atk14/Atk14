@@ -27,6 +27,11 @@ exit(0);
 
 require_once(dirname(__FILE__)."/load.php");
 
+if(PRODUCTION && !ATK14_ENABLE_DESTROY_DATABASE_OBJECTS_IN_PRODUCTION){
+	echo "Obviously you do not want this operation in production\n";
+	exit(1);
+}
+
 $previewing = isset($arguments["p"]) || isset($arguments["preview"]);
 $dbname = $dbmole->getDatabaseName();
 $schema = "public";

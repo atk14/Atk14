@@ -40,6 +40,8 @@ __defaults__(array(
 	// Also you can disable redirecting only in a particular namespace (e.g. api) by setting the following constant
 	//  define("ATK14_ENABLE_AUTO_REDIRECTING_IN_API",false);
 	"ATK14_ENABLE_AUTO_REDIRECTING" => true,
+
+	"ATK14_ENABLE_DESTROY_DATABASE_OBJECTS_IN_PRODUCTION" => false, // Can be the script ./scripts/destroy_database_objects executed executed in PRODUCTION?
 ));
 
 __defaults__(array(
