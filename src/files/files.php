@@ -28,13 +28,17 @@ class Files{
 	 * @param string $dirname	Name of directory to be created.
 	 * @param boolean &$error Error flag
 	 * @param string	 &$error_str Error description
-	 * @return int Number of directories created
+	 * @return int Number of directories created - Not true! See the code.
 	 */
 	static function Mkdir($dirname,&$error = null,&$error_str = null){
 		$out = 0;
 		$error = false;
 		$error_str = "";
-		$old_umask = umask(0);
+
+		if(file_exists($dirname)){ return $out; }
+
+		/*
+		// this obsolete code doesn't work well when open_basedir restriction is used
 		$ar = explode("/",$dirname);
 		$current_dir = "";
 		for($i=0;$i<sizeof($ar);$i++){
@@ -55,6 +59,14 @@ class Files{
 			}
 		}
 		umask($old_umask);
+		*/
+
+		// this is a temporary workaround
+		$old_umask = umask(0);
+		mkdir($dirname,0777,true);
+		$out = 1;
+		umask($old_umask);
+
 		return $out;
 	}
 

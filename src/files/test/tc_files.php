@@ -119,6 +119,18 @@ class TcFiles extends TcBase{
 		Files::Unlink($filename);
 	}
 
+	function test_Mkdir(){
+		$dir = TEMP . "/ddd/../ddd/d3";
+		$this->assertFalse(file_exists($dir));
+
+		$this->assertEquals(1,Files::Mkdir($dir)); // in fact 2 should be returned (2 directories were created)
+		$this->assertEquals(0,Files::Mkdir($dir));
+		$this->assertTrue(file_exists($dir));
+
+		rmdir(TEMP."/ddd/d3");
+		rmdir(TEMP."/ddd");
+	}
+
 	function test_DetermineFileType(){
 
 		// http://en.wikipedia.org/wiki/Internet_media_type
