@@ -120,13 +120,18 @@ class TcFiles extends TcBase{
 	}
 
 	function test_Mkdir(){
+		clearstatcache();
+
 		if(file_exists($_d = TEMP . "/ddd/d3")){ rmdir($_d); }
 		if(file_exists($_d = TEMP . "/ddd")){ rmdir($_d); }
+
+		clearstatcache();
 
 		$dir = TEMP . "/ddd/../ddd/d3";
 		$this->assertFalse(file_exists($dir));
 
 		$this->assertEquals(1,Files::Mkdir($dir)); // in fact 2 should be returned (2 directories were created)
+		clearstatcache();
 		$this->assertEquals(0,Files::Mkdir($dir));
 		$this->assertTrue(file_exists($dir));
 
