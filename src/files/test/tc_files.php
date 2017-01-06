@@ -120,6 +120,9 @@ class TcFiles extends TcBase{
 	}
 
 	function test_Mkdir(){
+		if(file_exists($_d = TEMP . "/ddd/d3")){ rmdir($_d); }
+		if(file_exists($_d = TEMP . "/ddd")){ rmdir($_d); }
+
 		$dir = TEMP . "/ddd/../ddd/d3";
 		$this->assertFalse(file_exists($dir));
 
