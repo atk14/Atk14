@@ -35,6 +35,7 @@ class Files{
 		$error = false;
 		$error_str = "";
 
+		$dirname = preg_replace('/\/+$/','',$dirname); // "/path/to/dir/" -> "/path/to/dir"
 		if(is_dir($dirname)){ return $out; }
 
 		/*
@@ -66,6 +67,9 @@ class Files{
 		if(mkdir($dirname,0777,true)){
 			$out = 1;
 		}else{
+			if(preg_match('/^5\.3\./',phpversion())){
+				return 1; // HACK for PHP5.3 - to be removed
+			}
 			$error = true;
 			$error_str = "can't create directory $dirname";
 		}
