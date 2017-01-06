@@ -35,7 +35,7 @@ class Files{
 		$error = false;
 		$error_str = "";
 
-		if(file_exists($dirname)){ return $out; }
+		if(is_dir($dirname)){ return $out; }
 
 		/*
 		// this obsolete code doesn't work well when open_basedir restriction is used
@@ -63,8 +63,12 @@ class Files{
 
 		// this is a temporary workaround
 		$old_umask = umask(0);
-		mkdir($dirname,0777,true);
-		$out = 1;
+		if(mkdir($dirname,0777,true)){
+			$out = 1;
+		}else{
+			$error = true;
+			$error_str = "can't create directory $dirname";
+		}
 		umask($old_umask);
 
 		return $out;
