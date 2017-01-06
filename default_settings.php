@@ -8,7 +8,7 @@ $__CONFIG_CONSTANTS__ = array();
 
 __defaults__(array(
 	"SECRET_TOKEN" => "make_sure_you_define_strong_secret_phrase_in_SECRET_TOKEN_constant",
-	"TEMP" => realpath( TEST ? dirname(__FILE__)."/../tmp/test" : dirname(__FILE__)."/../tmp" )."/",
+	"TEMP" => __realpath__( TEST ? dirname(__FILE__)."/../tmp/test" : dirname(__FILE__)."/../tmp" )."/",
 ));
 
 __defaults__(array(
@@ -20,7 +20,7 @@ __defaults__(array(
 __defaults__(array(
 	"ATK14_APPLICATION_NAME" => "Our Website",
 	"ATK14_APPLICATION_DESCRIPTION" => "Yet another application running on ATK14 Framework", // default description
-	"ATK14_DOCUMENT_ROOT" => realpath(dirname(__FILE__)."/..")."/", // where is the folder containing app/, config/, dispatcher.php...
+	"ATK14_DOCUMENT_ROOT" => __realpath__(dirname(__FILE__)."/..")."/", // where is the folder containing app/, config/, dispatcher.php...
 	"ATK14_BASE_HREF" => "/",
 	"ATK14_HTTP_HOST" => "www.our-awesome-website.com", //
 	"ATK14_ADMIN_EMAIL" => DEFAULT_EMAIL, // an address for sending DbMole's error reports...
@@ -60,7 +60,7 @@ __defaults__(array(
 ));
 
 __defaults__(array(
-	"LOGGER_DEFAULT_LOG_FILE" => realpath( TEST ? dirname(__FILE__)."/../log/test.log" : dirname(__FILE__)."/../log/application.log" ),
+	"LOGGER_DEFAULT_LOG_FILE" => __realpath__( TEST ? dirname(__FILE__)."/../log/test.log" : dirname(__FILE__)."/../log/application.log" ),
 	"LOGGER_DEFAULT_NOTIFY_EMAIL" => ATK14_ADMIN_EMAIL,
 	"LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION" => PRODUCTION ? 4 : 30, // 4 -> error, we don't want to receive emails with something less important than error
 	"LOGGER_NO_LOG_LEVEL" => PRODUCTION ? -1 : -30, // -1 -> debug, we don't want to log debug messages on PRODUCTION
@@ -100,4 +100,9 @@ function __defaults__($defaults){
 		!defined($key) && define($key,$value);
 		$__CONFIG_CONSTANTS__["$key"] = constant($key);
 	}
+}
+
+function __realpath__($path){
+	$realpath = realpath($path); // realpath() return false when $path doesn't exist
+	return $realpath ? $realpath : $path;
 }
