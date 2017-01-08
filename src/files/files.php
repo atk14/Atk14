@@ -630,7 +630,7 @@ class Files{
 	/**
 	 * $filename = Files::_NormalizeFilename("/path/to//project//../tmp//attachments//"); // "/path/to/tmp/attachments/"
 	 */
-	function _NormalizeFilename($filename){
+	static function _NormalizeFilename($filename){
 		$_filename = "";
 		while(1){
 			$_filename = preg_replace('/[^\/]+\/+\.\.\//','/',$filename); // "/path/to/dir/../tmp/images/" -> "/path/to/tmp/images/"
