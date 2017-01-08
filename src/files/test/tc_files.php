@@ -119,6 +119,23 @@ class TcFiles extends TcBase{
 		Files::Unlink($filename);
 	}
 
+	function test__NormalizeFilename(){
+		foreach(array(
+			"/path/to/file" => "/path/to/file",
+			"path/to/dir/" => "path/to/dir/",
+			"../path/to/file" => "../path/to/file",
+			"/path/to/file" => "/path/to/file",
+			"/../path/to/file" => "/../path/to/file", // in fact this is a nonsense
+
+			"////path///to//file" => "/path/to/file",
+			"////path///to//dir///" => "/path/to/dir/",
+			"/path/to//../tmp/images/..//attachments/" => "/path/tmp/attachments/",
+			"/path/to//..///../tmp/images/..//attachments/" => "/tmp/attachments/",
+		) as $filename => $normalized){
+			$this->assertEquals($normalized,Files::_NormalizeFilename($filename));
+		}
+	}
+
 	function test_Mkdir(){
 		if(file_exists($_d = TEMP . "/ddd/d3")){ rmdir($_d); }
 		if(file_exists($_d = TEMP . "/ddd")){ rmdir($_d); }

@@ -35,7 +35,8 @@ class Files{
 		$error = false;
 		$error_str = "";
 
-		$dirname = preg_replace('/\/+$/','',$dirname); // "/path/to/dir/" -> "/path/to/dir"
+		$dirname = self::_NormalizeFilename($dirname);
+
 		if(is_dir($dirname)){ return $out; }
 
 		/*
@@ -624,5 +625,22 @@ class Files{
 		}
 		
 		return $mime_type;
+	}
+
+	/**
+	 * $filename = Files::_NormalizeFilename("/path/to//project//../tmp//attachments//"); // "/path/to/tmp/attachments/"
+	 */
+	function _NormalizeFilename($filename){
+		$_filename = "";
+		while(1){
+			$_filename = preg_replace('/[^\/]+\/+\.\.\//','/',$filename); // "/path/to/dir/../tmp/images/" -> "/path/to/tmp/images/"
+			if($_filename==$filename){ break; }
+			$filename = $_filename;
+		}
+		$filename = $_filename;
+
+		$filename = preg_replace('/\/\/+/','/',$filename); // "/path/to//tmp/dir//" -> "/path/to/tmp/dir/"
+
+		return $filename;
 	}
 }
