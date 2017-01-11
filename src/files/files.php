@@ -605,7 +605,7 @@ class Files{
 			// most desirable suffix is on the first position
 			// 										the most desirable type is on the first position
 			"xls" =>				array("application/vnd.ms-excel","application/msexcel","application/vnd.ms-office","application/msword"),
-			"xlsx" =>				array("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/octet-stream"), // !! application/octet-stream seems to be a little odd
+			"xlsx" =>				array("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/zip","application/octet-stream"), // !! application/octet-stream seems to be a little odd
 			"doc" =>				array("application/msword","application/vnd.ms-office"),
 			"ppt" =>				array("application/vnd.ms-powerpoint","application/vnd.ms-office","application/msword"),
 			"jpg|jpeg" =>		array("image/jpeg","image/jpg"),
