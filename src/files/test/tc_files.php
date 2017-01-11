@@ -175,6 +175,7 @@ class TcFiles extends TcBase{
 			"xls" => "application/vnd.ms-excel",
 			"doc" => "application/msword",
 			"ppt" => "application/vnd.ms-powerpoint",
+			"xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 
 			"csv" => "text/csv",
 
