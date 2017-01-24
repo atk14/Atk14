@@ -70,6 +70,7 @@ if($DIR){
 
 $exists = false;
 foreach(array(
+		"../vendor/phpunit" => "../autoload.php",
 		"$HOME/.composer/vendor/phpunit" => "../autoload.php",
 		"$HOME/.config/composer/vendor/phpunit" => "../autoload.php",
 		"/usr/share/php/PHPUnit" => "Autoload.php"
