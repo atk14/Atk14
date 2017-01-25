@@ -185,6 +185,11 @@ class TcTranslate extends TcBase{
 		// Cyrillic transliteration in action
 		$this->assertEquals("Russkyj",Translate::Trans("Русский","UTF-8","ASCII"));
 		$this->assertEquals("malcyk",Translate::Trans("мальчик","UTF-8","ASCII"));
+		$this->assertEquals("Oftalmologyja",Translate::Trans("Офтальмология","UTF-8","ASCII"));
+
+		// German transliteration in action
+		$this->assertEquals("Was koennen Jaeger absetzen?",Translate::Trans("Was können Jäger absetzen?","UTF-8","ASCII"));
+		$this->assertEquals("Fuss",Translate::Trans("Fuß","UTF-8","ASCII"));
 
 		// TODO: otestovat locale
 		$_LANG_LC_ALL = "cs_CZ.UTF-8";

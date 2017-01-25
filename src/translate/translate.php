@@ -162,9 +162,9 @@ class Translate{
 	}
 
 	static function _Transliteration($text){
-		// Cyrillic Transliteration Table
-		// http://homes.chass.utoronto.ca/~tarn/courses/translit-table.html
 		$tr_table = array(
+			// Cyrillic Transliteration Table
+			// http://homes.chass.utoronto.ca/~tarn/courses/translit-table.html
 			"А" => "A",
 			"Б" => "B",
 			"В" => "V",
@@ -202,7 +202,7 @@ class Translate{
 			"Э" => "E",
 			"Ъ" => "", // '"'
 			"Ы" => "Y",
-
+			//
 			"а" => "a",
 			"б" => "b",
 			"в" => "v",
@@ -240,6 +240,15 @@ class Translate{
 			"э" => "e",
 			"ъ" => "", // '"'
 			"ы" => "y",
+
+			// German
+			"ä" => "ae",
+			"ö" => "oe",
+			"ü" => "ue",
+			"Ä" => "Ae",
+			"Ö" => "Oe",
+			"Ü" => "Ue",
+			"ß" => "ss",
 		);
 		return strtr($text,$tr_table);
 	}
