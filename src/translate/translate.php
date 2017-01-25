@@ -113,6 +113,10 @@ class Translate{
 			$text = Translate::_RemoveUtf8Headaches($text);
 		}
 
+		if($from_charset=="utf8" && $to_charset=="ascii"){
+			$text = Translate::_Transliteration($text);
+		}
+
 		if(TRANSLATE_USE_ICONV && function_exists('iconv')){
 			$success=true;
 			($out=@iconv($from_charset, $to_charset.'//TRANSLIT', $text)) or ($success=false);
@@ -155,6 +159,89 @@ class Translate{
 		return strtr($text,array(
 			chr(0xE2).chr(0x80).chr(0x93) => "-",
 		));
+	}
+
+	static function _Transliteration($text){
+		// Cyrillic Transliteration Table
+		// http://homes.chass.utoronto.ca/~tarn/courses/translit-table.html
+		$tr_table = array(
+			"А" => "A",
+			"Б" => "B",
+			"В" => "V",
+			"Г" => "H",
+			"Ґ" => "G",
+			"Д" => "D",
+			"E" => "E",
+			"Є" => "Je",
+			"Ж" => "Ž",
+			"З" => "Z",
+			"И" => "Y",
+			"І" => "I",
+			"Ї" => "Ji",
+			"Й" => "J",
+			"К" => "K",
+			"Л" => "L",
+			"М" => "M",
+			"Н" => "N",
+			"О" => "O",
+			"П" => "P",
+			"Р" => "R",
+			"С" => "S",
+			"Т" => "T",
+			"У" => "U",
+			"Ф" => "F",
+			"Х" => "X",
+			"Ц" => "C",
+			"Ч" => "Č",
+			"Ш" => "Š",
+			"Щ" => "Šč",
+			"Ю" => "Ju",
+			"Я" => "Ja",
+			"Ь" => "", // "'"
+			"Ё" => "-",
+			"Э" => "-",
+			"Ъ" => "-",
+			"Ы" => "-",
+
+			"а" => "a",
+			"б" => "b",
+			"в" => "v",
+			"г" => "h",
+			"ґ" => "g",
+			"д" => "d",
+			"e" => "e",
+			"є" => "je",
+			"ж" => "ž",
+			"з" => "z",
+			"и" => "y",
+			"і" => "i",
+			"ї" => "ji",
+			"й" => "j",
+			"к" => "k",
+			"л" => "l",
+			"м" => "m",
+			"н" => "n",
+			"о" => "o",
+			"п" => "p",
+			"р" => "r",
+			"с" => "s",
+			"т" => "t",
+			"у" => "u",
+			"ф" => "f",
+			"х" => "x",
+			"ц" => "c",
+			"ч" => "č",
+			"ш" => "š",
+			"щ" => "šč",
+			"ю" => "ju",
+			"я" => "ja",
+			"ь" => "", // "'"
+			"ё" => "-",
+			"э" => "-",
+			"ъ" => "-",
+			"ы" => "-",
+		);
+		return strtr($text,$tr_table);
 	}
 
 	/**

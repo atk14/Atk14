@@ -182,6 +182,10 @@ class TcTranslate extends TcBase{
 
 		$this->assertEquals("4 Giro's passage",Translate::Trans("4 Giro’s passage","UTF-8","ASCII"));
 
+		// Cyrillic transliteration in action
+		$this->assertEquals("Russkyj",Translate::Trans("Русский","UTF-8","ASCII"));
+		$this->assertEquals("malcyk",Translate::Trans("мальчик","UTF-8","ASCII"));
+
 		// TODO: otestovat locale
 		$_LANG_LC_ALL = "cs_CZ.UTF-8";
 		$_LANG_LC_ALL = "en_US.UTF-8";
