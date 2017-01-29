@@ -189,4 +189,18 @@ class TcFiles extends TcBase{
 			$this->assertEquals($mime_type,Files::DetermineFileType($file),$file);
 		}
 	}
+
+	function test_RecursiveUnlinkDir(){
+		$this->assertEquals(false,file_exists(TEMP . "/to_be_deleted"));
+
+		mkdir(TEMP . "/to_be_deleted");
+		copy(__FILE__ , TEMP."/to_be_deleted/file1");
+		copy(__FILE__ , TEMP."/to_be_deleted/file2");
+
+		$this->assertEquals(true,file_exists(TEMP."/to_be_deleted/file1"));
+		$this->assertEquals(true,file_exists(TEMP."/to_be_deleted/file2"));
+
+		$files_deleted = Files::RecursiveUnlinkDir(TEMP . "/to_be_deleted");
+		$this->assertEquals(3,$files_deleted);
+	}
 }
