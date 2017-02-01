@@ -285,7 +285,7 @@ class Atk14Url{
 		Atk14Utils::_CorrectActionForUrl($params);
 
 		$options = array_merge(array(
-			"connector" => "&amp;",
+			"connector" => "&",
 			"anchor" => null,
 			"with_hostname" => false,
 			"ssl" => null,
