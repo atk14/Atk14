@@ -4,7 +4,7 @@
  */
 class Atk14SmartyBase extends SmartyBC{
 
-	static $ATK14_RENDERED_TEMPLATES = [];
+	static $ATK14_RENDERED_TEMPLATES = array();
 
 	static protected $LAST_TPL_REF;
 
@@ -35,11 +35,11 @@ class Atk14SmartyBase extends SmartyBC{
 			}
 		}
 
-		$children = [];
-		self::$LAST_TPL_REF[] = [
+		$children = array();
+		self::$LAST_TPL_REF[] = array(
 			"template" => $template_fullpath,
 			"children" => &$children,
-		];
+		);
 
 		self::$LAST_TPL_REF = &$children;
 		$ret = parent::fetch($template, $cache_id, $compile_id, $parent);
