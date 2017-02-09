@@ -40,23 +40,25 @@ function __class_autoload__($options_or_class_name){
 
 
 		if(isset($store_filenames[$_key])){ require_once($store_filenames[strtolower($class_name)]); }
-		foreach($directories as $d){
-			$_filenames = array(
-				$class_name,
-				preg_replace("/([a-z])([A-Z])/","\\1_\\2",$class_name), // RedFruit -> red_fruit
-			);
+		# namespace to directory Namespace\ClassName -> Namespace/ClassName
+		$class_name = str_replace("\\", '/', $class_name);
+		$_filenames = array(
+			$class_name,
+			preg_replace('/([a-z])([A-Z])/','\1_\2',$class_name), // RedFruit -> red_fruit
+		);
 
-			$filenames = array();
-			foreach($_filenames as $f){
-				if(in_array("$f.inc",$filenames)){ continue; }
-				$filenames[] = "$f.inc";
-				$filenames[] = "$f.php";
-				if(strtolower($f)!=$f){
-					$filenames[] = strtolower($f).".inc";
-					$filenames[] = strtolower($f).".php";
-				}
+		$filenames = array();
+		foreach($_filenames as $f){
+			if(in_array("$f.inc",$filenames)){ continue; }
+			$filenames[] = "$f.inc";
+			$filenames[] = "$f.php";
+			if(strtolower($f)!=$f){
+				$filenames[] = strtolower($f).".inc";
+				$filenames[] = strtolower($f).".php";
 			}
+		}
 
+		foreach($directories as $d){
 			foreach($filenames as $f){
 				if(file_exists("$d/$f")){ require_once("$d/$f"); }
 				if(class_exists($class_name)){ return true; }

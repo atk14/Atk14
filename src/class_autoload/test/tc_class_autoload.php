@@ -18,5 +18,19 @@ class tc_class_autoload extends tc_base{
 
 		$this->assertTrue(class_exists("ConflictClass"));
 		$this->assertEquals("classes_alt",ConflictClass::DIR);
+
+		// namespace
+
+		$this->assertTrue(class_exists("Fruit\Orange"));
+		$this->assertTrue(class_exists("\Fruit\Orange"));
+
+		$this->assertTrue(class_exists("Fruit\VineGrapes"));
+		$this->assertTrue(class_exists("\Fruit\VineGrapes"));
+
+		$this->assertTrue(class_exists("Vegetable\Potatoe"));
+		$this->assertTrue(class_exists("\Vegetable\Potatoe"));
+
+		$this->assertTrue(class_exists("Vegetable\GreenCucumber"));
+		$this->assertTrue(class_exists("\Vegetable\GreenCucumber"));
 	}
 }
