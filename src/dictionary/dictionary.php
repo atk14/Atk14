@@ -53,6 +53,26 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	}
 
 	/**
+	 * Returns keys of dictionary data as associative or indexed array
+	 *
+	 *
+	 * ```
+	 * $keys = $user_data_dict->getKeys(); // array("firstname" => "firstname", "lastname" => "lastname", "email" => "email")
+	 * $keys = $user_data_dict->getKeys(array("as_hash" => false)); // array("firstname", "lastname", "email")
+	 * ```
+	 */
+	function getKeys($options = array()){
+		$options += array(
+			"as_hash" => true,
+		);
+		$keys = array_keys($this->_Values);
+		if($options["as_hash"]){
+			$keys = array_combine($keys,$keys);
+		}
+		return $keys;
+	}
+
+	/**
 	 *
 	 * Returns value from the distionary.
 	 *

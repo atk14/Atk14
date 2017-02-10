@@ -22,12 +22,17 @@ class tc_dictionary extends tc_base{
 		$this->assertNull($dict->getValue("key3"));
 		$this->assertNull($dict->getValue("key4"));
 
+		$this->assertEquals(array("key1","key2","key3"),$dict->getKeys(array("as_hash" => false)));
+		$this->assertEquals(array("key1" => "key1","key2" => "key2","key3" => "key3"),$dict->getKeys());
+
 		$dict->unsetValue("key1");
 		$this->assertNull($dict->getValue("key1"));
 		$this->assertFalse($dict->keyPresents("key1"));
 
 		$dict->setValue("key4","value4");
 		$this->assertEquals("value4",$dict->getValue("key4"));
+
+		$this->assertEquals(array("key2" => "key2","key3" => "key3", "key4" => "key4"),$dict->getKeys());
 	}
 
 	function test_shortcut(){
