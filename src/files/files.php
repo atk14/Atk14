@@ -572,8 +572,11 @@ class Files{
 		if(!file_exists($filename) || is_dir($filename)){
 			return null;
 		}
+		
 
-		if(function_exists("finfo_open")){
+		if(function_exists("mime_content_type")){
+			$mime_type = mime_content_type($filename);
+		}elseif(function_exists("finfo_open")){
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$mime_type = finfo_file($finfo, $filename);
 		}else{
