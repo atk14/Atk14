@@ -13,7 +13,7 @@ function smarty_modifier_to_sentence($ar,$connector = 'and'){
 	$index = 0;
 	$sizeof = sizeof($ar);
 	foreach($ar as $item){
-		if($index==$sizeof-1){
+		if(($index>0) && ($index==$sizeof-1)){
 			$out .= " $connector $item";
 		}elseif($index>0){
 			$out .= ", $item";
