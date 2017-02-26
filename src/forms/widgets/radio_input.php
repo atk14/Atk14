@@ -8,13 +8,18 @@
 class RadioInput
 {
 	var $input_type = "radio";
+	var $convert_html_special_chars = true;
 
-	function __construct($name, $value, $attrs, $choice, $index)
+	function __construct($name, $value, $attrs, $choice, $index, $options = [])
 	{
+		$options += array(
+			"convert_html_special_chars" => true
+		);
 		$this->name = $name;
 		$this->value = $value;
 		$this->attrs = $attrs;
 		$this->index = $index;
+		$this->convert_html_special_chars = $options["convert_html_special_chars"];
 		list($this->choice_value, $this->choice_label) = each($choice);
 	}
 
@@ -41,6 +46,10 @@ class RadioInput
 
 	function render()
 	{
-		return '<label>'.$this->tag().' '.forms_htmlspecialchars($this->choice_label).'</label>';
+		$label = $this->choice_label;
+		if($this->convert_html_special_chars){
+			$label = forms_htmlspecialchars($label);
+		}
+		return '<label>'.$this->tag().' '.$label.'</label>';
 	}
 }

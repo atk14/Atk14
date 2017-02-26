@@ -21,6 +21,17 @@
  * 		)
  * 	))
  * )));
+ * // or
+ * $this->add_field("agreement",new BooleanField(array(
+ * 	"label" => "Do you agree?",
+ * 	"widget" => new RadioSelect(array(
+ * 		"choices" => array(
+ * 			"on" => "<em>Yes</em>, I do",
+ * 			"off" => "<em>No</em>, I don't"
+ * 		),
+ *		"convert_html_special_chars" => false, // by default html special chars are being converted
+ * 	))
+ * )));
  * ```
  *
  * A choice field
@@ -43,8 +54,14 @@
 class RadioSelect extends Select
 {
 	var $input_type = "radio";
+	var $convert_html_special_chars = true;
 
 	function __construct($option = array()){
+		$option += array(
+			"convert_html_special_chars" => true,
+		);
+		$this->convert_html_special_chars = $option["convert_html_special_chars"];
+		unset($option["convert_html_special_chars"]);
 		parent::__construct($option);
 	}
 
@@ -53,7 +70,7 @@ class RadioSelect extends Select
 		$output = array();
 		$i = 0;
 		foreach ($choices as $k => $v) {
-			$ch = new RadioInput($name, $value, $attrs, array($k=>$v), $i);
+			$ch = new RadioInput($name, $value, $attrs, array($k=>$v), $i,array("convert_html_special_chars" => $this->convert_html_special_chars));
 			$output[] = "<li>".$ch->render()."</li>";
 			$i++;
 		}
