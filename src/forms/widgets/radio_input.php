@@ -10,7 +10,7 @@ class RadioInput
 	var $input_type = "radio";
 	var $convert_html_special_chars = true;
 
-	function __construct($name, $value, $attrs, $choice, $index, $options = [])
+	function __construct($name, $value, $attrs, $choice, $index, $options = array())
 	{
 		$options += array(
 			"convert_html_special_chars" => true
