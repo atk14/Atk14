@@ -49,6 +49,8 @@
  * @param array $content
  */
 function smarty_function_paginator($params,$template){
+	global $ATK14_GLOBAL;
+
 	$smarty = atk14_get_smarty_from_template($template);
 
 	if(isset($params["finder"])){
@@ -69,12 +71,20 @@ function smarty_function_paginator($params,$template){
 	$from_name = isset($params["$_from"]) ? $params["$_from"] : "$_from";
 
 	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
+	
 
 	$par = $smarty->getTemplateVars("params")->toArray();
+
+	if($smarty->getTemplateVars("rendering_component")){
+		$par["namespace"] = $smarty->getTemplateVars("prev_namespace");
+		$par["controller"] = $smarty->getTemplateVars("prev_controller");
+		$par["action"] = $smarty->getTemplateVars("prev_action");
+	}
+
 	// There is a possibility to change action, controller, lang and namespace variables.
 	// It is usefull when you display first page of some list on the frontpage and links from the paginator must point to an another controller/action.
 	foreach(array("action","controller","lang","namespace") as $_k){
-		if(isset($params[$_k])){ $par[$_k] = $params["action"]; }
+		if(isset($params[$_k])){ $par[$_k] = $params[$_k]; }
 	}
 
 	

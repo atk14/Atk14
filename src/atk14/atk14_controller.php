@@ -120,6 +120,34 @@ class Atk14Controller{
 	var $lang = "";
 
 	/**
+	 * Flag whether this controller is in rendering component mode
+	 *
+	 * @var boolean
+	 */
+	var $rendering_component = false;
+
+	/**
+	 * In rendering component mode this is the previous (caller) namespace
+	 *
+	 * @var string
+	 */
+	var $prev_namespace = null;
+
+	/**
+	 * In rendering component mode this is the previous (caller) controller
+	 *
+	 * @var string
+	 */
+	var $prev_controller = null;
+
+	/**
+	 * In rendering component mode this is the previous (caller) action
+	 *
+	 * @var string
+	 */
+	var $prev_action = null;
+
+	/**
 	 * A flag that an action has been already executed.
 	 *
 	 * When an action is executed during the _before_filter() call,
@@ -128,6 +156,7 @@ class Atk14Controller{
 	 * @var signature
 	 */
 	var $action_executed = false;
+
 
 	/**
 	 * GET and POST parameters.
@@ -796,6 +825,11 @@ class Atk14Controller{
 		$smarty->assign("requested_controller",$this->requested_controller);
 		$smarty->assign("requested_action",$this->requested_action);
 		$smarty->assign("rendering_component",$this->rendering_component);
+		if($this->rendering_component){
+			$smarty->assign("prev_namespace",$this->prev_namespace);
+			$smarty->assign("prev_controller",$this->prev_controller);
+			$smarty->assign("prev_action",$this->prev_action);
+		}
 		$smarty->assign("lang",$this->lang);
 		$smarty->assign("public",$ATK14_GLOBAL->getPublicBaseHref());
 		$smarty->assign("root",$ATK14_GLOBAL->getBaseHref());

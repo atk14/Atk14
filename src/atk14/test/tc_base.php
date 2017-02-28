@@ -18,8 +18,13 @@ class TcBase extends TcSuperBase{
 	}
 
 	function _run_action($path,$options = array(),&$response = null){
-		list($controller,$action) = explode("/",$path);
-		$response = Atk14Dispatcher::ExecuteAction($controller,$action);
+		$ar = explode("/",$path);
+		if(sizeof($ar)==3){
+			//$response = Atk14Dispatcher::ExecuteAction($ar[0],$ar[1]);
+			$response = Atk14Dispatcher::ExecuteAction($ar[1],$ar[2],array("namespace" => $ar[0]));
+		}else{
+			$response = Atk14Dispatcher::ExecuteAction($ar[0],$ar[1],array("namespace" => ""));
+		}
 		return $response->buffer->toString();
 	}
 

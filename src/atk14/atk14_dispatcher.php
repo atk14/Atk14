@@ -232,7 +232,7 @@ class Atk14Dispatcher{
 			$action = "error404";
 		}
 
-		$controller->atk14__initialize(array(
+		$initialize_params = array(
 			"namespace" => $namespace,
 			"controller" => $controller_name,
 			"action" => $action,
@@ -244,8 +244,15 @@ class Atk14Dispatcher{
 			"params" => $options["params"],
 			"rendering_component" => $options["apply_render_component_hacks"],
 			"request" => $options["request"]
-		));
-		
+		);
+		if($options["apply_render_component_hacks"]){
+			$initialize_params["prev_namespace"] = $prev_namespace;
+			$initialize_params["prev_controller"] = $prev_controller_name;
+			$initialize_params["prev_action"] = $prev_action;
+		}
+
+		$controller->atk14__initialize($initialize_params);
+
 		$controller->atk14__runBeforeFilters();
 
 		if($options["apply_render_component_hacks"]){

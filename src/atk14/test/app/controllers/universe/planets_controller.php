@@ -4,6 +4,10 @@ class PlanetsController extends UniverseController{
 		$this->render_template = false;
 	}
 
+	function controller_state(){
+		
+	}
+
 	function greeting(){
 	
 	}
