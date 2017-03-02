@@ -297,14 +297,16 @@ class Atk14Utils{
 		if(defined("TEMP")){ $PATH_SMARTY = TEMP."/smarty/"; }
 		if(defined("PATH_SMARTY")){ $PATH_SMARTY = PATH_SMARTY; }
 
+		if(!isset($template_dir)){
+			$template_dir = ATK14_DOCUMENT_ROOT."/app/views/";
+		}
+
 		if(function_exists("atk14_get_smarty")){
 
 			$smarty = atk14_get_smarty($template_dir);
 
 		}else{
 			$smarty = new Atk14Smarty();
-
-			if(!isset($template_dir)){ $template_dir = "./templates/"; }
 
 			if(is_string($template_dir) && !file_exists($template_dir) && file_exists("./templates/$template_dir")){
 				$template_dir = "./templates/$template_dir";
