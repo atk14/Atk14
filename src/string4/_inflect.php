@@ -6,6 +6,8 @@
  *
  * As I don't know the code I consider it as heavy experimental :)
  * Because of it there is the leading underscore in the class name.
+ *
+ * @ignore
  */
 
 
