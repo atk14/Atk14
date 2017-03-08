@@ -95,15 +95,33 @@ class UrlFetcher {
 	protected $_CountOfRedirection = 0;
 
 	/**
-	 * Maximum number of redirections.
+	 * Maximum number of redirections to follow
 	 *
 	 * @var integer
 	 */
 	protected $_MaxRedirections = 5;
 
+	/**
+	 * Headers to be sent with each request made by this instance of UrlFetcher
+	 *
+	 * @var array
+	 */
 	protected $_ConstructorAdditionalHeaders = array(); // these headers never disappear
-	protected $_AdditionalHeaders = array(); // these headers disappear upon every new request, TODO: more explanation & tests
 
+	/**
+	 * HTTP headers sent with a single request.
+	 *
+	 * Can be added during a POST request. They are reset after the request is done.
+	 * @var array
+	 * @todo more explanation and tests
+	 */
+	protected $_AdditionalHeaders = array();
+
+	/**
+	 * Text to send in User-Agent http header
+	 *
+	 * @var string
+	 */
 	protected $_UserAgent = "UrlFetcher";
 
 	/**
@@ -136,14 +154,11 @@ class UrlFetcher {
 	 * $f = new UrlFetcher("http://www.example.com/",array("additional_headers" => array("X-Powered-By: Grizzly Lib 1.2")));
 	 * $f = new UrlFetcher(array("additional_headers" => array("X-Powered-By: Grizzly Lib 1.2")));
 	 * ```
-	 * </code>
 	 *
 	 * @param string $url
 	 * @param array $options
-	 * <ul>
-	 * <li><b>additional_headers</b> - </li>
-	 * <li><b>max_redirections</b> 5</li>
-	 * </ul>
+	 * - <b>additional_headers</b> -
+	 * - <b>max_redirections</b> [default: 5]
 	 */
 	function __construct($url = "", $options = array()){
 		$this->_reset();
@@ -171,15 +186,23 @@ class UrlFetcher {
 	/**
 	 * Returns URL
 	 *
+	 * Normallly it returns initial url.
+	 * In case the request was redirected it returns the target url.
+	 *
+	 * Common situation without redirection
 	 * ```
 	 * $uf = new UrlFetcher("http://example.com/content.html");
 	 * echo $uf->getUrl(); // http://example.com/content.html
+	 * ```
 	 *
+	 * Request with redirection
+	 * ```
 	 * $uf = new UrlFetcher("http://example.com/to_be_redirected.html");
 	 * echo $uf->getUrl(); // http://example.com/to_be_redirected.html
 	 * $uf->getContent();
 	 * echo $uf->getUrl(); // http://example.com/redirected_address.html
 	 * ```
+	 * @return string
 	 */
 	function getUrl(){ return $this->_Url; }
 
@@ -233,6 +256,7 @@ class UrlFetcher {
 	/**
 	 * Fetches content from URL.
 	 *
+	 * Get content with method {@link getContent()}.
 	 * When called multiple times, the actual request is made only once.
 	 * Can be called from outside.
 	 *
@@ -247,7 +271,9 @@ class UrlFetcher {
 	 * ```
 	 *
 	 * @param string $url
-	 * @return string content of the url
+	 * @return boolean result of the operation
+	 * - true => success
+	 * - false => some exception occurred
 	 */
 	function fetchContent($url = ""){
 		if(strlen($url)>0){ $this->_setUrl($url); }
@@ -358,10 +384,8 @@ class UrlFetcher {
 	 *
 	 * @param mixed $data when array it is sent as query parameters, otherwise $data is sent without processing
 	 * @param array $options
-	 * <ul>
-	 * <li>content_type string ContentType header</li>
-	 * <li>additional_headers more headers</li>
-	 * </ul>
+	 * - content_type string - value for Content-Type HTTP header
+	 * - additional_headers array - more headers
 	 * @return bool result of request
 	 */
 	function post($data = "",$options = array()){
@@ -397,10 +421,9 @@ class UrlFetcher {
 	 * Gets headers returned by the server.
 	 *
 	 * @param array $options
-	 * <ul>
-	 * <li><b>as_hash</b></li> - 
-	 * <li><b>lowerize_keys</b></li> - 
-	 * </ul>
+	 * - <b>as_hash</b> - returns headers as array when set to true [default: false]
+	 * - <b>lowerize_keys</b> - convert header names lowercase when set to true [default: false]
+	 * @return string|array
 	 */
 	function getResponseHeaders($options = array()){
 		$options = array_merge(array(
@@ -427,9 +450,10 @@ class UrlFetcher {
 	}
 
 	/**
-	 * Returns http headers returned by the server.
+	 * Alias to method getResponseHeaders()
 	 *
-	 * @return string
+	 * @param array $options {@see getResponseHeaders()}
+	 * @return string|array
 	 */
 	function getHeaders(){ return $this->getResponseHeaders($options = array()); }
 
@@ -446,10 +470,10 @@ class UrlFetcher {
 	 * ```
 	 * $c_type = $uf->getHeaderValue("Content-Type"); // "text/xml"
 	 * ```
-	 * 
+	 *
 	 * @param string $header
 	 * @return string
-	 */ 
+	 */
 	function getHeaderValue($header){
 		$header = strtolower($header);
 		$headers = $this->getResponseHeaders(array("as_hash" => true, "lowerize_keys" => true));
@@ -479,7 +503,7 @@ class UrlFetcher {
 
 	/**
 	 * Returns content charset value.
-	 * 
+	 *
 	 * Value is parsed from the content-type header.
 	 *
 	 * @return string
