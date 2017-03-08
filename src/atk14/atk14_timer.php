@@ -54,6 +54,22 @@ class Atk14Timer {
 	/**
 	 * Returns a lap time
 	 *
+	 * Lap time is the time elapsed sice Start method.
+	 *
+	 * ```
+	 * Atk14Timer::Start("runner1");
+	 *
+	 * sleep(10);
+	 * $lap_1 = Atk14Timer::Lap("runner1");
+	 * sleep(10);
+	 * $lap_2 = Atk14Timer::Lap("runner1");
+	 * sleep(10);
+	 * $lap_3 = Atk14Timer::Lap("runner1");
+	 * printf("first lap: %1.1fs\n", $lap_1); # outputs "first lap 10.0s"
+	 * printf("second lap: %1.1fs\n", $lap_2); # outputs "second lap 20.0s"
+	 * printf("third lap: %1.1fs\n", $lap_3); # outputs "third lap 30.0s"
+	 * ```
+	 * @param string $mark timer identification
 	 * @return float
 	 */
 	static function Lap($mark = ""){

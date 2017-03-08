@@ -11,7 +11,7 @@ define("URL_FETCHER_VERSION","1.0");
 /**
  * UrlFetcher class provides methods to make http requests
  *
- * Basic usage
+ * ## Basic usage
  * ```
  * $fetcher = new UrlFetcher();
  * $fetcher->setAuthorization("username","password");
@@ -23,7 +23,7 @@ define("URL_FETCHER_VERSION","1.0");
  * }
  * ```
  *
- * Make a GET request
+ * ## Make a GET request
  * ```
  * $fetcher = new UrlFetcher("http://username:password@www.root.cz/");
  * if($f->found()){
@@ -31,7 +31,7 @@ define("URL_FETCHER_VERSION","1.0");
  * }
  * ```
  *
- * Make a POST request
+ * ## Make a POST request
  * ```
  * $f = new UrlFetcher("http://www.root.cz/login/");
  * if($f->post("username=madl&password=krtek")){
@@ -39,6 +39,7 @@ define("URL_FETCHER_VERSION","1.0");
  * }
  * ```
  *
+ * ## HTTP headers
  *
  * Some headers can be specified in options:
  * ```

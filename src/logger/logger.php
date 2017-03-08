@@ -23,14 +23,26 @@ defined("LOGGER_NO_LOG_LEVEL") || define("LOGGER_NO_LOG_LEVEL",-30);
 /**
  * Class for events logging.
  *
- * New way of usage
+ * ## Basic usage
+ *
+ * Create a new Logger instance
  * ```
  * $logger = new Logger("application_mark");
  * $logger->start();
  * ```
+ * Send a message to the logger.
+ * ```
+ * $logger->info("some message");
+ * ```
+ * Finish logging
+ * ```
+ * $logger->stop();
+ * ```
  *
+ * ### Message priorities
  *
- * Then in application code
+ * There are predefined message levels, each is assigned a priority.
+ * These levels have special methods to send a message.
  * ```
  * $logger->debug("a debug message");
  * $logger->info("some message");
@@ -39,10 +51,11 @@ defined("LOGGER_NO_LOG_LEVEL") || define("LOGGER_NO_LOG_LEVEL",-30);
  * $logger->security("a security concerning message");
  * ```
  *
- * Finish logging
+ * If some specific priority is needed, use {@link put_log} method.
  * ```
- * $logger->stop();
+ * $logger->put_log("unknown exception occured", 150);
  * ```
+ * Set constant LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION to specify from which priority messages are sent te email.
  *
  * In case we don't need START and STOP marks to show in the STDOUT, we create the logger instance this way:
  * ```
@@ -50,7 +63,7 @@ defined("LOGGER_NO_LOG_LEVEL") || define("LOGGER_NO_LOG_LEVEL",-30);
  * ```
  *
  *
- * Older way of usage
+ * ## Older way of usage
  * ```
  * $logger = new Logger();
  * $logger->set_prefix("application_mark");
@@ -125,9 +138,11 @@ class Logger{
 	var $_silent_mode = true;
 
 	/**
-	 * @access private
+	 * Flag to control logging of start and stop messages.
+	 *
+	 * @var boolean
 	 */
-	var $_disable_start_and_stop_marks = false;
+	private $_disable_start_and_stop_marks = false;
 
 	/**
 	 * Events with $_no_log_level priority and lower are not sent to output.
@@ -137,9 +152,14 @@ class Logger{
 	var $_no_log_level;
 
 	/**
-	 * @access private
+	 * Threshold to trigger sending notification
+	 *
+	 * When a log message has priority same or higher than $_notify_level, notification is sent to email
+	 * Defailt value is 30 or can be overridden with constant {@link LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION}
+	 *
+	 * @var integer
 	 */
-	var $_notify_level;
+	private $_notify_level;
 
 	/**
 	 * Email address for sending logged messages
@@ -247,12 +267,19 @@ class Logger{
 	 * @return string
 	 */
 	function get_log_file(){ return $this->_log_file; }
+
 	/**
 	 * Return log level priority
 	 *
 	 * @return integer
 	 */
 	function get_no_log_level(){ return $this->_no_log_level; }
+
+	/**
+	 * Get level for sending email notifications
+	 *
+	 * @return integer
+	 */
 	function get_notify_level(){ return $this->_notify_level; }
 
 	/**

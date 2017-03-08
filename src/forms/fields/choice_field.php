@@ -2,15 +2,33 @@
 /**
  * Field for choices.
  *
- * @package Atk14
- * @subpackage Forms
+ * @filesource
+ */
+
+/**
+ * Field for choices.
+ *
+ * @package Atk14\Forms
  */
 class ChoiceField extends Field
 {
-	var $choices = array();
+	/**
+	 * List of choices
+	 *
+	 * @var array
+	 */
+	protected $choices = array();
 
-	function __construct($options=array())
-	{
+	/**
+	 * Constructor
+	 *
+	 * This class extends $options with the following. For default options see {@link Field} class.
+	 *
+	 * @param array $options 
+	 * - choices array list of choices to render as list of options in select input field
+	 * @see Field::__construct()
+	 */
+	function __construct($options=array()) {
 		if (!isset($options["widget"])) {
 			$options["widget"] = new Select();
 		}
@@ -25,23 +43,32 @@ class ChoiceField extends Field
 	}
 
 	/**
-	* Vrati seznam voleb.
-	*
-	* NOTE: V djangu zrealizovano pomoci property.
-	*/
-	function get_choices()
-	{
+	 * Get list of input choices.
+	 *
+	 * {@internal V djangu zrealizovano pomoci property.}}
+	 * @return array
+	 */
+	function get_choices() {
 		return $this->choices;
 	}
 
 	/**
-	* Nastavi seznam voleb.
-	*
-	* NOTE: V djangu zrealizovano pomoci property (v pripade nastaveni
-	* saha i na widget)
-	*/
-	function set_choices($value)
-	{
+	 * Sets list of choices for option input field.
+	 *
+	 * The parameter $value has the following form
+	 * ```
+	 * array(
+	 * 	"value_1" => "First option label",
+	 * 	"value_2" => "Second option label"
+	 * )
+	 * ```
+	 *
+	 *
+	 * {@internal V djangu zrealizovano pomoci property (v pripade nastaveni saha i na widget) }}
+	 *
+	 * @param array $value
+	 */
+	function set_choices($value) {
 		$this->choices = $value;
 		$this->widget->choices = $value;
 	}
