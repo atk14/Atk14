@@ -70,6 +70,7 @@ function smarty_block_a_remote($params, $content, $template, &$repeat){
 			$_data = ", data: ''";
 			$_type = "POST";
 		}
+		unset($attrs["data-remote"]);
 		$attrs["onclick"] = "$('body').css('cursor','wait'); $.ajax({ type: '$_type', url: $(this).attr('href')$_data, dataType: 'script', complete: function(){ $('body').css('cursor','default'); } }); return false;";
 	}else{
 		if(!isset($attrs["class"])){ $attrs["class"] = ""; }
