@@ -7,7 +7,7 @@
  * @filesource
  */
 
-define("URL_FETCHER_VERSION","0.2");
+define("URL_FETCHER_VERSION","1.0");
 /**
  * UrlFetcher class provides methods to make http requests
  *
@@ -171,7 +171,7 @@ class UrlFetcher {
 		$options = array_merge(array(
 			"additional_headers" => array(),
 			"max_redirections" => $this->_MaxRedirections,
-			"user_agent" => "UrlFetcher ".URL_FETCHER_VERSION // "UrlFetcher 0.2"
+			"user_agent" => "UrlFetcher ".URL_FETCHER_VERSION // "UrlFetcher 1.0"
 		),$options);
 
 		if(strlen($url)>0){
