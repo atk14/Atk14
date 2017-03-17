@@ -6,6 +6,7 @@ class tc_url_fetcher extends tc_base{
 		$this->assertFalse($f->errorOccurred());
 		$this->assertTrue($f->found());
 		$this->assertEquals("http://jarek.plovarna.cz/unit-testing/dungeon-master.png",$f->getUrl());
+		$this->assertEquals("GET",$f->getRequestMethod());
 		$this->assertEquals(11462,strlen($f->getContent()));
 		$this->assertEquals("c4f99bdb6a4feb3b41b1bcd56a4d7aa3",md5($f->getContent()));
 		$this->assertEquals("image/png",$f->getContentType());
@@ -113,6 +114,7 @@ class tc_url_fetcher extends tc_base{
 		$this->assertTrue($f->post($data));
 		$this->assertTrue((bool)preg_match("/You are on the ssl/",$f->getContent()));
 		$this->assertTrue((bool)preg_match("/Request method is POST/",$f->getContent()));
+		$this->assertEquals("POST",$f->getRequestMethod());
 
 		$headers = $f->getRequestHeaders();
 		$this->assertContains("User-Agent: UrlFetcher",$headers);
@@ -148,9 +150,24 @@ class tc_url_fetcher extends tc_base{
 		$this->assertEquals(200,$f->getStatusCode());
 		$this->assertEquals("TEST CONTENT, type=relative",trim($f->getContent()));
 
-		// -- disable redirections
+		// -- POST
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/redirection.php?type=full_address");
+		$f->post();
+		$this->assertEquals(200,$f->getStatusCode());
+		$this->assertEquals("TEST CONTENT, type=full_address",$f->getContent());
+		$this->assertEquals("GET",$f->getRequestMethod());
+
+		// -- disable redirection
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/redirection.php?type=full_address",array("max_redirections" => 0));
 		$this->assertEquals(302,$f->getStatusCode());
 		$this->assertEquals("",$f->getContent());
+		$this->assertEquals("GET",$f->getRequestMethod());
+
+		// -- disable redirection & POST
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/redirection.php?type=full_address",array("max_redirections" => 0));
+		$f->post();
+		$this->assertEquals(302,$f->getStatusCode());
+		$this->assertEquals("",$f->getContent());
+		$this->assertEquals("POST",$f->getRequestMethod());
 	}
 }

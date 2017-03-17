@@ -207,6 +207,20 @@ class UrlFetcher {
 	function getUrl(){ return $this->_Url; }
 
 	/**
+	 * Returns method of the most recent request
+	 *
+	 *
+	 * ```
+	 * echo $uf->getRequestMethod(); // "GET" or "POST"
+	 * ```
+	 *
+	 * @return string
+	 */
+	function getRequestMethod(){
+		return $this->_RequestMethod;
+	}
+
+	/**
 	 * Checks if error occured on request
 	 *
 	 * @return bool
