@@ -632,6 +632,62 @@ class Files{
 	}
 
 	/**
+	 * Find files in the given directory according to a regular pattern and other criteria
+	 *
+	 *	$files = Files::FindFiles('./log/',array(
+	 * 		'pattern' => '/^.*\.(log|err)$/'
+	 *	));
+	 *	// array('./log/application.log', './log/application.err')
+	 * 
+	 * @return string[]
+	 */
+	static function FindFiles($directory,$options = array()){
+		$options += array(
+			"pattern" => null, // '/^.*\.(log|err)$/'
+			"min_mtime" => null, // time() - 2 * 60 * 60
+			"max_mtime" => null, // time() - 60 * 60
+			
+			// "maxdepth" => null // TODO: add maxdepth like in system command find
+		);
+
+		if(!preg_match('/\/$/',$directory)){
+			$directory = "$directory/"; // "./tmp" -> "./tmp/"
+		}
+
+		$pattern = $options["pattern"];
+		$min_mtime = $options["min_mtime"];
+		$max_mtime = $options["max_mtime"];
+
+		$files = array();
+
+		foreach(glob("$directory*") as $file){
+
+			$_f = substr($file,strlen($directory)); // "./log//application.log" -> "application.log"
+
+			if(!is_file($file)){
+				// TODO: also find files in a subdirectory
+				continue;
+			}
+		
+			if($pattern && !preg_match($pattern,$_f)){
+				continue;
+			}
+
+			if($min_mtime && filemtime($file)<$min_mtime){
+				continue;
+			}
+
+			if($max_mtime && filemtime($file)>$max_mtime){
+				continue;
+			}
+
+			$files[] = $file;
+		}
+
+		return $files;
+	}
+
+	/**
 	 * $filename = Files::_NormalizeFilename("/path/to//project//../tmp//attachments//"); // "/path/to/tmp/attachments/"
 	 */
 	static function _NormalizeFilename($filename){
