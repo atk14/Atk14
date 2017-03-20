@@ -218,8 +218,43 @@ class TcFiles extends TcBase{
 			'./sample_files/sample.jpg',
 			'./sample_files/sample.pdf',
 			'./sample_files/sample.png',
-			'./sample_files/sample.ppt'
+			'./sample_files/sample.ppt',
 		),$files);
+
+		// --- invert_pattern
+
+		$files = Files::FindFiles("./sample_files/",array(
+			"pattern" => '/^sample\.(p..|jpg)$/',
+			"invert_pattern" => '/\.ppt/'
+		));
+		$this->assertEquals(array(
+			'./sample_files/sample.jpg',
+			'./sample_files/sample.pdf',
+			'./sample_files/sample.png',
+		),$files);
+
+		// --- hidden files are included
+
+		touch('temp/.hidden_file.txt');
+
+		$files = Files::FindFiles("temp/",array(
+			"pattern" => '/^.*\.txt$/'
+		));
+		$this->assertEquals(array('temp/.hidden_file.txt'),$files);
+
+		$files = Files::FindFiles("temp/");
+		$this->assertTrue(in_array('temp/.hidden_file.txt',$files));
+
+		$files = Files::FindFiles("temp/",array(
+			"pattern" => '/^.*\.txt$/',
+			"invert_pattern" => '/^\./',
+		));
+		$this->assertEquals(array(),$files);
+		
+		unlink('temp/.hidden_file.txt');
+
+
+		// ----
 
 		touch('temp/application.log',time() - 60);
 

@@ -634,6 +634,8 @@ class Files{
 	/**
 	 * Find files in the given directory according to a regular pattern and other criteria
 	 *
+	 * TODO: Currently only regular files are being found just in the given directory
+	 *
 	 *	$files = Files::FindFiles('./log/',array(
 	 * 		'pattern' => '/^.*\.(log|err)$/'
 	 *	));
@@ -644,6 +646,7 @@ class Files{
 	static function FindFiles($directory,$options = array()){
 		$options += array(
 			"pattern" => null, // '/^.*\.(log|err)$/'
+			"invert_pattern" => null, // '/^\./' - do not find files starting with dot
 			"min_mtime" => null, // time() - 2 * 60 * 60
 			"max_mtime" => null, // time() - 60 * 60
 			
@@ -655,14 +658,26 @@ class Files{
 		}
 
 		$pattern = $options["pattern"];
+		$invert_pattern = $options["invert_pattern"];
 		$min_mtime = $options["min_mtime"];
 		$max_mtime = $options["max_mtime"];
 
+
+		// getting file list
 		$files = array();
+		$dir = opendir($directory);
+		while(is_string($item = readdir($dir))){
+			if($item=="." || $item==".."){ continue; }
+			$files[] = $item;
+		}
+		closedir($dir);
+		asort($files);
 
-		foreach(glob("$directory*") as $file){
+		$out = array();
 
-			$_f = substr($file,strlen($directory)); // "./log//application.log" -> "application.log"
+		foreach($files as $file){
+			$_f = $file; // "application.log"
+			$file = "$directory$file"; // "./log/application.log"
 
 			if(!is_file($file)){
 				// TODO: also find files in a subdirectory
@@ -673,18 +688,22 @@ class Files{
 				continue;
 			}
 
-			if($min_mtime && filemtime($file)<$min_mtime){
+			if($invert_pattern && preg_match($invert_pattern,$_f)){
 				continue;
 			}
 
-			if($max_mtime && filemtime($file)>$max_mtime){
+			if(isset($min_mtime) && filemtime($file)<$min_mtime){
 				continue;
 			}
 
-			$files[] = $file;
+			if(isset($max_mtime) && filemtime($file)>$max_mtime){
+				continue;
+			}
+
+			$out[] = $file;
 		}
 
-		return $files;
+		return $out;
 	}
 
 	/**
