@@ -51,6 +51,7 @@ defined("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS") || define("SENDMAIL_MAIL_ADDITION
 * Mozne klice:
 *		array(
 *			"from" => "",
+*			"from_name" => "",
 *			"bcc" => "",
 *			"cc" => "",
 *			"subject" => "",
@@ -227,6 +228,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 
 			"to" => $TO,
 			"from" => $FROM,
+			"from_name" => $FROM_NAME,
 			"cc" => $CC,
 			"bcc" => $BCC,
 
@@ -549,6 +551,7 @@ class _CMailFile {
 
 			"to" => "",
 			"from" => "",
+			"from_name" => "",
 			"cc" => "",
 			"bcc" => "",
 
@@ -565,7 +568,7 @@ class _CMailFile {
 		
 		$this->subject = $options["subject"];
 		$this->addr_to = $options["to"];
-		$this->smtp_headers = $this->write_smtpheaders($options["from"],$options["cc"],$options["bcc"]);
+		$this->smtp_headers = $this->write_smtpheaders($options["from"],$options["cc"],$options["bcc"],$options["from_name"]);
 		$this->text_body = $this->write_body($options["body"]);
 		$this->_first_attachment = true;
 		$this->text_encoded = $this->_attach_file($options["filename"],$file_content,$options["mime_type"]);
@@ -643,8 +646,9 @@ class _CMailFile {
 		return $out;
 	}
 
-	function write_smtpheaders($addr_from,$cc,$bcc) {
-		$out = "From: $addr_from\n";
+	function write_smtpheaders($addr_from,$cc,$bcc,$from_name = "") {
+		$_from = $from_name ? _sendmail_escape_email_name($from_name,$this->text_body_charset)." <$addr_from>" : $addr_from;
+		$out = "From: $_from\n";
 		$out = $out . "Reply-To: $addr_from\n";
 		$out = $out . "X-Mailer: mole 0.1\n";
 		$out = $out . "X-Sender: $addr_from\n";
