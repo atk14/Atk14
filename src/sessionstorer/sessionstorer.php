@@ -518,8 +518,8 @@ class SessionStorer{
 		$this->_clearDataCookies();
 
 		if(
-			$this->_obtainSessionIdAndSecurity($id,$security) &&
-			$this->_checkSessionSessionIdAndSecurity($id,$security)
+			($pairs = $this->_obtainSessionIdAndSecurityPairs()) &&
+			($this->_checkSessionIdAndSecurity($pairs))
 		){
 			$this->_garbageCollection();
 			$this->_readAllValuesFromDatabase();
@@ -589,28 +589,60 @@ class SessionStorer{
 	}
 
 	/**
-	 * Checks whether there is a session cookie
+	 * Extracts all session cookies from the current request
 	 *
-	 * @param integer $id
-	 * @param string $security
-	 * @return bool
+	 * Normally none or just one record is detected.
+	 *
+	 * It is also possible to have *multiple* session cookies from different applications on different domains and paths.
+	 * So the Cookie HTTP header contains more values with the same name.
+	 *
+	 * ```
+	 *	$pairs = $this->_obtainSessionIdAndSecurityPairs();
+	 *	var_dump($pairs);
+	 *	// array(
+	 *	//	"123.abcdefghijklmopqrstuvwxyz0123456" => array("id" => 123, "security" => "abcdefghijklmopqrstuvwxyz0123456"),
+	 *	//	"4881.a13fhJVULIxDlrnp97ogE8K4bmc0twQF" => array("id" => 4881, "security" => "a13fhJVULIxDlrnp97ogE8K4bmc0twQF"),
+	 *	//	"14227.J7vPy5fhDVcRd3KEnHeQrsqCSbFO6xal" => array("id" => 14227, "security" => "J7vPy5fhDVcRd3KEnHeQrsqCSbFO6xal"),
+	 *	// )
+	 *
+	 * ```
+	 *
+	 * @return array
 	 */
-	function _obtainSessionIdAndSecurity(&$id = null,&$security = null){
-		$id = null;
-		$security = null;
-		
+	function _obtainSessionIdAndSecurityPairs(){
 		$request = $this->_getRequest();
 
-		$cookie_val = $request->getCookieVar($this->getCookieName());
-		if(!$cookie_val || !is_string($cookie_val)) { return false; }
+		$pairs = array();
 
-		if(preg_match('/^([1-9][0-9]{0,20})\.([a-z0-9]{32})$/i',$cookie_val,$matches)){
-			$id = $matches[1];
-			$security = $matches[2];
-			return true;
+		$c_name = $this->getCookieName();
+
+		$this->__addCookieValueToPairs($request->getCookieVar($c_name),$pairs);
+
+		// Cookie: check=1490347093; session=4881.a13fhJVULIxDlrnp97ogE8K4bmc0twQF; session=14227.J7vPy5fhDVcRd3KEnHeQrsqCSbFO6xal; session=650142.AobSw960vtlPzrq8eFH7ODRsVfhUpWMg; session=681433.ExdUe0wl12pTKysc26ShP27IKR93j0vW
+		$cookies = $request->getHeader("Cookie");
+		foreach(explode(";",$cookies) as $c){
+			$ar = explode("=",trim($c));
+			if(urlencode($ar[0])==$c_name){
+				$this->__addCookieValueToPairs(urlencode($ar[1]),$pairs);
+			}
 		}
 
-		return false;
+		return $pairs;
+	}
+
+	protected function __addCookieValueToPairs($cookie_val,&$pairs){
+		$cookie_val = (string)$cookie_val;
+		if(strlen($cookie_val) && preg_match('/^([1-9][0-9]{0,20})\.([a-z0-9]{32})$/i',$cookie_val,$matches)){
+			if(sizeof($pairs)>20){
+				trigger_error(sprintf('Too many cookies named %s, refusing to add "%s"',$this->getCookieName(),$cookie_val));
+				return;
+			}
+
+			$pairs[$cookie_val] = array(
+				"id" => $matches[1],
+				"security" => $matches[2]
+			);
+		}
 	}
 
 	/**
@@ -618,34 +650,45 @@ class SessionStorer{
 	 *
 	 * Returns true on success.
 	 *
-	 * @param integer $id
-	 * @param string $security
 	 * @return bool
 	 */
-	protected function _checkSessionSessionIdAndSecurity($id,$security){
-		settype($id,"integer");
-		settype($security,"string");
+	protected function _checkSessionIdAndSecurity($pairs){
+		if(!$pairs){ return false; }
 
-		if(!$id || !$security){ return false; }
+		$conditions = $bind_ar = array();
 
+		$conditions[] = "session_name=:session_name";
+		$bind_ar[":session_name"] = $this->getSessionName();
+
+		$i = 0;
+		$_conds = array();
+		foreach($pairs as $pair){
+			$_conds[] = "(id=:id_$i AND security=:security_$i)";
+			$bind_ar[":id_$i"] = $pair["id"];
+			$bind_ar[":security_$i"] = $pair["security"];
+			$i++;
+		}
+
+		$conditions[] = "(".join(") OR (",$_conds).")";
+		
 		$row = $this->_dbmole->selectRow("
 			SELECT
+				id,
 				security,
 				last_access
 			FROM
 				sessions
 			WHERE
-				id=:id AND
-				session_name=:session_name
-		",array(":id" => $id, ":session_name" => $this->getSessionName()));
-		$rec_security = $row ? $row["security"] : null;
-		if(isset($rec_security) && $rec_security==$security){
-			$this->_SessionId = $id;
-			$this->_SessionSecurity = $security;
+				(".join(") AND (",$conditions).")
+			ORDER BY last_access DESC LIMIT 1
+		",$bind_ar);
+		if($row){
+			$this->_SessionId = (int)$row["id"];
+			$this->_SessionSecurity = $row["security"];
 
 			if($this->_isTimeToUpdateLastAccess($row["last_access"])){
 				$this->_dbmole->doQuery("UPDATE sessions SET last_access=:now WHERE id=:id AND last_access=:last_access",array(
-					":id" => $id,
+					":id" => $this->_SessionId,
 					":last_access" => $row["last_access"],
 					":now" => $this->_getNow(),
 				));
@@ -659,8 +702,8 @@ class SessionStorer{
 		}
 
 		//error_log("non existing session cookie found: $id.$security (".$request->getRemoteAddr().", ".$request->getUserAgent().")");
+		//$this->_clearSessionCookie();
 
-		$this->_clearSessionCookie();
 		return false;
 	}
 

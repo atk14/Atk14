@@ -325,6 +325,46 @@ class TcSessionStorer extends TcBase{
 		$this->assertTrue($falses>0);
 	}
 
+	function test__obtainSessionIdAndSecurityPairs(){
+		// initial check
+		$s = new SessionStorer();
+
+		$this->assertEquals("session",$s->getCookieName());
+	
+		// --
+		$request = new HTTPRequest();
+		$request->setHeader("Cookie","");
+		$request->setCookieVar("session",null);
+		$s = new SessionStorer(array(
+			"request" => $request,
+		));
+		$this->assertEquals(array(),$s->_obtainSessionIdAndSecurityPairs());
+
+		// --
+		$request->setCookieVar("session","invalid_val");
+		$s = new SessionStorer(array(
+			"request" => $request,
+		));
+		$this->assertEquals(array(),$s->_obtainSessionIdAndSecurityPairs());
+
+		// --
+		$request->setCookieVar("session","123.abcdefghijklmopqrstuvwxyz0123456");
+
+		$s = new SessionStorer(array(
+			"request" => $request,
+		));
+		$this->assertEquals(array("123.abcdefghijklmopqrstuvwxyz0123456" => array("id" => 123, "security" => "abcdefghijklmopqrstuvwxyz0123456")),$s->_obtainSessionIdAndSecurityPairs());
+
+		$request->setHeader("Cookie","check=1490347093; session=4881.a13fhJVULIxDlrnp97ogE8K4bmc0twQF; session=invalid_val; session2=681433.ExdUe0wl12pTKysc26ShP27IKR93j0vW; session=14227.J7vPy5fhDVcRd3KEnHeQrsqCSbFO6xal; ");
+
+		$this->assertEquals(array(
+			"123.abcdefghijklmopqrstuvwxyz0123456" => array("id" => 123, "security" => "abcdefghijklmopqrstuvwxyz0123456"),
+			"4881.a13fhJVULIxDlrnp97ogE8K4bmc0twQF" => array("id" => 4881, "security" => "a13fhJVULIxDlrnp97ogE8K4bmc0twQF"),
+			"14227.J7vPy5fhDVcRd3KEnHeQrsqCSbFO6xal" => array("id" => 14227, "security" => "J7vPy5fhDVcRd3KEnHeQrsqCSbFO6xal"),
+		),$s->_obtainSessionIdAndSecurityPairs());
+	}
+
+
 	function _add_cookies($send_cookies,&$store){
 		foreach($send_cookies as $item){
 			$store[$item[0]] = $item[1];
