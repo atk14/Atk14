@@ -44,8 +44,13 @@ if(!defined("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY")){
 	define("SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY",false);
 }
 
+/**
+ *
+ * define("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS",true);
+ * define("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS",".example.com");
+ */
 if(!defined("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS")){
-	define("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS",false);
+	define("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS",false); 
 }
 
 defined("SESSION_STORER_AUTO_GARBAGE_COLLECTION") || define("SESSION_STORER_AUTO_GARBAGE_COLLECTION",true);
@@ -888,9 +893,13 @@ class SessionStorer{
 	}
 
 	/**
-	 * Returns domain
+	 * Returns domain on which a new cookie should be set
 	 *
-	 * @param boolean $share_cookies_on_subdomains
+	 * A cookie will be set on the given domain and all its subdomains.
+	 *
+	 * Null is returned when domain attribute is not required or not acceptable.
+	 *
+	 * @param mixed $share_cookies_on_subdomains boolean or string
 	 * @return string
 	 */
 	function _getCookieDomain($share_cookies_on_subdomains = null){
@@ -898,11 +907,35 @@ class SessionStorer{
 
 		$request = $this->_getRequest();
 
-		$domain = $request->getHttpHost();
-		$domain = preg_replace('/:\d+$/','',$domain); // localhost:8080 -> localhost
+		$domain = null;
+
 		if($share_cookies_on_subdomains){
-			$domain = preg_replace('/^.*\.([^.]+\.[a-z]+)$/','\1',$domain); // www.example.com -> example.com
+
+			$domain = $request->getHttpHost();
+
+			if(preg_match('/^[0-9]{1,3}(\.[0-9]{1,3}){3}(|:[0-9]+)/',$domain)){
+				// an IPv4 address -> without domain attribute
+				return null;
+			}
+
+			if(preg_match('/::/',$domain) || preg_match('/(:[A-F0-9]+){2,}/i',$domain)){
+				// an IPv6 address -> without domain attribute
+				return null;
+			}
+
+			$domain = preg_replace('/:\d+$/','',$domain); // www.example.com:8080 -> www.example.com
+			$domain = ".$domain"; // www.example.com -> .www.example.com
+
+			if(is_string($share_cookies_on_subdomains)){
+				if($share_cookies_on_subdomains!=substr($domain,-strlen($share_cookies_on_subdomains))){
+					return null;
+				}
+				$domain = $share_cookies_on_subdomains;
+			}else{
+				$domain = preg_replace('/^\.www(\.[^.]+.*\.[a-z]+)$/','\1',$domain); // .www.example.com -> .example.com; !!! Automation only removes www
+			}
 		}
+
 		return $domain;
 	}
 

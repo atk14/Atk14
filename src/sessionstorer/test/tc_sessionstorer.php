@@ -219,21 +219,52 @@ class TcSessionStorer extends TcBase{
 
 		$HTTP_REQUEST->setHttpHost("www.example.org");
 		$ss = new SessionStorer();
-		$this->assertEquals("www.example.org",$ss->_getCookieDomain());
-		$this->assertEquals("example.org",$ss->_getCookieDomain(true));
-		$this->assertEquals("www.example.org",$ss->_getCookieDomain(false));
+		$this->assertEquals(".example.org",$ss->_getCookieDomain(true)); // automation
+		$this->assertEquals(null,$ss->_getCookieDomain(false));
+		$this->assertEquals(".example.org",$ss->_getCookieDomain(".example.org"));
+		$this->assertEquals(".www.example.org",$ss->_getCookieDomain(".www.example.org"));
 
 		$HTTP_REQUEST->setHttpHost("beta.admin.internal.example.org");
 		$ss = new SessionStorer();
-		$this->assertEquals("beta.admin.internal.example.org",$ss->_getCookieDomain());
-		$this->assertEquals("example.org",$ss->_getCookieDomain(true)); // TODO: is this correct?
+		$this->assertEquals(".beta.admin.internal.example.org",$ss->_getCookieDomain(true)); // no automation in this case
+		$this->assertEquals(null,$ss->_getCookieDomain(false));
+		$this->assertEquals(".example.org",$ss->_getCookieDomain(".example.org"));
+		$this->assertEquals(".admin.internal.example.org",$ss->_getCookieDomain(".admin.internal.example.org"));
+		$this->assertEquals(".beta.admin.internal.example.org",$ss->_getCookieDomain(".beta.admin.internal.example.org"));
+		$this->assertEquals(null,$ss->_getCookieDomain(".zeus.beta.admin.internal.example.org"));
+		$this->assertEquals(null,$ss->_getCookieDomain(".other.domain.com"));
 
+		// IPv4 address
 		$HTTP_REQUEST->setHttpHost("10.20.30.40");
 		$ss = new SessionStorer();
+		$this->assertEquals(null,$ss->_getCookieDomain());
+		$this->assertEquals(null,$ss->_getCookieDomain(true));
+		$this->assertEquals(null,$ss->_getCookieDomain(false));
+		$this->assertEquals(null,$ss->_getCookieDomain(".www.example.org"));
 
-		$this->assertEquals("10.20.30.40",$ss->_getCookieDomain());
-		$this->assertEquals("10.20.30.40",$ss->_getCookieDomain(true));
-		$this->assertEquals("10.20.30.40",$ss->_getCookieDomain(false));
+		// IPv4 address with a port
+		$HTTP_REQUEST->setHttpHost("10.20.30.40:81");
+		$ss = new SessionStorer();
+		$this->assertEquals(null,$ss->_getCookieDomain());
+		$this->assertEquals(null,$ss->_getCookieDomain(true));
+		$this->assertEquals(null,$ss->_getCookieDomain(false));
+		$this->assertEquals(null,$ss->_getCookieDomain(".www.example.org"));
+
+		// IPv6 address
+		$HTTP_REQUEST->setHttpHost("1762:0:0:0:0:B03:1:AF18");
+		$ss = new SessionStorer();
+		$this->assertEquals(null,$ss->_getCookieDomain());
+		$this->assertEquals(null,$ss->_getCookieDomain(true));
+		$this->assertEquals(null,$ss->_getCookieDomain(false));
+		$this->assertEquals(null,$ss->_getCookieDomain(".www.example.org"));
+
+		// IPv6 address
+		$HTTP_REQUEST->setHttpHost("::1");
+		$ss = new SessionStorer();
+		$this->assertEquals(null,$ss->_getCookieDomain());
+		$this->assertEquals(null,$ss->_getCookieDomain(true));
+		$this->assertEquals(null,$ss->_getCookieDomain(false));
+		$this->assertEquals(null,$ss->_getCookieDomain(".www.example.org"));
 	}
 
 	function test__garbageCollection(){
