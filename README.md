@@ -1,5 +1,5 @@
 ATK14 is a PHP Framework for fearless guys
-------------------------------------------
+==========================================
 
 [![Build Status](https://travis-ci.org/atk14/Atk14.svg?branch=master)](https://travis-ci.org/atk14/Atk14)
 
