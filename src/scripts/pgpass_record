@@ -16,11 +16,23 @@
  *  $ ./scripts/pgpass_record -a
  *	# or
  *  $ ./scripts/pgpass_record --add-record-automatically
+ *
+ * The last parameter could be the configuration name:
+ *
+ *	$ ./scripts/pgpass_record import
+ *	$ ./scripts/pgpass_record -a import
  */
 
 require_once(dirname(__FILE__)."/load.php");
 
-$d = $ATK14_GLOBAL->getDatabaseConfig();
+$configuration_name = (sizeof($argv)>1 && !preg_match('/^-/',$argv[sizeof($argv)-1])) ? $argv[sizeof($argv)-1] : "default"; // the last parameter with no prefix '-' could be the configuration name
+
+$d = $ATK14_GLOBAL->getDatabaseConfig($configuration_name);
+if(!$d){
+	// the error message must be printed out onto STDERR
+	//echo sprintf('there is no database connection "%s" in %s',$configuration_name,$ATK14_GLOBAL->getEnvironment()),"\n";
+	exit(0);
+}
 if($d["adapter"]!="postgresql"){
 	exit(0);
 }
