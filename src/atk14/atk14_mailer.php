@@ -106,6 +106,20 @@ class Atk14Mailer{
 	var $return_path = null;
 
 	/**
+	 * email address for Reply-To header
+	 *
+	 * e.g. samantha@doe.com
+	 */
+	var $reply_to = "";
+
+	/**
+	 * name for Reply-To header
+	 *
+	 * e.g. Samantha Doe
+	 */
+	var $reply_to_name = "";
+
+	/**
 	 * recipients email address
 	 *
 	 * @var string
@@ -521,6 +535,8 @@ class Atk14Mailer{
 			"from" => $this->from,
 			"from_name" => $this->from_name,
 			"return_path" => $this->return_path,
+			"reply_to" => $this->reply_to,
+			"reply_to_name" => $this->reply_to_name,
 			"to" => $this->to,
 			"cc" => $this->cc,
 			"bcc" => $this->bcc,

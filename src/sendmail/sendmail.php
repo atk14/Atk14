@@ -93,6 +93,8 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		"cc" => null,
 		"bcc" => null,
 		"return_path" => null,
+		"reply_to" => null,
+		"reply_to_name" => null,
 		"date" => gmdate('D, d M Y H:i:s \G\M\T', time()),
 		"subject" => $subject,
 		"body" => $message,
@@ -116,14 +118,9 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	//if(is_array($params["cc"])){ $params["cc"] = join(", ",array_unique($params["cc"])); }
 	//if(is_array($params["bcc"])){ $params["bcc"] = join(", ",array_unique($params["bcc"])); }
 
-	$FROM = trim($params['from']);
-	$FROM_NAME = $params['from_name'];
-	
-	// "John Doe <john.doe@example.com>" -> "John Doe", "john.doe@example.com"
-	if(preg_match('/^[\'"]?(.+?)[\'"]?\s+<([^@<>"\']+@[^@<>"\']+)>$/',$FROM,$matches)){
-		$FROM = $matches[2];
-		$FROM_NAME = str_replace('\"','"',$matches[1]); // ?? is this ok? 'John Doe \"aka\" John D.' -> 'John Doe "aka" John D.'
-	}
+	list($FROM,$FROM_NAME) = _sendmail_parse_email_and_name($params["from"],$params["from_name"]);
+	list($REPLY_TO,$REPLY_TO_NAME) = _sendmail_parse_email_and_name($params["reply_to"],$params["reply_to_name"]);
+
 
 	$BCC = array();
 	if(isset($params['bcc'])){ $BCC[] = _sendmail_correct_address($params['bcc']);}
@@ -198,9 +195,10 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	
 	$HEADERS = "";
 	if(sizeof($ATTACHMENTS)==0){
-		$_from = $FROM_NAME ? _sendmail_escape_email_name($FROM_NAME,$BODY_CHARSET)." <$FROM>" : $FROM;
+		$_from = _sendmail_render_email_address($FROM,$FROM_NAME,$BODY_CHARSET);
+		$_reply_to = $REPLY_TO ? _sendmail_render_email_address($REPLY_TO,$REPLY_TO_NAME,$BODY_CHARSET) : $_from;
 		$HEADERS .= "From: $_from\n";
-		$HEADERS .= "Reply-To: $FROM\n";
+		$HEADERS .= "Reply-To: $_reply_to\n";
 		if($BCC!=""){
 			$HEADERS .= "bcc: $BCC\n";
 		}
@@ -403,6 +401,38 @@ function _sendmail_escape_email_name($from_name,$charset = null){
 		$out = '"'.str_replace('"','\"',$out).'"';
 	}
 	return $out;
+}
+
+/**
+ *	$from = "john@doe.com";
+ *	$from_name = "John Doe";
+ *	// or
+ *	$from = "John Doe <john@doe.com>";
+ *	$from_name = "";
+ * 
+ *	list($from,$from_name) = _sendmail_parse_email_and_name($from,$from_name);
+ *
+ * 	echo $from; // "john@doe.com"
+ * 	echo $from_name; // "John Doe"
+ */
+function _sendmail_parse_email_and_name($from,$from_name){
+	$FROM = trim($from);
+	$FROM_NAME = $from_name;
+	
+	// "John Doe <john.doe@example.com>" -> "John Doe", "john.doe@example.com"
+	if(preg_match('/^[\'"]?(.+?)[\'"]?\s+<([^@<>"\']+@[^@<>"\']+)>$/',$FROM,$matches)){
+		$FROM = $matches[2];
+		$FROM_NAME = str_replace('\"','"',$matches[1]); // ?? is this ok? 'John Doe \"aka\" John D.' -> 'John Doe "aka" John D.'
+	}
+
+	return array($FROM,$FROM_NAME);
+}
+
+/**
+ *	$from = _sendmail_render_email_address("john@doe.com","John Doe","UTF-8");
+ */
+function _sendmail_render_email_address($from,$from_name,$charset){
+	return $from_name ? _sendmail_escape_email_name($from_name,$charset)." <$from>" : $from;
 }
 
 function _sendmail_escape_subject($subject,$charset = null){

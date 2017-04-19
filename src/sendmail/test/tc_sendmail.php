@@ -108,6 +108,35 @@ class tc_sendmail extends tc_base{
 		$this->assertContains('From: =?UTF-8?Q?Vesel=C3=A1_Proch=C3=A1zka?= <vesela-prochazka@example.com>',$ar["headers"]);
 	}
 
+	function test_reply_to(){
+		$ar = sendmail($params = array(
+			"from" => "john.doe@example.com",
+			"from_name" => "John Doe",
+		));
+		$this->assertEquals("john.doe@example.com",$ar["from"]);
+		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertContains('Reply-To: "John Doe" <john.doe@example.com>',$ar["headers"]);
+
+		$ar = sendmail($params = array(
+			"from" => "john.doe@example.com",
+			"from_name" => "John Doe",
+			"reply_to" => "samantha@doe.com",
+			"reply_to_name" => "Samantha Doe",
+		));
+		$this->assertEquals("john.doe@example.com",$ar["from"]);
+		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertContains('Reply-To: "Samantha Doe" <samantha@doe.com>',$ar["headers"]);
+
+		$ar = sendmail($params = array(
+			"from" => "john.doe@example.com",
+			"from_name" => "John Doe",
+			"reply_to" => "samantha@doe.com",
+		));
+		$this->assertEquals("john.doe@example.com",$ar["from"]);
+		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertContains('Reply-To: samantha@doe.com',$ar["headers"]);
+	}
+
 	function test_to_as_array(){
 		$ar = sendmail(array(
 			"to" => array("me@mydomain.com","she@mydomain.com"),
@@ -407,5 +436,23 @@ PROCESSCONTROL|eudocrpe_11442|NA|
 		$this->assertEquals("Hello World",_sendmail_escape_subject("Hello World"));
 		$this->assertEquals("=?UTF-8?Q?Ahoj_sv=C4=9Bte?=",_sendmail_escape_subject("Ahoj světe"));
 		$this->assertEquals("=?ISO-8859-2?Q?Ahoj_sv=ECte?=",_sendmail_escape_subject(Translate::Trans("Ahoj světe","UTF-8","ISO-8859-2"),"ISO-8859-2"));
+	}
+
+	function test__sendmail_parse_email_and_name(){
+		list($from,$from_name) = _sendmail_parse_email_and_name("john@doe.com","John Doe");
+		$this->assertEquals("john@doe.com",$from);
+		$this->assertEquals("John Doe",$from_name);
+
+		list($from,$from_name) = _sendmail_parse_email_and_name("John Doe <john@doe.com>","");
+		$this->assertEquals("john@doe.com",$from);
+		$this->assertEquals("John Doe",$from_name);
+
+		list($from,$from_name) = _sendmail_parse_email_and_name('Samantha Doe <samantha@doe.com>',"");
+		$this->assertEquals("samantha@doe.com",$from);
+		$this->assertEquals("Samantha Doe",$from_name);
+
+		list($from,$from_name) = _sendmail_parse_email_and_name("","");
+		$this->assertEquals("",$from);
+		$this->assertEquals("",$from_name);
 	}
 }
