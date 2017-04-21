@@ -123,7 +123,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 
 
 	$BCC = array();
-	if(isset($params['bcc'])){ $BCC[] = _sendmail_correct_address($params['bcc']);}
+	if($params['bcc']){ $BCC[] = _sendmail_correct_address($params['bcc']);}
 	if(defined("SENDMAIL_BCC_TO") && SENDMAIL_BCC_TO!=""){
 		$BCC[] = SENDMAIL_BCC_TO;
 	}elseif(defined("BCC_EMAIL") && BCC_EMAIL!=""){
@@ -131,7 +131,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	}
 	$BCC = join(", ",$BCC);
 	$CC = _sendmail_correct_address($params['cc']);
-	$RETURN_PATH = isset($params["return_path"]) ? $params["return_path"] : $FROM;
+	$RETURN_PATH = $params["return_path"] ? $params["return_path"] : $FROM;
 	$DATE = $params["date"];
 	$SUBJECT = _sendmail_escape_subject($params['subject'],$params["charset"]);
 	$BODY = $params['body'];
@@ -149,7 +149,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 
 	// pokud mame v parametrech headers, jedna se o predem pripraveny e-mail....
 	// TODO: dodelat - je to zatim neciste reseni...
-	if(isset($params["headers"])){
+	if($params["headers"]){
 		$BODY = $params["body"];
 		$HEADERS = $params["headers"];
 
@@ -183,7 +183,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	$BODY_CHARSET = $params["charset"];
 
 	$ATTACHMENTS = array();
-	if(isset($params['attachments'])){
+	if($params['attachments']){
 		for($i = 0; $i<sizeof($params['attachments']);$i++){
 			$ATTACHMENTS[] = array(
 				"body" => $params["attachments"][$i]["body"],
