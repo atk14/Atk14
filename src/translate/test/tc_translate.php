@@ -186,6 +186,7 @@ class TcTranslate extends TcBase{
 		$this->assertEquals("Russkyj",Translate::Trans("Русский","UTF-8","ASCII"));
 		$this->assertEquals("malcyk",Translate::Trans("мальчик","UTF-8","ASCII"));
 		$this->assertEquals("Oftalmologyja",Translate::Trans("Офтальмология","UTF-8","ASCII"));
+		$this->assertEquals("Specyalyzacyja",Translate::Trans("Специализация","UTF-8","ASCII"));
 
 		// German transliteration in action
 		$this->assertEquals("Was koennen Jaeger absetzen?",Translate::Trans("Was können Jäger absetzen?","UTF-8","ASCII"));
