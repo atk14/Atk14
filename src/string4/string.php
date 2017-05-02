@@ -60,7 +60,7 @@ class String{
 		if(is_object($string) && strtolower(get_class($string))=="string"){
 			return $string;
 		}
-		return new String($string,$encoding);
+		return new self($string,$encoding);
 	}
 
 	/**
@@ -630,14 +630,16 @@ class String{
 	/**
 	 * Returns a string shortened to given length.
 	 *
-	 * When a string is shortened a sequence of characters can be appended. By default '...' is appended
+	 * When a string is shortened a sequence of characters can be appended. By default '...' is appended.
+	 * This can be changed by option 'omission'.
+	 *
 	 * It can also detect certain characters and limit the string to this character.
 	 * So you can take care of split words.
 	 *
 	 * @param integer $length
 	 * @param array $options
-	 * - omission
-	 * - separator
+	 * - **omission** string to append to the end of the truncated string [default: '...']
+	 * - **separator** last character at which the string will end if it appears before the end of the truncated string
 	 * @return string
 	 */
 	function truncate($length,$options = array()){
@@ -671,6 +673,8 @@ class String{
 	}
 
 	/**
+	 * Returns copy of the object.
+	 *
 	 * @return String
 	 */
 	function copy(){ return $this->_copy(); }
