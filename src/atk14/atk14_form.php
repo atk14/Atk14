@@ -1134,22 +1134,4 @@ class Atk14Form extends Form
 
 		return $out;
 	}
-
-	/**
-	 * Method allowing to use CamelCase method names.
-	 *
-	 * When a called method does not exist, this magical method is executed instead.
-	 * It converts the called name to underscore format and tries to call this one.
-	 *
-	 * @param string $name
-	 * @param array $arguments
-	 * @return mixed
-	 */
-	function __call($name,$arguments){
-		$underscore_name = String4::ToObject($name)->underscore()->toString();
-		if(method_exists($this,$underscore_name)){
-			return call_user_func_array(array($this,$underscore_name),$arguments);
-		}
-		throw new Exception(get_class($this).": unknown method $name()");
-	}
 }
