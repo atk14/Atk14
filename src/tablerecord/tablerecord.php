@@ -1405,7 +1405,7 @@ class TableRecord extends inobj {
 			$id = $this->dbmole->selectInsertId();
 		}
 
-		$out = TableRecord::_GetInstanceById(get_class($this),$id,array("use_cache" => $options["use_cache"]));
+		$out = TableRecord::_GetInstanceById(get_class($this),$id,array("use_cache" => false));
 		$out->_Hook_afterCreateNewRecord();
 		return $out;
 	}
