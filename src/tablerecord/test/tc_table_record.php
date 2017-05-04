@@ -162,12 +162,19 @@ class TcTableRecord extends TcBase{
 
 		// CreateNewRecord; using cached while creating record
 		$qe = $dbmole->getQueriesExecuted();
+
+		$this->assertEquals(null,Cache::Get("TestTable",223));
+		$this->assertEquals($qe+1,$dbmole->getQueriesExecuted());
+
+		$this->assertEquals(null,Cache::Get("TestTable",223));
+		$this->assertEquals($qe+1,$dbmole->getQueriesExecuted());
+
 		$rec = TestTable::CreateNewRecord(array(
 			"id" => 223,
 			"title" => "La cache"
 		),array("use_cache" => true));
 		$qe_2 = $dbmole->getQueriesExecuted();
-		$this->assertEquals($qe+2,$qe_2);
+		$this->assertEquals($qe+3,$qe_2);
 		// --
 		$rec = TestTable::GetInstanceById($rec->getId(),array("use_cache" => true));
 		$qe_3 = $dbmole->getQueriesExecuted();
