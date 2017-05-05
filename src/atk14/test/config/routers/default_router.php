@@ -8,7 +8,7 @@ class DefaultRouter extends Atk14Router{
 			"lang" => $this->default_lang,
 			"path" => "posts/detail",
 			"params" => array(
-				"id" => '/^[\d]+$/',
+				"id" => '/\d+/',
 				"format" => 'raw'
 			)
 		));
@@ -17,7 +17,7 @@ class DefaultRouter extends Atk14Router{
 			"controller" => "posts",
 			"action" => "detail",
 			"params" => array(
-				"id" => "/^\d+$/"
+				"id" => "/\d+/"
 			)
 		));
 

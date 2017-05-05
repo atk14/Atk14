@@ -255,6 +255,25 @@ class TcUrl extends TcBase{
 		$this->assertEquals("/post-123.raw",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "raw", "lang" => "cs")));
 		$this->assertEquals("/post-123/?format=pdf",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "pdf", "lang" => "cs"))); // format is not raw
 		$this->assertEquals("/en/posts/detail/?id=123&format=raw",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "raw", "lang" => "en"))); // not default language
+		//
+		$this->_test_route("/post-123/",array(
+			"lang" => "cs",
+			"controller" => "posts",
+			"action" => "detail",
+			"force_redirect" => null
+		),array(
+			"id" => "123"
+		));
+		$this->_test_route("/post-123.raw",array(
+			"lang" => "cs",
+			"controller" => "posts",
+			"action" => "detail",
+			"force_redirect" => null
+		),array(
+			"id" => "123",
+			"format" => "raw"
+		));
+		$this->_test_404_route("/post-123.pdf");
 	}
 
 	function test_ParseParamsFromUri(){
