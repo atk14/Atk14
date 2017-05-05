@@ -90,7 +90,8 @@ class TcUrl extends TcBase{
 			"action" => "overview",
 			"force_redirect" => null
 		));
-		// chybejici lomitko na konci request_uri
+
+		// missing slash at the end of URI
 		$this->_test_route("/cs/articles/overview",array(
 			"namespace" => "",
 			"lang" => "cs",
@@ -107,7 +108,8 @@ class TcUrl extends TcBase{
 			"action" => "overview",
 			"force_redirect" => null
 		));
-		// chybejici lomitko
+
+		// missing slash
 		$r = $this->_test_route("/cs/articles/overview?from=20",array(
 			"namespace" => "",
 			"lang" => "cs",
@@ -115,6 +117,7 @@ class TcUrl extends TcBase{
 			"action" => "overview",
 			"force_redirect" => "/cs/articles/overview/?from=20"
 		));
+
 		$_GET = array();
 	}
 
@@ -216,7 +219,7 @@ class TcUrl extends TcBase{
 		$this->assertEquals("/fable/where-the-wild-things-are-5",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 5)));
 		$this->assertEquals("/fable/where-the-wild-things-are-5?format=xml&print=1",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 5, "format" => "xml", "print" => 1)));
 
-		// the router is for namespace "" and "universe", but not for namespace "admin"
+		// The router is for namespace "" and "universe", but not for namespace "admin",
 		// see config/routers/load.php
 		$this->assertEquals("/admin/en/fables/detail/?id=5",$this->_build_link(array("namespace" => "admin", "controller" => "fables", "action" => "detail", "id" => 5)));
 		$this->assertEquals("/universe/fable/where-the-wild-things-are-5",$this->_build_link(array("namespace" => "universe", "controller" => "fables", "action" => "detail", "id" => 5)));
@@ -240,9 +243,18 @@ class TcUrl extends TcBase{
 			"action" => "index",
 		));
 
-		// there is no Hungarian language in the config/locale.yml
+		// In the config/locale.yml there is no Hungarian language
 		$this->_test_404_route("/hu/");
 		$this->_test_404_route("/universe/hu/");
+	
+		// Routes only for the default language (cs)
+		$this->assertEquals("/post-123/",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "lang" => "cs")));
+		$this->assertEquals("/cs/posts/detail/?id=xyz",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "xyz", "lang" => "cs"))); // id is not number
+		$this->assertEquals("/en/posts/detail/?id=123",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "lang" => "en"))); // not default language
+		//
+		$this->assertEquals("/post-123.raw",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "raw", "lang" => "cs")));
+		$this->assertEquals("/post-123/?format=pdf",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "pdf", "lang" => "cs"))); // format is not raw
+		$this->assertEquals("/en/posts/detail/?id=123&format=raw",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "raw", "lang" => "en"))); // not default language
 	}
 
 	function test_ParseParamsFromUri(){
@@ -272,7 +284,7 @@ class TcUrl extends TcBase{
 	}
 
 	function _test_route($request_uri,$expected_ar,$expected_params = array()){
-		$route = atk14url::recognizeroute($request_uri);
+		$route = Atk14Url::RecognizeRoute($request_uri);
 		foreach($expected_ar as $k => $v){
 			$this->assertequals($v,$route[$k],"testing $k in $request_uri");
 		}

@@ -1,4 +1,6 @@
 <?php
+// In this file there is old way how to define routes
+
 $ATK14_GLOBAL->setValue("routes",array(
 	"
 	cs:clanky/feed.rss
@@ -27,6 +29,8 @@ $ATK14_GLOBAL->setValue("routes",array(
 																															"slug" => "/[a-z0-9-]+/",
 																															),
 
+	/*
+	// Default routes are in the file config/routers/default_router.php
 	"<lang>/<controller>" =>                           array(
                                                               "__page_title__" => "",
  																															"__page_description__" => "",
@@ -36,5 +40,5 @@ $ATK14_GLOBAL->setValue("routes",array(
 	"<lang>/<controller>/<action>" =>                           array(
                                                               "__page_title__" => "",
  																															"__page_description__" => "",
-                                                              ),
+                                                            ), */
 ));
