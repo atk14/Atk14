@@ -97,7 +97,7 @@ class TcDate extends TcBase{
 
 	function test_today_etc(){
 		$current_date = date("Y-m-d");
-		$yesterday_date = date("Y-m-d",time()-60*60*30);
+		$yesterday_date = date("Y-m-d",strtotime($current_date)-60*60);
 		$tomorrow_date = Dates::AddDays($current_date,1);
 
 		$today = Date::Today();
