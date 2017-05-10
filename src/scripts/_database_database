@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+require_once(dirname(__FILE__)."/load.php");
+
+$d = $ATK14_GLOBAL->getDatabaseConfig();
+
+echo $d["database"], "\n";

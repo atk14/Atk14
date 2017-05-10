@@ -6,7 +6,8 @@ dirname=`dirname $0`;
 cd $dirname;
 
 PG_USER=postgres                          # Postgresql's service account name
-DBNAME=`./_database_username`
+DBUSER=`./_database_username`
+DBNAME=`./_database_database`
 DBPASSWORD=`./_database_password`
 ENVIRONMENT=`./_atk14_env`
 CREATE_DATABASE_COMMAND=`./_create_database_command`
@@ -15,8 +16,8 @@ environment=`echo -n  $ENVIRONMENT | tr A-Z a-z`
 sql=$( cat <<EOF
 -- creating database for $ENVIRONMENT
 $CREATE_DATABASE_COMMAND
-CREATE USER $DBNAME WITH ENCRYPTED PASSWORD '$DBPASSWORD';
-GRANT ALL PRIVILEGES ON DATABASE $DBNAME TO $DBNAME;
+CREATE USER $DBUSER WITH ENCRYPTED PASSWORD '$DBPASSWORD';
+GRANT ALL PRIVILEGES ON DATABASE $DBNAME TO $DBUSER;
 EOF
 )
 if [ "$1" != '-f' ] ; then
