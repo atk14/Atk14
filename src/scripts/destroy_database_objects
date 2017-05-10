@@ -28,7 +28,7 @@ exit(0);
 require_once(dirname(__FILE__)."/load.php");
 
 if(PRODUCTION && !ATK14_ENABLE_DESTROY_DATABASE_OBJECTS_IN_PRODUCTION){
-	echo "Obviously you do not want this operation in production\n";
+	echo "Probably you don't want to perform this action in production\n";
 	exit(1);
 }
 
