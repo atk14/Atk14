@@ -1,0 +1,264 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ATK14 Framework\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-05-11 11:29+0200\n"
+"PO-Revision-Date: 2017-03-31 17:37+0100\n"
+"Last-Translator: \n"
+"Language-Team: ATK14 Development Team\n"
+"Language: hu_HU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: ../src/atk14/atk14_dispatcher.php:67
+msgid "Service Unavailable"
+msgstr "A szolgáltatás nem elérhető"
+
+#: ../src/atk14/atk14_dispatcher.php:68
+msgid "This site is in maintenance. Please come back later."
+msgstr "Az oldal szerkesztés alatt van Kérjük, jöjjön vissza később."
+
+#: ../src/atk14/atk14_form.php:222
+msgid "The form contains errors, therefore it cannot be processed."
+msgstr "Az űrlap hibákat tartalmaz, ezért nem lehet feldolgozni."
+
+#: ../src/atk14/atk14_form.php:507
+msgid "Please, submit the form again"
+msgstr "Kérjük küldje el újra az űrlapot"
+
+#: ../src/atk14/atk14_locale.php:59
+msgid "atk14.date_format"
+msgstr "j.n.Y"
+
+#: ../src/atk14/atk14_locale.php:79
+msgid "atk14.parse_date_pattern"
+msgstr "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4})$/"
+
+#: ../src/atk14/atk14_locale.php:113
+msgid "atk14.datetime_format"
+msgstr "j.n.Y H:i"
+
+#: ../src/atk14/atk14_locale.php:126
+msgid "atk14.parse_datetime_pattern"
+msgstr ""
+"/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
+"<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"
+
+#: ../src/atk14/atk14_locale.php:139
+msgid "atk14.datetime_with_seconds_format"
+msgstr "j.n.Y H:i:s"
+
+#: ../src/atk14/atk14_locale.php:151
+msgid "atk14.parse_datetime_with_seconds_pattern"
+msgstr ""
+"/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
+"<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})$/"
+
+#: ../src/atk14/atk14_sorting.php:146
+msgid "Sort table by this column"
+msgstr "A táblázat e szerint az oszlop szerint rendeződik"
+
+#: ../src/atk14/helpers/block.a_destroy.php:33
+msgid "Are you sure?"
+msgstr "Biztos benne?"
+
+#: ../src/atk14/helpers/function.paginator.php:99
+#: ../src/atk14/helpers/function.paginator.php:162
+#, php-format
+msgid "%s items total"
+msgstr "%s tételek összesen"
+
+#: ../src/atk14/helpers/function.paginator.php:113
+msgid "prev"
+msgstr "előző"
+
+#: ../src/atk14/helpers/function.paginator.php:157
+msgid "next"
+msgstr "következő"
+
+#: ../src/atk14/helpers/function.to_sentence.php:13
+msgid "and"
+msgstr "és"
+
+#: ../src/forms/fields/char_field.php:24 ../src/forms/fields/regex_field.php:25
+msgid "Ensure this value has at most %max% characters (it has %length%)."
+msgstr "Az értéknek legfeljebb %max% karaktere lehet (ez már %length%)."
+
+#: ../src/forms/fields/char_field.php:25 ../src/forms/fields/regex_field.php:26
+msgid "Ensure this value has at least %min% characters (it has %length%)."
+msgstr ""
+"Az értéknek legalább %min% karaktere kel hogy legyen (ez most %length%)."
+
+#: ../src/forms/fields/char_field.php:26
+msgid "Ensure this value has at most %max% characters."
+msgstr " Ez az érték"
+
+#: ../src/forms/fields/char_field.php:27
+msgid "Ensure this value has at least %min% characters."
+msgstr "Az értéknek legalább %min% karaktere kel hogy legyen."
+
+#: ../src/forms/fields/char_field.php:28
+msgid "Ensure this value has between %min% and %max% characters."
+msgstr "Az érték karakterjének a %min% és %max% között kel lennie."
+
+#: ../src/forms/fields/choice_field.php:37
+msgid "Select a valid choice. That choice is not one of the available choices."
+msgstr ""
+"Válasszon egy érvényes értéket. A kiválasztott érték nem szerepel a "
+"felkínált értékek között."
+
+#: ../src/forms/fields/choice_field.php:38
+msgid "Please, choose the right option."
+msgstr "Kérjük válassza ki a megfelelő opciót."
+
+#: ../src/forms/fields/date_field.php:17
+msgid "Enter a valid date."
+msgstr "Adjon meg egy érvényes dátumot."
+
+#: ../src/forms/fields/date_time_field.php:14
+msgid "Enter a valid date, hours and minutes."
+msgstr "Adjon meg egy érvényes dátumot, óra és perc."
+
+#: ../src/forms/fields/date_time_with_seconds_field.php:14
+msgid "Enter a valid date, hours, minutes and seconds."
+msgstr "Adjon meg egy érvényes dátumot, óra, perc és másodperc."
+
+#: ../src/forms/fields/email_field.php:20
+msgid "Enter a valid e-mail address."
+msgstr ".Adjon meg egy érvényes e-mail címet."
+
+#: ../src/forms/fields/file_field.php:39
+msgid "Ensure this file has at most %max_file_size% bytes (it has %file_size%)"
+msgstr ""
+"Győződjön meg róla, hogy a fájl nagysága nemlépi túl a %max_file_size% "
+"bájtot (most már %file_size%)"
+
+#: ../src/forms/fields/file_field.php:40
+msgid "Unsupported file type: %mime_type%"
+msgstr "Nem támogatott fájl típus: %mime_type%"
+
+#: ../src/forms/fields/file_field.php:42
+msgid ""
+"The uploaded file exceeds the max file size value that is set on the server "
+"(%upload_max_filesize%)"
+msgstr ""
+
+#: ../src/forms/fields/file_field.php:43
+msgid ""
+"The uploaded file exceeds the max file size directive that was specified in "
+"the HTML form (%MAX_FILE_SIZE%)"
+msgstr ""
+
+#: ../src/forms/fields/file_field.php:44
+msgid "The uploaded file was only partially uploaded"
+msgstr ""
+
+#: ../src/forms/fields/file_field.php:45
+msgid "Missing a temporary folder"
+msgstr ""
+
+#: ../src/forms/fields/file_field.php:46
+msgid "Failed to write file to disk"
+msgstr ""
+
+#: ../src/forms/fields/file_field.php:47
+msgid "File upload stopped by an extension installed on the server"
+msgstr ""
+
+#: ../src/forms/fields/file_field.php:48
+msgid "An error occurred during file upload"
+msgstr ""
+
+#: ../src/forms/fields/float_field.php:22
+msgid "Enter a number."
+msgstr "Adja meg a számot."
+
+#: ../src/forms/fields/float_field.php:23
+#: ../src/forms/fields/integer_field.php:33
+msgid "Ensure this value is less than or equal to %value%."
+msgstr "Az értéknek kisebb vagy egyenlőnek kel lennie, mint% valuek%."
+
+#: ../src/forms/fields/float_field.php:24
+#: ../src/forms/fields/integer_field.php:34
+msgid "Ensure this value is greater than or equal to %value%."
+msgstr "Az értéknek egyenlőnek vagy nagyobbnak kel lennie mint% valuek%."
+
+#: ../src/forms/fields/image_field.php:22
+msgid "Ensure this file is image."
+msgstr "Győződjön meg róla, hogy ez a fájl kép."
+
+#: ../src/forms/fields/image_field.php:24
+msgid "Ensure this image is %width_required% pixels wide (it is %width%)."
+msgstr ""
+"Győződjön meg róla, hogy ez a kép %width_required% pixel széles (most %width"
+"% széles)."
+
+#: ../src/forms/fields/image_field.php:25
+msgid "Ensure this image is %height_required% pixels high (it is %height%)."
+msgstr ""
+"Győződjön meg róla, hogy ez a kép %height_required% pixel magas (most %height"
+"%magas)."
+
+#: ../src/forms/fields/image_field.php:27
+msgid "Ensure this image is at most %max% pixels wide (it is %width%)."
+msgstr ""
+"Ellenőrizze, hogy a kép szélessége nem lépi túl a %max% pixelt (most %width"
+"%széles)."
+
+#: ../src/forms/fields/image_field.php:28
+msgid "Ensure this image is at most %max% pixels high (it is %height%)."
+msgstr ""
+"Ellenőrizze, hogy a kép magassága nem lépi túl a %max% pixelt (most %height"
+"%magas)."
+
+#: ../src/forms/fields/image_field.php:29
+msgid "Ensure this image is at least %min% pixels wide (it is %width%)."
+msgstr ""
+"A kép szélességének legalább %min% pixelnek kel lennie (ez most %width%)."
+
+#: ../src/forms/fields/image_field.php:30
+msgid "Ensure this image is at least %min% pixels high (it is %height%)."
+msgstr ""
+"A kép magasságának legalább %min% pixelnek kel lennie (ez most %height%)."
+
+#: ../src/forms/fields/image_field.php:32
+msgid "Ensure this image is in a required format"
+msgstr "Győződjön meg róla, hogy a kép a kívánt formátumban van."
+
+#: ../src/forms/fields/integer_field.php:32
+msgid "Enter a whole number."
+msgstr "Írjon be egy egész számot."
+
+#: ../src/forms/fields/ip_address_field.php:26
+msgid "Enter a valid IP address."
+msgstr ".Adjon meg egy érvényes IP-címet."
+
+#: ../src/forms/fields/multiple_choice_field.php:21
+msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgstr ""
+"Válasszon egy érvényes értéket. % (value) nem egy rendelkezésre álló "
+"választási lehetőség."
+
+#: ../src/forms/fields/multiple_choice_field.php:22
+msgid "Enter a list of values."
+msgstr "Adja meg az értékek listáját."
+
+#: ../src/forms/fields/multiple_choice_field.php:23
+msgid "Please, choose the right options."
+msgstr " Kérjük válassza ki a megfelelő beállításokat."
+
+#: ../src/forms/fields.php:235
+msgid "This field is required."
+msgstr "Ez a mező kötelező."
+
+#: ../src/forms/fields.php:236
+msgid "Enter a valid value."
+msgstr "Adjon meg egy érvényes értéket."

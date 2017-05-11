@@ -1,0 +1,247 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ATK14 Framework\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-05-11 11:29+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: ATK14 Development Team\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: ../src/atk14/atk14_dispatcher.php:67
+msgid "Service Unavailable"
+msgstr "Service Unavailable"
+
+#: ../src/atk14/atk14_dispatcher.php:68
+msgid "This site is in maintenance. Please come back later."
+msgstr "This site is in maintenance. Please come back later."
+
+#: ../src/atk14/atk14_form.php:222
+msgid "The form contains errors, therefore it cannot be processed."
+msgstr "The form contains errors, therefore it cannot be processed."
+
+#: ../src/atk14/atk14_form.php:507
+msgid "Please, submit the form again"
+msgstr "Please, submit the form again"
+
+#: ../src/atk14/atk14_locale.php:59
+msgid "atk14.date_format"
+msgstr "m/d/Y"
+
+#: ../src/atk14/atk14_locale.php:79
+msgid "atk14.parse_date_pattern"
+msgstr "/^(?<month>[0-9]{1,2})\\/(?<day>[0-9]{1,2})\\/(?<year>[0-9]{4})$/"
+
+#: ../src/atk14/atk14_locale.php:113
+msgid "atk14.datetime_format"
+msgstr "m/d/Y H:i"
+
+#: ../src/atk14/atk14_locale.php:126
+msgid "atk14.parse_datetime_pattern"
+msgstr ""
+"/^(?<month>[0-9]{1,2})\\/(?<day>[0-9]{1,2})\\/(?<year>[0-9]{4}) (?"
+"<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"
+
+#: ../src/atk14/atk14_locale.php:139
+msgid "atk14.datetime_with_seconds_format"
+msgstr "m/d/Y H:i:s"
+
+#: ../src/atk14/atk14_locale.php:151
+msgid "atk14.parse_datetime_with_seconds_pattern"
+msgstr ""
+"/^(?<month>[0-9]{1,2})\\/(?<day>[0-9]{1,2})\\/(?<year>[0-9]{4}) (?"
+"<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2}$/"
+
+#: ../src/atk14/atk14_sorting.php:146
+msgid "Sort table by this column"
+msgstr "Sort table by this column"
+
+#: ../src/atk14/helpers/block.a_destroy.php:33
+msgid "Are you sure?"
+msgstr "Are you sure?"
+
+#: ../src/atk14/helpers/function.paginator.php:99
+#: ../src/atk14/helpers/function.paginator.php:162
+#, php-format
+msgid "%s items total"
+msgstr "%s items total"
+
+#: ../src/atk14/helpers/function.paginator.php:113
+msgid "prev"
+msgstr "prev"
+
+#: ../src/atk14/helpers/function.paginator.php:157
+msgid "next"
+msgstr "next"
+
+#: ../src/atk14/helpers/function.to_sentence.php:13
+msgid "and"
+msgstr "and"
+
+#: ../src/forms/fields/char_field.php:24 ../src/forms/fields/regex_field.php:25
+msgid "Ensure this value has at most %max% characters (it has %length%)."
+msgstr "Ensure this value has at most %max% characters (it has %length%)."
+
+#: ../src/forms/fields/char_field.php:25 ../src/forms/fields/regex_field.php:26
+msgid "Ensure this value has at least %min% characters (it has %length%)."
+msgstr "Ensure this value has at least %min% characters (it has %length%)."
+
+#: ../src/forms/fields/char_field.php:26
+msgid "Ensure this value has at most %max% characters."
+msgstr "Ensure this value has at most %max% characters."
+
+#: ../src/forms/fields/char_field.php:27
+msgid "Ensure this value has at least %min% characters."
+msgstr "Ensure this value has at least %min% characters."
+
+#: ../src/forms/fields/char_field.php:28
+msgid "Ensure this value has between %min% and %max% characters."
+msgstr "Ensure this value has between %min% and %max% characters."
+
+#: ../src/forms/fields/choice_field.php:37
+msgid "Select a valid choice. That choice is not one of the available choices."
+msgstr ""
+"Select a valid choice. That choice is not one of the available choices."
+
+#: ../src/forms/fields/choice_field.php:38
+msgid "Please, choose the right option."
+msgstr "Please, choose the right option."
+
+#: ../src/forms/fields/date_field.php:17
+msgid "Enter a valid date."
+msgstr "Enter a valid date."
+
+#: ../src/forms/fields/date_time_field.php:14
+msgid "Enter a valid date, hours and minutes."
+msgstr "Enter a valid date, hours and minutes."
+
+#: ../src/forms/fields/date_time_with_seconds_field.php:14
+msgid "Enter a valid date, hours, minutes and seconds."
+msgstr "Enter a valid date, hours, minutes and seconds."
+
+#: ../src/forms/fields/email_field.php:20
+msgid "Enter a valid e-mail address."
+msgstr "Enter a valid e-mail address."
+
+#: ../src/forms/fields/file_field.php:39
+msgid "Ensure this file has at most %max_file_size% bytes (it has %file_size%)"
+msgstr ""
+"Ensure this file has at most %max_file_size% bytes (it has %file_size%)"
+
+#: ../src/forms/fields/file_field.php:40
+msgid "Unsupported file type: %mime_type%"
+msgstr "Unsupported file type: %mime_type%"
+
+#: ../src/forms/fields/file_field.php:42
+msgid ""
+"The uploaded file exceeds the max file size value that is set on the server "
+"(%upload_max_filesize%)"
+msgstr ""
+"The uploaded file exceeds the max file size value that is set on the server "
+"(%upload_max_filesize%)"
+
+#: ../src/forms/fields/file_field.php:43
+msgid ""
+"The uploaded file exceeds the max file size directive that was specified in "
+"the HTML form (%MAX_FILE_SIZE%)"
+msgstr ""
+"The uploaded file exceeds the max file size directive that was specified in "
+"the HTML form (%MAX_FILE_SIZE%)"
+
+#: ../src/forms/fields/file_field.php:44
+msgid "The uploaded file was only partially uploaded"
+msgstr "The uploaded file was only partially uploaded"
+
+#: ../src/forms/fields/file_field.php:45
+msgid "Missing a temporary folder"
+msgstr "Missing a temporary folder"
+
+#: ../src/forms/fields/file_field.php:46
+msgid "Failed to write file to disk"
+msgstr "Failed to write file to disk"
+
+#: ../src/forms/fields/file_field.php:47
+msgid "File upload stopped by an extension installed on the server"
+msgstr "File upload stopped by an extension installed on the server"
+
+#: ../src/forms/fields/file_field.php:48
+msgid "An error occurred during file upload"
+msgstr "An error occurred during file upload"
+
+#: ../src/forms/fields/float_field.php:22
+msgid "Enter a number."
+msgstr "Enter a number."
+
+#: ../src/forms/fields/float_field.php:23
+#: ../src/forms/fields/integer_field.php:33
+msgid "Ensure this value is less than or equal to %value%."
+msgstr "Ensure this value is less than or equal to %value%."
+
+#: ../src/forms/fields/float_field.php:24
+#: ../src/forms/fields/integer_field.php:34
+msgid "Ensure this value is greater than or equal to %value%."
+msgstr "Ensure this value is greater than or equal to %value%."
+
+#: ../src/forms/fields/image_field.php:22
+msgid "Ensure this file is image."
+msgstr "Ensure this file is image."
+
+#: ../src/forms/fields/image_field.php:24
+msgid "Ensure this image is %width_required% pixels wide (it is %width%)."
+msgstr "Ensure this image is %width_required% pixels wide (it is %width%)."
+
+#: ../src/forms/fields/image_field.php:25
+msgid "Ensure this image is %height_required% pixels high (it is %height%)."
+msgstr "Ensure this image is %height_required% pixels high (it is %height%)."
+
+#: ../src/forms/fields/image_field.php:27
+msgid "Ensure this image is at most %max% pixels wide (it is %width%)."
+msgstr "Ensure this image is at most %max% pixels wide (it is %width%)."
+
+#: ../src/forms/fields/image_field.php:28
+msgid "Ensure this image is at most %max% pixels high (it is %height%)."
+msgstr "Ensure this image is at most %max% pixels high (it is %height%)."
+
+#: ../src/forms/fields/image_field.php:29
+msgid "Ensure this image is at least %min% pixels wide (it is %width%)."
+msgstr "Ensure this image is at least %min% pixels wide (it is %width%)."
+
+#: ../src/forms/fields/image_field.php:30
+msgid "Ensure this image is at least %min% pixels high (it is %height%)."
+msgstr "Ensure this image is at least %min% pixels high (it is %height%)."
+
+#: ../src/forms/fields/image_field.php:32
+msgid "Ensure this image is in a required format"
+msgstr "Ensure this image is in a required format"
+
+#: ../src/forms/fields/integer_field.php:32
+msgid "Enter a whole number."
+msgstr "Enter a whole number."
+
+#: ../src/forms/fields/ip_address_field.php:26
+msgid "Enter a valid IP address."
+msgstr "Enter a valid IP address."
+
+#: ../src/forms/fields/multiple_choice_field.php:21
+msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgstr "Select a valid choice. %(value)s is not one of the available choices."
+
+#: ../src/forms/fields/multiple_choice_field.php:22
+msgid "Enter a list of values."
+msgstr "Enter a list of values."
+
+#: ../src/forms/fields/multiple_choice_field.php:23
+msgid "Please, choose the right options."
+msgstr "Please, choose the right options."
+
+#: ../src/forms/fields.php:235
+msgid "This field is required."
+msgstr "This field is required."
+
+#: ../src/forms/fields.php:236
+msgid "Enter a valid value."
+msgstr "Enter a valid value."
