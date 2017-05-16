@@ -23,9 +23,9 @@ class Atk14Fixture {
 
 		$dbmole = $options["dbmole"];
 
-		$filename = realpath(sprintf("%s/../test/fixtures/%s.yml", $ATK14_GLOBAL->getApplicationPath(), $name));
+		$filename = sprintf("%s/../test/fixtures/%s.yml", $ATK14_GLOBAL->getApplicationPath(), $name);
 		if (!file_exists($filename)) {
-			throw new Exception("Fixture $name not found");
+			throw new Exception("Fixture $name not found ($filename)");
 		}
 
 		$class_name = $options["class_name"];

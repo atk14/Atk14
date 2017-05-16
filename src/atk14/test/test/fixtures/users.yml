@@ -1,0 +1,11 @@
+john:
+  login: "john.doe"
+  name: "John Doe"
+  password: "JohnIsGod"
+  email: "john@doe.com"
+
+samantha:
+  login: "samantha.doe"
+  name: "Samantha Doe"
+  password: "fowl.no.more"
+  email: "samantha@doe.com"

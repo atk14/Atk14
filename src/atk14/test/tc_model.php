@@ -1,24 +1,26 @@
 <?php
-class TcUnitBase extends TcAtk14Model {}
+class TcModel extends TcBase {
 
-class TcModel extends TcUnitBase {
-	/**
-	 * Otestovani, ze funguje pouzivani datovych sad pomoci anotace @dataProvider
-	 *
-	 * @dataProvider provideNumbers
-	 */
-	function testSomething($a, $b) {
-		$this->assertTrue(isset($a));
-		$this->assertTrue(isset($b));
-		$this->assertEquals(2 + $a, $b);
-	}
+	// There are no TableRecord models.
+	// Here are few tests to check that our mock models are working properly.
+	function test(){
+		$john = User::CreateNewRecord(array(
+			"login" => "john.doe",
+			"name" => "John Doe"
+		));
+		$samantha = User::CreateNewRecord(array(
+			"login" => "samantha.doe",
+			"name" => "Samantha Doe",
+		));
 
-	function provideNumbers() {
-		return array(
-			"ada" => array(0,2),
-			array(1,3),
-			array(5,7),
-		);
+		$this->assertEquals(1,$john->getId());
+		$this->assertEquals(2,$samantha->getId());
+
+		$this->assertEquals("john.doe",$john["login"]);
+		$this->assertEquals("john.doe",$john->getLogin());
+
+		$this->assertEquals("samantha.doe",$samantha["login"]);
+		$this->assertEquals("samantha.doe",$samantha->getLogin());
 	}
 }
 
