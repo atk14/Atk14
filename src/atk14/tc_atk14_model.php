@@ -67,15 +67,15 @@ class TcAtk14Model extends TcSuperBase{
 		}
 
 		foreach($annotations["class"]["fixture"] as $_f) {
-			$this->$_f = $this->loadFixtures($_f);
+			$this->$_f = $this->loadFixture($_f);
 		}
 	}
 
 	/**
-	 * $this->users = $this->loadFixtures("users");
+	 * $this->users = $this->loadFixture("users");
 	 */
-	function loadFixtures($name){
-		return Atk14Fixtures::Load($name);
+	function loadFixture($name){
+		return Atk14Fixture::Load($name);
 	}
 
 }

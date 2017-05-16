@@ -29,8 +29,8 @@ if(ATK14_USE_SMARTY3){
 }
 require_once("$__PATH__/atk14_smarty.php");
 
-require_once("$__PATH__/atk14_fixtures.php");
-require_once("$__PATH__/atk14_fixtures_list.php");
+require_once("$__PATH__/atk14_fixture.php");
+require_once("$__PATH__/atk14_fixture_list.php");
 
 require_once("$__PATH__/tc_atk14_controller.php");
 require_once("$__PATH__/tc_atk14_model.php");
