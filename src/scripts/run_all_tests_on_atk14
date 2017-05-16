@@ -17,13 +17,16 @@ fi
 
 ret=0
 for dir in `find ./ -type d -name test | sort`; do
-	echo
-	echo
-	echo "###### $dir"
-	$PHP_BIN $base_dir/run_unit_tests $dir/
-	last_ret_code=$?
-	if [ $last_ret_code -ne 0 ]; then
-		ret=$last_ret_code
+	# in a directory with tests there should be initialize.php (or initialize.inc)
+	if [ -e $dir/initialize.php ] || [ -e $dir/initialize.inc ]; then
+		echo
+		echo
+		echo "###### $dir"
+		$PHP_BIN $base_dir/run_unit_tests $dir/
+		last_ret_code=$?
+		if [ $last_ret_code -ne 0 ]; then
+			ret=$last_ret_code
+		fi
 	fi
 done
 
