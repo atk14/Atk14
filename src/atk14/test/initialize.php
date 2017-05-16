@@ -19,3 +19,6 @@ require("../../../load.php");
 $dbmole = PgMole::GetInstance();
 $dbmole->doQuery(file_get_contents(__DIR__ . "/../../sessionstorer/test/drop_structures.postgresql.sql"));
 $dbmole->doQuery(file_get_contents(__DIR__ . "/../../sessionstorer/structures.postgresql.sql"));
+
+// There is need to create table "test_table"
+$dbmole->doQuery(file_get_contents(__DIR__ . "/../../tablerecord/test/structures.postgresql.sql"));
