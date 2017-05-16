@@ -1,0 +1,6 @@
+rec_1:
+  an_integer: 123
+  title: "Wonderful World"
+
+rec_2:
+  title: "Some nice title"
