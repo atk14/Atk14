@@ -52,4 +52,27 @@ class TcAtk14Field extends TcSuperBase{
 		}
 		return $err;
 	}
+
+	/**
+	 *
+	 * @see TcAtk14Model::setUpFixtures()
+	 */
+	function setUpFixtures() {
+		$annotations = $this->getAnnotations();
+		if (!isset($annotations["class"]["fixture"])) {
+			return;
+		}
+
+		foreach($annotations["class"]["fixture"] as $_f) {
+			$this->$_f = $this->loadFixture($_f);
+		}
+	}
+
+	/**
+	 *
+	 * @see TcAtk14Model::loadFixture()
+	 */
+	function loadFixture($name){
+		return Atk14Fixture::Load($name);
+	}
 }

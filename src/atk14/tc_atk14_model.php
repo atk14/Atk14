@@ -23,44 +23,60 @@ class TcAtk14Model extends TcSuperBase{
 	}
 
 	/**
-	 * Nacteni fixtur
+	 * Loads fixtures according to class annotations (@fixture)
 	 *
-	 * Pouziti potrebnych fixtur se zajisti pouzitim anotace '@fixture table_name' pred deklaraci tridy.
-	 * Soubor s fixturami je v test/fixtures/table_name.yml
+	 * Example usage:
 	 *
-	 * == Priklad pouziti fixtur pro model Showroom
-	 *
-	 * YML soubor showrooms.yml:
+	 * A fixture file:
 	 * ```
-	 * letnany:
-	 *  name_cs: Prodejna Letňany
-	 *  location_code: 60
-	 *  contact_email: letnany@activacek.cz
+	 * # file: test/fixtures/users.yml
 	 *
-	 * brno:
-	 *  name_cs: Pobočka Brno
-	 *  location_code: 80
-	 *  contact_email: brno@activacek.cz
+	 * rocky:
+	 *   login: "rocky"
+	 *   name: "Rocky Balboa"
+	 *   password: "secret"
+	 *
+	 * arnie:
+	 *   login: "arnie"
+	 *   name: "Arnie S."
+	 *   password: "noMercy"
 	 * ```
 	 *
-	 *
+	 * A test case:
 	 * ```
+	 * <?php
+	 * // file: test/models/tc_user.php
 	 * /**
-	 *  * @fixture showrooms
+	 *  *
+	 *  * @fixture users
 	 * \*\/
-	 * class TcShowrooms extends TcBase {
-	 * 	function test_something() {
-	 * 		$this->assertNotNull($this->showrooms["brno"]);
-	 * 		$this->showrooms["brno"]->getId();
+	 * class TcUser extends TcBase {
 	 *
+	 *  function test_something() {
+	 *   $this->assertNotNull($this->users["rocky"]);
+	 *   $this->assertEquals("Rocky Balboa",$this->users->getName());
+	 *  }
+	 * }
+	 * ```
 	 *
-	 * 	}
+	 * The base class should provide fixtures loading automation:
+	 * ```
+	 * <?php
+	 * // file: test/models/tc_base.php
+	 * class TcBase extends TcAtk14Model {
+	 *
+	 *  function setUp(){
+	 *    $this->dbmole->begin();
+	 *    $this->setUpFixtures();
+	 *  }
+	 *
+	 *  function tearDown(){
+	 *    $this->dbmole->rollback();
+	 *  }
 	 * }
 	 * ```
 	 */
 	function setUpFixtures() {
-		global $ATK14_GLOBAL;
-
 		$annotations = $this->getAnnotations();
 		if (!isset($annotations["class"]["fixture"])) {
 			return;
@@ -72,7 +88,11 @@ class TcAtk14Model extends TcSuperBase{
 	}
 
 	/**
-	 * $this->users = $this->loadFixture("users");
+	 * Loads the specific fixture
+	 *
+	 * ```
+	 * $this->users = $this->loadFixture("users"); // loads data from test/fixtures/users.yml
+	 * ```
 	 */
 	function loadFixture($name){
 		return Atk14Fixture::Load($name);
