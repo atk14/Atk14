@@ -3,12 +3,18 @@ ATK14 is a PHP Framework for fearless guys
 
 [![Build Status](https://travis-ci.org/atk14/Atk14.svg?branch=master)](https://travis-ci.org/atk14/Atk14)
 
-ATK14 is a framework helping to build websites of any kind. If one dares to dip into ATK14, she or he gains:
+ATK14 is a server-side web application framework helping to build websites of any kind.
+
+ATK14 is a classy MVC framework.
+
+ATK14 emphasizes Convention over Configuration principle.
+
+If one dares to dip into ATK14, she or he gains:
 
 * funny modelling, templating and controlling
 * awesome form validations
-* testing tools
 * database schema migrations
+* easy testing setup with automation and fixtures support
 * perfect headaches
 * big-boy-like feeling
 
@@ -21,7 +27,7 @@ ATK14 consists of
   * DbMole, a database data mining creature
   * TableRecord, an ORM framework
   * a tool for sending proper emails
-	* tools for parsing YAML and XML and so on
+  * tools for parsing YAML and XML and so on
 
 ATK14 requires UNIX environment, PHP 5.3 or newer and Postgresql as a database engine.
 
