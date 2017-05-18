@@ -1,8 +1,4 @@
 <?php
-if(!class_exists("TcSuperBase")){
-	class TcSuperBase{ }
-}
-
 /**
  * Base class for fields testing
  *
@@ -21,15 +17,17 @@ if(!class_exists("TcSuperBase")){
  *	}
  * </code>
  */
-class TcAtk14Field extends TcSuperBase{
+class TcAtk14Field extends TcAtk14Base{
 	var $field = null;
 
-	function __construct(){
-		$ref = new ReflectionClass("TcSuperBase");
-		$ref->newInstance(func_get_args());
+	/*
+	function __construct($name = NULL, array $data = array(), $dataName = ''){
+		parent::__construct($name, $data, $dataName);
 
-		$this->dbmole = $GLOBALS["dbmole"];
+		$ref = new ReflectionClass("TcAtk14Base");
+		$ref->newInstance(func_get_args());
 	}
+	*/
 
 	function clean($value,&$err = null){
 		list($err,$cleaned_value) = $this->field->clean($value);
@@ -37,6 +35,16 @@ class TcAtk14Field extends TcSuperBase{
 		return $cleaned_value;
 	}
 
+	/**
+	 *
+	 * ```
+	 * function test(){
+	 *  $this->field = new IntegerField(array("required" => false));
+	 *  $cleaned_value = $this->assertValid(" 123 ");
+	 *  $this->assertEquals(123,$cleaned_value);
+	 * }
+	 * ```
+	 */
 	function assertValid($value,$message = ""){
 		$cleaned_value = $this->clean($value,$err);
 		if(!is_null($err)){
@@ -45,34 +53,21 @@ class TcAtk14Field extends TcSuperBase{
 		return $cleaned_value;
 	}
 
+	/**
+	 *
+	 * ```
+	 * function test(){
+	 *  $this->field = new IntegerField(array("required" => false));
+	 *  $err = $this->assertInvalid("abc");
+	 *  $this->assertEquals("Enter a number",$err);
+	 * }
+	 * ```
+	 */
 	function assertInvalid($value,$message = null){
 		$cleaned_value = $this->clean($value,$err);
 		if(is_null($err)){
 			$this->fail("valid: $value [$cleaned_value]" . ($message ? " ($message)" : ""));
 		}
 		return $err;
-	}
-
-	/**
-	 *
-	 * @see TcAtk14Model::setUpFixtures()
-	 */
-	function setUpFixtures() {
-		$annotations = $this->getAnnotations();
-		if (!isset($annotations["class"]["fixture"])) {
-			return;
-		}
-
-		foreach($annotations["class"]["fixture"] as $_f) {
-			$this->$_f = $this->loadFixture($_f);
-		}
-	}
-
-	/**
-	 *
-	 * @see TcAtk14Model::loadFixture()
-	 */
-	function loadFixture($name){
-		return Atk14Fixture::Load($name);
 	}
 }
