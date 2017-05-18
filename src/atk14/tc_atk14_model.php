@@ -1,6 +1,6 @@
 <?php
 /**
- * This is a base class convenient for mode testing
+ * This is a base class convenient for model testing
  *
  * Model tests are usually located in ./test/models/
  */
