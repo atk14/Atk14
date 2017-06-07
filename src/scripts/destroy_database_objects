@@ -83,23 +83,32 @@ foreach(get_list_of_sequencies($dbmole,$schema) as $sequence){
 }
 
 if($dbmole->getDatabaseType()=="postgresql"){ // TODO: MySQL
-foreach($dbmole->selectRows("
-	SELECT
-		proisagg AS is_aggregate,
-		proname || '(' || oidvectortypes(proargtypes) || ')' AS function_name
-	FROM pg_proc INNER JOIN pg_namespace ns ON (pg_proc.pronamespace = ns.oid)
-	WHERE ns.nspname = '$schema' AND pg_proc.proowner=:userid ORDER BY proname
-",array(":userid" => get_database_userid($dbmole))) as $row){
-	$subject = $row["is_aggregate"]=='t' ? "AGGREGATE" : "FUNCTION";
-	$q = "DROP $subject $schema.$row[function_name]";
-	if($previewing){
-		echo "$q;\n";
-		continue;
+
+	foreach($dbmole->selectRows("
+		SELECT
+			proisagg AS is_aggregate,
+			proname || '(' || oidvectortypes(proargtypes) || ')' AS function_name
+		FROM pg_proc INNER JOIN pg_namespace ns ON (pg_proc.pronamespace = ns.oid)
+		WHERE ns.nspname = '$schema' AND pg_proc.proowner=:userid ORDER BY proname
+	",array(":userid" => get_database_userid($dbmole))) as $row){
+		$subject = $row["is_aggregate"]=='t' ? "AGGREGATE" : "FUNCTION";
+		$q = "DROP $subject $schema.$row[function_name] CASCADE";
+		if($previewing){
+			echo "$q;\n";
+			continue;
+		}
+		$dbmole->doQuery($q);
+		$subject = strtolower($subject);
+		echo "$subject $row[function_name] dropped\n";
 	}
-	$dbmole->doQuery($q);
-	$subject = strtolower($subject);
-	echo "$subject $row[function_name] dropped\n";
-}
+
+	foreach($dbmole->selectIntoArray("
+		SELECT cfgname from pg_ts_config WHERE cfgnamespace NOT IN
+			(SELECT oid FROM pg_namespace WHERE nspname = 'pg_catalog')
+		") as $tsc) {
+		$dbmole->doquery("DROP TEXT SEARCH CONFIGURATION $tsc CASCADE");
+	}
+
 }
 
 
