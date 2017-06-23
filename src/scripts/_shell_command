@@ -1,0 +1,58 @@
+#!/usr/bin/env php
+<?php
+
+require_once(dirname(__FILE__)."/load.php");
+
+//$stage = "productionx";
+
+$stage = "";
+array_shift($argv); // command
+
+if($argv && preg_match('/^[a-z][a-z0-9_]{1,}$/i',$argv[0])){
+	$stage = strtolower(array_shift($argv));
+}
+
+$stages = Atk14DeploymentStage::GetStages();
+
+if(!$stages){
+	echo 'echo In the config/deploy.yml there are no deployment stages',"\n";
+	exit;
+}
+
+if(!$stage){
+	echo 'echo First paramaeter must be a stage name, e.g. production',"\n";
+	exit;
+}
+
+if(!isset($stages[$stage])){
+	echo sprintf('echo Unknown deploy stage "%s"',$stage),"\n";
+	exit;
+}
+
+$stage = $stages[$stage];
+
+$s = $stage->toArray();
+
+$port = $s["port"] ? " -p $s[port]" : "";
+
+$cmd = "ssh -t $s[user]@$s[server]$port 'cd $s[directory] ; ATK14_ENV=production exec \"\$SHELL\"'";
+$cmd = "ssh -t $s[user]@$s[server]$port 'cd $s[directory] ; ATK14_ENV=production \$SHELL'";
+$cmd = "ssh -t $s[user]@$s[server]$port \"cd $s[directory] ; ATK14_ENV=production \$SHELL\"";
+$cmd = "ssh $s[user]@$s[server]$port -t \"cd $s[directory] ; ATK14_ENV=production \$SHELL --login\"";
+$cmd = "/usr/bin/ssh $s[user]@$s[server]$port -t 'cd $s[directory] ; \$SHELL'";
+
+$cmd = "ssh $s[user]@$s[server]$port";
+
+$t = ""; 
+if($argv && $argv[0]=='-t'){
+	$t = ' -t'; // force pseudo-terminal allocation
+	array_shift($argv);
+}
+
+if($argv){
+	$cmd .= "$t (cd '$s[directory]' ; ATK14_ENV=production ".join(" ",$argv).")";
+}else{
+	$cmd .= " -t (cd '$s[directory]' ; ATK14_ENV=production \$SHELL --login)";
+}
+
+echo $cmd,"\n";

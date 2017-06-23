@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Accessing into the given production environment
+#
+#   ./scripts/shell production
+#
+# Executing a command on the given production environment
+#
+#   ./scripts/shell production ./scripts/dump_db
+#
+# Force pseudo-terminal allocation for interactive tools
+#
+#   ./scripts/shell production -t ./scripts/dbconsole
+#
+#	Automatization...
+#
+#   echo 'SELECT COUNT(*) FROM users;' | ./scripts/shell production ./scripts/dbconsole
+#
+
+cd `dirname $0`
+
+cmd=`./_shell_command "$@"`
+
+exec $cmd
