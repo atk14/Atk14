@@ -50,9 +50,9 @@ if($argv && $argv[0]=='-t'){
 }
 
 if($argv){
-	$cmd .= "$t (cd '$s[directory]' ; ATK14_ENV=production ".join(" ",$argv).")";
+	$cmd .= "$t cd '$s[directory]' && export ATK14_ENV=production && (".join(" ",$argv).")";
 }else{
-	$cmd .= " -t (cd '$s[directory]' ; ATK14_ENV=production \$SHELL --login)";
+	$cmd .= " -t cd '$s[directory]' && export ATK14_ENV=production && \$SHELL --login";
 }
 
 echo $cmd,"\n";
