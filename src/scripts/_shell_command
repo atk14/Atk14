@@ -3,14 +3,7 @@
 
 require_once(dirname(__FILE__)."/load.php");
 
-//$stage = "productionx";
-
-$stage = "";
-array_shift($argv); // command
-
-if($argv && preg_match('/^[a-z][a-z0-9_]{1,}$/i',$argv[0])){
-	$stage = strtolower(array_shift($argv));
-}
+array_shift($argv); // command _shell_command
 
 $stages = Atk14DeploymentStage::GetStages();
 
@@ -19,9 +12,25 @@ if(!$stages){
 	exit;
 }
 
+$stage = "";
+$ssh_argv = array();
+$shell_argv = array();
+
+while(strlen($_p = array_shift($argv))){
+	if(!$stage && !$shell_argv && isset($stages[strtolower($_p)])){
+		$stage = strtolower($_p);
+		continue;
+	}
+	if(!$shell_argv && preg_match('/^-/',$_p)){
+		$ssh_argv[] = $_p;
+	}else{
+		$shell_argv[] = $_p;
+	}
+}
+
 if(!$stage){
-	echo 'echo First paramaeter must be a stage name, e.g. production',"\n";
-	exit;
+	$_keys = array_keys($stages);
+	$stage = $_keys[0]; // the first stage
 }
 
 if(!isset($stages[$stage])){
@@ -35,24 +44,15 @@ $s = $stage->toArray();
 
 $port = $s["port"] ? " -p $s[port]" : "";
 
-$cmd = "ssh -t $s[user]@$s[server]$port 'cd $s[directory] ; ATK14_ENV=production exec \"\$SHELL\"'";
-$cmd = "ssh -t $s[user]@$s[server]$port 'cd $s[directory] ; ATK14_ENV=production \$SHELL'";
-$cmd = "ssh -t $s[user]@$s[server]$port \"cd $s[directory] ; ATK14_ENV=production \$SHELL\"";
-$cmd = "ssh $s[user]@$s[server]$port -t \"cd $s[directory] ; ATK14_ENV=production \$SHELL --login\"";
-$cmd = "/usr/bin/ssh $s[user]@$s[server]$port -t 'cd $s[directory] ; \$SHELL'";
-
 $cmd = "ssh $s[user]@$s[server]$port";
 
-$t = ""; 
-if($argv && $argv[0]=='-t'){
-	$t = ' -t'; // force pseudo-terminal allocation
-	array_shift($argv);
+if(!$shell_argv){
+	$shell_argv[] = '$SHELL --login';
+	if(!in_array('-t',$ssh_argv)){
+		$ssh_argv[] = '-t'; // force pseudo-terminal allocation
+	}
 }
 
-if($argv){
-	$cmd .= "$t cd '$s[directory]' && export ATK14_ENV=production && (".join(" ",$argv).")";
-}else{
-	$cmd .= " -t cd '$s[directory]' && export ATK14_ENV=production && \$SHELL --login";
-}
+$cmd .= ($shell_argv ? " " : "").join(" ",$ssh_argv)." cd '$s[directory]' && export ATK14_ENV=production && (".join(" ",$shell_argv).")";
 
 echo $cmd,"\n";
