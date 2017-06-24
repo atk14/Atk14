@@ -18,6 +18,7 @@ before_install:
   - echo 'cs_CZ.UTF-8 UTF-8' | sudo tee --append /var/lib/locales/supported.d/local
   - sudo locale-gen
   - locale -a
+  - sudo apt-get install php-mysqli
   - composer global require "phpunit/phpunit=4.8.*"
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
 
