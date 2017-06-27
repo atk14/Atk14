@@ -114,9 +114,9 @@ if(sizeof($matches[1])==0){
 	echo "Seems that you have remote $stage configured with a different URL.\n";
 	echo "It's expected $config[deploy_repository]\n";
 	echo "and now it is ".$matches[1][0]."\n";
-	echo "You shall run:\n";
-	echo "  $ git remote rm $stage\n";
-	echo "  $ git remote add $stage $config[deploy_repository]\n";
+	echo "You may want to run:\n\n";
+	echo "  $ git remote rm $stage\n\n";
+	echo "and then deploy again...";
 	_exit_with_errors();
 }
 
