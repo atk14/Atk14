@@ -1,25 +1,52 @@
 <?php
 /**
-* {render partial="search_box"}
-*	toto povede k natazeni sablonky _search_box.tpl
-*
-* {render partial="shared/user_info"}
-* toto zase povede k natazeni sablonky shared/_user_info.tpl
-*
-*
-* Render parial se pouziva i misto {foreach}
-*
-*	{render parial="product" from=$products item=product} 
-*
-* {render parial="article" from=$articles item=article key=article_id}
-* 
-* {render parial=article_item from=$articles item=article}
-* {render parial=article_item from=$articles} {* zde bude item automaticky nastaveno na article *}
-*
-*
-* Dale je mozne render pouzit misto for(;;){ }:
-* {render parial="list_item" for=1 to=10 step=1 item=i}
-*/
+ * Smarty helper for including another templates.
+ *
+ * @package Atk14\Helpers
+ * @filesource
+ */
+
+/**
+ * Smarty function that allows including other templates.
+ *
+ * It allows usage of template pieces repeatedly.
+ *
+ * In this example a template `_search_box.tpl` is included
+ * ```
+ * {render partial="search_box"}
+ * ```
+ *
+ * This includes template `_user_info.tpl` placed in subdirectory `shared`
+ * ```
+ * {render partial="shared/user_info"}
+ * ```
+ *
+ * Render partial can be used like Smarty's {foreach} statement
+ * ```
+ * {render partial="product" from=$products item=product}
+ * ```
+ *
+ * ```
+ * {render partial="article" from=$articles item=article key=article_id}
+ * ```
+ *
+ * ```
+ * {render partial=article_item from=$articles item=article}
+ * ```
+ *
+ * In this case item variable will be automatically set to `article`
+ * ```
+ * {render partial=article_item from=$articles}
+ * ```
+ *
+ * It can also be used instead of `for` loop
+ * ```
+ * {render partial="list_item" for=1 to=10 step=1 item=i}
+ * ```
+ *
+ * @param array $params
+ * @param array $content
+ */
 function smarty_function_render($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 

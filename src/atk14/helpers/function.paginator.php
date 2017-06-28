@@ -6,38 +6,36 @@
  *
  * Basic form of the tag is as follows:
  *
- * <code>
+ * ```
  * {paginator finder=$finder} 
- * </code>
+ * ```
  *
  * You don't have to forward a finder when you have one in the $finder variable.
  *
- * <code>
- * {paginator} 
- * </code>
+ * ```
+ * {paginator}
+ * ```
  *
  * If you don't have an finder then...
  *
- * <code>
+ * ```
  * {paginator total_amount=100 max_amount=10 from=search_from}  // zde definujeme nazev parametru, kterym se posunujeme ve vysledcich
- * </code>
+ * ```
  *
  * Plugin picks all needed parameters from $params.
  * The helper expects usage of query parameter 'from'.
  * You can redefine it by the tag parameter 'from' to anything you want.
  * Basically you can omit the tag parameter 'from':
- * <code>
+ * ```
  * {paginator total_amount=100 max_amount=10}
- * </code>
+ * ```
  *
  * Plugin also takes variables $total_amount and $max_amount from controller. This code is mostly enough:
- * <code>
+ * ```
  * {paginator}
- * </code>
+ * ```
  *
- * @package Atk14
- * @subpackage Helpers
- * @author Jaromir Tomek
+ * @package Atk14\Helpers
  * @filesource
  */
 
