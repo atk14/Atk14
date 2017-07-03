@@ -33,11 +33,11 @@ class Atk14Utils{
 
 		// An existing constant has the strongest importance.
 		if(defined("TEST") && TEST){
-			define("DEVELOPMENT",false);
-			define("PRODUCTION",false);
+			defined("DEVELOPMENT") || define("DEVELOPMENT",false);
+			defined("PRODUCTION") || define("PRODUCTION",false);
 		}elseif(defined("DEVELOPMENT") && DEVELOPMENT){
 			define("TEST",false);
-			define("PRODUCTION",false);	
+			defined("PRODUCTION") || define("PRODUCTION",false);	
 		}elseif(defined("PRODUCTION") && PRODUCTION){
 			define("DEVELOPMENT",false);
 			define("TEST",false);
