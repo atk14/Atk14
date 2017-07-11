@@ -41,12 +41,10 @@ class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAc
 	 * @ignore
 	 */
 	static function ReadTableStructure($record,$options = array()){
-		@list($_schema, $_table) = explode(".", $record->getTableName());
+		$tblNameAr = explode(".", "public.".$record->getTableName());
 
-		if (is_null($_table)) {
-			$_table = $_schema;
-			$_schema = "public";
-		}
+		$_table = array_pop($tblNameAr);
+		$_schema = array_pop($tblNameAr);
 
 		$query = "
 			SELECT
