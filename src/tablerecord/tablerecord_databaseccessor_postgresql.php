@@ -41,6 +41,13 @@ class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAc
 	 * @ignore
 	 */
 	static function ReadTableStructure($record,$options = array()){
+		@list($_schema, $_table) = explode(".", $record->getTableName());
+
+		if (is_null($_table)) {
+			$_table = $_schema;
+			$_schema = "public";
+		}
+
 		$query = "
 			SELECT
 				a.attname,
@@ -50,11 +57,11 @@ class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAc
 				pg_catalog.pg_namespace n ON (c.relnamespace = n.oid) INNER JOIN
 				pg_catalog.pg_attribute a ON (a.attrelid = c.oid)
 			WHERE
-				n.nspname = 'public' AND
+				n.nspname = :schema_name AND
 				c.relname = :table_name AND
 				a.attisdropped = false AND
 				a.attnum > 0
 		";
-		return $record->dbmole->selectIntoAssociativeArray($query,array(":table_name" => $record->getTableName()),$options);
+		return $record->dbmole->selectIntoAssociativeArray($query,array(":table_name" => $_table, ":schema_name" => $_schema),$options);
 	}
 }
