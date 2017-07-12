@@ -2,7 +2,6 @@
 /**
  * Class for managing sortable records.
  *
- * @package Atk14\TableRecord
  * @filesource
  */
 
@@ -17,28 +16,24 @@
  * Each item points to associated TableRecord record.
  *
  * ```
- *	$article = Article::GetInstanceById(1);
- *	$lister = $article->getLister("Authors");
- *	$lister->append($author1);
- *	$lister->append($author2);
- *	$lister->getRecords(); // array($author1,$author2);
- *	$lister->contains($author1); // true
- *	$lister->contains($author3); // false
- *	$items = $lister->getItems();
- *	$items[0]->getRecord(); // $author1
- *	$items[1]->getRecord(); // $author2
+ * $article = Article::GetInstanceById(1);
+ * $lister = $article->getLister("Authors");
+ * $lister->append($author1);
+ * $lister->append($author2);
+ * $lister->getRecords(); // array($author1,$author2);
+ * $lister->contains($author1); // true
+ * $lister->contains($author3); // false
+ * $items = $lister->getItems();
+ * $items[0]->getRecord(); // $author1
+ * $items[1]->getRecord(); // $author2
  *
- *	$items[0]->getRank(); // 0
- *	$items[1]->setRank(0); //
- *	$items[0]->getRank(); // 1
+ * $items[0]->getRank(); // 0
+ * $items[1]->setRank(0); //
+ * $items[0]->getRank(); // 1
  *
- *	$lister->setRecordRank($author2,0);
+ * $lister->setRecordRank($author2,0);
  * ```
- *
  * @package Atk14\TableRecord
- * @param TableRecord $owner
- * @param String4 $subjects
- * @param array $options
  */
 class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 
@@ -61,8 +56,8 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *
 	 * Corresponding example
 	 * ```
-	 *	$authors_lister = new TableRecord_Lister($article,"Authors",array(
-	 *	));
+	 * $authors_lister = new TableRecord_Lister($article,"Authors",array(
+	 * ));
 	 * ```
 	 *
 	 * Description $options:
@@ -73,7 +68,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * - subject_field_name - name of the foreign key used to connect associating table and subjects table
 	 * - rank_field_name - name of the field used for sorting
 	 *
-	 * @param $owner TableRecord TableRecord instance to which the $subjects are associated
+	 * @param TableRecord $owner TableRecord instance to which the $subjects are associated
 	 * @param string $subjects name of associated table is derived from subjects
 	 * @param array $options
 	 *
@@ -111,24 +106,24 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * It helps to lower database usage.
 	 *
 	 * Usage:
-	 *
-	 * <code>
-	 *	 $lister = $article1->getLister("Authors");
-	 *	 $lister->prefetchDataFor($article2);
-	 *	 $lister->prefetchDataFor(array($article3,$article4));
-	 * </code>
+	 * ```
+	 * $lister = $article1->getLister("Authors");
+	 * $lister->prefetchDataFor($article2);
+	 * $lister->prefetchDataFor(array($article3,$article4));
+	 * ```
 	 *
 	 * Explanation:
-	 * 
-	 * <code>
-	 *	 $lister = $article1->getLister("Authors");
-	 *	 $lister->prefetchDataFor(array($article2,$article3));
-	 *	 $authors = $lister->getRecords(); // data are being read for $article1, $article2 and $article3
+	 * ```
+	 * $lister = $article1->getLister("Authors");
+	 * $lister->prefetchDataFor(array($article2,$article3));
+	 * $authors = $lister->getRecords(); // data are being read for $article1, $article2 and $article3
+	 * ```
 	 *
-	 *	 // and then there is no need to read data
-	 *	 $authors2 = $article2->getLister("Authors")->getRecords();
-	 *	 $authors3 = $article3->getLister("Authors")->getRecords();
-	 * </code>
+	 * and then there is no need to read data
+	 * ```
+	 * $authors2 = $article2->getLister("Authors")->getRecords();
+	 * $authors3 = $article3->getLister("Authors")->getRecords();
+	 * ```
 	 */
 	function prefetchDataFor($owners,$options = array()){
 		$options += array(
@@ -158,12 +153,12 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Flushes out cache for the current owner
 	 *
-	 * <code>
-	 *	$records = $lister->getRecords();
-	 * 	$lister->flushCache();
-	 *	$records2 = $lister->getRecords();
-	 *	// $records and $records2 may vary according to a cache state
-	 * </code>
+	 * In this example $records and $records2 may vary according to a cache state
+	 * ```
+	 * $records = $lister->getRecords();
+	 * $lister->flushCache();
+	 * $records2 = $lister->getRecords();
+	 * ```
 	 */
 	function flushCache(){
 		$this->prefetchDataFor($this->_owner,array("force_read" => true));
@@ -203,7 +198,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Shift an record off the beginning of the list.
 	 *
-	 * @returns TableRecord $record
+	 * @return TableRecord $record
 	 */
 	function shift(){
 		$items = $this->getItems();
@@ -263,6 +258,8 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 
 	/**
 	 * Removes all items in the list.
+	 *
+	 * It does not destroy the associated records, only the links from association table.
 	 */
 	function clear(){
 		$o = $this->_options;
@@ -276,7 +273,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * Does the list contain given record?
 	 *
 	 * @param TableRecord $record
-	 * @returns bool
+	 * @return bool
 	 */
 	function contains($record){
 		if(is_object($record)){ $record = $record->getId(); }
@@ -289,14 +286,14 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Returns number of items in the lister
 	 *
-	 * @returns int
+	 * @return int
 	 */
 	function size(){ return sizeof($this->getItems()); }
 
 	/**
 	 * Checks if lister contains items.
 	 *
-	 * @returns bool
+	 * @return bool
 	 */
 	function isEmpty(){ return $this->size()==0; }
 
@@ -306,7 +303,9 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * This method only returns records from association table that hold additional information such as position in collection.
 	 * To get associated records use method getRecords().
 	 *
-	 * @returns TableRecord_ListerItem[]
+	 * @param array $options
+	 * - force_read `true` clears cache and reads dall records in a fresh state [default: false]
+	 * @return TableRecord_ListerItem[]
 	 */
 	function &getItems($options = array()){
 		$options += array(
@@ -365,7 +364,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *	$ids = $lister->getRecordIds(array("force_read" => true)); // If the cache state could be stale
 	 * ```
 	 *
-	 * @returns integer[]
+	 * @return integer[]
 	 */
 	function getRecordIds($options = array()){
 		$out = array();
@@ -374,7 +373,9 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	}
 
 	/**
+	 * Returns classname of associated records.
 	 *
+	 * @return string
 	 */
 	function getClassNameOfRecords(){
 		return $this->_options["class_name"];
@@ -384,12 +385,14 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * Returns records from associated table.
 	 *
 	 * ```
-	 *	$lister = $article->getLister("Authors");
-	 *	$authors = $lister->getRecords(); // array of models
-	 *	$authors = $lister->getRecords(array("force_read" => true)); // If the cache state could be stale
+	 * $lister = $article->getLister("Authors");
+	 * $authors = $lister->getRecords(); // array of models
+	 * $authors = $lister->getRecords(array("force_read" => true)); // If the cache state could be stale
 	 * ```
 	 *
-	 * @returns TableRecord[]
+	 * @param array $options
+	 * - force_read {@link getItems}
+	 * @return TableRecord[]
 	 */
 	function getRecords($options = array()){
 		$ids = array();
@@ -447,7 +450,11 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * Gets the position of a given record in the list.
 	 *
+	 * ```
 	 *	echo $lister->getRecordRank($author); // 0
+	 * ```
+	 * @param TableRecord $record
+	 * @return int
 	 */
 	function getRecordRank($record){
 		$record = TableRecord::ObjToId($record);
@@ -484,7 +491,10 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *
 	 * It is applied after every position update.
 	 *
+	 * You can specify record which associated records should be reranked.
+	 *
 	 * @todo make it protected
+	 * @param TableRecord|null $owner
 	 */
 	function _correctRanking($owner = null){
 		if(!isset($owner)){ $owner = $this->_owner; }
@@ -669,7 +679,7 @@ class TableRecord_ListerItem{
 	/**
 	 * Returns id of the item.
 	 *
-	 * @returns integer
+	 * @return integer
 	 */
 	function getId(){
 		return (int)$this->_g("id");
