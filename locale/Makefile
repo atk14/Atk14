@@ -1,16 +1,17 @@
 SUBDIRS = $(shell { ls | cat; } | egrep '^[a-z]{2}_[A-Z]{2,4}' | sort | uniq | tr '\n' ' ' )
 
-pot:
-	> files_php
-	find ../ -type f -name '*.php' | egrep -v "(/test/|/src/smarty)" | sort >> files_php
-
-	-xgettext -L PHP --from-code=UTF-8 -f files_php --output=- > atk14.pot
+pot: files_php
+	-xgettext -L PHP --from-code=UTF-8 -f $< --output=- > atk14.pot
 	@sed --in-place atk14.pot --expression='s/Content-Type: text\/plain; charset=CHARSET/Content-Type: text\/plain; charset=UTF-8/'
 	@sed --in-place atk14.pot --expression='s/Project-Id-Version: PACKAGE VERSION/Project-Id-Version: ATK14 Framework/'
 	@sed --in-place atk14.pot --expression='s/Language-Team: LANGUAGE <LL@li.org>/Language-Team: ATK14 Development Team/'
+	@rm $<
 
-	@rm files_php
-	
+files_php:
+	@echo "clean list of php files"
+	> $@
+	find ../ -type f -name '*.php' | egrep -v "(/test/|/src/smarty)" | sort >> $@
+
 merge: $(addprefix merge-,$(SUBDIRS))
 
 test: $(addprefix test-,$(SUBDIRS))
