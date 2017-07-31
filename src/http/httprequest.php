@@ -56,6 +56,14 @@ class HTTPRequest{
 	protected $_HTTPRequest_serverProtocol = "";
 
 	/**
+	 * Server port
+	 *
+	 * @var string
+	 * @ignore
+	 */
+	protected $_ServerAddr = null;
+
+	/**
 	 * Port used on server side of connection
 	 *
 	 * @var integer
@@ -189,9 +197,11 @@ class HTTPRequest{
 		}
 
 		if(isset($_SERVER['SERVER_PORT'])){
-			$_tmp = $_SERVER['SERVER_PORT'];
-			settype($_tmp,"integer");
-			$this->_ServerPort = $_tmp;
+			$this->_ServerPort = (integer)$_SERVER['SERVER_PORT'];
+		}
+
+		if(isset($_SERVER['SERVER_ADDR'])){
+			$this->_ServerAddr = (string)$_SERVER['SERVER_ADDR'];
 		}
 
 		if(isset($_SERVER['SCRIPT_NAME'])){
@@ -321,6 +331,19 @@ class HTTPRequest{
 
 	function setServerName($name){
 		$this->_setForceValue("ServerName",$name);
+	}
+
+	/**
+	 * Gets server IP address
+	 *
+	 * @return integer
+	 */
+	function getServerAddr(){
+		return $this->_getForceValue_or_Value("ServerAddr");
+	}
+
+	function setServerAddr($addr){
+		return $this->_setForceValue("ServerAddr",$addr);
 	}
 
 	/**

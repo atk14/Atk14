@@ -1,16 +1,21 @@
 <?php
 class tc_http_request extends tc_base{
-	function test_get_remote_addr(){
+
+	function test_addresses(){
 		global $_SERVER;
 
 		$_SERVER["REMOTE_ADDR"] = "1.2.3.4";
+		$_SERVER["SERVER_ADDR"] = "10.10.20.20";
 		
 		$req = new HTTPRequest();
 
 		$this->assertEquals("1.2.3.4",$req->getRemoteAddr());
-
 		$req->setRemoteAddr("5.6.7.8");
 		$this->assertEquals("5.6.7.8",$req->getRemoteAddr());
+
+		$this->assertEquals("10.10.20.20",$req->getServerAddr());
+		$req->setServerAddr("30.30.40.40");
+		$this->assertEquals("30.30.40.40",$req->getServerAddr());
 	}
 
 	function test_get_vars(){
