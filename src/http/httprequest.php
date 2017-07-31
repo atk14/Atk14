@@ -318,6 +318,11 @@ class HTTPRequest{
 		$this->_setForceValue("RemoteAddr",$addr);
 	}
 
+	function getRemotePort(){
+		if($addr = $this->_getForceValue("RemotePort")){ return $addr; }
+		return isset($GLOBALS["_SERVER"]["REMOTE_PORT"]) ? $GLOBALS["_SERVER"]["REMOTE_PORT"] : null;
+	}
+
 	/**
 	 * Gets server name.
 	 *
