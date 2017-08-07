@@ -122,7 +122,13 @@ class Atk14Robot{
 
 		$this->locking_enabled && Lock::Unlock($robot_name,$this->logger);
 
-		$this->logger->stop();
+		$bytes = memory_get_peak_usage(true);
+		if($bytes>(1024*1024)){ $bytes = number_format($bytes/(1024 * 1024),2,".",",")."MB"; }
+		elseif($bytes>1024){ $bytes = number_format($bytes/1024,2,".",",")."kB"; }
+		else{ $bytes = "$bytes Bytes"; }
+		$msg = "real peak memory usage: ".$bytes;
+
+		$this->logger->stop($msg);
 		$this->logger->flush_all();
 	}
 
