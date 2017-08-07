@@ -654,6 +654,11 @@ class Logger{
 					$_minutes = (floor($_runing_time/60.0));
 					$_log .= sprintf(", running time: %d min %0.2f sec",$_minutes,($_runing_time-($_minutes*60)));
 				}
+				$bytes = memory_get_usage();
+				if($bytes>(1024*1024)){ $bytes = number_format($bytes/(1024 * 1024),2,".",",")."MB"; }
+				elseif($bytes>1024){ $bytes = number_format($bytes/1024,2,".",",")."kB"; }
+				else{ $bytes = "$bytes Bytes"; }
+				$_log .= ", memory used: ".$bytes;
 				$rec = $this->_put_log($_log);
 				if(!$this->_silent_mode){
 					echo $this->_build_message($rec);
