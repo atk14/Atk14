@@ -24,8 +24,6 @@
  *
  * </code>
  *
- * @package Atk14
- * @subpackage Forms
  * @filesource
  */
 
@@ -112,8 +110,7 @@ function my_array_merge($data)
  *
  * This class shouldn't be used directly but through its descendant.
  *
- * @package Atk14
- * @subpackage Forms
+ * @package Atk14\Forms
  */
 class Widget
 {

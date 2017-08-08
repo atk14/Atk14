@@ -1,15 +1,24 @@
 <?php
 /**
+ * Field for multiple checkboxes.
+ *
+ * @filesource
+ */
+
+/**
  * Field with multiple choices.
  *
- * @package Atk14
- * @subpackage Forms
+ * @package Atk14\Forms
  *
  * @internal NOTE: tohle asi v PHP nebude fachat, protoze pokud se ve formulari objevi vice poli sdilejici stejny nazev, v $_POST se objevi pouze jeden z nich (posledni)
- * @internal NOTE: v PHP to funguje, pokude se parametr ve formulare nazve takto: <select name="choices[]" multiple="multiple">... (yarri)
+ * @internal NOTE: v PHP to funguje, pokude se parametr ve formulare nazve takto: &lt;select name="choices[]" multiple="multiple">... (yarri)
  */
-class MultipleChoiceField extends ChoiceField
-{
+class MultipleChoiceField extends ChoiceField {
+	/**
+	 * Constructor
+	 *
+	 * @param array $options For options {@see Field class} or {@link Field class}
+	 */
 	function __construct($options=array())
 	{
 		$options += array(
@@ -24,6 +33,11 @@ class MultipleChoiceField extends ChoiceField
 		));
 	}
 
+	/**
+	 * Validating method
+	 *
+	 * @param mixed $value
+	 */
 	function clean($value)
 	{
 		if ($this->required && !$value) {

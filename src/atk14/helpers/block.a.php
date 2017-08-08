@@ -10,36 +10,49 @@
 
 /**
  *
- * @param array $params Parameters to build the <a /> tag
- * Reserved parameters are:
- * <ul>
- * 	<li><b>controller</b> - name of controller</li>
- * 	<li><b>action</b> - name of action in the specified controller</li>
- * 	<li><b>namespace</b> - application namespace. Defaults to current namespace.</li>
- * 	<li><b>lang</b> - language. Defaults to ATK14_DEFAULT_LANG</li>
- * 	<li><b>domain_name</b> - Generated url will contain this domain_name when used with _with_hostname=true</li>
- * 	<li><b>_with_hostname</b> - see domain_name parameter</li>
- * 	<li><b>_anchor</b> - generates anchor</li>
- *	<li><b>_method</b> - GET or POST. Defaults to GET.</li>
- *	<li><b>_confirm</b> - dialog that pops up after the link is clicked</li>
- * </ul>
+ * Use this helper to create a link.
  *
- * You can also define attributes of the tag. Simply add them to the helper with underscore at the beginning. For example parameter <b>_class=heading</b> will generate <a /> tag with attribute class="heading"
- * <code>
- * 	{a controller="articles" action="detail" id=$article _class="heading"}Read the article{/a}
- * </code>
- *
- * When a link to other namespace is needed. For example you are in admin and want a link to the main application which is not namespaced.
- * <code>
- * {a controller=products action=detail id=$product namespace=""}Show me the detail in shop{/a}
- * </code>
- *
- * Sometimes you may want to access an URL with method POST.
- * <code>
- *	{a controller="articles" action="destroy" id=$action _method="post" _confirm="Are you sure to delete the article?"}Destroy the article{/a}
- * </code>
+ * The script path is created by using reserved parameters like 'controller', 'action', 'namespace', and 'lang'.
+ * This will create basic link &lt;a href="/en/articles/">Show list of articles&lt;/a>
+ * ```
+ * {a controller="articles" action="index" lang="en"}Show list of articles{/a}
+ * ```
  *
  * More query parameters can be added by adding them to the helper. They will appear in the URL with the name you give them in helper.
+ * ```
+ * {a controller="articles" action="detail" id=$article}Read the article{/a}
+ * ```
+ * This will create basic link &lt;a href="/en/articles/detail/?id=32">Read the article</a>
+ *
+ *
+ * You can also define attributes of the tag. Simply add them to the helper with underscore at the beginning. For example parameter <b>_class=heading</b> will generate &lt;a /> tag with attribute class="heading"
+ * ```
+ * {a controller="articles" action="detail" id=$article _class="heading"}Read the article{/a}
+ * ```
+ *
+ * When a link to other namespace is needed, for example you are in admin and want a link to the main application which is not namespaced.
+ * ```
+ * {a controller=products action=detail id=$product namespace=""}Show me the detail in shop{/a}
+ * ```
+ *
+ * Sometimes you may want to access an URL with method POST.
+ * ```
+ * {a controller="articles" action="destroy" id=$action _method="post" _confirm="Are you sure to delete the article?"}Destroy the article{/a}
+ * ```
+ *
+ *
+ * @param array $params Parameters to build the &lt;a /> tag
+ * Reserved parameters are:
+ * - __controller__ - name of controller
+ * - __action__ - name of action in the specified controller
+ * - __namespace__ - application namespace. Defaults to current namespace.
+ * - __lang__ - language. Defaults to ATK14_DEFAULT_LANG
+ * - **domain_name** - Generated url will contain this domain_name when used with _with_hostname=true
+ * - ___with_hostname__ - see domain_name parameter
+ * - ___anchor__ - generates anchor
+ * - ___method__ - GET or POST. Defaults to GET.
+ * - ___confirm__ - dialog that pops up after the link is clicked
+ *
  * @param string $content content of the Smarty {a} block tag
  */
 function smarty_block_a($params, $content, $template, &$repeat){
