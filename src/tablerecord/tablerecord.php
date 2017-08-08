@@ -384,6 +384,13 @@ class TableRecord extends inobj {
 	final function getTableName(){ return $this->_TableName; }
 
 	/**
+	 * Returns name of id field.
+	 *
+	 * @return string
+	 */
+	final function getIdFieldName() { return $this->_IdFieldName; }
+
+	/**
 	 * Returns name of table sequence
 	 *
 	 * @return string
@@ -1598,7 +1605,9 @@ class TableRecord extends inobj {
 	/**
 	 * Returns table structure of the given table in a associative array
 	 *
+	 * ```
 	 * $structure = $this->_getTableStructure();
+	 * ```
 	 */
 	function _getTableStructure(){
 		$key = sprintf("%s.%s.%s",$this->dbmole->getDatabaseType(),$this->dbmole->getConfigurationName(),$this->getTableName()); // e.g. "postgresql.default.articles"
@@ -1651,9 +1660,9 @@ class TableRecord extends inobj {
 	 *
 	 * It may be useful in tasks like db schema migration...
 	 *
-	 * <code>
-	 *	TableRecord::FlushTableStructureCache();
-	 * </code>
+	 * ```
+	 * TableRecord::FlushTableStructureCache();
+	 * ```
 	 */
 	static function FlushTableStructureCache(){
 		self::$TableStructuresCacheDuration = 0;
