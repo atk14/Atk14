@@ -20,8 +20,8 @@ function EasyReplace($str,$replaces){
 */
 function h($string, $flags = null, $encoding = null){
 	if(!isset($flags)){
-		$flags =  ENT_COMPAT;
-		if(defined("ENT_HTML401")){ $flags = $flags | ENT_HTML401 | ENT_QUOTES; }
+		$flags =  ENT_COMPAT | ENT_QUOTES;
+		if(defined("ENT_HTML401")){ $flags = $flags | ENT_HTML401; }
 	}
 	if(!isset($encoding)){
  		// as of PHP5.4 the default encoding is UTF-8, it causes troubles in non UTF-8 applications,
