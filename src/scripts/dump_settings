@@ -5,12 +5,18 @@
 *
 * You can check out how configuration varies in different environments.
 *
-*  $ ATK14_ENV=PRODUCTION ./scripts/dump_settings.php
-*  $ ATK14_ENV=DEVELOPMENT ./scripts/dump_settings.php
-*  $ ATK14_ENV=TEST ./scripts/dump_settings.php
+*  $ ATK14_ENV=PRODUCTION ./scripts/dump_settings
+*  $ ATK14_ENV=DEVELOPMENT ./scripts/dump_settings
+*  $ ATK14_ENV=TEST ./scripts/dump_settings
 *
 * Also you can retrieve the value of the given constant:
-* $ ./scripts/dump_settings.php ATK14_APPLICATION_NAME
+*  $ ./scripts/dump_settings ATK14_APPLICATION_NAME
+*
+* Exporting data in json format
+*  $ ./scripts/dump_settings --json
+*  $ ./scripts/dump_settings -j
+*  $ ./scripts/dump_settings --json ATK14_APPLICATION_NAME
+*  $ ./scripts/dump_settings -j ATK14_APPLICATION_NAME
 */
 
 require_once(dirname(__FILE__)."/load.php");
@@ -21,20 +27,44 @@ $constants = array_merge(array(
 	"TEST" => TEST,
 ),$__CONFIG_CONSTANTS__);
 
-if(isset($argv[1]) && !isset($constants[$argv[1]]) && defined($argv[1])){
-	$constants[$argv[1]] = constant($argv[1]); 
+$spec_constant = null;
+$json = false;
+
+$command = array_shift($argv);
+foreach($argv as $a){
+	if(preg_match('/^[A-Z]/',$a)){ $spec_constant = $a; }
+	elseif(preg_match('/^(-j|--json)$/',$a)){ $json = true; }
+	else{
+		$stderr = fopen('php://stderr', 'w');
+		fwrite($stderr,"Unknown option $a\n");
+		exit(1);
+	}
+}
+
+if(isset($spec_constant) && !isset($constants[$spec_constant]) && defined($spec_constant)){
+	$constants[$spec_constant] = constant($spec_constant); 
+}
+
+if($json){
+	if($spec_constant){
+		$ary = isset($constants[$spec_constant]) ? array($spec_constant => $constants[$spec_constant]) : array();
+	}else{
+		$ary = $constants;
+	}
+	echo json_encode($ary,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), "\n";
+	exit(0);
 }
 
 foreach($constants as &$c){	if(is_bool($c)){ $c = $c ? "true" : "false"; } }
 
-if(isset($argv[1])){
-	if(!isset($constants[$argv[1]])){
+if(isset($spec_constant)){
+	if(!isset($constants[$spec_constant])){
 		$stderr = fopen('php://stderr', 'w');
-		fwrite($stderr,"There is no constant $argv[1]\n");
+		fwrite($stderr,"There is no constant $spec_constant\n");
 		exit(1);
 	}
 
-	echo $constants[$argv[1]]."\n";
+	echo $constants[$spec_constant]."\n";
 	exit;
 }
 
