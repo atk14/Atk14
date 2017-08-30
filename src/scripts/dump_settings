@@ -21,6 +21,12 @@
 
 require_once(dirname(__FILE__)."/load.php");
 
+function _exit_with_error($message){
+	$stderr = fopen('php://stderr', 'w');
+	fwrite($stderr,"$message\n");
+	exit(1);
+}
+
 $constants = array_merge(array(
 	"DEVELOPMENT" => DEVELOPMENT,
 	"PRODUCTION" => PRODUCTION,
@@ -35,9 +41,7 @@ foreach($argv as $a){
 	if(preg_match('/^[A-Z]/',$a)){ $spec_constant = $a; }
 	elseif(preg_match('/^(-j|--json)$/',$a)){ $json = true; }
 	else{
-		$stderr = fopen('php://stderr', 'w');
-		fwrite($stderr,"Unknown option $a\n");
-		exit(1);
+		_exit_with_error("Unknown option $a");
 	}
 }
 
@@ -51,6 +55,17 @@ if($json){
 	}else{
 		$ary = $constants;
 	}
+
+	foreach($ary as $k => $v){
+		if(is_string($v) && !Translate::CheckEncoding($v,"UTF-8")){
+			$v = Translate::Trans($v,DEFAULT_CHARSET,"UTF-8");
+			if(!Translate::CheckEncoding($v,"UTF-8")){
+				_exit_with_error("Invalid charset in $k=$v");
+			}
+			$ary[$k] = $v;
+		}
+	}
+
 	echo json_encode($ary,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), "\n";
 	exit(0);
 }
@@ -59,9 +74,7 @@ foreach($constants as &$c){	if(is_bool($c)){ $c = $c ? "true" : "false"; } }
 
 if(isset($spec_constant)){
 	if(!isset($constants[$spec_constant])){
-		$stderr = fopen('php://stderr', 'w');
-		fwrite($stderr,"There is no constant $spec_constant\n");
-		exit(1);
+		_exit_with_error("There is no constant $spec_constant");
 	}
 
 	echo $constants[$spec_constant]."\n";
