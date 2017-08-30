@@ -21,7 +21,7 @@ function EasyReplace($str,$replaces){
 function h($string, $flags = null, $encoding = null){
 	if(!isset($flags)){
 		$flags =  ENT_COMPAT;
-		if(defined("ENT_HTML401")){ $flags = $flags | ENT_HTML401; }
+		if(defined("ENT_HTML401")){ $flags = $flags | ENT_HTML401 | ENT_QUOTES; }
 	}
 	if(!isset($encoding)){
  		// as of PHP5.4 the default encoding is UTF-8, it causes troubles in non UTF-8 applications,
