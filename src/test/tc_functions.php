@@ -5,5 +5,7 @@ class TcFunctions extends TcBase{
 		$this->assertEquals('&quot;ATK14? Are you sure?&quot;',h('"ATK14? Are you sure?"'));
 
 		$this->assertEquals('hello&#039; dolly',h("hello' dolly"));
+
+		$this->assertEquals('My name is &quot;Nobody&quot;',h('My name is "Nobody"'));
 	}
 }
