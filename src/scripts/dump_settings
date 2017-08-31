@@ -1,23 +1,12 @@
 #!/usr/bin/env php
 <?php
 /**
-* Dumps configuration constants.
-*
-* You can check out how configuration varies in different environments.
-*
-*  $ ATK14_ENV=PRODUCTION ./scripts/dump_settings
-*  $ ATK14_ENV=DEVELOPMENT ./scripts/dump_settings
-*  $ ATK14_ENV=TEST ./scripts/dump_settings
-*
-* Also you can retrieve the value of the given constant:
-*  $ ./scripts/dump_settings ATK14_APPLICATION_NAME
-*
-* Exporting data in json format
-*  $ ./scripts/dump_settings --json
-*  $ ./scripts/dump_settings -j
-*  $ ./scripts/dump_settings --json ATK14_APPLICATION_NAME
-*  $ ./scripts/dump_settings -j ATK14_APPLICATION_NAME
-*/
+ * Dumps configuration constants
+ *
+ * To see help type:
+ *
+ *  $ ./scripts/dump_settings --help
+ */
 
 require_once(dirname(__FILE__)."/load.php");
 
@@ -33,52 +22,95 @@ $constants = array_merge(array(
 	"TEST" => TEST,
 ),$__CONFIG_CONSTANTS__);
 
-$spec_constant = null;
+$requested_constants = array();
 $json = false;
+$help = false;
 
 $command = array_shift($argv);
 foreach($argv as $a){
-	if(preg_match('/^[A-Z]/',$a)){ $spec_constant = $a; }
+	if(preg_match('/^[A-Z]/',$a)){ $requested_constants[] = $a; }
 	elseif(preg_match('/^(-j|--json)$/',$a)){ $json = true; }
+	elseif(preg_match('/^(-h|--help)$/',$a)){ $help = true; }
 	else{
 		_exit_with_error("Unknown option $a");
 	}
 }
 
-if(isset($spec_constant) && !isset($constants[$spec_constant]) && defined($spec_constant)){
-	$constants[$spec_constant] = constant($spec_constant); 
+if($help){
+	echo trim("
+Usage: ./scripts/dump_settings [-j|--json] [CONSTANT_NAME] [CONSTANT_NAME]...
+
+Dumps configuration constants
+
+To dump all constants just run:
+
+ $ ./scripts/dump_settings
+
+You can retrieve the value of the given constant:
+
+ $ ./scripts/dump_settings ATK14_APPLICATION_NAME
+
+It is also possible to dump list of specific constants:
+
+ $ ./scripts/dump_settings BCC_EMAIL DEFAULT_EMAIL
+
+You can check out how configuration varies in different environments:
+
+ $ ATK14_ENV=PRODUCTION ./scripts/dump_settings
+ $ ATK14_ENV=DEVELOPMENT ./scripts/dump_settings
+ $ ATK14_ENV=TEST ./scripts/dump_settings
+
+Exporting data in JSON format:
+
+ $ ./scripts/dump_settings --json
+ $ ./scripts/dump_settings -j
+ $ ./scripts/dump_settings --json ATK14_APPLICATION_NAME
+ $ ./scripts/dump_settings -j ATK14_APPLICATION_NAME
+
+ $ ./scripts/dump_settings -j BCC_EMAIL DEFAULT_EMAIL
+	"),"\n";
+	exit(0);
+}
+
+$out = array();
+
+foreach($requested_constants as $rc){
+	if(!in_array($rc,array_keys($constants))){
+		if(defined($rc)){
+			$constants[$rc] = constant($rc);
+		}else{
+			_exit_with_error("There is no constant $rc");
+		}
+	}
+	$out[$rc] = $constants[$rc];
+}
+
+if(!$out){
+	$out = $constants;
 }
 
 if($json){
-	if($spec_constant){
-		$ary = isset($constants[$spec_constant]) ? array($spec_constant => $constants[$spec_constant]) : array();
-	}else{
-		$ary = $constants;
-	}
 
-	foreach($ary as $k => $v){
+	foreach($out as $k => $v){
 		if(is_string($v) && !Translate::CheckEncoding($v,"UTF-8")){
 			$v = Translate::Trans($v,DEFAULT_CHARSET,"UTF-8");
 			if(!Translate::CheckEncoding($v,"UTF-8")){
 				_exit_with_error("Invalid charset in $k=$v");
 			}
-			$ary[$k] = $v;
+			$out[$k] = $v;
 		}
 	}
 
-	echo json_encode($ary,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), "\n";
+	echo json_encode($out,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), "\n";
 	exit(0);
 }
 
-foreach($constants as &$c){	if(is_bool($c)){ $c = $c ? "true" : "false"; } }
+foreach($out as &$c){ if(is_bool($c)){ $c = $c ? "true" : "false"; } }
 
-if(isset($spec_constant)){
-	if(!isset($constants[$spec_constant])){
-		_exit_with_error("There is no constant $spec_constant");
-	}
-
-	echo $constants[$spec_constant]."\n";
-	exit;
+if(sizeof($out)==1){
+	$out = array_values($out);
+	echo $out[0],"\n";
+	exit(0);
 }
 
-print_r($constants);
+print_r($out);
