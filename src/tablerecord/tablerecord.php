@@ -35,7 +35,9 @@ class TableRecord extends inobj {
 	 *
 	 * @var array
 	 */
-	static protected $_TableStructuresCache = array();
+	static protected $_TableStructuresCache;
+
+	static protected $_TableStructureKeysCache;
 
 	/**
 	 * Database interface.
@@ -412,7 +414,10 @@ class TableRecord extends inobj {
 	 * @param string $key
 	 * @return bool
 	 */
-	function hasKey($key){ return in_array((string)$key,array_keys($this->_getTableStructure())); }
+	function hasKey($key){
+		$struct = $this->_getTableStructure();
+		return isset($struct[(string)$key]);
+	}
 
 	/**
 	 * getBelongsTo.
@@ -1079,7 +1084,7 @@ class TableRecord extends inobj {
 			}
 			return $out;
 		}
-		settype($field_name,"string");
+		$field_name = (string)$field_name;
 		if(!in_array($field_name,$this->getKeys())){
 			throw new Exception(get_class($this)."::getValue() accesses non existing field ".$this->getTableName().".$field_name");
 		}
@@ -1151,7 +1156,8 @@ class TableRecord extends inobj {
 	 * @return array
 	 */
 	function getKeys(){
-		return array_keys($this->_getTableStructure());
+		$this->_getTableStructure($keys);
+		return $keys;
 	}
 
 	/**
@@ -1304,7 +1310,7 @@ class TableRecord extends inobj {
 	 * @param array $values
 	 */
 	function setValuesVirtually($values){
-		$keys = array_keys($this->_getTableStructure());
+		$keys = $this->getKeys();
 
 		foreach($values as $_key => $_value){
 			if(in_array($_key,$keys)){
@@ -1529,10 +1535,10 @@ class TableRecord extends inobj {
 	/**
 	 * Magic method changes calling to an nonexistent method in this way:
 	 *
-	 * $object->getEmailAddress() -> $object->g("email_address");
+	 * $object->getEmailAddress() -> $object->getValue("email_address");
 	 *
-	 * $object->getUserId() -> $object->g("user_id");
-	 * $object->getUser() -> User::GetInstanceById($object->g("user_id"));
+	 * $object->getUserId() -> $object->getValue("user_id");
+	 * $object->getUser() -> User::GetInstanceById($object->getValue("user_id"));
 	 *
 	 * @param string $name
 	 * @param string $arguments
@@ -1609,20 +1615,22 @@ class TableRecord extends inobj {
 	 * $structure = $this->_getTableStructure();
 	 * ```
 	 */
-	function _getTableStructure(){
-		$key = sprintf("%s.%s.%s",$this->dbmole->getDatabaseType(),$this->dbmole->getConfigurationName(),$this->getTableName()); // e.g. "postgresql.default.articles"
+	function _getTableStructure(&$keys = null){
+		$cache_key = $this->dbmole->getDatabaseType().".".$this->dbmole->getConfigurationName().".".$this->getTableName(); // e.g. "postgresql.default.articles"
 
-		if(!isset(self::$_TableStructuresCache[$key])){
+		if(!isset(self::$_TableStructuresCache[$cache_key])){
 			$structure = $this->_readTableStructure(array("cache" => self::$TableStructuresCacheDuration));
 
 			if(!$structure){
 				throw new Exception("There is not table ".$this->getTableName()." in the database ".$this->dbmole->getDatabaseName()." (".$this->dbmole->getDatabaseType().")");
 			}
 			
-			self::$_TableStructuresCache[$key] = $structure;
+			self::$_TableStructuresCache[$cache_key] = $structure;
+			self::$_TableStructureKeysCache[$cache_key] = array_keys($structure);
 		}
 
-		return self::$_TableStructuresCache[$key];
+		$keys = self::$_TableStructureKeysCache[$cache_key];
+		return self::$_TableStructuresCache[$cache_key];
 	}
 
 	/**
