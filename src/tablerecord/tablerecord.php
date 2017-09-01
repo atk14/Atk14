@@ -1085,6 +1085,9 @@ class TableRecord extends inobj {
 			return $out;
 		}
 		$field_name = (string)$field_name;
+		if(array_key_exists($field_name,$this->_RecordValues)){
+			return $this->_RecordValues[$field_name];
+		}
 		if(!in_array($field_name,$this->getKeys())){
 			throw new Exception(get_class($this)."::getValue() accesses non existing field ".$this->getTableName().".$field_name");
 		}
