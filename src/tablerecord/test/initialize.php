@@ -15,7 +15,7 @@ function &dbmole_connection($dbmole){
 
 	if($dbmole->getDatabaseType()=="postgresql"){
 		if(!isset($connections["postgresql"])){
-			$connections["postgresql"] = pg_connect("dbname=test user=test password=test");
+			$connections["postgresql"] = pg_connect("dbname=test user=test password=test host=127.0.0.1");
 		}
 		return $connections["postgresql"];
 	}
