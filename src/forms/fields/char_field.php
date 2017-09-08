@@ -64,6 +64,7 @@ class CharField extends Field
 		if (!is_null($this->max_length) && in_array(strtolower(get_class($widget)), array('textinput', 'passwordinput'))) {
 			return array('maxlength' => (string)$this->max_length);
 		}
+		return array();
 	}
 
 	function js_validator(){
