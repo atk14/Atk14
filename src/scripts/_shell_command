@@ -21,16 +21,21 @@ while(strlen($_p = array_shift($argv))){
 		$stage = strtolower($_p);
 		continue;
 	}
-	if(!$shell_argv && preg_match('/^-/',$_p)){
+	if(!$stage){
 		$ssh_argv[] = $_p;
 	}else{
 		$shell_argv[] = $_p;
 	}
 }
 
-if(!$stage){
+if(!$stage && !$ssh_argv){
 	$_keys = array_keys($stages);
 	$stage = $_keys[0]; // the first stage
+}
+
+if($stage==""){
+	echo sprintf('echo No stage specified'),"\n";
+	exit;
 }
 
 if(!isset($stages[$stage])){

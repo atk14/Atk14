@@ -1,21 +1,34 @@
 #!/bin/sh
 
-# Accessing into the given production environment
-#
-#   ./scripts/shell production
-#
-# Executing a command on the given production environment
-#
-#   ./scripts/shell production ./scripts/dump_db
-#
-# Force pseudo-terminal allocation for interactive tools
-#
-#   ./scripts/shell production -t ./scripts/dbconsole
-#
-#	Automatization...
-#
-#   echo 'SELECT COUNT(*) FROM users;' | ./scripts/shell production ./scripts/dbconsole
-#
+# Run ./scripts/shell -h in order to display help 
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+cat << EOF
+Usage: $0 [SSH OPTIONS] stage [COMMAND] [PARAM]...
+Securely connects to the deploy stage and starts a shell or performs the given command
+
+For displaying this help message run
+ $ $0 -h
+ $ $0 --help
+
+To enter a shell on the specific deploy stage (e.g. production) run
+ $ $0 production
+
+To perform a command on the specific deploy stage run
+ $ $0 production uname -a
+ $ $0 production ./scripts/dump_db > backup/dump.sql
+
+To start an interactive command on the specific deploy stage run
+ $ $0 -t production ./scripts/dbconsole
+
+To increase ssh verbosity use -v switch
+ $ $0 -v production
+
+To enter a shell on the first deploy stage run
+ $ $0
+EOF
+exit 0
+fi
 
 cd `dirname $0`
 
