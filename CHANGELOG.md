@@ -1,7 +1,33 @@
 # Change Log
-All notable changes to this project will be documented in this file.
+All notable changes to ATK14 Framework will be documented in this file.
 
-## [Unreleased]
+## [1.3] - 2017-09-08
+
+### Added
+
+- ./scripts/shell for entering a shell or execution of a program on a deploy stage
+- Fixtures for preparing testing data
+- 3662784 - [sendmail, Atk14] Added reply_to and reply_to_name to sendmail() and Atk14Mailer
+- 4e871f6 - [Atk14] New controller attributes added for better rendering component handling: $prev_namespace, $prev_controller and $prev_action
+- 08b8683 - [Forms] New option added to RadioSelect: convert_html_special_chars (default is true)
+- 43aa2b0 - [Files] New method added: Files::FindFiles()
+- 1e388bd - ./scripts/dump_settings is able to dump data in json
+- 9f419b - TableRecord can read table structure when a schema is used in table_name
+- [Translate] Added Cyrillic and German transliteration
+- 66bf5d2 - [Localization] Gettext messages from the framework are held in directory ./locale/
+- 52f0820 - [Atk14, Smarty] Experimental feature for capturing all rendered templates
+- a8d74e7 - scripts/run_unit_tests loads locally installed PHPUnit
+
+### Changed
+
+- a9f8984 - [Atk14] The silent redirection from an unknown language to the default language was removed
+- Smarty upgraded from 3.1.27 to 3.1.30
+- Smarty2 upgraded from 2.6.28 to 2.6.30
+
+### Security
+
+- 4c5ead1 - [security] h() now escapes ' to &#039;
+- a6d446d - [Security] By default script destroy_database_objects doesn't do its job in PRODUCTION
 
 ## [1.2] - 2016-11-10
 
