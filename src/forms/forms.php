@@ -302,7 +302,7 @@ class BoundField
 			$contents = forms_htmlspecialchars($this->label);
 		}
 		if ($id_ = $this->get_id()) {
-			if (is_array($options) && (count($options['attrs']) > 0)) {
+			if (is_array($options) && is_array($options['attrs']) && (count($options['attrs']) > 0)) {
 				$attrs = flatatt($options['attrs']);
 			}
 			else {
