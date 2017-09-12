@@ -2,13 +2,13 @@
 
 -- $ cat testing_structures.postgresql.sql | psql -U test test
 
-DROP TABLE IF EXISTS article_redactors;
-DROP TABLE IF EXISTS redactors;
-DROP TABLE IF EXISTS article_authors;
-DROP TABLE IF EXISTS authors;
-DROP TABLE IF EXISTS articles;
-DROP TABLE IF EXISTS images;
-DROP TABLE IF EXISTS test_table;
+DROP TABLE IF EXISTS article_redactors CASCADE;
+DROP TABLE IF EXISTS redactors CASCADE;
+DROP TABLE IF EXISTS article_authors CASCADE;
+DROP TABLE IF EXISTS authors CASCADE;
+DROP TABLE IF EXISTS articles CASCADE;
+DROP TABLE IF EXISTS images CASCADE;
+DROP TABLE IF EXISTS test_table CASCADE;
 
 DROP SEQUENCE IF EXISTS seq_article_redactors;
 DROP SEQUENCE IF EXISTS seq_redactors;
