@@ -80,7 +80,7 @@ __defaults__(array(
 __defaults__(array(
 	"PACKER_CONSTANT_SECRET_SALT" => SECRET_TOKEN,
 	"PACKER_USE_COMPRESS" => function_exists('gzcompress'),
-	"PACKER_ENABLE_ENCRYPTION" => function_exists('mcrypt_encrypt') && defined('MCRYPT_RIJNDAEL_256'), // TODO: provide an explanation
+	"PACKER_ENABLE_ENCRYPTION" => function_exists('openssl_encrypt'), // TODO: provide an explanation
 ));
 
 __defaults__(array(

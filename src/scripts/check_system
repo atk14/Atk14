@@ -73,11 +73,11 @@ assert_php_function_exists 'posix_getpid'
 assert_php_function_exists 'get_called_class'
 assert_php_function_exists 'spl_autoload_register'
 assert_php_function_exists 'mb_strlen'
-assert_php_function_exists 'mcrypt_encrypt'
+assert_php_function_exists 'openssl_encrypt'
 assert_php_function_exists 'gzcompress'
 assert_php_function_exists 'json_encode'
 
-assert_php_constant_defined 'MCRYPT_RIJNDAEL_256'
+# assert_php_constant_defined 'SOME_CONSTANT'
 
 # version of php must be >= 5.3
 echo -n "version of php is 5.3 or newer... "

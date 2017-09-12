@@ -300,13 +300,16 @@ class Packer{
 	}
 
 	static function _EncryptData($data){
-		// TODO: encyption and decryption has been copy&pastied somwhere from the internet, check out that it's ok
-		$key = PACKER_CONSTANT_SECRET_SALT;
-		return mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $data, MCRYPT_MODE_CBC, md5(md5($key)));
+		$secret = PACKER_CONSTANT_SECRET_SALT;
+		$key = hash('sha256', $secret);
+		$iv = substr(hash('sha256', $secret . "Iv_addon"),0,16);
+		return openssl_encrypt($data,"AES-256-CBC",$key,true,$iv);
 	}
 
 	static function _DecryptData($data){
-		$key = PACKER_CONSTANT_SECRET_SALT;
-		return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), $data, MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+		$secret = PACKER_CONSTANT_SECRET_SALT;
+		$key = hash('sha256', $secret);
+		$iv = substr(hash('sha256', $secret . "Iv_addon"),0,16);
+		return openssl_decrypt($data,"AES-256-CBC",$key,true,$iv);
 	}
 }
