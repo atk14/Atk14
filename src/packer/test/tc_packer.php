@@ -1,7 +1,7 @@
 <?php
 class TcPacker extends TcBase{
 	function test_php(){
-		$this->assertTrue(function_exists("mcrypt_encrypt"));
+		$this->assertTrue(function_exists("openssl_encrypt"));
 		$this->assertTrue(function_exists("gzcompress"));
 	}
 
