@@ -6,10 +6,24 @@
 
 $__CONFIG_CONSTANTS__ = array();
 
+// Make sure you have strong secret phrase in SECRET_TOKEN constant in PRODUCTION.
+// Place the secret phrase into file config/.secret_token.txt
+if(!defined("SECRET_TOKEN")){
+	if(file_exists(__DIR__ . "/../config/.secret_token.txt")){
+		define("SECRET_TOKEN",Files::GetFileContent(__DIR__ ."/../config/.secret_token.txt"));
+	}elseif(file_exists(__DIR__ . "/../config/secret_token.txt")){ // legacy filename, not recommended
+		define("SECRET_TOKEN",Files::GetFileContent(__DIR__ ."/../config/secret_token.txt"));
+	}
+}
+
 __defaults__(array(
-	"SECRET_TOKEN" => "make_sure_you_define_strong_secret_phrase_in_SECRET_TOKEN_constant",
+	"SECRET_TOKEN" => "DANGER!!! WEAK SECRET_TOKEN!!!",
 	"TEMP" => __realpath__( TEST ? dirname(__FILE__)."/../tmp/test" : dirname(__FILE__)."/../tmp" )."/",
 ));
+
+if(trim(SECRET_TOKEN)=="" || (PRODUCTION && SECRET_TOKEN=="DANGER!!! WEAK SECRET_TOKEN!!!")){
+	throw new Exception("A propper SECRET_TOKEN is missing.  Perhaps file config/.secret_token.txt is missing or is empty.");
+}
 
 __defaults__(array(
 	"DEFAULT_EMAIL" => "info@example.com",
