@@ -1116,17 +1116,18 @@ class Atk14Form extends Form
 	 * @return string[]
 	 */
 	function get_valid_csrf_tokens(){
-		global $HTTP_REQUEST;
-		$session = $GLOBALS["ATK14_GLOBAL"]->getSession();
+		global $HTTP_REQUEST,$ATK14_GLOBAL;
+		$session = $ATK14_GLOBAL->getSession();
 
 		$out = array();
 
-		$t = floor(time()/(60 * 5));
-
 		if(defined("TEST") && TEST){
-			$out[] = "testing_csrf_token"; // this token should be valid only in testing environment!
+			// This token can be valid only in testing environment.
+			// In testing this is also the current valid token.
+			$out[] = "testing_csrf_token";
 		}
 
+		$t = floor(time()/(60 * 5));
 		for($i=0;$i<=1;$i++){
 			$_t = $t - $i;
 			$out[] = sha1($_t.SECRET_TOKEN.get_class($this).$HTTP_REQUEST->getRemoteAddr().$session->getSecretToken());
