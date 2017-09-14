@@ -460,6 +460,7 @@ class Atk14Form extends Form
 	 */
 	function validate($data)
 	{
+		if(!isset($data)){ $data = array(); }
 		if($this->is_valid($data)){
 			return $this->cleaned_data;
 		}
@@ -495,7 +496,13 @@ class Atk14Form extends Form
 
 		isset($data) && $this->set_data($data);
 
-		$this->_call_super_constructor();
+		$super_constructor_called = $this->_call_super_constructor();
+
+		if(isset($data) && !$super_constructor_called){
+			$this->__do_big_initialization(array(
+				"data" => $this->atk14_data, // $this->atk14_data is set in set_data() method
+			));
+		}
 		
 		$out = parent::is_valid();
 
@@ -529,7 +536,10 @@ class Atk14Form extends Form
 
 			$this->atk14_super_constructor_called = true;
 			$this->post_set_up();
+
+			return true;
 		}
+		return false;
 	}
 
 	/**

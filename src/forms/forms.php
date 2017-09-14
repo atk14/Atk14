@@ -485,6 +485,7 @@ class Form implements ArrayAccess
 		$this->prefix = $options['prefix'];
 		$this->label_suffix = $options['label_suffix'];
 
+		$this->initial = array();
 		$this->errors = null;
 		$this->fields = array();
 	}
@@ -500,6 +501,7 @@ class Form implements ArrayAccess
 
 		$this->is_bound = !is_null($options['data']);
 		if (is_array($options['data'])) {
+			$this->errors = null;
 			$this->data = $options['data']; 
 		}
 		else {
@@ -507,9 +509,6 @@ class Form implements ArrayAccess
 		}
 		if (is_array($options['initial'])) {
 			$this->initial = $options['initial'];
-		}
-		else {
-			$this->initial = array();
 		}
 	}
 
