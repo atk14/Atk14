@@ -461,8 +461,8 @@ class Form implements ArrayAccess
 		$options = forms_array_merge(
 			array(
 				'call_set_up'   => true,
-				'__do_small_initialization' => true, // don't even thing about it :)
-				'__do_big_initialization' => true, // do not touch this!
+				'__do_small_initialization' => true, // don't even think about it :)
+				'__do_big_initialization' => true, // do not touch this :)
 			),
 			$options
 		);
