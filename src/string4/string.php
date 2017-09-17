@@ -517,9 +517,7 @@ class String{
 	 * @return String
 	 */
 	function tableize(){
-		$table_name = $this->pluralize();
-		$table_name = $table_name->underscore();
-		return $table_name;
+		return $this->underscore()->pluralize();
 	}
 
 	/**

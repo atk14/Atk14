@@ -198,6 +198,7 @@ class TcString4 extends TcBase{
 			"BlogPost" => "blog_posts",
 			"Sheep" => "sheep",
 			"Person" => "people",
+			"GroupPerson" => "group_people",
 		) as $class_name => $table_name){
 			$str = new String4($class_name);
 			$this->assertEquals($table_name,(string)$str->tableize());
