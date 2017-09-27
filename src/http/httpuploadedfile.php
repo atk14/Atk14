@@ -209,6 +209,9 @@ class HTTPUploadedFile{
 	 * <code>
 	 * $file->moveToTemp();
 	 * $file->moveToTemp("my_image.jpg");
+	 * $file->moveToTemp("/path/to/a/disrectory/");
+	 *
+	 * echo $file->getTmpFileName(); // current temporary filename
 	 * </code>
 	 *
 	 * @param string $filename custom filename
@@ -216,8 +219,14 @@ class HTTPUploadedFile{
 	 * @return bool true, false when error occurs
 	 */
 	function moveToTemp($filename = ""){
-		if(!$filename){ $filename = "moved_uploaded_file_".uniqid().rand(1,9999 ); }
-		return $this->moveTo(TEMP."/$filename");
+		if(!$filename){
+			$filename = TEMP."/moved_uploaded_file_".uniqid().rand(1,9999);
+		}elseif(is_dir($filename)){
+			$filename .= "/moved_uploaded_file_".uniqid().rand(1,9999);
+		}else{
+			$filename = TEMP."/".$filename;
+		}
+		return $this->moveTo($filename);
 	}
 
 	/**

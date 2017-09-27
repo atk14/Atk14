@@ -68,14 +68,28 @@ class tc_httpuploadedfile extends tc_base{
 		$this->assertTrue(file_exists($tmp_new));
 		$this->assertFalse(file_exists($tmp_orig));
 
+		//
+
 		$brand_new_tmp_file = "tempicek";
 		$hlava->moveToTemp($brand_new_tmp_file);
 
 		$this->assertTrue(file_exists(TEMP."/$brand_new_tmp_file"));
 		$this->assertFalse(file_exists($tmp_new));
 
-		$hlava->cleanUp();
+		//
+
+		$hlava->moveToTemp(__DIR__."/another_temp");
+
+		$tmp_name = $hlava->getTmpFilename();
+		$this->assertContains('/another_temp/',$tmp_name);
+
+		$this->assertTrue(file_exists($tmp_name));
 		$this->assertFalse(file_exists(TEMP."/$brand_new_tmp_file"));
+
+		//
+
+		$hlava->cleanUp();
+		$this->assertFalse(file_exists($tmp_name));
 	}
 
 	function test__sanitizeFileName(){

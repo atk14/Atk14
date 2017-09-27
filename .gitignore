@@ -7,5 +7,6 @@ src/atk14/test/log/*
 src/atk14/test/robots/lock/*
 skelet/atk14
 src/http/test/temp/*
+src/http/test/another_temp/*
 doc-cache
 locale/*/LC_MESSAGES/atk14.mo
