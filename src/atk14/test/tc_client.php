@@ -38,6 +38,13 @@ class TcClient extends TcBase{
 		$this->assertEquals("admin",$client->getBasicAuthUsername());
 		$this->assertEquals("secret",$client->getBasicAuthPassword());
 
+		$client->setBasicAuth("bob:theUglyOne");
+		$controller = $client->post("testing/test","<xml></xml>",array("content_type" => "text/xml"));
+		$this->assertEquals("bob:theUglyOne",$controller->request->getBasicAuthString());
+		$this->assertEquals("bob:theUglyOne",$client->getBasicAuthString());
+		$this->assertEquals("bob",$client->getBasicAuthUsername());
+		$this->assertEquals("theUglyOne",$client->getBasicAuthPassword());
+
 		$client->setBasicAuthString("john:aMagic");
 		$controller = $client->post("testing/test","<xml></xml>",array("content_type" => "text/xml"));
 		$this->assertEquals("john:aMagic",$controller->request->getBasicAuthString());

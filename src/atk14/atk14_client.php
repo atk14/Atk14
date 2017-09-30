@@ -227,13 +227,21 @@ class Atk14Client{
 	 * Set basic HTTP authentization values.
 	 *
 	 * ```
-	 * $client->setBasicAuth("robin","the hooded man");
+	 * $client->setBasicAuth("robin","theHoodedMan");
+	 * $client->setBasicAuth("robin:theHoodedMan);
 	 * ```
 	 *
 	 * @param string $username
 	 * @param string $password
 	 */
-	function setBasicAuth($username,$password){
+	function setBasicAuth($username,$password = ""){
+		if($password === ""){
+			$ary = explode(":",$username);
+			if(sizeof($ary)>=2){
+				$username = array_shift($ary);
+				$password = join(":",$ary);
+			}
+		}
 		$this->setBasicAuthUsername($username);
 		$this->setBasicAuthPassword($password);
 	}
