@@ -46,6 +46,13 @@ class TcUrl extends TcBase{
 		$_GET = array();
 	}
 
+	function test_EncodeParams(){
+		$this->assertEquals('?format=xml',Atk14Url::EncodeParams(array("format" => "xml")));
+		$this->assertEquals('?limit=10&offset=0',Atk14Url::EncodeParams(array("limit" => "10", "offset" => "0")));
+		$this->assertEquals('?colors%5B%5D=red&colors%5B%5D=blue',Atk14Url::EncodeParams(array("colors" => array("red","blue"))));
+		$this->assertEquals('?colors%5Bc1%5D=red&colors%5Bc2%5D=blue',Atk14Url::EncodeParams(array("colors" => array("c1" => "red", "c2" => "blue"))));
+	}
+
 	function test_recognize_route_omit_trailing_slash(){
 		$this->_test_route("/invoice/12345.pdf",array(
 			"controller" => "invoices",
