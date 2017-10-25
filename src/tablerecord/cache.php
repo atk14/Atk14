@@ -61,7 +61,7 @@ class ObjectCacher {
 	 *
 	 * @access protected
 	 */
-	protected function _readToCache($mandatory_ids = []) {
+	protected function _readToCache($mandatory_ids = array()) {
 		if(!$this->prepare) { return; }
 
 		$ids_to_be_read = array_combine($mandatory_ids,$mandatory_ids);
