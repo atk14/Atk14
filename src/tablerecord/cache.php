@@ -61,11 +61,21 @@ class ObjectCacher {
 	 *
 	 * @access protected
 	 */
-	protected function _readToCache() {
+	protected function _readToCache($mandatory_ids = []) {
 		if(!$this->prepare) { return; }
+
+		$ids_to_be_read = array_combine($mandatory_ids,$mandatory_ids);
+
+		// It's ok to read more records than $mandatory_ids
+		// But it's unwise to read more than TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE records.
+		foreach(array_diff($this->prepare,$ids_to_be_read) as $id){
+			if(sizeof($ids_to_be_read)>=TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE){ break; }
+			$ids_to_be_read[$id] = $id;
+		}
+
 		$cname = $this->class;
-		$this->cache += $cname::GetInstanceById($this->prepare,array("use_cache" => false));
-		$this->prepare = array();
+		$this->cache += $cname::GetInstanceById($ids_to_be_read,array("use_cache" => false));
+		$this->prepare = array_diff($this->prepare,$ids_to_be_read);
 	}
 
 	/**
@@ -87,7 +97,7 @@ class ObjectCacher {
 		$array_given = false;
 		$ids = self::_ToIds($ids, $array_given);
 		$this->prepare($ids);
-		$this->_readToCache();
+		$this->_readToCache($ids);
 		$out = $this->getCached($ids);
 		if(!$array_given){ $out = $out[0]; }
 		return $out;

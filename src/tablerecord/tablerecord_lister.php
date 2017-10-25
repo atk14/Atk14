@@ -349,7 +349,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		$rank = 0;
 		foreach($rows as $row){
 			self::$CACHE[$c_key][$row["owner_id"]][] = new TableRecord_ListerItem($this,$row,$rank);
-			Cache::Prepare($this->getClassNameOfRecords(),$row["record_id"]);
+			//Cache::Prepare($this->getClassNameOfRecords(),$row["record_id"]);
 			$rank++;
 		}
 

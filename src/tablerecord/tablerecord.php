@@ -17,6 +17,8 @@ defined("TABLERECORD_CACHES_STRUCTURES") || define("TABLERECORD_CACHES_STRUCTURE
 // Use the caching infrastructure whenever it is possible?
 defined("TABLERECORD_USE_CACHE_BY_DEFAULT") || define("TABLERECORD_USE_CACHE_BY_DEFAULT",false);
 
+defined("TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE") || define("TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE",200);
+
 /**
  * Base class for manipulating records.
  *
@@ -981,7 +983,7 @@ class TableRecord extends inobj {
 			"use_cache" => TABLERECORD_USE_CACHE_BY_DEFAULT,
 		),$options);
 
-		$MAX_ELEMENTS = 200;
+		$MAX_ELEMENTS = TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE;
 		if(sizeof($ids)>$MAX_ELEMENTS){
 			$out = array();
 
