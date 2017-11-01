@@ -105,11 +105,13 @@ function dbmole_error_handler($dbmole){
 		$dbmole->sendErrorReportToEmail(ATK14_ADMIN_EMAIL);
 		$dbmole->logErrorReport(); // zaloguje chybu do error logu
 
+		/*
+		// Not sure if this is still needed when an Exception is thrown away
 		$response = Atk14Dispatcher::ExecuteAction("application","error500",array(
 			"render_layout" => false,
 			"apply_render_component_hacks" => true,
 		));
-		$response->flushAll();
+		$response->flushAll();*/
 
 		if($ATK14_LOGGER){
 			$ATK14_LOGGER->error($dbmole->getErrorReport());
