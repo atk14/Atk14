@@ -83,7 +83,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		$subject_us = $subject->underscore();
 
 		$options = array_merge(array(
-			"class_name" => $subject, // Author
+			"class_name" => "$subject", // Author
 			"table_name" => "{$owner_class_us}_{$subjects_us}", // article_authors
 			"id_field_name" => "id",
 			"owner_field_name" => "{$owner_class_us}_id", // article_id
@@ -310,6 +310,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	function &getItems($options = array()){
 		$options += array(
 			"force_read" => false,
+			"preread_data" => true,
 		);
 
 		if($options["force_read"]){
@@ -324,8 +325,10 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 			return self::$CACHE[$c_key][$owner_id];
 		}
 
-		$cacher = Cache::GetObjectCacher($this->_getOwnerClass());
-		$this->prefetchDataFor($cacher->cachedIds());
+		if($options["preread_data"]){
+			$cacher = Cache::GetObjectCacher($this->_getOwnerClass());
+			$this->prefetchDataFor($cacher->cachedIds());
+		}
 
 		$ids_to_read = isset(self::$PREPARE[$c_key]) ? self::$PREPARE[$c_key] : array();
 		$ids_to_read[$owner_id] = $owner_id;
@@ -388,6 +391,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * $lister = $article->getLister("Authors");
 	 * $authors = $lister->getRecords(); // array of models
 	 * $authors = $lister->getRecords(array("force_read" => true)); // If the cache state could be stale
+	 * $authors = $lister->getRecords(array("preread_data" => false)); // When it's not desired to preread data for every cached object lister
 	 * ```
 	 *
 	 * @param array $options
