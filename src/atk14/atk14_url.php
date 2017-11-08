@@ -7,7 +7,7 @@
  *
  * Add a line into config/routers/load.php
  * ```
- *	Atk14Url::AddRouter("ProductsRouter");
+ * Atk14Url::AddRouter("ProductsRouter");
  * ```
  * Then create a router class in config/routers/products_router.php
  * ```
@@ -15,16 +15,14 @@
  * }
  * ```
  *
- * @package Atk14
- * @subpackage Core
+ * @package Atk14\Core
  * @filesource
  */
 
 /**
  * Class for working with Urls.
  *
- * @package Atk14
- * @subpackage Core
+ * @package Atk14\Core
  *
  */
 class Atk14Url{
@@ -35,10 +33,12 @@ class Atk14Url{
 	 * When nothing is recognized, returns null.
 	 *
 	 * ```
-	 *	$stat = Atk14Url::RecognizeRoute($HTTP_REQUEST->getRequestURI());
+	 * $stat = Atk14Url::RecognizeRoute($HTTP_REQUEST->getRequestURI());
 	 * ```
-	 * 
+	 *
 	 * @param string $requested_uri URI to decode
+	 * @param array $options
+	 * - get_params
 	 *
 	 * @return array description of URI, contains these parameters:
 	 * - controller - name of controller
@@ -232,23 +232,48 @@ class Atk14Url{
 	/**
 	 * Generates a URL
 	 *
+	 * Option with_hostname specifies whether full url or only path is generated.
+	 * When it is set to true configuration constant ATK14_HTTP_HOST will be used as hostname part.
+	 * Setting it to a string specific hostname can be used.
+	 *
+	 * Suppose we have this setup and want to generate url to a product detail
+	 * ```
+	 * define("ATK14_HTTP_HOST", "www.bestthings.com");
+	 * $params = [
+	 * 	 "controller" => "products",
+	 * 	 "action" => "detail",
+	 * 	 "id" => 10,
+	 * ];
+	 * ```
+	 *
+	 * ```
+	 * Atk14Url::BuildLink($params, ["with_hostname" => false, "ssl" => true])
+	 * ```
+	 * This code will generate `/en/products/detail/?id=10`
+	 *
+	 * ```
+	 * Atk14Url::BuildLink($params, ["with_hostname" => true, "ssl" => true])
+	 * ```
+	 * This code will generate `https://www.bestthings.com/en/products/detail/?id=10`
+	 *
+	 * ```
+	 * Atk14Url::BuildLink($params, ["with_hostname" => "supergadgets.ie", "ssl" => true])
+	 * ```
+	 * This code will generate `https://supergadgets.ie/en/products/detail/?id=10`
+	 *
+	 *
 	 * @param array $params
-	 * <ul>
-	 * 	<li><b>namespace</b></li>
-	 * 	<li><b>controller</b></li>
-	 * 	<li><b>action</b></li>
-	 * 	<li><b>lang</b></li>
-	 * </ul>
+	 * - **namespace**
+	 * - **controller**
+	 * - **action**
+	 * - **lang**
 	 * @param array $options
-	 * <ul>
-	 * 	<li><b>port</b></li>
-	 * 	<li><b>ssl</b></li>
-	 * 	<li><b>with_hostname</b></li>
-	 * 	<li><b>anchor</b></li>
-	 * 	<li><b>connector</b></li>
-	 * </ul>
+	 * - **port**
+	 * - **ssl**
+	 * - **with_hostname** - boolean|string - when true the generated url will contain whole path including hostname and protocol. String specifies specific hostname.
+	 * - **anchor**
+	 * - **connector**
 	 * @return string generated URL
-	 * @static
 	 *
 	 */
 	static function BuildLink($params,$options = array(),$__current_ary__ = array()){
@@ -492,14 +517,14 @@ class Atk14Url{
 	 * Adds a router into application.
 	 *
 	 * ```
-	 *	Atk14Url::AddRouter(new ProductsRouter());
-	 *	Atk14Url::AddRouter("ProductsRouter");
+	 * Atk14Url::AddRouter(new ProductsRouter());
+	 * Atk14Url::AddRouter("ProductsRouter");
 	 *
-	 *	Atk14Url::AddRouter("","ProductsRouter");
-	 *	Atk14Url::AddRouter("ProductsRouter"); // the same as previous
+	 * Atk14Url::AddRouter("","ProductsRouter");
+	 * Atk14Url::AddRouter("ProductsRouter"); // the same as previous
 	 *
-	 *	Atk14Url::AddRouter("admin","ProductsRouter");
-	 *	Atk14Url::AddRouter("*","ProductsRouter");
+	 * Atk14Url::AddRouter("admin","ProductsRouter");
+	 * Atk14Url::AddRouter("*","ProductsRouter");
 	 * ```
 	 * @param string $namespace_or_router
 	 * @param string|Atk14Router $router

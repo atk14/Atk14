@@ -139,11 +139,11 @@ class HTTPResponse{
 	/**
 	 * Sets status code of the response.
 	 *
-	 * <code>
+	 * ```
 	 *	 $response->setStatusCode(400);
 	 *	 $response->setStatusCode(404,"Not Found Dude");
 	 *	 $response->setStatusCode("200 Found");
-	 * </code>
+	 * ```
 	 *
 	 * @param integer $code
 	 * @param string $message string associated with the status code
@@ -240,21 +240,19 @@ class HTTPResponse{
 	 * Option <b>moved_permanently</b> sets HTTP status code to 301.
 	 *
 	 * Redirects client with status code '302 Found':
-	 * <code>
+	 * ```
 	 *	$response->setLocation("/?redirected=1");
-	 * </code>
+	 * ```
 	 *
 	 * Redirects client with status code '301 Moved Permanently':
-	 * </code>
-	 *	$response->setLocation("/?redirected=1",array("moved_permanently" => true));
-	 * </code>
+	 * ```
+	 * $response->setLocation("/?redirected=1",array("moved_permanently" => true));
+	 * ```
 	 *
 	 * @param string $url
 	 * @param array $options
-	 * <ul>
-	 * 	<li><b>status</b> - explicitly set status code</li>
-	 * 	<li><b>moved_permanently</b> - </li>
-	 * </ul>
+	 * - **status** - explicitly set status code
+	 * - **moved_permanently** - causes status code to be set to 301
 	 */
 	function setLocation($url,$options = array()){
 		$options = array_merge(array(
@@ -292,10 +290,10 @@ class HTTPResponse{
 	/**
 	 * Sets Content-Type response header.
 	 *
-	 * <code>
+	 * ```
 	 * $response->setContentType("text/plain");
 	 * $response->setContentType("text/plain; charset=UTF-8");
-	 * </code>
+	 * ```
 	 *
 	 * @param string $content_type
 	 */
@@ -355,11 +353,11 @@ class HTTPResponse{
 	 *
 	 * Sets content of HTTP response header to a value. Parameters should be passed as strings but values passed as other types are retyped to string.
 	 *
-	 * <code>
+	 * ```
 	 * $gmdate = gmdate("D, d M Y H:i:s \G\M\T");
 	 * $response->setHeader("Last-Modified",$gmdate");
 	 * $response->setHeader("Last-Modified: $gmdate");
-	 * </code>
+	 * ```
 	 *
 	 * @param string $name
 	 * @param string $value
@@ -398,14 +396,15 @@ class HTTPResponse{
 	 *
 	 * Returns null when there is no such header
 	 *
-	 * <code>
+	 * ```
 	 *	$response->setHeader("Last-Modified: Mon, 26 Aug 2013 09:41:51 GMT");
-	 *	
+	 *
 	 *	echo $response->getHeader("Last-Modified"); // Mon, 26 Aug 2013 09:41:51 GMT
 	 *	echo $response->getHeader("last-modified"); // Mon, 26 Aug 2013 09:41:51 GMT
-	 * </code>
+	 * ```
 	 *
 	 * @param string $name
+	 * @return string|null
 	 */
 	function getHeader($name){
 		$name = strtoupper($name);
@@ -421,12 +420,13 @@ class HTTPResponse{
 	 *
 	 * Unset header is not sent.
 	 *
-	 * <code>
+	 * ```
 	 * $response->setHeader("X-Frame-Option","SAMEORIGIN");
 	 * $response->header("X-Frame-Option");
-	 * </code>
+	 * ```
 	 *
 	 * @param string $name
+	 * @return undefined
 	 */
 	function clearHeader($name){
 		return $this->setHeader($name,"");
@@ -554,11 +554,13 @@ class HTTPResponse{
 	 *
 	 * Adds a cookie to the internal cookies array. They are sent to the output by {@link flush()} or {@link flushAll()} methods.
 	 *
-	 * <code>
-	 *	$response->addCookie(new HTTPCookie("last_login","bob",array("secure" => true)));
-	 *	// or
-	 *	$response->addCookie("last_login","bob",array("secure" => true)));
-	 * </code>
+	 * ```
+	 * $response->addCookie(new HTTPCookie("last_login","bob",array("secure" => true)));
+	 * ```
+	 * or
+	 * ```
+	 * $response->addCookie("last_login","bob",array("secure" => true)));
+	 * ```
 	 *
 	 * @param mixed $cookie_or_name
 	 * @param string $value
@@ -578,12 +580,18 @@ class HTTPResponse{
 
 	/**
 	 * Alias for addCookie()
+	 *
+	 * @param mixed $cookie_or_name
+	 * @param string $value
+	 * @param array $options
 	 */
 	function setCookie($cookie_or_name,$value = null,$options = array()){
 		$this->addCookie($cookie_or_name,$value,$options);
 	}
 
 	/**
+	 * Returns list of cookies
+	 *
 	 * @return HTTPCookie[]
 	 */
 	function getCookies(){
@@ -645,7 +653,7 @@ class HTTPResponse{
 			$this->_OutputBuffer->clear();
 		}
 	}
-	
+
 	/**
 	 * Sends everything to output.
 	 *

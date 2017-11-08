@@ -2,8 +2,7 @@
 /**
  * Class providing methods to make http requests
  *
- * @package Atk14
- * @subpackage UrlFetcher
+ * @package Atk14\UrlFetcher
  * @filesource
  */
 
@@ -51,10 +50,6 @@
  * $f = new UrlFetcher("http://www.example.com/", array("additional_headers" => array("X-App-Version: 1.2")));
  * echo $f->getContent();
  * ```
- *
- * @package Atk14
- * @subpackage UrlFetcher
- * @filesource
  */
 class UrlFetcher {
 
@@ -158,10 +153,11 @@ class UrlFetcher {
 	 * $f = new UrlFetcher(array("additional_headers" => array("X-Powered-By: Grizzly Lib 1.2")));
 	 * ```
 	 *
-	 * @param string $url
+	 * @param string $url URL to fetch content from
 	 * @param array $options
-	 * - <b>additional_headers</b> -
-	 * - <b>max_redirections</b> [default: 5]
+	 * - **additional_headers** -
+	 * - **max_redirections** [default: 5]
+	 * - **user_agent** - content of User-Agent http header [default: 'UrlFetcher 1.0']
 	 */
 	function __construct($url = "", $options = array()){
 		$this->_reset();

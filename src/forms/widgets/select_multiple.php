@@ -3,21 +3,26 @@
  * Widget for multiple select input field.
  *
  * Outputs field of this type:
- * <code>
+ * ```
  * <select multiple="multiple">
- *   <option value="1">jedna</option>
+ *   <option value="1">one</option>
+ *   <option value="2">two</option>
+ *   ...
  * </select>
- * </code>
+ * ```
  *
- * @package Atk14
- * @subpackage Forms
+ * @package Atk14\Forms
  */
 class SelectMultiple extends Widget
 {
 	var $input_type = "select";
 
-	function __construct($options=array())
-	{
+	/**
+	 * Constructor
+	 *
+	 * @param array $options
+	 */
+	function __construct($options=array()) {
 		$options = forms_array_merge(array('attrs'=>null, 'choices'=>array()), $options);
 		parent::__construct($options);
 		$this->choices = $options['choices'];

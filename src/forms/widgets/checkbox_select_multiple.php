@@ -10,6 +10,11 @@ class CheckboxSelectMultiple extends SelectMultiple
 {
 	var $input_type = "select";
 
+	/**
+	 * @param array $options
+	 * - **escape_labels** - escaping html in checkbox labels [default: true]
+	 *
+	 */
 	function __construct($options = array())
 	{
 		$options += array(
