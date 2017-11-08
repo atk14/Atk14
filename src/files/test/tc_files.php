@@ -211,6 +211,18 @@ class TcFiles extends TcBase{
 		$this->assertTrue(sizeof($files)>10);
 		$this->assertTrue(in_array('sample_files/sample.jpg',$files));
 
+		// --- using maxdepth option
+
+		$files = Files::FindFiles("sample_files/",array("maxdepth" => 0));
+		$this->assertEquals(array(),$files);
+
+		$files = Files::FindFiles("sample_files/",array("maxdepth" => -1));
+		$this->assertEquals(array(),$files);
+
+		$files = Files::FindFiles("sample_files/",array("maxdepth" => 1));
+		$this->assertTrue(sizeof($files)>10);
+		$this->assertTrue(in_array('sample_files/sample.jpg',$files));
+
 		$files = Files::FindFiles("./sample_files/",array(
 			"pattern" => '/^sample\.(p..|jpg)$/'
 		));

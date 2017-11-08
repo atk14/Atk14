@@ -649,8 +649,8 @@ class Files{
 			"invert_pattern" => null, // '/^\./' - do not find files starting with dot
 			"min_mtime" => null, // time() - 2 * 60 * 60
 			"max_mtime" => null, // time() - 60 * 60
-			
-			// "maxdepth" => null // TODO: add maxdepth like in system command find
+
+			"maxdepth" => null // TODO: add maxdepth like in system command find
 		);
 
 		if(!preg_match('/\/$/',$directory)){
@@ -661,7 +661,11 @@ class Files{
 		$invert_pattern = $options["invert_pattern"];
 		$min_mtime = $options["min_mtime"];
 		$max_mtime = $options["max_mtime"];
+		$maxdepth = $options["maxdepth"];
 
+		if(isset($maxdepth) && $maxdepth<=0){
+			return [];
+		}
 
 		// getting file list
 		$files = array();
@@ -679,8 +683,15 @@ class Files{
 			$_f = $file; // "application.log"
 			$file = "$directory$file"; // "./log/application.log"
 
+			if(is_dir($file) && !is_link($file)){
+				$_options = $options;
+				if(isset($_options["maxdepth"])){ $_options["maxdepth"]--; }
+				foreach(self::FindFiles($file,$_options) as $_file){
+					$out[] = $_file;
+				}
+			}
+
 			if(!is_file($file)){
-				// TODO: also find files in a subdirectory
 				continue;
 			}
 		
