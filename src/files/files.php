@@ -664,7 +664,7 @@ class Files{
 		$maxdepth = $options["maxdepth"];
 
 		if(isset($maxdepth) && $maxdepth<=0){
-			return [];
+			return array();
 		}
 
 		// getting file list
