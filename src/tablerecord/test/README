@@ -8,7 +8,7 @@ template1=# GRANT ALL PRIVILEGES ON DATABASE test TO test;
 
 Create there Postgresql`s structures from the file structures.postgresql.sql
 
-$ psql -U test test < testing_structures.postgresql.sql
+$ psql -U test test < structures.postgresql.sql
 
 You can do it with one command:
 

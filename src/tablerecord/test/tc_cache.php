@@ -116,4 +116,24 @@ class TcCache extends TcBase{
 		$this->assertEquals(null,Cache::Get("TestTable",11233));
 		$this->assertEquals($queries_executed+2,$dbmole->getQueriesExecuted());
 	}
+
+	function test_caching_null() {
+		# using empty string as caching key is ok
+		Cache::Get("TestTable", array(1123,"",55,0, -1));
+		$cached_ids = Cache::CachedIds("TestTable");
+		$this->assertCount(5, $cached_ids);
+		$this->assertArrayHasKey('', $cached_ids);
+		$this->assertArrayHasKey(1123, $cached_ids);
+		$this->assertArrayHasKey(55, $cached_ids);
+		$this->assertArrayHasKey(0, $cached_ids);
+		$this->assertArrayHasKey(-1, $cached_ids);
+
+		# but null shouldn't be used as id to be cached
+		Cache::Clear();
+		Cache::Get("TestTable", array(1123,null,55,0, -1));
+		$cached_ids = Cache::CachedIds("TestTable");
+		$this->assertCount(4, $cached_ids);
+		$this->assertArrayNotHasKey('', $cached_ids);
+	}
+
 }
