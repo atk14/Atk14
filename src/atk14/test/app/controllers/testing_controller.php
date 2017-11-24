@@ -12,7 +12,7 @@ class TestingController extends ApplicationController{
 	}
 
 	function test_render_collection(){
-		$this->tpl_data["articles"] = array(
+		$this->tpl_data["articles_set_1"] = array(
 			array(
 				"title" => "First article",
 				"teaser" => "Teaser of the first article",
@@ -20,6 +20,28 @@ class TestingController extends ApplicationController{
 			array(
 				"title" => "Second article",
 				"teaser" => "Teaser of the second article",
+			),
+		);
+
+		$this->tpl_data["articles_set_2"] = array(
+			array(
+				"title" => "Third article",
+				"teaser" => "Teaser of the third article",
+			),
+			array(
+				"title" => "Fourth article",
+				"teaser" => "Teaser of the fourth article",
+			),
+		);
+
+		$this->tpl_data["articles_set_3"] = array(
+			array(
+				"title" => "Fifth article",
+				"teaser" => "Teaser of the fifth article",
+			),
+			array(
+				"title" => "Sixth article",
+				"teaser" => "Teaser of the sixth article",
 			),
 		);
 	}

@@ -147,6 +147,12 @@ class TcController extends TcBase{
 		
 		$this->assertContains('First article',$content);
 		$this->assertContains('Second article',$content);
+
+		$this->assertContains('Third article',$content);
+		$this->assertContains('Fourth article',$content);
+
+		$this->assertContains('Fifth article',$content);
+		$this->assertContains('Sixth article',$content);
 	}
 
 	function test_error404(){
