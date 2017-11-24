@@ -1,6 +1,5 @@
 {render partial="article_item" from=$articles_set_1}
 
-{render partial="article_item" from=$articles_set_2 item="article"}
+{render partial="article" from=$articles_set_2}
 
-{render partial="article_item" article=$articles_set_3.0}
-{render partial="article_item" article=$articles_set_3.1}
+{render partial="a_item" from=$articles_set_3 item=article}
