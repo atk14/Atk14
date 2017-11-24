@@ -11,6 +11,19 @@ class TestingController extends ApplicationController{
 		));
 	}
 
+	function test_render_collection(){
+		$this->tpl_data["articles"] = array(
+			array(
+				"title" => "First article",
+				"teaser" => "Teaser of the first article",
+			),
+			array(
+				"title" => "Second article",
+				"teaser" => "Teaser of the second article",
+			),
+		);
+	}
+
 	function default_layout(){
 		$this->template_name = "template";
 	}

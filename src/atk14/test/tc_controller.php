@@ -140,6 +140,15 @@ class TcController extends TcBase{
 		$this->assertContains("John Doe",$this->client->getContent());
 	}
 
+	function test_render_collection(){
+		$controller = $this->client->get("testing/test_render_collection");
+
+		$content = $controller->response->buffer->toString();
+		
+		$this->assertContains('First article',$content);
+		$this->assertContains('Second article',$content);
+	}
+
 	function test_error404(){
 		$client = &$this->client;
 		$controller = $client->get("nonsence/nonsence");

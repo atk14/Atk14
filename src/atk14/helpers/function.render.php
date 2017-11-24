@@ -53,6 +53,20 @@ function smarty_function_render($params,$template){
 	// $solve_smarty_vs_template_problem is true when Smarty3 is being used
 	$solve_smarty_vs_template_problem = get_class($smarty)!=get_class($template);
 
+	$orig_params = $params;
+
+	$params += array(
+		"partial" => "",
+		"from" => null,
+	);
+
+	if(!is_null($params["from"])){
+		// default item value
+		$params += array(
+			"item" => (string)String4::ToObject($params["partial"])->gsub('/^.*\/(.+?)$/','\1')->gsub('/_item$/','') // "shared/article_item" -> "article" or "shared/person" -> "person"
+		);
+	}
+
 	Atk14Timer::Start("helper function.render");
 	$template_name = $partial = $params["partial"];
 	unset($params["partial"]);
@@ -60,7 +74,7 @@ function smarty_function_render($params,$template){
 	$template_name = preg_replace("/([^\\/]+)$/","_\\1",$template_name);
 	$template_name .= ".tpl";
 
-	if(in_array("from",array_keys($params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
+	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
 
 	$original_smarty_vars = $smarty->getTemplateVars();
 	if($solve_smarty_vs_template_problem){
