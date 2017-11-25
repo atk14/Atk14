@@ -1,6 +1,12 @@
 <?php
 class Atk14Fixture {
 
+	protected static $loaded_fixtures = array();
+
+	static function ClearLoadedFixtures(){
+		self::$loaded_fixtures = array();
+	}
+
 	/**
 	 *
 	 * Usage:
@@ -13,13 +19,18 @@ class Atk14Fixture {
 	 * @return Atk14FixtureList
 	 */
 	static function Load($name,$options = array()){
-		static $imported_lists = array();
 		global $ATK14_GLOBAL;
 
 		$options += array(
 			"class_name" => null,
 			"dbmole" => $GLOBALS["dbmole"],
+
+			"reload_fixture" => true,
 		);
+
+		if(!$options["reload_fixture"] && isset(self::$loaded_fixtures[$name])){
+			return self::$loaded_fixtures[$name];
+		}
 
 		$dbmole = $options["dbmole"];
 
@@ -38,7 +49,7 @@ class Atk14Fixture {
 
 		$data = miniYAML::Load(Files::GetFileContent($filename),array(
 			"interpret_php" => true,
-			"values" => $imported_lists, // ["products" => [...], ""]
+			"values" => &self::$loaded_fixtures, // ["products" => [...], ""]
 		));
 		if(!$data){
 			throw new Exception("Parsing YAML failed in $filename");
@@ -56,7 +67,7 @@ class Atk14Fixture {
 			$list[$k] = $o;
 		}
 
-		$imported_lists[$name] = $list;
+		self::$loaded_fixtures[$name] = $list;
 
 		return $list;
 	}

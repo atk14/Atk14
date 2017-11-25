@@ -84,13 +84,15 @@ class TcAtk14Base extends TcSuperBase {
 	 * ```
 	 */
 	function setUpFixtures() {
+		Atk14Fixture::ClearLoadedFixtures();
+
 		$annotations = $this->getAnnotations();
 		if (!isset($annotations["class"]["fixture"])) {
 			return;
 		}
 
 		foreach($annotations["class"]["fixture"] as $_f) {
-			$this->$_f = $this->loadFixture($_f);
+			$this->$_f = $this->loadFixture($_f,["reload_fixture" => false]);
 		}
 	}
 
