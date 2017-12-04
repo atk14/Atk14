@@ -310,6 +310,16 @@ class TcUrl extends TcBase{
 		$this->assertEquals("articles",$data["controller"]);
 		$this->assertEquals("detail",$data["action"]);
 		$this->assertEquals(array("id" => "123", "format" => "xml"),$data["get_params"]);
+
+		$data = Atk14Url::RecognizeRoute('/cs/articles/detail/?id=123&format=xml',array("get_params" => array("id" => "222")));
+		$this->assertEquals("articles",$data["controller"]);
+		$this->assertEquals("detail",$data["action"]);
+		$this->assertEquals(array("id" => "222"),$data["get_params"]);
+
+		$data = Atk14Url::RecognizeRoute('/nonsence/?x1=x2');
+		$this->assertEquals("application",$data["controller"]);
+		$this->assertEquals("error404",$data["action"]);
+		$this->assertEquals(array(),$data["get_params"]);
 	}
 
 	function _test_route($request_uri,$expected_ar,$expected_params = array()){
