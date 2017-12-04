@@ -54,8 +54,12 @@ class Atk14Url{
 
 		$requested_uri = (string)$requested_uri;
 		$options += array(
-			"get_params" => $GLOBALS["_GET"],
+			"get_params" => null,
 		);
+
+		if(is_null($options["get_params"])){
+			$options["get_params"] = self::ParseParamsFromUri($requested_uri);
+		}
 
 		// /domain-examination/plovarna.cz/?small=1 --> domain-examination/plovarna.cz
 		// /domain-examination/plovarna.cz?small=1 --> domain-examination/plovarna.cz

@@ -78,7 +78,9 @@ class Atk14Dispatcher{
 		}else{
 
 			Atk14Timer::Start("Atk14Url::RecognizeRoute");
-			$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri());
+			$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri(),array(
+				"get_params" => $GLOBALS["_GET"],
+			));
 			$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
 
 			if(DEVELOPMENT){
