@@ -238,7 +238,7 @@ class TcLister extends TcBase{
 			$this->assertEquals($expected_authors[$i]->getId(),$records[$i]->getId());
 			$this->assertEquals($expected_authors[$i]->getId(),$record_ids[$i]);
 
-			$this->assertEquals($record_ids[$i],$this->dbmole->selectInt("SELECT author_id FROM article_authors WHERE id=:id",[":id" => $ids[$i]]));
+			$this->assertEquals($record_ids[$i],$this->dbmole->selectInt("SELECT author_id FROM article_authors WHERE id=:id",array(":id" => $ids[$i])));
 		}
 
 		//
