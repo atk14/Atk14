@@ -229,12 +229,16 @@ class TcLister extends TcBase{
 		// getRecords(), getRecordIds()
 		$records = $lister->getRecords();
 		$record_ids = $lister->getRecordIds();
+		$ids = $lister->getIds();
 
 		$this->assertEquals(sizeof($records),sizeof($record_ids));
+		$this->assertEquals(sizeof($records),sizeof($ids));
 
 		for($i=0;$i<sizeof($expected_authors);$i++){
 			$this->assertEquals($expected_authors[$i]->getId(),$records[$i]->getId());
 			$this->assertEquals($expected_authors[$i]->getId(),$record_ids[$i]);
+
+			$this->assertEquals($record_ids[$i],$this->dbmole->selectInt("SELECT author_id FROM article_authors WHERE id=:id",[":id" => $ids[$i]]));
 		}
 
 		//

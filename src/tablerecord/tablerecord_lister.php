@@ -360,6 +360,20 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	}
 
 	/**
+	 * ```
+	 *	$ids = $lister->getIds(); // integer[]
+	 *	$ids = $lister->getIds(array("force_read" => true)); // If the cache state could be stale
+	 * ```
+	 *
+	 * @return integer[]
+	 */
+	function getIds($options = array()){
+		$out = array();
+		foreach($this->getItems($options) as $item){ $out[] = $item->getId(); }
+		return $out;
+	}
+
+	/**
 	 * Returns record ids of associated table.
 	 *
 	 * ```
