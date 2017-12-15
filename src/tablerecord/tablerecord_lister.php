@@ -653,6 +653,13 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		$items = $this->getItems();
 		return count($items);
 	}
+
+	/**
+	 * Cleares whole cache
+	 */
+	static function ClearCache() {
+		self::$CACHE = array();
+	}
 }
 
 /**
