@@ -11,6 +11,7 @@ require_once(dirname(__FILE__)."/src/stringbuffer/load.php");
 require_once(dirname(__FILE__)."/src/files/load.php");
 require_once(dirname(__FILE__)."/src/http/load.php");
 require_once(dirname(__FILE__)."/src/atk14/atk14_utils.php");
+require_once(dirname(__FILE__)."/src/functions.php");
 Atk14Utils::DetermineEnvironment();
 
 // loading the main configuration file (local_config/settings.php or config/settings.php)
@@ -42,7 +43,6 @@ require_once(dirname(__FILE__)."/src/sendmail/load.php");
 require_once(dirname(__FILE__)."/src/forms/load.php");
 require_once(dirname(__FILE__)."/src/url_fetcher/load.php");
 require_once(dirname(__FILE__)."/src/atk14/load.php");
-require_once(dirname(__FILE__)."/src/functions.php");
 
 // ...and load basic application`s objects
 foreach(array(

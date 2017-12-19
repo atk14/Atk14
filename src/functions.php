@@ -30,3 +30,11 @@ function h($string, $flags = null, $encoding = null){
 	}
 	return htmlspecialchars($string,$flags,$encoding);
 }
+
+/**
+ * Defines a constant if it hasn't been defined yet
+ */
+function definedef($name, $value){
+	defined($name) || define($name, $value);
+	return constant($name);
+}
