@@ -28,6 +28,9 @@ class Atk14Locale{
 	 */
 	static function Initialize(&$lang){
 		global $ATK14_GLOBAL;
+
+		$lang = (string)$lang; // $lang may be a object or something... :)
+
 		$previous_lang = $ATK14_GLOBAL->getLang();
 
 		if(function_exists("atk14_initialize_locale")){
