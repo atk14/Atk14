@@ -384,6 +384,9 @@ class Files{
 
 		$dir .= "/";
 		$dir_handle = opendir($dir);
+		if(!$dir_handle){
+			return 0;
+		}
 		while(($item = readdir($dir_handle))!==false){
 			if($item=="." || $item==".." || $item==""){
 				continue;
