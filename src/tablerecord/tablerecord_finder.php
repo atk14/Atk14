@@ -50,6 +50,13 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	 */
 	function __construct($options,&$dbmole){
 		$options += array(
+			"query" => null,
+			"query_count" => null,
+
+			"bind_ar" => array(),
+			"options" => array(),
+			"class_name" => "",
+
 			"use_cache" => TABLERECORD_USE_CACHE_BY_DEFAULT,
 		);
 		$this->_Query = $options["query"];
