@@ -327,7 +327,7 @@ class Atk14Controller{
 
 		$options = array_merge(array(
 			"request" => null,
-			"params" => null, 
+			"params" => null,
 		),$options);
 
 		$this->lang = $ATK14_GLOBAL->getValue("lang");
@@ -346,7 +346,6 @@ class Atk14Controller{
 		$this->dbmole = &$GLOBALS["dbmole"];
 		$this->logger = $ATK14_GLOBAL->getLogger();
 		$this->flash = &Atk14Flash::GetInstance();
-
 		$this->session = $GLOBALS["ATK14_GLOBAL"]->getSession();
 		$this->cookies_enabled = is_object($this->session) && $this->session->cookiesEnabled();
 
@@ -360,6 +359,8 @@ class Atk14Controller{
 		foreach($options as $_key => $_value){	
 			$this->$_key = $_value;
 		}
+
+		$this->mailer = Atk14MailerProxy::GetInstanceByController($this);
 
 		$this->template_name = null; // !! $this->template_name bude podle potreb nastaveno az v _execute_action()
 		$this->render_template = true;	
@@ -537,8 +538,6 @@ class Atk14Controller{
 			($this->form = Atk14Form::GetInstanceByController($this)) ||
 			($this->form = Atk14Form::GetDefaultForm($this));
 		}
-
-		$this->mailer = Atk14MailerProxy::GetInstanceByController($this);
 
 		if(!$cache){
 			Atk14Timer::Start("executing action $action");
