@@ -3,9 +3,9 @@ class TcHelpers extends TcBase{
 	function test_javascript_script_tag(){
 		$out = $this->_run_action("helpers/javascript_script_tag");
 		$mtime = filemtime("public/javascripts/site.js");
-		$this->assertEquals('<script src="/public/javascripts/site.js?'.$mtime.'" type="text/javascript"></script>
-<script src="/public/javascripts/site.js?'.$mtime.'" type="text/javascript" media="screen"></script>
-<script src="/public/javascripts/nonexisting.js" type="text/javascript"></script>',trim($out));
+		$this->assertEquals('<script src="/public/javascripts/site.js?'.$mtime.'"></script>
+<script src="/public/javascripts/site.js?'.$mtime.'" media="screen"></script>
+<script src="/public/javascripts/nonexisting.js"></script>',trim($out));
 
 	}
 

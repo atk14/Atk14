@@ -15,7 +15,7 @@
  *
  * This will produce the following output:
  * <code>
- *		<script src="/public/javascripts/script.js?1313093878" type="text/javascript"></script>
+ *		<script src="/public/javascripts/script.js?1313093878"></script>
  * </code>
  * 
  * It is also possible to link a javascript file absolutely:
@@ -90,5 +90,5 @@ function smarty_function_javascript_script_tag($params,$template){
 
 	$attribs = Atk14Utils::JoinAttributes($params);
 	
-	return "<script src=\"$src\" $attribs></script>";
+	return "<script src=\"$src\"$attribs></script>";
 }
