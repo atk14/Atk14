@@ -90,5 +90,5 @@ function smarty_function_javascript_script_tag($params,$template){
 
 	$attribs = Atk14Utils::JoinAttributes($params);
 	
-	return "<script src=\"$src\" type=\"text/javascript\"$attribs></script>";
+	return "<script src=\"$src\" $attribs></script>";
 }
