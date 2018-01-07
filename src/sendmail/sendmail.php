@@ -8,7 +8,7 @@ defined("SENDMAIL_USE_TESTING_ADDRESS_TO") || define("SENDMAIL_USE_TESTING_ADDRE
 defined("SENDMAIL_DO_NOT_SEND_MAILS") || define("SENDMAIL_DO_NOT_SEND_MAILS",((defined("DEVELOPMENT") && DEVELOPMENT) || (defined("TEST") && TEST)));
 defined("SENDMAIL_EMPTY_TO_REPLACE") || define("SENDMAIL_EMPTY_TO_REPLACE","");
 defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING") || define("SENDMAIL_DEFAULT_TRANSFER_ENCODING","8bit"); // "8bit" or "quoted-printable"
-defined("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS") || define("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS",""); // "-fbounce@domain.com"
+defined("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS") || define("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS",""); // e.g. to define a bounce address: "-fbounce@domain.com"
 
 /**
 * Sends an e-mail.
