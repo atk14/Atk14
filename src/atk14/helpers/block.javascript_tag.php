@@ -24,7 +24,7 @@
 function smarty_block_javascript_tag($params, $content, $template, &$repeat){
 	if(!$content){ return; }
 	$out = array();
-	$out[] = '<script type="text/javascript">';
+	$out[] = '<script>';
 	$out[] = '//<![CDATA[';
 	$out[] = $content;
 	$out[] = '//]]>';
