@@ -383,6 +383,8 @@ class Atk14Mailer{
 
 			$this->_after_render();
 		}
+
+		$this->_after_filter();
 	}
 
 	protected function _get_smarty($options = array()){
@@ -507,6 +509,13 @@ class Atk14Mailer{
 	 * @access protected
 	 */
 	function _after_render(){ }
+
+	/**
+	 * This method is called after every action in ApplicationMailer
+	 *
+	 * @access protected
+	 */
+	function _after_filter(){ }
 
 	/**
 	 * Calls sendmail function and pass it all important fields to construct the message and send it.
