@@ -10,6 +10,15 @@ class CheckboxSelectMultiple extends SelectMultiple
 {
 	var $input_type = "select";
 
+	function __construct($options = array())
+	{
+		$options += array(
+			"escape_labels" => true
+		);
+		$this->escape_labels = $options["escape_labels"];
+		parent::__construct($options);
+	}
+
 	function my_check_test($value)
 	{
 		return in_array($value, $this->_my_str_values);
@@ -41,7 +50,7 @@ class CheckboxSelectMultiple extends SelectMultiple
 			$cb = new CheckboxInput(array('attrs'=>$final_attrs, 'check_test'=>array($this, 'my_check_test')));
 			$option_value = (string)$option_value;
 			$rendered_cb = $cb->render("{$name}[]", $option_value);
-			$output[] = '<li class="checkbox"><label>'.$rendered_cb.' '.forms_htmlspecialchars($option_label).'</label></li>';
+			$output[] = '<li class="checkbox"><label>'.$rendered_cb.' '.($this->escape_labels ? forms_htmlspecialchars($option_label) : $option_label).'</label></li>';
 			$i++;
 		}
 		$output[] = '</ul>';
