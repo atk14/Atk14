@@ -13,6 +13,10 @@ class TcClient extends TcBase{
 			"Content-Type" => "text/html; charset=UTF-8",
 			"X-Test-Header" => "Yep"
 		),$client->getResponseHeaders());
+		$this->assertEquals(array(
+			"content-type" => "text/html; charset=UTF-8",
+			"x-test-header" => "Yep"
+		),$client->getResponseHeaders(array("lowerize_keys" => true)));
 
 		$controller = $client->post("testing/test",array("id" => "123", "format" => "xml"));
 		$this->assertEquals(200,$client->getStatusCode());

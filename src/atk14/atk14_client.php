@@ -567,7 +567,11 @@ class Atk14Client{
 	 *
 	 * @return array
 	 */
-	function getResponseHeaders(){
+	function getResponseHeaders($options = array()){
+		$options += array(
+			"lowerize_keys" => false,
+		);
+
 		$response = $this->controller->response;
 		$content_type = $response->getContentType();
 		$charset = $response->getContentCharset();
@@ -578,6 +582,15 @@ class Atk14Client{
 		foreach($response->getHeaders() as $key => $value){
 			$headers[$key] = $value;
 		}
+
+		if($options["lowerize_keys"]){
+			$_headers = array();
+			foreach($headers as $key => $value){
+				$_headers[strtolower($key)] = $value;
+			}
+			$headers = $_headers;
+		}
+
 		return $headers;
 	}
 
