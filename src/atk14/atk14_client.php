@@ -554,10 +554,31 @@ class Atk14Client{
 	/**
 	 * Returns response headers
 	 *
+	 * The header Content-Type is included.
+	 *
+	 * <code>
+	 *	print_r($client->getResponseHeaders());
+	 *	Array
+	 *	( 
+	 *	    [Content-Type] => text/html; charset=UTF-8
+	 *	    [Cache-Control] => private, max-age=0, must-revalidate
+	 *	)
+	 * </code>
+	 *
 	 * @return array
 	 */
 	function getResponseHeaders(){
-		return $this->controller->response->getHeaders();
+		$response = $this->controller->response;
+		$content_type = $response->getContentType();
+		$charset = $response->getContentCharset();
+		if($charset){
+			$content_type .= "; charset=$charset";
+		}
+		$headers = array("Content-Type" => $content_type);
+		foreach($response->getHeaders() as $key => $value){
+			$headers[$key] = $value;
+		}
+		return $headers;
 	}
 
 	/**

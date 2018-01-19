@@ -10,6 +10,7 @@ class TcClient extends TcBase{
 		$this->assertEquals(true,$controller->request->get());
 		$this->assertEquals(false,$controller->request->post());
 		$this->assertEquals(array(
+			"Content-Type" => "text/html; charset=UTF-8",
 			"X-Test-Header" => "Yep"
 		),$client->getResponseHeaders());
 

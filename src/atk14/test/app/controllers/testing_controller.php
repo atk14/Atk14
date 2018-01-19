@@ -1,7 +1,9 @@
 <?php
 class TestingController extends ApplicationController{
+
 	function test(){
 		$this->tpl_data["value_assigned_from_action_method"] = "there_is_a_value_assigned_from_action_method";
+		$this->response->setContentCharset("UTF-8");
 		$this->response->setHeader("X-Test-Header","Yep");
 	}
 
