@@ -9,6 +9,9 @@ class TcClient extends TcBase{
 		$this->assertEquals("xml",$controller->params->g("format"));
 		$this->assertEquals(true,$controller->request->get());
 		$this->assertEquals(false,$controller->request->post());
+		$this->assertEquals(array(
+			"X-Test-Header" => "Yep"
+		),$client->getResponseHeaders());
 
 		$controller = $client->post("testing/test",array("id" => "123", "format" => "xml"));
 		$this->assertEquals(200,$client->getStatusCode());

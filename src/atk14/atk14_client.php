@@ -552,6 +552,15 @@ class Atk14Client{
 	}
 
 	/**
+	 * Returns response headers
+	 *
+	 * @return array
+	 */
+	function getResponseHeaders(){
+		return $this->controller->response->getHeaders();
+	}
+
+	/**
 	 * Returns redirection of the request
 	 *
 	 * @return string content of Location response header.
