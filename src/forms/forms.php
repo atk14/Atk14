@@ -509,6 +509,12 @@ class Form implements ArrayAccess
 		}
 		if (is_array($options['initial'])) {
 			$this->initial = $options['initial'];
+			foreach($options["initial"] as $k => $v){
+				$k = (string)$k;
+				if(isset($this->fields[$k])){
+					$this->fields[$k]->initial = $v;
+				}
+			}
 		}
 	}
 
