@@ -5,6 +5,7 @@ require_once("app/controllers/multiple_before_filters_controller.php");
 require_once("app/controllers/multiple_after_filters_controller.php");
 
 class TcController extends TcBase{
+
 	function test_multiple_before_filters(){
 		$c = new MultipleBeforeFiltersController();
 		$c->atk14__initialize(array());
@@ -303,5 +304,25 @@ class TcController extends TcBase{
 		// rendering is disabled in the _before_filter
 		$client->get("main/hello_from_venus");
 		$this->assertEquals("Hello from Venus!",$client->getContent());
+	}
+
+	function test_execute_action(){
+		$client = &$this->client;
+
+		$controller = $client->get("execute_actions/action_one");
+		$this->assertEquals("action_one executed",$client->getContent());
+		$this->assertEquals("ActionOneForm",get_class($controller->form));
+
+		$controller = $client->get("execute_actions/action_two");
+		$this->assertEquals("action_two executed",$client->getContent());
+		$this->assertEquals("ActionTwoForm",get_class($controller->form));
+
+		$controller = $client->get("execute_actions/action_one",array("execute_action_two" => "1"));
+		$this->assertEquals("action_two executed",$client->getContent());
+		$this->assertEquals("ActionTwoForm",get_class($controller->form));
+
+		$controller = $client->get("execute_actions/action_one",array("execute_action_three" => "1"));
+		$this->assertEquals("action_three executed",$client->getContent());
+		$this->assertEquals("ApplicationForm",get_class($controller->form));
 	}
 }

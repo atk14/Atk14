@@ -393,7 +393,7 @@ class Atk14Controller{
 	 * @access private
 	 *
 	 */
-	function atk14__ExecuteAction($action){ return $this->_execute_action($action,array("force_to_set_template_name" => false)); }
+	function atk14__ExecuteAction($action){ return $this->_execute_action($action,array("force_to_set_template_name" => false, "force_to_initialize_form" => false)); }
 
 	/**
 	 * @access private
@@ -522,6 +522,7 @@ class Atk14Controller{
 
 		$options = array_merge(array(
 			"force_to_set_template_name" => true,
+			"force_to_initialize_form" => true,
 		),$options);
 
 		$this->action = $action;
@@ -532,8 +533,9 @@ class Atk14Controller{
 		$cache = null;
 		$this->_atk14_read_action_cache($cache);
 
-		// pokud nenajdeme formular urceny presne pro tuto akci, pokusime se najit ApplicationForm a nakonec Atk14Form
-		if(!isset($this->form)){ // pokud uz mame form z _before_filter, tak ho prece nezahodime - TODO: jsem zarazeny z toho, ze se _before_filter() pousti drive
+		// If we don't find a form designated precisely to this action, we try to find ApplicationForm or Atk14Form at last.
+		// Notice: A form can be initialized in _before_filter().
+		if($options["force_to_initialize_form"] || !isset($this->form)){
 			($this->form = $this->_get_form()) ||
 			($this->form = Atk14Form::GetInstanceByController($this)) ||
 			($this->form = Atk14Form::GetDefaultForm($this));
