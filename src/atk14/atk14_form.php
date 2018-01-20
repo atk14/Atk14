@@ -733,6 +733,13 @@ class Atk14Form extends Form
 
 		if(!isset($this->atk14_initial_values)){ $this->atk14_initial_values = array(); }
 		$this->atk14_initial_values = array_merge($this->atk14_initial_values,$key_or_values);
+
+		foreach($key_or_values as $k => $v){
+			$k = (string)$k;
+			if(isset($this->fields[$k])){
+				$this->fields[$k]->initial = $v;
+			}
+		}
 	}
 
 

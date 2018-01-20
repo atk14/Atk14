@@ -2,6 +2,7 @@
 require_once(dirname(__FILE__)."/app/forms/test_form.php");
 require_once(dirname(__FILE__)."/app/forms/pre_and_post_set_up_form.php");
 class TcForm extends TcBase{
+
 	function test_instantiating(){
 		global $ATK14_GLOBAL;
 		require_once(dirname(__FILE__)."/app/forms/application_form.php");
@@ -129,11 +130,22 @@ class TcForm extends TcBase{
 		$form->add_field("firstname",new CharField());
 		$form->add_field("lastname",new CharField(array("initial" => "Smith")));
 
+		$this->assertEquals("",$form->fields["firstname"]->initial);
+		$this->assertEquals("Smith",$form->fields["lastname"]->initial);
+
 		$this->assertEquals(array("firstname" => null, "lastname" => "Smith"),$form->get_initial());
 
 		$form->set_initial("firstname","John");
 
 		$this->assertEquals(array("firstname" => "John", "lastname" => "Smith"),$form->get_initial());
+
+		$this->assertEquals("John",$form->fields["firstname"]->initial);
+		$this->assertEquals("Smith",$form->fields["lastname"]->initial);
+
+		$form->validate(array());
+
+		$this->assertEquals("John",$form->fields["firstname"]->initial);
+		$this->assertEquals("Smith",$form->fields["lastname"]->initial);
 	}
 
 	function test_csrf_tokens(){
