@@ -242,9 +242,9 @@ msgid "Enter a valid IP address."
 msgstr ".Adjon meg egy érvényes IP-címet."
 
 #: ../src/forms/fields/multiple_choice_field.php:21
-msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgid "Select a valid choice. %value% is not one of the available choices."
 msgstr ""
-"Válasszon egy érvényes értéket. % (value) nem egy rendelkezésre álló "
+"Válasszon egy érvényes értéket. %value% nem egy rendelkezésre álló "
 "választási lehetőség."
 
 #: ../src/forms/fields/multiple_choice_field.php:22

@@ -246,9 +246,9 @@ msgid "Enter a valid IP address."
 msgstr "Legen Sie eine gültige IP-Adresse ein."
 
 #: ../src/forms/fields/multiple_choice_field.php:21
-msgid "Select a valid choice. %(value)s is not one of the available choices."
+msgid "Select a valid choice. %value% is not one of the available choices."
 msgstr ""
-"Wählen Sie einen gültigen Wert. % (Wert) ist keine der angebotenen Optionen."
+"Wählen Sie einen gültigen Wert. %value% ist keine der angebotenen Optionen."
 
 #: ../src/forms/fields/multiple_choice_field.php:22
 msgid "Enter a list of values."

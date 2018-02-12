@@ -27,7 +27,7 @@ class MultipleChoiceField extends ChoiceField {
 		$this->hidden_widget = new MultipleHiddenInput(); // we need this in order to call $bound_field->as_hidden();
 		parent::__construct($options);
 		$this->update_messages(array(
-			'invalid_choice' => _('Select a valid choice. %(value)s is not one of the available choices.'),
+			'invalid_choice' => _('Select a valid choice. %value% is not one of the available choices.'),
 			'invalid_list' => _('Enter a list of values.'),
 			'required' => _('Please, choose the right options.'),
 		));
@@ -63,7 +63,7 @@ class MultipleChoiceField extends ChoiceField {
 
 		foreach ($new_value as $val) {
 			if (!in_array($val, $valid_values)) {
-				return array(EasyReplace($this->messages['invalid_choice'], array('%(value)s'=> h($val))), null);
+				return array(EasyReplace($this->messages['invalid_choice'], array('%value%'=> h($val))), null);
 			}
 		}
 		return array(null, $new_value);
