@@ -272,6 +272,7 @@ class TcString4 extends TcBase{
 			"no" => false,
 			"0" => false,
 			"n" => false,
+			"" => false,
 
 			"on" => true,
 			"y" => true,

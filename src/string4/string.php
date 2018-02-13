@@ -699,7 +699,7 @@ class String{
 	 * Converts string to a boolean value
 	 */
 	function toBoolean(){
-		if(in_array($this->lower(),array('false','off','no','n','f'))){
+		if(in_array($this->lower(),array('','false','off','no','n','f'))){
 			return false;
 		}
 		return (bool)$this->toString();
