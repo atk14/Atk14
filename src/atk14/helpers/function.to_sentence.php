@@ -2,7 +2,7 @@
 /**
  * Converts an array to a sentence.
  * 
- * {to_sentence var=$singers words_connector="," last_word_connector="and"} -> George Michael, Boy George and Jimmy Somerville
+ * {to_sentence var=$singers words_connector=", " last_word_connector=" and "} -> George Michael, Boy George and Jimmy Somerville
  * 
  * There is also smarty`s modifier with the same name.
  */
