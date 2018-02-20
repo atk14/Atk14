@@ -157,11 +157,11 @@ class TcFinder extends TcBase{
 		// a finder with a special query with more fields in the select statement
 		$finder = TestTable::Finder(array("query" => "SELECT id, title, an_integer FROM test_table", "order_by" => "id"));
 		$this->assertEquals($finder->getRecordsCount(), 3);
-		$expect = [
+		$expect = array(
 			10 => array('id' => '10', 'title' => 'Apples', 'an_integer' => '10'),
 			20 => array('id' => '20', 'title' => 'and', 'an_integer' => '15'),
 			30 => array('id' => '30', 'title' => 'Oranges', 'an_integer' => '30')
-		];
+		);
 
 		foreach($finder as $r) {
 			$this->assertEquals($finder->getQueryData($r), $expect[$r->getId()]);
