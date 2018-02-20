@@ -5,6 +5,7 @@ require("../../dbmole/pgmole.php");
 require("../../dbmole/mysqlmole.php");
 require("../../string4/load.php");
 require("../../files/load.php");
+require("../../functions.php");
 require("../../class_autoload/load.php");
 
 require("../load.php");
