@@ -34,6 +34,8 @@
  */
 class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 
+	protected $associative = null;
+
 	/**
 	 * Constructor
 	 *
@@ -94,9 +96,56 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	 */
 	function getRecordIds() {
 		if(!isset($this->_RecordIds)){
-			$this->_RecordIds = $this->_dbmole->selectIntoArray($this->_Query,$this->_BindAr,$this->_QueryOptions);
+			$this->_RecordData = $this->_dbmole->selectRows($this->_Query,$this->_BindAr,$this->_QueryOptions);
+			if( $this->_RecordData ) {
+				$this->_RecordKey = key(current($this->_RecordData));
+				$this->_RecordIds = array_column($this->_RecordData, $this->_RecordKey);
+			} else {
+				$this->_RecordIds = array();
+			}
 		}
 		return $this->_RecordIds;
+	}
+
+	/**
+	 * Returns other data selected by query given to Finder to select ids.
+	 *
+	 * First field of the query should return ids of selected records.
+	 *
+	 * @return array or mixed: field or all fields associated with current record, or with
+	 *                         all records if no params are given.
+	 *
+	 * ```
+	 * $finder = User::Finder(["query" => "SELECT id, some, other, data FROM users"]);
+	 *
+	 * $data = $finder->getQueryData(); // all the query data
+	 *
+	 * foreach($finder as $user) {
+	 *     echo $finder->getQueryData($user,'some');   // just one field
+	 *     echo $finder->getQueryData($user)['other']; // array of data of given users
+	 *     echo $finder->getQueryData()[$user->getId()]['data'];  // whole dataset (associative array)
+	 * }
+	 * ```
+	 */
+	function getQueryData($id = null, $field = null) {
+		$this->getRecordIds();
+		if(!$this->associative) {
+			foreach($this->_RecordData as $row) {
+				$aid = $row[$this->_RecordKey];
+				$this->associative[$aid] = $row;
+			}
+		}
+		if($id !== null) {
+			if(is_object($id)) {
+				$id = $id->getId();
+			}
+			if($field) {
+				return $this->associative[$id][$field];
+			}
+			return $this->associative[$id];
+		} else {
+			return $this->associative;
+		}
 	}
 
 	/**

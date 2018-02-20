@@ -1,5 +1,6 @@
 <?php
 class TcFinder extends TcBase{
+
 	function test(){
 		$apples = TestTable::CreateNewRecord(array(
 			"title" => "Apples",
@@ -124,5 +125,49 @@ class TcFinder extends TcBase{
 		$this->assertEquals(true,$finder->atEnd());
 		$this->assertEquals(null,$finder->getPrevOffset());
 		$this->assertEquals(null,$finder->getNextOffset());
+	}
+
+	function test_getQueryData() {
+		$apples = TestTable::CreateNewRecord(array(
+			"id" => 10,
+			"title" => "Apples",
+			"an_integer" => 10,
+		));
+
+		$and = TestTable::CreateNewRecord(array(
+			"id" => 20,
+			"title" => "and",
+			"an_integer" => 15,
+		));
+
+		$oranges = TestTable::CreateNewRecord(array(
+			"id" => 30,
+			"title" => "Oranges",
+			"an_integer" => 30,
+		));
+
+		// an usual finder
+		$finder = TestTable::Finder(array("order_by" => "id"));
+		$this->assertEquals(array(
+			10 => array("id" => 10),
+			20 => array("id" => 20),
+			30 => array("id" => 30),
+		),$finder->getQueryData());
+
+		// a finder with a special query with more fields in the select statement
+		$finder = TestTable::Finder(array("query" => "SELECT id, title, an_integer FROM test_table", "order_by" => "id"));
+		$this->assertEquals($finder->getRecordsCount(), 3);
+		$expect = [
+			10 => array('id' => '10', 'title' => 'Apples', 'an_integer' => '10'),
+			20 => array('id' => '20', 'title' => 'and', 'an_integer' => '15'),
+			30 => array('id' => '30', 'title' => 'Oranges', 'an_integer' => '30')
+		];
+
+		foreach($finder as $r) {
+			$this->assertEquals($finder->getQueryData($r), $expect[$r->getId()]);
+			$this->assertEquals($finder->getQueryData($r->getId()), $expect[$r->getId()]);
+			$this->assertEquals($finder->getQueryData($r,'an_integer'), $expect[$r->getId()]['an_integer']);
+		}
+		$this->assertEquals($finder->getQueryData(), $expect);
 	}
 }
