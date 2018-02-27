@@ -1155,6 +1155,8 @@ class Atk14Controller{
 			$options["status"] = 303;
 		}
 		$this->response->setLocation($url,$options);
+
+		return $url;
 	}
 
 	/**
@@ -1180,20 +1182,25 @@ class Atk14Controller{
 	}
 
 
+	/**
+	 *
+	 * Typical usage in _application_before_filter()
+	 *
+	 * ```
+	 *	if(!$this->request->ssl()){
+	 *		$this->_redirect_to_ssl();
+	 *		return;
+	 *	} 
+	 * ```
+	 */
 	function _redirect_to_ssl(){
-		if($this->request->get() && !$this->request->sslActive()){
-			$this->_redirect_to("https://".$this->request->getHTTPHost().$this->request->getRequestURI());
-			return true;
-		}
-		return false;
+		$this->_redirect_to($url = "https://".$this->request->getHTTPHost().$this->request->getRequestURI());
+		return $url;
 	}
 
 	function _redirect_to_no_ssl(){
-		if($this->request->get() && $this->request->sslActive()){
-			$this->_redirect_to("http://".$this->request->getHTTPHost().$this->request->getRequestURI());
-			return true;
-		}
-		return false;	
+		$this->_redirect_to($url = "http://".$this->request->getHTTPHost().$this->request->getRequestURI());
+		return $url;
 	}
 
 	/**

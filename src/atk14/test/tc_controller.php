@@ -105,6 +105,20 @@ class TcController extends TcBase{
 		$this->assertEquals("/en/articles/",$c->_link_to(array("controller" => "articles", "namespace" => "")));
 	}
 
+	function test_redirect_to_ssl(){
+		$c = new ApplicationController();
+
+		$request = new HTTPRequest();
+		$request->setHttpHost("example.com");
+		$request->setRequestUri("/en/articles/detai/?id=123");
+
+		$c->request = $request;
+		$c->response = new HTTPResponse();
+
+		$this->assertEquals("https://example.com/en/articles/detai/?id=123",$c->_redirect_to_ssl());
+		$this->assertEquals("http://example.com/en/articles/detai/?id=123",$c->_redirect_to_no_ssl());
+	}
+
 	function test_layout(){
 		$controller = $this->client->get("testing/default_layout");
 
