@@ -1183,8 +1183,9 @@ class Atk14Controller{
 
 
 	/**
+	 * Provides redirection to SSL
 	 *
-	 * Typical usage in _application_before_filter()
+	 * Typical usage in _before_filter() (or yet better in _application_before_filter())
 	 *
 	 * ```
 	 *	if(!$this->request->ssl()){
@@ -1198,6 +1199,18 @@ class Atk14Controller{
 		return $url;
 	}
 
+	/**
+	 * Provides redirection to the unencrypted communication
+	 *
+	 * Usage in _before_filter() (or yet better in _application_before_filter())
+	 *
+	 * ```
+	 *	if($this->request->ssl()){
+	 *		$this->_redirect_to_no_ssl();
+	 *		return;
+	 *	} 
+	 * ```
+	 */
 	function _redirect_to_no_ssl(){
 		$this->_redirect_to($url = "http://".$this->request->getHTTPHost().$this->request->getRequestURI());
 		return $url;
