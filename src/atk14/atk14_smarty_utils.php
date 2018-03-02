@@ -28,7 +28,9 @@ function atk14_smarty_prefilter($tpl_source, $smarty = null){
 	$tpl_source = preg_replace("/({(a|a_remote|a_destroy|form|form_remote)\\s+[^}]*\\b_data)-/","\\1___",$tpl_source);
 
 	// {!$title} -> {$title nofilter}
-	$tpl_source = preg_replace('/\{!([^}]+)\}/','{\1 nofilter}',$tpl_source);
+	// {!$title|modifier:"param"} -> {$title|modifier:"param" nofilter}
+	// {!$title|modifier:{$param}} -> {$title|modifier:{$param} nofilter}
+	$tpl_source = preg_replace('/\{!([^{}]+(\{[^}]+\}|[^{}]+)*)\}/','{\1 nofilter}',$tpl_source);
 
 	return $tpl_source;
 }
