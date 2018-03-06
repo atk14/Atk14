@@ -89,10 +89,10 @@ class String{
 			$length = 32;
 		}
 
-		$options = array_merge(array(
+		$options += array(
 			'extra_chars' => '',
 			'length' => $length,
-		),$options);
+		);
 
 		srand ((double) microtime() * 1000000);
 		$chars = array('a','i','o','s','t','u','v','3','4','5','8','B','C','D','E','F','7','G','H','I','J','K','L','M','N','O','j','k','l','6','P','Q','W','b','c','d','e','f','g','h','p','q','r','x','y','z','0','1','S','T','U','w','2','9','A','R','V','m','n');
@@ -489,9 +489,9 @@ class String{
 	 * @return String
 	 */
 	function camelize($options = array()){
-		$options = array_merge(array(
+		$options += array(
 			"lower" => false,
-		),$options);
+		);
 		$out = $this->_copy();
 		$s = &$out->_String;
 		$s = preg_replace_callback("/_([a-z0-9])/i",function($matches){ return strtoupper($matches[1]); },$this->_String);
@@ -641,10 +641,10 @@ class String{
 	 * @return string
 	 */
 	function truncate($length,$options = array()){
-		$options = array_merge(array(
+		$options += array(
 			"omission" => "...",
 			"separator" => "",
-		),$options);
+		);
 
 		$text = $this->_copy();
 		$omission = new self($options["omission"]);
