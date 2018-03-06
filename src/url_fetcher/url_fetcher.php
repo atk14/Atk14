@@ -7,7 +7,6 @@
  * @filesource
  */
 
-define("URL_FETCHER_VERSION","1.0");
 /**
  * UrlFetcher class provides methods to make http requests
  *
@@ -58,6 +57,9 @@ define("URL_FETCHER_VERSION","1.0");
  * @filesource
  */
 class UrlFetcher {
+
+	const VERSION = "1.1.1";
+
 	/**
 	 * Authentication type
 	 *
@@ -172,7 +174,7 @@ class UrlFetcher {
 		$options = array_merge(array(
 			"additional_headers" => array(),
 			"max_redirections" => $this->_MaxRedirections,
-			"user_agent" => "UrlFetcher ".URL_FETCHER_VERSION // "UrlFetcher 1.0"
+			"user_agent" => "UrlFetcher/".self::VERSION
 		),$options);
 
 		if(strlen($url)>0){
