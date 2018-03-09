@@ -49,6 +49,10 @@ class HTTPXFile extends HTTPUploadedFile{
 		}
 	}
 
+	function __destruct(){
+		$this->_autoCleanUp();
+	}
+
 	/**
 	 * Initialize instance with uploaded file
 	 *
@@ -234,4 +238,12 @@ class HTTPXFile extends HTTPUploadedFile{
 		$this->_TmpFileName = TEMP."/http_x_file_".uniqid().rand(0,9999);
 		Files::WriteToFile($this->_TmpFileName,$content,$err,$err_str);
 	}
+
+	private function _autoCleanUp(){
+		if($this->_TestingMode){ return; } // no auto file deletion in the testing mode
+		if(!$this->_FileMoved && ($tmp_file = $this->getTmpFileName()) && file_exists($tmp_file)){
+			Files::Unlink($tmp_file,$err,$err_str);
+		}
+	}
+
 }

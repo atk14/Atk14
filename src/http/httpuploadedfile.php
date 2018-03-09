@@ -45,6 +45,18 @@ class HTTPUploadedFile{
 	 */
 	var $_MimeType = null;
 
+	/**
+	 * @var boolean
+	 * @access private
+	 */
+	var $_TestingMode = false;
+
+	/**
+	 * @var boolean
+	 * @access private
+	 */
+	var $_FileMoved = false;
+
 	function __construct(){
 
 	}
@@ -94,6 +106,7 @@ class HTTPUploadedFile{
 		$out->_TmpFileName = $FILE["tmp_name"];
 		$out->_Name = $name;
 		$out->_FileName = $FILE["name"];
+		$out->_TestingMode = $options["testing_mode"];
 		return $out;
 	}
 
@@ -195,6 +208,7 @@ class HTTPUploadedFile{
 			$new_filename = "$new_filename/".$this->getFileName();
 		}
 		if(Files::MoveFile($this->getTmpFileName(),$new_filename,$error,$error_str)==1){
+			$this->_FileMoved = true;
 			$this->_TmpFileName = $new_filename;
 			return true;
 		}
@@ -234,6 +248,7 @@ class HTTPUploadedFile{
 	 *
 	 */
 	function cleanUp(){
+		if($this->_TestingMode && !$this->_FileMoved){ return; } // no file deletion in the testing mode
 		if($tmp_file = $this->getTmpFileName()){
 			Files::Unlink($tmp_file,$err,$err_str);
 		}

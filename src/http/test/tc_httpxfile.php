@@ -1,5 +1,6 @@
 <?php
 class tc_httpxfile extends tc_base{
+
 	function test(){
 		global $HTTP_REQUEST;
 		$HTTP_REQUEST = new HTTPRequest(); // reset
