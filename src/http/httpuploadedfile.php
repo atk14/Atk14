@@ -221,16 +221,14 @@ class HTTPUploadedFile{
 	 * You can specify custom filename, or method generates unique filename.
 	 *
 	 * <code>
-	 * $file->moveToTemp();
-	 * $file->moveToTemp("my_image.jpg");
-	 * $file->moveToTemp("/path/to/a/disrectory/");
-	 *
-	 * echo $file->getTmpFileName(); // current temporary filename
+	 * $filename = $file->moveToTemp();
+	 * $filename = $file->moveToTemp("my_image.jpg");
+	 * $filename = $file->moveToTemp("/path/to/a/disrectory/");
 	 * </code>
 	 *
 	 * @param string $filename custom filename
-	 * @uses @moveToTemp()
-	 * @return bool true, false when error occurs
+	 * @uses @moveTo()
+	 * @return mixed, (string) filename or false when error occurred
 	 */
 	function moveToTemp($filename = ""){
 		if(!$filename){
@@ -240,15 +238,20 @@ class HTTPUploadedFile{
 		}else{
 			$filename = TEMP."/".$filename;
 		}
-		return $this->moveTo($filename);
+		$stat = $this->moveTo($filename);
+		if($stat){
+			return $filename;
+		}
+		return false;
 	}
 
 	/**
-	 * Removes temporary file when some exists.
+	 * Removes temporary file when some exists
 	 *
+	 * The removal is not executed after moving of the uploaded file (see moveToTemp method).
 	 */
 	function cleanUp(){
-		if($this->_TestingMode && !$this->_FileMoved){ return; } // no file deletion in the testing mode
+		if($this->_FileMoved){ return; } // no file deletion after its moving
 		if($tmp_file = $this->getTmpFileName()){
 			Files::Unlink($tmp_file,$err,$err_str);
 		}

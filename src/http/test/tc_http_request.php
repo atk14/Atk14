@@ -340,9 +340,10 @@ class tc_http_request extends tc_base{
 			"content_type" => "text/plain; charset=UTF-8"
 		));
 
-		$ar = miniYAML::Load($uf->getContent());
-		$this->assertEquals("text/plain",$ar["content-type"]);
-		$this->assertEquals("UTF-8",$ar["content-charset"]);
+		$content = $uf->getContent();
+
+		$this->assertContains("content-type: text/plain",$content);
+		$this->assertContains("content-charset: UTF-8",$content);
 	}
 
 	function test_get_user_agent(){

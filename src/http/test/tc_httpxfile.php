@@ -4,7 +4,6 @@ class tc_httpxfile extends tc_base{
 	function test(){
 		global $HTTP_REQUEST;
 		$HTTP_REQUEST = new HTTPRequest(); // reset
-
 		$request = $HTTP_REQUEST;
 
 		$this->assertNull(HTTPXFile::GetInstance());
@@ -40,6 +39,43 @@ class tc_httpxfile extends tc_base{
 		$this->assertEquals(false,$file->chunkedUpload());
 		$this->assertEquals(true,$file->firstChunk());
 		$this->assertEquals(true,$file->lastChunk());
+	}
+
+	function test__destruct(){
+		global $HTTP_REQUEST;
+		$HTTP_REQUEST = new HTTPRequest(); // reset
+		$request = $HTTP_REQUEST;
+		$request->setMethod("post");
+		$request->setHeader("Content-Disposition",'attachment; filename="condor.jpg"');
+
+		$this->assertNotNull($file = HTTPXFile::GetInstance());
+
+		$tmp_filename = $file->getTmpFilename();
+		$this->assertTrue(file_exists($tmp_filename));
+
+		unset($file);
+
+		$this->assertFalse(file_exists($tmp_filename)); // the temporary file was automatically deleted in __destruct()
+
+		//
+
+		$this->assertNotNull($file2 = HTTPXFile::GetInstance());
+
+		$tmp_filename2 = $file2->getTmpFilename();
+		$this->assertTrue(file_exists($tmp_filename2));
+
+		$this->assertNotEquals($tmp_filename,$tmp_filename2);
+
+		$tmp_filename3 = $file2->moveToTemp();
+
+		$this->assertNotEquals($tmp_filename2,$tmp_filename3);
+
+		$this->assertFalse(file_exists($tmp_filename2));
+		$this->assertTrue(file_exists($tmp_filename3));
+
+		unset($file2);
+
+		$this->assertTrue(file_exists($tmp_filename3)); // the moved temporary file was NOT automatically deleted in __destruct()
 	}
 
 	function test_getToken(){

@@ -50,7 +50,29 @@ class tc_httpuploadedfile extends tc_base{
 		$this->assertNull($pdf->getImageHeight());
 	}
 
-	function test_move_to_temp(){
+	function test_cleanUp(){
+		$this->_init_FILES();
+
+		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
+		$hlava = $files[0];
+		$dousi = $files[1];
+
+		$this->assertTrue(file_exists($hlava->getTmpFilename()));
+		$this->assertTrue(file_exists($dousi->getTmpFilename()));
+
+		$hlava->moveToTemp(); // Only $hlava is moved!
+
+		$this->assertTrue(file_exists($hlava->getTmpFilename()));
+		$this->assertTrue(file_exists($dousi->getTmpFilename()));
+
+		$hlava->cleanUp();
+		$dousi->cleanUp();
+
+		$this->assertTrue(file_exists($hlava->getTmpFilename()));
+		$this->assertFalse(file_exists($dousi->getTmpFilename()));
+	}
+
+	function test_moveToTemp(){
 		$this->_init_FILES();
 
 		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
@@ -89,7 +111,7 @@ class tc_httpuploadedfile extends tc_base{
 		//
 
 		$hlava->cleanUp();
-		$this->assertFalse(file_exists($tmp_name));
+		$this->assertTrue(file_exists($tmp_name));
 	}
 
 	function test__sanitizeFileName(){
