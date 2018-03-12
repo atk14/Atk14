@@ -38,10 +38,12 @@ function smarty_function_javascript_script_tag($params,$template){
 	$params += array(
 		"file" => "script.css",
 		"hide_when_file_not_found" => false,
+		"with_hostname" => false,
 	);
 
 	$file = $params["file"]; unset($params["file"]);
 	$hide_when_file_not_found = $params["hide_when_file_not_found"]; unset($params["hide_when_file_not_found"]);
+	$with_hostname = $params["with_hostname"]; unset($params["with_hostname"]);
 
 	// the real file is searched in the following places
 	$places = array(
@@ -81,6 +83,9 @@ function smarty_function_javascript_script_tag($params,$template){
 	}
 
 	$src = Atk14Utils::NormalizeUri($src);
+	if($with_hostname){
+		$src = Atk14Utils::AddHttpHostToUri($src);
+	}
 
 	if(file_exists($filename)){
 		$src .= "?".filemtime($filename);

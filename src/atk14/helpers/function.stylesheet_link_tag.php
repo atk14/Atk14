@@ -46,10 +46,12 @@ function smarty_function_stylesheet_link_tag($params,$template){
 	$params += array(
 		"file" => "style.css",
 		"hide_when_file_not_found" => false,
+		"with_hostname" => false,
 	);
 
 	$file = $params["file"]; unset($params["file"]);
 	$hide_when_file_not_found = $params["hide_when_file_not_found"]; unset($params["hide_when_file_not_found"]);
+	$with_hostname = $params["with_hostname"]; unset($params["with_hostname"]);
 
 	// the real file is searched in the following places
 	$places = array(
@@ -89,6 +91,9 @@ function smarty_function_stylesheet_link_tag($params,$template){
 	}
 
 	$href = Atk14Utils::NormalizeUri($href);
+	if($with_hostname){
+		$href = Atk14Utils::AddHttpHostToUri($href);
+	}
 
 	if(file_exists($filename)){
 		$href .= "?".filemtime($filename);

@@ -458,6 +458,26 @@ class Atk14Utils{
 	}
 
 	/**
+	 * Adds HTTP host to the given URI.
+	 *
+	 * ```
+	 * echo Atk14Utils::AddHttpHostToUri("/public/images/logo.png"); // "https://example.com/public/images/logo.png"
+	 * ```
+	 *
+	 * @param string $uri
+	 * @return string
+	 */
+	static function AddHttpHostToUri($uri){
+		global $HTTP_REQUEST;
+
+		$proto = $HTTP_REQUEST->ssl() ? "https"	: "http";
+		$host = $HTTP_REQUEST->getHttpHost();
+		$port = $HTTP_REQUEST->isServerOnStandardPort() ? "" : ":".$HTTP_REQUEST->getServerPort();
+
+		return "$proto://$host$port$uri";
+	}
+
+	/**
 	 * Normalizes filepath.
 	 *
 	 * Alias to {@see Atk14Utils::NormalizeUri() NormalizeUri()}
