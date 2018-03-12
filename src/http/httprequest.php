@@ -365,6 +365,19 @@ class HTTPRequest{
 	}
 
 	/**
+	 * Checks whether the server is running on standard port
+	 * 
+	 * @return bool
+	 */
+	function IsServerOnStandardPort(){
+		$port = $this->getServerPort();
+		if($this->ssl()){
+			return $this->getServerPort()==443;
+		}
+		return $this->getServerPort()==80;
+	}
+
+	/**
 	 * Gets HTTP host.
 	 *
 	 * Returns server name as given by user in request`s headers

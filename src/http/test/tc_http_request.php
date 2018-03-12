@@ -513,6 +513,39 @@ class tc_http_request extends tc_base{
 		$this->assertEquals(array("session" => "123456abcd", "lang" => "fi","check" => "1"),$request->getCookieVars());
 	}
 
+	function test_server_port(){
+		global $_SERVER;
+
+		unset($_SERVER["HTTPS"]);
+
+		$_SERVER["SERVER_PORT"] = 80;
+		$request = new HTTPRequest();
+
+		$this->assertEquals(80,$request->getServerPort());
+		$this->assertEquals(false,$request->ssl());
+		$this->assertEquals(true,$request->isServerOnStandardPort());
+
+		$_SERVER["SERVER_PORT"] = 81;
+		$request = new HTTPRequest();
+
+		$this->assertEquals(81,$request->getServerPort());
+		$this->assertEquals(false,$request->ssl());
+		$this->assertEquals(false,$request->isServerOnStandardPort());
+
+		$_SERVER["HTTPS"] = "on";
+
+		$_SERVER["SERVER_PORT"] = 443;
+		$request = new HTTPRequest();
+
+		$this->assertEquals(443,$request->getServerPort());
+		$this->assertEquals(true,$request->ssl());
+		$this->assertEquals(true,$request->isServerOnStandardPort());
+
+		$this->assertEquals(444,$request->getServerPort());
+		$this->assertEquals(true,$request->ssl());
+		$this->assertEquals(false,$request->isServerOnStandardPort());
+	}
+
 	/**
 	* Porovna dve asociativni pole bez ohledu na poradi klicu.
 	*/
