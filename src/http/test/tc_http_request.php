@@ -541,6 +541,9 @@ class tc_http_request extends tc_base{
 		$this->assertEquals(true,$request->ssl());
 		$this->assertEquals(true,$request->isServerOnStandardPort());
 
+		$_SERVER["SERVER_PORT"] = 444;
+		$request = new HTTPRequest();
+
 		$this->assertEquals(444,$request->getServerPort());
 		$this->assertEquals(true,$request->ssl());
 		$this->assertEquals(false,$request->isServerOnStandardPort());
