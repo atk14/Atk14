@@ -190,11 +190,7 @@ class Atk14Global{
 	 * @return string name of environment
 	 */
 	function getEnvironment(){
-		$out = "";
-		if(DEVELOPMENT){ $out =  "DEVELOPMENT"; }
-		if(PRODUCTION){ $out =  "PRODUCTION"; }
-		if(TEST){ $out =  "TEST"; }
-		return $out;
+		return Atk14Utils::DetermineEnvironment();
 	}
 
 	/**

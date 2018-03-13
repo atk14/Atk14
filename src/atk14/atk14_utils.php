@@ -15,7 +15,7 @@
 class Atk14Utils{
 
 	/**
-	 * Determines environment.
+	 * Determines environment, also initializes environment when needed.
 	 *
 	 * Determines environment and depending on that defines some constants.
 	 *
@@ -26,6 +26,11 @@ class Atk14Utils{
 	 * When even ATK14_ENV is not defined it defines these constants depending on REMOTE_ADDRESS.
 	 * For localhost or addresses in 192.168.0.0 and 172.16.0.0 or no IP(script is run from console) it defines environment as DEVELOPMENT, otherwise PRODUCTION.
 	 *
+	 * ```
+	 * echo Atk14Utils::DetermineEnvironment(); // "PRODUCTION", "DEVELOPMENT" or "TEST"
+	 * ```
+	 *
+	 * @return string
 	 */
 	static function DetermineEnvironment(){
 		global $HTTP_REQUEST;
@@ -36,11 +41,11 @@ class Atk14Utils{
 			defined("DEVELOPMENT") || define("DEVELOPMENT",false);
 			defined("PRODUCTION") || define("PRODUCTION",false);
 		}elseif(defined("DEVELOPMENT") && DEVELOPMENT){
-			define("TEST",false);
+			defined("TEST") || define("TEST",false);
 			defined("PRODUCTION") || define("PRODUCTION",false);	
 		}elseif(defined("PRODUCTION") && PRODUCTION){
-			define("DEVELOPMENT",false);
-			define("TEST",false);
+			defined("DEVELOPMENT") || define("DEVELOPMENT",false);
+			defined("TEST") || define("TEST",false);
 
 		// No environment constant was defined? Check out the ATK14_ENV environment variable...
 		}elseif(($atk14_env = strtoupper(getenv("ATK14_ENV")))=="TEST"){
@@ -64,6 +69,12 @@ class Atk14Utils{
 			define("PRODUCTION",!DEVELOPMENT);
 			define("TEST",false);
 		}
+
+		$out = "";
+		if(DEVELOPMENT){ $out =  "DEVELOPMENT"; }
+		if(PRODUCTION){ $out =  "PRODUCTION"; }
+		if(TEST){ $out =  "TEST"; }
+		return $out;
 	}
 
 	/**
