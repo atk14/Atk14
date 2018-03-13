@@ -561,9 +561,16 @@ class UrlFetcher {
 	/**
 	 * Returns filename
 	 *
+	 * It tries to extract a filename from the Content-Disposition header or from the current URL.
+	 *
 	 * @return string
 	 */
 	function getFilename(){
+		if($content_disposition = $this->getHeaderValue("Content-Disposition")){
+			if(preg_match('/filename="(.*?)"/',$content_disposition,$matches)){
+				return $matches[1];
+			}
+		}
 		if(preg_match("/([^\\/?]+)(\\?.*|)$/",$this->_Uri,$matches)){
 			return $matches[1];
 		}

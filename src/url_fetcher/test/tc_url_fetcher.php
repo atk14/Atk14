@@ -1,5 +1,6 @@
 <?php
 class tc_url_fetcher extends tc_base{
+
 	function test(){
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/dungeon-master.png");
 		$this->assertTrue($f->fetchContent());
@@ -22,6 +23,10 @@ class tc_url_fetcher extends tc_base{
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/dungeon-master.png?not_important_parameter=1");
 		$this->assertTrue($f->found());
 		$this->assertEquals("dungeon-master.png",$f->getFilename());
+
+		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/content_disposition.php");
+		$this->assertTrue($f->found());
+		$this->assertEquals("sample.dat",$f->getFilename());
 
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/non-existing");
 		//$this->assertFalse($f->fetchContent()); // nemusi byt volano!
