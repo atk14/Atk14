@@ -41,66 +41,24 @@
 function smarty_function_stylesheet_link_tag($params,$template){
 	global $ATK14_GLOBAL;
 
-	// TODO: Refactore common parts with {javascript_script_tag}
-
 	$params += array(
 		"file" => "style.css",
-		"hide_when_file_not_found" => false,
-		"with_hostname" => false,
+
+		// see smarty_function_javascript_script_tag() for more default options
+
+		//"hide_when_file_not_found" => false,
+		//"with_hostname" => false,
+
+		// internal stuff
+		// the real file is searched in the following places
+		"_places_" => array(
+			array($ATK14_GLOBAL->getPublicRoot()."/stylesheets/",	$ATK14_GLOBAL->getPublicBaseHref()."/stylesheets/"),	// "/public/stylesheets/"
+			array($ATK14_GLOBAL->getPublicRoot(),									$ATK14_GLOBAL->getPublicBaseHref()),									// "/public/"
+			array($ATK14_GLOBAL->getApplicationPath()."/../",			$ATK14_GLOBAL->getBaseHref())													// "/"
+		),
+		"_snippet_" => '<link rel="stylesheet" href="%uri%"%attribs% />'
 	);
 
-	$file = $params["file"]; unset($params["file"]);
-	$hide_when_file_not_found = $params["hide_when_file_not_found"]; unset($params["hide_when_file_not_found"]);
-	$with_hostname = $params["with_hostname"]; unset($params["with_hostname"]);
-
-	// the real file is searched in the following places
-	$places = array(
-		array($ATK14_GLOBAL->getPublicRoot()."/stylesheets/",	$ATK14_GLOBAL->getPublicBaseHref()."/stylesheets/"),	// "/public/stylesheets/"
-		array($ATK14_GLOBAL->getPublicRoot(),									$ATK14_GLOBAL->getPublicBaseHref()),									// "/public/"
-		array($ATK14_GLOBAL->getApplicationPath()."/../",			$ATK14_GLOBAL->getBaseHref())													// "/"
-	);
-
-	if(preg_match('/^\//',$file)){
-		// $file starts with "/", so we will search only in the very last place
-		$places = array(
-			array_pop($places)
-		);
-	}
-
-	$filename = $href = $filename_default = $href_default = "";
-	foreach($places as $place){
-		list($root,$base_href) = $place;
-
-		$_filename = Atk14Utils::NormalizeFilepath("$root/$file");
-
-		if(!$filename_default){
-			$filename_default = $_filename;
-			$href_default = "$base_href/$file";
-		}
-
-		if(file_exists($_filename)){
-			$filename = $_filename;
-			$href = "$base_href/$file";
-			break;
-		}
-	}
-
-	if(!$filename){
-		$filename = $filename_default;
-		$href = $href_default;
-	}
-
-	$href = Atk14Utils::NormalizeUri($href);
-	if($with_hostname){
-		$href = Atk14Utils::AddHttpHostToUri($href);
-	}
-
-	if(file_exists($filename)){
-		$href .= "?".filemtime($filename);
-	}elseif($hide_when_file_not_found){
-		return "";
-	}
-
-	$attribs = Atk14Utils::JoinAttributes($params);
-	return "<link rel=\"stylesheet\" href=\"$href\"$attribs />";
+	Atk14Require::Helper("function.javascript_script_tag");
+	return smarty_function_javascript_script_tag($params,$template);
 }
