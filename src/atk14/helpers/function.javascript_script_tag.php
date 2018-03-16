@@ -39,6 +39,7 @@ function smarty_function_javascript_script_tag($params,$template){
 		"file" => "script.css",
 		"hide_when_file_not_found" => false,
 		"with_hostname" => false,
+		"version_indicated_by" => ATK14_STATIC_FILE_VERSIONS_INDICATED_BY, // "parameter", "filename", "none"
 
 		// internal stuff
 		// the real file is searched in the following places
@@ -53,6 +54,8 @@ function smarty_function_javascript_script_tag($params,$template){
 	$file = $params["file"]; unset($params["file"]);
 	$hide_when_file_not_found = $params["hide_when_file_not_found"]; unset($params["hide_when_file_not_found"]);
 	$with_hostname = $params["with_hostname"]; unset($params["with_hostname"]);
+	$version_indicated_by = $params["version_indicated_by"]; unset($params["version_indicated_by"]);
+
 	$places = $params["_places_"]; unset($params["_places_"]);
 	$snippet = $params["_snippet_"]; unset($params["_snippet_"]);
 
@@ -92,7 +95,11 @@ function smarty_function_javascript_script_tag($params,$template){
 	}
 
 	if(file_exists($filename)){
-		$uri .= "?".filemtime($filename);
+		if($version_indicated_by=="parameter"){
+			$uri .= "?v".filemtime($filename);
+		}elseif($version_indicated_by=="filename"){
+			$uri = preg_replace('/(\.[a-zA-Z0-9]{1,10})$/i','.v'.filemtime($filename).'\1',$uri);
+		}
 	}elseif($hide_when_file_not_found){
 		return "";
 	}

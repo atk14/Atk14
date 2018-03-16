@@ -48,6 +48,14 @@ __defaults__(array(
 	"ATK14_SMARTY_DIR_PERMS" => 0771, # default Smartys directory permissions
 	"ATK14_SMARTY_FILE_PERMS" => 0644, # default Smartys file permissions
 
+	// For "filename" it is required to have proper rewrite rules in the .htaccess
+	//
+	//	RewriteCond %{REQUEST_URI} ^\/public\/[^?]+\.v[0-9a-f]{1,64}\.[a-zA-Z0-9]{1,10}(|\?.*)$
+	//	RewriteCond %{REQUEST_FILENAME} !-f
+	//	RewriteRule ^(public\/.+)\.v[0-9a-f]{1,64}(\.[a-zA-Z0-9]{1,10})$ $1$2 [L]
+	// 
+	"ATK14_STATIC_FILE_VERSIONS_INDICATED_BY" => "parameter", // "parameter", "filename", "none", see helpers javascript_script_tag and stylesheet_link_tag
+
 	// By default ATK14 is able to redirect transparently from an old URL form to a new URL form.
 	// This helps to keep every page on it's current URL form.
 	//
