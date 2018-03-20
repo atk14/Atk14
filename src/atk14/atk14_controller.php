@@ -1252,8 +1252,13 @@ class Atk14Controller{
 			"extra_params" => array(),
 		),$options);
 
+		$steps = array_values($steps); // Conversion to indexed array
+
 		$this->steps = $steps;
-		$this->step_id = "";
+		$this->step_id = ""; // e.g. "8c6725e6c523e8321698cbb939549cc1-5"
+		$this->walking_secret = ""; // e.g "8c6725e6c523e8321698cbb939549cc1"
+		$this->current_step_index = null; // 0, 1, 2...
+		$this->current_step_name = ""; // e.g. "get_password"
 		$this->form_data = array();
 		$this->returned_by = array();
 
@@ -1314,6 +1319,10 @@ class Atk14Controller{
 			// $this->__save_walking_state($state);
 		}
 
+		$this->walking_secret = $step_unique;
+		$this->current_step_index = $request_index;
+		$this->current_step_name = $steps[$request_index];
+
 		$this->_execute_current_step();
 	}
 
@@ -1336,6 +1345,10 @@ class Atk14Controller{
 	 */
 	function _next_step($current_step_returns = true){
 		$this->_save_walking_state($current_step_returns);
+
+		$this->current_step_index++;
+		$this->current_step_name = $this->steps[$this->current_step_index];
+
 		return $this->_execute_current_step();
 	}
 
