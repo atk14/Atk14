@@ -312,6 +312,7 @@ class Atk14Client{
 	 * ```
 	 * $controller = $client->get("books/index");
 	 * $controller = $client->get("books/index",array("q" => "Mark Twain"));
+	 * $controller = $client->get("/en/books/?q=Mark+Twain");
 	 * ```
 	 *
 	 * If you are calling this from tc_books.php file, you can use:
@@ -344,6 +345,10 @@ class Atk14Client{
 	 * ```
 	 * $client->post("books/edit",array(
 	 * 	"id" => 123,
+	 * 	"title" => "A New Title"
+	 * ));
+	 * // or
+	 * $client->post("/en/books/edit/?id=123",array(
 	 * 	"title" => "A New Title"
 	 * ));
 	 * ```
@@ -381,7 +386,9 @@ class Atk14Client{
 	 * ```
 	 * is same as
 	 * ```
-	 * $client->get("articles/detail",array("id" => 123))
+	 * $client->get("articles/detail",array("id" => 123));
+	 * // or
+	 * $client->get("/en/articles/detail/?id=123");
 	 * ```
 	 * Another - DELETE request
 	 * ```
@@ -453,35 +460,48 @@ class Atk14Client{
 		$namespace = $this->namespace;
 		$lang = $ATK14_GLOBAL->getDefaultLang();
 
-		$path_ar = explode("/",$path);
+		if(preg_match('/^\//',$path)){
 
-		switch(sizeof($path_ar)){
-			case 1:
-				// "create_new"
-				$action = $path_ar[0];
-				// name of the controller gonna be determined by the filename of the tc_*.php file
- 				// "/home/yarri/projects/lemonade/test/controllers/tc_password_recoveries.php" -> "password_recoveries"
-				preg_match('/tc_([a-z0-9_]+)\.(inc|php)$/',$GLOBALS["_TEST"]["FILENAME"],$matches);
-				$controller = $matches[1];
-				break;
+			$route_data = Atk14Url::RecognizeRoute($path);
+			$namespace = $route_data["namespace"];
+			$lang = $route_data["lang"];
+			$controller = $route_data["controller"];
+			$action = $route_data["action"];
+			$params += $route_data["get_params"];
+			
+		}else{
 
-			case 2:
-				// "sessions/create_new"
-				list($controller,$action) = $path_ar;
-				break;
+			$path_ar = explode("/",$path);
 
-			case 3:
-				// "en/sessions/create_new"
-				list($lang,$controller,$action) = $path_ar;
-				break;
+			switch(sizeof($path_ar)){
+				case 1:
+					// "create_new"
+					$action = $path_ar[0];
+					// name of the controller gonna be determined by the filename of the tc_*.php file
+					// "/home/yarri/projects/lemonade/test/controllers/tc_password_recoveries.php" -> "password_recoveries"
+					preg_match('/tc_([a-z0-9_]+)\.(inc|php)$/',$GLOBALS["_TEST"]["FILENAME"],$matches);
+					$controller = $matches[1];
+					break;
 
-			case 4:
-				// "api/en/sessions/create_new"
-				list($namespace,$lang,$controller,$action) = $path_ar;
-				break;
+				case 2:
+					// "sessions/create_new"
+					list($controller,$action) = $path_ar;
+					break;
 
-			default:
-				throw new Exception("Invalid path to action: $path");
+				case 3:
+					// "en/sessions/create_new"
+					list($lang,$controller,$action) = $path_ar;
+					break;
+
+				case 4:
+					// "api/en/sessions/create_new"
+					list($namespace,$lang,$controller,$action) = $path_ar;
+					break;
+
+				default:
+					throw new Exception("Invalid path to action: $path");
+			}
+
 		}
 
 		$request->setMethod($method);

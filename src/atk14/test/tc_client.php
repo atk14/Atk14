@@ -33,6 +33,21 @@ class TcClient extends TcBase{
 		$this->assertEquals("text/xml",$controller->request->getContentType());
 		$this->assertEquals("<xml></xml>",$controller->request->getRawPostData());
 
+		// Paths starting with "/"
+		$controller = $this->client->get("/cs/testing/testing/?id=333&format=yaml");
+		$this->assertEquals(200,$client->getStatusCode());
+		$this->assertEquals("333",$controller->params->g("id"));
+		$this->assertEquals("yaml",$controller->params->g("format"));
+		$this->assertEquals(true,$controller->request->get());
+		$this->assertEquals(false,$controller->request->post());
+
+		$controller = $this->client->post("/cs/testing/testing/?id=444&format=json",array("firstname" => "John"));
+		$this->assertEquals(200,$client->getStatusCode());
+		$this->assertEquals("444",$controller->params->g("id"));
+		$this->assertEquals("John",$controller->params->g("firstname"));
+		$this->assertEquals(false,$controller->request->get());
+		$this->assertEquals(true,$controller->request->post());
+
 		// Basic Auth
 		$this->assertEquals(null,$controller->request->getBasicAuthString());
 		$this->assertEquals(null,$client->getBasicAuthString());
