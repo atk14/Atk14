@@ -1409,6 +1409,8 @@ class Atk14Controller{
 		$this->returned_by = $state["returned_by"];
 		$this->tpl_data["form_data"] = $state["form_data"];
 		$this->tpl_data["step_id"] = $this->step_id;
+		$this->tpl_data["current_step_index"] = $this->current_step_index;
+		$this->tpl_data["current_step_name"] = $this->current_step_name;
 		if($out = $this->_before_walking()){
 			return $out;
 		}
