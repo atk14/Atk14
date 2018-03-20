@@ -1319,10 +1319,6 @@ class Atk14Controller{
 			// $this->__save_walking_state($state);
 		}
 
-		$this->walking_secret = $step_unique;
-		$this->current_step_index = $request_index;
-		$this->current_step_name = $steps[$request_index];
-
 		$this->_execute_current_step();
 	}
 
@@ -1334,22 +1330,25 @@ class Atk14Controller{
 	 * Status is saved to session.
 	 *
 	 * ```
-	 *	return $this->_next_step();
+	 *	function action__step(){
+	 *		if(!$this->do_we_need_to_execute_this_step){
+	 *			return $this->_next_step();
+	 *		}
+	 *	}
 	 * ```
 	 * Use of return is important!!
 	 *
 	 * Custom parameters can be passed, for example values returned from current step.
 	 *
-	 * @param mixed $current_step_returns
-	 * @return mixed vystup z dalsiho kroku
+	 * @return null
 	 */
 	function _next_step($current_step_returns = true){
-		$this->_save_walking_state($current_step_returns);
+		$state = $this->_save_walking_state($current_step_returns);
 
-		$this->current_step_index++;
-		$this->current_step_name = $this->steps[$this->current_step_index];
+		$this->_execute_current_step();
 
-		return $this->_execute_current_step();
+		// This method must return null due to typical usage.
+		return null;
 	}
 
 	/**
@@ -1368,6 +1367,7 @@ class Atk14Controller{
 		}
 		$state["current_step_index"]++;
 		$this->__save_walking_state($state);
+		return $state;
 	}
 
 	function __save_walking_state($state){
@@ -1376,9 +1376,7 @@ class Atk14Controller{
 
 	function _execute_current_step(){
 		if($ret = $this->__execute_current_step()){
-			$this->_save_walking_state($ret);
-
-			$state = $this->walking_state;
+			$state = $this->_save_walking_state($ret);
 			$steps = $this->steps;
 
 			return $this->_redirect_to(array_merge($this->_walking_extra_params,array("step_id" => "$state[step_unique]-$state[current_step_index]","step" => $steps[$state["current_step_index"]])));
@@ -1409,8 +1407,9 @@ class Atk14Controller{
 		$this->returned_by = $state["returned_by"];
 		$this->tpl_data["form_data"] = $state["form_data"];
 		$this->tpl_data["step_id"] = $this->step_id;
-		$this->tpl_data["current_step_index"] = $this->current_step_index;
-		$this->tpl_data["current_step_name"] = $this->current_step_name;
+		$this->tpl_data["current_step_index"] = $this->current_step_index = $state["current_step_index"];
+		$this->tpl_data["current_step_name"] = $this->current_step_name = $this->steps[$this->current_step_index];
+		$this->walking_secret = $state["step_unique"];
 		if($out = $this->_before_walking()){
 			return $out;
 		}
