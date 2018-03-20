@@ -16,7 +16,7 @@ class TcWalking extends TcBase {
 
 		// step 2
 
-		$client->post("walking/walk");
+		$client->post("walking/walk",array("name" => "Captain Bobek"));
 		$this->assertEquals(303,$client->getStatusCode());
 
 		$location = $client->getLocation();
@@ -29,6 +29,7 @@ class TcWalking extends TcBase {
 		$this->assertContains("current_step_index: 1",$content);
 		$this->assertContains("current_step_name: step2",$content);
 		$this->assertContains("returned_by_step1: step1 finished successfully",$content);
+		$this->assertContains("step1.name: Captain Bobek",$content);
 
 		// step 3
 
@@ -41,5 +42,6 @@ class TcWalking extends TcBase {
 		$this->assertContains("current_step_name: step3",$content);
 		$this->assertContains("returned_by_step1: step1 finished successfully",$content);
 		$this->assertContains("returned_by_step2: step2 finished gracefully",$content);
+		$this->assertContains("step1.name: Captain Bobek",$content);
 	}
 }

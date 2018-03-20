@@ -12,7 +12,7 @@ class WalkingController extends ApplicationController {
 	function walk__step1(){
 		$this->page_title = "Step #1";
 
-		if($this->request->post()){
+		if($this->request->post() && ($d = $this->form->validate($this->params))){
 			return "step1 finished successfully";
 		}
 	}
@@ -31,5 +31,6 @@ class WalkingController extends ApplicationController {
 
 	function _before_walking(){
 		$this->tpl_data["returned_by"] = $this->returned_by;
+		$this->tpl_data["form_data"] = $this->form_data;
 	}
 }
