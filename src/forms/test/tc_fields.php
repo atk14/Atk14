@@ -91,7 +91,9 @@ class TcFields extends TcBase
 	{
 		$DATA = array(
 			array(
-				'field' => new CharField(),
+				'field' => new CharField(array(
+					'charset' => 'utf8'
+				)),
 				'params' => array(
 					array(
 						'clean'=>1, 'error'=>null, 'result'=>'1'
@@ -108,6 +110,25 @@ class TcFields extends TcBase
 					array(
 						'clean'=>array(1,2,3), 'error'=>null, 'result'=>implode("\n", array('array (', '  0 => 1,', '  1 => 2,', '  2 => 3,', ')'))
 					),
+					array(
+						'clean'=> "\xc3\x28", 'error'=>'Invalid byte sequence for charset utf8.', 'result'=>null
+					),
+					array(
+						'clean'=> Translate::Trans("lišťička","utf8","iso-8859-2"), 'error'=>'Invalid byte sequence for charset utf8.', 'result'=>null,
+					),
+					array(
+						'clean'=> "ččč", 'error'=> null, 'result'=> "ččč"
+					)
+				)
+			),
+			array(
+				'field' => new CharField(array(
+					'charset' => 'iso-8859-2'
+				)),
+				'params' => array(
+					array(
+						'clean'=> Translate::Trans("lišťička","utf8","iso-8859-2"), 'error'=>null, 'result'=>Translate::Trans("lišťička","utf8","iso-8859-2"),
+					)
 				)
 			),
 			array(

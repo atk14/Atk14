@@ -9,16 +9,19 @@ class CharField extends Field
 {
 	function __construct($options=array())
 	{
+		$charset = defined('DEFAULT_CHARSET')?DEFAULT_CHARSET:'utf8';
 		$options = forms_array_merge(array(
 				'max_length' => null,
 				'min_length' => null,
 				'trim_value' => true,
-				'null_empty_output' => false
+				'null_empty_output' => false,
+				'charset' => $charset
 			),
 			$options
 		);
 		$this->max_length = $options['max_length'];
 		$this->min_length = $options['min_length'];
+		$this->charset = $options['charset'];
 		parent::__construct($options);
 		$this->update_messages(array(
 			'max_length' => _('Ensure this value has at most %max% characters (it has %length%).'),
@@ -26,6 +29,7 @@ class CharField extends Field
 			'js_validator_maxlength' => _('Ensure this value has at most %max% characters.'),
 			'js_validator_minlength' => _('Ensure this value has at least %min% characters.'),
 			'js_validator_rangelength' => _('Ensure this value has between %min% and %max% characters.'),
+			'charset' => _('Invalid byte sequence for charset %charset%.'),
 		));
 
 		$this->trim_value = $options['trim_value'];
@@ -56,6 +60,11 @@ class CharField extends Field
 		if ((!is_null($this->min_length)) && ($value_length < $this->min_length)) {
 			return array(EasyReplace($this->messages['min_length'], array('%min%'=>$this->min_length, '%length%'=>$value_length)), null);
 		}
+
+		if($this->charset && !mb_check_encoding($value, $this->charset)) {
+			return array(EasyReplace($this->messages['charset'], array('%charset%'=>$this->charset)), null);
+		}
+
 		return array(null, (string)$value);
 	}
 
