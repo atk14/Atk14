@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-11 11:29+0200\n"
+"POT-Creation-Date: 2018-03-27 08:38+0200\n"
 "PO-Revision-Date: 2017-03-31 17:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: ATK14 Development Team\n"
@@ -30,33 +30,33 @@ msgstr "Az oldal szerkesztés alatt van Kérjük, jöjjön vissza később."
 msgid "The form contains errors, therefore it cannot be processed."
 msgstr "Az űrlap hibákat tartalmaz, ezért nem lehet feldolgozni."
 
-#: ../src/atk14/atk14_form.php:507
+#: ../src/atk14/atk14_form.php:514
 msgid "Please, submit the form again"
 msgstr "Kérjük küldje el újra az űrlapot"
 
-#: ../src/atk14/atk14_locale.php:59
+#: ../src/atk14/atk14_locale.php:62
 msgid "atk14.date_format"
 msgstr "j.n.Y"
 
-#: ../src/atk14/atk14_locale.php:79
+#: ../src/atk14/atk14_locale.php:82
 msgid "atk14.parse_date_pattern"
 msgstr "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4})$/"
 
-#: ../src/atk14/atk14_locale.php:113
+#: ../src/atk14/atk14_locale.php:116
 msgid "atk14.datetime_format"
 msgstr "j.n.Y H:i"
 
-#: ../src/atk14/atk14_locale.php:126
+#: ../src/atk14/atk14_locale.php:129
 msgid "atk14.parse_datetime_pattern"
 msgstr ""
 "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
 "<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"
 
-#: ../src/atk14/atk14_locale.php:139
+#: ../src/atk14/atk14_locale.php:142
 msgid "atk14.datetime_with_seconds_format"
 msgstr "j.n.Y H:i:s"
 
-#: ../src/atk14/atk14_locale.php:151
+#: ../src/atk14/atk14_locale.php:154
 msgid "atk14.parse_datetime_with_seconds_pattern"
 msgstr ""
 "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
@@ -70,17 +70,17 @@ msgstr "A táblázat e szerint az oszlop szerint rendeződik"
 msgid "Are you sure?"
 msgstr "Biztos benne?"
 
-#: ../src/atk14/helpers/function.paginator.php:99
-#: ../src/atk14/helpers/function.paginator.php:162
+#: ../src/atk14/helpers/function.paginator.php:97
+#: ../src/atk14/helpers/function.paginator.php:160
 #, php-format
 msgid "%s items total"
 msgstr "%s tételek összesen"
 
-#: ../src/atk14/helpers/function.paginator.php:113
+#: ../src/atk14/helpers/function.paginator.php:111
 msgid "prev"
 msgstr "előző"
 
-#: ../src/atk14/helpers/function.paginator.php:157
+#: ../src/atk14/helpers/function.paginator.php:155
 msgid "next"
 msgstr "következő"
 
@@ -88,26 +88,30 @@ msgstr "következő"
 msgid "and"
 msgstr "és"
 
-#: ../src/forms/fields/char_field.php:24 ../src/forms/fields/regex_field.php:25
+#: ../src/forms/fields/char_field.php:27 ../src/forms/fields/regex_field.php:25
 msgid "Ensure this value has at most %max% characters (it has %length%)."
 msgstr "Az értéknek legfeljebb %max% karaktere lehet (ez már %length%)."
 
-#: ../src/forms/fields/char_field.php:25 ../src/forms/fields/regex_field.php:26
+#: ../src/forms/fields/char_field.php:28 ../src/forms/fields/regex_field.php:26
 msgid "Ensure this value has at least %min% characters (it has %length%)."
 msgstr ""
 "Az értéknek legalább %min% karaktere kel hogy legyen (ez most %length%)."
 
-#: ../src/forms/fields/char_field.php:26
+#: ../src/forms/fields/char_field.php:29
 msgid "Ensure this value has at most %max% characters."
 msgstr " Ez az érték"
 
-#: ../src/forms/fields/char_field.php:27
+#: ../src/forms/fields/char_field.php:30
 msgid "Ensure this value has at least %min% characters."
 msgstr "Az értéknek legalább %min% karaktere kel hogy legyen."
 
-#: ../src/forms/fields/char_field.php:28
+#: ../src/forms/fields/char_field.php:31
 msgid "Ensure this value has between %min% and %max% characters."
 msgstr "Az érték karakterjének a %min% és %max% között kel lennie."
+
+#: ../src/forms/fields/char_field.php:32
+msgid "Invalid byte sequence for charset %charset%."
+msgstr ""
 
 #: ../src/forms/fields/choice_field.php:37
 msgid "Select a valid choice. That choice is not one of the available choices."
@@ -241,17 +245,17 @@ msgstr "Írjon be egy egész számot."
 msgid "Enter a valid IP address."
 msgstr ".Adjon meg egy érvényes IP-címet."
 
-#: ../src/forms/fields/multiple_choice_field.php:21
+#: ../src/forms/fields/multiple_choice_field.php:30
 msgid "Select a valid choice. %value% is not one of the available choices."
 msgstr ""
 "Válasszon egy érvényes értéket. %value% nem egy rendelkezésre álló "
 "választási lehetőség."
 
-#: ../src/forms/fields/multiple_choice_field.php:22
+#: ../src/forms/fields/multiple_choice_field.php:31
 msgid "Enter a list of values."
 msgstr "Adja meg az értékek listáját."
 
-#: ../src/forms/fields/multiple_choice_field.php:23
+#: ../src/forms/fields/multiple_choice_field.php:32
 msgid "Please, choose the right options."
 msgstr " Kérjük válassza ki a megfelelő beállításokat."
 
