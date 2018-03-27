@@ -89,7 +89,11 @@ class TcFields extends TcBase
 	*/
 	function test_charfield()
 	{
+		$iso_string = Translate::Trans("lišťička","utf8","iso-8859-2");
+		$this->assertEquals(8,strlen($iso_string));
+
 		$DATA = array(
+
 			array(
 				'field' => new CharField(array(
 					'charset' => 'utf8'
@@ -121,16 +125,18 @@ class TcFields extends TcBase
 					)
 				)
 			),
+
 			array(
 				'field' => new CharField(array(
 					'charset' => 'iso-8859-2'
 				)),
 				'params' => array(
 					array(
-						'clean'=> Translate::Trans("lišťička","utf8","iso-8859-2"), 'error'=>null, 'result'=>Translate::Trans("lišťička","utf8","iso-8859-2"),
+						'clean'=> $iso_string, 'error'=>null, 'result'=>$iso_string,
 					)
 				)
 			),
+
 			array(
 				'field' => new CharField(array('required'=>false)),
 				'params' => array(
@@ -182,6 +188,17 @@ class TcFields extends TcBase
 					array(
 						'clean'=>'1234567890a', 'error'=>null, 'result'=>'1234567890a'
 					),
+				)
+			),
+			array(
+				'field' => new CharField(array(
+					'charset' => 'iso-8859-2',
+					'max_length' => 7,
+				)),
+				'params' => array(
+					array(
+						'clean'=> $iso_string, 'error'=>'Ensure this value has at most 7 characters (it has 8).', 'result'=>null,
+					)
 				)
 			),
 

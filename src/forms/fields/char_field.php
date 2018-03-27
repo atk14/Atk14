@@ -53,7 +53,7 @@ class CharField extends Field
 			return array(null, $value);
 		}
 
-		$value_length = String4::ToObject($value)->length();
+		$value_length = String4::ToObject($value,$this->charset)->length();
 		if ((!is_null($this->max_length)) && ($value_length > $this->max_length)) {
 			return array(EasyReplace($this->messages['max_length'], array('%max%'=>$this->max_length, '%length%'=>$value_length)), null);
 		}
