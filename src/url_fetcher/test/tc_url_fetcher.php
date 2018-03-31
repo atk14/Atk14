@@ -18,6 +18,7 @@ class tc_url_fetcher extends tc_base{
 		$this->assertEquals(null,$f->getHeaderValue("content-type-xxx"));
 
 		$this->assertEquals(200,$f->getStatusCode());
+		$this->assertEquals("OK",$f->getStatusMessage());
 		$this->assertEquals("dungeon-master.png",$f->getFilename());
 
 		$f = new UrlFetcher("http://jarek.plovarna.cz/unit-testing/dungeon-master.png?not_important_parameter=1");
@@ -33,6 +34,7 @@ class tc_url_fetcher extends tc_base{
 		$this->assertFalse($f->found());
 		$this->assertTrue($f->errorOccurred());
 		$this->assertEquals(404,$f->getStatusCode()); // Not Found
+		$this->assertEquals("Not Found",$f->getStatusMessage());
 		$this->assertContains('<title>404 Not Found</title>',$f->getContent());
 
 		// notice: connecting to port 8124 causes warning messages appearance 

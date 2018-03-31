@@ -58,7 +58,7 @@
  */
 class UrlFetcher {
 
-	const VERSION = "1.1.1";
+	const VERSION = "1.2";
 
 	/**
 	 * Authentication type
@@ -541,11 +541,32 @@ class UrlFetcher {
 	/**
 	 * Returns status code of response
 	 *
+	 *
+	 * ```
+	 * echo $uf->getStatusCode(); // 200, 404, 403...
+	 * ```
+	 *
 	 * @return int
 	 */
 	function getStatusCode(){
 		if(preg_match("/^HTTP\\/.\\.. ([0-9]{3})/",$this->getResponseHeaders(),$matches)){
 			return (int)$matches[1];
+		}
+	}
+
+	/**
+	 * Returns status message of response
+	 *
+	 *
+	 * ```
+	 * echo $uf->getStatusMessage(); // "Found", "Not Found", "Forbidden"...
+	 * ```
+	 *
+	 * @return string
+	 */
+	function getStatusMessage(){
+		if(preg_match("/^HTTP\\/.\\.. [0-9]{3} ([A-Za-z ]{1,})/",$this->getResponseHeaders(),$matches)){
+			return $matches[1];
 		}
 	}
 
