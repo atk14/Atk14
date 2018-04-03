@@ -292,8 +292,21 @@ class UrlFetcher {
 	 * - true => success
 	 * - false => some exception occurred
 	 */
-	function fetchContent($url = ""){
+	function fetchContent($url = "",$options = array()){
+		if(is_array($url)){
+			$options = $url;
+			$url = "";
+		}
+
 		if(strlen($url)>0){ $this->_setUrl($url); }
+
+		$options += array(
+			"request_method" => null, // "GET", "POST", "PUT", "DELETE"
+		);
+
+		if($options["request_method"]){
+			$this->_RequestMethod = $options["request_method"];
+		}
 
 		if(isset($this->_Fetched)){ return $this->_Fetched; }
 
@@ -397,7 +410,7 @@ class UrlFetcher {
 	}
 
 	/**
-	 * Make POST request.
+	 * Performs a POST request
 	 *
 	 * @param mixed $data when array it is sent as query parameters, otherwise $data is sent without processing
 	 * @param array $options
@@ -424,7 +437,31 @@ class UrlFetcher {
 		$this->_AdditionalHeaders = $options["additional_headers"];
 		$this->_AdditionalHeaders[] = "Content-Type: $options[content_type]";
 
-		return $this->found();
+		return $this->fetchContent();
+	}
+
+	/**
+	 * Performs a PUT request
+	 */
+	function put($url = "",$options = array()){
+		if(is_array($url)){
+			$options = $url;
+			$url = "";
+		}
+		$options["request_method"] = "PUT";
+		return $this->fetchContent($url,$options);
+	}
+
+	/**
+	 * Performs a DELETE request
+	 */
+	function delete($url = "",$options = array()){
+		if(is_array($url)){
+			$options = $url;
+			$url = "";
+		}
+		$options["request_method"] = "DELETE";
+		return $this->fetchContent($url,$options);
 	}
 
 	/**

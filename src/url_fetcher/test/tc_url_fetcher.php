@@ -106,6 +106,22 @@ class tc_url_fetcher extends tc_base{
 		));
 	}
 
+	function test_put(){
+		$f = new UrlFetcher();
+		$f->put("http://www.atk14.net/api/en/http_requests/detail/?format=json");
+		$this->assertEquals(200,$f->getStatusCode());
+		$data = json_decode($f->getContent(),true);
+		$this->assertEquals("PUT",$data["method"]);
+	}
+
+	function test_delete(){
+		$f = new UrlFetcher();
+		$f->delete("http://www.atk14.net/api/en/http_requests/detail/?format=json");
+		$this->assertEquals(200,$f->getStatusCode());
+		$data = json_decode($f->getContent(),true);
+		$this->assertEquals("DELETE",$data["method"]);
+	}
+
 	function test_additiona_headers(){
 		$f = new UrlFetcher("http://jarek.plovarna.cz/",array(	
 			"additional_headers" => array(
