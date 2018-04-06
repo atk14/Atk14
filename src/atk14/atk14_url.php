@@ -508,11 +508,19 @@ class Atk14Url{
 		if(!isset($router)){
 			$router = $namespace_or_router;
 			$namespace = "";
+			$namespace_defined = false;
 		}else{
 			$namespace = $namespace_or_router;
+			$namespace_defined = true;
 		}
 
-		if(is_string($router)){ $router = new $router(); } // "ProductsRouter" -> ProductsRouter
+		if(is_string($router)){
+			$_options = array();
+			if($namespace_defined){
+				$_options["namespace"] = $namespace;
+			}
+			$router = new $router($_options); // "ProductsRouter" -> ProductsRouter
+		}
 
 		Atk14Url::_SetRouter_GetRouters($namespace,$router);
 	}

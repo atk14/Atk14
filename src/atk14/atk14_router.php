@@ -31,8 +31,16 @@ class Atk14Router{
 
 	var $redirected_to = null;
 
-	function __construct(){
+	function __construct($options = array()){
 		global $ATK14_GLOBAL;
+		$options += array(
+			"namespace" => null,
+		);
+
+		if(isset($options["namespace"])){
+			$this->namespace = $options["namespace"];
+		}
+
 		$this->default_lang = $ATK14_GLOBAL->getDefaultLang();
 
 		$this->setUp();
