@@ -1,6 +1,39 @@
 # Change Log
 All notable changes to ATK14 Framework will be documented in this file.
 
+## [1.4] - 2018-04-10
+
+### Added
+
+- 6b8dfd4 - [TableRecord] Added option preread_data to TableRecord_Lister::getItems()
+- e8d3bb7 - [TableRecord] Added method TableRecord_Lister::getIds()
+- d1e9fd5 - [TableRecord] Added new static method TableRecord_Lister::ClearCache()
+- eb652e7 - Added new function definedef()
+- ce37a0c - [Atk14] Added method Atk14Mailer::_after_filter()
+- c74a5a9 - [Forms] CheckboxSelectMultiple widget can be instantiated with option "escape_labels" (default true)
+- 261fdf5 - [Atk14] Added new method Atk14Client::getResponseHeaders()
+- 5cbcc2c - [TableRecord] Added method TableRecord_Finder::getQueryData()
+- 0e851d1 - [Atk14] Added method Atk14Utils::AddHttpHostToUri(); Added optional parameter with_hostname to helpers stylesheet_link_tag and javascript_script_tag
+- 1023bea - [Atk14] Added configuration constant ATK14_STATIC_FILE_VERSIONS_INDICATED_BY with default value "parameter"
+
+### Changed
+
+- f8b7f5f - [Atk14, Forms] The same form can be validated again and again
+- c8f6eeb - [Atk14] Helper {render} sets item automatically, BC BREAK!
+- ed04a72 - [Atk14] Method Atk14Controller::_redirect_to_ssl() and Atk14Controller::_redirect_to_no_ssl() fixed, BC BREAK!
+- 944c579 - [Atk14] Atk14Client can handle paths starting with '/' (i.e. URIs)
+- 08661d5 - [Atk14] Namespace can be redefined as an option in Atk14Router::__construct()
+
+### Security
+
+- 588527b - [Packer, Security] mcrypt_encrypt(), mcrypt_decrypt() replaced with openssl_encrypt(), openssl_decrypt()
+- 369fbfc - [Security] Encryption in the Packer library is enabled by default
+- e5f8c66 - [Security] SECRET_TOKEN is loaded automatically from config/.secret_token.txt
+
+### Fixed
+
+- There are many fixes :)
+
 ## [1.3] - 2017-09-08
 
 ### Added
