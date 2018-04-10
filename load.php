@@ -5,6 +5,8 @@
 */
 error_reporting(255);
 
+define("ATK14_VERSION","1.4");
+
 // we need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
 // HTTP* classes give us right advices about environment & configuration
 require_once(dirname(__FILE__)."/src/stringbuffer/load.php");

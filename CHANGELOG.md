@@ -5,6 +5,7 @@ All notable changes to ATK14 Framework will be documented in this file.
 
 ### Added
 
+- 866cf9c - Added constant ATK14_VERSION
 - 6b8dfd4 - [TableRecord] Added option preread_data to TableRecord_Lister::getItems()
 - e8d3bb7 - [TableRecord] Added method TableRecord_Lister::getIds()
 - d1e9fd5 - [TableRecord] Added new static method TableRecord_Lister::ClearCache()
