@@ -1007,7 +1007,7 @@ class DbMole{
 	 */
 	final function begin($options = array()){
 		$options += array(
-			"execute_after_connecting" => false,
+			"execute_after_connecting" => true,
 		);
 		if($options["execute_after_connecting"] && !$this->isConnected()){
 			$this->_BeginTransactionDelayed = true;
