@@ -131,7 +131,7 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals(false,$dbmole->isConnected());
 
 		$count = $dbmole->getQueriesExecuted();
-		$dbmole->begin();
+		$dbmole->begin(array("execute_after_connecting" => false));
 		$this->assertEquals(true,$dbmole->isConnected());
 		$this->assertEquals($count + 1,$dbmole->getQueriesExecuted());
 		$dbmole->selectFirstRow("SELECT * FROM test_table");
@@ -145,7 +145,7 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals($count,$dbmole->getQueriesExecuted());
 		$this->assertEquals(false,$dbmole->isConnected());
 		//
-		$dbmole->begin();
+		$dbmole->begin(array("execute_after_connecting" => false));
 		$dbmole->rollback();
 		$this->assertEquals($count+2,$dbmole->getQueriesExecuted());
 		$this->assertEquals(true,$dbmole->isConnected());
@@ -158,7 +158,7 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals($count,$dbmole->getQueriesExecuted());
 		$this->assertEquals(false,$dbmole->isConnected());
 		//
-		$dbmole->begin();
+		$dbmole->begin(array("execute_after_connecting" => false));
 		$dbmole->commit();
 		$this->assertEquals($count+2,$dbmole->getQueriesExecuted());
 		$this->assertEquals(true,$dbmole->isConnected());
