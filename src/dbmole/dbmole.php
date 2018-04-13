@@ -11,6 +11,7 @@
 !defined("DBMOLE_ORACLE_TRUE") && define("DBMOLE_ORACLE_TRUE","Y");
 !defined("DBMOLE_ORACLE_FALSE") && define("DBMOLE_ORACLE_FALSE","N");
 !defined("DBMOLE_CHECK_BIND_AR_FORMAT") && define("DBMOLE_CHECK_BIND_AR_FORMAT",true);
+!defined("DBMOLE_AUTOMATIC_DELAY_TRANSACTION_BEGINNING_AFTER_CONNECTION") && define("DBMOLE_AUTOMATIC_DELAY_TRANSACTION_BEGINNING_AFTER_CONNECTION",true);
 
 /**
  * Provides basic functionality with databases.
@@ -1007,7 +1008,7 @@ class DbMole{
 	 */
 	final function begin($options = array()){
 		$options += array(
-			"execute_after_connecting" => true,
+			"execute_after_connecting" => DBMOLE_AUTOMATIC_DELAY_TRANSACTION_BEGINNING_AFTER_CONNECTION,
 		);
 		if($options["execute_after_connecting"] && !$this->isConnected()){
 			$this->_BeginTransactionDelayed = true;
