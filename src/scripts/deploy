@@ -204,8 +204,8 @@ function _create_maintenance_file_if_required(){
 function _exit_with_errors(){
 	echo '
   _____       _  _   _ 
- |  ___|__ _ (_)| | | |
- | |_  / _` || || | | |
+ |  ___|____ (_)| | | |
+ | |_  / _  || || | | |
  |  _|| (_| || || | |_|
  |_|   \__,_||_||_| (_)
                 	

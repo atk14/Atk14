@@ -2,7 +2,7 @@
 
 # This script checks the host system and installation of the current application
 
-cd `dirname $0`
+cd $(dirname $0)
 exit_val=0
 
 # At first we need run script for checking the system
@@ -11,7 +11,7 @@ if [ "$?" != "0" ]; then
 	exit_val=1
 fi
 
-ROOT=`./_get_application_path`../
+ROOT=$(./_get_application_path)../
 
 # checking for tmp and log directories
 for i in "tmp" "log"; do
@@ -28,11 +28,11 @@ for i in "tmp" "log"; do
 	# TODO: directory must be writable for others (webserver user)
 done
 
-http_host=`./dump_settings ATK14_HTTP_HOST`
+http_host=$(./dump_settings ATK14_HTTP_HOST)
 echo -n "host $http_host could be resolved... "
-etc_hosts_lines=`egrep "^\s*[0-9a-fA-F\.:][^#]*\s$http_host(|#.*|\s.*)$" /etc/hosts | wc -l`
+etc_hosts_lines=$(egrep "^\s*[0-9a-fA-F\.:][^#]*\s$http_host(|#.*|\s.*)$" /etc/hosts | wc -l)
 if [ "$etc_hosts_lines" -eq "0" ]; then
-	if [ "`host $http_host | grep 'not found' | wc -l`" -eq 1 ]; then
+	if [ "$(host $http_host | grep 'not found' | wc -l)" -eq 1 ]; then
 		echo "fail"
 		echo "!!  there is neither record for $http_host in /etc/hosts nor $http_host could be resolved"
 		echo "!!  you may do the following:"

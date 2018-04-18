@@ -13,10 +13,10 @@
 #
 #  $ ./scripts/dump_dbdata --column-inserts
 
-cd `dirname $0`
+cd $(dirname $0)
 
 # add pgpass record to ~/.pgpass file when the record is not present
-exec `./pgpass_record -a`
+exec $(./pgpass_record -a)
 
-cmd=`./_dump_dbschema_command "$@"`
+cmd=$(./_dump_dbschema_command "$@")
 exec $cmd

@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-# Runs all application`s tests
+# Runs all application's tests
 # Searches tests in directories:
 #   test/models
 #   test/controllers
 #   test/controllers/namespace
 #   test/controllers/another_namespace
 
-dirname=`dirname $0`
+dirname=$(dirname $0)
 cd $dirname
-base_dir=`./_get_application_path`../
+base_dir=$(./_get_application_path)../
 
-[  -z "`ATK14_ENV=TEST ./migrate -p`" ] || (cat << EOF && sleep 2 && ATK14_ENV=TEST ./migrate)
+[  -z "$(ATK14_ENV=TEST ./migrate -p)" ] || (cat << EOF && sleep 2 && ATK14_ENV=TEST ./migrate)
 **************************************************************************
 **                                                                      **
 **                   There are pending migrations!                      **
@@ -36,7 +36,7 @@ if [ ! -d test ]; then
 fi
 
 exit_val=0
-for d in `find -L test -maxdepth 4 -type d | egrep -v ^test$ | egrep -v '/\.' | sort` ; do
+for d in $(find -L test -maxdepth 4 -type d | egrep -v ^test$ | egrep -v '/\.' | sort) ; do
 	# in a directory with tests there should be initialize.php (or initialize.inc)
 	if [ -e $d/initialize.php ] || [ -e $d/initialize.inc ]; then
 		echo "--- [$d] ---"

@@ -22,11 +22,11 @@ echo "**             It should not be used on a public network.               **
 echo "**                                                                      **"
 echo "**************************************************************************"
 
-cd `dirname $0`
-cd `./_get_application_path`../
+cd $(dirname $0)
+cd $(./_get_application_path)../
 
 port=${1:-8000} # TODO: could be nice to check whether the given port is available
-appname=`./scripts/_shell_safe_appname`
+appname=$(./scripts/_shell_safe_appname)
 
 echo -ne "\033]0;ATK14 server for $appname - http://localhost:$port/\007"
 

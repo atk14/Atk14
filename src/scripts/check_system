@@ -2,13 +2,13 @@
 
 # This scripts checks for requirements in the host system
 
-cd `dirname $0`
+cd $(dirname $0)
 exit_val=0
 
 assert_command_exists () {
 	cmd=$1
 	echo -n "command $cmd exists... "
-	if [ "`which $cmd`" = "" ]; then
+	if [ "$(which $cmd)" = "" ]; then
 		echo "fail"
 		echo "!!  command $cmd is not installed"
 		exit_val=1
@@ -21,7 +21,7 @@ assert_php_function_exists () {
 	fn=$1
 	echo -n "php function $fn exists... "
 	src="echo function_exists('$fn') ? 'yes' : 'no';"
-	if [ `/usr/bin/env php -r "$src"` != "yes" ]; then
+	if [ $(/usr/bin/env php -r "$src") != "yes" ]; then
 		echo "fail"
 		echo "!!  in PHP there is no function $fn"
 		exit_val=1
@@ -34,7 +34,7 @@ assert_php_constant_defined () {
 	constant=$1
 	echo -n "php constant $constant defined... "
 	src="echo defined('$constant') ? 'yes' : 'no';"
-	if [ `/usr/bin/env php -r "$src"` != "yes" ]; then
+	if [ $(/usr/bin/env php -r "$src") != "yes" ]; then
 		echo "fail"
 		echo "!!  in PHP there is no constant $constant defined"
 		exit_val=1
@@ -45,7 +45,7 @@ assert_php_constant_defined () {
 
 # version of php must be >= 5.3
 echo -n "version of php is 5.3 or newer... "
-php_version=`php -v | head -1 | cut -d ' ' -f 2`
+php_version=$(php -v | head -1 | cut -d ' ' -f 2)
 if [ ! "$php_version" \> "5.3." ]; then
 	echo "fail"
 	echo "!!  version of currently installed php is $php_version"
@@ -81,7 +81,7 @@ assert_php_function_exists 'json_encode'
 
 # version of php must be >= 5.3
 echo -n "version of php is 5.3 or newer... "
-php_version=`php -v | head -1 | cut -d ' ' -f 2`
+php_version=$(php -v | head -1 | cut -d ' ' -f 2)
 if [ ! "$php_version" \> "5.3." ]; then
 	echo "fail"
 	echo "!!  version of currently installed php is $php_version"

@@ -2,16 +2,16 @@
 
 # create a database and an database user according to config/database.yml
 
-dirname=`dirname $0`;
+dirname=$(dirname $0);
 cd $dirname;
 
 PG_USER=postgres                          # Postgresql's service account name
-DBUSER=`./_database_username`
-DBNAME=`./_database_database`
-DBPASSWORD=`./_database_password`
-ENVIRONMENT=`./_atk14_env`
-CREATE_DATABASE_COMMAND=`./_create_database_command`
-environment=`echo -n  $ENVIRONMENT | tr A-Z a-z`
+DBUSER=$(./_database_username)
+DBNAME=$(./_database_database)
+DBPASSWORD=$(./_database_password)
+ENVIRONMENT=$(./_atk14_env)
+CREATE_DATABASE_COMMAND=$(./_create_database_command)
+environment=$(echo -n  $ENVIRONMENT | tr A-Z a-z)
 
 sql=$( cat <<EOF
 -- creating database for $ENVIRONMENT

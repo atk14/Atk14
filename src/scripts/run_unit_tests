@@ -18,7 +18,7 @@
  * 
  * Dangerous tests
  * ---------------
- * Sometimes you don`t want to execute some test files automatically unless you specify them on command line.
+ * Sometimes you don't want to execute some test files automatically unless you specify them on command line.
  * Prefix such files with exclamation mark.
  *
  *   $ run_unit_tests

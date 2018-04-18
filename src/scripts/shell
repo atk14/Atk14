@@ -30,8 +30,8 @@ EOF
 exit 0
 fi
 
-cd `dirname $0`
+cd $(dirname $0)
 
-cmd=`./_shell_command "$@"`
+cmd=$(./_shell_command "$@")
 
 exec $cmd

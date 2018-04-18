@@ -5,18 +5,18 @@
 # $ ./scripts/run_all_tests_on_atk14
 # $ PHP_BIN=/path/to/php7 ./scripts/run_all_tests_on_atk14
 
-dirname=`dirname $0`
+dirname=$(dirname $0)
 cd $dirname
-base_dir=`pwd -P`
+base_dir=$(pwd -P)
 cd $base_dir
 cd ../..
 
 if [ "x$PHP_BIN" = "x" ]; then
-	PHP_BIN=`which php`
+	PHP_BIN=$(which php)
 fi
 
 ret=0
-for dir in `find ./ -type d -name test | sort`; do
+for dir in $(find ./ -type d -name test | sort); do
 	# in a directory with tests there should be initialize.php (or initialize.inc)
 	if [ -e $dir/initialize.php ] || [ -e $dir/initialize.inc ]; then
 		echo

@@ -20,11 +20,11 @@ if [ -t 0 ]; then
 	echo "**************************************************************************"
 fi
 
-dir=`dirname $0`
-ATK14_DOCUMENT_ROOT=`$dir/dump_settings ATK14_DOCUMENT_ROOT`
+dir=$(dirname $0)
+ATK14_DOCUMENT_ROOT=$($dir/dump_settings ATK14_DOCUMENT_ROOT)
 cd $ATK14_DOCUMENT_ROOT
 
-#appname=`./scripts/_shell_safe_appname`
+#appname=$(./scripts/_shell_safe_appname)
 #echo -ne "\033]0;ATK14 console for $appname\007"
 
 if [ -t 0 ]; then

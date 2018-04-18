@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-cd `dirname $0` # /home/joe/webapps/myapp/scripts
+cd $(dirname $0) # /home/joe/webapps/myapp/scripts
 cd ..           # /home/joe/webapps/myapp
 
-PWD=`pwd`                                            # /home/joe/webapps/myapp
-HOSTNAME="`./scripts/dump_settings ATK14_HTTP_HOST`" # myapp.localhost
+PWD=$(pwd)                                            # /home/joe/webapps/myapp
+HOSTNAME="$(./scripts/dump_settings ATK14_HTTP_HOST)" # myapp.localhost
 FORCE=
 
 if [[ ${ATK14_ENV^^} == 'TEST' ]] ; then
@@ -24,7 +24,7 @@ done
 APACHE_CONF_DIR=
 APACHE_CONF_FILENAME="$HOSTNAME.conf" # myapp.localhost
 
-APACHE_CONF=`cat <<EOF
+APACHE_CONF=$(cat <<EOF
   <VirtualHost *:80>
    DocumentRoot "$PWD"
    ServerName $HOSTNAME
@@ -41,7 +41,7 @@ APACHE_CONF=`cat <<EOF
    </Directory>
    $ADD_CONF
   </VirtualHost>
-EOF`
+EOF)
 
 if [ -z "$FORCE" ]; then
   echo "\
