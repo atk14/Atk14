@@ -17,8 +17,8 @@ class TcFiles extends TcBase{
 
 	function test_get_image_size(){
 		$hlava = Files::GetFileContent("hlava.jpg",$err,$err_str);
-		$this->assertEquals(68423,strlen($hlava));
-		$this->assertEquals("93724a4b921ddaf8582bbcb7f2077034",md5($hlava));
+		$this->assertEquals(26130,strlen($hlava));
+		$this->assertEquals("cf5486d582909df788be944049402003",md5($hlava));
 		list($width,$height) = Files::GetImageSize($hlava,$err,$err_str);
 		$this->assertEquals(325,$width);
 		$this->assertEquals(448,$height);
