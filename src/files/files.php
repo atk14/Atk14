@@ -541,13 +541,34 @@ class Files{
 	}
 
 	/**
+	 * Returns the temporary directory
+	 *
+	 * ```
+	 * $tmp_dir = Files::GetTempDir(); // e.g. "/tmp"
+	 * ```
+	 *
+	 * It is NOT ensured whether returned is ending with "/" or not.
+	 *
+	 * @return string
+	 */
+	static function GetTempDir(){
+		$temp_dir = (defined("TEMP") && strlen("TEMP")) ? (string)TEMP : sys_get_temp_dir();
+		if(!strlen($temp_dir)){
+			$temp_dir = "/tmp";
+		}
+		return $temp_dir;
+	}
+
+	/**
 	 * Returns a filename for a new temporary file.
 	 *
 	 * @return string name of the newly created file
 	 */
-	static function GetTempFilename(){
-		$temp_filename = defined("TEMP") ? TEMP : "/tmp";
-		$temp_filename .= "/files_tmp_".uniqid("",true)."";
+	static function GetTempFilename($prefix = "files_tmp_"){
+		// Might be better, but oddly it breaks tests
+		//return tempnam(self::GetTempDir(), $prefix);
+
+		$temp_filename = self::GetTempDir() . "/files_tmp_".uniqid("",true);
 		return $temp_filename;
 	}
 
