@@ -25,7 +25,9 @@ class TcAtk14Base extends TcSuperBase {
 	function __construct($name = NULL, array $data = array(), $dataName = ''){
 		parent::__construct($name, $data, $dataName);
 
-		$this->dbmole = $GLOBALS["dbmole"];
+		// The '&' here is required. Without it, the delayed transaction beginning in begin() method doesn't work.
+		// Actually don't know why is that.
+		$this->dbmole = &$GLOBALS["dbmole"];
 	}
 
 
