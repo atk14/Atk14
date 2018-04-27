@@ -96,7 +96,8 @@ __defaults__(array(
 ));
 
 __defaults__(array(
-	"DBMOLE_COLLECT_STATICTICS" => DEVELOPMENT, // DbMole is able to collect query statistics and then report it (echo $dbmole->getStatistics())
+	"DBMOLE_COLLECT_STATICTICS" => DEVELOPMENT, // DbMole is able to collect query statistics and then report it (echo $dbmole->getStatistics()),
+	"DBMOLE_AUTOMATIC_DELAY_TRANSACTION_BEGINNING_AFTER_CONNECTION" => !TEST, // In tests do not automatically delay the transaction beginning.
 ));
 
 __defaults__(array(
