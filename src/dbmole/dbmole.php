@@ -1473,11 +1473,7 @@ class DbMole{
 	function _getCacheFilename($query,$bind_ar,$options){
 		// TODO: do we really need the atribute $this->_CacheDir?
 		if(!isset($this->_CacheDir)){
-			if(defined("TEMP")){
-				$this->_CacheDir = TEMP;
-			}else{
-				$this->_CacheDir = "/tmp/";
-			}
+			$this->_CacheDir = Files::GetTempDir();
 			$this->_CacheDir .= "/dbmole_cache/".$this->getDatabaseType()."/".$this->getConfigurationName()."/";
 		}
 
