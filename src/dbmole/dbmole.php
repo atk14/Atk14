@@ -474,13 +474,16 @@ class DbMole{
 	function _selectRows($query,&$bind_ar, $options = array()){
 		$options = array_merge(array(
 			"cache" => 0,
+			"recache" => false,
 		),$options);
 		$options["avoid_recursion"] = true; // protoze primo metoda selectRows() vola _selectRows() a naopak, mame tady tento ochranny parametr
+
 		$cache = (int)$options["cache"];
+		$recache = $options["recache"];
 
 		$this->_normalizeBindAr($bind_ar);
 
-		if($cache>0){
+		if($cache>0 && !$recache){
 			$rows = $this->_readCache($cache,$query,$bind_ar,$options);
 			if(is_array($rows)){
 				return $rows;
@@ -489,7 +492,7 @@ class DbMole{
 
 		$rows = $this->selectRows($query,$bind_ar,$options);
 
-		if($cache>0){
+		if($cache>0 || $recache){
 			$this->_writeCache($rows,$query,$bind_ar,$options);
 		}
 			
@@ -1477,6 +1480,12 @@ class DbMole{
 			}
 			$this->_CacheDir .= "/dbmole_cache/".$this->getDatabaseType()."/".$this->getConfigurationName()."/";
 		}
+
+		// TODO: I don't think that we really need to serialize $options.
+		// At least we unset some of them.
+		unset($options["cache"]);
+		unset($options["recache"]);
+		unset($options["type"]);
 
 		return $this->_CacheDir."/".md5($query)."/".md5(
 			serialize(array(

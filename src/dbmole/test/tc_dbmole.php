@@ -188,22 +188,35 @@ class tc_dbmole extends tc_base{
 
 		$q1 = "SELECT title FROM test_table -- ".uniqid();
 		$q2 = "SELECT title FROM test_table -- ".uniqid();
+		$q3 = "SELECT title FROM test_table -- ".uniqid();
 		$this->assertTrue($q1!=$q2);
+		$this->assertTrue($q1!=$q3);
+		$this->assertTrue($q2!=$q3);
 
 		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
+		$this->assertEquals($title,$dbmole->selectString($q3,array(),array("cache" => 60)));
 
 		$dbmole->doQuery("UPDATE test_table SET title=:title",array(":title" => "REWRITTEN"));
 
 		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
 		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => 60)));
 
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("recache" => true)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("cache" => 60)));
+
 		$dbmole->doQuery("DELETE FROM test_table");
 
 		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
 		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => 60)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("cache" => 60)));
+
+		$this->assertEquals($title,$dbmole->selectSingleValue($q1,array(),array("cache" => 60)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q2,array(),array("cache" => 60)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q3,array(),array("cache" => 60)));
 
 		$this->assertEquals(null,$dbmole->selectString($q1));
 		$this->assertEquals(null,$dbmole->selectString($q2));
+		$this->assertEquals(null,$dbmole->selectString($q3));
 	}
 
 	function test_pgmole(){
