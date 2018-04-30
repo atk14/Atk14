@@ -1626,6 +1626,11 @@ class TableRecord extends inobj {
 		if(!isset(self::$_TableStructuresCache[$cache_key])){
 			$structure = $this->_readTableStructure(array("cache" => self::$TableStructuresCacheDuration));
 
+			if(!$structure && self::$TableStructuresCacheDuration){
+				// This fix covers situation when a table is created after a cache for its structure was saved
+				$structure = $this->_readTableStructure(array("recache" => true));
+			}
+
 			if(!$structure){
 				throw new Exception("There is not table ".$this->getTableName()." in the database ".$this->dbmole->getDatabaseName()." (".$this->dbmole->getDatabaseType().")");
 			}
