@@ -252,6 +252,66 @@ class TcFields extends TcBase
 		$this->_check($DATA);
 	}
 
+	function test_textfield()
+	{
+		$DATA = array(
+			array(
+				'field' => new TextField(array(
+					'required' => false,
+				)),
+				'params' => array(
+					array('clean'=> 'Hello World!', 'error' => null, 'result' => 'Hello World!'),
+					array('clean'=> ' Hello World! ', 'error' => null, 'result' => ' Hello World! '),
+					array('clean'=> '', 'error' => null, 'result' => ''),
+					array('clean'=> ' ', 'error' => null, 'result' => ' '),
+				)
+			),
+
+			array(
+				'field' => new TextField(array(
+					'required' => false,
+					'null_empty_output' => true
+				)),
+				'params' => array(
+					array('clean'=> 'Hello World!', 'error' => null, 'result' => 'Hello World!'),
+					array('clean'=> ' Hello World! ', 'error' => null, 'result' => ' Hello World! '),
+					array('clean'=> '', 'error' => null, 'result' => null),
+					array('clean'=> ' ', 'error' => null, 'result' => null),
+				)
+			),
+
+			array(
+				'field' => new TextField(array(
+					'required' => false,
+					'trim_value' => true,
+				)),
+				'params' => array(
+					array('clean'=> 'Hello World!', 'error' => null, 'result' => 'Hello World!'),
+					array('clean'=> ' Hello World! ', 'error' => null, 'result' => 'Hello World!'),
+					array('clean'=> '', 'error' => null, 'result' => ''),
+					array('clean'=> ' ', 'error' => null, 'result' => ''),
+				)
+			),
+
+			array(
+				'field' => new TextField(array(
+					'required' => false,
+					'trim_value' => true,
+					'null_empty_output' => true
+				)),
+				'params' => array(
+					array('clean'=> 'Hello World!', 'error' => null, 'result' => 'Hello World!'),
+					array('clean'=> ' Hello World! ', 'error' => null, 'result' => 'Hello World!'),
+					array('clean'=> '', 'error' => null, 'result' => null),
+					array('clean'=> ' ', 'error' => null, 'result' => null),
+				)
+			),
+
+		);
+
+		$this->_check($DATA);
+	}
+
 	/**
 	* Kontrola IntegerField.
 	*/

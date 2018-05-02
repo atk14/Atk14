@@ -20,9 +20,12 @@ class TextField extends CharField{
 	}
 
 	function clean($value){
-		if($this->required && trim($value)==""){
+		if($this->required && trim($value)===""){
 			// when there are white characters only, the value is considered as empty
 			return array($this->messages["required"],null);
+		}
+		if($this->null_empty_output && trim($value)===""){
+			$value = null;
 		}
 		return parent::clean($value);
 	}
