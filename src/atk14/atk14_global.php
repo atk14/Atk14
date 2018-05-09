@@ -235,13 +235,17 @@ class Atk14Global{
 
 		$env = strtolower($this->getEnvironment()); // "development", "test", "production"
 
+		$d = null;
+
 		if($configuration_name=="default" || $configuration_name==""){
-			$d = $database_ar[$env];
+			$d = isset($database_ar[$env]) ? $database_ar[$env] : null;
 		}elseif(isset($database_ar["{$configuration_name}_$env"])){
 			$d = $database_ar["{$configuration_name}_$env"];
 		}elseif(isset($database_ar["$configuration_name"])){
 			$d = $database_ar["$configuration_name"];
-		}else{
+		}
+
+		if(!$d){
 			return null;
 		}
 
