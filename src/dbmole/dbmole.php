@@ -184,6 +184,8 @@ class DbMole{
 
 		if(is_string($options)){
 			$options = array("class_name" => $options);
+		}elseif(is_null($options)){
+			$options = array();
 		}
 
 		$options += array(
