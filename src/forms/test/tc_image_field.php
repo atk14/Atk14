@@ -20,6 +20,6 @@ class TcImageField extends TcBase{
 		));
 		list($err,$value) = $field->clean($image);
 		$this->assertNull($value);
-		$this->assertEquals($field->messages["file_formats"],$err);
+		$this->assertEquals(strtr($field->messages["file_formats"],array("%mime_type%" => "image/jpeg")),$err);
 	}
 }

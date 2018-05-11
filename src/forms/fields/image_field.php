@@ -19,7 +19,7 @@ class ImageField extends FileField{
 		parent::__construct($options);
 
 		$this->update_messages(array(
-			'not_image' => _('Ensure this file is image.'),
+			'not_image' => _('Ensure this file is image (it is %mime_type%).'),
 
 			'width' => _('Ensure this image is %width_required% pixels wide (it is %width%).'),
 			'height' => _('Ensure this image is %height_required% pixels high (it is %height%).'),
@@ -29,7 +29,7 @@ class ImageField extends FileField{
 			'min_width' => _('Ensure this image is at least %min% pixels wide (it is %width%).'),
 			'min_height' => _('Ensure this image is at least %min% pixels high (it is %height%).'),
 
-			'file_formats' => _('Ensure this image is in a required format'),
+			'file_formats' => _('Ensure this image is in a required format (it is %mime_type%).'),
 		));
 		$this->width = $options["width"];
 		$this->height = $options["height"];
@@ -46,14 +46,20 @@ class ImageField extends FileField{
 
 		// --
 
-		if(!$value->isImage()){ return array($this->messages['not_image'],null); }
+		if(!$value->isImage()){ return array(
+				strtr($this->messages['not_image'],array("%mime_type%" => h($value->getMimeType()))),
+				null);
+		}
 
 		// --
 		
 		if($this->file_formats){
 			list(,$file_format) = explode('/',$value->getMimeType());
 			if(!in_array($file_format,$this->file_formats)){
-				return array($this->messages['file_formats'],null);
+				return array(
+					strtr($this->messages['file_formats'],array("%mime_type%" => h($value->getMimeType()))),
+					null
+				);
 			}
 		}
 
