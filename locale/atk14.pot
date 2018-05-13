@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-27 08:38+0200\n"
+"POT-Creation-Date: 2018-05-13 17:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ATK14 Development Team\n"
@@ -61,7 +61,7 @@ msgstr ""
 msgid "Sort table by this column"
 msgstr ""
 
-#: ../src/atk14/helpers/block.a_destroy.php:33
+#: ../src/atk14/helpers/block.a_destroy.php:42
 msgid "Are you sure?"
 msgstr ""
 
@@ -186,7 +186,7 @@ msgid "Ensure this value is greater than or equal to %value%."
 msgstr ""
 
 #: ../src/forms/fields/image_field.php:22
-msgid "Ensure this file is image."
+msgid "Ensure this file is image (it is %mime_type%)."
 msgstr ""
 
 #: ../src/forms/fields/image_field.php:24
@@ -214,7 +214,7 @@ msgid "Ensure this image is at least %min% pixels high (it is %height%)."
 msgstr ""
 
 #: ../src/forms/fields/image_field.php:32
-msgid "Ensure this image is in a required format"
+msgid "Ensure this image is in a required format (it is %mime_type%)."
 msgstr ""
 
 #: ../src/forms/fields/integer_field.php:32

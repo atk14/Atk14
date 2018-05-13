@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-27 08:38+0200\n"
+"POT-Creation-Date: 2018-05-13 17:53+0200\n"
 "PO-Revision-Date: 2018-03-27 08:58+0200\n"
 "Last-Translator: Jaromir Tomek <jaromir.tomek@gmail.com>\n"
 "Language-Team: ATK14 Development Team\n"
@@ -66,7 +66,7 @@ msgstr ""
 msgid "Sort table by this column"
 msgstr "Zoradíť tabuľku podľa tohto stĺpca"
 
-#: ../src/atk14/helpers/block.a_destroy.php:33
+#: ../src/atk14/helpers/block.a_destroy.php:42
 msgid "Are you sure?"
 msgstr "Ste si istý?"
 
@@ -194,8 +194,8 @@ msgid "Ensure this value is greater than or equal to %value%."
 msgstr "Hodnota musí byť rovná alebo väčšia než hodnota %."
 
 #: ../src/forms/fields/image_field.php:22
-msgid "Ensure this file is image."
-msgstr "Overte, či tento súbor je obrázok."
+msgid "Ensure this file is image (it is %mime_type%)."
+msgstr ""
 
 #: ../src/forms/fields/image_field.php:24
 msgid "Ensure this image is %width_required% pixels wide (it is %width%)."
@@ -230,8 +230,8 @@ msgid "Ensure this image is at least %min% pixels high (it is %height%)."
 msgstr "Obrázok musí mať aspoň %min% bodov na výšku (teraz má %height%)."
 
 #: ../src/forms/fields/image_field.php:32
-msgid "Ensure this image is in a required format"
-msgstr "Uistite sa, že obrázok je v požadovanom formáte"
+msgid "Ensure this image is in a required format (it is %mime_type%)."
+msgstr ""
 
 #: ../src/forms/fields/integer_field.php:32
 msgid "Enter a whole number."
