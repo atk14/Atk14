@@ -76,6 +76,10 @@ class Dumper{
 			"collapse_structure" => false,
 		);
 
+		if(is_a($obj,"Closure")){
+			return $this->_Pad("Closure",$offset);
+		}
+
 		if($offset>0){
 			// in case of a deeper nesting a structure of a object is not being displayed
 			return $this->_Pad(get_class($obj)." Object",$offset);
