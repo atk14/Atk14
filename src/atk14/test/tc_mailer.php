@@ -39,6 +39,15 @@ class TcMailer extends TcBase{
 		$this->assertTrue(!!preg_match($_pattern_plain = '/Dear Customer\s+The plain part/s',$controller->mail_ar["body"])); // app/layouts/mailer.tpl
 		$this->assertTrue(!!preg_match($_pattern_html = '/<h2>Dear Customer<\/h2>.+<p>The rich part<\/p>.+Best Regards<br>\s*<b>SnakeOil ltd<\/b>/s',$controller->mail_ar["body"])); // app/layouts/mailer.html.tpl
 
+		// template for plain text part doesn't exist in this case
+		$controller = $this->client->get("testing/send_html_only_mail");
+		$this->assertEquals("unit@testing.com",$controller->mail_ar["from"]);
+		$this->assertEquals("HTML only notification",$controller->mail_ar["subject"]);
+		$this->assertContains('From: "Unit Testing" <unit@testing.com>',$controller->mail_ar["headers"]);
+		$this->assertContains("Content-Type: text/html",$controller->mail_ar["headers"]);
+		$this->assertTrue(!!preg_match($_pattern_html = '/<h2>Dear Customer<\/h2>.+<p>The HTML only message<\/p>.+Best Regards<br>\s*<b>SnakeOil ltd<\/b>/s',$controller->mail_ar["body"])); // app/layouts/mailer.html.tpl
+		$this->assertTrue(!isset($controller->mail_ar["body_html"]));
+
 		// layout is not rendered
 		$controller = $this->client->get("testing/send_html_mail_without_layout");
 		$this->assertContains("The plain part",$controller->mail_ar["body"]);
@@ -50,7 +59,15 @@ class TcMailer extends TcBase{
 		$controller = $this->client->get("testing/send_html_mail_christmas_theme");
 		$this->assertTrue(!!preg_match('/<h2>Dear Customer<\/h2>.+<p>The rich part<\/p>.+Merry Christmas<br>\s*<b>SnakeOil ltd<\/b>/s',$controller->mail_ar["body"]));
 		$this->assertTrue(!!preg_match('/Dear Customer\s+The plain part\s+Merry Christmas\s+SnakeOil/s',$controller->mail_ar["body"])); // app/layouts/mailer/tpl
-		
+
+		$exception_msg = "";
+		try{
+			$controller = $this->client->get("testing/send_mail_without_template");
+		}catch(Exception $e){
+			$exception_msg = $e->getMessage();
+		}
+		$this->assertEquals("For mailer ApplicationMailer there is no template notification_without_templates.tpl or notification_without_templates.html.tpl",$exception_msg);
+
 		// TODO: decode email bodies
 	}
 

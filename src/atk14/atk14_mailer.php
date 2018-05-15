@@ -372,13 +372,23 @@ class Atk14Mailer{
 			$template_name = $this->template_name.".tpl";
 			$html_template_name = $this->template_name.".html.tpl";
 
-			$this->body = $smarty->fetch($template_name);
-			$this->body = $this->_find_and_render_layout($smarty,$this->body);
+			$a_template_found = false;
+
+			if($smarty->templateExists($template_name)){
+				$a_template_found = true;
+				$this->body = $smarty->fetch($template_name);
+				$this->body = $this->_find_and_render_layout($smarty,$this->body);
+			}
 
 			if($smarty->templateExists($html_template_name)){
-				$smarty->clearAtk14Contents(); // there are atk14 contents from the plain part
+				$a_template_found = true;
+				$smarty->clearAtk14Contents(); // there may be atk14 contents from the plain part
 				$this->body_html = $smarty->fetch($html_template_name);
 				$this->body_html = $this->_find_and_render_layout($smarty,$this->body_html,array("suffix" => ".html"));
+			}
+
+			if(!$a_template_found){
+				throw new Exception("For mailer ".($this->namespace ? "$this->namespace/" : "").get_class($this)." there is no template $template_name or $html_template_name");
 			}
 
 			$this->_after_render();
@@ -556,7 +566,7 @@ class Atk14Mailer{
 			"attachments" => $this->_attachments,
 			"build_message_only" => false,
 		);
-		if($this->body_html){
+		if(strlen($this->body_html) && strlen($this->body)){
 			// !! experimental feature
 			$params["plain"] = $params["body"]; // oups! in sendhtmlmail() there is no param named body
 			$params["html"] = $this->body_html;
@@ -564,6 +574,10 @@ class Atk14Mailer{
 			unset($params["mime_type"]); // mime_type is determined automatically, "multipart/alternative" by default
 			$email_ar = sendhtmlmail($params);
 		}else{
+			if(strlen($this->body_html)){
+				$params["body"] = $this->body_html;
+				$params["mime_type"] = "text/html";
+			}
 			$email_ar = sendmail($params);
 		}
 		if(DEVELOPMENT){

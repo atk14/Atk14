@@ -23,6 +23,11 @@ class ApplicationMailer extends Atk14Mailer {
 		$this->to = "john.doe@hotmail.com";
 	}
 
+	function html_only_notification($params = array()){
+		$this->subject = "HTML only notification";
+		$this->to = "john.doe@hotmail.com";
+	}
+
 	function html_notification_without_layout($params = array()){
 		$this->subject = "Rich formatted notification";
 		$this->to = "john.doe@hotmail.com";
@@ -35,6 +40,11 @@ class ApplicationMailer extends Atk14Mailer {
 		$this->to = "john.doe@hotmail.com";
 		$this->template_name = "html_notification";
 		$this->layout_name = "mailer_christmas_theme";
+	}
+
+	function notification_without_templates($params = array()){
+		// There is no template for this action.
+		// An exception should be thrown.
 	}
 
 	function testing_hooks($params = array()){

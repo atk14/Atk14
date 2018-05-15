@@ -81,6 +81,11 @@ class TestingController extends ApplicationController{
 		$this->mail_ar = $this->mailer->execute("html_notification");
 	}
 
+	function send_html_only_mail(){
+		$this->render_template = false;
+		$this->mail_ar = $this->mailer->execute("html_only_notification");
+	}
+
 	function send_html_mail_without_layout(){
 		$this->render_template = false;
 		$this->mail_ar = $this->mailer->execute("html_notification_without_layout");
@@ -89,6 +94,11 @@ class TestingController extends ApplicationController{
 	function send_html_mail_christmas_theme(){
 		$this->render_template = false;
 		$this->mail_ar = $this->mailer->execute("html_notification_christmas_theme");
+	}
+
+	function send_mail_without_template(){
+		$this->render_template = false;
+		$this->mail_ar = $this->mailer->execute("notification_without_templates");
 	}
 
 	function testing_hooks(){
