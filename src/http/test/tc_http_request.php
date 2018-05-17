@@ -571,7 +571,7 @@ class tc_http_request extends tc_base{
 	function test_getRemoteHostname(){
 		$_SERVER["REMOTE_ADDR"] = "127.0.0.1";
 		$request = new HTTPRequest();
-		$this->assertEquals("localhost.localdomain",$request->getRemoteHostname());
+		$this->assertTrue(in_array($request->getRemoteHostname(),array("localhost.localdomain","localhost")));
 
 		$_SERVER["REMOTE_ADDR"] = "8.8.8.8";
 		$request = new HTTPRequest();
