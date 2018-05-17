@@ -467,6 +467,25 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("/index.php",$request->getRequestUri());
 	}
 
+	function test_getRequestAddress(){
+		global $_SERVER;
+		$_SERVER["REQUEST_URI"] = "/contact.php";
+		$_SERVER["SERVER_PORT"] = "81";
+		$_SERVER["HTTP_HOST"] = "www.testiq.cz";
+
+		$request = new HTTPRequest();
+		$this->assertEquals("http://www.testiq.cz:81/contact.php",$request->getRequestAddress());
+		$this->assertEquals("http://www.testiq.cz:81/contact.php",$request->getUrl());
+
+		$request->setRequestAddress("https://www.example.com/list.php");
+		$this->assertEquals("https://www.example.com/list.php",$request->getRequestAddress());
+		$this->assertEquals("https://www.example.com/list.php",$request->getUrl());
+
+		$request->setUrl("https://www.test.cz/calendar.php");
+		$this->assertEquals("https://www.test.cz/calendar.php",$request->getRequestAddress());
+		$this->assertEquals("https://www.test.cz/calendar.php",$request->getUrl());
+	}
+
 	function test_getGetVars(){
 		global $_GET;
 		$_GET = array("id" => "123", "format" => "xml");
