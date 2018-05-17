@@ -568,6 +568,20 @@ class tc_http_request extends tc_base{
 		$this->assertEquals(false,$request->isServerOnStandardPort());
 	}
 
+	function test_getRemoteHostname(){
+		$_SERVER["REMOTE_ADDR"] = "127.0.0.1";
+		$request = new HTTPRequest();
+		$this->assertEquals("localhost.localdomain",$request->getRemoteHostname());
+
+		$_SERVER["REMOTE_ADDR"] = "8.8.8.8";
+		$request = new HTTPRequest();
+		$this->assertEquals("google-public-dns-a.google.com",$request->getRemoteHostname());
+
+		unset($_SERVER["REMOTE_ADDR"]);
+		$request = new HTTPRequest();
+		$this->assertEquals(null,$request->getRemoteHostname());
+	}
+
 	/**
 	* Porovna dve asociativni pole bez ohledu na poradi klicu.
 	*/

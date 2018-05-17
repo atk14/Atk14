@@ -340,6 +340,12 @@ class HTTPRequest{
 		return isset($GLOBALS["_SERVER"]["REMOTE_PORT"]) ? $GLOBALS["_SERVER"]["REMOTE_PORT"] : null;
 	}
 
+	function getRemoteHostname(){
+		if($addr = $this->getRemoteAddr()){
+			return gethostbyaddr($addr);
+		}
+	}
+
 	/**
 	 * Gets server name.
 	 *
