@@ -434,7 +434,7 @@ class Atk14Global{
 			reset($routes);
 			$_last_title = "";
 			$_last_description = "";
-			while(list($key,$value) = each($routes)){
+			foreach($routes as $key => $value){
 				// $value["__path__"] = "domain/registration"  -> $value["controller"] = "domain", $value["action"] = "registration"
 				if(isset($value["__path__"])){ 
 					preg_match("/^(.+)\\/([a-z0-9_]+)$/",$value["__path__"],$matches);
@@ -463,8 +463,7 @@ class Atk14Global{
 
 			// doplneni chybejicich vzoru
 			// $routes["domain-registration/<domain_name>"] = array(); -> $routes["domain-registration/<domain_name>"] = array("domain_name" => "/.*/");
-			reset($routes);
-			while(list($key,$value) = each($routes)){
+			foreach($routes as $key => $value){
 				if(preg_match_all("/<([^>]+)>/",$key,$matches)){
 					for($i=0;$i<sizeof($matches[0]);$i++){
 						$_name = $matches[1][$i];

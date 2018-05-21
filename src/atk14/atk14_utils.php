@@ -199,8 +199,7 @@ class Atk14Utils{
 			"with_hostname" => false,
 			"ssl" => null,
 		),$options);
-		reset($options);
-		while(list($_key,$_value) = each($options)){
+		foreach($options as $_key => $_value){
 			if(isset($params["_$_key"])){
 				$options[$_key] = $params["_$_key"];
 			}
@@ -209,8 +208,7 @@ class Atk14Utils{
 
 		$_params = $params;
 
-		reset($_params);
-		while(list($key,) = each($_params)){
+		foreach(array_keys($_params) as $key)	{
 			if(preg_match("/^_/",$key)){ unset($_params[$key]); }
 		}
 
@@ -250,8 +248,7 @@ class Atk14Utils{
 	 * @return array
 	 */
 	static function ExtractAttributes(&$params,&$attributes = array()){
-		reset($params);
-		while(list($_key,$_value) = each($params)){
+		foreach($params as $_key => $_value){
 			if(preg_match("/^_(.+)/",$_key,$matches)){
 				$_attr = $matches[1];
 				$_attr = str_replace("___","-",$_attr); // this is a hack: "data___type" -> "data-type" (see atk14_smarty_prefilter() function)

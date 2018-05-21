@@ -898,8 +898,7 @@ class Atk14Form extends Form
 		$out = array();
 		if(sizeof($this->atk14_hidden_fields)){
 			$out[] = "<div>";
-			reset($this->atk14_hidden_fields);
-			while(list($_key,$_value) = each($this->atk14_hidden_fields))
+			foreach($this->atk14_hidden_fields as $_key => $_value)
 			{
 				$out[] = "<input type=\"hidden\" name=\"".h($_key)."\" value=\"".h($_value)."\" />";
 			}
@@ -1038,8 +1037,7 @@ class Atk14Form extends Form
 		$out[] = "<h3>$this->atk14_error_title</h3>";
 		$out[] = "<ul>";
 		$errors = $this->get_errors();
-		reset($errors);
-		while(list($_key,$_messages) = each($errors)){
+		foreach($errors as $_key => $_messages){
 			if(sizeof($_messages)==0){ continue; }
 			$_prefix = "";
 			if(isset($this->fields[$_key])){

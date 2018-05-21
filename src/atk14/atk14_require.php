@@ -134,8 +134,7 @@ class Atk14Require{
 
 		if(!$ar = glob($ATK14_GLOBAL->getApplicationPath()."$pattern")){ return $out; }
 
-		reset($ar);
-		while(list(,$filename) = each($ar)){
+		foreach($ar as $filename){
 			$basename = basename($filename);
 			if(!preg_match("/^[a-z0-9_].*\\.(inc|php)$/",$basename)){ continue; }
 			$out[] = $filename;
