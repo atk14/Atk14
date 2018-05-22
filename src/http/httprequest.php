@@ -1125,8 +1125,7 @@ class HTTPRequest{
 
 		$headers = $this->_HTTPRequest_headers;
 		$static_ar = array();
-		reset($headers);
-		while(list($key,$value) = each($headers)){
+		foreach($headers as $key => $value){
 			switch(strtoupper(trim($key))){
 				//case "ACCEPT": --> MSIE CHANGES IT DYNAMICALLY :)
 				//case "ACCEPT-CHARSET":
@@ -1142,8 +1141,7 @@ class HTTPRequest{
 		switch($output_format){
 			case "string":
 				$string = "";
-				reset($static_ar);
-				while(list($key,$value) = each($static_ar)){
+				foreach($static_ar as $key => $value){
 					$string .= "$key: $value\n";
 				}
 				return $string;

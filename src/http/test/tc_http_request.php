@@ -590,8 +590,7 @@ class tc_http_request extends tc_base{
 
 		$arry_keys = array_keys($arry);
 
-		reset($template);
-		while(list($_key,$_val) = each($template)){
+		foreach($template as $_key => $_val){
 			$this->assertTrue(in_array($_key,$arry_keys));
 			$this->assertEquals($_val,$arry[$_key]);
 		}

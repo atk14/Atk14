@@ -696,8 +696,7 @@ class HTTPResponse{
 		}
 
 		$headers = $this->getHeaders();
-		reset($headers);
-		while(list($_key,$_value) = each($headers)){
+		foreach($headers as $_key => $_value){
 			header("$_key: $_value");
 		}
 
