@@ -9,6 +9,10 @@
 # To dump schema and data from a specific table:
 #
 #  $ ATK14_ENV=PRODUCTION ./scripts/dump_db -t users
+#
+# To dump an another database, e.g. database named as import in config/database.yml:
+#
+#  $ ./scripts/dump_db import
 
 cd $(dirname $0)
 

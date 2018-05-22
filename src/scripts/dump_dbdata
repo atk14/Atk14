@@ -9,6 +9,10 @@
 # To dump data from a specific table:
 #
 #  $ ./scripts/dump_dbdata -t users
+#
+# To dump data from an another database, e.g. database named as import in config/database.yml:
+#
+#  $ ./scripts/dump_dbdata import
 
 cd $(dirname $0)
 

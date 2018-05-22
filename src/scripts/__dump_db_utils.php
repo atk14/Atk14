@@ -7,10 +7,20 @@
 function dump_db_command($dump = "all"){
 	global $argv,$ATK14_GLOBAL;
 
-	$d = $ATK14_GLOBAL->getDatabaseConfig();
-
 	$arguments = $argv;
 	array_shift($arguments); // removing script name
+
+	$configs = $ATK14_GLOBAL->getConfig("database"); // ['development' => [], 'test' => [], ...]
+
+	$config = "default";
+
+	// At the moment, the configuration name can be set in the one and only parameter.
+	if(sizeof($arguments)==1 && (in_array($arguments[0],array_keys($configs)) || $arguments[0]=="default")){
+		$config = $arguments[0];
+		$arguments = array();
+	}
+
+	$d = $ATK14_GLOBAL->getDatabaseConfig($config);
 
 	switch($d["adapter"]){
 		case "postgresql":

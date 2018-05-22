@@ -12,6 +12,10 @@
 # To make a dump with full inserts:
 #
 #  $ ./scripts/dump_dbdata --column-inserts
+#
+# To dump schema from an another database, e.g. database named as import in config/database.yml:
+#
+#  $ ./scripts/dump_dbdata import
 
 cd $(dirname $0)
 
