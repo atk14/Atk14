@@ -439,8 +439,7 @@ class Logger{
 		$fp = fopen($this->_log_file,"a");
 
 		if(!$this->_notify_level_reached){
-			reset($this->_log_store);
-			while(list(,$rec) = each($this->_log_store)){
+			foreach($this->_log_store as $rec){
 				if($rec['log_level']>=$this->_notify_level){
 					$this->_notify_level_reached = true;
 					break;
@@ -448,8 +447,7 @@ class Logger{
 			}
 		}
 
-		reset($this->_log_store);
-		while(list(,$rec) = each($this->_log_store)){
+		foreach($this->_log_store as $rec){
 
 			$this->_log_store_whole[] = $rec;
 
