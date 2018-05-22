@@ -20,7 +20,12 @@ class RadioInput
 		$this->attrs = $attrs;
 		$this->index = $index;
 		$this->convert_html_special_chars = $options["convert_html_special_chars"];
-		list($this->choice_value, $this->choice_label) = each($choice);
+
+		// A replacement for list($this->choice_value, $this->choice_label) = each($choice);
+		$this->choice_value = $this->choice_label = null;
+		foreach($choice as $this->choice_value => $this->choice_label){
+			break;
+		}
 	}
 
 	function is_checked()
