@@ -178,8 +178,7 @@ function assert_callback($script, $line, $message) {
 
 // on non-UTF-8 apps following hack converts UTF-8 params to DEFAULT_CHARSET
 function __to_default_charset__(&$params){
-	reset($params);
-	while(list($key,$value) = each($params)){
+	foreach($params as $key => $value){
 		if(is_string($value)){
 			Translate::CheckEncoding($params[$key],"UTF-8") && ($params[$key] = Translate::Trans($params[$key],"UTF-8",DEFAULT_CHARSET));
 			continue;
