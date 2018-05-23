@@ -393,8 +393,7 @@ class miniYAML{
       $str = $this->_escapeString($str);
     }else{
       $_escaped = false;
-      reset($patterns_to_escape);
-      while(list(,$pattern) = each($patterns_to_escape)){
+      foreach($patterns_to_escape as $pattern){
         if(preg_match($pattern,$str)){
           $str = $this->_escapeString($str);
           $_escaped = true;
@@ -408,8 +407,7 @@ class miniYAML{
   function _isIndexedArray($ar){
     if(!is_array($ar)){ return false; }
     $expected_key = 0;
-    reset($ar);
-    while(list($_key,) = each($ar)){
+    foreach(array_keys($ar) as $_key){
       if(!is_int($_key) || $_key!=$expected_key){ return false; }
       $expected_key++;
     }
@@ -418,8 +416,7 @@ class miniYAML{
 
   function _dumpIndexedArray($ar,$indent){
     $out = array();
-    reset($ar);
-    while(list(,$_value) = each($ar)){
+    foreach($ar as $_value){
       if($this->_isIndexedArray($_value) && sizeof($_value)>0){
         $_dump = $this->_dumpIndexedArray($_value,$indent + 1); // "- "
         $_prefix = $this->_dumpIndent($indent)."- ";
@@ -438,8 +435,7 @@ class miniYAML{
 
   function _dumpHashArray($ar,$indent){
     $out = array();
-    reset($ar);
-    while(list($_key,$_value) = each($ar)){
+    foreach($ar as $_key => $_value){
       $out[] = $this->_dumpIndent($indent).$this->_dumpString($_key).": ".$this->_dumpVar($_value,$indent);
     }
     return join("\n",$out);
@@ -454,4 +450,4 @@ class miniYAML{
     return "\"".str_replace("\"","\\\"",$str)."\"";
   }
 }
-// vim: set expandtab
+// vim: set expandtab:
