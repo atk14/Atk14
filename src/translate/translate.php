@@ -4,9 +4,9 @@
  *
  *
  * @internal
- *	updates
- *	3.12.2003 - pridana funkce _TO_windows_1250
- *	4.12.2003 - pridana funkce _TO_ascii pro osmibitove kodovani
+ *  updates
+ *  3.12.2003 - pridana funkce _TO_windows_1250
+ *  4.12.2003 - pridana funkce _TO_ascii pro osmibitove kodovani
  * 15.12.2003 - pridana funkce _check_encoding_ascii a _check_encoding_utf8
  * 13.3.2006 - opravena chyba pri Translate::Lower($neco,"windows-1250") a Translate::Upper($neco,"windows-1250")
  * 13.3.2006 - do metod lower a upper pridano kodovani iso-8859-2
@@ -74,6 +74,9 @@ class Translate{
 	 *
 	 * Parameter can be an array of string and the method also returns array with all converted strings.
 	 *
+	 * $options description
+	 * - "recode_array_keys" - when $text is of type array, also its keys will be converted
+	 * 
 	 * @param string|array $text
 	 * @param string $from_charset input charset
 	 * @param string $to_charset output charset
@@ -168,7 +171,8 @@ class Translate{
 			"Г" => "G", // "H" (Ukrainian)
 			"Ґ" => "G",
 			"Д" => "D",
-			"Е" => "E",
+			"E" => "E", // ??
+			"Е" => "E", // ??
 			"Є" => "Je",
 			"Ж" => "Ž",
 			"З" => "Z",
@@ -206,7 +210,8 @@ class Translate{
 			"г" => "g", // "h" (Ukrainian)
 			"ґ" => "g",
 			"д" => "d",
-			"е" => "e",
+			"e" => "e", // ??
+			"е" => "e", // ??
 			"є" => "je",
 			"ж" => "ž",
 			"з" => "z",
@@ -576,8 +581,7 @@ class Translate{
 	 */
 	static function CheckEncoding($text,$charset,$disallowed_char_sequencies = array()){
 		if(is_array($text)){
-			reset($text);
-			while(list($_key,$_value) = each($text)){
+			foreach($text as $_key => $_value){
 				$_stat_key = Translate::CheckEncoding($_key,$charset,$disallowed_char_sequencies);
 				$_stat_value = Translate::CheckEncoding($_value,$charset,$disallowed_char_sequencies);
 				if(!$_stat_key || !$_stat_value){
