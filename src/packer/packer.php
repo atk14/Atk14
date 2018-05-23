@@ -280,8 +280,7 @@ class Packer{
 		$base64 = array();
 		$_escapes = Packer::_GetEscape();
 		$escapes = array();
-		reset($_escapes);
-		while(list($_key,$_value) = each($_escapes)){
+		foreach($_escapes as $_key => $_value){
 			$escapes[$_value] = $_key;
 		}
 
