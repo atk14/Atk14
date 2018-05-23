@@ -978,7 +978,7 @@ class SessionStorer{
 				":session_id" => $this->_SessionId,
 				":section" => $this->getSection(),
 		));
-		while(list(,$row) = each($rows)){
+		foreach($rows as $row){
 			$_expiration = null;
 			if(isset($row["expiration"])){
 				$_expiration = strtotime($row["expiration"]);
