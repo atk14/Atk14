@@ -849,8 +849,7 @@ class XMole{
 			}
 
 			$_out = $this->_search_branches_by_path($wished_path,$_current_path,$xml_tree[$i]["children"]);
-			reset($_out);
-			while(list(,$_item) = each($_out)){
+			foreach($_out as $_item){
 				$out[] = $_item;
 			}
 		}
