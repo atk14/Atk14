@@ -242,8 +242,7 @@ class String{
 		if(is_array($search)){
 			$_replaces_keys = array();
 			$_replaces_values = array();
-			reset($search);
-			while(list($key,) = each($search)){
+			foreach(array_keys($search) as $key){
 				$_replaces_keys[] = $key;
 				$_replaces_values[] = $search[$key];
 			}   
