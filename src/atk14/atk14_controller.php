@@ -428,6 +428,10 @@ class Atk14Controller{
 		);
 
 		foreach($filters as $f){
+			if(is_a($f,"Closure")){
+				$f();
+				continue;
+			}
 			$f = "_$f";
 			$this->$f();
 		}
