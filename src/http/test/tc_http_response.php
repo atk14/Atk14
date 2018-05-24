@@ -172,6 +172,20 @@ class tc_http_response extends tc_base{
 			"X-Powered-By" => "ATK14 Framework",
 			"X-Forwarded-For" => "1.2.3.4",
 		),$headers);
+
+		// _OutputBuffer_Flush_Started - a kind of testing :)
+		$final_resp = new HTTPResponse();
+		$this->assertEquals(false,$final_resp->_OutputBuffer_Flush_Started);
+		$resp = new HTTPResponse();
+		$resp->write(_("Hello World!"));
+		$final_resp->concatenate($resp);
+		$this->assertEquals(false,$final_resp->_OutputBuffer_Flush_Started);
+		//
+		$resp = new HTTPResponse();
+		$resp->write(_("Hello Another World!"));
+		$resp->_OutputBuffer_Flush_Started = true;
+		$final_resp->concatenate($resp);
+		$this->assertEquals(true,$final_resp->_OutputBuffer_Flush_Started);
 	}
 
 	// TODO: this test is stupid and fails -> rewrite it

@@ -714,7 +714,11 @@ class HTTPResponse{
 	 * @param HTTPResponse $http_response
 	 */
 	function concatenate($http_response){
+		// Output buffer
 		$this->_OutputBuffer->addStringBuffer($http_response->_OutputBuffer);
+		if($http_response->_OutputBuffer_Flush_Started){
+			$this->_OutputBuffer_Flush_Started = true;
+		}
 
 		// Redirection
 		$_location = $http_response->getLocation();
