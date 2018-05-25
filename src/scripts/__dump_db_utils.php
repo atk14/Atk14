@@ -14,10 +14,9 @@ function dump_db_command($dump = "all"){
 
 	$config = "default";
 
-	// At the moment, the configuration name can be set in the one and only parameter.
-	if(sizeof($arguments)==1 && (in_array($arguments[0],array_keys($configs)) || $arguments[0]=="default")){
-		$config = $arguments[0];
-		$arguments = array();
+	// The first parameter can be a configuration name
+	if(sizeof($arguments)>=1 && (in_array($arguments[0],array_keys($configs)) || $arguments[0]=="default")){
+		$config = array_shift($arguments);
 	}
 
 	$d = $ATK14_GLOBAL->getDatabaseConfig($config);
