@@ -82,6 +82,24 @@ class Files{
 	}
 
 	/**
+	 * Created a directory for the given filename.
+	 *
+	 *
+	 * ```
+	 *	Files::MkdirForFile("/path/to/a/file.dat");
+	 * ```
+	 */
+	function MkdirForFile($filename,&$error = null,&$error_str = null){
+		$directory = preg_replace('/[^\/]+$/','',$filename);
+		if(!strlen($directory)){
+			$error = true;
+			$error_str = "can't determine directory name";
+			return;
+		}
+		return self::Mkdir($directory,$error,$error_str);
+	}
+
+	/**
 	 * Creates a copy of a file.
 	 *
 	 * When the target file does not exist, it is created with permissions 0666.

@@ -157,6 +157,24 @@ class TcFiles extends TcBase{
 		rmdir(TEMP."/ddd");
 	}
 
+	function test_MkdirForFile(){
+		$directory = TEMP . "/dir_for_a_file/";
+		$filename = "$directory/data.txt";
+		if(file_exists($directory)){ rmdir($directory); }
+
+		$this->assertFalse(file_exists($directory));
+
+		$out = Files::MkdirForFile($filename,$error);
+		$this->assertEquals(1,$out);
+		$this->assertEquals(false,$error);
+
+		$this->assertTrue(file_exists($directory));
+
+		$out = Files::MkdirForFile($filename,$error);
+		$this->assertEquals(0,$out);
+		$this->assertEquals(false,$error);
+	}
+
 	function test_DetermineFileType(){
 
 		// http://en.wikipedia.org/wiki/Internet_media_type
