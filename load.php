@@ -104,8 +104,14 @@ function dbmole_error_handler($dbmole){
 	global $ATK14_LOGGER;
 
 	if(PRODUCTION){
-		$dbmole->sendErrorReportToEmail(ATK14_ADMIN_EMAIL);
-		$dbmole->logErrorReport(); // zaloguje chybu do error logu
+		$dbmole->logErrorReport(); // logs the error into a error log
+
+		// sends an email but not often than once every 5 minutes
+		$email_lock_file = Files::GetTempDir()."/dbmole_email_sent_".md5(__DIR__);
+		if(!file_exists($email_lock_file) || filemtime($email_lock_file)<(time() - 60 * 5)){
+			$dbmole->sendErrorReportToEmail(ATK14_ADMIN_EMAIL);
+			touch($email_lock_file);
+		}
 
 		/*
 		// Not sure if this is still needed when an Exception is thrown away
