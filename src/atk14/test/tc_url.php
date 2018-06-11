@@ -322,6 +322,11 @@ class TcUrl extends TcBase{
 		$this->assertEquals(array(),$data["get_params"]);
 	}
 
+	function test_BuildLink(){
+		$this->assertEquals("https://secure.testing.cz/en/",$this->_build_link(array(),array("ssl" => true)));
+		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz")));
+	}
+
 	function _test_route($request_uri,$expected_ar,$expected_params = array()){
 		$route = Atk14Url::RecognizeRoute($request_uri);
 		foreach($expected_ar as $k => $v){
@@ -348,7 +353,7 @@ class TcUrl extends TcBase{
 		));
 	}
 
-	function _build_link($params = array()){
+	function _build_link($params = array(),$options = array()){
 		$params += array(
 			"namespace" => "",
 			"controller" => "main",
@@ -356,6 +361,10 @@ class TcUrl extends TcBase{
 			"lang" => "en",
 		);
 
-		return Atk14Url::BuildLink($params,array("connector" => "&"));
+		$options += array(
+			"connector" => "&"
+		);
+
+		return Atk14Url::BuildLink($params,$options);
 	}
 }
