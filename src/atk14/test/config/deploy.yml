@@ -1,10 +1,10 @@
 devel:
   url: "http://devel.mushoomradar.net/"
-  server: "zeus.mushoomradar.net"
+  server: "devel.mushoomradar.net"
   user: "deploy"
-  directory: "/home/deploy/apps/mushoomradar_devel/"
+  directory: "/home/deploy/apps/mushoomradar_{{ name }}/"
 # create_maintenance_file: "false" # this is default
-  deploy_repository: "deploy@zeus.mushoomradar.net:repos/mushoomradar_devel.git"
+  deploy_repository: "{{ user }}@{{server}}:repos/mushoomradar.git"
   deploy_branch: "master"
   before_deploy:
   - "@local composer update"
@@ -15,16 +15,21 @@ devel:
   after_deploy: "./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"
 
 acceptation:
+  server: "zeus.mushoomradar.net"
   url: "http://acceptation.mushoomradar.net"
   directory: "/home/deploy/apps/mushoomradar_acc/"
   create_maintenance_file: 1
-  deploy_repository: "deploy@zeus.mushoomradar.net:repos/mushoomradar_acc.git"
+  deploy_repository: "{{user}}@{{server}}:repos/mushoomradar_acc.git"
   rsync: ""
 
+acceptation2:
+  extends: acceptation
+  directory: "/home/deploy/apps/mushoomradar_acc2/"
+  deploy_repository: "{{user}}@{{server}}:repos/mushoomradar_acc2.git"
+
 production:
+  server: "zeus.mushoomradar.net"
   url: "http://www.mushoomradar.net"
-  directory: "/home/deploy/apps/mushoomradar"
   create_maintenance_file: "False"
-  deploy_repository: "deploy@zeus.mushoomradar.net:repos/mushoomradar.git"
 
 # vim: set et:

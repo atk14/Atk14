@@ -1,5 +1,6 @@
 <?php
 class Atk14DeploymentStage{
+
 	protected $data;
 
 	protected function __construct($name,$params){
@@ -24,6 +25,8 @@ class Atk14DeploymentStage{
 	}
 
 	/**
+	 * Returns all deployment stages
+	 *
 	 * $stages = Atk14DeploymentStage::GetStages();
 	 *
 	 * foreach($stages as $name => $stage){
@@ -34,8 +37,10 @@ class Atk14DeploymentStage{
 		global $ATK14_GLOBAL;
 
 		$out = array();
+		$defaults =
 	
 		$very_very_defauls = array(
+			"extends" => null, // e.g. "production"
 			"url" => "", // e.g. http://www.example.com; just for information
 			"user" => null,
 			"server" => null,
@@ -51,12 +56,26 @@ class Atk14DeploymentStage{
 		);
 
 		$defaults = null;
+		$all_defaults = array();
 		foreach($ATK14_GLOBAL->getConfig("deploy") as $name => $ar){
 			if(!isset($defaults)){
+				// the default recipe is the one for the first stage
 				$defaults = $ar + $very_very_defauls;
 			}
 
-			$ar += $defaults;
+			$_defaults = $defaults;
+			if(isset($ar["extends"]) && strlen($ar["extends"])>0){
+				if(!isset($all_defaults[$ar["extends"]])){
+					throw new Exception("Deployment stage $name extends from unknown ($ar[extends])");
+				}
+				$_defaults = $all_defaults[$ar["extends"]];
+			}
+
+			$ar += $_defaults;
+
+			$all_defaults[$name] = $ar;
+
+			$ar = self::_ReplaceVariables($ar,$name);
 
 			/*
 			// TODO: add some checks
@@ -74,6 +93,38 @@ class Atk14DeploymentStage{
 		}
 
 		return $out;
+	}
+
+	protected static function _ReplaceVariables($ar,$name){
+		$replaces = array();
+		foreach($ar as $key => $value){
+			if(is_array($value)){ continue; }
+			$replaces['{{'.$key.'}}'] = $value;
+		}
+
+		$replaces['{{name}}'] = $name;
+		
+		foreach($ar as $key => $value){
+			$ar[$key] = self::_ReplaceVariablesInItem($value,$replaces);
+		}
+
+		return $ar;
+	}
+
+	protected static function _ReplaceVariablesInItem($item,$replaces){
+		if(is_null($item)){ return $item; }
+		if(is_array($item)){
+			foreach($item as $k => $v){
+				$item[$k] = self::_ReplaceVariablesInItem($v,$replaces);
+			}
+			return $item;
+		}
+
+		// normalizing variable names
+		$item = preg_replace('/\{\{ ?([a-z_]+) ?\}\}/','{{\1}}',$item); // {{ user }} -> {{user}}
+
+		$item = strtr($item,$replaces);
+		return $item;
 	}
 
 	/**

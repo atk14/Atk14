@@ -3,8 +3,8 @@ class TcDeploymentStage extends TcBase{
 	function test(){
 		$stages = Atk14DeploymentStage::GetStages();
 
-		$this->assertEquals(3,sizeof($stages));
-		$this->assertEquals(array("devel","acceptation","production"),array_keys($stages));
+		$this->assertEquals(4,sizeof($stages));
+		$this->assertEquals(array("devel","acceptation","acceptation2","production"),array_keys($stages));
 
 		$first_stage = Atk14DeploymentStage::GetFirstStage();
 		$this->assertEquals("devel",$first_stage->name);
@@ -13,26 +13,73 @@ class TcDeploymentStage extends TcBase{
 		$this->assertEquals(null,Atk14DeploymentStage::GetStage("preview"));
 
 		$devel = Atk14DeploymentStage::GetStage("devel");
-		$this->assertEquals("devel",$devel->name);
 		$this->assertEquals("deployment_stage_devel","$devel");
-		$this->assertEquals("zeus.mushoomradar.net",$devel->server);
-		$this->assertEquals("/home/deploy/apps/mushoomradar_devel/",$devel->directory);
-		$this->assertEquals(false,$devel->create_maintenance_file);
-		$this->assertEquals(array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),$devel->after_deploy);
-		$this->assertEquals(array("public/dist/","vendor/"),$devel->rsync);
+		$this->assertEquals("devel",$devel->name);
+		$this->assertEquals("devel.mushoomradar.net",$devel->server);
+		// etc
+		$this->_compareArrays(array(
+			"name" => "devel",
+			"user" => "deploy",
+			"server" => "devel.mushoomradar.net",
+			"port" => null,
+			"directory" => "/home/deploy/apps/mushoomradar_devel/",
+			"deploy_via" => "git_push",
+			"deploy_repository" => "deploy@devel.mushoomradar.net:repos/mushoomradar.git",
+			"deploy_branch" => "master",
+			"create_maintenance_file" => false,
+			"before_deploy" => array("@local composer update", "@local grunt dist"),
+			"rsync" => array("public/dist/","vendor/"),
+			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
+		),$devel->toArray());
 
 		$production = Atk14DeploymentStage::GetStage("production");
 		$this->assertEquals("production",$production->name);
 		$this->assertEquals("deployment_stage_production","$production");
-		$this->assertEquals("zeus.mushoomradar.net",$production->server);
-		$this->assertEquals("/home/deploy/apps/mushoomradar/",$production->directory);
-		$this->assertEquals(false,$production->create_maintenance_file);
-		$this->assertEquals(array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),$production->after_deploy);
-		$this->assertEquals(array("public/dist/","vendor/"),$production->rsync);
+		$this->_compareArrays(array(
+			"name" => "production",
+			"user" => "deploy",
+			"server" => "zeus.mushoomradar.net",
+			"directory" => "/home/deploy/apps/mushoomradar_production/",
+			"deploy_via" => "git_push",
+			"deploy_repository" => "deploy@zeus.mushoomradar.net:repos/mushoomradar.git",
+			"deploy_branch" => "master",
+			"create_maintenance_file" => false,
+			"before_deploy" => array("@local composer update", "@local grunt dist"),
+			"rsync" => array("public/dist/","vendor/"),
+			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
+		),$production->toArray());
 
 		$acceptation = Atk14DeploymentStage::GetStage("acceptation");
-		$this->assertEquals(array(),$acceptation->rsync);
-		$this->assertEquals(true,$acceptation->create_maintenance_file);
+		$this->_compareArrays(array(
+			"name" => "acceptation",
+			"user" => "deploy",
+			"server" => "zeus.mushoomradar.net",
+			"port" => null,
+			"directory" => "/home/deploy/apps/mushoomradar_acc/",
+			"deploy_via" => "git_push",
+			"deploy_repository" => "deploy@zeus.mushoomradar.net:repos/mushoomradar_acc.git",
+			"deploy_branch" => "master",
+			"create_maintenance_file" => true,
+			"before_deploy" => array("@local composer update", "@local grunt dist"),
+			"rsync" => array(),
+			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
+		),$acceptation->toArray());
+
+		$acceptation2 = Atk14DeploymentStage::GetStage("acceptation2");
+		$this->_compareArrays(array(
+			"name" => "acceptation2",
+			"user" => "deploy",
+			"server" => "zeus.mushoomradar.net",
+			"port" => null,
+			"directory" => "/home/deploy/apps/mushoomradar_acc2/",
+			"deploy_via" => "git_push",
+			"deploy_repository" => "deploy@zeus.mushoomradar.net:repos/mushoomradar_acc2.git",
+			"deploy_branch" => "master",
+			"create_maintenance_file" => true,
+			"before_deploy" => array("@local composer update", "@local grunt dist"),
+			"rsync" => array(),
+			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
+		),$acceptation2->toArray());
 
 		// it is unable to set a value
 		$exception_thrown = false;
@@ -45,5 +92,11 @@ class TcDeploymentStage extends TcBase{
 		}
 		$this->assertEquals(true,$exception_thrown);
 		$this->assertEquals(array("public/dist/","vendor/"),$devel->rsync);
+	}
+
+	function _compareArrays($exp_ar,$ar){
+		foreach($exp_ar as $key => $exp){
+			$this->assertEquals($exp,$ar[$key],$key);
+		}
 	}
 }
