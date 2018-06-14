@@ -60,7 +60,8 @@ if(!$shell_argv){
 
 $ssh_options = $ssh_argv ? " ".join(" ",$ssh_argv) : "";
 
-$cmd = "ssh$ssh_options $s[user]@$s[server]";
+$user = $s["user"] ? "$s[user]@" : "";
+$cmd = "ssh$ssh_options $user$s[server]";
 
 $_cmd = "cd '$s[directory]' && export ATK14_ENV=production && (".join(" ",$shell_argv).")";
 //$_cmd = strtr($_cmd,array(
