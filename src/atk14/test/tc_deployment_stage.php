@@ -17,6 +17,23 @@ class TcDeploymentStage extends TcBase{
 		$this->assertEquals("devel",$devel->name);
 		$this->assertEquals("devel.mushoomradar.net",$devel->server);
 		// etc
+		// key order
+		$this->assertEquals(array(
+			"name",
+			"extends",
+			"url",
+			"user",
+			"server",
+			"port",
+			"directory",
+			"create_maintenance_file",
+			"deploy_via",
+			"deploy_repository",
+			"deploy_branch",
+			"before_deploy",
+			"rsync",
+			"after_deploy",
+		),array_keys($devel->toArray()));
 		$this->_compareArrays(array(
 			"name" => "devel",
 			"user" => "deploy",
