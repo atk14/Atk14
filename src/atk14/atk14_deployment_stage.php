@@ -54,6 +54,7 @@ class Atk14DeploymentStage{
 			"rsync" => array(), // array of directories which have to be synchronized to the server
 			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
 		);
+		$required_key_order = array_keys($very_very_defauls);
 
 		$defaults = null;
 		$all_defaults = array();
@@ -88,6 +89,15 @@ class Atk14DeploymentStage{
 				// TODO: check mandatory values
 				// TODO: check formats of values
 			} */
+
+			// gaining the requested key order in $ar
+			$_ar = array();
+			foreach($required_key_order as $k){
+				$_ar[$k] = $ar[$k];
+				unset($ar[$k]);
+			}
+			$_ar += $ar; // addition of eventual custom variables
+			$ar = $_ar;
 
 			$out[$name] = new Atk14DeploymentStage($name,$ar);
 		}
