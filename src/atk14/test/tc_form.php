@@ -40,6 +40,14 @@ class TcForm extends TcBase{
 		$this->assertNotContains('id=""',$form->begin());
 	}
 
+	function test_get_fields(){
+		$form = Atk14Form::GetInstanceByControllerAndAction("main","hello_world");
+		$fields = $form->get_fields();
+
+		$this->assertEquals(array("greeting"),array_keys($fields));
+		$this->assertContains('id="id_greeting"',$fields["greeting"]->as_widget());
+	}
+
 	function test_constructor(){
 		$form = new TestForm();
 		$this->assertEquals(null,$form->prefix);

@@ -1069,6 +1069,23 @@ class Atk14Form extends Form
 	}
 
 	/**
+	 * Returns all fields as associative array
+	 *
+	 * ```
+	 *	$fields = $form->get_fields();
+	 * ```
+	 */
+	function get_fields(){
+		$this->_call_super_constructor();
+
+		$fields = array();
+		foreach($this->get_field_keys() as $key){
+			$fields[$key] = $this->get_field($key);
+		}
+		return $fields;
+	}
+
+	/**
 	 * Returns names of the fields as array.
 	 *
 	 * @return array
