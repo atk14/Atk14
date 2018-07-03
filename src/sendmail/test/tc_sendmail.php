@@ -1,5 +1,6 @@
 <?php
 class tc_sendmail extends tc_base{
+
 	function test(){
 		$ar = sendmail(array(
 			"to" => "me@mydomain.com",

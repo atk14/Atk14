@@ -8,7 +8,18 @@ defined("SENDMAIL_USE_TESTING_ADDRESS_TO") || define("SENDMAIL_USE_TESTING_ADDRE
 defined("SENDMAIL_DO_NOT_SEND_MAILS") || define("SENDMAIL_DO_NOT_SEND_MAILS",((defined("DEVELOPMENT") && DEVELOPMENT) || (defined("TEST") && TEST)));
 defined("SENDMAIL_EMPTY_TO_REPLACE") || define("SENDMAIL_EMPTY_TO_REPLACE","");
 defined("SENDMAIL_DEFAULT_TRANSFER_ENCODING") || define("SENDMAIL_DEFAULT_TRANSFER_ENCODING","8bit"); // "8bit" or "quoted-printable"
-defined("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS") || define("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS",""); // e.g. to define a bounce address: "-fbounce@domain.com"
+
+// To define a special bounce address:
+//
+//  define("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS","-fbounce@domain.com");
+//
+// If SENDMAIL_MAIL_ADDITIONAL_PARAMETERS is set to null, a bounce address is determined automatically from the From: address.
+//
+// If extra parameters are not needed, set SENDMAIL_MAIL_ADDITIONAL_PARAMETERS to empty string:
+//
+//  define("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS","");
+//
+defined("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS") || define("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS",null);
 
 /**
 * Sends an e-mail.
@@ -79,7 +90,7 @@ defined("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS") || define("SENDMAIL_MAIL_ADDITION
 *
 *	@return	void
 */
-function sendmail($params = array(),$subject = "",$message = "",$additional_headers = null){
+function sendmail($params = array(),$subject = "",$message = "",$additional_headers = null,$additional_parameters = null){
 	$to = SENDMAIL_EMPTY_TO_REPLACE;
 	if(is_string($params)){
 		$to = $params;
@@ -106,7 +117,11 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		"build_message_only" => false,
 
 		"headers" => $additional_headers, // pozor! pokud bude toto nastaveno, probiha odesilani jinak, viz nize
+
+		"additional_parameters" => $additional_parameters, // additional parameters for PHP function mail()
 	),$params);
+
+	$additional_parameters = is_null($params["additional_parameters"]) ? SENDMAIL_MAIL_ADDITIONAL_PARAMETERS : $params["additional_parameters"];
 
 	// toto jsou zastarale parametry...
 	if(isset($params["body_charset"])){ $params["charset"] = $params["body_charset"]; }
@@ -173,8 +188,11 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 			if(preg_match("/([^@<>\"']+)@([^@<>\"']+)/",$RETURN_PATH,$matches)){
 				putenv("QMAILUSER=$matches[1]");
 				putenv("QMAILHOST=$matches[2]");
+				if(is_null($additional_parameters)){
+					$additional_parameters = "-f$matches[1]@$matches[2]";
+				}
 			}
-			$out["accepted_for_delivery"] = _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS);
+			$out["accepted_for_delivery"] = _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS,$additional_parameters);
 		}
 		return $out;
 	}
@@ -278,8 +296,11 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		if(preg_match("/([^@<>\"']+)@([^@<>\"']+)/",$RETURN_PATH,$matches)){
 			putenv("QMAILUSER=$matches[1]");
 			putenv("QMAILHOST=$matches[2]");
+			if(is_null($additional_parameters)){
+				$additional_parameters = "-f$matches[1]@$matches[2]";
+			}
 		}
-		$out["accepted_for_delivery"] = _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS);
+		$out["accepted_for_delivery"] = _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS,$additional_parameters);
 	}
 
 	return $out;
@@ -529,11 +550,11 @@ function _sendmail_lf_to_crlf($string){
 	return $string;
 }
 
-function _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS){
+function _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS,$PARAMETERS = ""){
 	if(!$TO){
 		error_log("sendmail: no recipients (To:) were specified in the message \"$SUBJECT\"");
 	}
-	return mail($TO,$SUBJECT,$BODY,$HEADERS,SENDMAIL_MAIL_ADDITIONAL_PARAMETERS);
+	return mail($TO,$SUBJECT,$BODY,$HEADERS,(string)$PARAMETERS);
 }
 
 /* notes from Dan Potter:
@@ -653,6 +674,7 @@ class _CMailFile {
 		);
 	}
 
+	// Notice: method _CMailFile::sendfile() is not being used
 	function sendfile() {
 		$headers = $this->smtp_headers . $this->mime_headers;		
 		$message = $this->text_body . $this->text_encoded;
