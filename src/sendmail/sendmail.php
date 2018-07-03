@@ -162,6 +162,15 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		$BCC = "";
 	}
 
+
+	if(preg_match("/([^@<>\"']+)@([^@<>\"']+)/",$RETURN_PATH,$matches)){
+		putenv("QMAILUSER=$matches[1]");
+		putenv("QMAILHOST=$matches[2]");
+		if(is_null($additional_parameters)){
+			$additional_parameters = "-f$matches[1]@$matches[2]";
+		}
+	}
+
 	// pokud mame v parametrech headers, jedna se o predem pripraveny e-mail....
 	// TODO: dodelat - je to zatim neciste reseni...
 	if($params["headers"]){
@@ -174,6 +183,8 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 			"headers" => $HEADERS,
 			"body" => $BODY,
 			"accepted_for_delivery" => null,
+
+			"additional_parameters" => $additional_parameters,
 		);
 
 		if($params["build_message_only"]){
@@ -185,13 +196,6 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		}
 
 		if(SENDMAIL_DO_NOT_SEND_MAILS==false){
-			if(preg_match("/([^@<>\"']+)@([^@<>\"']+)/",$RETURN_PATH,$matches)){
-				putenv("QMAILUSER=$matches[1]");
-				putenv("QMAILHOST=$matches[2]");
-				if(is_null($additional_parameters)){
-					$additional_parameters = "-f$matches[1]@$matches[2]";
-				}
-			}
 			$out["accepted_for_delivery"] = _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS,$additional_parameters);
 		}
 		return $out;
@@ -278,6 +282,8 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		"headers" => $HEADERS,
 		"body" => $BODY,
 		"accepted_for_delivery" => null,
+
+		"additional_parameters" => $additional_parameters,
 	);
 
 	// v $BODY nechceme sekvence \r\n, funguje to spatne
@@ -293,13 +299,6 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	}
 
 	if(SENDMAIL_DO_NOT_SEND_MAILS==false){
-		if(preg_match("/([^@<>\"']+)@([^@<>\"']+)/",$RETURN_PATH,$matches)){
-			putenv("QMAILUSER=$matches[1]");
-			putenv("QMAILHOST=$matches[2]");
-			if(is_null($additional_parameters)){
-				$additional_parameters = "-f$matches[1]@$matches[2]";
-			}
-		}
 		$out["accepted_for_delivery"] = _sendmail_mail($TO,$SUBJECT,$BODY,$HEADERS,$additional_parameters);
 	}
 

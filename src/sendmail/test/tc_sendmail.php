@@ -1,4 +1,6 @@
 <?php
+require("../sendmail.php");
+
 class tc_sendmail extends tc_base{
 
 	function test(){
@@ -15,16 +17,19 @@ class tc_sendmail extends tc_base{
 		$this->assertTrue((bool)preg_match("/From: test@file/",$ar["headers"]));
 		$this->assertTrue((bool)preg_match("/Content-Type: text\\/plain; charset=us-ascii/",$ar["headers"]));
 		$this->assertEquals(true,is_null($ar["accepted_for_delivery"])); // messages are not sent in testing environment
+		$this->assertEquals("-ftest@file",$ar["additional_parameters"]);
 
 		$ar = sendmail(array(
 			//"to" => "me@mydomain.com",
 			"from" => "test@file",
 			"return_path" => "return_path@file",
 			"subject" => "Hello from unit test",
-			"body" => "Hi there"
+			"body" => "Hi there",
+			"additional_parameters" => "",
 		));
 		$this->assertEquals("dummy@localhost",$ar["to"]);
 		$this->assertEquals("return_path@file",$ar["return_path"]);
+		$this->assertEquals("",$ar["additional_parameters"]);
 
 		$ar = sendmail(array(
 			"to" => "me@mydomain.com",
@@ -40,9 +45,11 @@ class tc_sendmail extends tc_base{
 			"subject" => "Hello from unit test",
 			"body" => "Hi there",
 			"charset" => "UTF-8",
-			"mime_type" => "text/html"
+			"mime_type" => "text/html",
+			"additional_parameters" => "-fbounce@example.com"
 		));
 		$this->assertTrue((bool)preg_match("/Content-Type: text\\/html; charset=UTF-8/",$ar["headers"]));
+		$this->assertEquals("-fbounce@example.com",$ar["additional_parameters"]);
 
 		// pokud charset nastavime prazdny, nesmi se ve vystupu objevit
 		$ar = sendmail(array(
@@ -79,12 +86,14 @@ class tc_sendmail extends tc_base{
 		));
 		$this->assertEquals("john.doe@example.com",$ar["from"]);
 		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertEquals("-fjohn.doe@example.com",$ar["additional_parameters"]);
 
 		$ar = sendmail($params = array(
-			"from" => "John Doe <john.doe@example.com>",
+			"from" => "Samantha Doe <samantha.doe@example.com>",
 		));
-		$this->assertEquals("john.doe@example.com",$ar["from"]);
-		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertEquals("samantha.doe@example.com",$ar["from"]);
+		$this->assertContains('From: "Samantha Doe" <samantha.doe@example.com>',$ar["headers"]);
+		$this->assertEquals("-fsamantha.doe@example.com",$ar["additional_parameters"]);
 
 		$ar = sendmail($params = array(
 			"from" => "john.doe@example.com",
@@ -136,6 +145,15 @@ class tc_sendmail extends tc_base{
 		$this->assertEquals("john.doe@example.com",$ar["from"]);
 		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
 		$this->assertContains('Reply-To: samantha@doe.com',$ar["headers"]);
+	}
+
+	function test_missing_from_address(){
+		$ar = sendmail(array(
+			"to" => "john@doe.com",
+		));
+
+		$this->assertEquals("info@somewhere.com",$ar["from"]); // address taken from SENDMAIL_DEFAULT_FROM
+		$this->assertEquals("-finfo@somewhere.com",$ar["additional_parameters"]);
 	}
 
 	function test_to_as_array(){
@@ -259,6 +277,7 @@ class tc_sendmail extends tc_base{
 		$this->assertTrue((bool)preg_match("/cc: his.father@mydomain.com\\n/",$ar["headers"]));
 		$this->assertTrue((bool)preg_match("/bcc: myself@localhost, big.brother@somewhere.com\\n/",$ar["headers"]));
 		$this->assertTrue((bool)preg_match("/From: me@mydomain.com\\n/",$ar["headers"]));
+		$this->assertEquals('-fme@mydomain.com',$ar["additional_parameters"]);
 
 		$this->assertTrue(strlen($ar["body"])>1000);
 		$this->assertTrue((bool)preg_match("/Content-Type: text\\/html; charset=\"us-ascii\"\\n/",$ar["body"]));

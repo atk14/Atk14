@@ -8,4 +8,4 @@ define("DEFAULT_CHARSET","UTF-8");
 
 require("../../files/load.php");
 require("../../translate/translate.php");
-require("../sendmail.php");
+//require("../sendmail.php"); // in tc_additional_parameters.php we need to define SENDMAIL_MAIL_ADDITIONAL_PARAMETERS before sendmail.php is required

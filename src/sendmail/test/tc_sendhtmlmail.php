@@ -1,5 +1,8 @@
 <?php
+require("../sendmail.php");
+
 class tc_sendhtmlmail extends tc_base{
+
 	function test(){
 		$ar = sendhtmlmail(array(
 			"from" => "info@test.cz",
@@ -35,6 +38,7 @@ class tc_sendhtmlmail extends tc_base{
 			),
 		));
 		$this->assertEquals(true,is_null($ar["accepted_for_delivery"])); // messages are not sent in testing environment
+		$this->assertEquals('-finfo@test.cz',$ar["additional_parameters"]);
 		//var_dump($ar);
 
 		/*
