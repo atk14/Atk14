@@ -1,6 +1,23 @@
 # Change Log
 All notable changes to ATK14 Framework will be documented in this file.
 
+## Unreleased
+
+### Added (only main features are listed)
+
+- a7d4d85 - [Sendmail] Added 4th optional parameter to sendmail(): $additional_parameters; When omited, the parameter is being configured automatically according to the Return-Path address
+- ca2dd43 - [Atk14] Added new method Atk14Form::get_fields()
+- d33fbbd - [Atk14] Variables can be used in config/deploy.yml; a deployment stage can extend a different stage than the first one by using "extends" key
+- 8f0ef59 - [Files] Added method Files::MkdirForFile()
+- 4f0e440 - [Atk14] After filter can be a closure
+- 8c9261c - With ```scripts/dump_db*``` its now possible to backup data or schema from a database other than "default"
+- f0d732c - [HTTP] Added method HTTPRequest::getRemoteHostname()
+- 2588dac - [Atk14] Atk14Mailer handles correctly actions with only HTML template
+- 2452292 - [DbMole] Added option "recache" default false
+- a7e9021 - [Atk14] Block helper a_destroy accepts a new parameter ```_xhr``` (default true)
+- f296a93 - [Files] Added new method Files::GetTempDir()
+- 821fca7, 821fca7, 9c8e06f - [DbMole] Added new constant ```DBMOLE_AUTOMATIC_DELAY_TRANSACTION_BEGINNING_AFTER_CONNECTION```; by default it is TRUE in non-test environment
+
 ## [1.4] - 2018-04-10
 
 ### Added
