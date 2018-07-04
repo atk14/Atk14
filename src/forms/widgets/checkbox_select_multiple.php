@@ -55,7 +55,9 @@ class CheckboxSelectMultiple extends SelectMultiple
 			$cb = new CheckboxInput(array('attrs'=>$final_attrs, 'check_test'=>array($this, 'my_check_test')));
 			$option_value = (string)$option_value;
 			$rendered_cb = $cb->render("{$name}[]", $option_value);
-			$output[] = '<li class="checkbox"><label>'.$rendered_cb.' '.($this->escape_labels ? forms_htmlspecialchars($option_label) : $option_label).'</label></li>';
+			$label = ($this->escape_labels ? forms_htmlspecialchars($option_label) : $option_label);
+			$markup = FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4 ? '<li class="checkbox">%checkbox% <label>%label%</label></li>' : '<li class="checkbox"><label>%checkbox% %label%</label></li>';
+			$output[] = strtr($markup,array("%checkbox%" => $rendered_cb, "%label%" => $label));
 			$i++;
 		}
 		$output[] = '</ul>';
