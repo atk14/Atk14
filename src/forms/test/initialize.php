@@ -1,6 +1,5 @@
 <?php
 define("TEST",true);
-define("FORMS_ENABLE_EXPERIMENTAL_HTML5_FEATURES",false); // this features break up tests
 
 require_once("../../class_autoload/class_autoload.php");
 require_once("../../atk14/atk14_locale.php");
