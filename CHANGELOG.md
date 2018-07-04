@@ -3,6 +3,8 @@ All notable changes to ATK14 Framework will be documented in this file.
 
 ## Unreleased
 
+## [1.5] - 2018-07-04
+
 ### Added (only main features are listed)
 
 - a7d4d85 - [Sendmail] Added 4th optional parameter to sendmail(): $additional_parameters; When omited, the parameter is being configured automatically according to the Return-Path address
