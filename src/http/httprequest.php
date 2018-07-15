@@ -269,10 +269,10 @@ class HTTPRequest{
 
 		$proto = $this->sslActive() ? "https" : "http";
 		$port = "";
-		if($this->sslActive() && $this->getServerPort()!=443){
+		if($this->sslActive() && $this->getServerPort() && $this->getServerPort()!=443){
 			$port = ":".$this->getServerPort();
 		}
-		if(!$this->sslActive() && $this->getServerPort()!=80){
+		if(!$this->sslActive() && $this->getServerPort() && $this->getServerPort()!=80){
 			$port = ":".$this->getServerPort();
 		}
 		$hostname = $this->getHttpHost();
