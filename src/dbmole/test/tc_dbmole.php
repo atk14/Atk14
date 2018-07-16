@@ -194,24 +194,32 @@ class tc_dbmole extends tc_base{
 		$this->assertTrue($q2!=$q3);
 
 		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
+		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => true)));
 		$this->assertEquals($title,$dbmole->selectString($q3,array(),array("cache" => 60)));
 
 		$dbmole->doQuery("UPDATE test_table SET title=:title",array(":title" => "REWRITTEN"));
 
 		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
+		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => true)));
 		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => 60)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => true)));
 
 		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("recache" => true)));
 		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("cache" => 60)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("cache" => true)));
 
 		$dbmole->doQuery("DELETE FROM test_table");
 
 		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
+		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => true)));
 		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => 60)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => true)));
 		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("cache" => 60)));
 
 		$this->assertEquals($title,$dbmole->selectSingleValue($q1,array(),array("cache" => 60)));
+		$this->assertEquals($title,$dbmole->selectSingleValue($q1,array(),array("cache" => true)));
 		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q2,array(),array("cache" => 60)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q2,array(),array("cache" => true)));
 		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q3,array(),array("cache" => 60)));
 
 		$this->assertEquals(null,$dbmole->selectString($q1));

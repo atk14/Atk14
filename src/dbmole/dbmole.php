@@ -12,6 +12,7 @@
 !defined("DBMOLE_ORACLE_FALSE") && define("DBMOLE_ORACLE_FALSE","N");
 !defined("DBMOLE_CHECK_BIND_AR_FORMAT") && define("DBMOLE_CHECK_BIND_AR_FORMAT",true);
 !defined("DBMOLE_AUTOMATIC_DELAY_TRANSACTION_BEGINNING_AFTER_CONNECTION") && define("DBMOLE_AUTOMATIC_DELAY_TRANSACTION_BEGINNING_AFTER_CONNECTION",true);
+!defined("DBMOLE_DEFAULT_CACHE_EXPIRATION") && define("DBMOLE_DEFAULT_CACHE_EXPIRATION",600);
 
 /**
  * Provides basic functionality with databases.
@@ -475,13 +476,18 @@ class DbMole{
 	 */
 	function _selectRows($query,&$bind_ar, $options = array()){
 		$options = array_merge(array(
-			"cache" => 0,
+			"cache" => 0, // 0, 600, true, false
 			"recache" => false,
 		),$options);
 		$options["avoid_recursion"] = true; // protoze primo metoda selectRows() vola _selectRows() a naopak, mame tady tento ochranny parametr
 
-		$cache = (int)$options["cache"];
+		$cache = $options["cache"];
 		$recache = $options["recache"];
+
+		if($cache && !is_numeric($cache)){
+			$cache = DBMOLE_DEFAULT_CACHE_EXPIRATION;
+		}
+		$cache = (int)$cache;
 
 		$this->_normalizeBindAr($bind_ar);
 
