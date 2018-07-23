@@ -425,7 +425,18 @@ class Atk14Client{
 			"content_type" => null,
 		),$options);
 
-		$params = $options["params"];
+		// converting objects to scalars
+		foreach($options["params"] as &$v){
+			if(is_object($v)){ $v = $v->getId(); }
+		}
+
+		if($method=="POST"){
+			$get_params = array();
+			$post_params = $options["params"];
+		}else{
+			$get_params = $options["params"];
+			$post_params = array();
+		}
 
 		$GLOBALS["HTTP_RESPONSE"]->clearCookies(); // !! danger !! global variable manipulation
 
@@ -452,23 +463,19 @@ class Atk14Client{
 
 		$this->flash->reset();
 
-		// converting objects to scalars
-		foreach($params as &$v){
-			if(is_object($v)){ $v = $v->getId(); }
-		}
-
 		$namespace = $this->namespace;
 		$lang = $ATK14_GLOBAL->getDefaultLang();
 
 		if(preg_match('/^\//',$path)){
 
-			$route_data = Atk14Url::RecognizeRoute($path);
-			$namespace = $route_data["namespace"];
-			$lang = $route_data["lang"];
-			$controller = $route_data["controller"];
-			$action = $route_data["action"];
-			$params += $route_data["get_params"];
-			
+			$uri = $path;
+			$_uri_params = Atk14Url::ParseParamsFromUri($uri);
+			if($get_params){
+				$uri .= preg_match('/\?/',$uri) ? '&' : '?';
+				$uri .= http_build_query($get_params);
+			}
+			$get_params = $_uri_params + $get_params;
+
 		}else{
 
 			$path_ar = explode("/",$path);
@@ -502,20 +509,18 @@ class Atk14Client{
 					throw new Exception("Invalid path to action: $path");
 			}
 
+			$uri = Atk14Url::BuildLink($get_params + array(
+				"namespace" => $namespace,
+				"action" => $action,
+				"controller" => $controller,
+				"lang" => $lang
+			),array("connector" => "&"));
 		}
 
+		$request->setRequestUri($uri);
 		$request->setMethod($method);
-		if($method=="POST"){
-			$request->setPostVars($params);
-		}else{
-			$request->setGetVars($params);
-		}
-		$request->setUri(Atk14Url::BuildLink(array(
-			"namespace" => $namespace,
-			"action" => $action,
-			"controller" => $controller,
-			"lang" => $lang
-		),array("connector" => "&")));
+		$request->setPostVars($post_params);
+		$request->setGetVars($get_params);
 
 		$ctrl = Atk14Dispatcher::Dispatch(array(
 			"display_response" => false,
@@ -599,6 +604,9 @@ class Atk14Client{
 			$content_type .= "; charset=$charset";
 		}
 		$headers = array("Content-Type" => $content_type);
+		if($response->redirected()){
+			$headers["Location"] = $response->getLocation();
+		}
 		foreach($response->getHeaders() as $key => $value){
 			$headers[$key] = $value;
 		}
@@ -612,6 +620,23 @@ class Atk14Client{
 		}
 
 		return $headers;
+	}
+
+	/**
+	 * Returns content of the specific response header
+	 *
+	 * Returns null when the given header doesn't exist
+	 *
+	 * <code>
+	 *	$client->getResponseHeader("Content-Type");
+	 *	// or
+	 *	$client->getResponseHeader("content-type");
+	 * </code>
+	 */
+	function getResponseHeader($header){
+		$header = strtolower($header);
+		$ary = $this->getResponseHeaders(array("lowerize_keys" => true));
+		return isset($ary[$header]) ? $ary[$header] : null;
 	}
 
 	/**

@@ -79,7 +79,7 @@ class Atk14Dispatcher{
 
 			Atk14Timer::Start("Atk14Url::RecognizeRoute");
 			$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri(),array(
-				"get_params" => $GLOBALS["_GET"],
+				"get_params" => $request->getGetVars(),
 			));
 			$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
 
@@ -116,7 +116,19 @@ class Atk14Dispatcher{
 			if($request->get() && strlen($route_ar["force_redirect"])>0 && !$request->xhr()){
 				$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
 				$options["display_response"] && $HTTP_RESPONSE->flushAll();
-				return Atk14Dispatcher::_ReturnResponseOrController($HTTP_RESPONSE,null,$options);
+
+				$ctrl = null;
+				if($options["return_controller"]){
+					$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
+						"page_title" => $route_ar["page_title"],
+						"page_description" => $route_ar["page_description"],
+						"return_controller" => true,
+						"request" => $request
+					));
+					$ctrl->response->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
+				}
+
+				return Atk14Dispatcher::_ReturnResponseOrController($HTTP_RESPONSE,$ctrl,$options);
 			}
 
 			// prestehovano Atk14Url::RecognizeRoute()

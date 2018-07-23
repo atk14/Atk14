@@ -4,11 +4,14 @@ class TcClient extends TcBase{
 		$client = new Atk14Client();
 
 		$controller = $client->get("testing/test",array("id" => "123", "format" => "xml"));
+		$this->assertEquals("/cs/testing/test/?id=123&format=xml",$controller->request->getRequestUri());
 		$this->assertEquals(200,$client->getStatusCode());
 		$this->assertEquals("123",$controller->params->g("id"));
 		$this->assertEquals("xml",$controller->params->g("format"));
 		$this->assertEquals(true,$controller->request->get());
 		$this->assertEquals(false,$controller->request->post());
+		//
+		// getResponseHeaders()
 		$this->assertEquals(array(
 			"Content-Type" => "text/html; charset=UTF-8",
 			"X-Test-Header" => "Yep"
@@ -17,8 +20,15 @@ class TcClient extends TcBase{
 			"content-type" => "text/html; charset=UTF-8",
 			"x-test-header" => "Yep"
 		),$client->getResponseHeaders(array("lowerize_keys" => true)));
+		//
+		// getResponseHeader()
+		$this->assertEquals("text/html; charset=UTF-8",$client->getResponseHeader("Content-Type"));
+		$this->assertEquals("text/html; charset=UTF-8",$client->getResponseHeader("content-type"));
+		$this->assertEquals("Yep",$client->getResponseHeader("X-TEST-HEADER"));
+		$this->assertEquals(null,$client->getResponseHeader("X-Non-Existing"));
 
 		$controller = $client->post("testing/test",array("id" => "123", "format" => "xml"));
+		$this->assertEquals("/cs/testing/test/",$controller->request->getRequestUri());
 		$this->assertEquals(200,$client->getStatusCode());
 		$this->assertEquals("123",$controller->params->g("id"));
 		$this->assertEquals("xml",$controller->params->g("format"));
@@ -26,6 +36,7 @@ class TcClient extends TcBase{
 		$this->assertEquals(true,$controller->request->post());
 
 		$controller = $client->post("testing/test","<xml></xml>",array("content_type" => "text/xml"));
+		$this->assertEquals("/cs/testing/test/",$controller->request->getRequestUri());
 		$this->assertEquals(200,$client->getStatusCode());
 		$this->assertEquals(true,$controller->params->isEmpty());
 		$this->assertEquals(false,$controller->request->get());
@@ -34,19 +45,57 @@ class TcClient extends TcBase{
 		$this->assertEquals("<xml></xml>",$controller->request->getRawPostData());
 
 		// Paths starting with "/"
-		$controller = $this->client->get("/cs/testing/testing/?id=333&format=yaml");
+		$controller = $client->get("/cs/testing/test/?id=333&format=yaml");
+		$this->assertEquals("/cs/testing/test/?id=333&format=yaml",$controller->request->getRequestUri());
 		$this->assertEquals(200,$client->getStatusCode());
 		$this->assertEquals("333",$controller->params->g("id"));
 		$this->assertEquals("yaml",$controller->params->g("format"));
 		$this->assertEquals(true,$controller->request->get());
 		$this->assertEquals(false,$controller->request->post());
 
-		$controller = $this->client->post("/cs/testing/testing/?id=444&format=json",array("firstname" => "John"));
+		$controller = $client->get("/en/testing/test/?id=111&format=yaml",array("firstname" => "Samantha"));
+		$this->assertEquals("/en/testing/test/?id=111&format=yaml&firstname=Samantha",$controller->request->getRequestUri());
+		$this->assertEquals(200,$client->getStatusCode());
+		$this->assertEquals("111",$controller->params->g("id"));
+		$this->assertEquals("yaml",$controller->params->g("format"));
+		$this->assertEquals("Samantha",$controller->params->g("firstname"));
+		$this->assertEquals(true,$controller->request->get());
+		$this->assertEquals(false,$controller->request->post());
+
+		$controller = $client->get("/sk/testing/test/",array("firstname" => "Samantha", "lastname" => "Doe"));
+		$this->assertEquals("/sk/testing/test/?firstname=Samantha&lastname=Doe",$controller->request->getRequestUri());
+		$this->assertEquals(200,$client->getStatusCode());
+
+		// Missing ending slash
+		$controller = $client->get("/sk/testing/test",array("firstname" => "James", "lastname" => "Doe"));
+		$this->assertEquals("/sk/testing/test/?firstname=James&lastname=Doe",$client->getLocation());
+		$this->assertEquals(301,$client->getStatusCode());
+		$this->assertEquals(array(
+			'Content-Type' => 'text/html; charset=UTF-8',
+			'Location' => '/sk/testing/test/?firstname=James&lastname=Doe',
+			'X-Test-Header' => 'Yep'
+		),$client->getResponseHeaders());
+
+		// 404
+		$controller = $client->get("/sk/testing/nonexisting/",array("firstname" => "Samuel"));
+		$this->assertEquals("/sk/testing/nonexisting/?firstname=Samuel",$controller->request->getRequestUri());
+		$this->assertEquals(404,$client->getStatusCode());
+		//
+		$controller = $client->post("/sk/testing/nonexisting/",array("firstname" => "Samuel"));
+		$this->assertEquals("/sk/testing/nonexisting/",$controller->request->getRequestUri());
+		$this->assertEquals(404,$client->getStatusCode());
+
+		// POST
+		$controller = $client->post("/en/testing/test/?id=444&format=json",array("firstname" => "John"));
+		$this->assertEquals("/en/testing/test/?id=444&format=json",$controller->request->getRequestUri());
 		$this->assertEquals(200,$client->getStatusCode());
 		$this->assertEquals("444",$controller->params->g("id"));
 		$this->assertEquals("John",$controller->params->g("firstname"));
 		$this->assertEquals(false,$controller->request->get());
 		$this->assertEquals(true,$controller->request->post());
+
+		//$this->client->get("/cs/main/index/?param=val");
+		//$this->
 
 		// Basic Auth
 		$this->assertEquals(null,$controller->request->getBasicAuthString());
