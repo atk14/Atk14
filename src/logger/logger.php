@@ -169,6 +169,12 @@ class Logger{
 	private $_notify_email;
 
 	/**
+	 *
+	 * @var string
+	 */
+	private $_default_notify_email;
+
+	/**
 	 * @access private
 	 */
 	var $_notify_level_reached = false;
@@ -240,13 +246,22 @@ class Logger{
 	 * - default_log_file - filename where to write logs
 	 * - log_to_stdout (false) - log messages to STDOUT instead of a log file
 	 * - automatically_log_to_stdout_on_terminal (false) - log messages to a log file and also to STDOUT when we are on TERMINAL
+	 * - default_notify_email
 	 */
-	function __construct($prefix = "",$options = array()){
+	function __construct($prefix_or_options = "",$options = array()){
+		if(is_array($prefix_or_options)){
+			$options = $prefix_or_options;
+		}else{
+			$options["prefix"] = $prefix_or_options;
+		}
+		
 		$options = array_merge(array(
+			"prefix" => "",
 			"disable_start_and_stop_marks" => false,
 			"default_log_file" => LOGGER_DEFAULT_LOG_FILE,
 			"log_to_stdout" => false,
 			"automatically_log_to_stdout_on_terminal" => false,
+			"default_notify_email" => LOGGER_DEFAULT_NOTIFY_EMAIL,
 		),$options);
 
 		$this->_default_log_file = $options["default_log_file"];
@@ -254,11 +269,12 @@ class Logger{
 		$this->_reset_configuration();
 		$this->_my_pid = posix_getpid();
 
-		$this->set_prefix($prefix);
+		$this->set_prefix($options["prefix"]);
 		if($options["log_to_stdout"]){ $this->_log_file = "php://stdout"; }
 		$this->_log_to_stdout = $options["log_to_stdout"];
 		$this->_automatically_log_to_stdout_on_terminal = $options["automatically_log_to_stdout_on_terminal"];
 		$this->_disable_start_and_stop_marks = $options["disable_start_and_stop_marks"];
+		$this->_default_notify_email = $options["default_notify_email"];
 	}
 
 	/**
@@ -287,7 +303,9 @@ class Logger{
 	 *
 	 * @return string
 	 */
-	function get_notify_email(){ return $this->_notify_email; }
+	function get_notify_email(){
+		return strlen($this->_notify_email) ? $this->_notify_email : $this->_default_notify_email; 
+	}
 
 	/**
 	 * Prefix setup
@@ -301,6 +319,10 @@ class Logger{
 		$this->_prefix = $prefix;
 
 		$this->_determin_configuration();
+	}
+
+	function get_prefix(){
+		return $this->_prefix;
 	}
 
 	/**
@@ -342,7 +364,7 @@ class Logger{
 	private function _reset_configuration(){
 		$this->_no_log_level = LOGGER_NO_LOG_LEVEL;
 		$this->_notify_level = LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION;
-		$this->_notify_email = LOGGER_DEFAULT_NOTIFY_EMAIL;
+		$this->_notify_email = $this->_default_notify_email;
 		$this->_log_file = $this->_default_log_file;
 	}
 
@@ -514,7 +536,7 @@ class Logger{
 	function flush_all(){
 		$this->flush();
 		if($this->_notify_level_reached && $this->_notify_email!=""){
-			$this->_notify_email();
+			$this->_send_email_notification();
 		}
 		$this->_log_store_whole = array();
 		return 0;
@@ -667,8 +689,11 @@ class Logger{
 	/**
 	 * @ignore
 	 */
-	private function _notify_email(){
-		if($this->_notify_email==""){ return;}
+	function _send_email_notification(){
+		$notify_email = $this->get_notify_email();
+
+		if(!strlen($notify_email)){ return;}
+		if(!sizeof($this->_log_store_whole)){ return; }
 
 		$max_level = null;
 		foreach($this->_log_store_whole as $rec){
@@ -695,9 +720,11 @@ class Logger{
 			"plain" => $output,
 			"html" => $html,
 			"subject" => "log report: $this->_prefix, ".date("Y-m-d H:i:s"),
-			"to" => $this->_notify_email,
+			"to" => $notify_email,
 			"charset" => "UTF-8",
 		));
+
+		return $ar;
 	}
 
 	/**
