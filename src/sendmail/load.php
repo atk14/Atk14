@@ -1,2 +1,3 @@
 <?php
-require_once(dirname(__FILE__)."/sendmail.php");
+require_once(__DIR__ ."/src/sendmail.php");
+require_once(__DIR__ ."/src/_CMailFile.php");

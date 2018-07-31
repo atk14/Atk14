@@ -1,11 +1,10 @@
 <?php
 define("SENDMAIL_MAIL_ADDITIONAL_PARAMETERS","-fbounce@example.com");
 
-require("../sendmail.php");
-
 class tc_additional_parameters extends tc_base {
 
 	function test(){
+//var_dump($GLOBALS); exit;
 		$ar = sendmail("joh@doe.com","Subject","Body");
 		$this->assertEquals("-fbounce@example.com",$ar["additional_parameters"]); // default
 

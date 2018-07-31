@@ -1,6 +1,4 @@
 <?php
-require("../sendmail.php");
-
 class tc_sendhtmlmail extends tc_base{
 
 	function test(){
