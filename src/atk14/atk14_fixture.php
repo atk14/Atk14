@@ -8,6 +8,7 @@ class Atk14Fixture {
 	}
 
 	/**
+	 * Loads given fixture
 	 *
 	 * Usage:
 	 *
@@ -25,7 +26,7 @@ class Atk14Fixture {
 			"class_name" => null,
 			"dbmole" => $GLOBALS["dbmole"],
 
-			"reload_fixture" => true,
+			"reload_fixture" => false,
 		);
 
 		if(!$options["reload_fixture"] && isset(self::$loaded_fixtures[$name])){
@@ -59,6 +60,10 @@ class Atk14Fixture {
 		// Auto-loading of all used fixtures
 		foreach($required_fixtures as $required_fixture){
 			Atk14Fixture::Load($required_fixture);
+		}
+
+		if(!$options["reload_fixture"] && isset(self::$loaded_fixtures[$name])){
+			return self::$loaded_fixtures[$name];
 		}
 
 		$class_name = $options["class_name"];
