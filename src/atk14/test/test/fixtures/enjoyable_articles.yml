@@ -1,0 +1,11 @@
+# class_name: Article
+
+article1:
+  title: "Enjoyable Title #1"
+  body: "Enjoyable Body 1"
+  author_id: "<?php echo $users["samantha"]->getId() ?>"
+
+article2:
+  title: "Enjoyable Title 2"
+  body: "Enjoyable Body 2"
+  author_id: "<?php echo $users["john"]->getId() ?>"

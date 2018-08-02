@@ -53,4 +53,12 @@ class TcFixtures extends TcAtk14Model {
 		$this->assertEquals($articles["article1"]->getId(),$articles3["article1"]->getId());
 		$this->assertNotEquals($articles["article1"]->getId(),$articles_re["article1"]->getId());
 	}
+
+	function test_different_class_name(){
+		$articles = Atk14Fixture::Load("enjoyable_articles");
+
+		$this->assertEquals(2,sizeof($articles));
+		$this->assertEquals("Article",get_class($articles["article1"]));
+		$this->assertEquals("Enjoyable Title #1",$articles["article1"]->getTitle());
+	}
 }

@@ -67,6 +67,18 @@ class Atk14Fixture {
 		}
 
 		$class_name = $options["class_name"];
+
+		if(is_null($class_name)){
+			// In the fixture YAML file there can be class set this way:
+			//
+			// # class_name: Article
+			//
+			// This is an experimental feature!
+			if(preg_match('/^(.*\n|)# *class_name: +"?(?P<class_name>[a-zA-Z0-9_]+)"?\s*(\n.*|)$/s',$content,$matches)){
+				$class_name = $matches["class_name"];
+			}
+		}
+
 		if(is_null($class_name)){
 			$class_name = String4::ToObject($name)->singularize()->camelize()->toString(); // "gallery_items" -> "GalleryItem"
 			if(!class_exists($class_name) || !method_exists($class_name,'CreateNewRecord')){
