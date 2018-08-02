@@ -33,10 +33,32 @@ class Atk14Fixture {
 		}
 
 		$dbmole = $options["dbmole"];
+	
+		$dir = $ATK14_GLOBAL->getApplicationPath()."/../test/fixtures/";
+		$filename = "$dir/$name.yml";
 
-		$filename = sprintf("%s/../test/fixtures/%s.yml", $ATK14_GLOBAL->getApplicationPath(), $name);
 		if (!file_exists($filename)) {
 			throw new Exception("Fixture $name not found ($filename)");
+		}
+
+		$content = Files::GetFilecontent($filename);
+
+		// Getting all fixtures from the fixtures directory
+		$all_fixtures = array();
+		foreach(Files::FindFiles($dir,array("maxdepth" => 1, "pattern" => '/^[a-z0-9_]+\.yml/')) as $_f){
+			$all_fixtures[] = preg_replace('/^.*\/([^\/]+)\.yml/','\1',$_f);
+		}
+
+		// Getting all fixtures which are used in the requested fixture
+		// I know that the method may not be totally accurate but it's okay to load a bit more fixtures then is actually needed.
+		preg_match_all('/\$('.join('|',$all_fixtures).'\b)/',$content,$matches);
+		$required_fixtures = array_combine($matches[1],$matches[1]);
+		unset($required_fixtures[$name]);
+		$required_fixtures = array_values($required_fixtures);
+
+		// Auto-loading of all used fixtures
+		foreach($required_fixtures as $required_fixture){
+			Atk14Fixture::Load($required_fixture);
 		}
 
 		$class_name = $options["class_name"];
