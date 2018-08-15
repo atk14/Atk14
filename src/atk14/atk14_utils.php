@@ -274,7 +274,7 @@ class Atk14Utils{
 	 */
 	static function JoinAttributes($attributes){
 		$out = array();
-		foreach($attributes as $key => $value){	
+		foreach(array_filter($attributes) as $key => $value){	
 			$out[] = " ".h($key)."=\"".h($value)."\"";
 		}
 		return join("",$out);
