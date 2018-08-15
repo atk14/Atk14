@@ -80,6 +80,7 @@ prev_action: render_component
 		$this->assertContains('<a href="/en/books/">List Books</a>',$out);
 		$this->assertContains('<a title="Book info" href="/en/books/detail/?id=123">Book#123</a>',$out);
 		$this->assertContains('<a href="/en/books/detail/?id=456#detail">Book#456</a>',$out);
+		$this->assertContains('<a class="active" href="/en/books/detail/?id=7890#detail">Book#7890</a>',$out);
 	}
 
 	function test_link_to(){
