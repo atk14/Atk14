@@ -7,7 +7,7 @@
  * Usage:
  *
  *	 {* somewhere in layout *}
- *	 {block_placeholder key="footer"}Default Footer{/block_placeholder}
+ *	 {block_placeholder for="footer"}Default Footer{/block_placeholder}
  *
  *
  *	 {* somewhere in template *}
