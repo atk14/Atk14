@@ -88,6 +88,15 @@ class Atk14Robot{
 	var $execute_robot = true;
 
 	/**
+	 * Robot name
+	 *
+	 * e.g. "article_importer"
+	 *
+	 * @var start
+	 */
+	var $robot_name = "";
+
+	/**
 	 * Constructor
 	 *
 	 */
@@ -100,6 +109,7 @@ class Atk14Robot{
 		
 		$this->dbmole = &$GLOBALS["dbmole"];
 		$robot_name = String4::ToObject(get_class($this))->underscore()->gsub('/_robot$/','');
+		$this->robot_name = $robot_name;
 		$this->logger = new Logger("$robot_name",array(
 			"default_log_file" => $this->default_log_file,
 			"automatically_log_to_stdout_on_terminal" => true,
@@ -111,25 +121,6 @@ class Atk14Robot{
 			"namespace" => "",
 			"logger" => $this->logger,
 		));
-
-		$this->logger->start();
-
-		$this->locking_enabled && Lock::Mklock($robot_name,$this->logger);
-
-		$this->beforeRun();
-		$this->execute_robot && $this->run();
-		$this->afterRun();
-
-		$this->locking_enabled && Lock::Unlock($robot_name,$this->logger);
-
-		$bytes = memory_get_peak_usage(true);
-		if($bytes>(1024*1024)){ $bytes = number_format($bytes/(1024 * 1024),2,".",",")."MB"; }
-		elseif($bytes>1024){ $bytes = number_format($bytes/1024,2,".",",")."kB"; }
-		else{ $bytes = "$bytes Bytes"; }
-		$msg = "real peak memory usage: ".$bytes;
-
-		$this->logger->stop($msg);
-		$this->logger->flush_all();
 	}
 
 	/**
@@ -156,4 +147,28 @@ class Atk14Robot{
 
 	}
 
+	/**
+	 *
+	 * @ignore
+	 */
+	final function __runRobot(){
+		$this->logger->start();
+
+		$this->locking_enabled && Lock::Mklock($this->robot_name,$this->logger);
+
+		$this->beforeRun();
+		$this->execute_robot && $this->run();
+		$this->afterRun();
+
+		$this->locking_enabled && Lock::Unlock($this->robot_name,$this->logger);
+
+		$bytes = memory_get_peak_usage(true);
+		if($bytes>(1024*1024)){ $bytes = number_format($bytes/(1024 * 1024),2,".",",")."MB"; }
+		elseif($bytes>1024){ $bytes = number_format($bytes/1024,2,".",",")."kB"; }
+		else{ $bytes = "$bytes Bytes"; }
+		$msg = "real peak memory usage: ".$bytes;
+
+		$this->logger->stop($msg);
+		$this->logger->flush_all();
+	}
 }

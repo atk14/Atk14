@@ -77,3 +77,4 @@ require_once("$robots_dir/{$robot_name}_robot.php");
 
 $class_name = $robot_name->camelize()."Robot"; // ImportUserRobot
 $robot = new $class_name();
+$robot->__runRobot();
