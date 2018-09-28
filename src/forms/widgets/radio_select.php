@@ -71,8 +71,15 @@ class RadioSelect extends Select
 		$i = 0;
 		foreach ($choices as $k => $v) {
 			$ch = new RadioInput($name, $value, $attrs, array($k=>$v), $i,array("convert_html_special_chars" => $this->convert_html_special_chars));
-			$output[] = "<li>".$ch->render()."</li>";
+			if(FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4){
+				$output[] = $ch->render();
+			}else{
+				$output[] = "<li>".$ch->render()."</li>";
+			}
 			$i++;
+		}
+		if(FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4){
+			return implode("\n", $output);
 		}
 		return "<ul class=\"radios\">\n".implode("\n", $output)."\n</ul>";
 	}
