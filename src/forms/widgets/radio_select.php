@@ -56,13 +56,15 @@ class RadioSelect extends Select
 	var $input_type = "radio";
 	var $convert_html_special_chars = true;
 
-	function __construct($option = array()){
-		$option += array(
+	function __construct($options = array()){
+		$options += array(
 			"convert_html_special_chars" => true,
+			"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4,
 		);
-		$this->convert_html_special_chars = $option["convert_html_special_chars"];
-		unset($option["convert_html_special_chars"]);
-		parent::__construct($option);
+		$this->convert_html_special_chars = $options["convert_html_special_chars"];
+		unset($options["convert_html_special_chars"]);
+		$this->bootstrap4 = $options["bootstrap4"];
+		parent::__construct($options);
 	}
 
 	function _renderer($name, $value, $attrs, $choices)
@@ -70,15 +72,15 @@ class RadioSelect extends Select
 		$output = array();
 		$i = 0;
 		foreach ($choices as $k => $v) {
-			$ch = new RadioInput($name, $value, $attrs, array($k=>$v), $i,array("convert_html_special_chars" => $this->convert_html_special_chars));
-			if(FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4){
+			$ch = new RadioInput($name, $value, $attrs, array($k=>$v), $i,array("convert_html_special_chars" => $this->convert_html_special_chars, "bootstrap4" => $this->bootstrap4));
+			if($this->bootstrap4){
 				$output[] = $ch->render();
 			}else{
 				$output[] = "<li>".$ch->render()."</li>";
 			}
 			$i++;
 		}
-		if(FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4){
+		if($this->bootstrap4){
 			return implode("\n", $output);
 		}
 		return "<ul class=\"radios\">\n".implode("\n", $output)."\n</ul>";

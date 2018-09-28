@@ -16,8 +16,10 @@ class RadioInput
 			"convert_html_special_chars" => true,
 			"label_attrs" => array(),
 			"wrap_attrs" => array(),
+
+			"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4,
 		);
-		if(FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4){
+		if($options["bootstrap4"]){
 			$attrs += array(
 				"class" => "form-check-input",
 			);
@@ -32,7 +34,6 @@ class RadioInput
 			$options["wrap_attrs"] += array(
 				"class" => "form-check",
 			);
-
 		}
 		$this->name = $name;
 		$this->value = $value;
@@ -41,6 +42,7 @@ class RadioInput
 		$this->convert_html_special_chars = $options["convert_html_special_chars"];
 		$this->label_attrs = $options["label_attrs"];
 		$this->wrap_attrs = $options["wrap_attrs"];
+		$this->bootstrap4 = $options["bootstrap4"];
 
 		// A replacement for list($this->choice_value, $this->choice_label) = each($choice);
 		$this->choice_value = $this->choice_label = null;
@@ -77,7 +79,7 @@ class RadioInput
 			$label = forms_htmlspecialchars($label);
 		}
 
-		if(FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4){
+		if($this->bootstrap4){
 			return strtr('<div%wrap_attrs%>%tag% <label%label_attrs%>%label%</label></div>',array(
 				"%tag%" => $this->tag(),
 				"%wrap_attrs%" => flatatt($this->wrap_attrs),
