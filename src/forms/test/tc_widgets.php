@@ -738,9 +738,16 @@ class TcWidgets extends TcBase
 				'params' => array(
 					array(
 						'params' => array('name' => 'direction', 'value' => 'right', 'options' => array('choices' => array('left' => 'Left', 'right' => 'Right'), 'attrs' => array('id' => 'direction'))),
-						'result' =>
-							'<div class="form-check"><input id="direction_0" class="form-check-input" type="radio" name="direction" value="left" /> <label class="form-check-label" for="direction_0">Left</label></div>'."\n".
-							'<div class="form-check"><input id="direction_1" class="form-check-input" type="radio" name="direction" value="right" checked="checked" /> <label class="form-check-label" for="direction_1">Right</label></div>'
+						'result' => implode("\n",array(
+							'<ul class="list list--radios">',
+							'<li class="list__item">',
+							'<div class="form-check"><input id="direction_0" class="form-check-input" type="radio" name="direction" value="left" /> <label class="form-check-label" for="direction_0">Left</label></div>',
+							'</li>',
+							'<li class="list__item">',
+							'<div class="form-check"><input id="direction_1" class="form-check-input" type="radio" name="direction" value="right" checked="checked" /> <label class="form-check-label" for="direction_1">Right</label></div>',
+							'</li>',
+							'</ul>'
+						))
 					),
 				),
 			),
@@ -841,10 +848,20 @@ class TcWidgets extends TcBase
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('J', 'P', 'R'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'), 'attrs' => array('id' => 'beatles'))),
 						'result' => implode("\n",array(
+							'<ul class="list list--checkboxes">',
+							'<li class="list__item">',
 							'<div class="form-check"><input id="beatles_0" class="form-check-input" type="checkbox" name="beatles[]" checked="checked" value="J" /> <label class="form-check-label" for="beatles_0">John</label></div>',
+							'</li>',
+							'<li class="list__item">',
 							'<div class="form-check"><input id="beatles_1" class="form-check-input" type="checkbox" name="beatles[]" checked="checked" value="P" /> <label class="form-check-label" for="beatles_1">Paul</label></div>',
+							'</li>',
+							'<li class="list__item">',
 							'<div class="form-check"><input id="beatles_2" class="form-check-input" type="checkbox" name="beatles[]" value="G" /> <label class="form-check-label" for="beatles_2">George</label></div>',
+							'</li>',
+							'<li class="list__item">',
 							'<div class="form-check"><input id="beatles_3" class="form-check-input" type="checkbox" name="beatles[]" checked="checked" value="R" /> <label class="form-check-label" for="beatles_3">Ringo</label></div>',
+							'</li>',
+							'</ul>'
 					)),
 				)),
 			),

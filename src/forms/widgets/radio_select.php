@@ -75,22 +75,29 @@ class RadioSelect extends Select
 	function _renderer($name, $value, $attrs, $choices)
 	{
 		$output = array();
+
+		$output[] = $this->bootstrap4 ? '<ul class="list list--radios">' : '<ul class="radios">';
+
 		$i = 0;
 		foreach ($choices as $k => $v) {
 			$final_attrs = $this->build_attrs($this->input_attrs,$attrs);
 
 			$ch = new RadioInput($name, $value, $final_attrs, array($k=>$v), $i,array("convert_html_special_chars" => $this->convert_html_special_chars, "label_attrs" => $this->label_attrs, "wrap_attrs" => $this->wrap_attrs, "bootstrap4" => $this->bootstrap4));
 			if($this->bootstrap4){
+				$output[] = '<li class="list__item">';
 				$output[] = $ch->render();
+				$output[] = '</li>';
 			}else{
-				$output[] = "<li>".$ch->render()."</li>";
+				$output[] = "<li>";
+				$output[] = $ch->render();
+				$output[] = "</li>";
 			}
 			$i++;
 		}
-		if($this->bootstrap4){
-			return implode("\n", $output);
-		}
-		return "<ul class=\"radios\">\n".implode("\n", $output)."\n</ul>";
+
+		$output[] = '</ul>';
+
+		return implode("\n", $output);
 	}
 
 	function render($name, $value, $options=array())
