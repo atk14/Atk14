@@ -1073,13 +1073,13 @@ class TcForms extends TcBase
 		// polozky selektitka se nemusi definovat ve formularove tride
 		$form = new FrameworkForm6(array('auto_id'=>false));
 		$field = $form->get_field('language');
-		$this->assertEquals(
+		$this->assertTrue($this->_compare_html(
 			implode("\n", array('<ul class="radios">', '<li><label><input type="radio" name="language" value="P" /> Python</label></li>', '<li><label><input type="radio" name="language" value="J" /> Java</label></li>', '</ul>')),
 			$field->as_widget()
-		);
+		));
 
 		// kontrola generovani celeho formulare
-		$this->assertEquals(
+		$this->assertTrue($this->_compare_html(
 			implode(
 				"\n", 
 				array(
@@ -1091,8 +1091,8 @@ class TcForms extends TcBase
 				)
 			),
 			$form->as_table()
-		);
-		$this->assertEquals(
+		));
+		$this->assertTrue($this->_compare_html(
 			implode(
 				"\n", 
 				array(
@@ -1104,19 +1104,19 @@ class TcForms extends TcBase
 				)
 			),
 			$form->as_ul()
-		);
+		));
 
 		// id u RadioSelect se generuji i s poradovym cislem
 		$form = new FrameworkForm6(array('auto_id'=>'id_%s'));
 		$field = $form->get_field('language');
-		$this->assertEquals(
+		$this->assertTrue($this->_compare_html(
 			implode("\n", array('<ul class="radios">', '<li><label><input id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>', '<li><label><input id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>', '</ul>')),
 			$field->as_widget()
-		);
+		));
 
 		// pokud se pouzije RadioSelect s parametrem auto_id, tag <label> bude 
 		// ukazovat na *prvni* z polozek radio buttonu.
-		$this->assertEquals(
+		$this->assertTrue($this->_compare_html(
 			implode(
 				"\n", 
 				array(
@@ -1128,8 +1128,8 @@ class TcForms extends TcBase
 				)
 			),
 			$form->as_table()
-		);
-		$this->assertEquals(
+		));
+		$this->assertTrue($this->_compare_html(
 			implode(
 				"\n", 
 				array(
@@ -1141,8 +1141,8 @@ class TcForms extends TcBase
 				)
 			),
 			$form->as_ul()
-		);
-		$this->assertEquals(
+		));
+		$this->assertTrue($this->_compare_html(
 			implode(
 				"\n", 
 				array(
@@ -1154,7 +1154,7 @@ class TcForms extends TcBase
 				)
 			),
 			$form->as_p()
-		);
+		));
 	}
 
 	/**
