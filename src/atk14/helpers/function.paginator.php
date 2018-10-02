@@ -51,25 +51,38 @@ function smarty_function_paginator($params,$template){
 
 	$smarty = atk14_get_smarty_from_template($template);
 
-	if(isset($params["finder"])){
+	$params += array(
+		"finder" => null,
+		//
+		"total_amount" => $smarty->getTemplateVars("total_amount"),
+		"max_amount" => $smarty->getTemplateVars("max_amount"),
+		//
+		"aria_label" => _("Pagination"),
+		"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4, // TODO: Ting and start use a more appropriate constant name, i.e. USING_BOOTSTRAP4
+		"align" => "left", // "left", "rigth", "center"
+	);
+
+	$finder = null;
+	if($params["finder"]){
 		$finder = $params["finder"];
 	}elseif(!is_null($smarty->getTemplateVars("finder"))){
 		$finder = $smarty->getTemplateVars("finder");
 	}
-
-	if(isset($finder)){
+	//
+	if($finder){
 		$total_amount = $finder->getTotalAmount();
 		$max_amount = $finder->getLimit();
 	}else{
-		$total_amount = isset($params["total_amount"]) ? (int)$params["total_amount"] : (int)$smarty->getTemplateVars("total_amount");
-		$max_amount = isset($params["max_amount"]) ? (int)$params["max_amount"] : (int)$smarty->getTemplateVars("max_amount");
+		$total_amount = (int)$params["total_amount"];
+		$max_amount = (int)$params["max_amount"];
 	}
 
 	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? ATK14_PAGINATOR_OFFSET_PARAM_NAME : "from";
 	$from_name = isset($params["$_from"]) ? $params["$_from"] : "$_from";
 
+	$bootstrap4 = $params["bootstrap4"];
+
 	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
-	
 
 	$par = $smarty->getTemplateVars("params")->toArray();
 
@@ -91,27 +104,44 @@ function smarty_function_paginator($params,$template){
 
 	$out = array();
 
+	if($bootstrap4){
+		$ul_class = array('pagination');
+		$p_class = array('pager__items-count');
+		($params["align"]=="center") && ($ul_class[] = "justify-content-center") && ($p_class[] = 'text-center');
+		($params["align"]=="right") && ($ul_class[] = "justify-content-end") && ($p_class[] = 'text-right');
+		$ul_class = $ul_class ? ' class="'.join(" ",$ul_class).'"' : '';
+		$p_class = $p_class ? ' class="'.join(" ",$p_class).'"' : '';
+	}else{
+		$ul_class = $p_class = '';
+	}
+
 	if($total_amount<=$max_amount){
 		if($total_amount>=5){
-			$out[] = "<div class=\"paginator\">";
-			$out[] = "<p>".sprintf(_("%s items total"),$total_amount)."</p>";
-			$out[] = "</div>";
-			
+			if($bootstrap4){
+				$out[] = sprintf('<nav class="pager" aria-label="%s">',h($params["aria_label"]));
+				$out[] = "<p$p_class>".sprintf(_("%s items total"),$total_amount)."</p>";
+				$out[] = "</nav>";
+			}else{
+				$out[] = "<div class=\"paginator\">";
+				$out[] = "<p>".sprintf(_("%s items total"),$total_amount)."</p>";
+				$out[] = "</div>";
+			}
 		}
 		return join("\n",$out);
 	}
 
-	$out[] = "<div class=\"paginator\">";
-	$out[] = "<ul>";
+	$out[] = $bootstrap4 ? sprintf('<nav class="pager" aria-label="%s">',h($params["aria_label"])) : "<div class=\"paginator\">";
+	$out[] = $bootstrap4 ? "<ul$ul_class>" : "<ul>";
 
 	$first_child = true;
 	if($from>0){
 		$par["$from_name"] = $from - $max_amount;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = "<li class=\"first-child prev\"><a href=\"$url\">"._("prev")."</a></li>";
+		$out[] = $bootstrap4 ? '<li class="page-item"><a class="page-link" href="'.$url.'" tabindex="-1">'._("prev").'</a></li>': "<li class=\"first-child prev\"><a href=\"$url\">"._("prev")."</a></li>";
 		$first_child = false;
 	}
 
+	$hellip_element = $bootstrap4 ? '<li class="page-item page-item--hellip">&hellip;</li>' : '<li class="skip">...</li>';
 	$cur_from = 0;
 	$screen = 1;
 	$steps = ceil($total_amount / $max_amount);
@@ -119,30 +149,34 @@ function smarty_function_paginator($params,$template){
 	while($cur_from < $total_amount){
 		$par["$from_name"] = $cur_from;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$_class = array();
-		$cur_from==$from && ($_class[] = "active");
-		$first_child && ($_class[] = "first-child") && ($first_child = false);
 
-		if($steps==$current_step && $screen==$current_step){
+		$_class = array();
+		$bootstrap4 && ($_class[] = "page-item");
+		($cur_from==$from) && ($_class[] = "active");
+		if($first_child){
+			!$bootstrap4 && ($_class[] = "first-child");
+			$first_child = false;
+		}
+		if(!$bootstrap4 && $steps==$current_step && $screen==$current_step){
 			$_class[] = "last-child";
 		}
 
 		$_class = $_class ? " class=\"".join(" ",$_class)."\"" : "";
 
 		if($cur_from==$from){
-			$out[] = "<li$_class>$screen</li>";
+			$out[] = $bootstrap4 ? '<li'.$_class.'><a class="page-link" href="'.$url.'">'.$screen.' <span class="sr-only">('._("current page").')</span></a></li>' : "<li$_class>$screen</li>";
 		}else{
-			$out[] = "<li$_class><a href=\"$url\">$screen</a></li>";
+			$out[] = $bootstrap4 ? '<li'.$_class.'><a class="page-link" href="'.$url.'">'.$screen.'</a></li>' : "<li$_class><a href=\"$url\">$screen</a></li>";
 		}
 		$screen++;
 
 		if($screen>2 && $current_step>6 && $screen<$current_step-4 && $screen<$steps-10){
-			$out[] = "<li class=\"skip\">...</li>";
+			$out[] = $hellip_element;
 			while($screen<$current_step-4 && $screen<$steps-10){ $screen++; }
 		}
 
 		if($screen>$current_step+4 && $steps-$screen>=2 && $screen>11){
-			$out[] = "<li class=\"skip\">...</li>";
+			$out[] = $hellip_element;
 			while(($steps-$screen)>=2){ $screen++; }
 		}
 
@@ -152,13 +186,13 @@ function smarty_function_paginator($params,$template){
 	if(($from+$max_amount)<$total_amount){
 		$par["$from_name"] = $from + $max_amount;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = "<li class=\"last-child next\"><a href=\"$url\">"._("next")."</a></li>";
+		$out[] = $bootstrap4 ? '<li class="page-item"><a class="page-link" href="'.$url.'">'._("next").'</a></li>' : "<li class=\"last-child next\"><a href=\"$url\">"._("next")."</a></li>";
 	}
 
 	$out[] = "</ul>";
 
-	$out[] = "<p>".sprintf(_("%s items total"),$total_amount)."</p>";
-	$out[] = "</div>";
+	$out[] = "<p$p_class>".sprintf(_("%s items total"),$total_amount)."</p>";
+	$out[] = $bootstrap4 ? '</nav>' : '</div>';
 
 	return join("\n",$out);
 }
