@@ -58,8 +58,8 @@ function smarty_function_paginator($params,$template){
 		"max_amount" => $smarty->getTemplateVars("max_amount"),
 		//
 		"aria_label" => _("Pagination"),
-		"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4, // TODO: Ting and start use a more appropriate constant name, i.e. USING_BOOTSTRAP4
-		"align" => "left", // "left", "rigth", "center"
+		"bootstrap4" => USING_BOOTSTRAP4,
+		"align" => "left", // "left", "rigth", "center"; it only matters when using Bootstrap4
 	);
 
 	$finder = null;
