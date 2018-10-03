@@ -15,7 +15,21 @@ class CheckboxInput extends Widget
 
 	function __construct($options=array())
 	{
-		$options = forms_array_merge(array('attrs'=>null, 'check_test'=>null), $options);
+		$options += array(
+			'attrs' => array(),
+			'check_test' => null,
+
+			'bootstrap4' => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4,
+		);
+
+		if($options["bootstrap4"]){
+			$options["attrs"] += array(
+				"class" => "form-check-input",
+			);
+		}
+		
+
+
 		parent::__construct($options);
 		$this->check_test = $options['check_test'];
 	}

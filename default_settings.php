@@ -117,6 +117,14 @@ __defaults__(array(
 	"SENDMAIL_DEFAULT_TRANSFER_ENCODING" => "quoted-printable", // "8bit" or "quoted-printable"
 ));
 
+__defaults__(array(
+	"USING_BOOTSTRAP4" => false, // HTML snippets rendered from some parts of the framework can be tuned for Bootstrap4
+));
+
+__defaults__(array(
+	"FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4" => USING_BOOTSTRAP4,
+));
+
 function __defaults__($defaults){
 	global $__CONFIG_CONSTANTS__;
 	foreach($defaults as $key => $value){

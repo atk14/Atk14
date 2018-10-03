@@ -56,25 +56,48 @@ class RadioSelect extends Select
 	var $input_type = "radio";
 	var $convert_html_special_chars = true;
 
-	function __construct($option = array()){
-		$option += array(
+	function __construct($options = array()){
+		$options += array(
 			"convert_html_special_chars" => true,
+			"input_attrs" => array(),
+			"label_attrs" => array(),
+			"wrap_attrs" => array(),
+			"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4,
 		);
-		$this->convert_html_special_chars = $option["convert_html_special_chars"];
-		unset($option["convert_html_special_chars"]);
-		parent::__construct($option);
+		$this->convert_html_special_chars = $options["convert_html_special_chars"];
+		$this->bootstrap4 = $options["bootstrap4"];
+		$this->input_attrs = $options["input_attrs"];
+		$this->label_attrs = $options["label_attrs"];
+		$this->wrap_attrs = $options["wrap_attrs"];
+		parent::__construct($options);
 	}
 
 	function _renderer($name, $value, $attrs, $choices)
 	{
 		$output = array();
+
+		$output[] = $this->bootstrap4 ? '<ul class="list list--radios">' : '<ul class="radios">';
+
 		$i = 0;
 		foreach ($choices as $k => $v) {
-			$ch = new RadioInput($name, $value, $attrs, array($k=>$v), $i,array("convert_html_special_chars" => $this->convert_html_special_chars));
-			$output[] = "<li>".$ch->render()."</li>";
+			$final_attrs = $this->build_attrs($this->input_attrs,$attrs);
+
+			$ch = new RadioInput($name, $value, $final_attrs, array($k=>$v), $i,array("convert_html_special_chars" => $this->convert_html_special_chars, "label_attrs" => $this->label_attrs, "wrap_attrs" => $this->wrap_attrs, "bootstrap4" => $this->bootstrap4));
+			if($this->bootstrap4){
+				$output[] = '<li class="list__item">';
+				$output[] = $ch->render();
+				$output[] = '</li>';
+			}else{
+				$output[] = "<li>";
+				$output[] = $ch->render();
+				$output[] = "</li>";
+			}
 			$i++;
 		}
-		return "<ul class=\"radios\">\n".implode("\n", $output)."\n</ul>";
+
+		$output[] = '</ul>';
+
+		return implode("\n", $output);
 	}
 
 	function render($name, $value, $options=array())
