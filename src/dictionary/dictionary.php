@@ -341,7 +341,15 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/**
 	 * @ignore
 	 */
-	function offsetSet($name, $value){ $this->setValue($name, $value);	}
+	function offsetSet($key, $value){
+		if(is_null($key)){
+			$keys = array_keys($this->_Values);
+			$keys = array_filter($keys,function($k){ return is_numeric($k); });
+			sort($keys,SORT_NUMERIC);
+			$key = $keys ? array_pop($keys) + 1 : 0;
+		}
+		$this->setValue($key, $value);
+	}
 
 	/**
 	 * @ignore

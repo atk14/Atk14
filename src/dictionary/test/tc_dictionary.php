@@ -225,6 +225,24 @@ class tc_dictionary extends tc_base{
 
 		unset($dict["very_lastname"]);
 		$this->assertEquals(array("firstname" => "yarrino", "lastname" => "tomino"),$dict->toArray());
+
+		// numeric keys
+		$dict = new Dictionary();
+		$dict[] = "figure 1";
+		$dict[] = "figure 2";
+		$dict[] = "figure 3";
+		$this->assertEquals(array(0 => "figure 1", 1 => "figure 2", 2 => "figure 3"),$dict->toArray());
+
+		$dict[1] = "figure #2";
+		$dict[] = "figure #4";
+		$this->assertEquals(array(0 => "figure 1", 1 => "figure #2", 2 => "figure 3", 3 => "figure #4"),$dict->toArray());
+
+		$dict = new Dictionary();
+		$dict["a"] = "a";
+		$dict[] = "figure 1";
+		$dict["b"] = "b";
+		$dict[] = "figure 2";
+		$this->assertEquals(array("a" => "a", 0 => "figure 1", "b" => "b", 1 => "figure 2"),$dict->toArray());
 	}
 
 	function _check_bool($data,$expected){
