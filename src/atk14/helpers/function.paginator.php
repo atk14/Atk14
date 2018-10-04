@@ -164,7 +164,7 @@ function smarty_function_paginator($params,$template){
 		$_class = $_class ? " class=\"".join(" ",$_class)."\"" : "";
 
 		if($cur_from==$from){
-			$out[] = $bootstrap4 ? '<li'.$_class.'><a class="page-link" href="'.$url.'">'.$screen.' <span class="sr-only">('._("current page").')</span></a></li>' : "<li$_class>$screen</li>";
+			$out[] = $bootstrap4 ? '<li'.$_class.'><span class="page-link">'.$screen.' <span class="sr-only">('._("current page").')</span></span></li>' : "<li$_class>$screen</li>";
 		}else{
 			$out[] = $bootstrap4 ? '<li'.$_class.'><a class="page-link" href="'.$url.'">'.$screen.'</a></li>' : "<li$_class><a href=\"$url\">$screen</a></li>";
 		}
