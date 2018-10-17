@@ -68,7 +68,7 @@ class TcUtils extends TcBase{
 
 		$this->assertEquals(null,Atk14Utils::ToScalar(null));
 
-		$article = Article::CreateNewRecord(["id" => 345]);
+		$article = Article::CreateNewRecord(array("id" => 345));
 		$this->assertEquals(345,Atk14Utils::ToScalar($article));
 
 		$str = new String4("Object with toString() method");
