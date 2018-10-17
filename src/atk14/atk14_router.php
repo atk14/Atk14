@@ -70,7 +70,7 @@ class Atk14Router{
 		}
 		$this->params = $params;
 		foreach($this->params->keys() as $k){
-			if(is_object($this->params->g($k))){ $this->params->s($k,$this->params->g($k)->getId()); }
+			if(is_object($this->params->g($k))){ $this->params->s($k,Atk14Utils::ToScalar($this->params->g($k))); }
 		}
 		return $this->build();
 	}
