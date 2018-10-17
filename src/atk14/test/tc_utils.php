@@ -60,4 +60,18 @@ class TcUtils extends TcBase{
 		$this->assertEquals('/public/stylesheets/blueprint/screen.css?1305634061',Atk14Utils::NormalizeUri('/public/././stylesheets/blueprint/screen.css?1305634061'));
 		$this->assertEquals('/public/dist/css/app.css?1384766775',Atk14Utils::NormalizeUri('/public/stylesheets/../dist/css/app.css?1384766775'));
 	}
+
+	function test_ToScalar(){
+		$this->assertEquals(5,Atk14Utils::ToScalar(5));
+		$this->assertEquals(1.23,Atk14Utils::ToScalar(1.23));
+		$this->assertEquals("Text",Atk14Utils::ToScalar("Text"));
+
+		$this->assertEquals(null,Atk14Utils::ToScalar(null));
+
+		$article = Article::CreateNewRecord(["id" => 345]);
+		$this->assertEquals(345,Atk14Utils::ToScalar($article));
+
+		$str = new String4("Object with toString() method");
+		$this->assertEquals("Object with toString() method",Atk14Utils::ToScalar($str));
+	}
 }

@@ -518,6 +518,31 @@ class Atk14Utils{
 	}
 
 	/**
+	 * Converts the given variable into a scalar
+	 *
+	 * Casts an exception if conversion fails.
+	 *
+	 * ```
+	 * $book = Book::FindById(5);
+	 * echo Atk14Utils::ToScalar($book); // 5
+	 *
+	 * echo Atk14Utils::ToScalar(123); // 123
+	 * echo Atk14Utils::ToScalar("Text"); // "Text"
+	 * ```
+	 */
+	static function ToScalar($var){
+		if(is_scalar($var) || is_null($var)){
+			return $var;
+		}
+
+		if(method_exists($var,"getId")){ return $var->getId(); }
+		if(method_exists($var,"toString")){ return $var->toString(); }
+		if(method_exists($var,"__toString")){ return $var->__toString(); }
+
+		throw new Exception(sprintf("Can't convert %s var into a scalar value",get_class($var)));
+	}
+
+	/**
 	 * @ignore
 	 */ 
 	static function _CorrectActionForUrl(&$params){
