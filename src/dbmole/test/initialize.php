@@ -1,10 +1,15 @@
 <?php
+define("TEST",true);
+define("SENDMAIL_DO_NOT_SEND_MAILS",true);
+
 require(__DIR__."/../dbmole.php");
 require(__DIR__."/../pgmole.php");
 require(__DIR__."/../oraclemole.php");
 require(__DIR__."/../mysqlmole.php");
 require(__DIR__."/../../stopwatch/stopwatch.php");
 require(__DIR__."/../../files/load.php");
+require(__DIR__."/../../sendmail/load.php");
+require(__DIR__."/../../translate/load.php");
 
 require(__DIR__."/connections_and_handler.php");
 

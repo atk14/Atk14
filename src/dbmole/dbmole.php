@@ -622,15 +622,30 @@ class DbMole{
 	 * @param string $email_address
 	 * @param array $options
 	 * - report_failed_database_connection boolean whether send report about failed database connection
+	 * - limit_sending_rate boolean or numeric (number of seconds); whether email sending rate should be limited or not; default true
 	 */
 	function sendErrorReportToEmail($email_address,$options = array()){
-		$options["report_failed_database_connection"] = isset($options["report_failed_database_connection"]) ? (bool)$options["report_failed_database_connection"] : false;
+		$options += array(
+			"report_failed_database_connection" => false,
+			"limit_sending_rate" => true, // bolean or number of seconds (default 300),
+			"sending_lock_file" => null, // "/tmp/dbmole_email_sent_".md5(__DIR__)
+		);
 
 		if(!$options["report_failed_database_connection"] && preg_match("/^can't connect to database/",$this->getErrorMessage())){
 			return;
 		}
 
-		sendmail(array(
+		// Limiting sending rate
+		if($options["limit_sending_rate"]){
+			$threshold = is_numeric($options["limit_sending_rate"]) ? $options["limit_sending_rate"] : 300;
+			$email_lock_file = $options["sending_lock_file"] ? $options["sending_lock_file"] : Files::GetTempDir()."/dbmole_email_sent_".md5(__DIR__);
+			if(file_exists($email_lock_file) && filemtime($email_lock_file)>(time() - $threshold)){
+				return;
+			}
+			touch($email_lock_file);
+		}
+
+		return sendmail(array(
 			"to" => $email_address,
 			"subject" => "DbMole: error report",
 			"body" => $this->getErrorReport(),

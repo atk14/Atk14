@@ -299,6 +299,39 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals("dbmole_error_handler",$dbmole->getErrorHandler());
 	}
 
+	function test_sendErrorReportToEmail_limit_sending_rate(){
+		$dbmole = PgMole::GetInstance();
+		$sending_lock_file = Files::GetTempDir()."/testing_dbmole_email_sent_".uniqid();
+
+		$this->assertEquals(false,file_exists($sending_lock_file));
+
+		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",array(
+			"sending_lock_file" => $sending_lock_file
+		));
+		$this->assertTrue(is_array($ret));
+		$this->assertEquals(true,file_exists($sending_lock_file));
+
+		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",array(
+			"sending_lock_file" => $sending_lock_file
+		));
+		$this->assertEquals(null,$ret);
+
+		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",array(
+			"sending_lock_file" => $sending_lock_file,
+			"limit_sending_rate" => 0,
+		));
+		$this->assertTrue(is_array($ret));
+
+		unlink($sending_lock_file);
+
+		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",array(
+			"sending_lock_file" => $sending_lock_file
+		));
+		$this->assertTrue(is_array($ret));
+
+		unlink($sending_lock_file);
+	}
+
 	function _test_common_behaviour(&$dbmole){
 		$this->assertTrue($dbmole->doQuery("DELETE FROM test_table"));
 
