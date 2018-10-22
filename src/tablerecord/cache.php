@@ -47,7 +47,7 @@ class ObjectCacher {
 		$class_lo = strtolower($class);
 		if(!key_exists($class_lo, self::$InitilizedCachers)) {
 			if(!$create) { $null = null; return $null; }
-			self::$InitilizedCachers[$class_lo] = $class::CreateObjectCacher();
+			self::$InitilizedCachers[$class_lo] = method_exists($class,"CreateObjectCacher") ? $class::CreateObjectCacher() : new ObjectCacher($class);
 		}
 		return self::$InitilizedCachers[$class_lo];
 	}
