@@ -1550,11 +1550,10 @@ class TableRecord extends inobj {
 	 * @ignore
 	 */
 	function __call($name,$arguments){
-		static $CACHES;
+		static $CACHES = array();
 
 		$class_name = get_class($this);
 
-		if(!isset($CACHES)){ $CACHES = array(); }
 		if(!isset($CACHES[$class_name])){
 			$CACHES[$class_name] = array(
 				"fields" => array(),
@@ -1581,7 +1580,7 @@ class TableRecord extends inobj {
 			}
 		}
 
-		throw new Exception("TableRecord::__call(): unknown method ".get_class($this)."::$name()");
+		throw new Exception("TableRecord::__call(): unknown method $class_name::$name()");
 	}
 
 	/**
