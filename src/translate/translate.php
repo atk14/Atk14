@@ -69,6 +69,8 @@ defined("TRANSLATE_USE_ICONV") || define("TRANSLATE_USE_ICONV",false);
  */
 class Translate{
 
+	const VERSION = "1.2";
+
 	/**
 	 * Converts string from source charset to target charset.
 	 *
@@ -85,12 +87,12 @@ class Translate{
 	 * @return string|array
 	 */
 	static function Trans($text,$from_charset,$to_charset,$options = array()){
-		$from_charset = Translate::_GetCharsetByName($from_charset);
-		$to_charset = Translate::_GetCharsetByName($to_charset);
+		$from_charset = self::_GetCharsetByName($from_charset);
+		$to_charset = self::_GetCharsetByName($to_charset);
 		if($from_charset==$to_charset){
 			return $text;
 		}
-		return Translate::_Trans($text,$from_charset,$to_charset,$options);
+		return self::_Trans($text,$from_charset,$to_charset,$options);
 	}
 
 	/**
@@ -102,19 +104,19 @@ class Translate{
 			foreach($text as $key => $value){
 				$_key = $key;
 				if(isset($options["recode_array_keys"]) && $options["recode_array_keys"]){
-					$_key = Translate::_Trans($key,$from_charset,$to_charset);
+					$_key = self::_Trans($key,$from_charset,$to_charset);
 				}
-				$out[$_key] = (is_string($text[$key]) || is_array($text[$key])) ? Translate::_Trans($text[$key],$from_charset,$to_charset) : $text[$key];
+				$out[$_key] = (is_string($text[$key]) || is_array($text[$key])) ? self::_Trans($text[$key],$from_charset,$to_charset) : $text[$key];
 			}
 			return $out;
 		}
 
 		if($from_charset=="utf8" && $to_charset!="utf8"){
-			$text = Translate::_RemoveUtf8Headaches($text);
+			$text = self::_RemoveUtf8Headaches($text);
 		}
 
 		if($from_charset=="utf8" && $to_charset=="ascii"){
-			$text = Translate::_Transliteration($text);
+			$text = self::_Transliteration($text);
 		}
 
 		if(TRANSLATE_USE_ICONV && function_exists('iconv')){
@@ -126,27 +128,29 @@ class Translate{
 
 		switch($to_charset){
 			case "iso-8859-2":
-				return Translate::_TO_iso_8859_2($text,$from_charset);
+				$text = self::_TO_iso_8859_2($text,$from_charset);
 				break;
 			case "utf8":
-				return Translate::_TO_utf8($text,$from_charset);
+				$text = self::_TO_utf8($text,$from_charset);
 				break;
 			case "windows-1250":
-			  return Translate::_TO_windows_1250($text,$from_charset);
+			  $text = self::_TO_windows_1250($text,$from_charset);
 				break;
 			case "852":
-				return Translate::_TO_852($text,$from_charset);
+				$text = self::_TO_852($text,$from_charset);
 				break;			
 			case "ascii":
-				return Translate::_TO_ascii($text,$from_charset);
+				$text = self::_TO_ascii($text,$from_charset);
 				break;
 			case "HTML entities":
-				return Translate::_TO_HTML_entitites($text,$from_charset);
-				break;
-			default: 
-				return $text;
+				$text = self::_TO_HTML_entitites($text,$from_charset);
 				break;
 		}
+
+		if($from_charset=="utf8" && $to_charset=="ascii"){
+			$text = self::_RemoveUtf8Chars($text);
+		}
+
 		return $text;
 	}
 
@@ -158,101 +162,140 @@ class Translate{
 	static function _RemoveUtf8Headaches($text){
 		return strtr($text,array(
 			chr(0xE2).chr(0x80).chr(0x93) => "-",
+			chr(0xC2).chr(0xA0) => " ", // Non-breaking space
 		));
 	}
 
 	static function _Transliteration($text){
-		$tr_table = array(
-			// Cyrillic Transliteration Table
-			// http://homes.chass.utoronto.ca/~tarn/courses/translit-table.html
-			"А" => "A",
-			"Б" => "B",
-			"В" => "V",
-			"Г" => "G", // "H" (Ukrainian)
-			"Ґ" => "G",
-			"Д" => "D",
-			"E" => "E", // ??
-			"Е" => "E", // ??
-			"Є" => "Je",
-			"Ж" => "Ž",
-			"З" => "Z",
-			"И" => "Y",
-			"І" => "I",
-			"Ї" => "Ji",
-			"Й" => "J",
-			"К" => "K",
-			"Л" => "L",
-			"М" => "M",
-			"Н" => "N",
-			"О" => "O",
-			"П" => "P",
-			"Р" => "R",
-			"С" => "S",
-			"Т" => "T",
-			"У" => "U",
-			"Ф" => "F",
-			"Х" => "X",
-			"Ц" => "C",
-			"Ч" => "Č",
-			"Ш" => "Š",
-			"Щ" => "Šč",
-			"Ю" => "Ju",
-			"Я" => "Ja",
-			"Ь" => "", // "'"
-			"Ё" => "E",
-			"Э" => "E",
-			"Ъ" => "", // '"'
-			"Ы" => "Y",
-			//
-			"а" => "a",
-			"б" => "b",
-			"в" => "v",
-			"г" => "g", // "h" (Ukrainian)
-			"ґ" => "g",
-			"д" => "d",
-			"e" => "e", // ??
-			"е" => "e", // ??
-			"є" => "je",
-			"ж" => "ž",
-			"з" => "z",
-			"и" => "y",
-			"і" => "i",
-			"ї" => "ji",
-			"й" => "j",
-			"к" => "k",
-			"л" => "l",
-			"м" => "m",
-			"н" => "n",
-			"о" => "o",
-			"п" => "p",
-			"р" => "r",
-			"с" => "s",
-			"т" => "t",
-			"у" => "u",
-			"ф" => "f",
-			"х" => "x",
-			"ц" => "c",
-			"ч" => "č",
-			"ш" => "š",
-			"щ" => "šč",
-			"ю" => "ju",
-			"я" => "ja",
-			"ь" => "", // "'"
-			"ё" => "e",
-			"э" => "e",
-			"ъ" => "", // '"'
-			"ы" => "y",
+		static $tr_table;
 
-			// German
-			"ä" => "ae",
-			"ö" => "oe",
-			"ü" => "ue",
-			"Ä" => "Ae",
-			"Ö" => "Oe",
-			"Ü" => "Ue",
-			"ß" => "ss",
-		);
+		if(!$tr_table){
+			// the new table for transliteration
+			require(__DIR__ . "/tr_tables/transliteration/tr_table.php");
+
+			// the original array for transliteration
+			$tr_table = array(
+				// Cyrillic Transliteration Table
+				// http://homes.chass.utoronto.ca/~tarn/courses/translit-table.html
+				"А" => "A",
+				"Б" => "B",
+				"В" => "V",
+				"Г" => "G", // "H" (Ukrainian)
+				"Ґ" => "G",
+				"Д" => "D",
+				"E" => "E", // ??
+				"Е" => "E", // ??
+				"Є" => "Je",
+				"Ж" => "Ž",
+				"З" => "Z",
+				"И" => "Y",
+				"І" => "I",
+				"Ї" => "Ji",
+				"Й" => "J",
+				"К" => "K",
+				"Л" => "L",
+				"М" => "M",
+				"Н" => "N",
+				"О" => "O",
+				"П" => "P",
+				"Р" => "R",
+				"С" => "S",
+				"Т" => "T",
+				"У" => "U",
+				"Ф" => "F",
+				"Х" => "X",
+				"Ц" => "C",
+				"Ч" => "Č",
+				"Ш" => "Š",
+				"Щ" => "Šč",
+				"Ю" => "Ju",
+				"Я" => "Ja",
+				"Ь" => "", // "'"
+				"Ё" => "E",
+				"Э" => "E",
+				"Ъ" => "", // '"'
+				"Ы" => "Y",
+				//
+				"а" => "a",
+				"б" => "b",
+				"в" => "v",
+				"г" => "g", // "h" (Ukrainian)
+				"ґ" => "g",
+				"д" => "d",
+				"e" => "e", // ??
+				"е" => "e", // ??
+				"є" => "je",
+				"ж" => "ž",
+				"з" => "z",
+				"и" => "y",
+				"і" => "i",
+				"ї" => "ji",
+				"й" => "j",
+				"к" => "k",
+				"л" => "l",
+				"м" => "m",
+				"н" => "n",
+				"о" => "o",
+				"п" => "p",
+				"р" => "r",
+				"с" => "s",
+				"т" => "t",
+				"у" => "u",
+				"ф" => "f",
+				"х" => "x",
+				"ц" => "c",
+				"ч" => "č",
+				"ш" => "š",
+				"щ" => "šč",
+				"ю" => "ju",
+				"я" => "ja",
+				"ь" => "", // "'"
+				"ё" => "e",
+				"э" => "e",
+				"ъ" => "", // '"'
+				"ы" => "y",
+
+				// German
+				"ä" => "ae",
+				"ö" => "oe",
+				"ü" => "ue",
+				"Ä" => "Ae",
+				"Ö" => "Oe",
+				"Ü" => "Ue",
+				"ß" => "ss",
+
+				// Slovak - there are conflicts with German!!
+				"ä" => "a",
+				"Ä" => "A",
+			) + $tr_table;
+
+			$tr_table += array(
+				"–" => "-", // ndash
+				"—" => "-", // mdash
+				"®" => "(R)",
+				"™" => "TM",
+				"¼" => "1/4",
+				"½" => "1/2",
+				"¾" => "3/4",
+				"…" => "...", // hellip
+			) + $tr_table;
+
+		}
 		return strtr($text,$tr_table);
+	}
+
+	static function _RemoveUtf8Chars($text,$options = array()){
+		$options += array(
+			"unknown" => "?",
+		);
+
+		$chars = preg_split('//u',$text);
+		foreach($chars as &$char){
+			if(strlen($char)>1){
+				$char = $options["unknown"];
+			}
+		}
+		return join("",$chars);
 	}
 
 	/**
@@ -265,7 +308,7 @@ class Translate{
 	static function Lower($text,$charset = null){
 		static $TR_TABLES = array();
 
-		$charset = Translate::_GetCharsetByName($charset);
+		$charset = self::_GetCharsetByName($charset);
 		switch($charset){
 			case "windows-1250":
 			case "iso-8859-2":
@@ -276,9 +319,9 @@ class Translate{
 				break;
 			case "utf8":
 				// TODO: rewrite this masterpiece :)
-				$text = Translate::Trans($text,"utf8","iso-8859-2");
-				$text = Translate::Lower($text,"iso-8859-2");
-				return Translate::Trans($text,"iso-8859-2","utf8");
+				$text = self::Trans($text,"utf8","iso-8859-2");
+				$text = self::Lower($text,"iso-8859-2");
+				return self::Trans($text,"iso-8859-2","utf8");
 				break;
 			case "ascii":
 			default: 
@@ -297,7 +340,7 @@ class Translate{
 	static function Upper($text,$charset = null){
 		static $TR_TABLES = array();
 
-		$charset = Translate::_GetCharsetByName($charset);
+		$charset = self::_GetCharsetByName($charset);
 		switch($charset){
 			case "windows-1250":
 			case "iso-8859-2":
@@ -308,9 +351,9 @@ class Translate{
 				break;
 			case "utf8":
 				// TODO: rewrite this masterpiece :)
-				$text = Translate::Trans($text,"utf8","iso-8859-2");
-				$text = Translate::Upper($text,"iso-8859-2");
-				return Translate::Trans($text,"iso-8859-2","utf8");
+				$text = self::Trans($text,"utf8","iso-8859-2");
+				$text = self::Upper($text,"iso-8859-2");
+				return self::Trans($text,"iso-8859-2","utf8");
 				break;
 			case "ascii":
 			default: 
@@ -501,7 +544,7 @@ class Translate{
 	static function _TO_852(&$text,$from_cp){
 		switch($from_cp){
 			case "utf8":
-				$text = Translate::Trans($text,"utf8","windows-1250");
+				$text = self::Trans($text,"utf8","windows-1250");
 			case "windows-1250":
 				$in = array(chr(199),chr(252),chr(233),chr(226),chr(228),chr(249),chr(230),chr(231),chr(179),chr(235),chr(213),chr(245),chr(238),chr(143),chr(196),chr(198),chr(201),chr(197),chr(229),chr(244),chr(246),chr(188),chr(190),chr(140),chr(156),chr(214),chr(220),chr(141),chr(157),chr(163),chr(215),chr(232),chr(225),chr(237),chr(243),chr(250),chr(165),chr(185),chr(142),chr(158),chr(202),chr(234),chr(172),chr(159),chr(200),chr(186),chr(171),chr(187),chr(193),chr(194),chr(204),chr(170),chr(175),chr(191),chr(195),chr(227),chr(164),chr(240),chr(208),chr(207),chr(203),chr(239),chr(210),chr(205),chr(206),chr(236),chr(222),chr(217),chr(211),chr(223),chr(212),chr(209),chr(241),chr(242),chr(138),chr(154),chr(192),chr(218),chr(224),chr(219),chr(253),chr(221),chr(254),chr(180),chr(173),chr(189),chr(178),chr(161),chr(162),chr(167),chr(247),chr(184),chr(176),chr(168),chr(255),chr(216),chr(248),chr(160));
 				$out = array(chr(128),chr(129),chr(130),chr(131),chr(132),chr(133),chr(134),chr(135),chr(136),chr(137),chr(138),chr(139),chr(140),chr(141),chr(142),chr(143),chr(144),chr(145),chr(146),chr(147),chr(148),chr(149),chr(150),chr(151),chr(152),chr(153),chr(154),chr(155),chr(156),chr(157),chr(158),chr(159),chr(160),chr(161),chr(162),chr(163),chr(164),chr(165),chr(166),chr(167),chr(168),chr(169),chr(170),chr(171),chr(172),chr(173),chr(174),chr(175),chr(181),chr(182),chr(183),chr(184),chr(189),chr(190),chr(198),chr(199),chr(207),chr(208),chr(209),chr(210),chr(211),chr(212),chr(213),chr(214),chr(215),chr(216),chr(221),chr(222),chr(224),chr(225),chr(226),chr(227),chr(228),chr(229),chr(230),chr(231),chr(232),chr(233),chr(234),chr(235),chr(236),chr(237),chr(238),chr(239),chr(240),chr(241),chr(242),chr(243),chr(244),chr(245),chr(246),chr(247),chr(248),chr(249),chr(250),chr(252),chr(253),chr(255));
@@ -554,8 +597,8 @@ class Translate{
 					chr(0xC2).chr(0xA0) => " ", // Non-breaking space
 				));
 				// nasledujicim hackem se prevedou do ascii jen ceske znaky z celeho utf8
-				$out = Translate::Trans($out,"utf8","iso-8859-2");
-				return Translate::Trans($out,"iso-8859-2","ascii");
+				$out = self::Trans($out,"utf8","iso-8859-2");
+				return self::Trans($out,"iso-8859-2","ascii");
 				break;
 			default:
 				return $text;	
@@ -569,7 +612,7 @@ class Translate{
 	 * When they appear method returns false
 	 *
 	 * ```
-	 * Translate::CheckEncoding($text, "utf-8", array(".",";","{","}","HUSAK"));
+	 * self::CheckEncoding($text, "utf-8", array(".",";","{","}","HUSAK"));
 	 * ```
 	 *
 	 * @param string|array $text string or array of strings
@@ -582,8 +625,8 @@ class Translate{
 	static function CheckEncoding($text,$charset,$disallowed_char_sequencies = array()){
 		if(is_array($text)){
 			foreach($text as $_key => $_value){
-				$_stat_key = Translate::CheckEncoding($_key,$charset,$disallowed_char_sequencies);
-				$_stat_value = Translate::CheckEncoding($_value,$charset,$disallowed_char_sequencies);
+				$_stat_key = self::CheckEncoding($_key,$charset,$disallowed_char_sequencies);
+				$_stat_value = self::CheckEncoding($_value,$charset,$disallowed_char_sequencies);
 				if(!$_stat_key || !$_stat_value){
 					return false;
 				}
@@ -593,14 +636,14 @@ class Translate{
 
 		settype($charset,"string");
 		settype($disallowed_char_sequencies,"array");
-		$charset = Translate::_GetCharsetByName($charset);
+		$charset = self::_GetCharsetByName($charset);
 		$out = true;
 		switch($charset){
 			case "utf8":
-				$out = Translate::_CheckEncodingUtf8($text);
+				$out = self::_CheckEncodingUtf8($text);
 				break;
 			case "ascii":
-				$out = Translate::_CheckEncodingAscii($text);
+				$out = self::_CheckEncodingAscii($text);
 				break;
 		}
 
@@ -702,10 +745,10 @@ class Translate{
 	 * @return integer
 	 */
 	static function Length(&$text,$charset){
-		$charset = Translate::_GetCharsetByName($charset);
+		$charset = self::_GetCharsetByName($charset);
 		switch($charset){
 			case "utf8":
-				return Translate::_LengthUtf8($text);
+				return self::_LengthUtf8($text);
 			default:
 				return strlen($text);
 		}

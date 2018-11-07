@@ -180,14 +180,22 @@ class TcTranslate extends TcBase{
 
 		$this->assertEquals("4 Giro's passage",Translate::Trans("4 Giro’s passage","UTF-8","ASCII"));
 
-		// Cyrillic transliteration in action
+		// Czech
+		$this->assertEquals("Prilis zlutoucky kun upel dabelske ody",Translate::Trans("Příliš žluťoučký kůň úpěl ďábelské ódy","UTF-8","ASCII"));
+		$this->assertEquals("PRILIS ZLUTOUCKY KUN UPEL DABELSKE ODY",Translate::Trans("PŘÍLIŠ ŽLUŤOUČKÝ KŮŇ ÚPĚL ĎÁBELSKÉ ÓDY","UTF-8","ASCII"));
+
+		// Slovak
+		$this->assertEquals("klud, maso, dlzka, kopor",Translate::Trans("kľud, mäso, dĺžka, kôpor","UTF-8","ASCII"));
+		$this->assertEquals("KLUD, MASO, DLZKA, KOPOR",Translate::Trans("KĽUD, MÄSO, DĹŽKA, KÔPOR","UTF-8","ASCII"));
+
+		// Cyrillic
 		$this->assertEquals("Russkyj",Translate::Trans("Русский","UTF-8","ASCII"));
 		$this->assertEquals("malcyk",Translate::Trans("мальчик","UTF-8","ASCII"));
 		$this->assertEquals("Oftalmologyja",Translate::Trans("Офтальмология","UTF-8","ASCII"));
 		$this->assertEquals("Specyalyzacyja",Translate::Trans("Специализация","UTF-8","ASCII"));
 
-		// German transliteration in action
-		$this->assertEquals("Was koennen Jaeger absetzen?",Translate::Trans("Was können Jäger absetzen?","UTF-8","ASCII"));
+		// German
+		$this->assertEquals("Was koennen Jager absetzen?",Translate::Trans("Was können Jäger absetzen?","UTF-8","ASCII"));
 		$this->assertEquals("Fuss",Translate::Trans("Fuß","UTF-8","ASCII"));
 
 		// TODO: otestovat locale
@@ -235,6 +243,11 @@ class TcTranslate extends TcBase{
     }
     
   }
+
+	function test__RemoveUtf8Chars(){
+		$this->assertEquals("li?ti?ka",Translate::_RemoveUtf8Chars("lištička"));
+		$this->assertEquals("li_ti_ka",Translate::_RemoveUtf8Chars("lištička",array("unknown" => "_")));
+	}
   
   function test_error()
   {
@@ -274,8 +287,7 @@ class TcTranslate extends TcBase{
   curl_close($session);
   return trim($response);
  }
-	
- 
+
  #some transliterations can be done by more ways: make them equals  
   function normalize($t)
   {
