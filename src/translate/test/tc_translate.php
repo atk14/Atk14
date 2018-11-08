@@ -172,6 +172,12 @@ class TcTranslate extends TcBase{
 
 		$this->assertNotEquals("KŘEMÍLEK",Translate::Upper("Křemílek","ASCII"));
 		$this->assertNotEquals("křemílek",Translate::Lower("KřemÍLEK","ASCII"));
+
+		$this->assertEquals("KŘEMÍLEK",Translate::Upper("Křemílek","UTF-8"));
+		$this->assertEquals("křemílek",Translate::Lower("KřemÍLEK","UTF-8"));
+
+		$this->assertEquals("§ • (symbols)",Translate::Lower("§ • (symbols)","UTF-8"));
+		$this->assertEquals("§ • (SYMBOLS)",Translate::UPPER("§ • (SYMBOLS)","UTF-8"));
 	}
 
 	function test_utf8_to_ascii(){
@@ -197,6 +203,11 @@ class TcTranslate extends TcBase{
 		// German
 		$this->assertEquals("Was koennen Jager absetzen?",Translate::Trans("Was können Jäger absetzen?","UTF-8","ASCII"));
 		$this->assertEquals("Fuss",Translate::Trans("Fuß","UTF-8","ASCII"));
+
+		// Symbols
+		$this->assertEquals("(R) (c)",Translate::Trans("® ©","UTF-8","ASCII"));
+		$this->assertEquals("? (section)",Translate::Trans("§ (section)","UTF-8","ASCII"));
+
 
 		// TODO: otestovat locale
 		$_LANG_LC_ALL = "cs_CZ.UTF-8";

@@ -69,7 +69,7 @@ defined("TRANSLATE_USE_ICONV") || define("TRANSLATE_USE_ICONV",false);
  */
 class Translate{
 
-	const VERSION = "1.2";
+	const VERSION = "1.2.1";
 
 	/**
 	 * Converts string from source charset to target charset.
@@ -115,10 +115,6 @@ class Translate{
 			$text = self::_RemoveUtf8Headaches($text);
 		}
 
-		if($from_charset=="utf8" && $to_charset=="ascii"){
-			$text = self::_Transliteration($text);
-		}
-
 		if(TRANSLATE_USE_ICONV && function_exists('iconv')){
 			$success=true;
 			($out=@iconv($from_charset, $to_charset.'//TRANSLIT', $text)) or ($success=false);
@@ -145,10 +141,6 @@ class Translate{
 			case "HTML entities":
 				$text = self::_TO_HTML_entitites($text,$from_charset);
 				break;
-		}
-
-		if($from_charset=="utf8" && $to_charset=="ascii"){
-			$text = self::_RemoveUtf8Chars($text);
 		}
 
 		return $text;
@@ -180,13 +172,13 @@ class Translate{
 				"А" => "A",
 				"Б" => "B",
 				"В" => "V",
-				"Г" => "G", // "H" (Ukrainian)
+				"Г" => "G", // "H" (in Ukrainian)
 				"Ґ" => "G",
 				"Д" => "D",
 				"E" => "E", // ??
 				"Е" => "E", // ??
 				"Є" => "Je",
-				"Ж" => "Ž",
+				"Ж" => "Z", // "Ž"
 				"З" => "Z",
 				"И" => "Y",
 				"І" => "I",
@@ -205,9 +197,9 @@ class Translate{
 				"Ф" => "F",
 				"Х" => "X",
 				"Ц" => "C",
-				"Ч" => "Č",
-				"Ш" => "Š",
-				"Щ" => "Šč",
+				"Ч" => "C", // "Č"
+				"Ш" => "S", // "Š"
+				"Щ" => "Sc", // "Šč"
 				"Ю" => "Ju",
 				"Я" => "Ja",
 				"Ь" => "", // "'"
@@ -222,10 +214,9 @@ class Translate{
 				"г" => "g", // "h" (Ukrainian)
 				"ґ" => "g",
 				"д" => "d",
-				"e" => "e", // ??
 				"е" => "e", // ??
 				"є" => "je",
-				"ж" => "ž",
+				"ж" => "z", // "ž"
 				"з" => "z",
 				"и" => "y",
 				"і" => "i",
@@ -244,9 +235,9 @@ class Translate{
 				"ф" => "f",
 				"х" => "x",
 				"ц" => "c",
-				"ч" => "č",
-				"ш" => "š",
-				"щ" => "šč",
+				"ч" => "c", // "č"
+				"ш" => "s", // "š"
+				"щ" => "sc", // "šč"
 				"ю" => "ju",
 				"я" => "ja",
 				"ь" => "", // "'"
@@ -267,9 +258,22 @@ class Translate{
 				// Slovak - there are conflicts with German!!
 				"ä" => "a",
 				"Ä" => "A",
+				"ľ" => "l",
+				"Ľ" => "L",
+				"ĺ" => "l",
+				"Ĺ" => "L" 
 			) + $tr_table;
 
+			// Symbols, specials
 			$tr_table += array(
+				'’' => "'",
+				'„' => '"',
+				'“' => '"',
+				'»' => '>>',
+				'«' => '<<',
+				'›' => '>',
+				'‹' => '<',
+
 				"–" => "-", // ndash
 				"—" => "-", // mdash
 				"®" => "(R)",
@@ -315,19 +319,16 @@ class Translate{
 				if(!isset($TR_TABLES[$charset])){
 					require(dirname(__FILE__)."/tr_tables/lower_upper/$charset.php");
 				}
-				return strtr($text,$TR_TABLES[$charset]["velka"],$TR_TABLES[$charset]["mala"]);
+				$text = strtr($text,$TR_TABLES[$charset]["velka"],$TR_TABLES[$charset]["mala"]);
 				break;
 			case "utf8":
-				// TODO: rewrite this masterpiece :)
-				$text = self::Trans($text,"utf8","iso-8859-2");
-				$text = self::Lower($text,"iso-8859-2");
-				return self::Trans($text,"iso-8859-2","utf8");
+				$text = mb_strtolower($text,"utf8");
 				break;
-			case "ascii":
 			default: 
-				return strtolower($text);
-				break;
+				$text = strtolower($text);
 		}
+
+		return $text;
 	}
 
 	/**
@@ -347,19 +348,17 @@ class Translate{
 				if(!isset($TR_TABLES[$charset])){
 					require(dirname(__FILE__)."/tr_tables/lower_upper/$charset.php");
 				}
-				return strtr($text,$TR_TABLES[$charset]["mala"],$TR_TABLES[$charset]["velka"]);
+				$text = strtr($text,$TR_TABLES[$charset]["mala"],$TR_TABLES[$charset]["velka"]);
 				break;
 			case "utf8":
-				// TODO: rewrite this masterpiece :)
-				$text = self::Trans($text,"utf8","iso-8859-2");
-				$text = self::Upper($text,"iso-8859-2");
-				return self::Trans($text,"iso-8859-2","utf8");
+				$text = mb_strtoupper($text,"utf8");
 				break;
 			case "ascii":
 			default: 
-				return strtoupper($text);
-				break;
+				$text = strtoupper($text);
 		}
+
+		return $text;
 	}
 
 	/**
@@ -590,19 +589,15 @@ class Translate{
 				if(!isset($TR_TABLES[$from_cp])){
 					require(dirname(__FILE__)."/tr_tables/to_ascii/$from_cp.php");
 				}
-				return strtr($text,$TR_TABLES["$from_cp"]);
+				$text = strtr($text,$TR_TABLES["$from_cp"]);
 				break;
 			case "utf8":
-				$out = strtr($text,array(
-					chr(0xC2).chr(0xA0) => " ", // Non-breaking space
-				));
-				// nasledujicim hackem se prevedou do ascii jen ceske znaky z celeho utf8
-				$out = self::Trans($out,"utf8","iso-8859-2");
-				return self::Trans($out,"iso-8859-2","ascii");
+				$text = self::_Transliteration($text);
+				$text = self::_RemoveUtf8Chars($text);
 				break;
-			default:
-				return $text;	
 		}
+
+		return $text;	
 	}
 
 	/**
