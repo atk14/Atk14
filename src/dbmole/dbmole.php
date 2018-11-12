@@ -435,11 +435,11 @@ class DbMole{
 		if(isset($this->_DbConnect)){ return true; }
 
 		$this->_DbConnect = &dbmole_connection($this);
-		if(!isset($this->_DbConnect)){
-			$this->_raiseDBError(sprintf("can't connect to %s database with configuration '%s'",$this->getDatabaseType(),$this->getConfigurationName()));
+		if(!isset($this->_DbConnect) || $this->_DbConnect===false){
+			$this->_raiseDBError(sprintf("unable to connect to %s database with configuration named %s",$this->getDatabaseType(),$this->getConfigurationName()));
 			return false;
 		}
-
+	
 		if($this->_BeginTransactionDelayed){
 			$this->_BeginTransactionDelayed = false;
 
