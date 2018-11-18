@@ -128,7 +128,12 @@ _create_maintenance_file_if_required(); // we are trying to create the maintenan
 
 _exec("git push $stage $current_branch:$config[deploy_branch]",array(
 	"description" => "gonna push to deployment repo",
-	"tip_for_repair" => "When pushing some refs failed, you may try to run:\n\n  $ git push --force $stage $current_branch:$config[deploy_branch]\n\n... and deploy again"
+	"tip_for_repair" =>
+		"When someone else did deploy and forgot to push to $current_branch, you can merge the stuff by typing:\n\n".
+		"  $ git pull $stage $config[deploy_branch]:$current_branch\n\n".
+		"When you are absolutely sure that this is a force deployment, you may wish to execute:\n\n".
+		"  $ git push --force $stage $current_branch:$config[deploy_branch]\n\n".
+		"... and then deploy again"
 ));
 #echo _remote_exec("git fetch origin master && git reset --hard origin/master","gonna synchronize source code"); # TODO: Tento radek nekde nefunoval podle ocekavani. Byl nahrazem tim nasledujicim. Proc?
 echo _remote_exec("git checkout master && git fetch origin && git reset --hard origin/master","gonna synchronize source code");
