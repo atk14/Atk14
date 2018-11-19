@@ -129,6 +129,8 @@ _create_maintenance_file_if_required(); // we are trying to create the maintenan
 _exec("git push $stage $current_branch:$config[deploy_branch]",array(
 	"description" => "gonna push to deployment repo",
 	"tip_for_repair" =>
+		"If it is unable to push some refs, you can inspect git log by typing:\n\n".
+		"  $ git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit $current_branch $stage/$config[deploy_branch]\n\n".
 		"When someone else did deploy and forgot to push to $current_branch, you can merge the stuff by typing:\n\n".
 		"  $ git pull $stage $config[deploy_branch]:$current_branch\n\n".
 		"When you are absolutely sure that this is a force deployment, you may wish to execute:\n\n".
