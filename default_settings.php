@@ -119,6 +119,7 @@ __defaults__(array(
 
 __defaults__(array(
 	"USING_BOOTSTRAP4" => false, // HTML snippets rendered from some parts of the framework can be tuned for Bootstrap4
+	"USING_FONTAWESOME" => false, // Is it OK to decorate internal HTML snippets with something like <span class="fas fa-arrow-up"></span> (see https://fontawesome.com/)
 ));
 
 __defaults__(array(

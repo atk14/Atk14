@@ -79,10 +79,10 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 	$_arrow = "";
 	if(in_array($sorting->getActiveKey(),array("$key","$key-asc"))){
 		$_active = " active";
-		$_arrow = " <span class=\"arrow-up\">&uArr;</span>";
+		$_arrow = USING_FONTAWESOME ? ' <span class="fas fa-arrow-up"></span>' : ' <span class="arrow-up">&uArr;</span>';
 	}elseif($sorting->getActiveKey()=="$key-desc"){
 		$_active = " active";
-		$_arrow = " <span class=\"arrow-down\">&dArr;</span>";
+		$_arrow = USING_FONTAWESOME ? ' <span class="fas fa-arrow-down"></span>' : ' <span class="arrow-down">&dArr;</span>';
 	}
 	$content = trim($content);
 	// is there already an class attribute?
