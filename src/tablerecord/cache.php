@@ -107,11 +107,37 @@ class ObjectCacher {
 	}
 
 	/**
-	 * Returns only records (by ids), which have been already read to cache.
+	 * Returns cached records
 	 *
-	 * Returns nulls instead of all unread.
+	 * <code>
+	 *	// Returns records, which have been all read to cache
+	 *	$records = $cache->getCached();
+	 *
+	 *	// Reads all previously prepared and missing records into cache and returns all records from cache
+	 *	$records = $cache->getCached(true); 
+	 *
+	 *	// Returns only records by the given array, which have been already read to cache.
+	 *	// Returns null instead of an unread record.
+	 *	$cacher->getCached([123,124]);
+	 *
+	 *	// The combination of prev two cases
+	 *	$calls->getCached([123,124],true);
+	 * </code>
 	 */
-	function getCached($ids) {
+	function getCached($ids_or_prepare = null,$prepare = false) {
+		$ids = null;
+		if(is_array($ids_or_prepare)){
+			$ids = $ids_or_prepare;
+		}elseif(is_bool($ids_or_prepare)){
+			$prepare = $ids_or_prepare;
+		}
+
+		if($prepare){ $this->_readToCache(); }
+
+		if(is_null($ids)){
+			return $this->cache;
+		}
+
 		$out = array();
 		foreach($ids as $k => $id){
 			$out[$k] = $id === null || !key_exists($id, $this->cache) ? null : $this->cache[$id];
