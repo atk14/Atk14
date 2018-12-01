@@ -1,5 +1,6 @@
 <?php
 class TcCache extends TcBase{
+
 	function test(){
 		$record1 = TestTable::CreateNewRecord(array());
 
@@ -134,6 +135,48 @@ class TcCache extends TcBase{
 		$cached_ids = Cache::CachedIds("TestTable");
 		$this->assertCount(4, $cached_ids);
 		$this->assertArrayNotHasKey('', $cached_ids);
+	}
+
+	function test_getCached(){
+		$a123 = Article::CreateNewRecord(array(
+			"id" => 123,
+			"title" => "Article no 123",
+		));
+		$a124 = Article::CreateNewRecord(array(
+			"id" => 124,
+			"title" => "Article no 124",
+		));
+		$a125 = Article::CreateNewRecord(array(
+			"id" => 125,
+			"title" => "Article no 125",
+		));
+
+		Cache::Clear();
+
+		$cacher = Cache::GetObjectCacher("Article");
+
+		$this->assertEquals(array(),$cacher->getCached());
+		$this->assertEquals(array(),$cacher->getCached(true));
+
+		$this->assertEquals(array(null,null,null),$cacher->getCached(array(123,124,125)));
+		$this->assertEquals(array(null,null,null),$cacher->getCached(array(123,124,125),true));
+
+		Cache::Prepare("Article",123);
+
+		$this->assertEquals(array(),$cacher->getCached());
+		$this->assertEquals(array(123 => $a123),$cacher->getCached(true));
+
+		$this->assertEquals(array($a123,null,null),$cacher->getCached(array(123,124,125)));
+
+		Cache::Prepare("Article",124);
+
+		$this->assertEquals(array($a123,null,null),$cacher->getCached(array(123,124,125)));
+		$this->assertEquals(array($a123,$a124,null),$cacher->getCached(array(123,124,125),true));
+
+		Cache::Get("Article",125);
+
+		$this->assertEquals(array($a123,$a124,$a125),$cacher->getCached(array(123,124,125)));
+		$this->assertEquals(array(123 => $a123,124 => $a124,125 => $a125),$cacher->getCached());
 	}
 
 }
