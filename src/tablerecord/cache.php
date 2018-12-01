@@ -67,7 +67,7 @@ class ObjectCacher {
 		# filter out nulls from mandatory_ids because array_combine translates null to empty string
 		# and so returns array containing item with empty string as key which is something different from null.
 		$mandatory_ids = array_filter($mandatory_ids, function($v) {return !is_null($v);});
-		$ids_to_be_read = array_combine($mandatory_ids,$mandatory_ids);
+		$ids_to_be_read = $mandatory_ids ? array_combine($mandatory_ids,$mandatory_ids) : array();
 
 		// It's ok to read more records than $mandatory_ids
 		// But it's unwise to read more than TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE records.
