@@ -10,7 +10,14 @@ class FileInput extends Input{
 
 	function render($name, $value, $options=array())
 	{
-		// zde je $value objekt tridy HTTPUploadedFile -> pro rendering z toho udelame prazdny string
+		if(!isset($this->attrs["class"])){ // if a class was not defined in the constructor
+			!isset($options["attrs"]) && ($options["attrs"] = array());
+			$class = "form-control-file"; // form-control-form is there for Bootstrap
+			$options["attrs"] = forms_array_merge(array(
+				"class" => $class,
+			),$options["attrs"]);
+		}
+		// here, the $value is a HTTPUploadedFile object -> for the rendering it turns to the empty string
 		return parent::render($name, "", $options);
 	}
 
