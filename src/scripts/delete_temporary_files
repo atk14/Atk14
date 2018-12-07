@@ -25,7 +25,7 @@ $d_handle = opendir($dirname);
 $counter = 0;
 while($item = readdir($d_handle)){
 	if($item=='.' || $item=='..'){ continue; }
-	if(preg_match('/^README\./',$item)){ continue; }
+	if(preg_match('/^(README\..*|\.gitkeep|\.gitignore)$/',$item)){ continue; }
 
 	$file = "$dirname/$item";
 	if(is_dir($file)){
