@@ -7,7 +7,7 @@ error_reporting(255);
 
 define("ATK14_VERSION","1.4");
 
-// we need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
+// We need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
 // HTTP* classes give us right advices about environment & configuration
 require_once(__DIR__."/src/stringbuffer/load.php");
 require_once(__DIR__."/src/files/load.php");
@@ -16,12 +16,13 @@ require_once(__DIR__."/src/atk14/atk14_utils.php");
 require_once(__DIR__."/src/functions.php");
 Atk14Utils::DetermineEnvironment();
 
-// loading the main configuration file (local_config/settings.php or config/settings.php)
+// Loading the main configuration file (local_config/settings.php or config/settings.php)
 $_document_root = defined("ATK14_DOCUMENT_ROOT") ? ATK14_DOCUMENT_ROOT : __DIR__."/..";
 require_once(file_exists("$_document_root/local_config/settings.php") ? "$_document_root/local_config/settings.php" : "$_document_root/config/settings.php");
 require_once(__DIR__."/default_settings.php");
 
-// loading the rest...
+// Loading framework libraries.
+require_once(__DIR__."/src/class_autoload/load.php");
 require_once(__DIR__."/src/string4/load.php");
 require_once(__DIR__."/src/translate/load.php");
 require_once(__DIR__."/src/dictionary/load.php");
@@ -36,7 +37,6 @@ if(ATK14_USE_SMARTY3){
 }else{
 	require_once(__DIR__."/src/smarty/libs/Smarty.class.php");
 }
-require_once(__DIR__."/src/class_autoload/load.php");
 require_once(__DIR__."/src/dbmole/load.php");
 require_once(__DIR__."/src/tablerecord/load.php");
 require_once(__DIR__."/src/sessionstorer/load.php");
@@ -46,7 +46,16 @@ require_once(__DIR__."/src/forms/load.php");
 require_once(__DIR__."/src/url_fetcher/load.php");
 require_once(__DIR__."/src/atk14/load.php");
 
-// ...and load basic application`s objects
+// Loading the application's stuff.
+//
+// Loading model classes, field (and widget) classes and external (3rd party) libs.
+// In every directory class_autoload() is applied. I believe it can do a lot.
+// But everywhere the load.php file is optional.
+foreach(array("lib","app/models","app/fields","app/widgets") as $_d_){
+	class_autoload(ATK14_DOCUMENT_ROOT."/$_d_/");
+	($_f_ = atk14_find_file(ATK14_DOCUMENT_ROOT."/$_d_/load.php")) && require_once($_f_);
+}
+
 foreach(array(
 	// forms are now loaded in Atk14Utils::LoadControllers()
 	//ATK14_DOCUMENT_ROOT."/app/forms/application_form.php",
@@ -55,14 +64,6 @@ foreach(array(
 	ATK14_DOCUMENT_ROOT."/config/routers/load.php"
 ) as $_f_){
 	($_f_ = atk14_find_file($_f_)) && require_once($_f_);
-}
-
-// Loading model classes, field (and widget) classes and external (3rd party) libs.
-// In every directory class_autoload() is applied. I believe it can do a lot.
-// But everywhere the load.php file is optional.
-foreach(array("app/models","app/fields","app/widgets","lib") as $_d_){
-	class_autoload(ATK14_DOCUMENT_ROOT."/$_d_/");
-	($_f_ = atk14_find_file(ATK14_DOCUMENT_ROOT."/$_d_/load.php")) && require_once($_f_);
 }
 
 // global variable $dbmole holds database connection
