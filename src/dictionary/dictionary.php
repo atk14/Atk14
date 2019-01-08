@@ -27,6 +27,9 @@
  */
 class Dictionary implements ArrayAccess, Iterator, Countable{
 
+
+	const VERSION = "1.0";
+
 	/**
 	 * Internal storage of values
 	 *
