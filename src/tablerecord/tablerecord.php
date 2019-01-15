@@ -1648,8 +1648,54 @@ class TableRecord extends inobj {
 	 * @param array $row raw data read from table
 	 */
 	function _setRecordValues($row){
-		$accessor_class = "TableRecord_DatabaseAccessor_".$this->dbmole->getDatabaseType();
-		$accessor_class::SetRecordValues($row,$this->_RecordValues,$this);
+		static $INT_TYPES_CACHE = array();
+
+		$database_type = $this->dbmole->getDatabaseType();
+		$accessor_class = "TableRecord_DatabaseAccessor_$database_type";
+		$structure = $this->_getTableStructure();
+
+		if(!isset($INT_TYPES_CACHE[$database_type])){ $INT_TYPES_CACHE[$database_type] = array(); }
+
+		foreach($row as $key => $value){
+			if($value===null){
+				$this->_RecordValues[$key] = null;
+				continue;
+			}
+
+			$type = isset($structure[$key]) ? $structure[$key] : null;
+			if(!$type){
+				$internal_type = "string";
+			}else{
+				if(!isset($INT_TYPES_CACHE[$database_type][$type])){
+					$INT_TYPES_CACHE[$database_type][$type] = $accessor_class::DatabaseTypeToInternalType($type);
+				}
+				$internal_type = $INT_TYPES_CACHE[$database_type][$type];
+			}
+
+			if($internal_type == "boolean"){
+				$this->_RecordValues[$key] = $this->dbmole->parseBoolFromSql($value);
+				continue;
+			}
+			if($internal_type == "timestamp"){
+				$this->_RecordValues[$key] = substr($value,0,19);
+				continue;
+			}
+			if($internal_type == "integer"){
+				#in 32 system integer can overflow, but float can be sufficient 
+				$real = (float)$value;
+				$value = (int)$value;
+				if($value!=$real){
+					$value = $real;
+				}
+				$this->_RecordValues[$key] = $value;
+				continue;
+			}
+			if($internal_type == "float"){
+				$this->_RecordValues[$key] = (float)$value;
+				continue;
+			}
+			$this->_RecordValues[$key] = $value;
+		}
 		$this->_Id = $this->_RecordValues[$this->_IdFieldName];
 	}
 

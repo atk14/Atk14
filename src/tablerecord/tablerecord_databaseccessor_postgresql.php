@@ -2,40 +2,6 @@
 class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAccessor {
 
 	/**
-	 * @ignore
-	 */
-	static function SetRecordValues($data_row,&$record_values,$record){
-
-		$structure = $record->_getTableStructure();
-	  
-		// pretypovani hodnot...
-		foreach($data_row as $_key => $_value){
-			if($_value===null){
-				// hodnota je NULL, nemusime nic typovat
-
-			}elseif(preg_match("/^(numeric|double precision)/",$structure[$_key])){
-				$_value=(float) $_value;
-
-			}elseif(preg_match("/^integer|bigint|smallint/",$structure[$_key])){
-				$_real = $_value;
-				#in 32 system integer can overflow, but float can be sufficient 
-				 $_real=(float) $_real;
-				 $_value=(int) $_value;
-				if($_value!=$_real){
-					$_value = $_real;
-				}
-			}elseif(preg_match("/^timestamp/",$structure[$_key])){
-				$_value = substr($_value,0,19);
-
-			}elseif(preg_match("/^bool/",$structure[$_key])){
-				$_value = $record->dbmole->parseBoolFromSql($_value);
-			}
-
-			$record_values[$_key] = $_value;
-		}
-	}
-
-	/**
 	 * Reads (physically) table structure from the database
 	 *
 	 * @ignore
@@ -61,5 +27,30 @@ class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAc
 				a.attnum > 0
 		";
 		return $record->dbmole->selectIntoAssociativeArray($query,array(":table_name" => $_table, ":schema_name" => $_schema),$options);
+	}
+
+	/**
+	 * Converts database type into into the corresponding internal type
+	 *
+	 * @ignore
+	 */
+	static function DatabaseTypeToInternalType($database_type){
+		if(preg_match("/^(numeric|double precision)/",$database_type)){
+			return "float";
+		}
+
+		if(preg_match("/^(integer|bigint|smallint)/",$database_type)){
+			return "integer";
+		}
+
+		if(preg_match("/^timestamp/",$database_type)){
+			return "timestamp";
+		}
+
+		if(preg_match("/^bool/",$database_type)){
+			return "boolean";
+		}
+
+		return "string";
 	}
 }
