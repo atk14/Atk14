@@ -51,20 +51,19 @@ class TcHelpers extends TcBase{
 		$content = $this->_run_action("universe/planets/controller_state");
 		$content_rp = $this->_run_action("helpers/render_component");
 
-		$this->assertContains('namespace: universe
-controller: planets
-action: controller_state
-prev_namespace: 
-prev_controller: 
-prev_action: 
-',$content);
+		$this->assertContains('namespace: "universe"
+controller: "planets"
+action: "controller_state"
+prev_namespace: ""
+prev_controller: ""
+prev_action: ""',$content);
 
-		$this->assertContains('namespace: universe
-controller: planets
-action: controller_state
-prev_namespace: 
-prev_controller: helpers
-prev_action: render_component',$content_rp);
+		$this->assertContains('namespace: "universe"
+controller: "planets"
+action: "controller_state"
+prev_namespace: ""
+prev_controller: "helpers"
+prev_action: "render_component"',$content_rp);
 
 	}
 
