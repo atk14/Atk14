@@ -64,8 +64,7 @@ controller: planets
 action: controller_state
 prev_namespace: 
 prev_controller: helpers
-prev_action: render_component
-',$content_rp);
+prev_action: render_component',$content_rp);
 
 	}
 
