@@ -1193,13 +1193,14 @@ class Atk14Controller{
 	 *
 	 * ```
 	 *	if(!$this->request->ssl()){
-	 *		$this->_redirect_to_ssl();
+	 *		$this->_redirect_to_ssl(["moved_permanently" => true]);
 	 *		return;
 	 *	} 
 	 * ```
 	 */
-	function _redirect_to_ssl(){
-		$this->_redirect_to($url = "https://".$this->request->getHTTPHost().$this->request->getRequestURI());
+	function _redirect_to_ssl($options = array()){
+		$url = "https://".$this->request->getHTTPHost().$this->request->getRequestURI();
+		$this->_redirect_to($url,$options);
 		return $url;
 	}
 
