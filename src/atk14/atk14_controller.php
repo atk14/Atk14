@@ -619,11 +619,15 @@ class Atk14Controller{
 		}
 
 		if(!$cache){
-			$GLOBALS["__explicit_layout_name__"] = ""; // TODO: avoid using global variable
+			if(!$this->rendering_component){
+				$GLOBALS["__explicit_layout_name__"] = ""; // TODO: avoid using global variable
+			}
 			$action_content = array(
 				"main" => $this->smarty->fetch($template_name)
 			);
-			$explicit_layout_name = $GLOBALS["__explicit_layout_name__"];
+			if(!$this->rendering_component){
+				$explicit_layout_name = $GLOBALS["__explicit_layout_name__"];
+			}
 		}else{
 			$action_content = $cache["content"];
 			$explicit_layout_name = isset($cache["extra_values"]["explicit_layout_name"]) ? $cache["extra_values"]["explicit_layout_name"] : "";
