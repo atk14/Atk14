@@ -622,9 +622,12 @@ class Atk14Controller{
 			if(!$this->rendering_component){
 				$GLOBALS["__explicit_layout_name__"] = ""; // TODO: avoid using global variable
 			}
+			$this->smarty->assign("template_name",$this->template_name);
+			$this->smarty->assign("layout_name",$this->layout_name);
 			$action_content = array(
 				"main" => $this->smarty->fetch($template_name)
 			);
+			$this->smarty->assign("template_name",$this->template_name); // 2nd call prevents template_name to be overwritten inside the rendering component
 			if(!$this->rendering_component){
 				$explicit_layout_name = $GLOBALS["__explicit_layout_name__"];
 			}
@@ -663,7 +666,8 @@ class Atk14Controller{
 				Atk14Utils::ErrorLog($this->namespace ? "Missing layout template layouts/$this->namespace/$layout_template.tpl or layouts/$layout_template.tpl" : "Missing layout template layouts/$layout_template.tpl",$this->response);
 				return $this->response;
 			}
-
+			
+			$this->smarty->assign("layout_name",$layout_template);
 			$layout_content = $this->smarty->fetch($_layout_template);
 			$layout_content = str_replace("<%atk14_content[main]%>",$action_content["main"],$layout_content);
 			foreach($this->smarty->getAtk14ContentKeys() as $c_key){
