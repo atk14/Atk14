@@ -47,6 +47,7 @@ __defaults__(array(
 	"ATK14_SMARTY_DEFAULT_MODIFIER" => 'h', // 'h' is a goog one, see http://www.smarty.net/docs/en/variable.default.modifiers.tpl
 	"ATK14_SMARTY_DIR_PERMS" => 0771, # default Smartys directory permissions
 	"ATK14_SMARTY_FILE_PERMS" => 0644, # default Smartys file permissions
+	"ATK14_SMARTY_FORCE_COMPILE" => !PRODUCTION, // It may be desirable that in DEVELOPMENT $smarty->force_compile is set to true, see https://www.smarty.net/docs/en/variable.force.compile.tpl
 
 	// For "filename" it is required to have proper rewrite rules in the .htaccess
 	//

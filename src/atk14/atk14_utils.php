@@ -333,8 +333,7 @@ class Atk14Utils{
 			$smarty->setCompileDir($_compile_dir = "$PATH_SMARTY/$userid/templates_c/"); // the uid of the user owning the current process is involved in the compile_dir, thus some file permission issues are solved
 			$smarty->setConfigDir($PATH_SMARTY."/config/");
 			$smarty->setCacheDir($_cache_dir = "$PATH_SMARTY/$userid/cache/");
-
-			$smarty->force_compile = !PRODUCTION; // TODO: It seems that there is an issue with usage of an old compiled template... !!! Caching in Smarty is not working while force_compile is set to true !!!
+			$smarty->setForceCompile(ATK14_SMARTY_FORCE_COMPILE);
 
 			if(!file_exists($_compile_dir)){ Files::Mkdir($_compile_dir); }
 			if(!file_exists($_cache_dir)){ Files::Mkdir($_cache_dir); }

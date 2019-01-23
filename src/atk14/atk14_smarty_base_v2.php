@@ -56,6 +56,10 @@ class Atk14SmartyBase extends Smarty{
 		$this->compile_dir = $dir;
 	}
 
+	function setForceCompile($set = true){
+		$this->force_compile = $set;
+	}
+
 	function setConfigDir($dir){
 		$this->config_dir = $dir;
 	}
