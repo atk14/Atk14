@@ -716,6 +716,6 @@ class String4{
 	 * @return string
 	 */
 	function __toString(){
-		return $this->toString();
+		return $this->_String4;
 	}
 }
