@@ -93,12 +93,19 @@ class Atk14Require{
 	 * @return string[]
 	 */
 	static function Helper($filename,$smarty = null){
-		!preg_match("/\\.php$/",$filename) && ($filename .= ".php");
+		!preg_match('/\.php$/',$filename) && ($filename .= ".php");
+
+		$function = String4::ToObject($filename)->gsub('/\.php$/','')->replace('.','_')->prepend('smarty_')->toString(); // "block.message.php" -> "smarty_block_message"
+		if(function_exists($function)){
+			return array();
+		}
+
 		if(!$smarty){ $smarty = Atk14Utils::GetSmarty(); }
 		$plugins_dir = $smarty->plugins_dir;
 		foreach($plugins_dir as $dir){
 			if(file_exists("$dir/$filename")){
-				require_once("$dir/$filename"); return array("$dir/$filename");
+				require_once("$dir/$filename");
+				return array("$dir/$filename");
 			}
 		}
 		return array();
