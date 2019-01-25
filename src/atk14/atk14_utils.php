@@ -309,7 +309,7 @@ class Atk14Utils{
 		if(trim($options)==""){ return array(); }
 
 		$ar = explode(",",$options);
-		$options = [];
+		$options = array();
 
 		foreach($ar as $item){
 			list($key,$value) = strpos($item,'=') ? explode('=',$item) : array($item,true);
