@@ -74,4 +74,17 @@ class TcUtils extends TcBase{
 		$str = new String4("Object with toString() method");
 		$this->assertEquals("Object with toString() method",Atk14Utils::ToScalar($str));
 	}
+
+	function test_StringToOptions(){
+		$this->assertEquals(array(
+			"color" => "red",
+			"with_border" => true,
+			"with_decoration" => false,
+			"drop_shadow" => true,
+		),Atk14Utils::StringToOptions('color=red,with_border,with_decoration=false,drop_shadow=true'));
+
+		$this->assertEquals(array(),Atk14Utils::StringToOptions(""));
+		$this->assertEquals(array(),Atk14Utils::StringToOptions(array()));
+		$this->assertEquals(array("a" => "b"),Atk14Utils::StringToOptions(array("a" => "b")));
+	}
 }

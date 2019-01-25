@@ -281,6 +281,50 @@ class Atk14Utils{
 	}
 
 	/**
+	 * Converts options written in a string into an array
+	 *
+	 * It may be useful in Smarty modifiers since their options can't be written as array (as in Smarty blocks)
+	 *
+	 * Usage:
+	 * ```
+	 *	$options = Atk14Utils::StringToOptions('color=red,with_border,with_decoration=false'); // ["color" => "red", "with_border" => true, "with_decoration" => false]
+	 * ```
+	 *
+	 * Sample usage in a modifier:
+	 * ```
+	 *	function smarty_modifier_icon($glyph,$options = ""){
+	 *		$options = Atk14Utils::StringToOptions($options);
+	 *		// ...
+	 *	}
+	 *
+	 *	// usage in a template
+	 * 	{"edit"|icon:"color=red,size=20"}
+	 * ```
+	 *
+	 * @param string $options
+	 * @return string joined attributes
+	 */
+	static function StringToOptions($options){
+		if(is_array($options)){ return $options; }
+		if(trim($options)==""){ return array(); }
+
+		$ar = explode(",",$options);
+		$options = [];
+
+		foreach($ar as $item){
+			list($key,$value) = strpos($item,'=') ? explode('=',$item) : array($item,true);
+			if(strtolower($value)==="true"){
+				$value = true;
+			}elseif(strtolower($value)==="false"){
+				$value = false;
+			}
+			$options[$key] = $value;
+		}
+
+		return $options;
+	}
+
+	/**
 	 * Returns instance of Smarty object.
 	 *
 	 *
