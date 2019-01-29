@@ -863,6 +863,7 @@ class TcFields extends TcBase
 				'params' => array(  
 					array('clean' => 'a@foo.com', 'error' => null, 'result' => 'a@foo.com'),
 					array('clean' => ' a@foo.com ', 'error' => null, 'result' => 'a@foo.com'),
+					array('clean' => ' a@foo.realestate ', 'error' => null, 'result' => 'a@foo.realestate'),
 					array('clean' => '', 'error' => null, 'result' => null),
 				),
 			),
