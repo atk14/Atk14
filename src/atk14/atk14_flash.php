@@ -18,13 +18,15 @@
  * - warning
  *
  * Example of usage
- * 	class MyController extends ApplicationController {
- * 		function edit() {
- * 			...
- * 			$this->flash->notice("record was successfully updated");
- * 			...
- * 		}
+ * ```
+ * class MyController extends ApplicationController {
+ * 	function edit() {
+ * 		...
+ * 		$this->flash->notice("record was successfully updated");
+ * 		...
  * 	}
+ * }
+ * ```
  *
  * Custom message types can be created using the method {@link setMessage() setMessage()}
  *
@@ -35,7 +37,6 @@ class Atk14Flash{
 	/**
 	 * Flag indicating if a flash message was read.
 	 *
-	 * @access private
 	 * @var bool
 	 */
 	var $_FlashRead = false;
@@ -45,7 +46,9 @@ class Atk14Flash{
 	 *
 	 * Do not use it. Instance must be initialized by call {@link GetInstance()}
 	 *
-	 * 	$flash = &Atk14Flash::GetInstance();
+	 * ```
+	 * $flash = &Atk14Flash::GetInstance();
+	 * ```
 	 *
 	 */
 	function __construct(){
@@ -168,14 +171,16 @@ class Atk14Flash{
 	 *
 	 * If the $message param is omitted the $key is used as $param as <strong>notice</strong>.
 	 *
-	 * <code>
-	 *	$flash->setMessage("You are so great");
-	 *	$flash->setMessage("warning","Don't touch the button");
+	 * ```
+	 * $flash->setMessage("You are so great");
+	 * $flash->setMessage("warning","Don't touch the button");
+	 * ```
 	 *
-	 *	// clearing message
-	 *	$flash->setMessage("");
-	 *	$flash->setMessage("warning","");
-	 * </code>
+	 * clearing message
+	 * ```
+	 * $flash->setMessage("");
+	 * $flash->setMessage("warning","");
+	 * ```
 	 *
 	 * @param string $key
 	 * @param string $message
@@ -209,7 +214,7 @@ class Atk14Flash{
 	 * Getter for flash messages with other than one of default keys.
 	 *
 	 * @param string $key
-	 * @return string
+	 * @return Atk14FlashMessage
 	 */
 	function getMessage($key = null){
 		$session = $GLOBALS["ATK14_GLOBAL"]->getSession();

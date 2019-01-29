@@ -22,8 +22,8 @@
  *
  * There are two more methods that are used once each robot is executed.
  *
- * Method ({@link Atk14Robot::beforeRun()}) is executed before the robots {@link run()} method.
- * Method {@link afterRun()} is executed after the robots {@link run()} method.
+ * Method ({@link Atk14Robot::beforeRun()}) is executed before the robots {@link Atk14Robot::run()} method.
+ * Method {@link Atk14Robot::afterRun()} is executed after the robots {@link Atk14Robot::run()} method.
  *
  *
  * Run the robot with command robot_runner

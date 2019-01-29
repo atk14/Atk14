@@ -1,4 +1,16 @@
 <?php
+/**
+ * Class for working with deployment stages.
+ *
+ * @filesource
+ */
+
+/**
+ * Class for working with deployment stages.
+ *
+ * @package Atk14\Core
+ * @todo Some description explanation
+ */
 class Atk14DeploymentStage{
 
 	protected $data;
@@ -27,11 +39,14 @@ class Atk14DeploymentStage{
 	/**
 	 * Returns all deployment stages
 	 *
+	 * ```
 	 * $stages = Atk14DeploymentStage::GetStages();
 	 *
 	 * foreach($stages as $name => $stage){
 	 *
 	 * }
+	 * ```
+	 * @return Atk14DeploymentStage[]
 	 */
 	static function GetStages(){
 		global $ATK14_GLOBAL;
@@ -138,7 +153,15 @@ class Atk14DeploymentStage{
 	}
 
 	/**
+	 * Get instance of Atk14DeploymentStage by name
+	 *
+	 * ```
 	 * $preview = Atk14DeploymentStage::GetStage("preview"):
+	 * ```
+	 *
+	 * @param $name string
+	 * @return Atk14DeploymentStage
+	 * @todo maybe should return null when no stage is found
 	 */
 	static function GetStage($name){
 		foreach(Atk14DeploymentStage::GetStages() as $s){

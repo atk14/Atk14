@@ -551,7 +551,12 @@ class Atk14Url{
 	}
 
 	/**
+	 * Get all routers used in application.
 	 *
+	 * The list can be narrowed by selecting a namespace.
+	 *
+	 * @param string $namespace
+	 * @return Atk14Router[] array of application routers
 	 */
 	static function GetRouters($namespace = ""){
 		return Atk14Url::_SetRouter_GetRouters($namespace);
@@ -587,7 +592,12 @@ class Atk14Url{
 	}
 
 	/**
+	 * Returns parameters from request uri.
+	 * ```
 	 * $params = Atk14Url::ParseParamsFromUri("/?id=123&format=xml"); // array("id" => "123", "format" => "xml");
+	 * ```
+	 * @param string $uri
+	 * @return array array with parsed parameters.
 	 */
 	static function ParseParamsFromUri($uri){
 		$params = parse_url($uri, PHP_URL_QUERY);
