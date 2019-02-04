@@ -1,6 +1,18 @@
 <?php
 class TcGlobal extends TcBase{
-	function test(){
+
+	function test_paths(){
+		$global = new Atk14Global();
+
+		$this->assertEquals(__DIR__ . "/",$global->getDocumentRoot());
+		$this->assertEquals(__DIR__ . "/app/",$global->getApplicationPath());
+		$this->assertEquals(__DIR__ . "/public/",$global->getPublicRoot());
+
+		$this->assertEquals("/",$global->getBaseHref());
+		$this->assertEquals("/public/",$global->getPublicBaseHref());
+	}
+
+	function test_locales(){
 		$global = new Atk14Global();
 
 		$this->assertEquals(array("cs","en","sk"),$global->getSupportedLangs()); // see config/locale.yml

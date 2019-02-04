@@ -86,7 +86,7 @@ class Atk14Utils{
 	 */
 	static function LoadConfig(){
 		global $ATK14_GLOBAL;
-		if(!file_exists($path = $ATK14_GLOBAL->getApplicationPath()."../config/")){
+		if(!file_exists($path = $ATK14_GLOBAL->getDocumentRoot()."/config/")){
 			$path = $ATK14_GLOBAL->getApplicationPath()."conf/";
 		}
 

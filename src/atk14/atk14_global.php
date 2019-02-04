@@ -297,8 +297,8 @@ class Atk14Global{
 
 		// paths in which the configuration file is searched
 		$paths = array(
-			$this->getApplicationPath()."../local_config/",
-			$this->getApplicationPath()."../config/",
+			$this->getDocumentRoot()."/local_config/",
+			$this->getDocumentRoot()."/config/",
 			$this->getApplicationPath()."conf/", // legacy path, TODO: to be removed
 		);
 
@@ -329,6 +329,15 @@ class Atk14Global{
 		if(defined("ATK14_DOCUMENT_ROOT")){ $out = ATK14_DOCUMENT_ROOT; } // the most preffered constant!
 		if(substr($out,-1)!="/"){ $out .= "/"; }
 		return $out;
+	}
+
+	/**
+	 * Absolute path to the document root
+	 *
+	 * It surely ends with "/"
+	 */
+	function getDocumentRoot(){
+		return $this->_getRoot();
 	}
 
 	/**
