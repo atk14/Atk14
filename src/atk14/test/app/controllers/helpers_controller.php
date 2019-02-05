@@ -38,9 +38,12 @@ class HelpersController extends ApplicationController{
 	}
 
 	function content(){
-		//require_once(dirname(__FILE__)."/../../../helpers/block.placeholder.php");
 		$this->layout_name = "testing_content_helper";
 		$this->render_layout = true;
+	}
+
+	function cache(){
+		$this->tpl_data["uniqid"] = uniqid();
 	}
 
 	function _before_filter(){

@@ -1,5 +1,6 @@
 <?php
 class TcHelpers extends TcBase{
+
 	function test_javascript_script_tag(){
 		$out = $this->_run_action("helpers/javascript_script_tag");
 		$mtime = filemtime("public/javascripts/site.js");
@@ -109,7 +110,13 @@ prev_action: "render_component"',$content_rp);
 		$this->assertContains('<lyrics>Five little monkeys jumping on the bed. One fell off and bumped his head. Mama called the doctor and the doctor said, "No more monkeys jumping on the bed!"</lyrics>',$out);
 
 		$this->assertContains('<title>La Musique | DEMO</title>',$out);
+	}
 
-		//echo $out;
+	function test_cache(){
+		$out = $this->_run_action("helpers/cache");
+		$out2 = $this->_run_action("helpers/cache");
+
+		$this->assertEquals($out,$out2);
+		$this->assertNotContains('uniqid: ""',$out); // just to make sure that a proper $uniqid was assigned to the template
 	}
 }
