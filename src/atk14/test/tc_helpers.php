@@ -35,6 +35,12 @@ class TcHelpers extends TcBase{
 		$this->assertContains('some_value from the middle: LOWER_VALUE',$out);
 	}
 
+	function test_render_with_forms(){
+		$out = $this->_run_action("helpers/render_with_forms");
+		$this->assertContains('FirstForm: <form action="/first/" method="post" id="form_helpers_first">',$out);
+		$this->assertContains('SecondForm: <form action="/second/" method="post" id="form_helpers_second">',$out);
+	}
+
 	function test_render_component(){
 		global $ATK14_GLOBAL;
 		$out = $this->_run_action("helpers/render_component");

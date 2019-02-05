@@ -17,6 +17,11 @@ class HelpersController extends ApplicationController{
 		);
 	}
 
+	function render_with_forms(){
+		$this->form = $this->_get_form("FirstForm");
+		$this->tpl_data["second_form"] = $this->_get_form("SecondForm");
+	}
+
 	function render_component(){
 		
 	}
