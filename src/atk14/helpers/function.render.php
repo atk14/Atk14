@@ -48,8 +48,7 @@
  * @param array $content
  */
 function smarty_function_render($params,$template){
-	if(ATK14_USE_SMARTY3 && 0){
-	// !! In this code there is a malfunction; It must be investigated and corrected !!
+	if(ATK14_USE_SMARTY3){
 
 	// -*-*-*-*-*-*-*-*-*- NEW IMPLEMENTATION ONLY FOR SMARTY3 -*-*-*-*-*-*-*-*-*-
 	$smarty = atk14_get_smarty_from_template($template);
