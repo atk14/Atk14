@@ -44,7 +44,7 @@ function __class_autoload__($options_or_class_name){
 		$class_name = str_replace("\\", '/', $class_name);
 		$_filenames = array(
 			$class_name,
-			preg_replace('/([a-z])([A-Z])/','\1_\2',$class_name), // RedFruit -> red_fruit
+			preg_replace('/([a-z0-9])([A-Z])/','\1_\2',$class_name), // RedFruit -> red_fruit; Ean13NumberField -> ean13_number_field
 		);
 
 		$filenames = array();
