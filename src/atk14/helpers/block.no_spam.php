@@ -32,5 +32,5 @@ function smarty_block_no_spam($params, $content, $template, &$repeat){
  * @ignore
  */
 function __no_spam_filter__($content){
-	return preg_replace("/([^\\s]+)@([^\\s]+)\\.([a-z]{2,5})/i","<span class=\"atk14_no_spam\">\\1[at-sign]\\2[dot-sign]\\3</span>",$content);
+	return preg_replace("/([^\\s]+)@([^\\s]+)\\.([a-z]{2,14})/i","<span class=\"atk14_no_spam\">\\1[at-sign]\\2[dot-sign]\\3</span>",$content);
 }
