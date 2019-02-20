@@ -2,6 +2,36 @@
 /**
  * A middle layer for Smarty version 3.
  */
+class Atk14SmartyBase extends SmartyBC{
+
+	static $ATK14_RENDERED_TEMPLATES;
+
+	function __construct(){
+		parent::__construct();
+		if( DEVELOPMENT ) {
+			$this->debugging = true;
+			$this->_debug = new Atk14SmartyDebug($this);
+		}
+		$this->setErrorReporting(E_ALL ^ E_NOTICE);
+	}
+
+  public function createTemplate($template, $cache_id = null, $compile_id = null, $parent = null, $do_clone = true) {
+		$d = $this->_debug;
+		$out = parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone);
+		$this->_debug = $d;
+		return $out;
+	}
+
+	function start_template_render($template) {
+		$template_fullpath = substr($template->source->filepath, strlen(realpath(__DIR__ . '/../../..')));
+		self::$ATK14_RENDERED_TEMPLATES->enter($template_fullpath);
+	}
+
+	function end_template_render($template) {
+		self::$ATK14_RENDERED_TEMPLATES->leave();
+	}
+}
+
 class Atk14SmartyDebug extends Smarty_Internal_Debug {
 
 	function start_render(Smarty_Internal_Template $template, $mode = null) {
@@ -20,6 +50,7 @@ class Atk14SmartyDebug extends Smarty_Internal_Debug {
 }
 
 class Atk14TemplateIndexItem implements ArrayAccess {
+
 	function __construct($template, $parent) {
 		$this->parent = $parent;
 		$this->template = $template;
@@ -65,36 +96,6 @@ class Atk14TemplateIndex implements IteratorAggregate {
 
 	function getIterator() {
 		return new ArrayIterator($this->root->children);
-	}
-}
-
-class Atk14SmartyBase extends SmartyBC{
-
-	static $ATK14_RENDERED_TEMPLATES;
-
-  public function createTemplate($template, $cache_id = null, $compile_id = null, $parent = null, $do_clone = true) {
-		$d = $this->_debug;
-		$out = parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone);
-		$this->_debug = $d;
-		return $out;
-	}
-
-	function __construct(){
-		parent::__construct();
-		if( DEVELOPMENT ) {
-			$this->debugging = true;
-			$this->_debug = new Atk14SmartyDebug($this);
-		}
-		$this->setErrorReporting(E_ALL ^ E_NOTICE);
-	}
-
-	function start_template_render($template) {
-		$template_fullpath = substr($template->source->filepath, strlen(realpath(__DIR__ . '/../../..')));
-		self::$ATK14_RENDERED_TEMPLATES->enter($template_fullpath);
-	}
-
-	function end_template_render($template) {
-		self::$ATK14_RENDERED_TEMPLATES->leave();
 	}
 }
 
