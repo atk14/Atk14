@@ -23,7 +23,7 @@ class Atk14TemplateIndexItem implements ArrayAccess {
 	function __construct($template, $parent) {
 		$this->parent = $parent;
 		$this->template = $template;
-		$this->children = [];
+		$this->children = array();
 	}
 
 	function push($template) {
