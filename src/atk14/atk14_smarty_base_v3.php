@@ -4,12 +4,12 @@
  */
 class Atk14SmartyDebug extends Smarty_Internal_Debug {
 
-	function start_render($template) {
-		parent::start_render($template);
+	function start_render(Smarty_Internal_Template $template, $mode = null) {
+		parent::start_render($template, $mode);
 		$this->smarty->start_template_render($template);
 	}
 
-	function end_render($template) {
+	function end_render(Smarty_Internal_Template $template) {
 		parent::end_render($template);
 		$this->smarty->end_template_render($template);
 	}
@@ -67,7 +67,6 @@ class Atk14TemplateIndex implements IteratorAggregate {
 		return new ArrayIterator($this->root->children);
 	}
 }
-
 
 class Atk14SmartyBase extends SmartyBC{
 
