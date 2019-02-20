@@ -23,7 +23,7 @@ class Atk14SmartyBase extends SmartyBC{
 	}
 
 	function start_template_render($template) {
-		$template_fullpath = substr($template->source->filepath, strlen(realpath(__DIR__ . '/../../..')));
+		$template_fullpath = substr($template->source->filepath, strlen(realpath(__DIR__ . '/../../../')) + 1); // +1 cuts off the leading slash: "/app/view/main/index.tpl" -> "app/view/main/index.tpl"
 		self::$ATK14_RENDERED_TEMPLATES->enter($template_fullpath);
 	}
 
