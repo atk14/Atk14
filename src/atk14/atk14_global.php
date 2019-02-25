@@ -272,8 +272,31 @@ class Atk14Global{
 					break;
 			}
 		}
+	
+		// replacing string values back into the configuration
+		//  {{username}}, {{database}}...
+		$replaces = array();
+		foreach($d as $k => $v){
+			if(is_string($v)){
+				$replaces['{{'.$k.'}}'] = $v;
+			}
+		}
+		$d = $this->_replace($d,$replaces);
 
 		return $d;
+	}
+
+	protected function _replace($value,$replaces){
+		if(!$replaces){ return $value; }
+		if(is_null($value)){ return null; }
+		if(is_array($value)){
+			foreach($value as $k => $v){
+				$value[$k] = $this->_replace($v,$replaces);
+			}
+			return $value;
+		}
+		$value = strtr($value,$replaces);
+		return $value;
 	}
 
 	/**
