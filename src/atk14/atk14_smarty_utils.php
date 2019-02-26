@@ -70,12 +70,15 @@ function atk14_error_handler($errno, $errstr, $errfile, $errline){
 set_error_handler("atk14_error_handler");
 
 /**
- * Smarty2 <-> Smarty3 compatibility hack
+ * Obsolete function; It returns given parameter with no change
  *
- * This is required in block helpers.
+ * This was a Smarty2 <-> Smarty3 compatibility hack which was required
+ * in block helpers and is no longer needed.
+ * Actually the previous implementation causes troubles.
  */
 function atk14_get_smarty_from_template($template){
-	return isset($template->smarty) ? $template->smarty : $template;
+	return $template;
+	//return isset($template->smarty) ? $template->smarty : $template; // the previous implementation
 }
 
 function _smarty_addAtk14Content(&$smarty,&$atk14_contents,$key,$content,$options){

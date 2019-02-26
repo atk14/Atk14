@@ -48,12 +48,9 @@
  * @param array $content
  */
 function smarty_function_render($params,$template){
-	if(ATK14_USE_SMARTY3 && 0){
-	// !! In this code there is a malfunction; It must be investigated and corrected !!
+	if(ATK14_USE_SMARTY3){
 
 	// -*-*-*-*-*-*-*-*-*- NEW IMPLEMENTATION ONLY FOR SMARTY3 -*-*-*-*-*-*-*-*-*-
-	$smarty = atk14_get_smarty_from_template($template);
-
 	$orig_params = $params;
 
 	$params += array(
@@ -77,7 +74,7 @@ function smarty_function_render($params,$template){
 
 	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
 
-	$data = $smarty->createData($template);
+	$data = $template->createData($template);
 	$out = array();
 
 	if(!isset($params["from"])){
@@ -85,7 +82,7 @@ function smarty_function_render($params,$template){
 		foreach($params as $key => $value){
 			$data->assign($key,$value);
 		}
-		$out[] = $smarty->fetch($template_name, $data);
+		$out[] = $template->fetch($template_name, $data);
 
 	}else{
 
@@ -134,7 +131,7 @@ function smarty_function_render($params,$template){
 			$data->assign("__first__",$counter==0);
 			$data->assign("__last__",$counter==($collection_size-1));
 			$data->assign("__total__",$collection_size);
-			$out[] = $smarty->fetch($template_name, $data);
+			$out[] = $template->fetch($template_name, $data);
 			$counter++;
 		}
 	}
