@@ -438,10 +438,6 @@ class Atk14Controller{
 		Atk14Timer::Stop("running after filters");
 	}
 
-	function index(){
-		$this->_execute_action("error404");
-	}
-
 	/**
 	 * Renders error page for missing page.
 	 *
