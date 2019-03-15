@@ -254,6 +254,32 @@ class HTTPRequest{
 	function setUri($uri){ $this->setRequestUri($uri); }
 
 	/**
+	 * Returns Query sting
+	 *
+	 * ```
+	 * // consider URL https:/example.com/articles/list.php?tag=love&offset=20
+	 * echo $request->getQueryString(); // "tag=love&offset=20"
+	 * echo $request->getQueryString(true); // "?tag=love&offset=20"
+	 *
+	 * // consider URL https:/example.com/articles/list.php
+	 * echo $request->getQueryString(); // ""
+	 * echo $request->getQueryString(true); // ""
+	 * ```
+	 *
+	 * @return string
+	 */
+	function getQueryString($prepend_question_mark = false){
+		$uri = $this->getRequestUri();
+		$ary = explode('?',$uri);
+		array_shift($ary);
+		$query_string = join('?',$ary);
+		if($prepend_question_mark && strlen($query_string)){
+			return "?".$query_string;
+		}
+		return $query_string;
+	}
+
+	/**
 	 * Returns complete address for this request
 	 *
 	 * ```

@@ -467,6 +467,25 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("/index.php",$request->getRequestUri());
 	}
 
+	function test_getQueryString(){
+		global $_SERVER;
+
+		$_SERVER["REQUEST_URI"] = "/index.php?foo=bar&name=John+Doe";
+		$request = new HTTPRequest();
+		$this->assertEquals("foo=bar&name=John+Doe",$request->getQueryString());
+		$this->assertEquals("?foo=bar&name=John+Doe",$request->getQueryString(true));
+
+		$_SERVER["REQUEST_URI"] = "/index.php?foo=bar&name=John+Doe&motto=Why%20not?";
+		$request = new HTTPRequest();
+		$this->assertEquals("foo=bar&name=John+Doe&motto=Why%20not?",$request->getQueryString());
+		$this->assertEquals("?foo=bar&name=John+Doe&motto=Why%20not?",$request->getQueryString(true));
+
+		$_SERVER["REQUEST_URI"] = "/index.aspx";
+		$request = new HTTPRequest();
+		$this->assertEquals("",$request->getQueryString());
+		$this->assertEquals("",$request->getQueryString(true));
+	}
+
 	function test_getRequestAddress(){
 		global $_SERVER;
 		$_SERVER["REQUEST_URI"] = "/contact.php";
