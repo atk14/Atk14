@@ -36,6 +36,7 @@ require_once("$__PATH__/tc_atk14_base.php");
 require_once("$__PATH__/tc_atk14_controller.php");
 require_once("$__PATH__/tc_atk14_model.php");
 require_once("$__PATH__/tc_atk14_field.php");
+require_once("$__PATH__/tc_atk14_router.php");
 
 global $ATK14_GLOBAL;
 $ATK14_GLOBAL = Atk14Global::GetInstance();
