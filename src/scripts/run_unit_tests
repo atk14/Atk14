@@ -104,7 +104,7 @@ if($exists) {
 		echo "*  Missing dependency: class PHPUnit_Framework_TestCase       *\n";
 		echo "*  The following command may help you:                        *\n";
 		echo "*                                                             *\n";
-		echo "*  $ composer global require \"phpunit/phpunit=4.8.*\"          *\n";
+		echo "*  $ composer global require \"phpunit/phpunit=4.8.*|5.7.*\"    *\n";
 		echo "*                                                             *\n";
 		echo "*  or for the installation of the very old PHPUnit2 execute:  *\n";
 		echo "*                                                             *\n";
@@ -119,8 +119,13 @@ if(PHPUNIT2){
 	eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
 	eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
 }else{
-	eval("class tc_super_base extends PHPUnit_Framework_TestCase{ }");
-	eval("class TcSuperBase extends PHPUnit_Framework_TestCase{ }");
+	if(class_exists('PHPUnit\Framework\TestCase')){
+		eval("class tc_super_base extends PHPUnit\Framework\TestCase{ }");
+		eval("class TcSuperBase extends PHPUnit\Framework\TestCase{ }");
+	}else{
+		eval("class tc_super_base extends PHPUnit_Framework_TestCase{ }");
+		eval("class TcSuperBase extends PHPUnit_Framework_TestCase{ }");
+	}
 }
 
 if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
