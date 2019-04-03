@@ -185,3 +185,15 @@ if(DEFAULT_CHARSET!="UTF-8"){
 	if($HTTP_REQUEST->xhr() && isset($_POST) && is_array($_POST)){ __to_default_charset__($_POST); }
 	if($HTTP_REQUEST->xhr() && isset($_GET) && is_array($_GET)){ __to_default_charset__($_GET); }
 }
+
+// Now the application is fully loaded and initialized.
+// The after initialize configuration can be loaded.
+foreach(array(
+	ATK14_DOCUMENT_ROOT."/local_config/after_initialize.php",
+	ATK14_DOCUMENT_ROOT."/config/after_initialize.php",
+) as $_after_initialization_config){
+	if(file_exists($_after_initialization_config)){
+		require($_after_initialization_config);
+		break;
+	}
+}
