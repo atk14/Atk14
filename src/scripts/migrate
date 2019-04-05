@@ -8,8 +8,9 @@
  */
 
 $arguments = getopt("hpfl",array("help","preview","force","list"));
-if(isset($arguments["h"]) || isset($arguments["help"])){
 $script = $argv[0];
+
+if(isset($arguments["h"]) || isset($arguments["help"])){
 echo ltrim("
 Do pending migrations
 Load and process *.sql or *.php files from the migration folder (db/migrations/).
@@ -147,6 +148,20 @@ foreach($migrations as $m){
 
 	if($previewing){
 		$logger->info("$m");
+		continue;
+	}
+
+	// Experimental feature!
+	// Trying to isolate every migration.
+	if(sizeof($force_to_execute_migrations)!=1){
+		$_forcing = $forcing ? " -f" : "";
+		$_env = $ATK14_GLOBAL->getEnvironment();
+		$_migration = escapeshellarg($m);
+		$command = "ATK14_ENV=$_env $script$_forcing $_migration";
+		passthru($command,$ret_val);
+		if($ret_val!==0){
+			exit($ret_val);
+		}
 		continue;
 	}
 
