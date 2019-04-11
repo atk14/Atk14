@@ -188,12 +188,14 @@ if(DEFAULT_CHARSET!="UTF-8"){
 
 // Now the application is fully loaded and initialized.
 // The after initialize configuration can be loaded.
-foreach(array(
-	ATK14_DOCUMENT_ROOT."/local_config/after_initialize.php",
-	ATK14_DOCUMENT_ROOT."/config/after_initialize.php",
-) as $_after_initialization_config){
-	if(file_exists($_after_initialization_config)){
-		require($_after_initialization_config);
-		break;
+if(ATK14_LOAD_AFTER_INITIALIZE_SETTINGS){
+	foreach(array(
+		ATK14_DOCUMENT_ROOT."/local_config/after_initialize.php",
+		ATK14_DOCUMENT_ROOT."/config/after_initialize.php",
+	) as $_after_initialization_config){
+		if(file_exists($_after_initialization_config)){
+			require($_after_initialization_config);
+			break;
+		}
 	}
 }

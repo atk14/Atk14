@@ -65,6 +65,8 @@ __defaults__(array(
 	"ATK14_ENABLE_AUTO_REDIRECTING" => true,
 
 	"ATK14_ENABLE_DESTROY_DATABASE_OBJECTS_IN_PRODUCTION" => false, // Can be the script ./scripts/destroy_database_objects executed executed in PRODUCTION?
+
+	"ATK14_LOAD_AFTER_INITIALIZE_SETTINGS" => true, // Load config/after_initialize.php if the file exists?
 ));
 
 __defaults__(array(
