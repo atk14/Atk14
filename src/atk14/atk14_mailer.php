@@ -608,7 +608,7 @@ class Atk14Mailer{
 			//);
 			$this->logger->info(
 				"You can send the last message to yourself by typing this command in shell:\n".
-				sprintf('cat %s | sendmail -f "%s" "%s"',"$dir/latest",DEFAULT_EMAIL,ATK14_ADMIN_EMAIL)
+				sprintf('cat %s | sendmail -f "%s" "%s"',"$dir/latest",$this->from,ATK14_ADMIN_EMAIL)
 			);
 		}
 		return $email_ar;
