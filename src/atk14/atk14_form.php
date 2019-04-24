@@ -321,13 +321,13 @@ class Atk14Form extends Form
 			}
 			if(isset($filename)){ break; }
 		}
-		
+
 		if(!isset($filename)){ return null; }
 
 		$classname = "";
 		if(preg_match('/([^\\/]+)_form\.(inc|php)$/',$filename,$matches)){
-			$classname = "{$matches[1]}Form";
-			$classname = str_replace("_","",$classname);
+			$classname = new String4($matches[1]);
+			$classname = $classname->camelize()->append("Form")->toString();
 		}
 		if(strlen($classname)==0 || !file_exists($filename)){
 			return null;
