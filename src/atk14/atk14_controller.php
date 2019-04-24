@@ -1422,6 +1422,9 @@ class Atk14Controller{
 		if($out = $this->_before_walking()){
 			return $out;
 		}
+		if($this->action_executed){ // e.g. $this->_execute_action("error404")
+			return;
+		}
 		return $this->$method_name();
 	}
 	
