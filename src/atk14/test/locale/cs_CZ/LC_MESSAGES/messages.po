@@ -70,6 +70,12 @@ msgstr ""
 msgid "atk14.datetime_with_seconds_format"
 msgstr "j.n.Y H:i:s"
 
+msgid "atk14.number_format.decimal_point"
+msgstr ","
+
+msgid "atk14.number_format.thousands_separator"
+msgstr " "
+
 #: ../atk14/src/atk14/atk14_locale.php:148
 msgid "atk14.parse_datetime_with_seconds_pattern"
 msgstr ""

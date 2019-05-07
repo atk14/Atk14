@@ -160,6 +160,57 @@ class Atk14Locale{
 		return $out;
 	}
 
+	/**
+	 * Returns decimal point for number formatting
+	 *
+	 * <code>
+	 * echo Atk14Locale::DecimalPoint(); // e.g. "."
+	 * </code>
+	 */
+	static function DecimalPoint(){
+		$decimal_point = _("atk14.number_format.decimal_point");
+		if($decimal_point == "atk14.number_format.decimal_point"){
+			$decimal_point = ","; 
+		}
+		return $decimal_point;
+	}
+
+	/**
+	 * Returns thousands separator for number formatting
+	 *
+	 * <code>
+	 * echo Atk14Locale::ThousandsSeparator(); // e.g. " "
+	 * </code>
+	 */
+	static function ThousandsSeparator(){
+		$thousands_separator = _("atk14.number_format.thousands_separator");
+		if($thousands_separator == "atk14.number_format.thousands_separator"){
+			$thousands_separator = " "; 
+		}
+		return $thousands_separator;
+	}
+
+	/**
+	 * Format number according to the current locale
+	 *
+	 * <code>
+	 * echo Atk14Locale::FormatNumber(33); // "33"
+	 * echo Atk14Locale::FormatNumber(-1234.56); // "-1 234,56"
+	 * </code>
+	 */
+	static function FormatNumber($number){
+		if(!strlen("$number")){ return; }
+
+		$decimal_places = 0;
+		if(preg_match('/\.(\d*)$/',"$number",$matches)){
+			$decimal_places = strlen($matches[1]);
+		}
+
+		$out = number_format($number,$decimal_places,self::DecimalPoint(),self::ThousandsSeparator());
+
+		return $out;
+	}
+
 	static function _ParseDateTime($localized_datetime,$pattern){
 		if(
 			preg_match($pattern,$localized_datetime,$matches) &&
