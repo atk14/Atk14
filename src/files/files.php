@@ -89,7 +89,7 @@ class Files{
 	 *	Files::MkdirForFile("/path/to/a/file.dat");
 	 * ```
 	 */
-	function MkdirForFile($filename,&$error = null,&$error_str = null){
+	static function MkdirForFile($filename,&$error = null,&$error_str = null){
 		$directory = preg_replace('/[^\/]+$/','',$filename);
 		if(!strlen($directory)){
 			$error = true;
