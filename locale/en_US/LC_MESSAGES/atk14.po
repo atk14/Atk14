@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-13 17:53+0200\n"
+"POT-Creation-Date: 2019-05-07 15:44+0200\n"
 "PO-Revision-Date: \n"
-"Last-Translator: \n"
+"Last-Translator: Jaromir Tomek <jaromir.tomek@gmail.com>\n"
 "Language-Team: ATK14 Development Team\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: ../src/atk14/atk14_dispatcher.php:67
 msgid "Service Unavailable"
@@ -56,7 +56,15 @@ msgstr ""
 "/^(?<month>[0-9]{1,2})\\/(?<day>[0-9]{1,2})\\/(?<year>[0-9]{4}) (?"
 "<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2}$/"
 
-#: ../src/atk14/atk14_sorting.php:146
+#: ../src/atk14/atk14_locale.php:171
+msgid "atk14.number_format.decimal_point"
+msgstr "."
+
+#: ../src/atk14/atk14_locale.php:186
+msgid "atk14.number_format.thousands_separator"
+msgstr ","
+
+#: ../src/atk14/atk14_sorting.php:152
 msgid "Sort table by this column"
 msgstr "Sort table by this column"
 
@@ -64,17 +72,26 @@ msgstr "Sort table by this column"
 msgid "Are you sure?"
 msgstr "Are you sure?"
 
-#: ../src/atk14/helpers/function.paginator.php:97
-#: ../src/atk14/helpers/function.paginator.php:160
+#: ../src/atk14/helpers/function.paginator.php:60
+msgid "Pagination"
+msgstr "Pagination"
+
+#: ../src/atk14/helpers/function.paginator.php:122
+#: ../src/atk14/helpers/function.paginator.php:126
+#: ../src/atk14/helpers/function.paginator.php:194
 #, php-format
 msgid "%s items total"
 msgstr "%s items total"
 
-#: ../src/atk14/helpers/function.paginator.php:111
+#: ../src/atk14/helpers/function.paginator.php:140
 msgid "prev"
 msgstr "prev"
 
-#: ../src/atk14/helpers/function.paginator.php:155
+#: ../src/atk14/helpers/function.paginator.php:167
+msgid "current page"
+msgstr "current page"
+
+#: ../src/atk14/helpers/function.paginator.php:189
 msgid "next"
 msgstr "next"
 
@@ -104,7 +121,7 @@ msgstr "Ensure this value has between %min% and %max% characters."
 
 #: ../src/forms/fields/char_field.php:32
 msgid "Invalid byte sequence for charset %charset%."
-msgstr ""
+msgstr "Invalid byte sequence for charset %charset%."
 
 #: ../src/forms/fields/choice_field.php:37
 msgid "Select a valid choice. That choice is not one of the available choices."
@@ -192,7 +209,7 @@ msgstr "Ensure this value is greater than or equal to %value%."
 
 #: ../src/forms/fields/image_field.php:22
 msgid "Ensure this file is image (it is %mime_type%)."
-msgstr ""
+msgstr "Ensure this file is image (it is %mime_type%)."
 
 #: ../src/forms/fields/image_field.php:24
 msgid "Ensure this image is %width_required% pixels wide (it is %width%)."
@@ -220,7 +237,7 @@ msgstr "Ensure this image is at least %min% pixels high (it is %height%)."
 
 #: ../src/forms/fields/image_field.php:32
 msgid "Ensure this image is in a required format (it is %mime_type%)."
-msgstr ""
+msgstr "Ensure this image is in a required format (it is %mime_type%)."
 
 #: ../src/forms/fields/integer_field.php:32
 msgid "Enter a whole number."
