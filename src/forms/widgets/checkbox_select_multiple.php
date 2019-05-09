@@ -22,23 +22,27 @@ class CheckboxSelectMultiple extends SelectMultiple
 			"input_attrs" => array(),
 			"label_attrs" => array(),
 			"wrap_attrs" => array(),
-			"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4
+			"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4,
 		);
+		$options += array(
+			"bootstrap4_customized" => $options["bootstrap4"] // whether or not add classes for checkbox customization in bootstrap4 (https://www.w3schools.com/bootstrap4/bootstrap_forms_custom.asp)
+		);
+
 		if($options["bootstrap4"]){
-			// This is done in CheckboxInput
-			//$options["input_attrs"] += array(
-			//	"class" => "form-check-input", 
-			//);
+			$options["input_attrs"] += array(
+				"class" => $options["bootstrap4_customized"] ? "form-check-input custom-control-input" : "form-check-input",
+			);
 			$options["label_attrs"] += array(
-				"class" => "form-check-label",
+				"class" => $options["bootstrap4_customized"] ? "form-check-label custom-control-label" : "form-check-label",
 			);
 			$options["wrap_attrs"] += array(
-				"class" => "form-check",
+				"class" => $options["bootstrap4_customized"] ? "form-check custom-control custom-checkbox" : "form-check",
 			);
 		}
 
 		$this->escape_labels = $options["escape_labels"];
 		$this->bootstrap4 = $options["bootstrap4"];
+		$this->bootstrap4_customized = $options["bootstrap4_customized"];
 		$this->input_attrs = $options["input_attrs"];
 		$this->label_attrs = $options["label_attrs"];
 		$this->wrap_attrs = $options["wrap_attrs"];
