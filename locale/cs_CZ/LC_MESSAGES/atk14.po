@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-05-07 15:44+0200\n"
-"PO-Revision-Date: 2019-05-07 15:46+0200\n"
+"PO-Revision-Date: 2019-05-14 22:59+0200\n"
 "Last-Translator: Jaromir Tomek <jaromir.tomek@gmail.com>\n"
 "Language-Team: ATK14 Development Team\n"
 "Language: cs_CZ\n"
@@ -65,7 +65,7 @@ msgstr ""
 
 #: ../src/atk14/atk14_locale.php:171
 msgid "atk14.number_format.decimal_point"
-msgstr "."
+msgstr ","
 
 #: ../src/atk14/atk14_locale.php:186
 msgid "atk14.number_format.thousands_separator"
