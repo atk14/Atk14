@@ -9,6 +9,7 @@ class tc_class_autoload extends tc_base{
 		$this->assertFalse(class_exists("RedColor"));
 		$this->assertFalse(class_exists("RedBar"));
 		$this->assertFalse(class_exists("Ean13NumberField"));
+		$this->assertFalse(class_exists("GoogleTagManagerB2C"));
 
 		class_autoload("./classes/");
 
@@ -17,6 +18,7 @@ class tc_class_autoload extends tc_base{
 		$this->assertTrue(class_exists("RedColor"));
 		$this->assertTrue(class_exists("RedBar"));
 		$this->assertTrue(class_exists("Ean13NumberField"));
+		$this->assertTrue(class_exists("GoogleTagManagerB2C"));
 
 		$this->assertTrue(class_exists("ConflictClass"));
 		$this->assertEquals("classes_alt",ConflictClass::DIR);
