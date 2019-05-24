@@ -482,6 +482,16 @@ class Atk14Controller{
 	}
 
 	/**
+	 * Render error page for bad authorization.
+	 *
+	 * Renders page with error message and sets HTTP status 401. Browser prompts for username and password.
+	 */
+	function error401(){
+		$this->response->authorizationRequired();
+		$this->render_template = false;
+	}
+
+	/**
 	 * Executes another action defined in current controller.
 	 *
 	 * The action is executed including all before/after filters and before/after render filters.
