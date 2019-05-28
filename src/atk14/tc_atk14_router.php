@@ -31,18 +31,19 @@ class TcAtk14Router extends TcAtk14Base {
 	 *	$this->assertEquals("/article/very-nice-article/",$uri);
 	 */
 	function assertBuildable($params = array(),&$ret_params = null){
-		$uri = $this->_buil($params,$ret_params);
+		$uri = $this->_build($params,$ret_params);
 		$this->assertNotNull($uri);
 
 		return $uri;
 	}
 
 	function assertNotBuildable($params = array()){
-		$uri = $this->_buil($params);
+		$uri = $this->_build($params);
 		$this->assertNull($uri);
 	}
 
 	function assertRecognizable($uri,&$params = array()){
+		$params = array();
 		$this->_recognize($uri,$params);
 
 		$this->assertTrue(!is_null($this->router->controller) && !is_null($this->router->action),$uri);
@@ -61,7 +62,7 @@ class TcAtk14Router extends TcAtk14Base {
 		$this->assertTrue(is_null($this->router->controller) && is_null($this->router->action),$uri);
 	}
 
-	function _buil($params,&$ret_params = null){
+	function _build($params,&$ret_params = null){
 		global $ATK14_GLOBAL;
 
 		$ret_params = null;
