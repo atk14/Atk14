@@ -594,7 +594,7 @@ class tc_http_request extends tc_base{
 
 		$_SERVER["REMOTE_ADDR"] = "8.8.8.8";
 		$request = new HTTPRequest();
-		$this->assertEquals("google-public-dns-a.google.com",$request->getRemoteHostname());
+		$this->assertEquals("dns.google",$request->getRemoteHostname());
 
 		unset($_SERVER["REMOTE_ADDR"]);
 		$request = new HTTPRequest();
