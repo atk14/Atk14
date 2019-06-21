@@ -1,5 +1,6 @@
 <?php
 class TcSorting extends TcBase{
+
 	function test(){
 		$sorting = new Atk14Sorting();
 		$this->assertEquals("","$sorting");
@@ -94,6 +95,26 @@ class TcSorting extends TcBase{
 
 		$this->assertEquals("id ASC",$sorting->getOrder()); // default
 	}
+
+	function test_ArrayIterator(){
+		$sorting = $this->_get_sorting();
+
+		$ary = array();
+		foreach($sorting as $item){
+			$ary[] = $item;
+		}
+
+		$this->assertEquals(array(
+			"id",
+			"created_at",
+			"title",
+			"author",
+			"shelf_mark",
+			"url",
+			"subtitle",
+		),$ary);
+	}
+
 
 	function _get_sorting($order = null){
 		$params = new Dictionary();

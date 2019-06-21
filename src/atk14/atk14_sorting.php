@@ -51,7 +51,7 @@
  * $sorting["year"] = array("year ASC, id ASC", "year DESC, id DESC");
  * ```
  */
-class Atk14Sorting implements ArrayAccess{
+class Atk14Sorting implements ArrayAccess, IteratorAggregate {
 
 	/**
 	 * Stored parameters from constructor.
@@ -164,6 +164,15 @@ class Atk14Sorting implements ArrayAccess{
 		$this->_OrderingStrings["$key"] = $options["ascending_ordering"];
 		$this->_OrderingStrings["$key-asc"] = $options["ascending_ordering"]; // obsolete ascendant key, TODO: to be removed in the future
 		$this->_OrderingStrings["$key-desc"] = $options["descending_ordering"];
+	}
+
+	/**
+	 * IteratorAggregate intergate
+	 *
+	 * Iterates over keys of defined orderings.
+	 */
+	function getIterator() {
+		return new ArrayIterator(array_keys($this->_Ordering));
 	}
 
 	/**
