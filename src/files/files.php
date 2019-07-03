@@ -17,7 +17,7 @@
  */
 class Files{
 
-	const VERSION = "1.3";
+	const VERSION = "1.3.1";
 
 	/**
 	 * Creates a directory.
