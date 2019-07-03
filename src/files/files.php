@@ -585,10 +585,12 @@ class Files{
 	 * @return string name of the newly created file
 	 */
 	static function GetTempFilename($prefix = "files_tmp_"){
+		$prefix = preg_replace('/[^0-9a-z_.-]/i','_',$prefix); // sanitization
+
 		// Might be better, but oddly it breaks tests
 		//return tempnam(self::GetTempDir(), $prefix);
 
-		$temp_filename = self::GetTempDir() . "/files_tmp_".uniqid("",true);
+		$temp_filename = self::GetTempDir() . "/$prefix".uniqid("",true);
 		return $temp_filename;
 	}
 

@@ -57,11 +57,24 @@ class TcFiles extends TcBase{
 	function test_get_temp_filename(){
 		$t1 = Files::GetTempFilename();
 		$t2 = Files::GetTempFilename();
+		$t3 = Files::GetTempFilename("pdf_creator_");
 
 		$this->assertContains(TEMP,$t1);
 		$this->assertContains(TEMP,$t2);
+		$this->assertContains(TEMP,$t3);
+
+		$this->assertContains("files_tmp_",$t1); // default prefix
+		$this->assertContains("files_tmp_",$t2);
+		$this->assertNotContains("files_tmp_",$t3);
+		$this->assertContains("pdf_creator_",$t3);
 
 		$this->assertTrue($t1!=$t2);
+
+		// prefix sanitization
+		$t = Files::GetTempFilename("bad/joke");
+
+		$this->assertNotContains("bad/joke",$t);
+		$this->assertContains("bad_joke",$t);
 	}
 
 	function test_move_file(){
