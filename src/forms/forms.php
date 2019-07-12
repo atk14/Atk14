@@ -81,64 +81,6 @@ class JsFormValidator{
 }
 
 /**
- * Converts 'first_name' to 'First name'.
- *
- * @param string $name
- * @return string
- */
-function pretty_name($name)
-{
-	return str_replace('_', ' ', ucfirst($name));
-}
-
-/**
- * Escapes html.
- */
-function forms_htmlspecialchars($string)
-{
-	return h($string, ENT_COMPAT);
-
-	// puvodne tady byla tato verze.
-	// to ale zlobilo na webech, ktere nebezi v UTF-8...
-	//return htmlspecialchars($string, ENT_COMPAT, 'UTF-8');
-}
-
-/**
- * A smarter replacement for PHP built-in array_merge().
- *
- * In PHP5 array_merge() changes its behaviour and accepts strictly arrays.
- */
-function forms_array_merge ()
-{
-	$merged=array ();
-	for($i=0;$i<func_num_args ();$i++)
-	{
-		$val = func_get_arg($i);
-		if(!isset($val)){ continue; }
-		$tmp= is_array($val) ?  $val : array($val);
-		$merged=array_merge ($merged,$tmp);
-	}
-	return $merged;
-}
-
-/**
-* Funkce pro prevod pole s error hlaskami na HTML strukturu
-* vhodnou k zobrazeni v sablonach.
-*/
-function format_errors($errors)
-{
-	if (count($errors) < 1) {
-		return '';
-	}
-	$output = array();
-	foreach ($errors as $e) {
-		$output[] = '<li>'.$e.'</li>';
-	}
-	return '<ul class="errorlist">'.implode('', $output).'</ul>';
-}
-
-
-/**
  * Bound field je trida pro formularove pole (field), do ktereho jsou nalite data.
  *
  * @package Atk14
@@ -249,7 +191,7 @@ class BoundField
 	function as_textarea($attrs=null)
 	{
 		return $this->as_widget(array(
-			'widget' => new Textarea(),
+			'widget' => new TextArea(),
 			'attrs' => $attrs
 		));
 	}

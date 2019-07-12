@@ -10,7 +10,7 @@
  * @package Atk14
  * @subpackage Forms
  */
-class Textarea extends Widget
+class TextArea extends Widget
 {
 	var $input_type = "textarea";
 

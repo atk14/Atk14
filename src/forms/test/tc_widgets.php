@@ -364,7 +364,7 @@ class TcWidgets extends TcBase
 	{
 		$DATA = array(
 			array(
-				'widget' => new Textarea(),
+				'widget' => new TextArea(),
 				'params' => array(
 					array(
 						'params' => array('name'=>'msg', 'value'=>'', 'options'=>array()),
@@ -390,7 +390,7 @@ class TcWidgets extends TcBase
 			),
 			// atributy se muzou nasadit i v konstruktoru
 			array(
-				'widget' => new Textarea($options=array('attrs'=>array('class'=>'pretty'))),
+				'widget' => new TextArea($options=array('attrs'=>array('class'=>'pretty'))),
 				'params' => array(
 					array(
 						'params' => array('name'=>'msg', 'value'=>'', 'options'=>array()),
@@ -404,7 +404,7 @@ class TcWidgets extends TcBase
 			),
 			// specifictejsi options prebiji obecnejsi
 			array(
-				'widget' => new Textarea($options=array('attrs'=>array('class'=>'pretty'))),
+				'widget' => new TextArea($options=array('attrs'=>array('class'=>'pretty'))),
 				'params' => array(
 					array(
 						'params' => array('name'=>'msg', 'value'=>'', 'options'=>array('attrs'=>array('class'=>'special'))),

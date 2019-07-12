@@ -56,7 +56,7 @@ class ContactForm extends Form
 		$this->add_field('subject', new CharField());
 		$this->add_field('message', new CharField(
 			array(
-				'widget' => new Textarea(array('attrs'=>array('rows'=>80,'cols'=>20)))
+				'widget' => new TextArea(array('attrs'=>array('rows'=>80,'cols'=>20)))
 			)
 		));
 	}
