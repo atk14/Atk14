@@ -40,6 +40,31 @@
  *		}
  *	}
  * ```
+ * ## Advanced form validation
+ *
+ * Overridde {@see Form::clean()} method when it is needed to perform more complex validation such as combination of two fields.
+ * For example you want to make sure that user filled email field when he checked that he wants to accept newsletter
+ *```
+ * class ExampleForm extends ApplicationForm {
+ *
+ * 	function set_up() {
+ * 		$this->add_field("receive_newsletter", new BooleanField());
+ * 		$this->add_field("email", new EmailField());
+ * 	}
+ *
+ *
+ * 	function clean() {
+ * 		$data = $this->cleaned_data;
+ * 		if ($data["receive_newsletter"]===true) {
+ * 			if (!$data["email"]) {
+ * 				$this->set_error("email", "Fill your email address if you want to receive out newsletter");
+ * 			}
+ * 		}
+ *
+ * 		return [null, $data];
+ * 	}
+ * }
+ *```
  *
  * ## Using a form in a controller
  *
@@ -58,7 +83,7 @@
  * ```
  * ### Accessing fields in a controller
  *
- * - Using {@see get_field()} method
+ * - Using {@see Atk14Form::get_field()} method
  * ```
  * echo $form->get_field("login");
  * ```
@@ -359,9 +384,9 @@ class Atk14Form extends Form
 	 *
 	 * @param string $controller name of controller
 	 * @param string $action name of action
-	 * @param Atk14Controller $controller_obj instance of controller using the form (optional)
-	 * @param array $options {@see __construct}
-	 * @return Atk14Form instance of {@link Atk14Form}
+	 * @param Atk14Controller $controller_obj instance of controller using the form (optional) to set context controller
+	 * @param array $options see {@link Atk14Form::__construct()}
+	 * @return Atk14Form
 	 */
 	static function GetInstanceByControllerAndAction($controller,$action,$controller_obj = null,$options = array())
 	{
@@ -718,7 +743,7 @@ class Atk14Form extends Form
 	 * ```
 	 *	$this->set_initial($this->params);
 	 * ```
-	 * - object of class TableRecord
+	 * - object of class {@link TableRecord}
 	 * ```
 	 *	$this->set_initial($user);
 	 * ```
@@ -1051,9 +1076,10 @@ class Atk14Form extends Form
 	}
 
 	/**
-	 * Gets instance of a {@link \Field Field} of current form.
+	 * Gets instance of a {@link BoundField} of current form.
 	 *
 	 * @param string $name identifier of the field
+	 * @return BoundField
 	 */
 	function get_field($name){
 	// !!! je dulezite pred volanim get_field() volat konstruktor rodice.
@@ -1072,8 +1098,9 @@ class Atk14Form extends Form
 	 * Returns all fields as associative array
 	 *
 	 * ```
-	 *	$fields = $form->get_fields();
+	 * $fields = $form->get_fields();
 	 * ```
+	 * @return BoundField[]
 	 */
 	function get_fields(){
 		$this->_call_super_constructor();
