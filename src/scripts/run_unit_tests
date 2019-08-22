@@ -57,6 +57,7 @@ isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 isset($argv) || ($argv = array());
 
 $SCRIPT = array_shift($argv);
+$SCRIPT_ABSOLUTE = __FILE__;
 $DIR = "";
 $RUN_TESTS_ONLY = array();
 while($_a = array_shift($argv)){
@@ -187,10 +188,10 @@ if(sizeof($tests_to_execute)==1){
 
 $exit_code = 0;
 foreach($tests_to_execute as $_f){
-	$cmd = escapeshellcmd($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
-	if(isset($_SERVER["_"])){
+	$cmd = escapeshellcmd($SCRIPT_ABSOLUTE)." ".escapeshellarg($_f)." 2>&1";
+	if(isset($_SERVER["_"]) && strlen($_SERVER["_"]) && $_SERVER["_"]!=$SCRIPT){
 		// v $_SERVER["_"] je interpret PHP: /usr/bin/php
-		$cmd = escapeshellcmd($_SERVER["_"])." ".escapeshellarg($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
+		$cmd = escapeshellcmd($_SERVER["_"])." ".escapeshellarg($SCRIPT_ABSOLUTE)." ".escapeshellarg($_f)." 2>&1";
 	}
 	passthru($cmd,$_exit_code);
 	if($_exit_code!=0){
