@@ -1207,12 +1207,15 @@ class Atk14Controller{
 	 *
 	 * ```
 	 *	if(!$this->request->ssl()){
-	 *		$this->_redirect_to_ssl(["moved_permanently" => true]);
+	 *		$this->_redirect_to_ssl();
 	 *		return;
 	 *	} 
 	 * ```
 	 */
 	function _redirect_to_ssl($options = array()){
+		$options += array(
+			"moved_permanently" => true,
+		);
 		$url = "https://".$this->request->getHTTPHost().$this->request->getRequestURI();
 		$this->_redirect_to($url,$options);
 		return $url;
