@@ -441,18 +441,23 @@ class Atk14Url{
 		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out.Atk14Url::EncodeParams($get_params,array("connector" => $options["connector"]));
 		if(strlen($options["anchor"])>0){ $out .= "#$options[anchor]"; }
 
+		// Internally, the port 80 is treated as standard ssl port.
+		// It's quite common that Apache is running on non-ssl port 80 and ssl is provided by Nginx in reverse proxy mode. 
+		$_std_ssl_ports = array(443,80);
+		$_std_non_ssl_ports = array(80);
+
 		if($options["with_hostname"]){
 			$_server_port = isset($options["port"]) ? $options["port"] : $HTTP_REQUEST->getServerPort();
 			$hostname = (is_string($options["with_hostname"])) ? $options["with_hostname"] : $ATK14_GLOBAL->getHttpHost();
 			if($HTTP_REQUEST->ssl()){
-				$_exp_port = 443;
+				$_exp_ports = $_std_ssl_ports;
 				$_proto = "https";
 			}else{
-				$_exp_port = 80;
+				$_exp_ports = $_std_non_ssl_ports;
 				$_proto = "http";
 			}
 			$_port = "";
-			if($_server_port && $_server_port!=$_exp_port){
+			if($_server_port && !in_array($_server_port,$_exp_ports)){
 				$_port = ":".$_server_port;
 			}
 
@@ -460,16 +465,14 @@ class Atk14Url{
 				if($options["ssl"] && !$HTTP_REQUEST->ssl()){
 					$_port = "";
 					$_proto = "https";
-					if(isset($options["port"]) && !in_array($options["port"],array(443,80))){
-						// Port 80 here is treated as standard ssl port.
-						// It's common that Apache is running on non-ssl port 80 and ssl is provided by Nginx in reverse proxy mode. 
+					if(isset($options["port"]) && !in_array($options["port"],$_std_ssl_ports)){
 						$_port = ":$options[port]";
 					}
 				}
 				if(!$options["ssl"] && $HTTP_REQUEST->ssl()){
 					$_port = "";
 					$_proto = "http";
-					if(isset($options["port"]) && $options["port"]!=80){
+					if(isset($options["port"]) && !in_array($options["port"],$_std_non_ssl_ports)){
 						$_port = ":$options[port]";
 					}
 				}
