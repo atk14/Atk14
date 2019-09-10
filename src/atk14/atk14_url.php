@@ -460,7 +460,9 @@ class Atk14Url{
 				if($options["ssl"] && !$HTTP_REQUEST->ssl()){
 					$_port = "";
 					$_proto = "https";
-					if(isset($options["port"]) && $options["port"]!=443){
+					if(isset($options["port"]) && !in_array($options["port"],array(443,80))){
+						// Port 80 here is treated as standard ssl port.
+						// It's common that Apache is running on non-ssl port 80 and ssl is provided by Nginx in reverse proxy mode. 
 						$_port = ":$options[port]";
 					}
 				}

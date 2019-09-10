@@ -325,6 +325,15 @@ class TcUrl extends TcBase{
 	function test_BuildLink(){
 		$this->assertEquals("https://secure.testing.cz/en/",$this->_build_link(array(),array("ssl" => true)));
 		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz")));
+
+		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz", "port" => 443)));
+		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz", "port" => 80)));
+		$this->assertEquals("https://ssl.testing.cz:444/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz", "port" => 444)));
+
+		$this->assertEquals("http://www.testing.cz/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz")));
+		$this->assertEquals("http://www.testing.cz/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 80)));
+		$this->assertEquals("http://www.testing.cz:81/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 81)));
+		$this->assertEquals("http://www.testing.cz:443/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 443)));
 	}
 
 	function _test_route($request_uri,$expected_ar,$expected_params = array()){
