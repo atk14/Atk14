@@ -7,7 +7,7 @@
  * Basic form of the tag is as follows:
  *
  * ```
- * {paginator finder=$finder} 
+ * {paginator finder=$finder}
  * ```
  *
  * You don't have to forward a finder when you have one in the $finder variable.
@@ -35,6 +35,11 @@
  * {paginator}
  * ```
  *
+ * Example of the parameter items_total_label usage:
+ * ```
+ * {paginator items_total_label="article total"}
+ * ```
+ *
  * @package Atk14\Helpers
  * @filesource
  */
@@ -49,6 +54,10 @@
 function smarty_function_paginator($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
+	$params += array(
+		"items_total_label" => _("items total"), // "articles", "products"...
+	);
+
 	if(isset($params["finder"])){
 		$finder = $params["finder"];
 	}elseif(!is_null($smarty->getTemplateVars("finder"))){
@@ -62,11 +71,12 @@ function smarty_function_paginator($params,$template){
 		$total_amount = isset($params["total_amount"]) ? (int)$params["total_amount"] : (int)$smarty->getTemplateVars("total_amount");
 		$max_amount = isset($params["max_amount"]) ? (int)$params["max_amount"] : (int)$smarty->getTemplateVars("max_amount");
 	}
+	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
 
 	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? ATK14_PAGINATOR_OFFSET_PARAM_NAME : "from";
 	$from_name = isset($params["$_from"]) ? $params["$_from"] : "$_from";
 
-	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
+	$items_total_label = $params["items_total_label"];
 
 	$par = $smarty->getTemplateVars("params")->toArray();
 	// There is a possibility to change action, controller, lang and namespace variables.
@@ -84,7 +94,7 @@ function smarty_function_paginator($params,$template){
 	if($total_amount<=$max_amount){
 		if($total_amount>=5){
 			$out[] = "<div class=\"pagination-container\">";
-			$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> "._("items total")."</p>";
+			$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
 			$out[] = "</div>";
 			
 		}
@@ -148,7 +158,7 @@ function smarty_function_paginator($params,$template){
 
 	$out[] = "</ul>";
 
-	$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> "._("items total")."</p>";
+	$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
 	$out[] = "</div>";
 
 	return join("\n",$out);
