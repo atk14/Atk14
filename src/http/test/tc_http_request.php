@@ -498,6 +498,27 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("",$request->getQueryString(true));
 	}
 
+	function test_getServerUrl(){
+		global $_SERVER;
+
+		$_SERVER["REQUEST_URI"] = "/contact.php";
+		unset($_SERVER["HTTPS"]);
+		$_SERVER["SERVER_PORT"] = "80";
+		$_SERVER["HTTP_HOST"] = "www.testiq.cz";
+		$request = new HTTPRequest();
+		//
+		$this->assertEquals("http://www.testiq.cz",$request->getServerUrl());
+
+		$_SERVER["SERVER_PORT"] = "81";
+		$request = new HTTPRequest();
+		//
+		$this->assertEquals("http://www.testiq.cz:81",$request->getServerUrl());
+
+		$request->setRequestAddress("https://www.test.cz:444/calendar.php");
+		//
+		$this->assertEquals("https://www.test.cz:444",$request->getServerUrl());
+	}
+
 	function test_getRequestAddress(){
 		global $_SERVER;
 

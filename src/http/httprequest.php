@@ -280,6 +280,29 @@ class HTTPRequest{
 	}
 
 	/**
+	 * Returns URL to the server
+	 *
+	 * Basically it returns request URL without the URI part.
+	 *
+	 * ```
+	 * $server_url = $request->getServerUrl(); // e.g. "https://www.test.com:444"
+	 * ```
+	 *
+	 * @returns string
+	 */
+	function getServerUrl(){
+		if($url = $this->_getForceValue("RequestAddress")){
+			$url = preg_replace('/^(https?:\/\/[^\/]+)(.*)/i','\1',$url);
+			return $url;
+		}
+
+		$scheme = $this->getScheme();
+		$port = $this->isServerOnStandardPort() ? "" : ":".$this->getServerPort();
+		$hostname = $this->getHttpHost();
+		return "$scheme://$hostname$port";
+	}
+
+	/**
 	 * Returns complete address for this request
 	 *
 	 * ```
@@ -293,11 +316,9 @@ class HTTPRequest{
 			return $url;
 		}
 
-		$scheme = $this->getScheme();
-		$port = $this->isServerOnStandardPort() ? "" : ":".$this->getServerPort();
-		$hostname = $this->getHttpHost();
+		$server_url = $this->getServerUrl();
 		$uri = $this->getRequestUri();
-		return "$scheme://$hostname$port$uri";
+		return "$server_url$uri";
 	}
 
 	function setRequestAddress($url){
