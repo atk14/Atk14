@@ -293,7 +293,7 @@ class HTTPRequest{
 			return $url;
 		}
 
-		$proto = $this->sslActive() ? "https" : "http";
+		$proto = $this->getProtocol();
 		$port = "";
 		if($this->sslActive() && $this->getServerPort() && $this->getServerPort()!=443){
 			$port = ":".$this->getServerPort();
@@ -440,6 +440,17 @@ class HTTPRequest{
 
 	function setHttpHost($host){
 		$this->_setForceValue("HttpHost",$host);
+	}
+
+	/**
+	 * Returns protocol
+	 *
+	 *	$protocol = $request->getProtocol(); // "https" or "http"
+	 *
+	 * @return string
+	 */
+	function getProtocol(){
+		return $this->sslActive() ? "https" : "http";
 	}
 
 	/**

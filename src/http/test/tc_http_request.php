@@ -244,6 +244,18 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("www.fake.cz",$req->getHttpHost());
 	}
 
+	function test_getProtocol(){
+		global $_SERVER;
+
+		unset($_SERVER["HTTPS"]);
+		$req = new HTTPRequest();
+		$this->assertEquals("http",$req->getProtocol());
+
+		$_SERVER["HTTPS"] = "on";
+		$req = new HTTPRequest();
+		$this->assertEquals("https",$req->getProtocol());
+	}
+
 	function test_http_referer(){
 		global $_SERVER;
 
