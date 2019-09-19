@@ -293,7 +293,7 @@ class HTTPRequest{
 			return $url;
 		}
 
-		$proto = $this->getProtocol();
+		$proto = $this->getScheme();
 		$port = "";
 		if($this->sslActive() && $this->getServerPort() && $this->getServerPort()!=443){
 			$port = ":".$this->getServerPort();
@@ -443,13 +443,13 @@ class HTTPRequest{
 	}
 
 	/**
-	 * Returns protocol
+	 * Returns scheme
 	 *
-	 *	$protocol = $request->getProtocol(); // "https" or "http"
+	 *	$scheme = $request->getScheme(); // "https" or "http"
 	 *
 	 * @return string
 	 */
-	function getProtocol(){
+	function getScheme(){
 		return $this->sslActive() ? "https" : "http";
 	}
 
