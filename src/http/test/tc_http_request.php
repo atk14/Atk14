@@ -500,11 +500,13 @@ class tc_http_request extends tc_base{
 
 	function test_getRequestAddress(){
 		global $_SERVER;
+
 		$_SERVER["REQUEST_URI"] = "/contact.php";
+		unset($_SERVER["HTTPS"]);
 		$_SERVER["SERVER_PORT"] = "81";
 		$_SERVER["HTTP_HOST"] = "www.testiq.cz";
-
 		$request = new HTTPRequest();
+
 		$this->assertEquals("http://www.testiq.cz:81/contact.php",$request->getRequestAddress());
 		$this->assertEquals("http://www.testiq.cz:81/contact.php",$request->getUrl());
 
@@ -515,6 +517,25 @@ class tc_http_request extends tc_base{
 		$request->setUrl("https://www.test.cz/calendar.php");
 		$this->assertEquals("https://www.test.cz/calendar.php",$request->getRequestAddress());
 		$this->assertEquals("https://www.test.cz/calendar.php",$request->getUrl());
+
+		$_SERVER["HTTPS"] = "on";
+		$_SERVER["SERVER_PORT"] = "443";
+		$request = new HTTPRequest();
+
+		$this->assertEquals("https://www.testiq.cz/contact.php",$request->getRequestAddress());
+		$this->assertEquals("https://www.testiq.cz/contact.php",$request->getUrl());
+
+		$_SERVER["SERVER_PORT"] = "444";
+		$request = new HTTPRequest();
+
+		$this->assertEquals("https://www.testiq.cz:444/contact.php",$request->getRequestAddress());
+		$this->assertEquals("https://www.testiq.cz:444/contact.php",$request->getUrl());
+
+		$_SERVER["SERVER_PORT"] = "80";
+		$request = new HTTPRequest();
+
+		$this->assertEquals("https://www.testiq.cz/contact.php",$request->getRequestAddress());
+		$this->assertEquals("https://www.testiq.cz/contact.php",$request->getUrl());
 	}
 
 	function test_getGetVars(){
@@ -596,7 +617,14 @@ class tc_http_request extends tc_base{
 
 		$this->assertEquals(444,$request->getServerPort());
 		$this->assertEquals(true,$request->ssl());
-		$this->assertEquals(false,$request->isServerOnStandardPort());
+		$this->assertEquals(false,$request->isServerOnStandardPort()); // Yes, it's ok! It's quite common that Apache is running on non-ssl port 80 and ssl is provided by Nginx in reverse proxy mode.
+
+		$_SERVER["SERVER_PORT"] = 80;
+		$request = new HTTPRequest();
+
+		$this->assertEquals(80,$request->getServerPort());
+		$this->assertEquals(true,$request->ssl());
+		$this->assertEquals(true,$request->isServerOnStandardPort());
 	}
 
 	function test_getRemoteHostname(){

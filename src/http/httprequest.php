@@ -293,17 +293,11 @@ class HTTPRequest{
 			return $url;
 		}
 
-		$proto = $this->getScheme();
-		$port = "";
-		if($this->sslActive() && $this->getServerPort() && $this->getServerPort()!=443){
-			$port = ":".$this->getServerPort();
-		}
-		if(!$this->sslActive() && $this->getServerPort() && $this->getServerPort()!=80){
-			$port = ":".$this->getServerPort();
-		}
+		$scheme = $this->getScheme();
+		$port = $this->isServerOnStandardPort() ? "" : ":".$this->getServerPort();
 		$hostname = $this->getHttpHost();
 		$uri = $this->getRequestUri();
-		return "$proto://$hostname$port$uri";
+		return "$scheme://$hostname$port$uri";
 	}
 
 	function setRequestAddress($url){
@@ -419,10 +413,11 @@ class HTTPRequest{
 	 * 
 	 * @return bool
 	 */
-	function IsServerOnStandardPort(){
+	function isServerOnStandardPort(){
 		$port = $this->getServerPort();
-		if($this->ssl()){
-			return $this->getServerPort()==443;
+		if($this->sslActive()){
+			return $this->getServerPort()==443 ||
+				$this->getServerPort()==80; // It's quite common that Apache is running on non-ssl port 80 and ssl is provided by Nginx in reverse proxy mode.
 		}
 		return $this->getServerPort()==80;
 	}
