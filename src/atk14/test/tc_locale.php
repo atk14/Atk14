@@ -88,6 +88,17 @@ class TcLocale extends TcBase{
 		$this->assertEquals("cs",$lang);
 		$this->assertEquals("en",$previous);
 		$this->assertEquals("cs",$ATK14_GLOBAL->getLang());
+
+		// Initializing environment to the default language (cs)
+
+		// ... first set a language other than the default
+		$lang = "en";
+		Atk14Locale::Initialize($lang);
+		$this->assertEquals("en",$ATK14_GLOBAL->getLang());
+
+		// ... and now set the default language
+		Atk14Locale::Initialize();
+		$this->assertEquals("cs",$ATK14_GLOBAL->getLang());
 	}
 
 	function test_number_format(){
