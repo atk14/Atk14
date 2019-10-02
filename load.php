@@ -155,8 +155,8 @@ if(PHP_VERSION_ID < 50600){
 	ini_set('default_charset', DEFAULT_CHARSET);
 }
 
-// initializing locale for the default language (i.e. the first one in config/locale.yml)
-atk14_initialize_locale();
+// initializing locale for the default language (i.e. the first one in config/locale.yml or defined by the constant ATK14_DEFAULT_LANG)
+Atk14Locale::Initialize();
 
 // catching up assertion failures
 assert_options(ASSERT_ACTIVE, 1);

@@ -23,13 +23,21 @@ class Atk14Locale{
 	/**
 	 * Initializes locale
 	 *
+	 * <code>
 	 * $new_lang = "cs";
 	 * $prev_lang = Atk14Locale::Initialize($new_lang);
+	 *
+	 * // or just...
+	 * Atk14Locale::Initialize();
+	 * </code>
 	 */
-	static function Initialize(&$lang){
+	static function Initialize(&$lang = null){
 		global $ATK14_GLOBAL;
 
 		$lang = (string)$lang; // $lang may be a object or something... :)
+		if(!$lang){
+			$lang = $ATK14_GLOBAL->getDefaultLang();
+		}
 
 		$previous_lang = $ATK14_GLOBAL->getLang();
 
