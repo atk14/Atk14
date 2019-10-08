@@ -263,7 +263,7 @@ class Field
 			$widget->attrs = forms_array_merge($widget->attrs, $extra_attrs);
 		}
 
-		// this automatically adds placeholder and required to the attributes
+		// this automatically adds required to the attributes
 		if(is_subclass_of($widget,"Input")){
 			$_attr_keys = array_keys($widget->attrs);
 			if($this->required && !in_array("required",$_attr_keys)){
