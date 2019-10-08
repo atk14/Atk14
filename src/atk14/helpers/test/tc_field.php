@@ -22,5 +22,6 @@ class TcField extends TcBase {
 
 		$this->assertEquals('<input maxlength="50" required="required" type="text" name="name" class="text form-control" id="id_name" value="John Doe" />',smarty_modifier_field($form,"name"));
 		$this->assertEquals('<input maxlength="50" required="required" placeholder="Enter your name" type="text" name="name" class="text form-control" id="id_name" value="John Doe" />',smarty_modifier_field($form,"name","label_to_placeholder"));
+		$this->assertEquals('<input maxlength="50" required="required" type="text" name="name" class="text form-control" id="id_name" value="John Doe" />',smarty_modifier_field($form,"name"));
 	}
 }
