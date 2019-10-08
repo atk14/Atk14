@@ -113,7 +113,6 @@ class BoundField {
 		$this->help_text = $field->help_text;
 		$this->hint = $field->hint;
 		$this->hints = $field->hints;
-		$this->hint_in_placeholder = $field->hint_in_placeholder;
 		$this->required = $this->field->required;
 		$this->disabled = $this->field->disabled;
 	}
