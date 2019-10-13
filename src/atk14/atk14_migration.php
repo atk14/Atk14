@@ -112,15 +112,17 @@ class Atk14Migration{
 	 * @return boolean
 	 */
 	static function SchemaMigrationsTableExists($dbmole){
+		$bind_ar = array();
 		switch($dbmole->getDatabaseType()){
 			case "postgresql":
-				$query = "SELECT COUNT(*) FROM pg_tables WHERE LOWER(tablename)='schema_migrations'";
+				$query = "SELECT COUNT(*) FROM pg_tables WHERE LOWER(tablename)='schema_migrations' AND schemaname=:schema";
+				$bind_ar[":schema"] = self::GetDatabaseSchema($dbmole);
 				break;
 			case "mysql":
 				$query = "SELECT COUNT(*) FROM information_schema.tables WHERE LOWER(table_name)='schema_migrations' LIMIT 1";
 				break;
 		}
-		return 1==$dbmole->selectInt($query);
+		return 1==$dbmole->selectInt($query,$bind_ar);
 	}
 
 	/**
@@ -134,6 +136,27 @@ class Atk14Migration{
 			version VARCHAR(255) PRIMARY KEY,
 			created_at TIMESTAMP NOT NULL DEFAULT NOW()
 		)");
+	}
+
+	/**
+	 * Detects current database schema
+	 *
+	 *	echo Atk14Migration::GetDatabaseSchema($dbmole); // e.g. "public"
+	 */
+	static function GetDatabaseSchema($dbmole){
+		switch($dbmole->getDatabaseType()){
+			case "postgresql":
+				$search_path = $dbmole->selectSingleValue("SHOW search_path"); // '"$user",public'
+				$search_path = preg_replace('/\s+/','',$search_path); // '"$user", public' -> '"$user",public'
+				$schemas = explode(",",$search_path);
+				$schemas = array_diff($schemas,array('"$user"'));
+				$schemas = array_values($schemas);
+				if($schemas){ return $schemas[0]; }
+				break;
+			case "mysql":
+				return $dbmole->selectSingleValue("SELECT DATABASE()");
+				break;
+		}
 	}
 }
 

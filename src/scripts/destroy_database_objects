@@ -34,16 +34,16 @@ if(PRODUCTION && !ATK14_ENABLE_DESTROY_DATABASE_OBJECTS_IN_PRODUCTION){
 
 $previewing = isset($arguments["p"]) || isset($arguments["preview"]);
 $dbname = $dbmole->getDatabaseName();
-$schema = "public";
+$schema = Atk14Migration::GetDatabaseSchema($dbmole);
 
 if(!$previewing){
 
 	if(PRODUCTION){
 		echo "ATTENTION!!! You are on PRODUCTION!\n";
-		echo "Shall I wipe out all objects in the database $dbname?\n";
+		echo "Shall I wipe out all objects in the database $dbname in the schema $schema?\n";
 		echo "If you are sure, answer PLEASE_DO_SO > ";
 	}else{
-		echo "Shall I wipe out all objects in the database $dbname?\n";
+		echo "Shall I wipe out all objects in the database $dbname in the schema $schema?\n";
 		echo "Hit y, if so > ";
 	}
 
