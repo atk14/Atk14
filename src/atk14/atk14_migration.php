@@ -143,7 +143,8 @@ class Atk14Migration{
 	 *
 	 *	echo Atk14Migration::GetDatabaseSchema($dbmole); // e.g. "public"
 	 */
-	static function GetDatabaseSchema($dbmole){
+	static function GetDatabaseSchema($dbmole = null){
+		if(!$dbmole){ $dbmole = $GLOBALS["dbmole"]; }
 		switch($dbmole->getDatabaseType()){
 			case "postgresql":
 				$search_path = $dbmole->selectSingleValue("SHOW search_path"); // '"$user",public'
@@ -155,6 +156,27 @@ class Atk14Migration{
 				break;
 			case "mysql":
 				return $dbmole->selectSingleValue("SELECT DATABASE()");
+				break;
+		}
+	}
+
+	/**
+	 * Sets the default database schema
+	 *
+	 *	Atk14Migration::SetDatabaseSchema("application");
+	 *	Atk14Migration::SetDatabaseSchema("application",$dbmole);
+	 */
+	static function SetDatabaseSchema($schema,$dbmole = null){
+		if(!$dbmole){ $dbmole = $GLOBALS["dbmole"]; }
+		switch($dbmole->getDatabaseType()){
+			case "postgresql":
+				if(!preg_match('/^[a-z][a-z0-9_]{0,62}$/i',$schema)){
+					throw new Exception("Invalid schema name");
+				}
+				$dbmole->doQuery("SET search_path TO $schema");
+				break;
+			case "mysql":
+				throw new Exception("There are no schemas in mysql"); // TODO: really? :)
 				break;
 		}
 	}
