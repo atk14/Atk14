@@ -7,10 +7,24 @@
  *	$ ./scripts/migrations --help
  */
 
-$arguments = getopt("hpfl",array("help","preview","force","list"));
 $script = $argv[0];
+$arguments = getopt("hpfls::",array("help","preview","force","list","schema::"));
+$arguments += array(
+	"h" => null,
+	"p" => null,
+	"f" => null,
+	"l" => null,
+	"s" => null,
+);
+$arguments += array(
+	"help" => $arguments["h"],
+	"preview" => $arguments["p"],
+	"force" => $arguments["f"],
+	"list" => $arguments["l"],
+	"schema" => $arguments["s"],
+);
 
-if(isset($arguments["h"]) || isset($arguments["help"])){
+if(isset($arguments["help"])){
 echo ltrim("
 Do pending migrations
 Load and process *.sql or *.php files from the migration folder (db/migrations/).
@@ -56,6 +70,15 @@ exit(0);
 define("TABLERECORD_CACHES_STRUCTURES",0); // do not read cached structures during migration
 require_once(dirname(__FILE__)."/load.php");
 
+if(strlen($arguments["schema"])){
+	try{
+		Atk14Migration::SetDatabaseSchema($arguments["schema"],$dbmole);
+	}catch(Exception $e){
+		echo "Error: ",$e->getMessage(),"\n";
+		exit(1);
+	}
+}
+
 // loads application_migration.php
 if(file_exists($_f = $ATK14_GLOBAL->getMigrationsPath()."/application_migration.php")){
 	require_once($_f);
@@ -63,8 +86,8 @@ if(file_exists($_f = $ATK14_GLOBAL->getMigrationsPath()."/application_migration.
 
 $logger = Atk14Migration::GetLogger();
 
-$previewing = isset($arguments["p"]) || isset($arguments["preview"]);
-$listing = isset($arguments["l"]) || isset($arguments["list"]);
+$previewing = isset($arguments["preview"]);
+$listing = isset($arguments["list"]);
 
 if($listing){
 	// We need to have records, that have NULLs in created_at, at the beginning of the list.
@@ -157,7 +180,8 @@ foreach($migrations as $m){
 		$_forcing = $forcing ? " -f" : "";
 		$_env = $ATK14_GLOBAL->getEnvironment();
 		$_migration = escapeshellarg($m);
-		$command = "ATK14_ENV=$_env $script$_forcing $_migration";
+		$_schema = strlen($arguments["schema"]) ? " --schema=".escapeshellarg($arguments["schema"]) : "";
+		$command = "ATK14_ENV=$_env $script$_forcing$_schema $_migration";
 		passthru($command,$ret_val);
 		if($ret_val!==0){
 			exit($ret_val);
