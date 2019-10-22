@@ -392,6 +392,22 @@ class HTTPResponse{
 	}
 
 	/**
+	 * Bulk HTTP header assignment
+	 *
+	 * ```
+	 * $response->setHeader([
+	 *   "X-Powered-By" => "ATK14 Framework",
+	 *   "X-Content-Type-Options" => "nosniff",
+	 * ]);
+	 * ```
+	 */
+	function setHeaders($headers){
+		foreach($headers as $name => $value){
+			$this->setHeader($name,$value);
+		}
+	}
+
+	/**
 	 * Returns value of the given HTTP header previously set in this response
 	 *
 	 * Returns null when there is no such header

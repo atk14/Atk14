@@ -96,6 +96,14 @@ class tc_http_response extends tc_base{
 		$this->assertEquals("789",$response->getHeader("X-USER-ID"));
 		$this->assertEquals("789",$response->getHeader("X-User-Id"));
 		$this->assertEquals("789",$response->getHeader("x-user-id"));
+
+		$response->setHeaders(array(
+			"X-User-Id" => "333",
+			"X-Powered-By" => "ATK14 Framework",
+		));
+
+		$this->assertEquals("333",$response->getHeader("X-User-Id"));
+		$this->assertEquals("ATK14 Framework",$response->getHeader("X-Powered-By"));
 	}
 
 	function test_cookies(){
