@@ -127,6 +127,7 @@ __defaults__(array(
 
 __defaults__(array(
 	"FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4" => USING_BOOTSTRAP4,
+	"FORMS_AUTOMATICALLY_MOVE_HINTS_TO_PLACEHOLDERS" => false, // In some cases on some kinds of fields specific hints can be automatically moved into placeholders. This was standard behavior in older versions of the ATK14 Framework.
 ));
 
 function __defaults__($defaults){

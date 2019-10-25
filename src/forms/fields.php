@@ -266,6 +266,12 @@ class Field
 		// this automatically adds required to the attributes
 		if(is_subclass_of($widget,"Input")){
 			$_attr_keys = array_keys($widget->attrs);
+			if(defined("FORMS_AUTOMATICALLY_MOVE_HINTS_TO_PLACEHOLDERS") && FORMS_AUTOMATICALLY_MOVE_HINTS_TO_PLACEHOLDERS && sizeof($this->hints)==1 && !preg_match('/</',$this->hints[0])/* no-html */ && !in_array("placeholder",$_attr_keys)){
+				// This was standard behavior in older versions of the ATK14 Framework.
+				$widget->attrs["placeholder"] = $this->hints[0];
+				$this->hint = '';
+				$this->hints = array();
+			}
 			if($this->required && !in_array("required",$_attr_keys)){
 				$widget->attrs["required"] = "required";
 			}
