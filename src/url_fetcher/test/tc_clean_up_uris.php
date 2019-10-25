@@ -5,6 +5,7 @@ class TcCleanUpUris extends TcBase {
 		foreach(array(
 			"http://www.atk14.net/" 												=> "/",
 			"http://www.atk14.net/./././" 									=> "/",
+			"http://www.atk14.net/a/b/./" 									=> "/a/b/",
 			"http://www.atk14.net/doc/././00-intro.md" 			=> "/doc/00-intro.md",
 			"http://www.atk14.net/././." 										=> "/.",
 			"http://www.atk14.net/../" 											=> "/",
