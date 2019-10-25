@@ -685,7 +685,7 @@ class UrlFetcher {
 		if(preg_match('/^(.*?)(\?.*|)$/',$uri,$matches)){
 			$file = $matches[1];
 			$query_string = $matches[2];
-			$file = preg_replace('/(\/.){1,}\//','/',$file); // "/././file.dat" -> "/file.dat"
+			$file = preg_replace('/(\/\.){1,}\//','/',$file); // "/././file.dat" -> "/file.dat"
 			$file = preg_replace('/^(\/+\.\.){1,}\//','/',$file); // "/../about/" -> "/about/"
 			while(1){
 				$_file = preg_replace('/\/([^\/]+\/+\.\.)\//','/',$file); // "/about/../" -> "/"
