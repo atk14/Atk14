@@ -51,6 +51,13 @@ To display already executed migrations:
  $ $script -l
  $ $script --list
 
+To perform any of described operations in a specific database schema:
+
+ $ $script -sschema_name
+ $ $script --schema=schema_name
+
+Note that the default schema in Postgresql is public.
+
 You can run migrate script in different environments:
  $ ATK14_ENV=development $script -p
  $ ATK14_ENV=production $script -p
