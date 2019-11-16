@@ -300,13 +300,17 @@ class Atk14Global{
 	}
 
 	/**
-	 * Loads and returns configuration from conf/$config_name.yml
+	 * Loads and returns configuration from config/$config_name.yml or config/$config_name.json
+	 *
+	 * If the given config file exists in the directory local_config/ it will be used instead of the one located in the directory config/.
 	 *
 	 * Returns null when there is no such configuration file
 	 *
 	 * Example
 	 * ```
 	 * $ATK14_GLOBAL->getConfig("database");
+	 * $ATK14_GLOBAL->getConfig("theme/colors");
+	 * $ATK14_GLOBAL->getConfig("theme/colors.json");
 	 * ```
 	 *
 	 * @param string $config_name
@@ -325,11 +329,28 @@ class Atk14Global{
 			$this->getApplicationPath()."conf/", // legacy path, TODO: to be removed
 		);
 
+		$suffixes = array("",".yml",".json");
+
+		$filename = "";
 		foreach($paths as $path){
-			if(file_exists($_f = $path."$config_name.yml")){
-				$STORE[$config_name] = miniYAML::Load(Files::GetFileContent($_f),array("interpret_php" => true));
-				break;
+			foreach($suffixes as $suffix){
+				if(file_exists($_f = "$path$config_name$suffix")){
+					$filename = $_f;
+					break 2;
+				}
 			}
+		}
+
+		if($filename){
+			if(preg_match('/\.yml$/i',$filename)){
+				$_config = miniYAML::Load(Files::GetFileContent($filename),array("interpret_php" => true));
+			}elseif(preg_match('/\.json$/i',$filename)){
+				$_config = json_decode(Files::GetFileContent($filename),true);
+			}
+			if(is_null($_config)){
+				throw new Exception("Atk14Global::getConfig(\"$config_name\"): Unable to load config from $filename");
+			}
+			$STORE[$config_name] = $_config;
 		}
 
 		return $STORE[$config_name];
