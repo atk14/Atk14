@@ -43,6 +43,7 @@ class TcGlobal extends TcBase{
 		// jsons
 		$this->assertEquals(array("red" => "#ff0000", "blue" => "#0000ff", "green" => "#00ff00"),$global->getConfig("colors"));
 		$this->assertEquals(array("red" => "#ff0000", "blue" => "#0000ff", "green" => "#00ff00"),$global->getConfig("colors.json"));
+		$this->assertEquals(array(),$global->getConfig("empty_array"));
 
 		// subfolders
 		$this->assertEquals(array(0,1.25,2.5),$global->getConfig("theme/spacers"));
