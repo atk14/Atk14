@@ -68,7 +68,7 @@ foreach(array(
 
 // global variable $dbmole holds database connection
 $__db_config__ = $ATK14_GLOBAL->getDatabaseConfig();
-$dbmole = DbMole::GetInstance("default",$__db_config__["adapter"]); // $dbmole = DbMole::GetInstance("default","postgresql");
+$dbmole = DbMole::GetInstance("default",is_array($__db_config__) ? $__db_config__["adapter"] : array()); // $dbmole = DbMole::GetInstance("default","postgresql");
 unset($__db_config__);
 
 function &dbmole_connection(&$dbmole){
