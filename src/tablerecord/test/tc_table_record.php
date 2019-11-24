@@ -893,6 +893,17 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals("2016-07-19 15:17:00",$a2->getCreatedAt());
 	}
 
+	function test__determineSequenceName(){
+		$article = new Article();
+		$this->assertEquals("seq_articles",$article->getSequenceName());
+
+		$author = new AuthorWithSchema("public.authors");
+		$this->assertEquals("public.seq_authors",$author->getSequenceName());
+
+		$tt = new TestTable();
+		$this->assertEquals("test_table_id_seq",$tt->getSequenceName());
+	}
+
 	function _test_fall($recs){
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals("Fall",$recs[0]->getTitle());

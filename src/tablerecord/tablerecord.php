@@ -156,7 +156,7 @@ class TableRecord extends inobj {
 		$this->_TableName = $options["table_name"];
 
 		if(is_null($options["sequence_name"])){
-			$options["sequence_name"] = $this->_DetermineSequenceName();
+			$options["sequence_name"] = $this->_determineSequenceName();
 		}
 		$this->_SequenceName = $options["sequence_name"];
 		self::$_DoNotReadValues = $options["do_not_read_values"];
@@ -491,8 +491,8 @@ class TableRecord extends inobj {
 	 *
 	 * @access private
 	 */
-	function _DetermineSequenceName(){
-		return sprintf('seq_%s',$this->getTableName());
+	function _determineSequenceName(){
+		return preg_replace('/^(.*\.|)(.*?)$/','\1seq_\2',$this->getTableName()); // "articles" -> "seq_articles", "public.articles" -> "public.seq_articles"
 	}
 
 	/**
