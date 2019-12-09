@@ -1507,7 +1507,7 @@ class TableRecord extends inobj {
 	 * @ignore
 	 */
 	final function __toString(){
-		return $this->toString();
+		return (string)$this->toString();
 	}
 
 	/**
