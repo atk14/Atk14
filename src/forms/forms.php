@@ -2,8 +2,6 @@
 /**
  * Formulare.
  *
- * @package Atk14
- * @subpackage Forms
  * @filesource
  *
  */
@@ -29,6 +27,11 @@ class JsFormValidator{
 	 */
 	var $validators = array();
 
+	/**
+	 * Constructor
+	 *
+	 * @param Form $form
+	 */
 	function __construct(&$form){
 		$this->validators = array();
 		$this->_fields_html_names = array();
@@ -83,8 +86,7 @@ class JsFormValidator{
 /**
  * Bound field je trida pro formularove pole (field), do ktereho jsou nalite data.
  *
- * @package Atk14
- * @subpackage InternalLibraries
+ * @package Atk14\InternalLibraries
  */
 class BoundField {
 	/**
@@ -194,10 +196,17 @@ class BoundField {
 	}
 
 	/**
-	* Vrati pole jako <textarea></textarea>.
-	*/
-	function as_textarea($attrs=null)
-	{
+	 * Renders input as textarea type.
+	 *
+	 * Basically the output will be
+	 * ```
+	 * <textarea></textarea>
+	 * ```
+	 *
+	 * @param array $attrs additional attributes that will be added to `<textarea/>` attributes
+	 * @return string
+	 */
+	function as_textarea($attrs=null) {
 		return $this->as_widget(array(
 			'widget' => new TextArea(),
 			'attrs' => $attrs
@@ -205,10 +214,17 @@ class BoundField {
 	}
 
 	/**
-	* Vrati pole jako <input type="hidden" />.
-	*/
-	function as_hidden($attrs=null)
-	{
+	 * Renders field as input of hidden type.
+	 *
+	 * Output will look similar to this
+	 * ```
+	 * <input type="hidden" />
+	 * ```
+	 *
+	 * @param array $attrs additional attributes that will be added to `<textarea/>` attributes
+	 * @return string
+	 */
+	function as_hidden($attrs=null) {
 		return $this->as_widget(array(
 			'widget' => $this->field->hidden_widget,
 			'attrs' => $attrs
@@ -227,19 +243,29 @@ class BoundField {
 	}
 
 	/**
-	* Pokud ma field definovan atribut 'id', obali se zadany 
-	* 'contents' v tagu <label> (na content se nevola htmlspecialchars).
-	* Pokud 'content' zadan neni, pouzije se hodnota z $field->label
-	* (escapeovana s pomoci htmlspecialchars).
-	*
-	* Pokud jsou v $options definovany atributy 'attrs', nalijou se
-	* do tagu <label>.
-	*/
-	function label_tag($options=array())
-	{
+	 * Returns label tag for the input field
+	 *
+	 * In case the input does not have assigned id the label is rendered as plain text, without the label element.
+	 * `attrs` options is ignored.
+	 * Otherwise the label wrapped in ```<label/>``` element.
+	 *
+	 * As a content of the tag is used the label of the input (or value of the `label` option of the {@link Field}.
+	 * Default label is escaped with `htmlspecialchars` function.
+	 *
+	 * With this method the content can be overridden with option `contents`.
+	 * Custom content is not escaped.
+	 *
+	 * When option 'attrs' is passed it will be used as attributes of the tag.
+	 *
+	 * @param array $options
+	 * - **contents** custom content of the label
+	 * - **attrs** array additional attributes for the `<label/>` tag
+	 * @return string
+	 */
+	function label_tag($options=array()) {
 		$options = forms_array_merge(
 			array(
-				'contents' => null, 
+				'contents' => null,
 				'attrs'  => null
 			),
 			$options
@@ -342,8 +368,7 @@ class BoundField {
  * You should use the class {@link Atk14Form} instead of this class in an application.
  *
  * @todo Write about creating and using forms
- * @package Atk14
- * @subpackage Forms
+ * @package Atk14\Forms
  */
 class Form implements ArrayAccess
 {
@@ -419,11 +444,13 @@ class Form implements ArrayAccess
 	var $errors = null;
 
 	/**
+	 * Constructor
 	 *
 	 * @param array $options
-	 * - prefix [default null]
-	 * - label_suffix [default ':']
-	 * - auto_id affects generation of 'id' attribute of nested inputs [default: 'id_%s']
+	 * - **call_set_up** whether to call forms set_up() method after initialization [default: true]
+	 * - **prefix** [default null]
+	 * - **label_suffix** string to separate fields label and input [default ':']
+	 * - **auto\_id** affects generation of 'id' attribute of nested inputs [default: 'id_%s']
 	 * 	- false - inputs will not have 'id' attribute. Nor label attributes will be generated.
 	 * 	- true - attribute id will be generated and it will equal to the name attribute
 	 * 	- string
@@ -493,7 +520,7 @@ class Form implements ArrayAccess
 	}
 
 	/**
-	 * Initialization method.
+	 * Dummy initialization method.
 	 *
 	 * This abstract method is used in descendants to setup an instance of a form and to define its fields.
 	 *
@@ -632,7 +659,7 @@ class Form implements ArrayAccess
 	 * }
 	 * ```
 	 *
-	 * @param string $name
+	 * @param string $field_name
 	 * @return bool true if there is an error on specified field.
 	 */
 	function error_on($field_name) {
@@ -914,6 +941,11 @@ class Form implements ArrayAccess
 		return array(null, $this->cleaned_data);
 	}
 
+	/**
+	 * Creates and returns specialized class for validating forms with browsers javascript interpreter.
+	 *
+	 * @return JsFormValidator
+	 */
 	function js_validator(){
 		return new JsFormValidator($this);
 	}

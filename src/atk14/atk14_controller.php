@@ -2,18 +2,13 @@
 /**
  * Base class for controllers.
  *
- * @package Atk14
- * @subpackage Core
- * @author Jaromir Tomek
  * @filesource
- *
  */
 
 /**
  * Base class for controllers.
  *
- * @package Atk14
- * @subpackage Core
+ * @package Atk14\Core
  * @author Jaromir Tomek
  *
  */
@@ -320,7 +315,13 @@ class Atk14Controller{
 	var $dbmole = null;
 
 	/**
-	 * @access private
+	 * Controller initialization
+	 *
+	 * Do not use directly, this is an internal method used by {@link Atk14Dispatcher}
+	 *
+	 * @param array $options
+	 * - request HttpRequest
+	 * - params
 	 */
 	function atk14__initialize($options = array()){
 		global $ATK14_GLOBAL;
@@ -449,7 +450,7 @@ class Atk14Controller{
 	}
 
 	/**
-	 * Render error page for internal server error.
+	 * Action rendering page for internal server error.
 	 *
 	 * Render page with error message and sets HTTP status code 500.
 	 */
@@ -458,6 +459,11 @@ class Atk14Controller{
 		$this->render_template = false;
 	}
 
+	/**
+	 * Action rendering 503 status page.
+	 *
+	 * Render page with error message and sets HTTP status code 503.
+	 */
 	function error503(){
 		$this->response->setStatusCode(503);
 		$this->response->write("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">
@@ -1158,7 +1164,7 @@ class Atk14Controller{
 	 * @access protected
 	 *
 	 * @uses HTTPResponse::setLocation()
-	 *
+	 * @return string
 	 */
 	function _redirect_to($params = array(),$options = array()){
 		$options = array_merge(array(
@@ -1182,9 +1188,9 @@ class Atk14Controller{
 	 *
 	 * Examples:
 	 * ```
-	 *	$this->_redirect_to_action("overview");
-	 *	$this->_redirect_to_action("overview",array("offset" => 10));
-	 *	$this->_redirect_to_action("overview",array("offset" => 10),array("moved_permanently" => true));
+	 * $this->_redirect_to_action("overview");
+	 * $this->_redirect_to_action("overview",array("offset" => 10));
+	 * $this->_redirect_to_action("overview",array("offset" => 10),array("moved_permanently" => true));
 	 * ```
 	 * @param string $action
 	 * @param array $other_params parameters to build url query part
@@ -1206,11 +1212,14 @@ class Atk14Controller{
 	 * Typical usage in _before_filter() (or yet better in _application_before_filter())
 	 *
 	 * ```
-	 *	if(!$this->request->ssl()){
-	 *		$this->_redirect_to_ssl();
-	 *		return;
-	 *	} 
+	 * if(!$this->request->ssl()){
+	 * 	$this->_redirect_to_ssl();
+	 * 	return;
+	 * }
 	 * ```
+	 * @param array $options
+	 * - **moved_permanently** sets 301 http status code
+	 * @return string
 	 */
 	function _redirect_to_ssl($options = array()){
 		$options += array(
@@ -1232,6 +1241,7 @@ class Atk14Controller{
 	 *		return;
 	 *	} 
 	 * ```
+	 * @return string
 	 */
 	function _redirect_to_no_ssl(){
 		$this->_redirect_to($url = "http://".$this->request->getHTTPHost().$this->request->getRequestURI());
@@ -1265,9 +1275,9 @@ class Atk14Controller{
 	 *	);
 	 * ```
 	 *
-	 * 	@param array $steps Array with identifiers for each step.
-	 * 	@param array $options Extra options
-	 * 	@access protected
+	 * @param array $steps Array with identifiers for each step.
+	 * @param array $options Extra options
+	 * @access protected
 	 */
 	function _walk($steps,$options = array()){
 		$options = array_merge(array(

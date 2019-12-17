@@ -23,6 +23,8 @@ class HTTPXFile extends HTTPUploadedFile{
 	var $_Request;
 
 	/**
+	 * Constructor
+	 *
 	 * @param array $options
 	 * - request HTTPRequest
 	 */
@@ -49,6 +51,9 @@ class HTTPXFile extends HTTPUploadedFile{
 		}
 	}
 
+	/**
+	 * Destructor
+	 */
 	function __destruct(){
 		$this->_autoCleanUp();
 	}
@@ -231,7 +236,6 @@ class HTTPXFile extends HTTPUploadedFile{
 	 * Write file to temporary place
 	 *
 	 * @param string $content data to write
-	 * @ignore
 	 */
 	private function _writeTmpFile($content){
 		if($this->_TmpFileName){ return; }
@@ -239,11 +243,13 @@ class HTTPXFile extends HTTPUploadedFile{
 		Files::WriteToFile($this->_TmpFileName,$content,$err,$err_str);
 	}
 
+	/**
+	 * Method for cleanup
+	 */
 	private function _autoCleanUp(){
 		if($this->_TestingMode){ return; } // no auto file deletion in the testing mode
 		if(!$this->_FileMoved && ($tmp_file = $this->getTmpFileName()) && file_exists($tmp_file)){
 			Files::Unlink($tmp_file,$err,$err_str);
 		}
 	}
-
 }

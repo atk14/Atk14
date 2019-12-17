@@ -30,7 +30,7 @@ class Atk14Utils{
 	 * echo Atk14Utils::DetermineEnvironment(); // "PRODUCTION", "DEVELOPMENT" or "TEST"
 	 * ```
 	 *
-	 * @return string
+	 * @return string can be one of "PRODUCTION", "DEVELOPMENT", "TEST"
 	 */
 	static function DetermineEnvironment(){
 		global $HTTP_REQUEST;
@@ -80,8 +80,8 @@ class Atk14Utils{
 	/**
 	 * Load all config files.
 	 *
-	 * Loads all config files (*.inc) in directory $ATK14_GLOBAL->getApplicationPath()/../config/
-	 * Also tries to use formerly prefered directory $ATK14_GLOBAL->getApplicationPath()/conf
+	 * Loads all config files (*.inc) in directory `$ATK14_GLOBAL->getApplicationPath()/../config/`
+	 * Also tries to use formerly prefered directory `$ATK14_GLOBAL->getApplicationPath()/conf`
 	 *
 	 */
 	static function LoadConfig(){
@@ -330,9 +330,9 @@ class Atk14Utils{
 	 *
 	 * @param string $template_dir
 	 * @param array $options
-	 * - <b>controller_name</b>
-	 * - namespace
-	 * - compile_id_salt
+	 * - **controller_name**
+	 * - **namespace**
+	 * - **compile_id_salt**
 	 *
 	 * @return Smarty instance of Smarty
 	 */
@@ -418,7 +418,7 @@ class Atk14Utils{
 	 *
 	 * Example
 	 * ```
-	 *	Atk14Utils::ErrorLog("chybi sablona _item.tpl",$http_response);
+	 *	Atk14Utils::ErrorLog("Template _item.tpl not found",$http_response);
 	 * ```
 	 *
 	 * @param string $message
@@ -456,9 +456,12 @@ class Atk14Utils{
 	 *
 	 * Result of this call
 	 * ```
-	 *	Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d"));
+	 * Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d"));
 	 * ```
-	 * will be array("a","b","c","d")
+	 * will be
+	 * ```
+	 * array("a","b","c","d")
+	 * ```
 	 *
 	 * @return array joined arrays
 	 */
@@ -567,11 +570,20 @@ class Atk14Utils{
 	 *
 	 * ```
 	 * $book = Book::FindById(5);
-	 * echo Atk14Utils::ToScalar($book); // 5
-	 *
-	 * echo Atk14Utils::ToScalar(123); // 123
-	 * echo Atk14Utils::ToScalar("Text"); // "Text"
+	 * echo Atk14Utils::ToScalar($book);
 	 * ```
+	 * Outputs `5`
+	 *
+	 * ```
+	 * echo Atk14Utils::ToScalar(123);
+	 * ```
+	 * Outputs `123`
+	 * ```
+	 * echo Atk14Utils::ToScalar("Text");
+	 * ```
+	 * Outputs `"Text"`
+	 *
+	 * @param mixed $var
 	 */
 	static function ToScalar($var){
 		if(is_scalar($var) || is_null($var)){
@@ -605,7 +617,7 @@ class Atk14Utils{
  * it loads some/path/file.php or some/path/file.inc
  *
  * @param string $file
- */ 
+ */
 function atk14_require_once($file){
 	($_file = atk14_find_file($file)) || ($_file = $file);
 	return require_once($_file);

@@ -2,17 +2,13 @@
 /**
  * Class for storing of application globals & settings.
  *
- * @package Atk14
- * @subpackage Core
  * @filesource
  */
 
 /**
  * Class for storing of globals.
  *
- * @package Atk14
- * @subpackage Core
- * @filesource
+ * @package Atk14\Core
  *
  */
 class Atk14Global{
@@ -20,7 +16,6 @@ class Atk14Global{
 	 * Array to store values.
 	 *
 	 * @var array
-	 * @ignore
 	 */
 	private $_Store = array();
 
@@ -286,6 +281,14 @@ class Atk14Global{
 		return $d;
 	}
 
+	/**
+	 * Replaces values with placeholders.
+	 *
+	 * @note Author please explain this method.
+	 * @param string|array $value accepts a string or can also replace strings in array of strings
+	 * @param array $replaces
+	 * @return string
+	 */
 	protected function _replace($value,$replaces){
 		if(!$replaces){ return $value; }
 		if(is_null($value)){ return null; }

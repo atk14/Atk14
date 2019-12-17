@@ -2,7 +2,6 @@
 /**
  * Class for sorting records
  *
- * @package Atk14\Core
  * @filesource
  */
 
@@ -50,6 +49,7 @@
  * $sorting["title"] = "UPPER(name)";
  * $sorting["year"] = array("year ASC, id ASC", "year DESC, id DESC");
  * ```
+ * @package Atk14\Core
  */
 class Atk14Sorting implements ArrayAccess, IteratorAggregate {
 

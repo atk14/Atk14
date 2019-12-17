@@ -1,6 +1,8 @@
 <?php
-// Source of this transformation table is https://github.com/jbroadway/urlify/blob/master/URLify.php on revision 68e3dd9 - some native speaker kazakh improvement.
-// Thank you guys!
+/**
+ * Source of this transformation table is https://github.com/jbroadway/urlify/blob/master/URLify.php on revision 68e3dd9 - some native speaker kazakh improvement.
+ * Thank you guys!
+ */
 $tr_table = array(
 		//'de' => array ( /* German */
 			'Ä' => 'Ae', 'Ö' => 'Oe', 'Ü' => 'Ue', 'ä' => 'ae', 'ö' => 'oe', 'ü' => 'ue', 'ß' => 'ss',
