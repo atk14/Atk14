@@ -57,6 +57,10 @@ class tc_dbmole extends tc_base{
 			":title_1" => "'test2'",
 			":title_t" => "'test3'",
 		),$dbmole->getBindAr());
+
+		$dbmole->doQuery("INSERT INTO test_table (id,title) VALUES(:b1,:b11)",array(":b1" => 111, ":b11" => "Confusing title :b1 :b11 :b111"));
+		$title = $dbmole->selectSingleValue("SELECT title FROM test_table WHERE id=111");
+		$this->assertEquals("Confusing title :b1 :b11 :b111",$title);
 	}
 
 	function test_invalid_bind_ar(){
