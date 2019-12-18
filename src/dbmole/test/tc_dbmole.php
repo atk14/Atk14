@@ -57,9 +57,24 @@ class tc_dbmole extends tc_base{
 			":title_1" => "'test2'",
 			":title_t" => "'test3'",
 		),$dbmole->getBindAr());
+	}
 
-		$dbmole->doQuery("INSERT INTO test_table (id,title) VALUES(:b1,:b11)",array(":b1" => 111, ":b11" => "Confusing title :b1 :b11 :b111"));
+	function test_similar_binding_values(){
+		$dbmole = $this->pg;
+
+		$dbmole->doQuery("INSERT INTO test_table (id,title) VALUES(:a1,:a11)",array(
+			":a1" => 111,
+			":a11" => "Confusing title :a1 :a11 :a111",
+		));
 		$title = $dbmole->selectSingleValue("SELECT title FROM test_table WHERE id=111");
+		$this->assertEquals("Confusing title :a1 :a11 :a111",$title);
+
+		// same test with reversed values in in bind_ar
+		$dbmole->doQuery("INSERT INTO test_table (id,title) VALUES(:b1,:b11)",array(
+			":b11" => "Confusing title :b1 :b11 :b111",
+			":b1" => 222,
+		));
+		$title = $dbmole->selectSingleValue("SELECT title FROM test_table WHERE id=222");
 		$this->assertEquals("Confusing title :b1 :b11 :b111",$title);
 	}
 
