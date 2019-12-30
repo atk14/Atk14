@@ -452,8 +452,6 @@ class Files{
 		$error = false;
 		$error_str = "";
 
-		$out = "";
-		
 		settype($filename,"string");
 
 		if(!is_file($filename)){
@@ -469,7 +467,7 @@ class Files{
 		if(!$f){
 			$error = false;
 			$error_str = "can't open file $filename for writing";
-			return $out;
+			return null;
 		}
 		$out = fread($f,$filesize);
 		fclose($f);

@@ -7,11 +7,12 @@ class TcFiles extends TcBase{
 
 		$content = Files::GetFileContent("empty_file.txt",$err,$err_str);
 		$this->assertFalse($err);
-		$this->assertEquals("",$content);
+		$this->assertTrue($content === "");
 
 		$content = Files::GetFileContent("non_existing_file.txt",$err,$err_str);
 		$this->assertTrue($err);
 		$this->assertEquals("non_existing_file.txt is not a file",$err_str);
+		$this->assertTrue($content === null);
 
 	}
 
