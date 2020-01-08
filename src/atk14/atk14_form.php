@@ -544,6 +544,50 @@ class Atk14Form extends Form
 	}
 
 	/**
+	 * Checks whether any values have been changed in the form compared with its initial state
+	 *
+	 *
+	 * ```
+	 *	if($request->post() && $form->is_valid($params))){
+	 *		if(!$form->changed()){
+	 *			// no changes were done in the form
+	 *			return;
+	 *		}
+	 *		$article->setValues($form->cleaned_data);
+	 *	}
+	 * ```
+	 *
+	 * Returns true or false.
+	 * Returns null if the form has not yet been validated.
+	 */
+	function changed(){
+		if(!isset($this->cleaned_data)){
+			// the form has not been validated
+			return null;
+		}
+
+		$flattenner = function($item) use(&$flattenner){
+			if(is_array($item)){
+				foreach($item as $k => $v){
+					$item[$k] = $flattenner($v);
+				}
+			}
+			if(is_object($item) && method_exists($item,"getId")){
+				$item = $item->getId();
+			}
+			if(is_object($item) && method_exists($item,"__toString")){
+				$item = (string)$item;
+			}
+			return $item;
+		};
+
+		$initials = $flattenner($this->get_initial());
+		$d = $flattenner($this->cleaned_data);
+
+		return $initials!=$d;
+	}
+
+	/**
 	 * @access private
 	 * @ignore
 	 */
