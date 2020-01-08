@@ -245,5 +245,23 @@ class TcForm extends TcBase{
 			"nickname" => "smither",
 		));
 		$this->assertTrue($form->changed() === false);
+
+		$form = new TestForm();
+		$form->set_initial("firstname",new String4("Paul"));
+		$form->validate(array(
+			"firstname" => "Paul",
+			"lastname" => "Smith",
+			"nickname" => "smither",
+		));
+		$this->assertTrue($form->changed() === false);
+
+		$form = new TestForm();
+		$form->set_initial("firstname",new String4("George"));
+		$form->validate(array(
+			"firstname" => "Paul",
+			"lastname" => "Smith",
+			"nickname" => "smither",
+		));
+		$this->assertTrue($form->changed() === true);
 	}
 }
