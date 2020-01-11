@@ -174,6 +174,7 @@ class Atk14Migration{
 					throw new Exception("Invalid schema name");
 				}
 				$dbmole->doQuery("SET search_path TO $schema");
+				TableRecord_DatabaseAccessor_Postgresql::SetDefaultDatabaseSchema($schema);
 				break;
 			case "mysql":
 				throw new Exception("There are no schemas in mysql"); // TODO: really? :)
