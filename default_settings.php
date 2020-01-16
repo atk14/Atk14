@@ -82,6 +82,7 @@ __defaults__(array(
 	"SESSION_STORER_COOKIE_NAME_SESSION" => "%session_name%",
 	"SESSION_STORER_COOKIE_NAME_CHECK" => "check", // set this to empty string for disable sending the testing cookie
 	"SESSION_STORER_INITIALIZE_DATABASE_SESSION_EARLY" => true,
+	"SESSION_STORER_SET_COOKIES_ONLY_ON_SSL_BY_DEFAULT" => false,
 ));
 
 __defaults__(array(

@@ -6,6 +6,7 @@
  * @package Atk\Sessions
  * @filesource
  */
+
 /**
  * Sessions lifetime, count of seconds
  */
@@ -27,6 +28,7 @@ if(!defined("SESSION_STORER_DEFAULT_SECTION")){
 if(!defined("SESSION_STORER_COOKIE_NAME_SESSION")){
 	define("SESSION_STORER_COOKIE_NAME_SESSION","_%session_name%_"); // _ses_
 }
+
 /**
  * Checking cookie name
  *
@@ -53,7 +55,16 @@ if(!defined("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS")){
 	define("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS",false); 
 }
 
-defined("SESSION_STORER_AUTO_GARBAGE_COLLECTION") || define("SESSION_STORER_AUTO_GARBAGE_COLLECTION",true);
+if(!defined("SESSION_STORER_AUTO_GARBAGE_COLLECTION")){
+	define("SESSION_STORER_AUTO_GARBAGE_COLLECTION",true);
+}
+
+/**
+ *
+ */
+if(!defined("SESSION_STORER_SET_COOKIES_ONLY_ON_SSL_BY_DEFAULT")){
+	define("SESSION_STORER_SET_COOKIES_ONLY_ON_SSL_BY_DEFAULT",false);
+}
 
 /**
  * A class for storing and reading values into a session.
@@ -169,7 +180,7 @@ class SessionStorer{
 	 *
 	 * @var boolean
 	 */
-	protected $_SslOnly = false;
+	protected $_SslOnly;
 
 	/**
 	 * Cookie name
@@ -233,7 +244,7 @@ class SessionStorer{
 			"section" => $section,
 
 			"max_lifetime" => null, // for garbage collection
-			"ssl_only" => false,
+			"ssl_only" => SESSION_STORER_SET_COOKIES_ONLY_ON_SSL_BY_DEFAULT,
 			"cookie_name" => SESSION_STORER_COOKIE_NAME_SESSION,
 			"cookie_expiration" => 0,
 
