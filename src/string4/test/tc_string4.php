@@ -167,6 +167,7 @@ class TcString4 extends TcBase{
 			"hello_world" => "HelloWorld",
 			"hello_123" => "Hello123",
 			"a_b_c_d" => "ABCD",
+			"štika" => "Štika",
 		) as $str => $result){
 			$str = new String4($str);
 			$this->assertEquals($result,$out = (string)$str->camelize());
@@ -178,6 +179,9 @@ class TcString4 extends TcBase{
 		$str = String4::ToObject("hello_world");
 		$this->assertEquals("helloWorld",(string)$str->camelize(array("lower" => true)));
 		$this->assertEquals("HelloWorld",(string)$str->camelize());
+
+		$str = String4::ToObject("Štika");
+		$this->assertEquals("štika",(string)$str->camelize(array("lower" => true)));
 	}
 
 	function test_underscore(){

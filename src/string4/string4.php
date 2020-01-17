@@ -493,12 +493,14 @@ class String4{
 		);
 		$out = $this->_copy();
 		$s = &$out->_String4;
-		$s = preg_replace_callback("/_([a-z0-9])/i",function($matches){ return strtoupper($matches[1]); },$this->_String4);
+		$s = preg_replace_callback("/_([a-z0-9])/i",function($matches){ return mb_strtoupper($matches[1]); },$this->_String4);
 
-		if(isset($s[0])){
-			$s[0] = $options["lower"] ? strtolower($s[0]) : strtoupper($s[0]);
+		if(mb_strlen($s)){
+			$first = $out->substr( 0, 1);
+			$first = $options["lower"] ? mb_strtolower($first) : mb_strtoupper($first);
+			$s = $first.$out->substr(1);
 		}
-			
+
 		return $out;
 	}
 
