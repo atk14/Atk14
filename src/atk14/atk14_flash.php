@@ -213,14 +213,28 @@ class Atk14Flash{
 	/**
 	 * Getter for flash messages with other than one of default keys.
 	 *
+	 * ```
+	 * $success = $flash->getMessage("success");
+	 * $notice = $flash->getMessage("notice");
+	 *
+	 * $success = $flash->getMessage("success",["set_read_state" => false]);
+	 * ```
+	 *
 	 * @param string $key
 	 * @return Atk14FlashMessage
 	 */
-	function getMessage($key = null){
+	function getMessage($key = null,$options = array()){
+		$options += array(
+			"set_read_state" => true,
+		);
+
 		$session = $GLOBALS["ATK14_GLOBAL"]->getSession();
 
 		$flash_ar = $session->getValue("__flash__");
-		$this->_FlashRead = true;
+
+		if($options["set_read_state"]){
+			$this->_FlashRead = true;
+		}
 		
 		$out = null;
 
