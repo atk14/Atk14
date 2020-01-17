@@ -88,12 +88,24 @@ class TcString4 extends TcBase{
 		$this->assertEquals("Hello World",(string)$str->replace(array()));
 	}
 
-	function test_sub(){
+	function test_gsub(){
 		$str = new String4("hello");
 		$this->assertEquals("hexxo",(string)$str->gsub("/l/","x"));
 
 		$str = new String4("Hello_World!");
 		$this->assertEquals("Hello World!",(string)$str->gsub("/[^A-Z!]/i"," "));
+
+		$str = new String4("hello");
+		$out = $str->gsub("/^./", function($m) {
+			return mb_strtoupper($m[0]);
+		});
+		$this->assertEquals("Hello", (string)$out);
+
+		$str = new String4("hello");
+		$out = $str->gsub("/[l]/", function($m) {
+			return "X";
+		});
+		$this->assertEquals("heXXo", (string)$out);
 	}
 
 	function test_prepend_and_append(){
@@ -269,6 +281,12 @@ class TcString4 extends TcBase{
 		$this->assertEquals("UTF-8",$s->getEncoding());
 		$this->assertEquals("ŠPINAVÁ ŘEDKVIČKA",(string)$s->upcase());
 		$this->assertEquals("špinavá ředkvička",(string)$s->lower());
+
+		$s = new String4("špinavá ředkvička");
+		$this->assertEquals("Špinavá ředkvička",(string)$s->capitalize());
+
+		$s = new String4("špinavá paní Ředkvička");
+		$this->assertEquals("Špinavá paní Ředkvička",(string)$s->capitalize());
 	}
 
 	function test_toAscii(){
