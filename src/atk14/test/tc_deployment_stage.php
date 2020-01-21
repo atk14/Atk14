@@ -25,6 +25,7 @@ class TcDeploymentStage extends TcBase{
 			"user",
 			"server",
 			"port",
+			"env",
 			"directory",
 			"create_maintenance_file",
 			"deploy_via",

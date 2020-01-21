@@ -60,6 +60,7 @@ class Atk14DeploymentStage{
 			"user" => null,
 			"server" => null,
 			"port" => null, // ssh port, e.g. "2222"
+			"env" => "", // e.g. "PATH=/home/john/bin/:$PATH EDITOR=vim"; environment variable ATK14_ENV=production is set automatically
 			"directory" => null,
 			"create_maintenance_file" => "false",
 			"deploy_via" => "git_push", // there is only one way

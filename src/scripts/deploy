@@ -188,7 +188,9 @@ function _remote_exec($cmd,$options = array()){
 	global $config;
 	$port_spec = $config["port"] ? " -p $config[port]" : "";
 	$user = $config["user"] ? "$config[user]@" : "";
-	$cmd = "ssh $user$config[server]$port_spec \"cd $config[directory] && export ATK14_ENV=production && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
+	$env = "ATK14_ENV=production";
+	$env .= $config["env"] ? " $config[env]" : "";
+	$cmd = "ssh $user$config[server]$port_spec \"cd $config[directory] && export $env && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
 	return _exec($cmd,$options);
 }
 
