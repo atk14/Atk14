@@ -64,7 +64,10 @@ $ssh_options = $ssh_argv ? " ".join(" ",$ssh_argv) : "";
 $user = $s["user"] ? "$s[user]@" : "";
 $cmd = "ssh$ssh_options $user$s[server]";
 
-$_cmd = "cd '$s[directory]' && export ATK14_ENV=production && (".join(" ",$shell_argv).")";
+$env = "ATK14_ENV=production";
+$env .= $s["env"] ? " $s[env]" : "";
+
+$_cmd = "cd '$s[directory]' && export $env && (".join(" ",$shell_argv).")";
 //$_cmd = strtr($_cmd,array(
 //	'"' => '\"',
 //));
