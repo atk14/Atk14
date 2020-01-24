@@ -280,7 +280,7 @@ class String4{
 	 * @return String4 new instance of String4 class with replaced content
 	 */
 	function gsub($pattern,$replace_or_callable){
-		if (is_callable($replace_or_callable)) {
+		if (!is_string($replace_or_callable) && is_callable($replace_or_callable)) {
 			return $this->_copy(preg_replace_callback($pattern,$replace_or_callable,$this->_String4));
 		}
 		return $this->_copy(preg_replace($pattern,$replace_or_callable,$this->_String4));
