@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-07 15:44+0200\n"
+"POT-Creation-Date: 2020-01-30 12:26+0100\n"
 "PO-Revision-Date: 2017-03-31 17:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: ATK14 Development Team\n"
@@ -26,47 +26,47 @@ msgstr "A szolgáltatás nem elérhető"
 msgid "This site is in maintenance. Please come back later."
 msgstr "Az oldal szerkesztés alatt van Kérjük, jöjjön vissza később."
 
-#: ../src/atk14/atk14_form.php:222
+#: ../src/atk14/atk14_form.php:247
 msgid "The form contains errors, therefore it cannot be processed."
 msgstr "Az űrlap hibákat tartalmaz, ezért nem lehet feldolgozni."
 
-#: ../src/atk14/atk14_form.php:514
+#: ../src/atk14/atk14_form.php:539
 msgid "Please, submit the form again"
 msgstr "Kérjük küldje el újra az űrlapot"
 
-#: ../src/atk14/atk14_locale.php:62
+#: ../src/atk14/atk14_locale.php:70
 msgid "atk14.date_format"
 msgstr "j.n.Y"
 
-#: ../src/atk14/atk14_locale.php:82
+#: ../src/atk14/atk14_locale.php:90
 msgid "atk14.parse_date_pattern"
 msgstr "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4})$/"
 
-#: ../src/atk14/atk14_locale.php:116
+#: ../src/atk14/atk14_locale.php:124
 msgid "atk14.datetime_format"
 msgstr "j.n.Y H:i"
 
-#: ../src/atk14/atk14_locale.php:129
+#: ../src/atk14/atk14_locale.php:137
 msgid "atk14.parse_datetime_pattern"
 msgstr ""
 "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
 "<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"
 
-#: ../src/atk14/atk14_locale.php:142
+#: ../src/atk14/atk14_locale.php:150
 msgid "atk14.datetime_with_seconds_format"
 msgstr "j.n.Y H:i:s"
 
-#: ../src/atk14/atk14_locale.php:154
+#: ../src/atk14/atk14_locale.php:162
 msgid "atk14.parse_datetime_with_seconds_pattern"
 msgstr ""
 "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
 "<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})$/"
 
-#: ../src/atk14/atk14_locale.php:171
+#: ../src/atk14/atk14_locale.php:179
 msgid "atk14.number_format.decimal_point"
 msgstr ""
 
-#: ../src/atk14/atk14_locale.php:186
+#: ../src/atk14/atk14_locale.php:194
 msgid "atk14.number_format.thousands_separator"
 msgstr ""
 
@@ -78,28 +78,17 @@ msgstr "A táblázat e szerint az oszlop szerint rendeződik"
 msgid "Are you sure?"
 msgstr "Biztos benne?"
 
-#: ../src/atk14/helpers/function.paginator.php:60
-msgid "Pagination"
+#: ../src/atk14/helpers/function.paginator.php:58
+msgid "items total"
 msgstr ""
 
-#: ../src/atk14/helpers/function.paginator.php:122
-#: ../src/atk14/helpers/function.paginator.php:126
-#: ../src/atk14/helpers/function.paginator.php:194
-#, php-format
-msgid "%s items total"
-msgstr "%s tételek összesen"
-
-#: ../src/atk14/helpers/function.paginator.php:140
-msgid "prev"
-msgstr "előző"
-
-#: ../src/atk14/helpers/function.paginator.php:167
-msgid "current page"
+#: ../src/atk14/helpers/function.paginator.php:93
+msgid "Prev"
 msgstr ""
 
-#: ../src/atk14/helpers/function.paginator.php:189
-msgid "next"
-msgstr "következő"
+#: ../src/atk14/helpers/function.paginator.php:94
+msgid "Next"
+msgstr ""
 
 #: ../src/atk14/helpers/function.to_sentence.php:13
 msgid "and"
@@ -258,7 +247,7 @@ msgstr ""
 msgid "Enter a whole number."
 msgstr "Írjon be egy egész számot."
 
-#: ../src/forms/fields/ip_address_field.php:26
+#: ../src/forms/fields/ip_address_field.php:48
 msgid "Enter a valid IP address."
 msgstr ".Adjon meg egy érvényes IP-címet."
 
