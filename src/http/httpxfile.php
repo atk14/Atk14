@@ -87,8 +87,23 @@ class HTTPXFile extends HTTPUploadedFile{
 		$request = $options["request"];
 
 		if($request->post() && (preg_match('/^attachment/',$request->getHeader("Content-Disposition")) || $request->getHeader("X-File-Name"))){
+			$content = $request->getRawPostData();
+
+			$content_length = $request->getHeader("Content-Length");
+			if(!is_null($content_length)){
+				$content_length = (int)$content_length;
+				if($content_length<0 || strlen($content)!=$content_length){
+					return;
+				}
+			}else{
+				if(strlen($content)==0){
+					// An empty file without "Content-Length" header? It doesn't look good.
+					return;
+				}
+			}
+
 			$out = new HTTPXFile(array("request" => $request));
-			$out->_writeTmpFile($request->getRawPostData());
+			$out->_writeTmpFile($content);
 			$out->_Name = $options["name"];
 			return $out;
 		}
