@@ -53,7 +53,7 @@
  */
 class UrlFetcher {
 
-	const VERSION = "1.4.1";
+	const VERSION = "1.4.2";
 
 	/**
 	 * Authentication type
@@ -738,6 +738,7 @@ class UrlFetcher {
 	 */
 	protected function _fwriteStream(&$fp, &$string) {
 		$fwrite = 0;
+		$retries = 0;
 		for($written = 0; $written < strlen($string); $written += $fwrite){
 			$fwrite = @fwrite($fp, substr($string, $written));
 
@@ -746,7 +747,9 @@ class UrlFetcher {
 			}
 
 			if(!$fwrite){ // 0 bytes written; error code  11:  Resource temporarily unavailable
-				usleep(10000);
+				if($retries>=100){ return $written; }
+				usleep(10000); // 0.01s
+				$retries++;
 				continue;
 			}
 		}
