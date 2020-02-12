@@ -236,6 +236,7 @@ class HTTPXFile extends HTTPUploadedFile{
 	 * Write file to temporary place
 	 *
 	 * @param string $content data to write
+	 * @ignore
 	 */
 	private function _writeTmpFile($content){
 		if($this->_TmpFileName){ return; }
