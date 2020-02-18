@@ -11,6 +11,12 @@ if [ "$?" != "0" ]; then
 	exit_val=1
 fi
 
+# Second, check requirements described in config/requirements.yml (if exists)
+./_check_requirements
+if [ "$?" != "0" ]; then
+	exit_val=1
+fi
+
 ROOT=$(./_get_application_path)../
 
 # checking for tmp and log directories
@@ -29,7 +35,7 @@ for i in "tmp" "log"; do
 done
 
 http_host=$(./dump_settings ATK14_HTTP_HOST)
-echo -n "host $http_host could be resolved... "
+echo -n "host $http_host should be resolved... "
 etc_hosts_lines=$(egrep "^\s*[0-9a-fA-F\.:][^#]*\s$http_host(|#.*|\s.*)$" /etc/hosts | wc -l)
 if [ "$etc_hosts_lines" -eq "0" ]; then
 	if [ "$(host $http_host | grep 'not found' | wc -l)" -eq 1 ]; then
