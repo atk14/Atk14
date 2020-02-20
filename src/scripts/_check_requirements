@@ -32,10 +32,10 @@ $requirements += array(
 	"php" => array(),
 	"system" => array(),
 );
-$requirements["system"] += array(
+$requirements["system"] = (array)$requirements["system"] + array(
 	"binaries" => array(),
 );
-$requirements["php"] += array(
+$requirements["php"] = $requirements["php"] + array(
 	"functions" => array(),
 	"extensions" => array(),
 	"constants" => array(),
@@ -50,7 +50,7 @@ function binary_exists($binary){
 	$output = trim(join("\n",$output));
 	return $ret_val===0 && strlen($output);
 }
-foreach($requirements["system"]["binaries"] as $b){
+foreach((array)$requirements["system"]["binaries"] as $b){
 	echo "binary $b exists... ";
 	if(binary_exists($b)){
 		echo "ok";
@@ -62,7 +62,7 @@ foreach($requirements["system"]["binaries"] as $b){
 }
 
 // PHP functions
-foreach($requirements["php"]["functions"] as $f){
+foreach((array)$requirements["php"]["functions"] as $f){
 	echo "php function $f exists... ";
 	if(function_exists($f)){
 		echo "ok";
@@ -75,7 +75,7 @@ foreach($requirements["php"]["functions"] as $f){
 
 // PHP extensions
 $extensions = get_loaded_extensions();
-foreach($requirements["php"]["extensions"] as $e){
+foreach((array)$requirements["php"]["extensions"] as $e){
 	echo "php extension $e installed... ";
 	if(in_array($e,$extensions)){
 		echo "ok";
@@ -87,7 +87,7 @@ foreach($requirements["php"]["extensions"] as $e){
 }
 
 // PHP constants
-foreach($requirements["php"]["constants"] as $c){
+foreach((array)$requirements["php"]["constants"] as $c){
 	echo "php constant $c defined... ";
 	if(defined("$c")){
 		echo "ok";
@@ -104,7 +104,7 @@ function eval_expression($e){
 	eval($expression);
 	return $e;
 }
-foreach($requirements["php"]["expressions"] as $e){
+foreach((array)$requirements["php"]["expressions"] as $e){
 	echo "php expression \"$e\"... ";
 	if(eval_expression($e)){
 		echo "ok";
