@@ -753,6 +753,8 @@ class HTTPRequest{
 	 * @return bool
 	 */
 	function sslActive(){
+		if(!is_null($var = $this->_getForceValue("SslActive"))){ return $var; }
+
 		if(isset($GLOBALS["_SERVER"]["HTTPS"]) && $GLOBALS["_SERVER"]["HTTPS"]=="on"){
 			return true;
 		}
@@ -761,6 +763,10 @@ class HTTPRequest{
 			return false;
 		}
 		return in_array($port,$this->_SSLPorts);
+	}
+
+	function setSslActive($ssl = true){
+		$this->_setForceValue("SslActive",(bool)$ssl);
 	}
 
 	/**

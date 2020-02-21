@@ -455,6 +455,13 @@ class tc_http_request extends tc_base{
 
 		$request->setServerPort(80);
 		$this->assertEquals(false,$request->sslActive());
+
+		// Forcing value
+		$request->setSslActive();
+		$this->assertEquals(true,$request->sslActive());
+
+		$request->setSslActive(false);
+		$this->assertEquals(false,$request->sslActive());
 	}
 
 	function test_getServerName(){
