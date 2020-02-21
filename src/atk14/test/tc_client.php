@@ -66,6 +66,30 @@ class TcClient extends TcBase{
 		$this->assertEquals("/sk/testing/test/?firstname=Samantha&lastname=Doe",$controller->request->getRequestUri());
 		$this->assertEquals(200,$client->getStatusCode());
 
+		// Complete URLs
+		$controller = $client->get("https://example.com/cs/testing/test/?id=555&format=xml");
+		$this->assertEquals("/cs/testing/test/?id=555&format=xml",$controller->request->getRequestUri());
+		$this->assertEquals("example.com",$controller->request->getHttpHost());
+		$this->assertEquals(443,$controller->request->getServerPort());
+		$this->assertEquals(true,$controller->request->ssl());
+		$this->assertEquals(200,$client->getStatusCode());
+		$this->assertEquals("555",$controller->params->g("id"));
+		$this->assertEquals("xml",$controller->params->g("format"));
+		$this->assertEquals(true,$controller->request->get());
+		$this->assertEquals(false,$controller->request->post());
+
+		$controller = $client->get("http://www.atk14.net/");
+		$this->assertEquals("/",$controller->request->getRequestUri());
+		$this->assertEquals("www.atk14.net",$controller->request->getHttpHost());
+		$this->assertEquals(80,$controller->request->getServerPort());
+		$this->assertEquals(false,$controller->request->ssl());
+
+		$controller = $client->get("https://www.atk14.net:444/sitemap.xml");
+		$this->assertEquals("/sitemap.xml",$controller->request->getRequestUri());
+		$this->assertEquals("www.atk14.net",$controller->request->getHttpHost());
+		$this->assertEquals(444,$controller->request->getServerPort());
+		$this->assertEquals(true,$controller->request->ssl());
+
 		// Missing ending slash
 		$controller = $client->get("/sk/testing/test",array("firstname" => "James", "lastname" => "Doe"));
 		$this->assertEquals("/sk/testing/test/?firstname=James&lastname=Doe",$client->getLocation());

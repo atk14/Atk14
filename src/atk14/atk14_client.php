@@ -312,7 +312,12 @@ class Atk14Client{
 	 * ```
 	 * $controller = $client->get("books/index");
 	 * $controller = $client->get("books/index",array("q" => "Mark Twain"));
+	 * $controller = $client->get("en/books/index",array("q" => "Mark Twain"));
+	 * $controller = $client->get("amin/en/books/detail",array("id" => 123));
+	 *
+	 * // Real world URIs
 	 * $controller = $client->get("/en/books/?q=Mark+Twain");
+	 * $controller = $client->get("http://example.com/en/books/?q=Mark+Twain");
 	 * ```
 	 *
 	 * If you are calling this from tc_books.php file, you can use:
@@ -466,9 +471,21 @@ class Atk14Client{
 		$namespace = $this->namespace;
 		$lang = $ATK14_GLOBAL->getDefaultLang();
 
-		if(preg_match('/^\//',$path)){
+		if(preg_match('/^((?<scheme>https?):\/\/(?<hostname>[^\/]+)|)(?<uri>\/.*)/',$path,$matches)){
 
-			$uri = $path;
+			if(isset($matches["hostname"])){
+				$hostname = $matches["hostname"];
+				$server_port = $matches["scheme"]=="https" ? 443 : 80;
+				if(preg_match('/^(.+):(\d+)$/',$hostname,$_m)){
+					$hostname = $_m[1];
+					$server_port = (int)$_m[2];
+				}
+				$request->setHttpHost($hostname);
+				$request->setServerPort($server_port);
+				$request->setSslActive($matches["scheme"]=="https");
+			}
+
+			$uri = $matches["uri"];
 			$_uri_params = Atk14Url::ParseParamsFromUri($uri);
 			if($get_params){
 				$uri .= preg_match('/\?/',$uri) ? '&' : '?';
