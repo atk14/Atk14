@@ -466,11 +466,23 @@ class Files{
 		$f = fopen($filename,"r");
 		if(!$f){
 			$error = false;
-			$error_str = "can't open file $filename for writing";
+			$error_str = "can't open file $filename for reading";
 			return null;
 		}
 		$out = fread($f,$filesize);
 		fclose($f);
+
+		if(strlen($out)==0){
+			$error = true;
+			$error_str = "can't read from file $filename";
+			return null;
+		}
+
+		if(strlen($out)!=$filesize){
+			$error = true;
+			$error_str = "can't read $filesize bytes from $filename (it was read ".strlen($out).")";
+			return null;
+		}
 
 		return $out;
 	}
