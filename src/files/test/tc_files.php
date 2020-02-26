@@ -421,4 +421,54 @@ class TcFiles extends TcBase{
 		$this->assertEquals(false,file_exists(TEMP . "/d1"));
 		$this->assertEquals(false,file_exists(TEMP . "/d2"));
 	}
+
+	function test_NormalizeFilePerms(){
+
+		// Directory
+
+		$dir = TEMP . "/d1";
+		if(file_exists($dir)){ rmdir($dir); }
+
+		Files::SetDefaultDirPerms(0755);
+		Files::Mkdir($dir);
+		//
+		$this->assertEquals(true,Files::NormalizeFilePerms($dir));
+		clearstatcache();
+		$this->assertEquals("755",substr(decoct(fileperms($dir)),-3));
+		//
+		$this->assertEquals(true,Files::NormalizeFilePerms($dir));
+		clearstatcache();
+		$this->assertEquals("755",substr(decoct(fileperms($dir)),-3));
+		//
+		Files::SetDefaultDirPerms(0777);
+		$this->assertEquals(true,Files::NormalizeFilePerms($dir));
+		clearstatcache();
+		$this->assertEquals("777",substr(decoct(fileperms($dir)),-3));
+
+		// File
+
+		$file = TEMP . "/f1";
+		if(file_exists($file)){ unlink($file); }
+
+		Files::SetDefaultFilePerms(0644);
+		Files::WriteToFile($file,"content");
+		//
+		$this->assertEquals(true,Files::NormalizeFilePerms($file));
+		clearstatcache();
+		$this->assertEquals("644",substr(decoct(fileperms($file)),-3));
+		//
+		$this->assertEquals(true,Files::NormalizeFilePerms($file));
+		clearstatcache();
+		$this->assertEquals("644",substr(decoct(fileperms($file)),-3));
+		//
+		Files::SetDefaultFilePerms(0666);
+		$this->assertEquals(true,Files::NormalizeFilePerms($file));
+		clearstatcache();
+		$this->assertEquals("666",substr(decoct(fileperms($file)),-3));
+
+		// Cleaning
+
+		rmdir($dir);
+		unlink($file);
+	}
 }

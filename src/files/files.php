@@ -69,6 +69,30 @@ class Files{
 	}
 
 	/**
+	 * Normalizes permissions of a file or a directory according the default perms
+	 *
+	 *	Files::NormalizeFilePerms("/path/to/a/file");
+	 *	Files::NormalizeFilePerms("/path/to/a/directory");
+	 */
+	static function NormalizeFilePerms($filename,&$error = null,&$error_str = null){
+		$error = false;
+		$error_str = "";
+
+		$perms = is_dir($filename) ? self::GetDefaultDirPerms() : self::GetDefaultFilePerms();
+		
+		$_old_umask = umask(0);
+		$_stat = chmod($filename,$perms);
+		umask($_old_umask);
+
+		if(!$_stat){
+			$error = true;
+			$error_str = "failed to do chmod on $filename";
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Creates a directory.
 	 *
 	 * Also creates parent directories when they don't exist.
