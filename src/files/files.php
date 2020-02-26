@@ -509,6 +509,12 @@ class Files{
 			return null;		
 		}
 
+		if(!is_readable($filename)){
+			$error = false;
+			$error_str = "file $filename is not readable";
+			return null;
+		}
+
 		$filesize = filesize($filename);
 		if($filesize==0){ return ""; }
 
