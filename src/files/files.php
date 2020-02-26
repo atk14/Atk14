@@ -18,7 +18,7 @@
  */
 class Files{
 
-	const VERSION = "1.3.1";
+	const VERSION = "1.4";
 
 	static protected $_DefaultFilePerms = 0666;
 
