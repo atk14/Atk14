@@ -6,6 +6,7 @@
  *
  * @filesource
  */
+
 /**
  * Class for basic file management.
  *
@@ -18,6 +19,54 @@
 class Files{
 
 	const VERSION = "1.3.1";
+
+	static protected $_DefaultFilePerms = 0666;
+
+	static protected $_DefaultDirPerms = 0777;
+
+	/**
+	 *
+	 *
+	 *	echo decoct(Files::GetDefaultFilePerms()); // e.g. "666"
+	 */
+	static function GetDefaultFilePerms(){
+		return self::$_DefaultFilePerms;
+	}
+
+	/**
+	 *
+	 *
+	 *	$prev_perms = Files::SetDefaultFilePerms(0640);
+	 */
+	static function SetDefaultFilePerms($perms){
+		$perms = (int)$perms;
+
+		$prev = self::$_DefaultFilePerms;
+		self::$_DefaultFilePerms = $perms;
+		return $prev;
+	}
+
+	/**
+	 *
+	 *
+	 *	echo decoct(Files::GetDefaultDirPerms()); // e.g. "777"
+	 */
+	static function GetDefaultDirPerms(){
+		return self::$_DefaultDirPerms;
+	}
+
+	/**
+	 *
+	 *
+	 *	$prev_perms = Files::SetDefaultDirPerms(0750);
+	 */
+	static function SetDefaultDirPerms($perms){
+		$perms = (int)$perms;
+
+		$prev = self::$_DefaultDirPerms;
+		self::$_DefaultDirPerms = $perms;
+		return $prev;
+	}
 
 	/**
 	 * Creates a directory.
@@ -67,7 +116,7 @@ class Files{
 
 		// this is a temporary workaround
 		$old_umask = umask(0);
-		if(mkdir($dirname,0777,true)){
+		if(mkdir($dirname,self::GetDefaultDirPerms(),true)){
 			$out = 1;
 		}else{
 			if(preg_match('/^5\.3\./',phpversion())){
@@ -147,10 +196,10 @@ class Files{
 		fclose($in);
 		fclose($out);
 		
-		//menit modsouboru, jenom, kdyz soubor drive neexistoval
+		//menit mod souboru, jenom, kdyz soubor drive neexistoval
 		if(!$__target_file_exists){
 			$_old_umask = umask(0);
-			$_stat = chmod($to_file,0666);
+			$_stat = chmod($to_file,self::GetDefaultFilePerms());
 			umask($_old_umask);
 
 			if(!$_stat && $error==false){
@@ -215,10 +264,10 @@ class Files{
 		}
 		fclose($f);
 
-		//menit modsouboru, jenom, kdyz soubor drive neexistoval
+		//menit mod souboru, jenom, kdyz soubor drive neexistoval
 		if(!$_file_exists){
 			$_old_umask = umask(0);
-			$_stat = chmod($file,0666);
+			$_stat = chmod($file,self::GetDefaultFilePerms());
 			umask($_old_umask);
 	
 			if(!$_stat && $error==false){
