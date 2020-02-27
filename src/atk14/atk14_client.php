@@ -486,13 +486,12 @@ class Atk14Client{
 			}
 
 			$uri = $matches["uri"];
-			$_uri_params = Atk14Url::ParseParamsFromUri($uri);
+			$route_ar = Atk14Url::RecognizeRoute($uri);
 			if($get_params){
 				$uri .= preg_match('/\?/',$uri) ? '&' : '?';
 				$uri .= http_build_query($get_params);
 			}
-			$get_params = $_uri_params + $get_params;
-
+			$get_params = $route_ar["get_params"] + $get_params;
 		}else{
 
 			$path_ar = explode("/",$path);

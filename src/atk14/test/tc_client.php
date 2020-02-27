@@ -1,5 +1,6 @@
 <?php
 class TcClient extends TcBase{
+
 	function test(){
 		$client = new Atk14Client();
 
@@ -89,6 +90,15 @@ class TcClient extends TcBase{
 		$this->assertEquals("www.atk14.net",$controller->request->getHttpHost());
 		$this->assertEquals(444,$controller->request->getServerPort());
 		$this->assertEquals(true,$controller->request->ssl());
+
+		// here, the parameter id is doubled
+		$controller = $client->get("https://example.com/cs/testing/test/?id=333&format=xml",array("p1" => "1","id" => "444"));
+		$this->assertEquals("/cs/testing/test/?id=333&format=xml&p1=1&id=444",$controller->request->getRequestUri());
+		$this->assertEquals("333",$controller->params->g("id"));
+		$this->assertEquals("xml",$controller->params->g("format"));
+		$this->assertEquals("1",$controller->params->g("p1"));
+		$this->assertEquals(true,$controller->request->get());
+		$this->assertEquals(false,$controller->request->post());
 
 		// Missing ending slash
 		$controller = $client->get("/sk/testing/test",array("firstname" => "James", "lastname" => "Doe"));
