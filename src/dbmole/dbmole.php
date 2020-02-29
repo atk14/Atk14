@@ -589,29 +589,38 @@ class DbMole{
 		$out[] = "bind_ar";
 		$out[] = "-------";
 		$out[] = print_r($this->getBindAr(),true);
-		if(isset($GLOBALS["_SERVER"]));{
-			$out[] = "";
-			$out[] = "server vars";
-			$out[] = "-----------";
+		if(php_sapi_name()=="cli"){
+			$out[] = "script";
+			$out[] = "------";
+			$out[] = $_SERVER["SCRIPT_FILENAME"];
+			$out[] = "argv";
+			$out[] = "----";
+			$out[] = print_r($GLOBALS["argv"],true);
+		}else{
+			if(isset($GLOBALS["_SERVER"]));{
+				$out[] = "";
+				$out[] = "server vars";
+				$out[] = "-----------";
 
-			// $_SERVER["PHP_AUTH_PW"] may contain a password in plain text form
-			$server_vars = $GLOBALS["_SERVER"];
-			if(isset($server_vars["PHP_AUTH_PW"])){
-				$server_vars["PHP_AUTH_PW"] = "*************";
+				// $_SERVER["PHP_AUTH_PW"] may contain a password in plain text form
+				$server_vars = $GLOBALS["_SERVER"];
+				if(isset($server_vars["PHP_AUTH_PW"])){
+					$server_vars["PHP_AUTH_PW"] = "*************";
+				}
+				$out[] = print_r($server_vars,true);
 			}
-			$out[] = print_r($server_vars,true);
-		}
-		if(isset($GLOBALS["_GET"]));{
-			$out[] = "";
-			$out[] = "get vars";
-			$out[] = "--------";
-			$out[] = print_r($GLOBALS["_GET"],true);
-		}
-		if(isset($GLOBALS["_POST"]));{
-			$out[] = "";
-			$out[] = "post vars";
-			$out[] = "--------";
-			$out[] = print_r($GLOBALS["_POST"],true);
+			if(isset($GLOBALS["_GET"]));{
+				$out[] = "";
+				$out[] = "get vars";
+				$out[] = "--------";
+				$out[] = print_r($GLOBALS["_GET"],true);
+			}
+			if(isset($GLOBALS["_POST"]));{
+				$out[] = "";
+				$out[] = "post vars";
+				$out[] = "--------";
+				$out[] = print_r($GLOBALS["_POST"],true);
+			}
 		}
 		return join("\n",$out);
 	}

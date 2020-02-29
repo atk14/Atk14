@@ -113,9 +113,13 @@ function dbmole_error_handler($dbmole){
 			$ATK14_LOGGER->flush();
 		}
 	}elseif(!TEST){
-		echo "<pre>";
-		echo h($dbmole->getErrorReport());
-		echo "</pre>";
+		if(php_sapi_name()=="cli"){
+			echo $dbmole->getErrorReport();
+		}else{
+			echo "<pre>";
+			echo h($dbmole->getErrorReport());
+			echo "</pre>";
+		}
 	}
 
 	throw new DbMoleException(get_class($dbmole)." on ".$dbmole->getDatabaseName().": ".$dbmole->getErrorMessage());
