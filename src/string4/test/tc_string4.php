@@ -352,8 +352,34 @@ class TcString4 extends TcBase{
 		$this->assertEquals("spinava-redkvicka",(string)$a);
 		$this->assertEquals("ASCII",$a->getEncoding());
 
+		// max_length
+		$this->assertEquals("spinava",(string)$s->toSlug(array("max_length" => 7)));
+		$this->assertEquals("spinava",(string)$s->toSlug(array("max_length" => 8)));
+		$this->assertEquals("spinava-r",(string)$s->toSlug(array("max_length" => 9)));
+		$this->assertEquals("",(string)$s->toSlug(array("max_length" => 0)));
+		$this->assertEquals("",(string)$s->toSlug(array("max_length" => -10)));
+
+		// shortcut for max_length
 		$this->assertEquals("spinava",(string)$s->toSlug(7));
 		$this->assertEquals("spinava",(string)$s->toSlug(8));
 		$this->assertEquals("spinava-r",(string)$s->toSlug(9));
+
+		// suffix
+		$this->assertEquals("spinava-redkvicka",(string)$s->toSlug(array("suffix" => "")));
+		$this->assertEquals("spinava-redkvicka-chutna",(string)$s->toSlug(array("suffix" => "chutná")));
+		$this->assertEquals("spinava-redkvicka",(string)$s->toSlug(array("suffix" => " ")));
+
+		// max_length & suffix combination
+		$this->assertEquals("spinava-redkvicka-12345",(string)$s->toSlug(array("max_length" => 100, "suffix" => "12345")));
+		$this->assertEquals("spinava-12345",(string)$s->toSlug(array("max_length" => 13, "suffix" => "12345")));
+		$this->assertEquals("spin-12345",(string)$s->toSlug(array("max_length" => 10, "suffix" => "12345")));
+		$this->assertEquals("s-12345",(string)$s->toSlug(array("max_length" => 7, "suffix" => "12345")));
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 5, "suffix" => "12345")));
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 6, "suffix" => "12345")));
+
+		// suffix has priority over max_length
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 4, "suffix" => "12345")));
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 0, "suffix" => "12345")));
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => -10, "suffix" => "12345")));
 	}
 }

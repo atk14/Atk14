@@ -644,11 +644,43 @@ class String{
 	 * ```
 	 * this example outputs "amazing-facts-about-foxes"
 	 *
-	 * @param integer $max_length
+	 * max length
+	 * ```
+	 * echo $s->toSlug(["max_length" => 10]); // "amazing-fa"
+	 * // or
+	 * echo $s->toSlug(10); // "amazing-fa"
+	 * ```
+	 *
+	 * mandatory suffix
+	 * ```
+	 * echo $s->toSlug(["suffix" => "Really nice!"]); // "amazing-facts-about-foxes-really-nice"
+	 *
+	 * echo $s->toSlug(["suffix" => "123"]); // "amazing-facts-about-foxes-123"
+	 * echo $s->toSlug(["suffix" => 10, "suffix" => "123"]) // "amazin-123"
+	 * ```
+	 *
+	 * @param array $options
 	 * @return string
 	 */
-	function toSlug($max_length = null){
-		return $this->toAscii()->lower()->gsub('/[^a-z0-9]+/',' ')->substr(0,$max_length)->trim()->replace(' ','-');
+	function toSlug($options = array()){
+		if(!is_array($options)){
+			$options = array(
+				"max_length" => $options
+			);
+		}
+		$options += array(
+			"max_length" => null,
+			"suffix" => "",
+		);
+
+		$suffix = strlen($options["suffix"]) ? String4::ToObject($options["suffix"])->toSlug()->toString() : "";
+		$suffix = strlen($suffix) ? "-$suffix" : "";
+
+		$max_length = $options["max_length"] && strlen($suffix) ? $options["max_length"] - strlen($suffix) : $options["max_length"];
+		$max_length = $max_length<0 ? 0 : $max_length;
+
+		$slug = $this->toAscii()->lower()->gsub('/[^a-z0-9]+/',' ')->trim()->substr(0,$max_length)->trim()->replace(' ','-')->append($suffix)->gsub('/^-/','');
+		return $slug;
 	}
 
 	/**
