@@ -7,8 +7,13 @@
  * @filesource
  */
 
-defined("FILES_DEFAULT_FILE_PERMS") || define("FILES_DEFAULT_FILE_PERMS",0666);
-defined("FILES_DEFAULT_DIR_PERMS") || define("FILES_DEFAULT_DIR_PERMS",0777);
+if(defined("FILES_DEFAULT_FILE_PERMS")){
+	Files::SetDefaultFilePerms(constant("FILES_DEFAULT_FILE_PERMS"));
+}
+
+if(defined("FILES_DEFAULT_DIR_PERMS")){
+	Files::SetDefaultDirPerms(constant("FILES_DEFAULT_DIR_PERMS"));
+}
 
 /**
  * Class for basic file management.
@@ -21,11 +26,11 @@ defined("FILES_DEFAULT_DIR_PERMS") || define("FILES_DEFAULT_DIR_PERMS",0777);
  */
 class Files{
 
-	const VERSION = "1.4.1";
+	const VERSION = "1.4.2";
 
-	static protected $_DefaultFilePerms = FILES_DEFAULT_FILE_PERMS;
+	static protected $_DefaultFilePerms = 0666;
 
-	static protected $_DefaultDirPerms = FILES_DEFAULT_DIR_PERMS;
+	static protected $_DefaultDirPerms = 0777;
 
 	/**
 	 *
