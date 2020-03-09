@@ -7,6 +7,9 @@
  * @filesource
  */
 
+defined("FILES_DEFAULT_FILE_PERMS") || define("FILES_DEFAULT_FILE_PERMS",0666);
+defined("FILES_DEFAULT_DIR_PERMS") || define("FILES_DEFAULT_DIR_PERMS",0777);
+
 /**
  * Class for basic file management.
  *
@@ -20,9 +23,9 @@ class Files{
 
 	const VERSION = "1.4";
 
-	static protected $_DefaultFilePerms = 0666;
+	static protected $_DefaultFilePerms = FILES_DEFAULT_FILE_PERMS;
 
-	static protected $_DefaultDirPerms = 0777;
+	static protected $_DefaultDirPerms = FILES_DEFAULT_DIR_PERMS;
 
 	/**
 	 *
