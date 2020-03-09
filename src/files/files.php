@@ -21,7 +21,7 @@ defined("FILES_DEFAULT_DIR_PERMS") || define("FILES_DEFAULT_DIR_PERMS",0777);
  */
 class Files{
 
-	const VERSION = "1.4";
+	const VERSION = "1.4.1";
 
 	static protected $_DefaultFilePerms = FILES_DEFAULT_FILE_PERMS;
 
