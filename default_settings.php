@@ -75,6 +75,12 @@ __defaults__(array(
 	"ATK14_SSL_PORT" => 443,
 ));
 
+__defaults__(array(
+ 	// Default file and dir permissions for class Files
+	"FILES_DEFAULT_FILE_PERMS" => 0666,
+	"FILES_DEFAULT_DIR_PERMS" => 0777,
+));
+
 // SessionStorer`s constants, a session subsystem
 __defaults__(array(
 	"SESSION_STORER_SESSION_MAX_LIFETIME" => 60 * 60 * 24 * 1, // time in seconds; whole day by default

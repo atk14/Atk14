@@ -21,6 +21,9 @@ $_document_root = defined("ATK14_DOCUMENT_ROOT") ? ATK14_DOCUMENT_ROOT : __DIR__
 require_once(file_exists("$_document_root/local_config/settings.php") ? "$_document_root/local_config/settings.php" : "$_document_root/config/settings.php");
 require_once(__DIR__."/default_settings.php");
 
+Files::SetDefaultFilePerms(FILES_DEFAULT_FILE_PERMS);
+Files::SetDefaultDirPerms(FILES_DEFAULT_DIR_PERMS);
+
 // Loading framework libraries.
 require_once(__DIR__."/src/class_autoload/load.php");
 require_once(__DIR__."/src/string4/load.php");
