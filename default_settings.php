@@ -6,6 +6,14 @@
 
 $__CONFIG_CONSTANTS__ = array();
 
+// Constants  for the environment determination.
+// Just one of these should be true.
+__defaults__(array(
+	"PRODUCTION" => false,
+	"DEVELOPMENT" => false,
+	"TEST" => false,
+));
+
 // Make sure you have strong secret phrase in SECRET_TOKEN constant in PRODUCTION.
 // Place the secret phrase into file config/.secret_token.txt
 if(!defined("SECRET_TOKEN")){
@@ -73,6 +81,22 @@ __defaults__(array(
 	"ATK14_HTTP_HOST_SSL" => ATK14_HTTP_HOST, // sometimes a ssl hostname differs from the non-ssl, like www.project-x.net and secure.project-x.net
 	"ATK14_NON_SSL_PORT" => 80,
 	"ATK14_SSL_PORT" => 443,
+));
+
+__defaults__(array(
+	"REDIRECT_TO_SSL_AUTOMATICALLY" => false,
+));
+
+__defaults__(array(
+	// This buils something like "http://atk14skelet.localhost/" or "https://www.example.com:444/"
+	"ATK14_APPLICATION_URL" =>
+		"http".
+		(REDIRECT_TO_SSL_AUTOMATICALLY ? "s" : "").
+		"://".
+		(REDIRECT_TO_SSL_AUTOMATICALLY ? ATK14_HTTP_HOST_SSL : ATK14_HTTP_HOST).
+		(REDIRECT_TO_SSL_AUTOMATICALLY && ATK14_SSL_PORT!=443 ? ":".ATK14_SSL_PORT : "").
+		(!REDIRECT_TO_SSL_AUTOMATICALLY && ATK14_NON_SSL_PORT!=80 ? ":".ATK14_NON_SSL_PORT : "").
+		ATK14_BASE_HREF
 ));
 
 __defaults__(array(
