@@ -59,8 +59,15 @@ function smarty_function_javascript_script_tag($params,$template){
 	$places = $params["_places_"]; unset($params["_places_"]);
 	$snippet = $params["_snippet_"]; unset($params["_snippet_"]);
 
+	$file = preg_replace('/\/{2,}/','/',$file); // "/public//dist/styles/vendor.min.css" -> "/public/dist/styles/vendor.min.css"
+
 	if(preg_match('/^\//',$file)){
-		// $file starts with "/", so we will search only in the very last place
+		// $file starts with "/", so we will search only in the very last place.
+		// But first $base_href needs to be removed from the $file.
+		$base_href = $ATK14_GLOBAL->getBaseHref();
+		if($base_href!=="/" && substr($file,0,strlen($base_href))===$base_href){
+			$file = "/".substr($file,strlen($base_href));
+		}
 		$places = array(
 			array_pop($places)
 		);
