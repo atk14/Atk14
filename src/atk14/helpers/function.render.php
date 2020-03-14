@@ -170,7 +170,7 @@ function smarty_function_render($params,$template){
 	$template_name = preg_replace("/([^\\/]+)$/","_\\1",$template_name);
 	$template_name .= ".tpl";
 
-	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
+	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || (!is_numeric($params["from"]) && sizeof($params["from"])==0))){ return ""; }
 
 	$original_smarty_vars = $smarty->getTemplateVars();
 	if($solve_smarty_vs_template_problem){
