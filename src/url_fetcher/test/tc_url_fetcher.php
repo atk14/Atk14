@@ -92,7 +92,7 @@ class tc_url_fetcher extends tc_base{
 	}
 
 	function test_ssl(){
-		$f = new UrlFetcher("https://admin.plovarna.cz/unit-testing.php");
+		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing.php");
 		$this->assertTrue($f->found());
 		$this->assertTrue((bool)preg_match("/You are on the ssl/",$f->getContent()));
 		$this->assertTrue((bool)preg_match("/Request method is GET/",$f->getContent()));
@@ -133,7 +133,7 @@ class tc_url_fetcher extends tc_base{
 	}
 
 	function _test_post($data){
-		$f = new UrlFetcher("https://admin.plovarna.cz/unit-testing.php");
+		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing.php");
 		$this->assertTrue($f->post($data));
 		$this->assertTrue((bool)preg_match("/You are on the ssl/",$f->getContent()));
 		$this->assertTrue((bool)preg_match("/Request method is POST/",$f->getContent()));
