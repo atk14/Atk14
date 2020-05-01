@@ -94,6 +94,10 @@ class Atk14DeploymentStage{
 
 			$ar = self::_ReplaceVariables($ar,$name);
 
+			if(strlen($ar["deploy_repository"]) && strpos($ar["deploy_repository"],":")===false && strlen($ar["server"])){
+				$ar["deploy_repository"] = (strlen($ar["user"]) ? "$ar[user]@" : "")."$ar[server]:$ar[deploy_repository]"; // "/home/user/repos/myapp.git" -> "user@server:/home/user/repos/myapp.git"
+			}
+
 			/*
 			// TODO: add some checks
 			$raw_def_keys = array_keys($raw_def);
