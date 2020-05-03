@@ -1,5 +1,6 @@
 <?php
 class TcDeploymentStage extends TcBase{
+
 	function test(){
 		$stages = Atk14DeploymentStage::GetStages();
 
@@ -16,6 +17,10 @@ class TcDeploymentStage extends TcBase{
 		$this->assertEquals("deployment_stage_devel","$devel");
 		$this->assertEquals("devel",$devel->name);
 		$this->assertEquals("devel.mushoomradar.net",$devel->server);
+
+		$this->assertEquals("devel",$devel->getName());
+		$this->assertEquals("/home/deploy/apps/mushoomradar_devel/",$devel->getDirectory());
+
 		// etc
 		// key order
 		$this->assertEquals(array(

@@ -125,6 +125,14 @@ class Atk14DeploymentStage{
 		return $out;
 	}
 
+	function getName(){
+		return $this->name;
+	}
+
+	function getDirectory(){
+		return $this->directory;
+	}
+
 	/**
 	 * Returns URL of the deploy repository from the outside view
 	 *
