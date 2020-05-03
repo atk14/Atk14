@@ -125,6 +125,59 @@ class Atk14DeploymentStage{
 		return $out;
 	}
 
+	/**
+	 * Returns URL of the deploy repository from the outside view
+	 *
+	 */
+	function getDeployRepository(){
+		$ar = $this->toArray();
+		if(strlen($ar["deploy_repository"]) && strpos($ar["deploy_repository"],":")===false && strlen($ar["server"])){
+			$ar["deploy_repository"] = (strlen($ar["user"]) ? "$ar[user]@" : "")."$ar[server]:$ar[deploy_repository]"; // "/home/user/repos/myapp.git" -> "user@server:/home/user/repos/myapp.git"
+		}
+		return $ar["deploy_repository"];
+	}
+
+	/**
+	 * Returns URL of the deploy repository from the views of the deployment server
+	 *
+	 */
+	function getDeployRepositoryRemoteDir(){
+		$ar = $this->toArray();
+		$deploy_repository_remote = $ar["deploy_repository"];
+		$deploy_repository_remote = preg_replace('/^.*?:/','',$deploy_repository_remote);
+		if(!preg_match('/^\//',$deploy_repository_remote)){ $deploy_repository_remote = "/home/$ar[user]/$deploy_repository_remote"; }
+		return $deploy_repository_remote;
+	}
+
+	function toArray(){
+		// it's fine to have the name on the first position :)
+		$data = $this->data->toArray();
+		$out = array("name" => $data["name"]);
+		unset($data["name"]);
+		return $out + $data;
+	}
+
+	/**
+	 * Get instance of Atk14DeploymentStage by name
+	 *
+	 * ```
+	 * $preview = Atk14DeploymentStage::GetStage("preview"):
+	 * ```
+	 *
+	 * @param $name string
+	 * @return Atk14DeploymentStage
+	 * @todo maybe should return null when no stage is found
+	 */
+	static function GetStage($name){
+		foreach(Atk14DeploymentStage::GetStages() as $s){
+			if($s->name==$name){ return $s; }
+		}
+	}
+
+	static function GetFirstStage(){
+		foreach(Atk14DeploymentStage::GetStages() as $s){ return $s; }
+	}
+
 	protected static function _ReplaceVariables($ar,$name){
 		$replaces = array();
 		foreach($ar as $key => $value){
@@ -172,35 +225,6 @@ class Atk14DeploymentStage{
 		$item = strtr($item,$replaces);
 		$something_replaced = $item!==$orig;
 		return $item;
-	}
-
-	/**
-	 * Get instance of Atk14DeploymentStage by name
-	 *
-	 * ```
-	 * $preview = Atk14DeploymentStage::GetStage("preview"):
-	 * ```
-	 *
-	 * @param $name string
-	 * @return Atk14DeploymentStage
-	 * @todo maybe should return null when no stage is found
-	 */
-	static function GetStage($name){
-		foreach(Atk14DeploymentStage::GetStages() as $s){
-			if($s->name==$name){ return $s; }
-		}
-	}
-
-	static function GetFirstStage(){
-		foreach(Atk14DeploymentStage::GetStages() as $s){ return $s; }
-	}
-
-	function toArray(){
-		// it's fine to have the name on the first position :)
-		$data = $this->data->toArray();
-		$out = array("name" => $data["name"]);
-		unset($data["name"]);
-		return $out + $data;
 	}
 
 	function __toString(){

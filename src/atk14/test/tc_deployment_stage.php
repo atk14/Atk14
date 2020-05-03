@@ -112,6 +112,23 @@ class TcDeploymentStage extends TcBase{
 		$this->assertEquals(array("public/dist/","vendor/"),$devel->rsync);
 	}
 
+	function test_getDeployRepository(){
+		// in config: "deploy@devel:repos/mushoomradar.git"
+		$devel = Atk14DeploymentStage::GetStage("devel");
+		$this->assertEquals("deploy@devel.mushoomradar.net:repos/mushoomradar.git",$devel->getDeployRepository());
+		$this->assertEquals("/home/deploy/repos/mushoomradar.git",$devel->getDeployRepositoryRemoteDir());
+
+		// in config: "deploy@zeus.mushoomradar.net:repos/mushoomradar.git"
+		$production = Atk14DeploymentStage::GetStage("production");
+		$this->assertEquals("deploy@zeus.mushoomradar.net:repos/mushoomradar.git",$production->getDeployRepository());
+		$this->assertEquals("/home/deploy/repos/mushoomradar.git",$production->getDeployRepositoryRemoteDir());
+
+		// in config: "/home/deploy/repos/mushoomradar_acc.git"
+		$acceptation = Atk14DeploymentStage::GetStage("acceptation");
+		$this->assertEquals("deploy@zeus.mushoomradar.net:/home/deploy/repos/mushoomradar_acc.git",$acceptation->getDeployRepository());
+		$this->assertEquals("/home/deploy/repos/mushoomradar_acc.git",$acceptation->getDeployRepositoryRemoteDir());
+	}
+
 	function _compareArrays($exp_ar,$ar){
 		foreach($exp_ar as $key => $exp){
 			$this->assertEquals($exp,$ar[$key],$key);
