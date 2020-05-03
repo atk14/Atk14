@@ -57,6 +57,8 @@ class TcDeploymentStage extends TcBase{
 			"name" => "production",
 			"user" => "deploy",
 			"server" => "zeus.mushoomradar.net",
+			"port" => "2222",
+			"env" => 'PATH=/home/deploy/bin:$PATH',
 			"directory" => "/home/deploy/apps/mushoomradar_production/",
 			"deploy_via" => "git_push",
 			"deploy_repository" => "deploy@zeus.mushoomradar.net:repos/mushoomradar.git",
@@ -73,6 +75,7 @@ class TcDeploymentStage extends TcBase{
 			"user" => "deploy",
 			"server" => "zeus.mushoomradar.net",
 			"port" => null,
+			"env" => "",
 			"directory" => "/home/deploy/apps/mushoomradar_acc/",
 			"deploy_via" => "git_push",
 			"deploy_repository" => "deploy@zeus.mushoomradar.net:/home/deploy/repos/mushoomradar_acc.git",
@@ -89,6 +92,7 @@ class TcDeploymentStage extends TcBase{
 			"user" => "deploy",
 			"server" => "zeus.mushoomradar.net",
 			"port" => null,
+			"env" => "",
 			"directory" => "/home/deploy/apps/mushoomradar_acc2/",
 			"deploy_via" => "git_push",
 			"deploy_repository" => "deploy@zeus.mushoomradar.net:repos/mushoomradar_acc2.git",
@@ -129,9 +133,25 @@ class TcDeploymentStage extends TcBase{
 		$this->assertEquals("/home/deploy/repos/mushoomradar_acc.git",$acceptation->getDeployRepositoryRemoteDir());
 	}
 
+	function test_compileRemoteShellCommand(){
+		$deploy = Atk14DeploymentStage::GetStage("devel");
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/migrate)"',$deploy->compileRemoteShellCommand("./scripts/migrate"));
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/delete_temporary_files \"dbmole_cache\")"',$deploy->compileRemoteShellCommand('./scripts/delete_temporary_files "dbmole_cache"'));
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache)"',$deploy->compileRemoteShellCommand('./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache'));
+		// changing directory to the project
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (id)"',$deploy->compileRemoteShellCommand("id"));
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "export ATK14_ENV=production && (id)"',$deploy->compileRemoteShellCommand("id",false));
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (id)"',$deploy->compileRemoteShellCommand("id",true));
+
+		// a stage with port
+		$production = Atk14DeploymentStage::GetStage("production");
+		$this->assertEquals('ssh deploy@zeus.mushoomradar.net -p 2222 "cd /home/deploy/apps/mushoomradar_production/ && export ATK14_ENV=production PATH=/home/deploy/bin:$PATH && (./scripts/migrate)"',$production->compileRemoteShellCommand("./scripts/migrate"));
+	}
+
 	function _compareArrays($exp_ar,$ar){
 		foreach($exp_ar as $key => $exp){
 			$this->assertEquals($exp,$ar[$key],$key);
+			$this->assertTrue($exp===$ar[$key],$key);
 		}
 	}
 }

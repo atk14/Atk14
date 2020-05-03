@@ -149,6 +149,23 @@ class Atk14DeploymentStage{
 		return $deploy_repository_remote;
 	}
 
+	/**
+	 *
+	 * 	$cmd = $stage->compileRemoteShellCommand("./scripts/migrate"); // e.g. 'ssh deploy@devel.mushoomradar.net "cd /home/deploy/webapps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/migrate)"'
+	 */
+	function compileRemoteShellCommand($cmd,$cd_to_project_directory = true){
+		$config = $this->toArray();
+
+		$cd_cmd = $cd_to_project_directory ? "cd $config[directory] && " : ""; // e.g. "cd /home/deploy/webapps/myapp/ && "
+
+		$port_spec = $config["port"] ? " -p $config[port]" : "";
+		$user = $config["user"] ? "$config[user]@" : "";
+		$env = "ATK14_ENV=production";
+		$env .= $config["env"] ? " $config[env]" : "";
+		$cmd = "ssh $user$config[server]$port_spec \"${cd_cmd}export $env && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
+		return $cmd;
+	}
+
 	function toArray(){
 		// it's fine to have the name on the first position :)
 		$data = $this->data->toArray();

@@ -29,6 +29,8 @@ acceptation2:
 
 production:
   server: "zeus.mushoomradar.net"
+  port: 2222
+  env: "PATH=/home/{{user}}/bin:$PATH"
   url: "http://www.mushoomradar.net"
   create_maintenance_file: "False"
 
