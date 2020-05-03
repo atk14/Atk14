@@ -1,0 +1,74 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Script for initialization deployment stage - i.e. installing application into production
+ *
+ * Experimental script
+ */
+require_once(dirname(__FILE__)."/load.php");
+$cwd = getcwd();
+chdir(ATK14_DOCUMENT_ROOT);
+
+$STAGES = Atk14DeploymentStage::GetStages();
+$FIRST_STAGE = Atk14DeploymentStage::GetFirstStage();
+
+if(!$STAGES){
+	echo file_exists("./config/deploy.yml") ? "It looks like the file ./config/deploy.yml is corrupted (beware of usage of tabulators)\n" : "It looks like there is no file ./config/deploy.yml\n";
+	exit(1);
+}
+
+$stage_explicit = (sizeof($argv)>1 && !preg_match('/^-/',$argv[sizeof($argv)-1])) ? $argv[sizeof($argv)-1] : null; // the last parameter without '-' at the beginning
+$stage = isset($stage_explicit) ? $stage_explicit : $FIRST_STAGE->name;
+
+if($stage_explicit && !isset($STAGES[$stage_explicit])){
+	echo "# sorry, in ./config/deploy.yml I have no information about a stage $stage_explicit\n";
+	exit(1);
+}
+
+if(!isset($STAGES[$stage])){
+	echo "# sorry, in ./config/deploy.yml I have no information about a stage $stage\n";
+	exit(1);
+}
+
+$stage = $STAGES[$stage];
+$deploy_repository_remote_dir = $stage->getDeployRepositoryRemoteDir();
+$stage_name = $stage->getName();
+
+$out = array();
+
+$out[] = "# Initializing stage ".$stage->getName();
+$out[] = "cd ".getcwd()."/";
+$out[] = $stage->compileRemoteShellCommand("mkdir -p ".$stage->getDeployRepositoryRemoteDir(),false);
+$out[] = $stage->compileRemoteShellCommand("git init --bare $deploy_repository_remote_dir",false);
+$current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD","getting name of the branch you are on"));
+if($current_branch=="HEAD"){
+	echo "# You are not currently on a branch\n";
+	exit(1);
+}
+$out[] = "git remote add $stage_name ".$stage->getDeployRepository();
+$out[] = "git push $stage_name $current_branch:master";
+$out[] = $stage->compileRemoteShellCommand("mkdir -p ".$stage->getDirectory(),false);
+$out[] = $stage->compileRemoteShellCommand("git clone $deploy_repository_remote_dir .");
+$out[] = $stage->compileRemoteShellCommand("git submodule init");
+$out[] = $stage->compileRemoteShellCommand("git submodule update");
+$out[] = $stage->compileRemoteShellCommand("mkdir -p tmp");
+$out[] = $stage->compileRemoteShellCommand("chmod 777 tmp");
+$out[] = $stage->compileRemoteShellCommand("mkdir -p log");
+$out[] = $stage->compileRemoteShellCommand("chmod 777 log");
+$out[] = $stage->compileRemoteShellCommand("head -c 200 /dev/urandom | base64 -w 0 > config/.secret_token.txt");
+
+echo join("\n",$out);
+echo "\n";
+exit(0);
+
+function _exec($cmd){
+	exec("($cmd) 2>&1",$output,$err);
+	if($err){
+		echo join("\n",$output),"\n";
+		echo "# command execution failed ($err), exiting...\n";
+		exit(1);
+	}
+	$output && ($output[] = "");
+	return join("\n",$output);
+}
+
