@@ -56,6 +56,12 @@ $out[] = $stage->compileRemoteShellCommand("chmod 777 tmp");
 $out[] = $stage->compileRemoteShellCommand("mkdir -p log");
 $out[] = $stage->compileRemoteShellCommand("chmod 777 log");
 $out[] = $stage->compileRemoteShellCommand("head -c 200 /dev/urandom | base64 -w 0 > config/.secret_token.txt");
+foreach($stage->getRsync() as $file){
+	if(is_dir($file)){
+		$out[] = $stage->compileRemoteShellCommand("mkdir -p $file");
+		$out[] = $stage->compileRsyncCommand($file);
+	}
+}
 
 echo join("\n",$out);
 echo "\n";
