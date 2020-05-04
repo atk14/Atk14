@@ -159,6 +159,19 @@ class Atk14DeploymentStage{
 
 	/**
 	 *
+	 * @return string[]
+	 */
+	function getRsync(){
+		$out = $this->rsync;
+		if(!$out){ return array(); }
+		if(!is_array($out)){
+			$out = array($out);
+		}
+		return $out;
+	}
+
+	/**
+	 *
 	 * 	$cmd = $stage->compileRemoteShellCommand("./scripts/migrate"); // e.g. 'ssh deploy@devel.mushoomradar.net "cd /home/deploy/webapps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/migrate)"'
 	 */
 	function compileRemoteShellCommand($cmd,$cd_to_project_directory = true){
@@ -172,6 +185,22 @@ class Atk14DeploymentStage{
 		$env .= $config["env"] ? " $config[env]" : "";
 		$cmd = "ssh $user$config[server]$port_spec \"${cd_cmd}export $env && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
 		return $cmd;
+	}
+
+	/**
+	 *
+	 *	$cmd = $stage->compileRsyncCommand("public/dist/");
+	 */
+	function compileRsyncCommand($file){
+		$config = $this->toArray();
+		if(is_dir(ATK14_DOCUMENT_ROOT."/".$file)){
+			!preg_match('/\/$/',$file) && ($file .= "/"); // "public/dist" -> "public/dist/"
+		}
+		$port_spec = $config["port"] ? " -e 'ssh -p $config[port]'" : "";
+		$user = $config["user"] ? "$config[user]@" : "";
+		$dest = "$config[directory]/$file";
+		$dest = preg_replace('/\/{2,}/','/',$dest);
+		return "rsync -av --delete$port_spec $file $user$config[server]:$dest";
 	}
 
 	function toArray(){

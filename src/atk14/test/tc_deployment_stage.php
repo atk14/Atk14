@@ -20,7 +20,13 @@ class TcDeploymentStage extends TcBase{
 
 		$this->assertEquals("devel",$devel->getName());
 		$this->assertEquals("/home/deploy/apps/mushoomradar_devel/",$devel->getDirectory());
+		$this->assertEquals(array("public/dist/","vendor","public/sitemap.xml"),$devel->getRsync());
 
+		$acceptation = Atk14DeploymentStage::GetStage("acceptation");
+		$this->assertEquals("acceptation",$acceptation->getName());
+		$this->assertEquals("/home/deploy/apps/mushoomradar_acc/",$acceptation->getDirectory());
+		$this->assertEquals(array(),$acceptation->getRsync());
+		
 		// etc
 		// key order
 		$this->assertEquals(array(
@@ -51,7 +57,7 @@ class TcDeploymentStage extends TcBase{
 			"deploy_branch" => "master",
 			"create_maintenance_file" => false,
 			"before_deploy" => array("@local composer update", "@local grunt dist"),
-			"rsync" => array("public/dist/","vendor/"),
+			"rsync" => array("public/dist/","vendor","public/sitemap.xml"),
 			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
 		),$devel->toArray());
 
@@ -70,7 +76,7 @@ class TcDeploymentStage extends TcBase{
 			"deploy_branch" => "master",
 			"create_maintenance_file" => false,
 			"before_deploy" => array("@local composer update", "@local grunt dist"),
-			"rsync" => array("public/dist/","vendor/"),
+			"rsync" => array("public/dist/","vendor","public/sitemap.xml"),
 			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
 		),$production->toArray());
 
@@ -118,7 +124,7 @@ class TcDeploymentStage extends TcBase{
 			$exception_thrown = true;
 		}
 		$this->assertEquals(true,$exception_thrown);
-		$this->assertEquals(array("public/dist/","vendor/"),$devel->rsync);
+		$this->assertEquals(array("public/dist/","vendor","public/sitemap.xml"),$devel->rsync);
 	}
 
 	function test_getDeployRepository(){
@@ -139,18 +145,29 @@ class TcDeploymentStage extends TcBase{
 	}
 
 	function test_compileRemoteShellCommand(){
-		$deploy = Atk14DeploymentStage::GetStage("devel");
-		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/migrate)"',$deploy->compileRemoteShellCommand("./scripts/migrate"));
-		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/delete_temporary_files \"dbmole_cache\")"',$deploy->compileRemoteShellCommand('./scripts/delete_temporary_files "dbmole_cache"'));
-		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache)"',$deploy->compileRemoteShellCommand('./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache'));
+		$devel = Atk14DeploymentStage::GetStage("devel");
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/migrate)"',$devel->compileRemoteShellCommand("./scripts/migrate"));
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/delete_temporary_files \"dbmole_cache\")"',$devel->compileRemoteShellCommand('./scripts/delete_temporary_files "dbmole_cache"'));
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache)"',$devel->compileRemoteShellCommand('./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache'));
 		// changing directory to the project
-		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (id)"',$deploy->compileRemoteShellCommand("id"));
-		$this->assertEquals('ssh deploy@devel.mushoomradar.net "export ATK14_ENV=production && (id)"',$deploy->compileRemoteShellCommand("id",false));
-		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (id)"',$deploy->compileRemoteShellCommand("id",true));
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (id)"',$devel->compileRemoteShellCommand("id"));
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "export ATK14_ENV=production && (id)"',$devel->compileRemoteShellCommand("id",false));
+		$this->assertEquals('ssh deploy@devel.mushoomradar.net "cd /home/deploy/apps/mushoomradar_devel/ && export ATK14_ENV=production && (id)"',$devel->compileRemoteShellCommand("id",true));
 
 		// a stage with port
 		$production = Atk14DeploymentStage::GetStage("production");
 		$this->assertEquals('ssh deploy@zeus.mushoomradar.net -p 2222 "cd /home/deploy/apps/mushoomradar_production/ && export ATK14_ENV=production PATH=/home/deploy/bin:$PATH && (./scripts/migrate)"',$production->compileRemoteShellCommand("./scripts/migrate"));
+	}
+
+	function test_compileRsyncCommand(){
+		$devel = Atk14DeploymentStage::GetStage("devel");
+		$this->assertEquals('rsync -av --delete public/dist/ deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/',$devel->compileRsyncCommand("public/dist/"));
+		$this->assertEquals('rsync -av --delete vendor/ deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/vendor/',$devel->compileRsyncCommand("vendor"));
+		$this->assertEquals('rsync -av --delete public/dist/sitemap.xml deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/sitemap.xml',$devel->compileRsyncCommand("public/dist/sitemap.xml"));
+
+		$production = Atk14DeploymentStage::GetStage("production");
+		$this->assertEquals("rsync -av --delete -e 'ssh -p 2222' public/dist/ deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/",$production->compileRsyncCommand("public/dist/"));
+		$this->assertEquals("rsync -av --delete -e 'ssh -p 2222' vendor/ deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/vendor/",$production->compileRsyncCommand("vendor"));
 	}
 
 	function _compareArrays($exp_ar,$ar){
