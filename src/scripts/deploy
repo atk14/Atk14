@@ -149,9 +149,7 @@ foreach($config["rsync"] as $file){
 		_remote_exec("mkdir -p $file","gonna create directory $file if doesn't exist"); // creates directory when it is missing
 		!preg_match('/\/$/',$file) && ($file .= "/"); // "public/dist" -> "public/dist/"
 	}
-	$port_spec = $config["port"] ? " -e 'ssh -p $config[port]'" : "";
-	$user = $config["user"] ? "$config[user]@" : "";
-	echo _exec("rsync -av --delete$port_spec $file $user$config[server]:$config[directory]/$file","gonna synchronize $file");
+	echo _exec($stage_obj->compileRsyncCommand($file),"gonna synchronize $file");
 }
 
 _run_commands($config["after_deploy"],"after_deploy");
