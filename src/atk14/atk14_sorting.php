@@ -51,7 +51,7 @@
  * ```
  * @package Atk14\Core
  */
-class Atk14Sorting implements ArrayAccess, IteratorAggregate {
+class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 
 	/**
 	 * Stored parameters from constructor.
@@ -293,5 +293,14 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate {
 		unset($this->_OrderingStrings["$key"]);
 		unset($this->_OrderingStrings["$key-asc"]);
 		unset($this->_OrderingStrings["$key-dec"]);
+	}
+
+	/**
+	 * Return the number of possible sort options.
+	 * > echo count($sorting);
+	 * > echo $sorting->count();
+	 **/
+	function count() {
+		return count($this->_Ordering);
 	}
 }
