@@ -104,14 +104,14 @@ class Files{
 	 * Creates a directory.
 	 *
 	 * Also creates parent directories when they don't exist.
-	 * Return number of created directories.
+	 * Returns 1 when directory is created.
 	 * When the requested directory exists method returns 0.
 	 * Newly created directories have permissions set to 0777.
 	 *
 	 * @param string $dirname	Name of directory to be created.
 	 * @param boolean &$error Error flag
-	 * @param string	 &$error_str Error description
-	 * @return int Number of directories created - Not true! See the code.
+	 * @param string &$error_str Error description
+	 * @return int 1 when created, 0 when directory exists
 	 */
 	static function Mkdir($dirname,&$error = null,&$error_str = null){
 		$out = 0;
@@ -167,7 +167,7 @@ class Files{
 	 *
 	 *
 	 * ```
-	 *	Files::MkdirForFile("/path/to/a/file.dat");
+	 * Files::MkdirForFile("/path/to/a/file.dat");
 	 * ```
 	 */
 	static function MkdirForFile($filename,&$error = null,&$error_str = null){

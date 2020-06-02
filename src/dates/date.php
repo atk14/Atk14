@@ -11,49 +11,49 @@
  *
  * Basic usage
  * ```
- *	$d = new Date("2008-01-01");
+ * $d = new Date("2008-01-01");
  * ```
  * Unexpected thing may happen when input date is not valid so the following usage is preferred.
  *
  * This call returns null when input date is not valid.
  * ```
- *	$d = Date::ByDate("2008-01-01");
+ * $d = Date::ByDate("2008-01-01");
  * ```
  *
  * Getting yesterday, today a tommorow date
  * ```
- *	$today = Date::Today();
- *	$yesterday = Date::Yesterday();
- *	$tomorrow = Date::Tomorrow();
+ * $today = Date::Today();
+ * $yesterday = Date::Yesterday();
+ * $tomorrow = Date::Tomorrow();
  * ```
  *
  * Getting various output formats.
  * ```
- *	$d = Date::Today();
- *	$d->getUnixTimestamp();
- *	$d->toString();
+ * $d = Date::Today();
+ * $d->getUnixTimestamp();
+ * $d->toString();
  * ```
  *
  * Following methods change the instance value
  * ```
- *	$d->addDay();
- *	$d->addDays(10);
- *	$d->addDays(-2);
+ * $d->addDay();
+ * $d->addDays(10);
+ * $d->addDays(-2);
  * ```
  *
  * Following methods return copy of an instance
  * ```
- *	$d1 = $d->plusDay();
- *	$d2 = $d->plusDays(10);
- *	$d3 = $d->minusDay();
- *	$d4 = $d->minusDays(10);
+ * $d1 = $d->plusDay();
+ * $d2 = $d->plusDays(10);
+ * $d3 = $d->minusDay();
+ * $d4 = $d->minusDays(10);
  * ```
  *
  * Check if the date is monday
  * ```
- *	if($d->isMonday()){
- *		ok, it's monday
- *	}
+ * if($d->isMonday()){
+ * 	ok, it's monday
+ * }
  * ```
  *
  * @package Atk14

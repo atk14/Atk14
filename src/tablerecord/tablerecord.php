@@ -121,6 +121,8 @@ class TableRecord extends inobj {
 	 * - <b>id_field_name</b> - name of field containing primary key (default: id)
 	 * - <b>id_field_type</b> - type of field containing primary key. When not set, it is guessed from database type of the primary key field.
 	 * - <b>sequence\_name</b> - set the sequence name in case it doesn't suit atk14s pattern 'seq_' + $table_name
+	 * - <b>table\_name</b> - use own table name in case it doesn't suit atk14s pattern where table name is derived from the plural of the model name.
+	 * - <b>dbmole</b> - use own dbmole in case model uses different database.
 	 */
 	function __construct($table_name_or_options = null,$options = array()){
 		static $DEFAULT_OPTIONS = array();

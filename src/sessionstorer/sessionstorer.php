@@ -73,16 +73,18 @@ if(!defined("SESSION_STORER_SET_COOKIES_ONLY_ON_SSL_BY_DEFAULT")){
  * Another values are stored in a database (using global $dbmole).
  *
  * Usage:
- *		$session = new SessionStorer();
- *		if(!$session->cookiesEnabled()){
- *			echo "Error: please, enable cookies in your browser";
- *		}
- *		// ...
- *		$session->writeValue("password_validated",true);
- *		//...
- *		if($session->readValue("password_validated") === true){
- *			//...
- *		}
+ * ```
+ * $session = new SessionStorer();
+ * if(!$session->cookiesEnabled()){
+ * 	echo "Error: please, enable cookies in your browser";
+ * }
+ * // ...
+ * $session->writeValue("password_validated",true);
+ * //...
+ * if($session->readValue("password_validated") === true){
+ * 	//...
+ * }
+ * ```
  *
  * There are two tables needed in a database. See README for structure specifications.
  */
@@ -159,6 +161,11 @@ class SessionStorer{
 	 */
 	protected $_ExtraRequest = null;
 
+	/**
+	 * Instance of HttpResponse currently used.
+	 *
+	 * @var HttpResponse
+	 */
 	protected $_response = null;
 
 	/**
@@ -357,8 +364,8 @@ class SessionStorer{
 	 * Writes values into the session
 	 *
 	 * @param string $key
-	 * @param mixed $value				an integer, an string, an array, an object...
-	 * @param int $expiration			pocet vterin, po kterou ma hodnota platit
+	 * @param mixed $value an integer, a string, an array, an object that should be stored
+	 * @param int $expiration number of seconds after which the value expires
 	 */
 	function writeValue($key,$value,$expiration = null){
 		settype($key,"string");
@@ -400,13 +407,18 @@ class SessionStorer{
 	}
 
 	/**
-	 * Cleares all values
+	 * Clears all values
 	 */
 	function clear(){
 		$this->_initialize();
 		foreach($this->_ValuesStore as $k => $v){ $this->writeValue($k,null); }
 	}
 
+	/**
+	 * Returns session values as array of key => value pairs.
+	 *
+	 * @return array
+	 */
 	function toArray(){
 		$this->_initialize();
 		$out = array();
@@ -476,6 +488,11 @@ class SessionStorer{
 		return $this->_SentCookies;
 	}
 
+	/**
+	 * Get current request instance.
+	 *
+	 * @return HttpRequest
+	 */
 	function _getRequest(){
 		if($this->_ExtraRequest){ return $this->_ExtraRequest; }
 		return $GLOBALS["HTTP_REQUEST"];
@@ -644,6 +661,14 @@ class SessionStorer{
 		return $pairs;
 	}
 
+	/**
+	 * To be explained.
+	 *
+	 * @note to be explained
+	 *
+	 * @param string $cookie_val
+	 * @param array &$pairs
+	 */
 	protected function __addCookieValueToPairs($cookie_val,&$pairs){
 		$cookie_val = (string)$cookie_val;
 		if(strlen($cookie_val) && preg_match('/^([1-9][0-9]{0,20})\.([a-z0-9]{32})$/i',$cookie_val,$matches)){
@@ -664,6 +689,7 @@ class SessionStorer{
 	 *
 	 * Returns true on success.
 	 *
+	 * @param array $pairs
 	 * @return bool
 	 */
 	protected function _checkSessionIdAndSecurity($pairs){
@@ -721,6 +747,14 @@ class SessionStorer{
 		return false;
 	}
 
+	/**
+	 * Checks if access time should be updated.
+	 *
+	 * Access time is updated every five minutes. This method decides if it is time to update it.
+	 *
+	 * @param string $current_last_access
+	 * @return bool
+	 */
 	function _isTimeToUpdateLastAccess($current_last_access){
 		$min_delta = 60 * 4; // 4 minutes
 		$max_delta = 60 * 6; // 6 minutes

@@ -10,12 +10,12 @@
  *
  * Usage in controller:
  * ```
- *	$this->session->setValue("user_id",123);
- *	$this->session->getValue("user_id");
- *	$this->session->clearValue("user_id");
- *	if($this->session->defined("user_id")){
- *			//...
- *	}
+ * $this->session->setValue("user_id",123);
+ * $this->session->getValue("user_id");
+ * $this->session->clearValue("user_id");
+ * if($this->session->defined("user_id")){
+ * 		//...
+ * }
  * ```
  *
  * @package Atk14\Core
@@ -85,6 +85,7 @@ class Atk14Session{
 	/**
 	 * Alias to method {@link setValue()}
 	 *
+	 * {@see SessionStorer->writeValue()}
 	 * @param string $name
 	 * @param mixed $value
 	 */

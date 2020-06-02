@@ -361,6 +361,16 @@ class Field
 	/**
 	 * This method provides value presentation.
 	 *
+	 * It provides that any type of data passed to the field for example by {@link Atk14Form::set_initial()} will be properly displayed in related input field.
+	 *
+	 * ```
+	 * function format_initial_data($value) {
+	 * 	if (is_a($value, "User")) {
+	 * 		return $value->getLogin();
+	 * 	}
+	 * 	return $value;
+	 * }
+	 * ```
 	 * @param string $data
 	 * @todo should be defined as abstract
 	 */

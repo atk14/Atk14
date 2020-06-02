@@ -102,11 +102,11 @@ class HTTPResponse{
 	var $_HTTPCookies = array();
 
 	/**
-	 * @access private
-	 * @ignore
+	 * Output buffer
+	 *
 	 * @var StringBuffer
 	 */
-	var $_OutputBuffer = null;
+	protected $_OutputBuffer = null;
 
 	/**
 	 * @access private
@@ -115,8 +115,11 @@ class HTTPResponse{
 	var $_OutputBuffer_Flush_Started = false;
 
 	/**
+	 * Output buffer instance.
+	 *
+	 * This is only a reference to {@link _OutputBuffer}
+	 *
 	 * @access private
-	 * @ignore
 	 * @var StringBuffer
 	 */
 	var $buffer = null;
@@ -140,9 +143,9 @@ class HTTPResponse{
 	 * Sets status code of the response.
 	 *
 	 * ```
-	 *	 $response->setStatusCode(400);
-	 *	 $response->setStatusCode(404,"Not Found Dude");
-	 *	 $response->setStatusCode("200 Found");
+	 * $response->setStatusCode(400);
+	 * $response->setStatusCode(404,"Not Found Dude");
+	 * $response->setStatusCode("200 Found");
 	 * ```
 	 *
 	 * @param integer $code
@@ -395,11 +398,14 @@ class HTTPResponse{
 	 * Bulk HTTP header assignment
 	 *
 	 * ```
-	 * $response->setHeader([
+	 * $response->setHeaders([
 	 *   "X-Powered-By" => "ATK14 Framework",
 	 *   "X-Content-Type-Options" => "nosniff",
 	 * ]);
 	 * ```
+	 *
+	 * @param array $headers
+	 * @uses setHeader()
 	 */
 	function setHeaders($headers){
 		foreach($headers as $name => $value){
