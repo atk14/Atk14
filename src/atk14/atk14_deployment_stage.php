@@ -200,7 +200,7 @@ class Atk14DeploymentStage{
 		$user = $config["user"] ? "$config[user]@" : "";
 		$dest = "$config[directory]/$file";
 		$dest = preg_replace('/\/{2,}/','/',$dest);
-		return "rsync -av --delete$port_spec $file $user$config[server]:$dest";
+		return "rsync -av --checksum --no-times --delete$port_spec $file $user$config[server]:$dest";
 	}
 
 	function toArray(){
