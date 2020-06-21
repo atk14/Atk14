@@ -161,13 +161,13 @@ class TcDeploymentStage extends TcBase{
 
 	function test_compileRsyncCommand(){
 		$devel = Atk14DeploymentStage::GetStage("devel");
-		$this->assertEquals('rsync -av --delete public/dist/ deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/',$devel->compileRsyncCommand("public/dist/"));
-		$this->assertEquals('rsync -av --delete vendor/ deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/vendor/',$devel->compileRsyncCommand("vendor"));
-		$this->assertEquals('rsync -av --delete public/dist/sitemap.xml deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/sitemap.xml',$devel->compileRsyncCommand("public/dist/sitemap.xml"));
+		$this->assertEquals('rsync -av --checksum --no-times --delete public/dist/ deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/',$devel->compileRsyncCommand("public/dist/"));
+		$this->assertEquals('rsync -av --checksum --no-times --delete vendor/ deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/vendor/',$devel->compileRsyncCommand("vendor"));
+		$this->assertEquals('rsync -av --checksum --no-times --delete public/dist/sitemap.xml deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/sitemap.xml',$devel->compileRsyncCommand("public/dist/sitemap.xml"));
 
 		$production = Atk14DeploymentStage::GetStage("production");
-		$this->assertEquals("rsync -av --delete -e 'ssh -p 2222' public/dist/ deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/",$production->compileRsyncCommand("public/dist/"));
-		$this->assertEquals("rsync -av --delete -e 'ssh -p 2222' vendor/ deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/vendor/",$production->compileRsyncCommand("vendor"));
+		$this->assertEquals("rsync -av --checksum --no-times --delete -e 'ssh -p 2222' public/dist/ deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/",$production->compileRsyncCommand("public/dist/"));
+		$this->assertEquals("rsync -av --checksum --no-times --delete -e 'ssh -p 2222' vendor/ deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/vendor/",$production->compileRsyncCommand("vendor"));
 	}
 
 	function _compareArrays($exp_ar,$ar){
