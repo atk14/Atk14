@@ -8,7 +8,8 @@
  * 
  * There is also smarty`s function with the same name.
  */
-function smarty_modifier_to_sentence($ar,$connector = 'and'){
+function smarty_modifier_to_sentence($ar,$connector = null){
+	if(is_null($connector)){ $connector = _("and"); }
 	$out = '';
 	$index = 0;
 	$sizeof = sizeof($ar);
