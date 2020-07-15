@@ -105,7 +105,8 @@ class CheckboxSelectMultiple extends SelectMultiple
 
 	function id_for_label($id_)
 	{
-		if ($id_) {
+		if ($id_ && sizeof($this->choices)==1) {
+			// if there are more choices than one it is an unwanted feature to toggle checkbox of the first choice by clicking label
 			$id_ = $id_.'_0';
 		}
 		return $id_;
