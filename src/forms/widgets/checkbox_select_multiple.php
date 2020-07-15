@@ -86,7 +86,7 @@ class CheckboxSelectMultiple extends SelectMultiple
 			$option_value = (string)$option_value;
 			$rendered_cb = $cb->render("{$name}[]", $option_value);
 			$label = ($this->escape_labels ? forms_htmlspecialchars($option_label) : $option_label);
-			$markup = $this->bootstrap4 ? '<div%wrap_attrs%>%checkbox% <label%label_attrs%>%label%</label></div>' : '<label>%checkbox% %label%</label>';
+			$markup = $this->bootstrap4 ? '<div%wrap_attrs%>%checkbox% <label%label_attrs%>%label%</label></div>' : '<label class="control-label">%checkbox% %label%</label>';
 			$output[] = $this->bootstrap4 ? '<li class="list__item">' : '<li class="checkbox">';
 			$output[] = strtr($markup,array(
 				"%checkbox%" => $rendered_cb,
