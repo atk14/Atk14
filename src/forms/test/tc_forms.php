@@ -903,7 +903,7 @@ class TcForms extends TcBase
 		$form = new SignupForm(array('auto_id'=>false));
 		$field = $form->get_field('email');
 		$this->assertEquals(
-			'<input required="required" type="email" name="email" class="email text form-control" />',
+			'<input required="required" type="email" name="email" class="email text form-control" value="@" />',
 			$field->as_widget()
 		);
 		$field = $form->get_field('get_spam');
