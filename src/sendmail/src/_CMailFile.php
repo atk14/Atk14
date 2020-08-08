@@ -90,9 +90,9 @@ class _CMailFile {
 		$encoded = $this->encode_file($filename,$file_content);
 
 		$out = $this->_first_attachment ? "--$this->mime_boundary\n" : "\n";
-		$out = $out . "Content-type: " . $mimetype . "; name=\"$filename\";\n";		
+		$out = $out . "Content-Type: " . $mimetype . "; name=\"$filename\";\n";
 		$out = $out . "Content-Transfer-Encoding: base64\n";
-		$out = $out . "Content-disposition: attachment; filename=\"$filename\"\n\n";
+		$out = $out . "Content-Disposition: attachment; filename=\"$filename\"\n\n";
 		$out = $out . $encoded . "\n";
 		$out = $out . "--" . $this->mime_boundary;
 		$this->_first_attachment = false;
