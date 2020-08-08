@@ -190,8 +190,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 			$ATTACHMENTS[] = array(
 				"body" => $params["attachments"][$i]["body"],
 				"filename" => $params["attachments"][$i]["filename"],
-				"mime_type" => $params["attachments"][$i]["mime_type"],
-				"cid" => isset($params["attachments"][$i]["cid"]) ? $params["attachments"][$i]["cid"] : "",
+				"mime_type" => $params["attachments"][$i]["mime_type"]
 			);
 		}
 	}
@@ -239,12 +238,11 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 
 			"mime_type" => $ATTACHMENTS[0]['mime_type'],
 			"filename" => $ATTACHMENTS[0]['filename'],
-			"cid" => $ATTACHMENTS[0]['cid'],
 		));
 
 		// pokud jsou, vlozime do e-mailu dalsi prilohy
 		for($i=1;$i<sizeof($ATTACHMENTS);$i++){
-			$mailfile->attach_file($ATTACHMENTS[$i]['filename'],$ATTACHMENTS[$i]['body'],$ATTACHMENTS[$i]['mime_type'],$ATTACHMENTS[$i]['cid']);
+			$mailfile->attach_file($ATTACHMENTS[$i]['filename'],$ATTACHMENTS[$i]['body'],$ATTACHMENTS[$i]['mime_type']);
 		}
 
 		$mail_ar = $mailfile->getfile();
