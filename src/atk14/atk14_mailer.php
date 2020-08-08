@@ -186,6 +186,14 @@ class Atk14Mailer{
 	var $_attachments = array();
 
 	/**
+	 *
+	 * @access protected
+	 * @var protected
+	 * @see Atk14Mailer::add_html_image()
+	 */
+	var $_html_images = array();
+
+	/**
 	 * Template name
 	 *
 	 * @var string
@@ -498,6 +506,48 @@ class Atk14Mailer{
 	 */
 	function clear_attachments(){ $this->_attachments = array(); }
 
+	/**
+	 * Adds an image to be displayed in the HTML email section
+	 *
+	 * ```
+	 *	$this->add_html_image($content,"logo");
+	 *	// or
+	 *	$this->add_html_image($content,"logo","atk14_birdie.png");
+	 *	// or
+	 *	$this->add_html_image($content,"logo","atk14_birdie.png","image/png");
+	 * ```
+	 *
+	 * And than in a HTML template:
+	 *
+	 * ```
+	 *	...
+	 *	<img src="cid:logo">
+	 *	...
+	 * ```
+	 *
+	 */
+	function add_html_image($content,$cid,$filename = "",$mime_type = ""){
+		if(!$filename){
+			$filename = "image".uniqid();
+		}
+		if(!$mime_type){
+			$mime_type = Files::DetermineFileType($content);
+		}
+		$this->_html_images[] = array(
+			"content" => $content,
+			"cid" => $cid,
+			"filename" => $filename,
+			"mime_type" => $mime_type,
+		);
+	}
+
+	/**
+	 * Removes all html images
+	 *
+	 * Should be usefull when several messages with different images in the HTML part are sent through a single instance.
+	 */
+	function clear_html_images(){ $this->_html_images = array(); }
+
 
 	/**
 	 * This method is called before every action in ApplicationMailer
@@ -570,6 +620,7 @@ class Atk14Mailer{
 			// !! experimental feature
 			$params["plain"] = $params["body"]; // oups! in sendhtmlmail() there is no param named body
 			$params["html"] = $this->body_html;
+			$params["images"] = $this->_html_images;
 			unset($params["body"]);
 			unset($params["mime_type"]); // mime_type is determined automatically, "multipart/alternative" by default
 			$email_ar = sendhtmlmail($params);
