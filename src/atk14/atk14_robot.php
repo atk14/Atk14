@@ -167,6 +167,9 @@ class Atk14Robot{
 		elseif($bytes>1024){ $bytes = number_format($bytes/1024,2,".",",")."kB"; }
 		else{ $bytes = "$bytes Bytes"; }
 		$msg = "real peak memory usage: ".$bytes;
+		if($this->dbmole){
+			$msg .= ", total queries executed: ".$this->dbmole->getQueriesExecuted();
+		}
 
 		$this->logger->stop($msg);
 		$this->logger->flush_all();
