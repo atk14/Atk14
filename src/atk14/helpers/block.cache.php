@@ -88,7 +88,12 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 		return;
 	}
 
-	$tmp_file = Files::WriteToTemp($content);
+	$tmp_file = Files::WriteToTemp($content,$err,$err_str);
+	if($err){
+		throw new Exception("Unable to write cache file for a content: $err_str");
+	}
+	
 	Files::MoveFile($tmp_file,$cache_file);
+
 	return $content;
 }
