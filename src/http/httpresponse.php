@@ -725,7 +725,19 @@ class HTTPResponse{
 		}
 
 		foreach($this->getCookies() as $cookie){
-			setcookie($cookie->getName(),$cookie->getValue(),$cookie->getExpire(),$cookie->getPath(),$cookie->getDomain(),$cookie->isSecure(),$cookie->isHttponly());
+			if(PHP_VERSION_ID >= 70300){
+				setcookie($cookie->getName(),$cookie->getValue(),array(
+					"expires" => $cookie->getExpire(),
+					"path" => $cookie->getPath(),
+					"domain" => $cookie->getDomain(),
+					"secure" => $cookie->isSecure(),
+					"httponly" => $cookie->isHttponly(),
+					"samesite" => $cookie->getSameSite(),
+				));
+			}else{
+				// Note that there is no samesite parameter for older versions of PHP.
+				setcookie($cookie->getName(),$cookie->getValue(),$cookie->getExpire(),$cookie->getPath(),$cookie->getDomain(),$cookie->isSecure(),$cookie->isHttponly());
+			}
 		}
 	}
 
