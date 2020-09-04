@@ -896,7 +896,8 @@ class SessionStorer{
 			"path" => $path,
 		);
 
-		// otherwise, the default value is used
+		// use a option if it is set, otherwise the default value is used
+		// see HTTPCookie::DefaultOptions()
 		if(!is_null($domain)){ $options["domain"] = $domain; }
 		if(!is_null($secure)){ $options["secure"] = $secure; }
 		if(!is_null($httponly)){ $options["httponly"] = $httponly; }
