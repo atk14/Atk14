@@ -511,9 +511,7 @@ class SessionStorer{
 			!$request->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C") ||
 			$this->_getCurrentTime()-(int)$request->getCookieVar(SESSION_STORER_COOKIE_NAME_CHECK)>60*60*24*365*2 // the check cookie is older than 2 years
 		){
-			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,$this->_getCurrentTime(),$this->_getCurrentTime()+60*60*24*365*5,array(
-				"ssl_only" => false, // value of $this->_SslOnly does not matter
-			));
+			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,$this->_getCurrentTime(),$this->_getCurrentTime()+60*60*24*365*5);
 		}
 	}
 
@@ -836,11 +834,15 @@ class SessionStorer{
 	 */
 	protected function _setCookie($name,$value,$time = 0,$options = array()){
 		$options += array(
-			"ssl_only" => $this->_SslOnly,
+			"ssl_only" => null,
 			"http_only" => true,
 			"domain" => $this->_getCookieDomain(),
 			"document_root" => $this->_getWebDocumentRoot(),
 		);
+
+		if($this->_SslOnly && is_null($options["ssl_only"])){
+			$options["ssl_only"] = $this->_SslOnly;
+		}
 
 		$request = $this->_getRequest();
 
@@ -887,14 +889,20 @@ class SessionStorer{
 	 * @param boolean $secure
 	 * @param boolean $http_only
 	 */
-	protected function __setCookie($name , $value, $expire, $path , $domain = null, $secure = false, $httponly = false){
-		$this->_response->addCookie(new HTTPCookie($name,$value,array(
+	protected function __setCookie($name , $value, $expire, $path , $domain = null, $secure = null, $httponly = null){
+
+		$options = array(
 			"expire" => $expire,
 			"path" => $path,
-			"domain" => $domain,
-			"secure" => $secure,
-			"httponly" => $httponly,
-		)));
+		);
+
+		// use a option if it is set, otherwise the default value is used
+		// see HTTPCookie::DefaultOptions()
+		if(!is_null($domain)){ $options["domain"] = $domain; }
+		if(!is_null($secure)){ $options["secure"] = $secure; }
+		if(!is_null($httponly)){ $options["httponly"] = $httponly; }
+
+		$this->_response->addCookie(new HTTPCookie($name,$value,$options));
 
 		/*
 		if(defined("TEST") && TEST){
