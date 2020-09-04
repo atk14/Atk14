@@ -87,9 +87,16 @@ class HTTPCookie{
 	 * ```
 	 *	HTTPCookie::DefaultOptions(["secure" => true, "samesite" => "None"]); // sets default options
 	 *	HTTPCookie::DefaultOptions(); // returns current default options
+	 *
+	 *	$def_secure = HTTPCookie::DefaultOptions("secure"); // returns default value of the given option
 	 * ```
 	 */
 	static function DefaultOptions($options = null){
+		if(isset($options) && !is_array($options)){
+			$name = (string)$options;
+			return self::$DEFAULT_OPTIONS[$name];
+		}
+
 		if(is_array($options)){
 			self::$DEFAULT_OPTIONS = $options + self::$DEFAULT_OPTIONS;
 		}

@@ -63,6 +63,8 @@ class tc_http_cookie extends tc_base{
 			"httponly" => false,
 			"samesite" => ""
 		),HTTPCookie::DefaultOptions());
+		$this->assertEquals(false,HTTPCookie::DefaultOptions("secure"));
+		$this->assertEquals("",HTTPCookie::DefaultOptions("samesite"));
 
 		$c = new HTTPCookie("test1","#1");
 		$this->assertEquals(false,$c->isSecure());
@@ -76,6 +78,8 @@ class tc_http_cookie extends tc_base{
 			"httponly" => false,
 			"samesite" => "Strict"
 		),HTTPCookie::DefaultOptions(array("secure" => true, "samesite" => "Strict")));
+		$this->assertEquals(true,HTTPCookie::DefaultOptions("secure"));
+		$this->assertEquals("Strict",HTTPCookie::DefaultOptions("samesite"));
 
 		$this->assertEquals(array(
 			"expire" => 0,
