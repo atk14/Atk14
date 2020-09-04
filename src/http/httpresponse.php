@@ -737,6 +737,9 @@ class HTTPResponse{
 			}else{
 				// Note that there is no samesite parameter for older versions of PHP.
 				setcookie($cookie->getName(),$cookie->getValue(),$cookie->getExpire(),$cookie->getPath(),$cookie->getDomain(),$cookie->isSecure(),$cookie->isHttponly());
+				if($cookie->getSameSite()!=""){
+					trigger_error(sprintf("HTTPResponse: can't set cookie %s with samesite option; PHP>=7.3 is needed; the cookie was set without samesite option",$cookie->getName()));
+				}
 			}
 		}
 	}
