@@ -834,11 +834,15 @@ class SessionStorer{
 	 */
 	protected function _setCookie($name,$value,$time = 0,$options = array()){
 		$options += array(
-			"ssl_only" => $this->_SslOnly,
+			"ssl_only" => null,
 			"http_only" => true,
 			"domain" => $this->_getCookieDomain(),
 			"document_root" => $this->_getWebDocumentRoot(),
 		);
+
+		if($this->_SslOnly && is_null($options["ssl_only"])){
+			$options["ssl_only"] = $this->_SslOnly;
+		}
 
 		$request = $this->_getRequest();
 

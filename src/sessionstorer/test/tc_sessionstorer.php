@@ -395,6 +395,33 @@ class TcSessionStorer extends TcBase{
 		),$s->_obtainSessionIdAndSecurityPairs());
 	}
 
+	function test_default_cookies_options(){
+		$defaults = HTTPCookie::DefaultOptions();
+
+		$response = new HTTPResponse();
+		$storer = new SessionStorer(array("response" => $response));
+		$cookies = $response->getCookies();
+		$check_cookie = $cookies[0];
+
+		$this->assertEquals(false,$check_cookie->isSecure());
+		$this->assertEquals("",$check_cookie->getSameSite());
+
+		HTTPCookie::DefaultOptions(array(
+			"secure" => true,
+			"samesite" => "None",
+		));
+
+		$response = new HTTPResponse();
+		$storer = new SessionStorer(array("response" => $response));
+		$cookies = $response->getCookies();
+		$check_cookie = $cookies[0];
+
+		$this->assertEquals(true,$check_cookie->isSecure());
+		$this->assertEquals("None",$check_cookie->getSameSite());
+
+		HTTPCookie::DefaultOptions($defaults);
+	}
+
 
 	function _add_cookies($send_cookies,&$store){
 		foreach($send_cookies as $item){
