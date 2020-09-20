@@ -204,14 +204,21 @@ class Atk14Locale{
 	 * <code>
 	 * echo Atk14Locale::FormatNumber(33); // "33"
 	 * echo Atk14Locale::FormatNumber(-1234.56); // "-1 234,56"
+	 *
+	 * // setting decimal places
+	 * echo Atk14Locale::FormatNumber(33, 2); // "33,00"
+	 * echo Atk14Locale::FormatNumber(33.7777, 2); // "33,78"
+	 * echo Atk14Locale::FormatNumber(33.7777, 0); // "34"
 	 * </code>
 	 */
-	static function FormatNumber($number){
+	static function FormatNumber($number,$decimal_places = null){
 		if(!strlen("$number")){ return; }
 
-		$decimal_places = 0;
-		if(preg_match('/\.(\d*)$/',"$number",$matches)){
-			$decimal_places = strlen($matches[1]);
+		if(strlen($decimal_places)==0){ // null, "", false...
+			$decimal_places = 0;
+			if(preg_match('/\.(\d*)$/',"$number",$matches)){
+				$decimal_places = strlen($matches[1]);
+			}
 		}
 
 		$out = number_format($number,$decimal_places,self::DecimalPoint(),self::ThousandsSeparator());
