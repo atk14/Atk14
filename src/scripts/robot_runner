@@ -9,6 +9,9 @@
 
 require_once(dirname(__FILE__)."/load.php");
 
+ini_set("log_errors","On");
+ini_set("error_log",LOG_DIR."/robots_error.log");
+
 $robots_dir = $ATK14_GLOBAL->getApplicationPath()."/../robots";
 
 $robot_name = null;
