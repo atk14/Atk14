@@ -1098,10 +1098,11 @@ class SessionStorer{
 						":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
 					)
 				);
-				$this->_dbmole->doQuery("
+				$this->_dbmole->selectSingleValue("
 					INSERT INTO session_values (session_id, section, key, value, expiration)
 					VALUES (:session_id, :section, :key, :value, :expiration)
 					ON CONFLICT (session_id, section, key) DO UPDATE SET value=:value, expiration=:expiration
+					RETURNING id
 						", array(
 						":session_id" => $this->_SessionId,
 						":section" => $this->getSection(),
