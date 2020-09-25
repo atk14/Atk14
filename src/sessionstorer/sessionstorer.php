@@ -1100,8 +1100,8 @@ class SessionStorer{
 				);
 				$this->_dbmole->doQuery("
 					INSERT INTO session_values (session_id, section, key, value, expiration)
-					SELECT :session_id, :section, :key, :value, :expiration
-					WHERE NOT EXISTS (SELECT 1 FROM session_values WHERE session_id=:session_id AND section=:section AND key=:key)
+					VALUES (:session_id, :section, :key, :value, :expiration)
+					ON CONFLICT (session_id, section, key) DO UPDATE SET value=:value, expiration=:expiration
 						", array(
 						":session_id" => $this->_SessionId,
 						":section" => $this->getSection(),
