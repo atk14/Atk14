@@ -1098,19 +1098,29 @@ class SessionStorer{
 						":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
 					)
 				);
-				$this->_dbmole->selectSingleValue("
-					INSERT INTO session_values (session_id, section, key, value, expiration)
-					VALUES (:session_id, :section, :key, :value, :expiration)
-					ON CONFLICT (session_id, section, key) DO UPDATE SET value=:value, expiration=:expiration
-					RETURNING id
-						", array(
-						":session_id" => $this->_SessionId,
-						":section" => $this->getSection(),
-						":key" => $key,
-						":value" => $this->_ValuesStore[$key]["packed_value"],
-						":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
-					)
-				);
+				if(defined("POSTGRESQL_UPSERT") && !constant("POSTGRESQL_UPSERT")){
+					// for Postgresql < 9.5
+					$query = "
+						INSERT INTO session_values (session_id, section, key, value, expiration)
+						SELECT :session_id, :section, :key, :value, :expiration
+						WHERE NOT EXISTS (SELECT 1 FROM session_values WHERE session_id=:session_id AND section=:section AND key=:key)
+					";
+				}else{
+					// for Postgresql >= 9.5
+					$query = "
+						INSERT INTO session_values (session_id, section, key, value, expiration)
+						VALUES (:session_id, :section, :key, :value, :expiration)
+						ON CONFLICT (session_id, section, key) DO UPDATE SET value=:value, expiration=:expiration
+						RETURNING id
+					";
+				}
+				$this->_dbmole->doQuery($query,array(
+					":session_id" => $this->_SessionId,
+					":section" => $this->getSection(),
+					":key" => $key,
+					":value" => $this->_ValuesStore[$key]["packed_value"],
+					":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
+				));
 			} else {
 				$id = $this->_dbmole->selectSingleValue("
 					SELECT id FROM session_values WHERE
