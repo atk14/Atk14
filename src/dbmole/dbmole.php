@@ -1569,6 +1569,9 @@ class DbMole{
 				"patch" => isset($ary[2]) ? (int)$ary[2] : 0,
 			);
 		}
+		if(preg_match('/^\d+\.\d+$/',$version)){
+			$version = "$version.0"; // "10.1" -> "10.1.0"
+		}
 		return $version;
 	}
 
