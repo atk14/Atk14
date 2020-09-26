@@ -351,6 +351,37 @@ class tc_dbmole extends tc_base{
 		unlink($sending_lock_file);
 	}
 
+	function test_getDatabaseVersion(){
+		foreach(array($this->pg,$this->my) as $dbmole){
+
+			$server_version_str = $dbmole->getDatabaseServerVersion();
+			$this->assertTrue(is_string($server_version_str));
+			$this->assertTrue(strlen($server_version_str)>0);
+			$this->assertTrue(!!preg_match('/^\d+\.\d+/',$server_version_str));
+
+			$server_version_ary = $dbmole->getDatabaseServerVersion(array("as_array" => true));
+			$this->assertTrue(is_array($server_version_ary));
+			$this->assertTrue(is_int($server_version_ary["major"]));
+			$this->assertTrue($server_version_ary["major"]>0);
+			$this->assertTrue(is_int($server_version_ary["minor"]));
+			$this->assertTrue(is_int($server_version_ary["patch"]));
+			$this->assertEquals($server_version_str,"$server_version_ary[major].$server_version_ary[minor].$server_version_ary[patch]");
+
+			$client_version_str = $dbmole->getDatabaseClientVersion();
+			$this->assertTrue(is_string($client_version_str));
+			$this->assertTrue(strlen($client_version_str)>0);
+			$this->assertTrue(!!preg_match('/^\d+\.\d+/',$client_version_str));
+
+			$client_version_ary = $dbmole->getDatabaseClientVersion(array("as_array" => true));
+			$this->assertTrue(is_array($client_version_ary));
+			$this->assertTrue(is_int($client_version_ary["major"]));
+			$this->assertTrue($client_version_ary["major"]>0);
+			$this->assertTrue(is_int($client_version_ary["minor"]));
+			$this->assertTrue(is_int($client_version_ary["patch"]));
+			$this->assertEquals($client_version_str,"$client_version_ary[major].$client_version_ary[minor].$client_version_ary[patch]");
+		}
+	}
+
 	function _test_common_behaviour(&$dbmole){
 		$this->assertTrue($dbmole->doQuery("DELETE FROM test_table"));
 
