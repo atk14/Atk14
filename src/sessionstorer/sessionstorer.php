@@ -1098,12 +1098,20 @@ class SessionStorer{
 						":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
 					)
 				);
-				if(defined("POSTGRESQL_UPSERT") && !constant("POSTGRESQL_UPSERT")){
+
+				$server_ver = $this->_dbmole->getDatabaseServerVersion(array("as_array" => true));
+				$server_ver = (float)"$server_ver[major].$server_ver[minor]";
+
+				if($server_ver<9.5){
 					// for Postgresql < 9.5
 					$query = "
-						INSERT INTO session_values (session_id, section, key, value, expiration)
-						SELECT :session_id, :section, :key, :value, :expiration
-						WHERE NOT EXISTS (SELECT 1 FROM session_values WHERE session_id=:session_id AND section=:section AND key=:key)
+						DO $$
+						BEGIN
+							INSERT INTO session_values (session_id, section, key, value, expiration) VALUES (:session_id, :section, :key, :value, :expiration);
+						EXCEPTION WHEN unique_violation THEN
+							UPDATE session_values SET value=:value, expiration=:expiration WHERE session_id=:session_id AND section=:section AND key=:key;
+						END;
+						$$
 					";
 				}else{
 					// for Postgresql >= 9.5
