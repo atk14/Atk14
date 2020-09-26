@@ -105,4 +105,24 @@ class MysqlMole extends DbMole{
 
 		return $result;
 	}
+
+	function _getDatabaseServerVersion(){
+		$connection = $this->_getDbConnect();
+		$ver = mysqli_get_server_version($connection);
+		$major = floor($ver/10000);
+		$minor = floor(($ver - ($major * 10000))/100);
+		$patch = $ver % 100;
+		$ver = "$major.$minor.$patch";
+		return $ver;
+	}
+
+	function _getDatabaseClientVersion(){
+		$connection = $this->_getDbConnect();
+		$ver = mysqli_get_client_version($connection);
+		$major = floor($ver/10000);
+		$minor = floor(($ver - ($major * 10000))/100);
+		$patch = $ver % 100;
+		$ver = "$major.$minor.$patch";
+		return $ver;
+	}
 }

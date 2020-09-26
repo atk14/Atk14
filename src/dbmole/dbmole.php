@@ -1539,6 +1539,44 @@ class DbMole{
 
 	/**
 	 *
+	 *	echo $dbmole->getDatabaseServerVersion(); // "9.6.19"
+	 *	var_dump($dbmole->getDatabaseServerVersion(["as_array" => true]);) // ["major" => 9, "minor" => 6, "patch" => 19]
+	 */
+	final function getDatabaseServerVersion($options = array()){
+		return $this->_parseVersion($this->_getDatabaseServerVersion(),$options);
+	}
+
+	/**
+	 *
+	 *	echo $dbmole->getDatabaseServerVersion(); // "9.5.21"
+	 *	var_dump($dbmole->getDatabaseServerVersion(["as_array" => true]);) // ["major" => 9, "minor" => 5, "patch" => 21]
+	 */
+	final function getDatabaseClientVersion($options = array()){
+		return $this->_parseVersion($this->_getDatabaseClientVersion(),$options);
+	}
+
+	protected function _parseVersion($version,$options){
+		$options += array(
+			"as_array" => false,
+		);
+
+		if(strlen($version)==0){ return null; }
+		if($options["as_array"]){
+			$ary = explode(".",$version);
+			return array(
+				"major" => (int)$ary[0],
+				"minor" => isset($ary[1]) ? (int)$ary[1] : 0,
+				"patch" => isset($ary[2]) ? (int)$ary[2] : 0,
+			);
+		}
+		if(preg_match('/^\d+\.\d+$/',$version)){
+			$version = "$version.0"; // "10.1" -> "10.1.0"
+		}
+		return $version;
+	}
+
+	/**
+	 *
 	 * @ignore
 	 */
 	function __sleep(){

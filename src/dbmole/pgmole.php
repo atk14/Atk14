@@ -119,4 +119,15 @@ class PgMole Extends DbMole{
 		return pg_dbname($connection);
 	}
 
+	function _getDatabaseServerVersion(){
+		$connection = $this->_getDbConnect();
+		$ver = pg_version($connection);
+		return $ver["server"];
+	}
+
+	function _getDatabaseClientVersion(){
+		$connection = $this->_getDbConnect();
+		$ver = pg_version($connection);
+		return $ver["client"];
+	}
 }
