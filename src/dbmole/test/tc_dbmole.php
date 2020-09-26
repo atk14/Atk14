@@ -354,6 +354,8 @@ class tc_dbmole extends tc_base{
 	function test_getDatabaseVersion(){
 		foreach(array($this->pg,$this->my) as $dbmole){
 
+			// Server version
+
 			$server_version_str = $dbmole->getDatabaseServerVersion();
 			$this->assertTrue(is_string($server_version_str));
 			$this->assertTrue(strlen($server_version_str)>0);
@@ -367,6 +369,15 @@ class tc_dbmole extends tc_base{
 			$this->assertTrue(is_int($server_version_ary["patch"]));
 			$this->assertEquals($server_version_str,"$server_version_ary[major].$server_version_ary[minor].$server_version_ary[patch]");
 
+			$server_version_float = $dbmole->getDatabaseServerVersion(array("as_float" => true));
+			$this->assertTrue(is_float($server_version_float));
+			$this->assertEquals((float)($server_version_ary["major"].".".$server_version_ary["minor"]),$server_version_float);
+
+			$this->assertEquals($server_version_ary,$dbmole->getDatabaseServerVersion("as_array"));
+			$this->assertEquals($server_version_float,$dbmole->getDatabaseServerVersion("as_float"));
+
+			// Client version
+
 			$client_version_str = $dbmole->getDatabaseClientVersion();
 			$this->assertTrue(is_string($client_version_str));
 			$this->assertTrue(strlen($client_version_str)>0);
@@ -379,6 +390,13 @@ class tc_dbmole extends tc_base{
 			$this->assertTrue(is_int($client_version_ary["minor"]));
 			$this->assertTrue(is_int($client_version_ary["patch"]));
 			$this->assertEquals($client_version_str,"$client_version_ary[major].$client_version_ary[minor].$client_version_ary[patch]");
+
+			$client_version_float = $dbmole->getDatabaseClientVersion(array("as_float" => true));
+			$this->assertTrue(is_float($client_version_float));
+			$this->assertEquals((float)($client_version_ary["major"].".".$client_version_ary["minor"]),$client_version_float);
+
+			$this->assertEquals($client_version_ary,$dbmole->getDatabaseClientVersion("as_array"));
+			$this->assertEquals($client_version_float,$dbmole->getDatabaseClientVersion("as_float"));
 		}
 	}
 

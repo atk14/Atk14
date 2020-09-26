@@ -1556,8 +1556,12 @@ class DbMole{
 	}
 
 	protected function _parseVersion($version,$options){
+		if(is_string($options)){
+			$options = array($options => true);
+		}
 		$options += array(
 			"as_array" => false,
+			"as_float" => false,
 		);
 
 		if(strlen($version)==0){ return null; }
@@ -1569,6 +1573,11 @@ class DbMole{
 				"patch" => isset($ary[2]) ? (int)$ary[2] : 0,
 			);
 		}
+		if($options["as_float"]){
+			$ar = $this->_parseVersion($version,array("as_array" => true));
+			return (float)($ar["major"].".".$ar["minor"]);
+		}
+
 		if(preg_match('/^\d+\.\d+$/',$version)){
 			$version = "$version.0"; // "10.1" -> "10.1.0"
 		}
