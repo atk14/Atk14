@@ -1541,6 +1541,8 @@ class DbMole{
 	 *
 	 *	echo $dbmole->getDatabaseServerVersion(); // "9.6.19"
 	 *	var_dump($dbmole->getDatabaseServerVersion(["as_array" => true]);) // ["major" => 9, "minor" => 6, "patch" => 19]
+	 *	var_dump($dbmole->getDatabaseServerVersion("as_array");) // shortcut
+	 *	echo $dbmole->getDatabaseServerVersion("as_float"); // 9.6 - only major and minor
 	 */
 	final function getDatabaseServerVersion($options = array()){
 		return $this->_parseVersion($this->_getDatabaseServerVersion(),$options);
@@ -1550,6 +1552,8 @@ class DbMole{
 	 *
 	 *	echo $dbmole->getDatabaseServerVersion(); // "9.5.21"
 	 *	var_dump($dbmole->getDatabaseServerVersion(["as_array" => true]);) // ["major" => 9, "minor" => 5, "patch" => 21]
+	 *	var_dump($dbmole->getDatabaseClientVersion("as_array");) // shortcut
+	 *	echo $dbmole->getDatabaseClientVersion("as_float"); // 9.5 - only major and minor
 	 */
 	final function getDatabaseClientVersion($options = array()){
 		return $this->_parseVersion($this->_getDatabaseClientVersion(),$options);
