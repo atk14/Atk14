@@ -26,3 +26,15 @@ $my->doQuery($matches[1]);
 // creating table
 preg_match('/\n(CREATE TABLE.*?);/s',$script,$matches);
 $my->doQuery($matches[1]);
+
+
+class ProxyDbMole extends DbMole {
+
+	function __construct($configuration_name = "default"){
+		parent::__construct($configuration_name);
+	}
+
+	function parseVersion($version,$options){
+		return $this->_parseVersion($version,$options);
+	}
+}

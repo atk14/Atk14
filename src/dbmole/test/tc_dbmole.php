@@ -371,7 +371,7 @@ class tc_dbmole extends tc_base{
 
 			$server_version_float = $dbmole->getDatabaseServerVersion(array("as_float" => true));
 			$this->assertTrue(is_float($server_version_float));
-			$this->assertEquals((float)($server_version_ary["major"].".".$server_version_ary["minor"]),$server_version_float);
+			$this->assertEquals((float)(sprintf("%s.%02d%03d",$server_version_ary["major"],$server_version_ary["minor"],$server_version_ary["patch"])),$server_version_float);
 
 			$this->assertEquals($server_version_ary,$dbmole->getDatabaseServerVersion("as_array"));
 			$this->assertEquals($server_version_float,$dbmole->getDatabaseServerVersion("as_float"));
@@ -393,11 +393,17 @@ class tc_dbmole extends tc_base{
 
 			$client_version_float = $dbmole->getDatabaseClientVersion(array("as_float" => true));
 			$this->assertTrue(is_float($client_version_float));
-			$this->assertEquals((float)($client_version_ary["major"].".".$client_version_ary["minor"]),$client_version_float);
+			$this->assertEquals((float)(sprintf("%s.%02d%03d",$client_version_ary["major"],$client_version_ary["minor"],$client_version_ary["patch"])),$client_version_float);
 
 			$this->assertEquals($client_version_ary,$dbmole->getDatabaseClientVersion("as_array"));
 			$this->assertEquals($client_version_float,$dbmole->getDatabaseClientVersion("as_float"));
 		}
+	}
+
+	function test__parseVersion(){
+		$dbmole = new ProxyDbMole();
+		$this->assertEquals(9.06016,$dbmole->parseVersion("9.6.16",array("as_float" => true)));
+		$this->assertEquals(9.616,$dbmole->parseVersion("9.6.16",array("as_float" => true,"minor_number_divider" => 10, "patch_number_divider" => 1000)));
 	}
 
 	function _test_common_behaviour(&$dbmole){

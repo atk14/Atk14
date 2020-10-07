@@ -1553,19 +1553,23 @@ class DbMole{
 	 *	echo $dbmole->getDatabaseServerVersion(); // "9.5.21"
 	 *	var_dump($dbmole->getDatabaseServerVersion(["as_array" => true]);) // ["major" => 9, "minor" => 5, "patch" => 21]
 	 *	var_dump($dbmole->getDatabaseClientVersion("as_array");) // shortcut
-	 *	echo $dbmole->getDatabaseClientVersion("as_float"); // 9.5 - only major and minor
+	 *	echo $dbmole->getDatabaseClientVersion("as_float"); // 9.05016
 	 */
 	final function getDatabaseClientVersion($options = array()){
 		return $this->_parseVersion($this->_getDatabaseClientVersion(),$options);
 	}
 
-	protected function _parseVersion($version,$options){
+	function _parseVersion($version,$options){
 		if(is_string($options)){
 			$options = array($options => true);
 		}
 		$options += array(
 			"as_array" => false,
 			"as_float" => false,
+
+			// options for conversion to float
+			"minor_number_divider" => 100,
+			"patch_number_divider" => 100000,
 		);
 
 		if(strlen($version)==0){ return null; }
@@ -1579,7 +1583,7 @@ class DbMole{
 		}
 		if($options["as_float"]){
 			$ar = $this->_parseVersion($version,array("as_array" => true));
-			return (float)($ar["major"].".".$ar["minor"]);
+			return $ar["major"] + ($ar["minor"] / $options["minor_number_divider"]) + ($ar["patch"] / $options["patch_number_divider"]);
 		}
 
 		if(preg_match('/^\d+\.\d+$/',$version)){
