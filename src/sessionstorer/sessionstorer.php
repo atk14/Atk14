@@ -1099,7 +1099,7 @@ class SessionStorer{
 					)
 				);
 
-				if($this->_dbmole->getDatabaseServerVersion("as_float")<9.5){
+				if($this->_dbmole->getDatabaseServerVersion("as_float")<9.05){
 					// for Postgresql < 9.5
 					$query = "
 						DO $$
