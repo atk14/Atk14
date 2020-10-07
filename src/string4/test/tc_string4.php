@@ -282,11 +282,62 @@ class TcString4 extends TcBase{
 		$this->assertEquals("ŠPINAVÁ ŘEDKVIČKA",(string)$s->upcase());
 		$this->assertEquals("špinavá ředkvička",(string)$s->lower());
 
+		// camelize()
+
 		$s = new String4("špinavá ředkvička");
 		$this->assertEquals("Špinavá ředkvička",(string)$s->capitalize());
+		$this->assertEquals("špinavá ředkvička",(string)$s); // doesn't change the object itself
 
 		$s = new String4("špinavá paní Ředkvička");
 		$this->assertEquals("Špinavá paní Ředkvička",(string)$s->capitalize());
+
+		$s = new String4("x");
+		$this->assertEquals("X",(string)$s->capitalize());
+
+		$s = new String4("");
+		$this->assertEquals("",(string)$s->capitalize());
+
+		// uncapitalize()
+
+		$s = new String4("Nice Try!!!");
+		$this->assertEquals("nice Try!!!",(string)$s->uncapitalize());
+		$this->assertEquals("Nice Try!!!",(string)$s); // doesn't change the object itself
+
+		$s = new String4("X");
+		$this->assertEquals("x",(string)$s->uncapitalize());
+
+		$s = new String4("");
+		$this->assertEquals("",(string)$s->uncapitalize());
+
+		// isUpper() & isLower()
+
+		$s = new String4("HELLO!!!");
+		$this->assertEquals(true,$s->isUpper());
+		$this->assertEquals(false,$s->isLower());
+
+		$s = new String4("hello!!!");
+		$this->assertEquals(false,$s->isUpper());
+		$this->assertEquals(true,$s->isLower());
+
+		$s = new String4("Hello!!!");
+		$this->assertEquals(false,$s->isUpper());
+		$this->assertEquals(false,$s->isLower());
+
+		$s = new String4("ŠPINAVÁ ŘEDKVIČKA");
+		$this->assertEquals(true,$s->isUpper());
+		$this->assertEquals(false,$s->isLower());
+
+		$s = new String4("x");
+		$this->assertEquals(false,$s->isUpper());
+		$this->assertEquals(true,$s->isLower());
+
+		$s = new String4("!");
+		$this->assertEquals(true,$s->isUpper());
+		$this->assertEquals(true,$s->isLower());
+
+		$s = new String4("");
+		$this->assertEquals(false,$s->isUpper());
+		$this->assertEquals(false,$s->isLower());
 	}
 
 	function test_toAscii(){

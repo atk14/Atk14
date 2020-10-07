@@ -597,9 +597,18 @@ class String4{
 	function lower(){ return $this->downcase(); }
 
 	/**
-		* Returns instance with string in upper case
-		*
-		* @return String4
+	 * Returns true when all character in the string are lowercase
+	 *
+	 * @return bool
+	 */
+	function isLower(){ return $this->length()>0 && $this->toString()===$this->downcase()->toString(); }
+
+	/**
+	 * Returns instance with string in upper case
+	 *
+	 * For empty string it returns false.
+	 *
+	 * @return String4
 	 */
 	function upcase(){
 		return $this->_copy(Translate::Upper($this->toString(),$this->getEncoding()));
@@ -613,17 +622,32 @@ class String4{
 	function upper(){ return $this->upcase(); }
 
 	/**
+	 * Returns true when all character in the string are uppercase
+	 *
+	 * For empty string it returns false.
+	 *
+	 * @return bool
+	 */
+	function isUpper(){ return $this->length()>0 && $this->toString()===$this->upcase()->toString(); }
+
+	/**
 	 * Makes first character of string uppercase.
 	 *
 	 * @return String4
 	 */
 	function capitalize() {
-		$out = $this->_copy();
-		$s = &$out->_String4;
+		$first = $this->substr(0,1)->upcase();
+		return $first->append($this->substr(1));
+	}
 
-		$first = mb_strtoupper($out->substr( 0, 1));
-		$s = $first.$out->substr(1);
-		return $out;
+	/**
+	 * Makes first character of string lowercase.
+	 *
+	 * @return String4
+	 */
+	function uncapitalize(){
+		$first = $this->substr(0,1)->downcase();
+		return $first->append($this->substr(1));
 	}
 
 	/**
