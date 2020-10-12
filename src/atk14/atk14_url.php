@@ -247,19 +247,12 @@ class Atk14Url{
 	 * ```
 	 *
 	 * ```
-	 * Atk14Url::BuildLink($params, ["with_hostname" => false, "ssl" => true])
-	 * ```
-	 * This code will generate `/en/products/detail/?id=10`
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => false, "ssl" => true]); // "/en/products/detail/?id=10"
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => true, "ssl" => true]); // "https://www.bestthings.com/en/products/detail/?id=10"
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => "supergadgets.ie", "ssl" => true]); // "https://supergadgets.ie/en/products/detail/?id=10"
 	 *
+	 * echo Atk14Url::BuildLink($params, ["basic_auth_string" => "preview", "basic_auth_password" => "s3cr3t"]); // "http://preview:s3cr3t@www.bestthings.com/en/products/detail/?id=10"
 	 * ```
-	 * Atk14Url::BuildLink($params, ["with_hostname" => true, "ssl" => true])
-	 * ```
-	 * This code will generate `https://www.bestthings.com/en/products/detail/?id=10`
-	 *
-	 * ```
-	 * Atk14Url::BuildLink($params, ["with_hostname" => "supergadgets.ie", "ssl" => true])
-	 * ```
-	 * This code will generate `https://supergadgets.ie/en/products/detail/?id=10`
 	 *
 	 *
 	 * @param array $params
@@ -273,6 +266,8 @@ class Atk14Url{
 	 * - **with_hostname** - boolean|string - when true the generated url will contain whole path including hostname and protocol. String specifies specific hostname.
 	 * - **anchor**
 	 * - **connector**
+	 * - ** basic_auth_username **
+	 * - ** basic_auth_password **
 	 * @return string generated URL
 	 *
 	 */
@@ -318,8 +313,14 @@ class Atk14Url{
 			"anchor" => null,
 			"with_hostname" => false,
 			"ssl" => null,
-			"port" => null
+			"port" => null,
+			"basic_auth_username" => "",
+			"basic_auth_password" => "",
 		),$options);
+
+		if(!$options["with_hostname"] && (strlen($options["basic_auth_username"]) || strlen($options["basic_auth_password"]))){
+			$options["with_hostname"] = true;
+		}
 	
 		if(is_string($options["with_hostname"])){
 			if($options["with_hostname"]=="true"){ $options["with_hostname"] = true;
@@ -478,7 +479,12 @@ class Atk14Url{
 				}
 			}
 
-			$hostname = "$_proto://$hostname$_port";
+			$basic_auth_string = "";
+			if(strlen($options["basic_auth_username"]) || strlen($options["basic_auth_password"])){
+				$basic_auth_string = $options["basic_auth_username"].":".$options["basic_auth_password"]."@";
+			}
+
+			$hostname = "$_proto://$basic_auth_string$hostname$_port";
 			$out = $hostname.$out;
 		}
 

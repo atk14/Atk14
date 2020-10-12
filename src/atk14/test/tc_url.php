@@ -323,6 +323,8 @@ class TcUrl extends TcBase{
 	}
 
 	function test_BuildLink(){
+		$this->assertEquals("/en/",$this->_build_link(array()));
+
 		$this->assertEquals("https://secure.testing.cz/en/",$this->_build_link(array(),array("ssl" => true)));
 		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz")));
 
@@ -334,6 +336,8 @@ class TcUrl extends TcBase{
 		$this->assertEquals("http://www.testing.cz/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 80)));
 		$this->assertEquals("http://www.testing.cz:81/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 81)));
 		$this->assertEquals("http://www.testing.cz:443/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 443)));
+
+		$this->assertEquals("http://preview:secret@www.testing.cz/en/",$this->_build_link(array(),array("basic_auth_username" => "preview", "basic_auth_password" => "secret")));
 	}
 
 	function _test_route($request_uri,$expected_ar,$expected_params = array()){
