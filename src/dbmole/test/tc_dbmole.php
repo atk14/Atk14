@@ -522,6 +522,24 @@ class tc_dbmole extends tc_base{
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table WHERE an_integer=-an_integer");
 		$this->assertEquals(array(),$ar);
 
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 3, "offset" => 0));
+		$this->assertEquals(array("11","22","33"),$ar);
+
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 0, "offset" => 0));
+		$this->assertEquals(array(),$ar);
+
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 3, "offset" => -1));
+		$this->assertEquals(array("11","22"),$ar);
+
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 3, "offset" => -2));
+		$this->assertEquals(array("11"),$ar);
+
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 3, "offset" => -3));
+		$this->assertEquals(array(),$ar);
+
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => -10, "offset" => -10));
+		$this->assertEquals(array(),$ar);
+
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 FROM test_table ORDER BY an_integer",array());
 		$this->assertEquals(array("11" => "12","22" => "23","33" => "34"),$ar);
 

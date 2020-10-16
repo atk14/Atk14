@@ -476,10 +476,36 @@ class DbMole{
 	 */
 	function _selectRows($query,&$bind_ar, $options = array()){
 		$options = array_merge(array(
+			"limit" => null,
+			"offset" => null,
 			"cache" => 0, // 0, 600, true, false
 			"recache" => false,
 		),$options);
 		$options["avoid_recursion"] = true; // protoze primo metoda selectRows() vola _selectRows() a naopak, mame tady tento ochranny parametr
+
+
+		if(isset($options["offset"]) || isset($options["limit"])){
+			$offset = $options["offset"];
+			$limit = $options["limit"];
+
+			if(!isset($offset)){ $offset = 0; }
+
+			if($offset<0 && isset($limit)){
+				$limit = $limit + $offset;
+			}
+
+			$offset = max((int)$offset,0);
+			if(isset($limit)){
+				$limit = max((int)$limit,0);
+			}
+
+			if(isset($limit) && $limit==0){
+				return array();
+			}
+
+			$options["offset"] = $offset;
+			$options["limit"] = $limit;
+		}
 
 		$cache = $options["cache"];
 		$recache = $options["recache"];
