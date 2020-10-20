@@ -23,6 +23,15 @@
  * 		{javascript_script_tag file="/public/themes/retro/script.js"}
  * </code>
  *
+ * Other attributes will be placed as attributes of the <script> element
+ * <code>
+ * 		{javascript_script_tag file="/public/javascripts/script.js" defer="defer" async="async"}
+ * </code>
+ *
+ * It renders
+ * <code>
+ *		<script src="/public/javascripts/script.js?1313093878" defer="defer" async="async"></script>
+ * </code>
  * 
  * @package Atk14
  * @subpackage Helpers
