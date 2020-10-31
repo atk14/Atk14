@@ -30,6 +30,14 @@ class Atk14SmartyBase extends SmartyBC{
 	function end_template_render($template) {
 		self::$ATK14_RENDERED_TEMPLATES->leave();
 	}
+
+	function fetch($template = NULL, $cache_id = NULL, $compile_id = NULL, $parent = NULL){
+		// In PHP8, warnings are rendered into output
+		$orig_er = error_reporting(0);
+		$out = parent::fetch($template, $cache_id, $compile_id, $parent);
+		error_reporting($orig_er);
+		return $out;
+	}
 }
 
 class Atk14SmartyDebug extends Smarty_Internal_Debug {
