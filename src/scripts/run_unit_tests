@@ -44,12 +44,18 @@ if(preg_match("/^4/",phpversion())){
 	echo "Sorry! PHP4 is no more supported\n";
 	exit(1);
 }
-if(preg_match("/^5/",phpversion())){
+if(preg_match('/^5\./',phpversion())){
 	define("PHP5",true);
 	define("PHP7",false);
-}elseif(preg_match("/^7/",phpversion())){
+	define("PHP8",false);
+}elseif(preg_match('/^7\./',phpversion())){
 	define("PHP5",false);
 	define("PHP7",true);
+	define("PHP8",false);
+}elseif(preg_match('/^8\./',phpversion())){
+	define("PHP5",false);
+	define("PHP7",false);
+	define("PHP8",true);
 }else{
 	echo "Sorry! Your version of PHP is not supported\n";
 	exit(1);
@@ -259,11 +265,23 @@ function _test_runner($filename,$DIR){
 
 	}else{
 
-		$printer = new PHPUnit_TextUI_ResultPrinter;
+		if(class_exists("PHPUnit\TextUI\ResultPrinter")){
+			$printer = new PHPUnit\TextUI\ResultPrinter();
+		}else{
+			// phpunit/phpunit 4.*|5.*
+			$printer = new PHPUnit_TextUI_ResultPrinter();
+		}
 
-		$suite  = new PHPUnit_Framework_TestSuite(
-			new ReflectionClass($classname)
-		);
+		if(class_exists("PHPUnit\Framework\TestSuite")){
+			$suite  = new PHPUnit\Framework\TestSuite(
+				new ReflectionClass($classname)
+			);
+		}else{
+			// phpunit/phpunit 4.*|5.*
+			$suite  = new PHPUnit_Framework_TestSuite(
+				new ReflectionClass($classname)
+			);
+		}
 
 		$result = $suite->run();
 		$printer->printResult($result);
