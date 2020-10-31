@@ -1609,7 +1609,7 @@ class DbMole{
 		}
 		if($options["as_float"]){
 			$ar = $this->_parseVersion($version,array("as_array" => true));
-			return $ar["major"] + ($ar["minor"] / $options["minor_number_divider"]) + ($ar["patch"] / $options["patch_number_divider"]);
+			return (float)($ar["major"] + ($ar["minor"] / $options["minor_number_divider"]) + ($ar["patch"] / $options["patch_number_divider"]));
 		}
 
 		if(preg_match('/^\d+\.\d+$/',$version)){
