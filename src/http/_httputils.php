@@ -55,7 +55,7 @@ class _HTTPUtils{
 	static function PrepareEnvironment(){
 		global $_COOKIE, $_FILES, $_GET, $_POST, $_REQUEST, $_SERVER;
 
-		if (get_magic_quotes_gpc()) {
+		if (function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc()) {
 			$_COOKIE = _HTTPUtils::stripslashes_array($_COOKIE);
 			//$_FILES = _HTTPUtils::stripslashes_array($_FILES);
 			$_GET = _HTTPUtils::stripslashes_array($_GET);
