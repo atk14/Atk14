@@ -444,7 +444,7 @@ class tc_http_request extends tc_base{
 		unset($_SERVER["HTTPS"]);
 		$this->assertEquals(false,$request->sslActive());
 
-		$_SERVER["HTTPS"]="on";
+		$_SERVER["HTTPS"]="ON";
 		$this->assertEquals(true,$request->sslActive());
 
 		unset($_SERVER["HTTPS"]);
@@ -452,6 +452,12 @@ class tc_http_request extends tc_base{
 
 		$_SERVER["HTTPS"]="1";
 		$this->assertEquals(true,$request->sslActive());
+
+		unset($_SERVER["HTTPS"]);
+		$this->assertEquals(false,$request->sslActive());
+
+		$_SERVER["HTTPS"]="off";
+		$this->assertEquals(false,$request->sslActive());
 
 		unset($_SERVER["HTTPS"]);
 		$this->assertEquals(false,$request->sslActive());
