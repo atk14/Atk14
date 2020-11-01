@@ -107,4 +107,9 @@ class Atk14SmartyBase extends Smarty{
 	function templateExists($template){
 		return $this->template_exists($template);
 	}
+
+	function setErrorReporting($error_reporting){
+		// There is no method setErrorReporting in Smarty2.
+		// Just don't do anything.
+	}
 }
