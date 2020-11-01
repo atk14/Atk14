@@ -755,7 +755,7 @@ class HTTPRequest{
 	function sslActive(){
 		if(!is_null($var = $this->_getForceValue("SslActive"))){ return $var; }
 
-		if(isset($GLOBALS["_SERVER"]["HTTPS"]) && $GLOBALS["_SERVER"]["HTTPS"]=="on"){
+		if(isset($GLOBALS["_SERVER"]["HTTPS"]) && in_array($GLOBALS["_SERVER"]["HTTPS"],array("on","1"))){
 			return true;
 		}
 

@@ -450,6 +450,12 @@ class tc_http_request extends tc_base{
 		unset($_SERVER["HTTPS"]);
 		$this->assertEquals(false,$request->sslActive());
 
+		$_SERVER["HTTPS"]="1";
+		$this->assertEquals(true,$request->sslActive());
+
+		unset($_SERVER["HTTPS"]);
+		$this->assertEquals(false,$request->sslActive());
+
 		$request->setServerPort(443);
 		$this->assertEquals(true,$request->sslActive());
 
