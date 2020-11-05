@@ -36,7 +36,6 @@ $stage_name = $stage->getName();
 
 $out = array();
 
-$out[] = "# Initializing stage ".$stage->getName();
 $out[] = "cd ".getcwd()."/";
 $out[] = $stage->compileRemoteShellCommand("mkdir -p ".$stage->getDeployRepositoryRemoteDir(),false);
 $out[] = $stage->compileRemoteShellCommand("git init --bare $deploy_repository_remote_dir",false);
@@ -45,7 +44,7 @@ if($current_branch=="HEAD"){
 	echo "# You are not currently on a branch\n";
 	exit(1);
 }
-$out[] = "git remote add $stage_name ".$stage->getDeployRepository();
+$out[] = "git remote set-url $stage_name ".$stage->getDeployRepository()." || git remote add $stage_name ".$stage->getDeployRepository();
 $out[] = "git push $stage_name $current_branch:master";
 $out[] = $stage->compileRemoteShellCommand("mkdir -p ".$stage->getDirectory(),false);
 $out[] = $stage->compileRemoteShellCommand("git clone $deploy_repository_remote_dir .");
@@ -63,7 +62,10 @@ foreach($stage->getRsync() as $file){
 	}
 }
 
-echo join("\n",$out);
+$out[] = "echo 'Everything looks great!'";
+
+echo "# Initializing stage ".$stage->getName()."\n";
+echo "(".join(") &&\n(",$out).")";
 echo "\n";
 exit(0);
 
