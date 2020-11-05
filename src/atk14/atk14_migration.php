@@ -37,6 +37,30 @@
 class Atk14Migration{
 
 	/**
+	 *
+	 * @var string
+	 */
+	var $version;
+
+	/**
+	 *
+	 * @var DbMole
+	 */
+	var $dbmole;
+
+	/**
+	 *
+	 * @var Logger
+	 */
+	var $logger;
+
+	/**
+	 *
+	 * @var boolean
+	 */
+	protected $_failed;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $version Migration file
