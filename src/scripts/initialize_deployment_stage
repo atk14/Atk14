@@ -64,7 +64,10 @@ foreach($stage->getRsync() as $file){
 
 $out[] = "echo 'Everything looks great!'";
 
-echo "# Initializing stage ".$stage->getName()."\n";
+echo "# Initializing stage ".$stage->getName().". If you are brave enough, execute the following command:\n";
+echo "#\n";
+echo "#  $argv[0] ".$stage->getName()." | sh\n";
+echo "#\n";
 echo "(".join(") &&\n(",$out).")";
 echo "\n";
 exit(0);
