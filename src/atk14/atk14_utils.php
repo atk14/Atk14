@@ -24,7 +24,7 @@ class Atk14Utils{
 	 * If none of them is defined it checks the system environment variable ATK14_ENV and when found it defines constants TEST,DEVELOPMENT and PRODUCTION depending on the value of ATK14_ENV
 	 *
 	 * When even ATK14_ENV is not defined it defines these constants depending on REMOTE_ADDRESS.
-	 * For localhost or addresses in 192.168.0.0 and 172.16.0.0 or no IP(script is run from console) it defines environment as DEVELOPMENT, otherwise PRODUCTION.
+	 * For localhost or no IP(script is run from console) it defines environment as DEVELOPMENT, otherwise PRODUCTION.
 	 *
 	 * ```
 	 * echo Atk14Utils::DetermineEnvironment(); // "PRODUCTION", "DEVELOPMENT" or "TEST"
