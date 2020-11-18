@@ -92,10 +92,12 @@ class TcUtils extends TcBase{
 	function test__DetermineEnvironmentByRemoteAddr(){
 		$this->assertEquals("DEVELOPMENT",Atk14Utils::_DetermineEnvironmentByRemoteAddr("127.0.0.1"));
 		$this->assertEquals("DEVELOPMENT",Atk14Utils::_DetermineEnvironmentByRemoteAddr("::1"));
-		$this->assertEquals("DEVELOPMENT",Atk14Utils::_DetermineEnvironmentByRemoteAddr("192.168.1.2"));
-		$this->assertEquals("DEVELOPMENT",Atk14Utils::_DetermineEnvironmentByRemoteAddr("10.20.30.40"));
 
 		$this->assertEquals("PRODUCTION",Atk14Utils::_DetermineEnvironmentByRemoteAddr("8.8.8.8"));
 		$this->assertEquals("PRODUCTION",Atk14Utils::_DetermineEnvironmentByRemoteAddr("2001:4860:4860::8888"));
+
+		// The environment PRODUCTION is considered on an IP address from internal areas
+		$this->assertEquals("PRODUCTION",Atk14Utils::_DetermineEnvironmentByRemoteAddr("192.168.1.2"));
+		$this->assertEquals("PRODUCTION",Atk14Utils::_DetermineEnvironmentByRemoteAddr("10.20.30.40"));
 	}
 }

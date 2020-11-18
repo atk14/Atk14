@@ -78,8 +78,7 @@ class Atk14Utils{
 	}
 
 	static function _DetermineEnvironmentByRemoteAddr($remote_addr){
-		// TODO: There are total 3 private areas: 10.0.0.0/8, 192.168.0.0/16 and 172.16.0.0/12. The last one cannot be determined by a regular expression.
-		if(in_array($remote_addr,array("127.0.0.1","::1")) || preg_match('/^(10\.|192\.168\.)/',$remote_addr)){
+		if(in_array($remote_addr,array("127.0.0.1","::1"))){
 			return "DEVELOPMENT";
 		}
 		return "PRODUCTION";
