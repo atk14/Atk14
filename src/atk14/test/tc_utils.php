@@ -1,5 +1,6 @@
 <?php
 class TcUtils extends TcBase{
+
 	function test_response_produced(){
 		$c = new Atk14Controller();
 
@@ -86,5 +87,15 @@ class TcUtils extends TcBase{
 		$this->assertEquals(array(),Atk14Utils::StringToOptions(""));
 		$this->assertEquals(array(),Atk14Utils::StringToOptions(array()));
 		$this->assertEquals(array("a" => "b"),Atk14Utils::StringToOptions(array("a" => "b")));
+	}
+
+	function test__DetermineEnvironmentByRemoteAddr(){
+		$this->assertEquals("DEVELOPMENT",Atk14Utils::_DetermineEnvironmentByRemoteAddr("127.0.0.1"));
+		$this->assertEquals("DEVELOPMENT",Atk14Utils::_DetermineEnvironmentByRemoteAddr("::1"));
+		$this->assertEquals("DEVELOPMENT",Atk14Utils::_DetermineEnvironmentByRemoteAddr("192.168.1.2"));
+		$this->assertEquals("DEVELOPMENT",Atk14Utils::_DetermineEnvironmentByRemoteAddr("10.20.30.40"));
+
+		$this->assertEquals("PRODUCTION",Atk14Utils::_DetermineEnvironmentByRemoteAddr("8.8.8.8"));
+		$this->assertEquals("PRODUCTION",Atk14Utils::_DetermineEnvironmentByRemoteAddr("2001:4860:4860::8888"));
 	}
 }
