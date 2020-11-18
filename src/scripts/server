@@ -1,16 +1,27 @@
 #!/usr/bin/env bash
 
-# Stars a webserver for development
+# Starts a web server for development
 #
-# By default the server is listening on port 8000
+# By default the server is listening on localhost on port 8000
 #
 # Usage:
 #
 #		$ ./scripts/server
 #
+# And the server should be accessible on the URL http://localhost:8000/
+#
 # A different port could be specified as the first parameter:
 #
 #		$ ./scripts/server 8001
+#
+# A different server address also could be specified as the first parameter:
+#
+#		$ ./scripts/server 192.168.2.25
+#
+# Finally, both the server address and the port can be specified:
+#
+#		$ ./scripts/server 192.168.2.25 8001
+#
 
 echo "**************************************************************************"
 echo "**                                                                      **"
@@ -25,10 +36,27 @@ echo "**************************************************************************
 cd $(dirname $0)
 cd $(./_get_application_path)../
 
-port=${1:-8000} # TODO: could be nice to check whether the given port is available
+if [ -n "$2" ]; then
+	address=$1
+	port=$2
+elif [ -n "$1" ] && [ "$1" -eq "$1" ] 2>/dev/null; then
+	# here, the $1 is a number
+	address="localhost"
+	port=$1
+elif [ -n "$1" ]; then
+	address=$1
+	port="8000"
+else
+	address="localhost"
+	port="8000"
+fi
+
 appname=$(./scripts/_shell_safe_appname)
+ATK14_ENV=$(./scripts/_atk14_env);
 
-echo -ne "\033]0;ATK14 server for $appname - http://localhost:$port/\007"
+export ATK14_ENV
 
-php -S localhost:$port -t ./ ./scripts/_server.php
+echo -ne "\033]0;ATK14 server for $appname - http:/$address:$port/ ($ATK14_ENV)\007"
+
+php -S $address:$port -t ./ ./scripts/_server.php
 
