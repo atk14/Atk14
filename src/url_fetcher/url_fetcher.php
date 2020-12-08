@@ -333,7 +333,7 @@ class UrlFetcher {
 
 		if(!$stat || $stat!=strlen($_data)){
 			fclose($f);
-			return $this->_setError("cannot write to socket");
+			return $this->_setError(sprintf("cannot write to socket (bytes written: %s, bytes needed to be written: %s)",$stat,strlen($_data)));
 		}
 
 		$headers = "";
@@ -748,9 +748,11 @@ class UrlFetcher {
 
 			if(!$fwrite){ // 0 bytes written; error code  11:  Resource temporarily unavailable
 				if($retries>=100){ return $written; }
-				usleep(10000); // 0.01s
+				usleep(10000 + $retries * 1000); // 0.01s + 0s .. 0.01s + 0.1s
 				$retries++;
 				continue;
+			}else{
+				$retries = 0; // something was written? -> reset $retries
 			}
 		}
 		return $written;
