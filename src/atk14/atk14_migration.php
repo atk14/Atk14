@@ -37,11 +37,35 @@
 class Atk14Migration{
 
 	/**
+	 *
+	 * @var string
+	 */
+	var $version;
+
+	/**
+	 *
+	 * @var DbMole
+	 */
+	var $dbmole;
+
+	/**
+	 *
+	 * @var Logger
+	 */
+	var $logger;
+
+	/**
+	 *
+	 * @var boolean
+	 */
+	protected $_failed;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $version Migration file
 	 */
-	function Atk14Migration($version){
+	function __construct($version){
 		$this->version = $version;
 		$this->dbmole = &$GLOBALS["dbmole"];
 		$this->_failed = false;

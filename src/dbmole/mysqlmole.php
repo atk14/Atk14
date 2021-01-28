@@ -117,8 +117,7 @@ class MysqlMole extends DbMole{
 	}
 
 	function _getDatabaseClientVersion(){
-		$connection = $this->_getDbConnect();
-		$ver = mysqli_get_client_version($connection);
+		$ver = mysqli_get_client_version();
 		$major = floor($ver/10000);
 		$minor = floor(($ver - ($major * 10000))/100);
 		$patch = $ver % 100;

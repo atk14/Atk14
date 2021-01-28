@@ -185,6 +185,19 @@ class HTTPUploadedFile{
 	}
 
 	/**
+	 * Gets total file size.
+	 *
+	 * This is an alias for getFileSize() in case of a normal file uploads.
+	 *
+	 * The size of the entire file is returned for a chunked upload.
+	 *
+	 * @see HTTPXFile::getTotalFileSize()
+	 */
+	function getTotalFileSize(){
+		return $this->getFileSize();
+	}
+
+	/**
 	 * Returns MIME type.
 	 *
 	 * Tries to determine MIME type using system command 'file'.

@@ -12,7 +12,7 @@ class Atk14SmartyBase extends SmartyBC{
 			$this->debugging = true;
 			$this->_debug = new Atk14SmartyDebug($this);
 		}
-		$this->setErrorReporting(E_ALL ^ E_NOTICE);
+		$this->setErrorReporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 	}
 
   public function createTemplate($template, $cache_id = null, $compile_id = null, $parent = null, $do_clone = true) {

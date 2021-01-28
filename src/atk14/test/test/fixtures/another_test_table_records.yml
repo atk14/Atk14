@@ -1,0 +1,8 @@
+# table_name: test_table
+
+rec_1:
+  an_integer: "-2"
+  title: "Another record #1"
+
+rec_2:
+  title: "Another record #2"

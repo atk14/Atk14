@@ -392,7 +392,7 @@ class tc_dbmole extends tc_base{
 			$this->assertEquals($client_version_str,"$client_version_ary[major].$client_version_ary[minor].$client_version_ary[patch]");
 
 			$client_version_float = $dbmole->getDatabaseClientVersion(array("as_float" => true));
-			$this->assertTrue(is_float($client_version_float));
+			$this->assertTrue(is_float($client_version_float),print_r($client_version_float,true));
 			$this->assertEquals((float)(sprintf("%s.%02d%03d",$client_version_ary["major"],$client_version_ary["minor"],$client_version_ary["patch"])),$client_version_float);
 
 			$this->assertEquals($client_version_ary,$dbmole->getDatabaseClientVersion("as_array"));

@@ -19,27 +19,36 @@ class tc_httpxfile extends tc_base{
 		$this->assertEquals("hlavicka.jpg",$file->getFileName());
 		$this->assertEquals("hlavička.jpg",$file->getFileName(array("sanitize" => false)));
 		$this->assertEquals(false,$file->chunkedUpload());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(21727,$file->getTotalFileSize());
 
-		$request->setHeader("Content-Range","bytes 0-100/256");
-
+		$request->setHeader("Content-Range","bytes 0-21727/121727");
 		$this->assertEquals(true,$file->chunkedUpload());
 		$this->assertEquals(true,$file->firstChunk());
 		$this->assertEquals(false,$file->lastChunk());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(121727,$file->getTotalFileSize());
 
-		$request->setHeader("Content-Range","bytes 200-255/256");
+		$request->setHeader("Content-Range","bytes 99999-121726/121727");
 		$this->assertEquals(true,$file->chunkedUpload());
 		$this->assertEquals(false,$file->firstChunk());
 		$this->assertEquals(true,$file->lastChunk());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(121727,$file->getTotalFileSize());
 
-		$request->setHeader("Content-Range","bytes 100-200/256");
+		$request->setHeader("Content-Range","bytes 100-21827/121727");
 		$this->assertEquals(true,$file->chunkedUpload());
 		$this->assertEquals(false,$file->firstChunk());
 		$this->assertEquals(false,$file->lastChunk());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(121727,$file->getTotalFileSize());
 
-		$request->setHeader("Content-Range","bytes 0-255/256");
+		$request->setHeader("Content-Range","bytes 0-21726/21727");
 		$this->assertEquals(false,$file->chunkedUpload());
 		$this->assertEquals(true,$file->firstChunk());
 		$this->assertEquals(true,$file->lastChunk());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(21727,$file->getTotalFileSize());
 	}
 
 	function test__destruct(){

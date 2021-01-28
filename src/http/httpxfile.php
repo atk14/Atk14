@@ -119,6 +119,27 @@ class HTTPXFile extends HTTPUploadedFile{
 	}
 
 	/**
+	 * Returns the size of the uploaded file or the size of the current chunk in case of chunked upload
+	 */
+	function getFileSize(){
+		return parent::getFileSize();
+	}
+
+	/**
+	 * Returns the size of the uploaded file or the the size of the entire file in case of chunked upload
+	 */
+	function getTotalFileSize(){
+		if($this->chunkedUpload()){
+			$range_data = $this->_getContentRangeData();
+			if(!is_null($range_data) && isset($range_data["total_size"])){
+				return (int)$range_data["total_size"];
+			}
+			// TODO: handle the legacy way of chunked upload?
+		}
+		return parent::getTotalFileSize();
+	}
+
+	/**
 	 * Returns the current chunk order.
 	 * Ordering starts from 1.
 	 *

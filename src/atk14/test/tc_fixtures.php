@@ -61,4 +61,13 @@ class TcFixtures extends TcAtk14Model {
 		$this->assertEquals("Article",get_class($articles["article1"]));
 		$this->assertEquals("Enjoyable Title #1",$articles["article1"]->getTitle());
 	}
+
+	function test_table_name_specified(){
+		$records = Atk14Fixture::Load("another_test_table_records");
+
+		$this->assertEquals(2,sizeof($records));
+		$this->assertTrue(is_array($records["rec_1"]));
+		$this->assertEquals(array("an_integer" => "-2", "title" => "Another record #1"),$records["rec_1"]);
+		$this->assertEquals(array("title" => "Another record #2"),$records["rec_2"]);
+	}
 }
