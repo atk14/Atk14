@@ -1,5 +1,6 @@
 <?php
 class tc_httpuploadedfile extends tc_base{
+
 	function test(){
 		global $_FILES,$HTTP_RAW_POST_DATA,$HTTP_REQUEST;
 
@@ -22,11 +23,17 @@ class tc_httpuploadedfile extends tc_base{
 		$this->assertTrue($hlava->isImage());
 		$this->assertFalse($hlava->chunkedUpload());
 
+		$this->assertEquals(21727,$hlava->getFileSize());
+		$this->assertEquals(21727,$hlava->getTotalFileSize());
+
 		$GLOBALS["_FILES"]["hlava"]["error"] = 3; // The uploaded file was only partially uploaded.
 
 		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
 		$this->assertEquals(1,sizeof($files));
 		$this->assertEquals("Dousi.pdf",$files[0]->getFileName());
+
+		$this->assertEquals(15257,$files[0]->getFileSize());
+		$this->assertEquals(15257,$files[0]->getTotalFileSize());
 	}
 
 	function test_image_processing(){
