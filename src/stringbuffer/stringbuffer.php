@@ -142,6 +142,40 @@ class StringBuffer{
 			$this->_Buffer[$i]->replace($search,$replace);
 		}
 	}
+
+	/**
+	 * Returns the portion of buffered string specified by the offset and length parameters
+	 *
+	 *	$part = $buffer->substr(10,20);
+	 */
+	function substr($offset,$length = null){
+		if($offset<0){
+			$offset = $this->getLength() - abs($offset);
+			if($offset<0){
+				// $length = is_null($length) ? $length : $length - abs($offset);
+				$offset = 0;
+			}
+		}
+
+		$out = "";
+		foreach($this->_Buffer as $b){
+			if(!is_null($length) && $length<=0){
+				break;
+			}
+			$b_length = $b->getLength();
+			if($offset>$b_length-1){
+				$offset = $offset-$b_length;
+				continue;
+			}
+			$out .= $b->substr($offset,$length);
+			if(!is_null($length)){
+				$bytes_taken = min($length,$b_length - $offset);
+				$length = $length - $bytes_taken;
+			}
+			$offset = 0;
+		}
+		return $out;
+	}
 }
 
 /**
@@ -188,6 +222,13 @@ class StringBufferItem{
 	 */
 	function replace($search,$replace){
 		$this->_String = str_replace($search,$replace,$this->_String);
+	}
+
+	function substr($offset,$length = null){
+		if(is_null($length)){
+			return substr($this->_String,$offset);
+		}
+		return substr($this->_String,$offset,$length);
 	}
 }
 
@@ -243,5 +284,16 @@ class StringBufferFileItem extends StringBufferItem{
 	function replace($search,$replace){
 		$this->_String = $this->toString();
 		return parent::replace($search,$replace);
+	}
+
+	function substr($offset,$length = null){
+		if(is_null($length)){
+			$length = $this->getLength() - $offset;
+		}
+		$f = fopen($this->_Filename,"r");
+		fseek($f,$offset);
+		$out = fread($f,$length);
+		fclose($f);
+		return $out;
 	}
 }
