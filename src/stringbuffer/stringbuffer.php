@@ -257,7 +257,11 @@ class StringBufferFileItem extends StringBufferItem{
 	 */
 	function getLength(){
 		if(isset($this->_String)){ return parent::getLength(); }
-		return filesize($this->_Filename);
+		$size = filesize($this->_Filename);
+		if($size === false){
+			throw new Exception("StringBufferFileItem: cannot get the size of file $this->_Filename");
+		}
+		return $size;
 	}
 
 	function flush(){
@@ -272,7 +276,11 @@ class StringBufferFileItem extends StringBufferItem{
 	 */
 	function toString(){
 		if(isset($this->_String)){ return parent::toString(); }
-		return Files::GetFileContent($this->_Filename);
+		$content = Files::GetFileContent($this->_Filename,$err,$err_msg);
+		if($err){
+			throw new Exception("StringBufferFileItem: cannot read file $this->_Filename ($err_msg)");
+		}
+		return $content;
 	}
 
 	/**
@@ -291,8 +299,17 @@ class StringBufferFileItem extends StringBufferItem{
 			$length = $this->getLength() - $offset;
 		}
 		$f = fopen($this->_Filename,"r");
-		fseek($f,$offset);
+		if($f === false){
+			throw new Exception("cannot open file $this->_Filename for reading");
+		}
+		$ret = fseek($f,$offset);
+		if($ret !== 0){
+			throw new Exception("cannot do fseek in file $this->_Filename");
+		}
 		$out = fread($f,$length);
+		if($out === false){
+			throw new Exception("cannot read from file $this->_Filename");
+		}
 		fclose($f);
 		return $out;
 	}
