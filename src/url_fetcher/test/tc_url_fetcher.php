@@ -193,4 +193,63 @@ class tc_url_fetcher extends tc_base{
 		$this->assertEquals("",$f->getContent());
 		$this->assertEquals("POST",$f->getRequestMethod());
 	}
+
+	function test_upload_file(){
+		foreach(array(
+			// small file (~ 100kB)
+			array(
+				"url" => "https://filesamples.com/samples/document/pdf/sample2.pdf",
+				"filename" => "sample2.pdf",
+				"filesize" => 65715,
+				"md5sum" => "6099fc695fe018ce444752929d86f9c8",
+				"mime_type" => "application/pdf",
+			),
+			// big file (~ 2MB)
+			array(
+				"url" => "https://filesamples.com/samples/audio/mp3/sample1.mp3",
+				"filename" => "sample1.mp3",
+				"filesize" => 1954212,
+				"md5sum" => "c6c014f0c24af2d5e943c3b2ea40a329",
+				"mime_type" => "audio/mpeg",
+			),
+			// huge file (~ 10MB)
+			array(
+				"url" => "https://filesamples.com/samples/video/avi/sample_1920x1080.avi",
+				"filename" => "sample_1920x1080.avi",
+				"filesize" => 9909100,
+				"md5sum" => "49c64d5d240cf9ef41a517dbed58a5fd",
+				"mime_type" => "video/x-msvideo",
+			),
+		) as $item){
+			// Download
+			$f = new UrlFetcher($item["url"]);
+			$this->assertTrue($f->found());
+			$this->assertEquals($item["filename"],$f->getFilename());
+			$this->assertEquals($item["mime_type"],$f->getContentType());
+			$full_path = __DIR__ . "/tmp/" . $f->getFilename();
+			Files::WriteToFile($full_path,$f->getContent(),$err);
+			$this->assertFalse($err);
+			$this->assertEquals($item["filesize"],filesize($full_path));
+			$this->assertEquals($item["md5sum"],md5_file($full_path));
+
+			// Upload using StringBuffer
+			$f = new UrlFetcher("https://www.atk14.net/api/en/file_uploads/create_new/?format=json");
+			$content = new StringBuffer();
+			$content->addFile($full_path);
+			$f->post($content,array(
+				"content_type" => $item["mime_type"],
+				"additional_headers" => array(
+					sprintf('Content-Disposition: attachment; filename="%s"',rawurlencode($item["filename"]))
+				)
+			));
+			$status_code = $f->getStatusCode();
+			$this->assertEquals("",$f->getErrorMessage());
+			$this->assertEquals(201,$status_code);
+			$data = json_decode($f->getContent(),true);
+			$this->assertEquals($item["filename"],$data["filename"]);
+			$this->assertEquals($item["filesize"],$data["filesize"]);
+			$this->assertEquals($item["md5sum"],$data["md5sum"]);
+			$this->assertEquals($item["mime_type"],$data["mime_type"]);
+		}
+	}
 }

@@ -128,7 +128,7 @@ class UrlFetcher {
 	function _reset(){
 		$this->_Fetched = null;
 		$this->_RequestMethod = "GET";
-		$this->_PostData = "";
+		$this->_PostData = new StringBuffer();
 		$this->_AdditionalHeaders = array();
 		$this->_Url = "";
 		$this->_Ssl = false;
@@ -327,13 +327,15 @@ class UrlFetcher {
 			return $this->_setError("failed to open socket: $errstr [$errno]");
 		}
 		stream_set_blocking($f,0);
-		$_data = $this->_RequestHeaders;
-		if($this->_RequestMethod=="POST"){ $_data .= $this->_PostData; }
-		$stat = $this->_fwriteStream($f,$_data);
+		$_buffer = new StringBuffer($this->_RequestHeaders);
+		if($this->_RequestMethod=="POST"){
+			$_buffer->addStringBuffer($this->_PostData);
+		}
+		$stat = $this->_fwriteStream($f,$_buffer);
 
-		if(!$stat || $stat!=strlen($_data)){
+		if(!$stat || $stat!=strlen($_buffer)){
 			fclose($f);
-			return $this->_setError(sprintf("cannot write to socket (bytes written: %s, bytes needed to be written: %s)",$stat,strlen($_data)));
+			return $this->_setError(sprintf("cannot write to socket (bytes written: %s, bytes needed to be written: %s)",$stat,$_buffer->getLength()));
 		}
 
 		$headers = "";
@@ -410,7 +412,7 @@ class UrlFetcher {
 	/**
 	 * Performs a POST request
 	 *
-	 * @param mixed $data when array it is sent as query parameters, otherwise $data is sent without processing
+	 * @param string|array|StringBuffer $data when array it is sent as query parameters
 	 * @param array $options
 	 * - content_type string - value for Content-Type HTTP header
 	 * - additional_headers array - more headers
@@ -425,13 +427,17 @@ class UrlFetcher {
 			$data = join("&",$d);
 		}
 
+		if(!is_a($data,"StringBuffer")){
+			$data = new StringBuffer($data);
+		}
+
 		$options = array_merge(array(
 			"content_type" => "application/x-www-form-urlencoded",
 			"additional_headers" => array(),
 		),$options);
 
 		$this->_RequestMethod = "POST";
-		$this->_PostData = $data;
+		$this->_PostData->addStringBuffer($data);
 		$this->_AdditionalHeaders = $options["additional_headers"];
 		$this->_AdditionalHeaders[] = "Content-Type: $options[content_type]";
 
@@ -622,14 +628,28 @@ class UrlFetcher {
 	 * @return string
 	 */
 	function getFilename(){
+		$filename = "";
+
 		if($content_disposition = $this->getHeaderValue("Content-Disposition")){
-			if(preg_match('/filename="(.*?)"/',$content_disposition,$matches)){
-				return $matches[1];
+			if(preg_match('/filename="?([^";]+)"?/',$content_disposition,$matches)){
+				$filename = trim($matches[1]);
 			}
 		}
-		if(preg_match("/([^\\/?]+)(\\?.*|)$/",$this->_Uri,$matches)){
-			return $matches[1];
+
+		if(!strlen($filename) && preg_match("/([^\\/?]+)(\\?.*|)$/",$this->_Uri,$matches)){
+			$filename = $matches[1];
+			$filename = urldecode($filename);
 		}
+
+		// Sanitization
+		$filename = strtr($filename,array(
+			"/" => "_",
+			"\\" => "_",
+		));
+		if($filename === "."){ $filename = "_"; }
+		if($filename === ".."){ $filename = "__"; }
+
+		return $filename;
 	}
 
 	/**
@@ -714,7 +734,7 @@ class UrlFetcher {
 			$out[] = "Authorization: Basic ".base64_encode("$this->_Username:$this->_Password");
 		}
 		if($this->_RequestMethod=="POST"){
-			$out[] = "Content-Length: ".strlen($this->_PostData);
+			$out[] = "Content-Length: ".$this->_PostData->getLength();
 		}
 		foreach($this->_ConstructorAdditionalHeaders as $h){
 			$out[] = $h;
@@ -736,11 +756,16 @@ class UrlFetcher {
 	 *
 	 * @ignore
 	 */
-	protected function _fwriteStream(&$fp, &$string) {
+	protected function _fwriteStream(&$fp, $buffer) {
 		$fwrite = 0;
 		$retries = 0;
-		for($written = 0; $written < strlen($string); $written += $fwrite){
-			$fwrite = @fwrite($fp, substr($string, $written));
+		$chunk_size = 1024 * 1024; // 1MB
+		$chunk = null;
+		for($written = 0; $written < $buffer->getLength(); $written += $fwrite){
+			if(is_null($chunk)){
+				$chunk = $buffer->substr($written,$chunk_size);
+			}
+			$fwrite = @fwrite($fp, $chunk);
 
 			if($fwrite === false){
 				return $written;
@@ -753,6 +778,7 @@ class UrlFetcher {
 				continue;
 			}else{
 				$retries = 0; // something was written? -> reset $retries
+				$chunk = null;
 			}
 		}
 		return $written;
