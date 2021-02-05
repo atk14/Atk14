@@ -298,7 +298,7 @@ class StringBufferFileItem extends StringBufferItem{
 		if(is_null($length)){
 			$length = $this->getLength() - $offset;
 		}
-		$f = fopen($this->_Filename,"r");
+		$f = fopen($this->_Filename,"rb"); // reading + binary
 		if($f === false){
 			throw new Exception("cannot open file $this->_Filename for reading");
 		}

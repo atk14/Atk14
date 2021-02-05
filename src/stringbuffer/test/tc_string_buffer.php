@@ -119,5 +119,18 @@ class TcStringBuffer extends TcBase{
 		$this->assertEquals("lorem ipsum",$buffer->substr(0,11));
 		$this->assertEquals("sit ametlorem ipsum dolor sit amet",$buffer->substr(18));
 		$this->assertEquals("r sit amet",$buffer->substr(-10));
+
+		// Zeroes
+		$zero = chr(0);
+		$buffer = new StringBuffer();
+		$buffer->addString("START{$zero}-");
+		$buffer->addFile(__DIR__ . "/zeroes.dat");
+		$buffer->addString("-{$zero}END");
+		$this->assertEquals(22,$buffer->getLength());
+		$this->assertEquals("START{$zero}-{$zero}{$zero}{$zero}{$zero}{$zero}{$zero}{$zero}{$zero}{$zero}{$zero}-{$zero}END",$buffer->substr(0));
+		$this->assertEquals("START{$zero}",$buffer->substr(0,6));
+		$this->assertEquals("START{$zero}-{$zero}",$buffer->substr(0,8));
+		$this->assertEquals("{$zero}END",$buffer->substr(-4));
+		$this->assertEquals("{$zero}-{$zero}END",$buffer->substr(-6));
 	}
 }
