@@ -375,7 +375,7 @@ class UrlFetcher {
 		//
 		// je to hack pro stahovani souboru: http://do-mobilu.respekt.cz/kestazeni-download.php?f_ID=815
 		// tam koumaci prilepili za data velikost souboru - pocitaji natvrdo z HTTP/1.1
-		if(($length = $this->getContentLength()) && strlen($this->_Content)>$length){
+		if(($length = $this->getContentLength()) && strlen($this->_Content->getLength())>$length){
 			$this->_Content = substr($this->_Content,0,$length);
 		}
 
