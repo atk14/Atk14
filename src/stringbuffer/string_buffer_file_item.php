@@ -63,6 +63,10 @@ class StringBufferFileItem extends StringBufferItem{
 	}
 
 	function substr($offset,$length = null){
+		if(!is_null($this->_String)){
+			return parent::substr($offset,$length);
+		}
+
 		if(is_null($length)){
 			$length = $this->getLength() - $offset;
 		}

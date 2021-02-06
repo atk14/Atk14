@@ -15,13 +15,19 @@ class StringBufferTemporary extends StringBuffer {
 
 	function addString($string_to_add){
 		settype($string_to_add,"string");
-		if(strlen($string_to_add)>0){
-			$filename = Files::GetTempFilename("string_buffer_temporary_");
-			Files::WriteToFile($filename,$string_to_add,$err,$err_str);
-			if($err){
-				throw new Exception(get_class($this).": cannot write to temporary file $filename ($err_msg)");
-			}
-			$this->_Items[] = new StringBufferTemporaryFileItem($filename);
+
+		$FILEIZE_THRESHOLD = defined("TEST") && constant("TEST") ? 1 : 1024 * 1024; // 1B or 1MB
+
+		$last_item = $this->getLastItem();
+		if($last_item && !$last_item->isFileized()){
+			$last_item->addString($string_to_add);
+		}else{
+			$last_item = new StringBufferTemporaryItem($string_to_add);
+			$this->_Items[] = $last_item;
+		}
+
+		if(!$last_item->isFileized() && ($last_item->getLength() > $FILEIZE_THRESHOLD)){
+			$last_item->fileize();
 		}
 	}
 }

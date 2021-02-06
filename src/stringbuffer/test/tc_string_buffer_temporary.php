@@ -9,8 +9,8 @@ class TcStringBufferTemporary extends TcBase {
 		$items = $buffer->getItems();
 		$this->assertEquals(2,sizeof($items));
 
-		$this->assertTrue(is_a($items[0],"StringBufferTemporaryFileItem"));
-		$this->assertTrue(is_a($items[1],"StringBufferTemporaryFileItem"));
+		$this->assertTrue(is_a($items[0],"StringBufferTemporaryItem"));
+		$this->assertTrue(is_a($items[1],"StringBufferTemporaryItem"));
 
 		$filename1 = $items[0]->getFilename();
 		$filename2 = $items[1]->getFilename();

@@ -61,6 +61,10 @@ class StringBuffer{
 	function getItems(){
 		return $this->_Items;
 	}
+
+	function getLastItem(){
+		return $this->_Items ? $this->_Items[sizeof($this->_Items)-1] : null;
+	}
 	
 	/**
 	 * Adds another string to the buffer.
