@@ -9,5 +9,6 @@ skelet/atk14
 src/http/test/temp/*
 src/http/test/another_temp/*
 src/url_fetcher/test/tmp/*
+src/files/test/temp/*
 doc-cache
 locale/*/LC_MESSAGES/atk14.mo
