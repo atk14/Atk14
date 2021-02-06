@@ -1,4 +1,4 @@
 <?php
 require("../url_fetcher.php");
-require("../../stringbuffer/stringbuffer.php");
+require("../../stringbuffer/load.php");
 require("../../files/files.php");
