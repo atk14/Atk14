@@ -53,7 +53,7 @@
  */
 class UrlFetcher {
 
-	const VERSION = "1.5.1";
+	const VERSION = "1.6";
 
 	/**
 	 * Authentication type
@@ -140,7 +140,7 @@ class UrlFetcher {
 		$this->_RequestHeaders = "";
 		$this->_ResponseHeaders = "";
 
-		$this->_Content = null;
+		$this->_Content = null; // StringBufferTemporary
 	}
 
 	/**
@@ -339,20 +339,20 @@ class UrlFetcher {
 		}
 
 		$headers = "";
-		$_buffer_ar = array();
+		$_buffer = new StringBufferTemporary();
 		while(!feof($f) && $f){
-			$_b = fread($f,4095);
+			$_b = fread($f,1024 * 256); // 256kB
 			if(strlen($_b)==0){
 				usleep(20000);
 				continue;
 			}
-			$_buffer_ar[] = $_b;
+			$_buffer->addString($_b);
 
-			if(!strlen($headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",join("",$_buffer_ar),$matches)){
+			if(!strlen($headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$_buffer->toString(),$matches)){
 				$headers = $matches[1];
 				$_b = $matches[2];
-				$_buffer_ar = array();
-				(strlen($_b)>0) && ($_buffer_ar[] = $_b);
+				$_buffer = new StringBufferTemporary();
+				(strlen($_b)>0) && ($_buffer->addString($_b));
 			}
 		}
 		fclose($f);
@@ -366,7 +366,7 @@ class UrlFetcher {
 		}
 
 		$this->_ResponseHeaders = $headers;
-		$this->_Content = join("",$_buffer_ar);
+		$this->_Content = $_buffer;
 
 		$this->_Fetched = true;
 
@@ -577,7 +577,16 @@ class UrlFetcher {
 	 *
 	 * @return string
 	 */
-	function getContentLength(){ return $this->getHeaderValue("content-length"); }
+	function getContentLength(){
+		$length = $this->getHeaderValue("content-length");
+		if(strlen($length)){
+			return $length;
+		}
+		if($this->_Content){
+			return (string)$this->_Content->getLength();
+		}
+		return "";
+	}
 
 	/**
 	 * Returns status code of response
@@ -757,30 +766,32 @@ class UrlFetcher {
 	 * @ignore
 	 */
 	protected function _fwriteStream(&$fp, $buffer) {
+		$total_length = $buffer->getLength();
 		$fwrite = 0;
 		$retries = 0;
-		$chunk_size = 1024 * 1024; // 1MB
+		$chunk_size = 1024 * 256; // 256kB
 		$chunk = null;
-		for($written = 0; $written < $buffer->getLength(); $written += $fwrite){
+		for($bytes_written = 0; $bytes_written < $total_length; $bytes_written += $fwrite){
+			$length = min($chunk_size,$total_length - $bytes_written);
 			if(is_null($chunk)){
-				$chunk = $buffer->substr($written,$chunk_size);
+				$chunk = $buffer->substr($bytes_written,$length);
 			}
-			$fwrite = @fwrite($fp, $chunk);
+			$fwrite = @fwrite($fp, $chunk, $length);
 
 			if($fwrite === false){
-				return $written;
+				return $bytes_written;
 			}
 
-			if(!$fwrite){ // 0 bytes written; error code  11:  Resource temporarily unavailable
-				if($retries>=100){ return $written; }
+			if(!$fwrite){ // 0 bytes bytes_written; error code  11:  Resource temporarily unavailable
+				if($retries>=100){ return $bytes_written; }
 				usleep(10000 + $retries * 1000); // 0.01s + 0s .. 0.01s + 0.1s
 				$retries++;
 				continue;
 			}else{
-				$retries = 0; // something was written? -> reset $retries
+				$retries = 0; // something was bytes_written? -> reset $retries
 				$chunk = null;
 			}
 		}
-		return $written;
+		return $bytes_written;
 	}
 }
