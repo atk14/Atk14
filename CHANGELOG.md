@@ -7,6 +7,8 @@ To locate potential backward compatibility breaks, search for string "BC BREAK".
 ## Unreleased
 
 - 56adf87 - [Smarty3] Smarty upgrade to 3.1.38
+- [StringBuffer] Added method StringBuffer::writeToFile()
+- [StringBuffer] Added class StringBufferTemporary
 - 9d50989 - [UrlFetcher] UrlFetcher::getContent() returns StringBuffer (actually StringBufferTemporary) and not string. BC BREAK!
 - 93a7b88 - [Atk14] In a fixture file the table_name can be specified
 - 990a72d - [Atk14] ./scripts/server improved: the server address can be specified as a parameter
