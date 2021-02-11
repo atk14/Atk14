@@ -55,7 +55,7 @@ To locate potential backward compatibility breaks, search for string "BC BREAK".
 - c50bc59 - [Forms] <input type="file"> is rendered with class="form-control-field" (it's a default value, it can be changed)
 - 4600ef6 - [Atk14] Added constant USING_FONTAWESOME (default false); Helper block.sortable uses nice fontawesome icons
 - 03b9477 - [Bootstrap4] Added configuration constant: USING_BOOTSTRAP4
-- f0bf770 - [Forms, Bootstrap4] Markup for CheckboxSelectMultiple and RadioSelect improved; radios and checkboxes are rendered as <ul><li> list
+- f0bf770 - [Forms, Bootstrap4] Markup for CheckboxSelectMultiple and RadioSelect improved; radios and checkboxes are rendered as ```<ul><li>``` list
 - 7e6934b - [Forms, Bootstrap4] Widgets CheckboxInput and CheckboxSelectMultiple tuned for Bootstrap4; Added option bootstrap4
 - f34d7fe - [Forms, Bootstrap4] Widgets RadioInput and RadioSelect tuned for Bootstrap4
 - f2b08c1 - [Atk14] In YAML of a fixture there can be set a specific class_name
