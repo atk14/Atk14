@@ -352,7 +352,7 @@ class tc_http_request extends tc_base{
 			"content_type" => "text/plain; charset=UTF-8"
 		));
 
-		$content = $uf->getContent();
+		$content = (string)$uf->getContent();
 
 		$this->assertContains("content-type: text/plain",$content);
 		$this->assertContains("content-charset: UTF-8",$content);

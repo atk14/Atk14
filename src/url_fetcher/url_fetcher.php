@@ -53,7 +53,7 @@
  */
 class UrlFetcher {
 
-	const VERSION = "1.4.3";
+	const VERSION = "1.6.2";
 
 	/**
 	 * Authentication type
@@ -128,7 +128,7 @@ class UrlFetcher {
 	function _reset(){
 		$this->_Fetched = null;
 		$this->_RequestMethod = "GET";
-		$this->_PostData = "";
+		$this->_PostData = new StringBuffer();
 		$this->_AdditionalHeaders = array();
 		$this->_Url = "";
 		$this->_Ssl = false;
@@ -140,7 +140,7 @@ class UrlFetcher {
 		$this->_RequestHeaders = "";
 		$this->_ResponseHeaders = "";
 
-		$this->_Content = null;
+		$this->_Content = null; // StringBufferTemporary
 	}
 
 	/**
@@ -327,30 +327,32 @@ class UrlFetcher {
 			return $this->_setError("failed to open socket: $errstr [$errno]");
 		}
 		stream_set_blocking($f,0);
-		$_data = $this->_RequestHeaders;
-		if($this->_RequestMethod=="POST"){ $_data .= $this->_PostData; }
-		$stat = $this->_fwriteStream($f,$_data);
+		$_buffer = new StringBuffer($this->_RequestHeaders);
+		if($this->_RequestMethod=="POST"){
+			$_buffer->addStringBuffer($this->_PostData);
+		}
+		$stat = $this->_fwriteStream($f,$_buffer);
 
-		if(!$stat || $stat!=strlen($_data)){
+		if(!$stat || $stat!=$_buffer->getLength()){
 			fclose($f);
-			return $this->_setError(sprintf("cannot write to socket (bytes written: %s, bytes needed to be written: %s)",$stat,strlen($_data)));
+			return $this->_setError(sprintf("cannot write to socket (bytes written: %s, bytes needed to be written: %s)",$stat,$_buffer->getLength()));
 		}
 
 		$headers = "";
-		$_buffer_ar = array();
+		$_buffer = new StringBufferTemporary();
 		while(!feof($f) && $f){
-			$_b = fread($f,4095);
+			$_b = fread($f,1024 * 256); // 256kB
 			if(strlen($_b)==0){
 				usleep(20000);
 				continue;
 			}
-			$_buffer_ar[] = $_b;
+			$_buffer->addString($_b);
 
-			if(!strlen($headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",join("",$_buffer_ar),$matches)){
+			if(!strlen($headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$_buffer->toString(),$matches)){
 				$headers = $matches[1];
 				$_b = $matches[2];
-				$_buffer_ar = array();
-				(strlen($_b)>0) && ($_buffer_ar[] = $_b);
+				$_buffer = new StringBufferTemporary();
+				(strlen($_b)>0) && ($_buffer->addString($_b));
 			}
 		}
 		fclose($f);
@@ -364,7 +366,7 @@ class UrlFetcher {
 		}
 
 		$this->_ResponseHeaders = $headers;
-		$this->_Content = join("",$_buffer_ar);
+		$this->_Content = $_buffer;
 
 		$this->_Fetched = true;
 
@@ -373,7 +375,7 @@ class UrlFetcher {
 		//
 		// je to hack pro stahovani souboru: http://do-mobilu.respekt.cz/kestazeni-download.php?f_ID=815
 		// tam koumaci prilepili za data velikost souboru - pocitaji natvrdo z HTTP/1.1
-		if(($length = $this->getContentLength()) && strlen($this->_Content)>$length){
+		if(($length = $this->getContentLength()) && strlen($this->_Content->getLength())>$length){
 			$this->_Content = substr($this->_Content,0,$length);
 		}
 
@@ -410,7 +412,7 @@ class UrlFetcher {
 	/**
 	 * Performs a POST request
 	 *
-	 * @param mixed $data when array it is sent as query parameters, otherwise $data is sent without processing
+	 * @param string|array|StringBuffer $data when array it is sent as query parameters
 	 * @param array $options
 	 * - content_type string - value for Content-Type HTTP header
 	 * - additional_headers array - more headers
@@ -425,13 +427,17 @@ class UrlFetcher {
 			$data = join("&",$d);
 		}
 
+		if(!is_a($data,"StringBuffer")){
+			$data = new StringBuffer($data);
+		}
+
 		$options = array_merge(array(
 			"content_type" => "application/x-www-form-urlencoded",
 			"additional_headers" => array(),
 		),$options);
 
 		$this->_RequestMethod = "POST";
-		$this->_PostData = $data;
+		$this->_PostData->addStringBuffer($data);
 		$this->_AdditionalHeaders = $options["additional_headers"];
 		$this->_AdditionalHeaders[] = "Content-Type: $options[content_type]";
 
@@ -571,7 +577,16 @@ class UrlFetcher {
 	 *
 	 * @return string
 	 */
-	function getContentLength(){ return $this->getHeaderValue("content-length"); }
+	function getContentLength(){
+		$length = $this->getHeaderValue("content-length");
+		if(strlen($length)){
+			return $length;
+		}
+		if($this->_Content){
+			return (string)$this->_Content->getLength();
+		}
+		return "";
+	}
 
 	/**
 	 * Returns status code of response
@@ -622,14 +637,28 @@ class UrlFetcher {
 	 * @return string
 	 */
 	function getFilename(){
+		$filename = "";
+
 		if($content_disposition = $this->getHeaderValue("Content-Disposition")){
-			if(preg_match('/filename="(.*?)"/',$content_disposition,$matches)){
-				return $matches[1];
+			if(preg_match('/filename="?([^";]+)"?/',$content_disposition,$matches)){
+				$filename = trim($matches[1]);
 			}
 		}
-		if(preg_match("/([^\\/?]+)(\\?.*|)$/",$this->_Uri,$matches)){
-			return $matches[1];
+
+		if(!strlen($filename) && preg_match("/([^\\/?]+)(\\?.*|)$/",$this->_Uri,$matches)){
+			$filename = $matches[1];
+			$filename = urldecode($filename);
 		}
+
+		// Sanitization
+		$filename = strtr($filename,array(
+			"/" => "_",
+			"\\" => "_",
+		));
+		if($filename === "."){ $filename = "_"; }
+		if($filename === ".."){ $filename = "__"; }
+
+		return $filename;
 	}
 
 	/**
@@ -714,7 +743,7 @@ class UrlFetcher {
 			$out[] = "Authorization: Basic ".base64_encode("$this->_Username:$this->_Password");
 		}
 		if($this->_RequestMethod=="POST"){
-			$out[] = "Content-Length: ".strlen($this->_PostData);
+			$out[] = "Content-Length: ".$this->_PostData->getLength();
 		}
 		foreach($this->_ConstructorAdditionalHeaders as $h){
 			$out[] = $h;
@@ -736,25 +765,33 @@ class UrlFetcher {
 	 *
 	 * @ignore
 	 */
-	protected function _fwriteStream(&$fp, &$string) {
+	protected function _fwriteStream(&$fp, $buffer) {
+		$total_length = $buffer->getLength();
 		$fwrite = 0;
 		$retries = 0;
-		for($written = 0; $written < strlen($string); $written += $fwrite){
-			$fwrite = @fwrite($fp, substr($string, $written));
+		$chunk_size = 1024 * 256; // 256kB
+		$chunk = null;
+		for($bytes_written = 0; $bytes_written < $total_length; $bytes_written += $fwrite){
+			$length = min($chunk_size,$total_length - $bytes_written);
+			if(is_null($chunk)){
+				$chunk = $buffer->substr($bytes_written,$length);
+			}
+			$fwrite = @fwrite($fp, $chunk, $length);
 
 			if($fwrite === false){
-				return $written;
+				return $bytes_written;
 			}
 
-			if(!$fwrite){ // 0 bytes written; error code  11:  Resource temporarily unavailable
-				if($retries>=100){ return $written; }
+			if(!$fwrite){ // 0 bytes bytes_written; error code  11:  Resource temporarily unavailable
+				if($retries>=100){ return $bytes_written; }
 				usleep(10000 + $retries * 1000); // 0.01s + 0s .. 0.01s + 0.1s
 				$retries++;
 				continue;
 			}else{
-				$retries = 0; // something was written? -> reset $retries
+				$retries = 0; // something was bytes_written? -> reset $retries
+				$chunk = null;
 			}
 		}
-		return $written;
+		return $bytes_written;
 	}
 }

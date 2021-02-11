@@ -26,7 +26,7 @@ if(defined("FILES_DEFAULT_DIR_PERMS")){
  */
 class Files{
 
-	const VERSION = "1.4.2";
+	const VERSION = "1.5";
 
 	static protected $_DefaultFilePerms = 0666;
 
@@ -288,11 +288,17 @@ class Files{
 			$error_str = "failed to open file for writing";
 			return 0;
 		}
-		$bytes = fwrite($f,$content,strlen($content));
-		if($bytes!=strlen($content)){
-			$error = true;
-			$error_str = "failed to write ".strlen($content)." bytes; writen ".$bytes;
-			return $bytes;
+		$strlen = strlen($content);
+		if($strlen>0 || $options["file_open_mode"]=="w"){
+			$bytes = fwrite($f,$content,$strlen);
+			if($bytes!==$strlen){
+				$error = true;
+				$error_str = "failed to write $strlen bytes; writen $bytes";
+				return $bytes;
+			}
+		}
+		if($strlen == 0){
+			touch($file);
 		}
 		fclose($f);
 
@@ -326,6 +332,32 @@ class Files{
 	 */
 	static function AppendToFile($file,$content,&$error = null,&$error_str = null){
 		return Files::WriteToFile($file,$content,$error,$error_str,array("file_open_mode" => "a"));
+	}
+
+	/**
+	 * Sets access and modification time of file
+	 *
+	 * @param string $file name of the file
+	 * @param boolean &$error flag indicating that something went wrong
+	 * @param string &$error_str message describing the error
+	 * @return boolean false on error
+	 */
+	static function TouchFile($file,&$error = null,&$error_str = null){
+		Files::WriteToFile($file,"",$error,$error_str,array("file_open_mode" => "a"));
+		return !$error;
+	}
+
+	/**
+	 * Empties the given file
+	 *
+	 * @param string $file name of the file
+	 * @param boolean &$error flag indicating that something went wrong
+	 * @param string &$error_str message describing the error
+	 * @return boolean false on error
+	 */
+	static function EmptyFile($file,&$error = null,&$error_str = null){
+		Files::WriteToFile($file,"",$error,$error_str);
+		return !$error;
 	}
 
 	/**

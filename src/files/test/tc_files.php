@@ -139,6 +139,73 @@ class TcFiles extends TcBase{
 		Files::Unlink($filename);
 	}
 
+	function test_TouchFile(){
+		$filename = Files::GetTempFilename();
+		$this->assertEquals(false,file_exists($filename));
+
+		Files::TouchFile($filename,$err,$err_str);
+		clearstatcache();
+		$this->assertEquals(false,$err);
+		$this->assertEquals("",$err_str);
+		$this->assertEquals(true,file_exists($filename));
+		$this->assertEquals(0,filesize($filename));
+
+		Files::AppendToFile($filename,"test");
+		clearstatcache();
+		$this->assertEquals(4,filesize($filename));
+		$filemtime = filemtime($filename);
+		$fileatime = fileatime($filename);
+
+		usleep(1100000); // 1.1 sec
+
+		Files::TouchFile($filename,$err,$err_str);
+		clearstatcache();
+		$this->assertEquals(false,$err);
+		$this->assertEquals("",$err_str);
+		$this->assertEquals(true,file_exists($filename));
+		$this->assertEquals(4,filesize($filename));
+		$filemtime2 = filemtime($filename);
+		$fileatime2 = fileatime($filename);
+
+		$this->assertTrue($filemtime2>$filemtime);
+		$this->assertTrue($fileatime2>$fileatime);
+	}
+
+	function test_EmptyFile(){
+		$filename = Files::GetTempFilename();
+		$this->assertEquals(false,file_exists($filename));
+
+		Files::WriteToFile($filename,"test");
+		clearstatcache();
+		$this->assertEquals(true,file_exists($filename));
+		$this->assertEquals(4,filesize($filename));
+
+		$ret = Files::EmptyFile($filename,$err,$err_str);
+		clearstatcache();
+		$this->assertEquals(true,$ret);
+		$this->assertEquals(false,$err);
+		$this->assertEquals("",$err_str);
+		$this->assertEquals(true,file_exists($filename));
+		$this->assertEquals(0,filesize($filename));
+		$filemtime = filemtime($filename);
+		$fileatime = fileatime($filename);
+
+		usleep(1100000); // 1.1 sec
+
+		$ret = Files::EmptyFile($filename,$err,$err_str);
+		clearstatcache();
+		$this->assertEquals(true,$ret);
+		$this->assertEquals(false,$err);
+		$this->assertEquals("",$err_str);
+		$this->assertEquals(true,file_exists($filename));
+		$this->assertEquals(0,filesize($filename));
+		$filemtime2 = filemtime($filename);
+		$fileatime2 = fileatime($filename);
+
+		$this->assertTrue($filemtime2>$filemtime);
+		$this->assertTrue($fileatime2>$fileatime);
+	}
+
 	function test__NormalizeFilename(){
 		foreach(array(
 			"/path/to/file" => "/path/to/file",
