@@ -3,6 +3,8 @@ All notable changes to ATK14 Framework will be documented in this file.
 
 ## Unreleased
 
+- 9d50989 - UrlFetcher::getContent() returns StringBuffer (actually StringBufferTemporary) and not string. BC BREAK!
+
 ## [1.5] - 2018-07-04
 
 ### Added (only main features are listed)
