@@ -2,14 +2,21 @@
 
 All notable changes to ATK14 Framework will be documented in this file.
 
-To locate potential backward compatibility breaks, search for string "BC BREAK".
+## [1.6] - 2021-02-12
 
-## Unreleased
+### BC BREAKS
+
+- 9d50989 - [UrlFetcher] UrlFetcher::getContent() returns StringBuffer (actually StringBufferTemporary) and not string. BC BREAK!
+- 6638499 - [Forms] Textarea renamed to TextArea. Small BC BREAK!
+- 7c20d40 - [Atk14] Removed implementation of function atk14_get_smarty_from_template(): now it returns given parameter with no change. Small BC BREAK!
+- c79daeb - [Forms] Removed constant FORMS_ENABLE_EXPERIMENTAL_HTML5_FEATURES; There is no option how to turn off HTML5 features. BC BREAK!
+
+### Additions and changes (only the important are listed)
 
 - 56adf87 - [Smarty3] Smarty upgrade to 3.1.38
 - [StringBuffer] Added method StringBuffer::writeToFile()
 - [StringBuffer] Added class StringBufferTemporary
-- 9d50989 - [UrlFetcher] UrlFetcher::getContent() returns StringBuffer (actually StringBufferTemporary) and not string. BC BREAK!
+- [Files] Added methods Files::TouchFile() and Files::EmptyFile()
 - 93a7b88 - [Atk14] In a fixture file the table_name can be specified
 - 990a72d - [Atk14] ./scripts/server improved: the server address can be specified as a parameter
 - [TableRecord] TableRecord installed in version 1.1 (Added methods TableRecord_DatabaseAccessor_Postgresql::SetDefaultDatabaseSchema() and TableRecord_DatabaseAccessor_Postgresql::GetDefaultDatabaseSchema())
@@ -42,13 +49,11 @@ To locate potential backward compatibility breaks, search for string "BC BREAK".
 - e58bdfb - [Atk14] Smarty modifier field can be called with option "label_to_placeholder"
 - 0d83155 - [Http] Added method HTTPRequest::getServerUrl()
 - 3f6da9f - [Atk14] Atk14Controller::_redirect_to_ssl() is by default with moved_permanently (set to true)
-- 6638499 - [Forms] Textarea renamed to TextArea. Small BC BREAK!
 - d3dd54e - [Atk14] Added action method Atk14Controller::error401()
 - 985e5d5 - [Forms] In Bootstrap 4 the CheckboxSelectMultiple renders by default markup with custom checkboxes
 - 44f81e8 - [Atk14] In an application, the config/after_initialize.php file will be loaded after full initialization
 - 9b1b741 - [Atk14] Added constant ATK14_LOAD_AFTER_INITIALIZE_SETTINGS (default true) to enable/disable loading of "after initialize" settings
 - 5e5b355 - [Http] Added method HTTPRequest::getQueryString()
-- 7c20d40 - [Atk14] Removed implementation of atk14_get_smarty_from_template: now it returns given parameter with no change. Small BC BREAK!
 - 4f2b6a4 - [Atk14] In the database configuration (yaml) string values can be referenced with their names on other places
 - 4fb8696 - [Atk14] Added new method Atk14Global::getDocumentRoot()
 - 227e597 - [Atk14] Added helper link for preloading resources
@@ -65,7 +70,19 @@ To locate potential backward compatibility breaks, search for string "BC BREAK".
 - dbf00fc - [Atk14] Atk14Client tuned; added new method Atk14Client::getResponseHeader()
 - e7f4672 - [DbMole] The "cache" option can be set to true and not only a count of seconds; Added new constant DBMOLE_DEFAULT_CACHE_EXPIRATION
 - 4c8771d - [Forms] Added constant FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4; Widget CheckboxSelectMultiple is tunable for Bootstrap4
-- c79daeb - [Forms] Removed constant FORMS_ENABLE_EXPERIMENTAL_HTML5_FEATURES; There is no option how to turn off HTML5 features. BC BREAK!
+
+Note: The following settings can be helpful for old projects:
+
+    <?php
+    // file: config/settings.php
+
+    // ...
+
+    // Backward compatibility switches
+    define("USING_BOOTSTRAP4",false);
+    define("USING_FONTAWESOME",false);
+    define("FORMS_AUTOMATICALLY_MOVE_HINTS_TO_PLACEHOLDERS",true);
+
 
 ## [1.5] - 2018-07-04
 
