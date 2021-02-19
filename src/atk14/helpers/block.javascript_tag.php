@@ -22,7 +22,10 @@
  * @param string $content
  */
 function smarty_block_javascript_tag($params, $content, $template, &$repeat){
-	if(!$content){ return; }
+	if($repeat){ return; }
+
+	if(strlen(trim($content))==0){ return; }
+
 	$out = array();
 	$out[] = '<script>';
 	$out[] = '//<![CDATA[';
