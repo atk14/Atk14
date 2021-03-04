@@ -301,10 +301,10 @@ class TcFiles extends TcBase{
 		foreach(array(
 			"jpg" => "image/jpeg",
 			"png" => "image/png",
-			"png" => "image/png",
 			"gif" => "image/gif",
 			"tiff" => "image/tiff",
 			"bmp" => "image/bmp",
+			"webp" => PHP_VERSION_ID<70000 ? "application/octet-stream" : "image/webp",
 
 			"eps" => "application/postscript",
 			"ai" => "application/postscript",

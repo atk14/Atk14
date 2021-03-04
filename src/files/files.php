@@ -26,7 +26,7 @@ if(defined("FILES_DEFAULT_DIR_PERMS")){
  */
 class Files{
 
-	const VERSION = "1.6";
+	const VERSION = "1.6.1";
 
 	static protected $_DefaultFilePerms = 0666;
 
@@ -655,8 +655,17 @@ class Files{
 	static function GetImageSize($filename,&$error = null,&$error_str = null){
 		// preserve obsolete usage - first part
 		// TODO: to be removed
+		if(!class_exists("TypeError")){
+			// for PHP5
+			eval("class TypeError extends Exception { }");
+		}
 		$tmp_file_created = false;
-		$file_exists = @file_exists($filename);
+		try {
+			$file_exists = @file_exists($filename);
+		} catch ( TypeError $e ) {
+			// TypeError: file_exists() expects parameter 1 to be a valid path, string given
+			$file_exists = false;
+		}
 		if(!$file_exists){
 			trigger_error("Files::GetImageSize(): Use Files::GetImageSizeByContent() to determine image sizeof from content");
 			$filename = self::WriteToTemp($filename,$error,$error_str);
