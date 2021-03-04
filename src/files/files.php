@@ -26,7 +26,7 @@ if(defined("FILES_DEFAULT_DIR_PERMS")){
  */
 class Files{
 
-	const VERSION = "1.5";
+	const VERSION = "1.6";
 
 	static protected $_DefaultFilePerms = 0666;
 
@@ -639,11 +639,67 @@ class Files{
 	}
 
 	/**
-	 * Determines width and height of an image in parameter.
+	 * Determines width and height of an image
 	 *
 	 * Example
 	 * ```
-	 *	list($width,$height) = Files::GetImageSize($image_content,$err,$err_str);
+	 *	list($width,$height) = Files::GetImageSize($path_to_image,$err,$err_str);
+	 * ```
+	 * 
+	 * @param string $path_to_image
+	 * @param boolean $error Error flag
+	 * @param string $error_str Error description
+	 * @return array Image dimensions
+	 *
+	 */
+	static function GetImageSize($filename,&$error = null,&$error_str = null){
+		// preserve obsolete usage - first part
+		// TODO: to be removed
+		$tmp_file_created = false;
+		$file_exists = @file_exists($filename);
+		if(!$file_exists){
+			trigger_error("Files::GetImageSize(): Use Files::GetImageSizeByContent() to determine image sizeof from content");
+			$filename = self::WriteToTemp($filename,$error,$error_str);
+			if($error){
+				return null;
+			}
+			$tmp_file_created = true;
+		}
+
+		if(!file_exists($filename)){
+			$error = true;
+			$error_str = "image $filename doesn't exist";
+			return null;
+		}
+
+		$out = getimagesize($filename);
+		if(!$out && class_exists("Imagick")){
+			try {
+				$imagick = new Imagick();
+				$imagick->readImage($filename);
+				if($imagick->getImageWidth()){
+					$out = array($imagick->getImageWidth(),$imagick->getImageHeight());
+				}
+			} catch (Exception $e) {
+				// no success, never mind...
+			}
+		}
+
+		// preserve obsolete usage - second part
+		if($tmp_file_created){
+			Files::Unlink($filename,$error,$error_str);
+		}
+
+		if(!is_array($out)){ $out = null; }
+		return $out;
+	}
+
+	/**
+	 * Determines width and height of an image by it's content
+	 *
+	 * Example
+	 * ```
+	 *	list($width,$height) = Files::GetImageSizeByContent($image_content,$err,$err_str);
 	 * ```
 	 * 
 	 * @param string $image_content Binary image data
@@ -652,13 +708,13 @@ class Files{
 	 * @return array Image dimensions
 	 *
 	 */
-	static function GetImageSize($image_content,&$error = null,&$error_str = null){
-		$temp = defined("TEMP") ? TEMP : "/tmp";
-		$filename = $temp."/get_image_filename_".posix_getpid();
-		if(!Files::WriteToFile($filename,$image_content,$error,$error_str)){ return null; }
-		$out = getimagesize($filename);
+	static function GetImageSizeByContent($image_content,&$error = null,&$error_str = null){
+		$filename = self::WriteToTemp($image_content,$error,$error_str);
+		if($error){
+			return null;
+		}
+		$out = Files::GetImageSize($filename,$error,$error_str);
 		Files::Unlink($filename,$error,$error_str);
-		if(!is_array($out)){ $out = null; }
 		return $out;
 	}
 
@@ -789,6 +845,7 @@ class Files{
 			"jpg|jpeg" =>		array("image/jpeg","image/jpg"),
 			"svg" =>				array("image/svg+xml","image/svg","text/plain"),
 			"bmp" =>				array("image/bmp","image/x-bmp","image/x-ms-bmp","application/octet-stream"),
+			"webp" =>				array("image/webp","image/x-webp"),
 			"eps" =>				array("application/postscript","application/eps"),
 			"csv" =>				array("text/csv","text/plain"),
 			"docx" => 			array("application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/zip"),

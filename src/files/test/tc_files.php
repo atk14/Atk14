@@ -17,15 +17,51 @@ class TcFiles extends TcBase{
 	}
 
 	function test_get_image_size(){
+		list($width,$height) = Files::GetImageSize("hlava.jpg",$err,$err_str);
+		$this->assertEquals(325,$width);
+		$this->assertEquals(448,$height);
+
+		list($width,$height) = Files::GetImageSize("sample_files/sample.webp",$err,$err_str);
+		if(PHP_VERSION_ID>=70100){
+			// getimagesize() CHANGELOG: 7.1.0 Added WebP support.
+			$this->assertEquals(50,$width);
+			$this->assertEquals(38,$height);
+		}else{
+			$this->assertEquals(null,$width);
+			$this->assertEquals(null,$height);
+		}
+
+		$hlava = Files::GetFileContent("hlava.jpg",$err,$err_str);
+		$this->assertEquals(26130,strlen($hlava));
+		$this->assertEquals("cf5486d582909df788be944049402003",md5($hlava));
+		list($width,$height) = Files::GetImageSizeByContent($hlava,$err,$err_str);
+		$this->assertEquals(325,$width);
+		$this->assertEquals(448,$height);
+
+		$image = Files::GetFileContent("sample_files/sample.webp",$err,$err_str);
+		$this->assertEquals(2358,strlen($image));
+		$this->assertEquals("c417b6553db97185609e3dc5925d8a42",md5($image));
+		list($width,$height) = Files::GetImageSizeByContent($image,$err,$err_str);
+		if(PHP_VERSION_ID>=70100){
+			// getimagesize() CHANGELOG: 7.1.0 Added WebP support.
+			$this->assertEquals(50,$width);
+			$this->assertEquals(38,$height);
+		}else{
+			$this->assertEquals(null,$width);
+			$this->assertEquals(null,$height);
+		}
+
+		$hlava = "xxxxxxxxxxxxxxxxx";
+		$this->assertNull(Files::GetImageSizeByContent($hlava,$err,$err_str));
+
+		// Legacy usage
+
 		$hlava = Files::GetFileContent("hlava.jpg",$err,$err_str);
 		$this->assertEquals(26130,strlen($hlava));
 		$this->assertEquals("cf5486d582909df788be944049402003",md5($hlava));
 		list($width,$height) = Files::GetImageSize($hlava,$err,$err_str);
 		$this->assertEquals(325,$width);
 		$this->assertEquals(448,$height);
-
-		$hlava = "xxxxxxxxxxxxxxxxx";
-		$this->assertNull(Files::GetImageSize($hlava,$err,$err_str));
 	}
 
 	function test_deterine_file_type(){
