@@ -1153,7 +1153,7 @@ class DbMole{
 		$query_values = array();
 		$bind_ar = array();
 		foreach($values as $_field_name => $_value){	
-			$query_fields[] = $_field_name;
+			$query_fields[] = $this->escapeColumnName4Sql($_field_name);
 			if(in_array($_field_name,$options["do_not_escape"])){
 				$query_values[] = $_value;
 				continue;
@@ -1206,7 +1206,7 @@ class DbMole{
 		// TODO: tady se zatim vubec neresi to, ze muze byt nastaveno $options["do_not_escape"] = array("id")
 		$_options = $options;
 		$_options["type"] = "integer";
-		$count = $this->selectSingleValue("SELECT COUNT(*) FROM $table_name WHERE $id_field=:id_value",array(":id_value" => $id_value),$_options);
+		$count = $this->selectSingleValue("SELECT COUNT(*) FROM ".$this->escapeTableName4Sql($table_name)." WHERE ".$this->escapeColumnName4Sql($id_field)."=:id_value",array(":id_value" => $id_value),$_options);
 
 		if($count==0){
 
@@ -1223,13 +1223,13 @@ class DbMole{
 				$bind_ar[":$_key"] = $_value;
 				if($_key == $id_field){ continue; }
 				if(!isset($options["do_not_escape"]["$_key"])){
-					$update_ar[] = "$_key=:$_key";	
+					$update_ar[] = $this->escapeColumnName4Sql($_key)."=:$_key";
 				}else{
-					$update_ar[] = "$_key=$_value";
+					$update_ar[] = $this->escapeColumnName4Sql($_key)."=$_value";
 				}
 			}
 			if(sizeof($update_ar)==0){ return true; } // je to podivne, ale tady se nic nemeni; nekdo vola nmetodu nesmyslne ve stylu: $dbmole->insertOrUpdateRecord("persons",array("id" => 20));
-			return $this->doQuery("UPDATE $table_name SET ".join(", ",$update_ar)." WHERE $id_field=:$id_field",$bind_ar,$options);
+			return $this->doQuery("UPDATE ".$this->escapeTableName4Sql($table_name)." SET ".join(", ",$update_ar)." WHERE ".$this->escapeColumnName4Sql($id_field)."=:$id_field",$bind_ar,$options);
 
 		}
 	}
@@ -1350,6 +1350,15 @@ class DbMole{
 		$this->_hookAfterQueryExecution();
 
 		return $out;
+	}
+
+	/**
+	 *
+	 * @param string $column_name
+	 * @return string
+	 */
+	function escapeColumnName4Sql($column_name){
+		return $column_name;
 	}
 
 	/**
