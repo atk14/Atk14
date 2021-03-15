@@ -130,8 +130,18 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 		if(is_string($options_or_asc_ordering)){
 			$asc_ordering = $options_or_asc_ordering;
 			if(!isset($desc_ordering)){
-				$desc_ordering = preg_replace('/\sASC$/i','',$asc_ordering);
-				$desc_ordering .= " DESC"; // TOTO: "name ASC, author ASC" -> "name DESC, author DESC"
+				$desc_ordering = trim($asc_ordering);
+
+				$uniqid = uniqid();
+				$desc_ordering = preg_replace('/\bASC\b/i',"DESC$uniqid",$desc_ordering);
+				$desc_ordering = preg_replace('/\bDESC\b/i',"ASC$uniqid",$desc_ordering);
+				$desc_ordering = strtr($desc_ordering,array(
+					"DESC$uniqid" => "DESC",
+					"ASC$uniqid" => "ASC",
+				));
+				if(!preg_match('/\b(ASC|DESC)$/i',$desc_ordering)){
+					$desc_ordering .= " DESC"; // "name" -> "name DESC"
+				}
 			}
 		}
 

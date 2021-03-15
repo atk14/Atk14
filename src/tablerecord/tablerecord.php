@@ -656,7 +656,7 @@ class TableRecord extends inobj {
 			$query_count = "SELECT COUNT(*) FROM ".$query;
 
 
-			$query = "SELECT $this->_IdFieldName FROM $query";
+			$query = "SELECT ".$this->_escapeColumnName4Sql($this->_IdFieldName)." FROM $query";
 		}
 
 		if(strlen($options["order"])>0){
@@ -775,7 +775,7 @@ class TableRecord extends inobj {
 
 		TableRecord::_NormalizeConditions($conditions,$bind_ar);
 
-		$query = "SELECT $this->_IdFieldName FROM ".$this->dbmole->escapeTableName4Sql($this->getTableName());
+		$query = "SELECT ".$this->_escapeColumnName4Sql($this->_IdFieldName)." FROM ".$this->dbmole->escapeTableName4Sql($this->getTableName());
 		if(sizeof($conditions)>0){
 			$query .= " WHERE (".join(") AND (",$conditions).")";
 		}
@@ -1040,7 +1040,7 @@ class TableRecord extends inobj {
 		$objs = array();
 
 		if(sizeof($bind_ar)>0){
-			$query = "SELECT ".join(",",$this->_fieldsToRead())." FROM ".$this->dbmole->escapeTableName4Sql($this->getTableName())." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
+			$query = "SELECT ".join(",",$this->_escapeColumnName4Sql($this->_fieldsToRead()))." FROM ".$this->dbmole->escapeTableName4Sql($this->getTableName())." WHERE $this->_IdFieldName IN (".join(", ",array_keys($bind_ar)).")";
 			$rows = $this->dbmole->selectRows($query,$bind_ar);
 			if(!is_array($rows)){ return null; }
 			foreach($rows as $row){
@@ -1340,8 +1340,10 @@ class TableRecord extends inobj {
 	 */
 	function _readValues($fields = null){
 		if(!isset($fields)){ $fields = $this->_fieldsToRead(); }
-		if(is_array($fields))
-		  $fields = join(",",$fields);
+		$fields = $this->_escapeColumnName4Sql($fields);
+		if(is_array($fields)){
+			$fields = join(",",$fields);
+		}
 		if(!$row = $this->dbmole->selectFirstRow("SELECT $fields FROM ".$this->dbmole->escapeTableName4Sql($this->getTableName())." WHERE $this->_IdFieldName=:id",array(":id" => $this->_Id))){
 			return null;
 		}
@@ -1706,7 +1708,7 @@ class TableRecord extends inobj {
 	 *
 	 * @ignore
 	 */
-	private function _objectToScalar($object){
+	protected function _objectToScalar($object){
 		if(!is_object($object)){
 			return $object;
 		}
@@ -1716,6 +1718,17 @@ class TableRecord extends inobj {
 		if(method_exists($object,"__toString")){ return $object->__toString(); }
 
 		throw new Exception(sprintf("Can't convert %s object into a scalar value",get_class($object)));
+	}
+
+	protected function _escapeColumnName4Sql($field){
+		if(is_array($field)){
+			$out = array();
+			foreach($field as $f){
+				$out[] = $this->_escapeColumnName4Sql($f);
+			}
+			return $out;
+		}
+		return $this->dbmole->escapeColumnName4Sql($field);
 	}
 
 	/**

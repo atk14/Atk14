@@ -89,7 +89,17 @@ function &dbmole_connection(&$dbmole){
 
 	switch($dbmole->getDatabaseType()){
 		case "mysql":
+			$d += array(
+				"charset" => DEFAULT_CHARSET,
+			);
 			$out = mysqli_connect($d["host"], $d["username"], $d["password"], $d["database"] , $d["port"]);
+			if($out){
+				$charset = strtoupper($d["charset"]);
+				$charset = $charset=="UTF-8" ? "UTF8" : $charset;
+				if(strlen($charset)>0){
+					mysqli_set_charset($out,$charset);
+				}
+			}
 			break;
 
 		case "postgresql":

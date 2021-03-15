@@ -904,6 +904,22 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals("test_table_id_seq",$tt->getSequenceName());
 	}
 
+	function test_proper_column_names_escaping(){
+		// PostgreSQL
+		$rec = TestTable::CreateNewRecord(array(
+			"title" => "My Title",
+		));
+		$dbmole = $rec->getDbmole();
+		$this->assertContains("SELECT id,title,znak,an_integer",$dbmole->getQuery());
+
+		// MySQL
+		$rec = MyTestTable::CreateNewRecord(array(
+			"title" => "My Title",
+		));
+		$dbmole = $rec->getDbmole();
+		$this->assertContains("SELECT `id`,`title`,`znak`,`an_integer`",$dbmole->getQuery());
+	}
+
 	function _test_fall($recs){
 		$this->assertEquals(1,sizeof($recs));
 		$this->assertEquals("Fall",$recs[0]->getTitle());

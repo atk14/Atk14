@@ -53,6 +53,10 @@ class MysqlMole extends DbMole{
 		return $out;
 	}
 
+	function escapeColumnName4Sql($column_name){
+		return "`$column_name`";
+	}
+
 	function escapeString4Sql($s){
 		$connection = $this->_getDbConnect();
 		return "'".mysqli_real_escape_string($connection,$s)."'";

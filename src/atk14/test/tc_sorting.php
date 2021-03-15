@@ -8,7 +8,7 @@ class TcSorting extends TcBase{
 
 		// -- default
 		$sorting = $this->_get_sorting();
-		$this->assertEquals(count($sorting), 7);
+		$this->assertEquals(count($sorting), 8);
 		$this->assertEquals("id ASC",$sorting->getOrder());
 		$this->assertEquals("id ASC","$sorting");
 
@@ -67,13 +67,24 @@ class TcSorting extends TcBase{
 
 		// --
 		$sorting = $this->_get_sorting("subtitle");
-		$this->assertEquals("articles.subtitle ASC",$sorting->getOrder());
+		$this->assertEquals("articles.subtitle ASC, articles.title",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("subtitle-asc"); // obsolete key format
-		$this->assertEquals("articles.subtitle ASC",$sorting->getOrder());
+		$this->assertEquals("articles.subtitle ASC, articles.title",$sorting->getOrder());
 
 		$sorting = $this->_get_sorting("subtitle-desc");
-		$this->assertEquals("articles.subtitle DESC",$sorting->getOrder());
+		$this->assertEquals("articles.subtitle DESC, articles.title DESC",$sorting->getOrder());
+
+		// --
+		$sorting = $this->_get_sorting("borrowed");
+		$this->assertEquals("borrowed DESC, borrowed_date ASC",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("borrowed-asc"); // obsolete key format
+		$this->assertEquals("borrowed DESC, borrowed_date ASC",$sorting->getOrder());
+
+		$sorting = $this->_get_sorting("borrowed-desc");
+		$this->assertEquals("borrowed ASC, borrowed_date DESC",$sorting->getOrder());
+
 	}
 
 	function test_ArrayAccess(){
@@ -114,6 +125,7 @@ class TcSorting extends TcBase{
 			"shelf_mark",
 			"url",
 			"subtitle",
+			"borrowed",
 		),$ary);
 	}
 
@@ -139,7 +151,9 @@ class TcSorting extends TcBase{
 
 		$sorting->add("url","articles.url");
 
-		$sorting->add("subtitle","articles.subtitle ASC");
+		$sorting->add("subtitle","articles.subtitle ASC, articles.title");
+
+		$sorting->add("borrowed","borrowed DESC, borrowed_date ASC");
 
 		return $sorting;
 	}

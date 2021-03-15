@@ -8,5 +8,7 @@ class tc_zz_cleaner extends tc_base{
 		foreach(HTTPUploadedFile::GetInstances(array("testing_mode" => true)) as $file){
 			$file->cleanUp();
 		}
+
+		$this->assertTrue(true); // this test should perform at least one assertion
 	}
 }

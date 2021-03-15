@@ -1,5 +1,6 @@
 <?php
 class tc_dbmole extends tc_base{
+
 	function test_uses_sequencies(){
 		$this->assertFalse($this->my->usesSequencies());
 		//$this->assertTrue($this->ora->usesSequencies());
@@ -407,6 +408,11 @@ class tc_dbmole extends tc_base{
 
 		$this->assertEquals(9.06016,$dbmole->parseVersion("9.6.16",array("as_float" => true)));
 		$this->assertEquals(9.616,$dbmole->parseVersion("9.6.16",array("as_float" => true,"minor_number_divider" => 10, "patch_number_divider" => 1000)));
+	}
+
+	function test_escapeColumnName4Sql(){
+		$this->assertEquals("id",$this->pg->escapeColumnName4Sql("id"));
+		$this->assertEquals("`id`",$this->my->escapeColumnName4Sql("id"));
 	}
 
 	function _test_common_behaviour(&$dbmole){
