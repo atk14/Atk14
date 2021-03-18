@@ -852,7 +852,7 @@ class Files{
 			"doc" =>				array("application/msword","application/vnd.ms-office"),
 			"ppt" =>				array("application/vnd.ms-powerpoint","application/vnd.ms-office","application/msword"),
 			"jpg|jpeg" =>		array("image/jpeg","image/jpg"),
-			"svg" =>				array("image/svg+xml","image/svg","text/plain"),
+			"svg" =>				array("image/svg+xml","image/svg","text/html","text/plain"),
 			"bmp" =>				array("image/bmp","image/x-bmp","image/x-ms-bmp","application/octet-stream"),
 			"webp" =>				array("image/webp","image/x-webp"),
 			"eps" =>				array("application/postscript","application/eps"),
