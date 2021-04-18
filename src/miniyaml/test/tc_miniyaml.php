@@ -306,7 +306,7 @@ key2: <?php echo $hodnota_2?>
 		}
 	}
 
-	function test_null(){
+	function test_nullable(){
 		$data = '
 ---
 key1: null
@@ -333,5 +333,27 @@ key6: "Null"
 		$this->assertTrue($a["key4"]==="NULL");
 		$this->assertTrue($a["key5"]==="Null");
 		$this->assertTrue($a["key6"]==="Null");
+
+		$data = array(
+			"key1" => null,
+			"key2" => "NULL",
+		);
+
+		$yaml = miniYAML::Dump($data);
+		//
+		$this->assertEquals(trim('
+---
+key1: NULL
+key2: "NULL"
+		'),trim($yaml));
+
+		$yaml = miniYAML::Dump($data,array("nullable" => false));
+		//
+		$this->assertEquals(trim('
+---
+key1: ""
+key2: "NULL"
+		'),trim($yaml));
+		
 	}
 }

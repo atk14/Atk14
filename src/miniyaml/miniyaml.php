@@ -107,8 +107,8 @@ class miniYAML{
   * @param array $ar
   * @return string
   */
-  static function Dump($ar){
-    $obj = new miniYAML();
+  static function Dump($ar,$options = array()){
+    $obj = new miniYAML($options);
     $out = "---";
 		if($obj->_isIndexedArray($ar)){
 			$out .= "\n".$obj->_dumpIndexedArray($ar,0);
@@ -408,7 +408,9 @@ class miniYAML{
 			"/:$/",
     );
 
-    if(is_numeric($str) || is_numeric(str_replace("_","",$str))){
+    if(is_null($str) && $this->nullable){
+      $str = "NULL";
+    }elseif(is_numeric($str) || is_numeric(str_replace("_","",$str))){
       $str = $this->_escapeString($str);
     }else{
       $_escaped = false;
