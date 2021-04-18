@@ -1,5 +1,6 @@
 <?php
 class tc_miniyaml extends tc_base{
+
 	function test_read_hash_array(){
 		$data = "
 ---
@@ -303,5 +304,34 @@ key2: <?php echo $hodnota_2?>
 		}catch(Exception $e){
 			$this->assertContains("token cannot begin with tabulator",$e->getMessage());
 		}
+	}
+
+	function test_null(){
+		$data = '
+---
+key1: null
+key2: NULL
+key3: "null"
+key4: "NULL"
+key5: Null
+key6: "Null"
+';
+		$a = miniYAML::Load($data);
+		//
+		$this->assertTrue(is_null($a["key1"]));
+		$this->assertTrue(is_null($a["key2"]));
+		$this->assertTrue($a["key3"]==="null");
+		$this->assertTrue($a["key4"]==="NULL");
+		$this->assertTrue($a["key5"]==="Null");
+		$this->assertTrue($a["key6"]==="Null");
+
+		$a = miniYAML::Load($data,array("nullable" => false));
+		//
+		$this->assertTrue($a["key1"]==="null");
+		$this->assertTrue($a["key2"]==="NULL");
+		$this->assertTrue($a["key3"]==="null");
+		$this->assertTrue($a["key4"]==="NULL");
+		$this->assertTrue($a["key5"]==="Null");
+		$this->assertTrue($a["key6"]==="Null");
 	}
 }
