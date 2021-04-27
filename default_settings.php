@@ -29,6 +29,10 @@ __defaults__(array(
 	"TEMP" => __realpath__( TEST ? __DIR__."/../tmp/test" : __DIR__."/../tmp" )."/",
 ));
 
+if(TEST && !file_exists(TEMP)){
+	mkdir(TEMP);
+}
+
 if(trim(SECRET_TOKEN)=="" || (PRODUCTION && SECRET_TOKEN=="DANGER!!! WEAK SECRET_TOKEN!!!")){
 	throw new Exception("A propper SECRET_TOKEN is missing.  Perhaps file config/.secret_token.txt is missing or is empty.");
 }
