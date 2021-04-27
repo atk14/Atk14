@@ -17,7 +17,7 @@ class StringBufferTemporaryItem extends StringBufferFileItem {
 		$filename = Files::GetTempFilename("string_buffer_temporary_");
 		Files::WriteToFile($filename,$this->_String,$err,$err_str);
 		if($err){
-			throw new Exception(get_class($this).": cannot write to temporary file $filename ($err_msg)");
+			throw new Exception(get_class($this).": cannot write to temporary file $filename ($err_str)");
 		}
 		$this->_String = null;
 		$this->_Filename = $filename;
