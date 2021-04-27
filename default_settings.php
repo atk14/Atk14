@@ -30,7 +30,7 @@ __defaults__(array(
 ));
 
 if(TEST && !file_exists(TEMP)){
-	mkdir(TEMP);
+	Files::Mkdir(TEMP);
 }
 
 if(trim(SECRET_TOKEN)=="" || (PRODUCTION && SECRET_TOKEN=="DANGER!!! WEAK SECRET_TOKEN!!!")){
