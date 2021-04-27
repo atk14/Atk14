@@ -41,5 +41,56 @@ class TcStringBufferTemporary extends TcBase {
 		$this->assertFalse(file_exists($filename));
 		// and its content must be loaded as member variable
 		$this->assertEquals("Hi there!","$buffer");
+
+		// The last item is being written to a temporary file automatically.
+		// In testing, after 5 bytes.
+		$buffer = new StringBufferTemporary();
+
+		$items = $buffer->getItems();
+		$this->assertEquals(0,sizeof($items));
+
+		$buffer->addString("A");
+		$items = $buffer->getItems();
+		$this->assertEquals(1,sizeof($items));
+		$this->assertEquals("A",(string)$items[0]);
+		$this->assertEquals(false,$items[0]->isFileized());
+
+		$buffer->addString("B");
+		$items = $buffer->getItems();
+		$this->assertEquals(1,sizeof($items));
+		$this->assertEquals("AB",(string)$items[0]);
+		$this->assertEquals(false,$items[0]->isFileized());
+
+		$buffer->addString("CDEF");
+		$items = $buffer->getItems();
+		$this->assertEquals(1,sizeof($items));
+		$this->assertEquals("ABCDEF",(string)$items[0]);
+		$this->assertEquals(true,$items[0]->isFileized());
+
+		$buffer->addString("GH");
+		$items = $buffer->getItems();
+		$this->assertEquals(2,sizeof($items));
+		$this->assertEquals("ABCDEF",(string)$items[0]);
+		$this->assertEquals(true,$items[0]->isFileized());
+		$this->assertEquals("GH",(string)$items[1]);
+		$this->assertEquals(false,$items[1]->isFileized());
+
+		$buffer->addString("IJKLM");
+		$items = $buffer->getItems();
+		$this->assertEquals(2,sizeof($items));
+		$this->assertEquals("ABCDEF",(string)$items[0]);
+		$this->assertEquals(true,$items[0]->isFileized());
+		$this->assertEquals("GHIJKLM",(string)$items[1]);
+		$this->assertEquals(true,$items[1]->isFileized());
+		
+		$buffer->addString("NOPQRST");
+		$items = $buffer->getItems();
+		$this->assertEquals(3,sizeof($items));
+		$this->assertEquals("ABCDEF",(string)$items[0]);
+		$this->assertEquals(true,$items[0]->isFileized());
+		$this->assertEquals("GHIJKLM",(string)$items[1]);
+		$this->assertEquals(true,$items[1]->isFileized());
+		$this->assertEquals("NOPQRST",(string)$items[2]);
+		$this->assertEquals(true,$items[2]->isFileized());
 	}
 }

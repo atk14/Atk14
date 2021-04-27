@@ -16,7 +16,7 @@ class StringBufferTemporary extends StringBuffer {
 	function addString($string_to_add){
 		settype($string_to_add,"string");
 
-		$FILEIZE_THRESHOLD = defined("TEST") && constant("TEST") ? 1 : 1024 * 1024; // 1B or 1MB
+		$FILEIZE_THRESHOLD = defined("TEST") && constant("TEST") ? 5 : 1024 * 1024; // 5 bytes or 1MB
 
 		$last_item = $this->getLastItem();
 		if($last_item && !$last_item->isFileized()){
@@ -26,7 +26,7 @@ class StringBufferTemporary extends StringBuffer {
 			$this->_Items[] = $last_item;
 		}
 
-		if(!$last_item->isFileized() && ($last_item->getLength() > $FILEIZE_THRESHOLD)){
+		if(!$last_item->isFileized() && ($last_item->getLength() >= $FILEIZE_THRESHOLD)){
 			$last_item->fileize();
 		}
 	}
