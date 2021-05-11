@@ -1,13 +1,16 @@
 <?php
 class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAccessor {
 
+	protected static $_DefaultDatabaseSchema = "public";
+
 	/**
 	 * Reads (physically) table structure from the database
 	 *
 	 * @ignore
 	 */
 	static function ReadTableStructure($record,$options = array()){
-		$tblNameAr = explode(".", "public.".$record->getTableName());
+		$schema = self::GetDefaultDatabaseSchema(); // e.g. "public"
+		$tblNameAr = explode(".", "$schema.".$record->getTableName());
 
 		$_table = array_pop($tblNameAr);
 		$_schema = array_pop($tblNameAr);
@@ -52,5 +55,21 @@ class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAc
 		}
 
 		return "string";
+	}
+
+	/**
+	 *
+	 *	echo TableRecord_DatabaseAccessor_Postgresql::GetDefaultDatabaseSchema(); // e.g. "public"
+	 */
+	static function GetDefaultDatabaseSchema(){
+		return self::$_DefaultDatabaseSchema;
+	}
+
+	/**
+	 *
+	 *	TableRecord_DatabaseAccessor_Postgresql::SetDefaultDatabaseSchema("application");
+	 */
+	static function SetDefaultDatabaseSchema($namespace){
+		self::$_DefaultDatabaseSchema = $namespace;
 	}
 }

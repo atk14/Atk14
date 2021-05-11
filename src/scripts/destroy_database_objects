@@ -10,8 +10,19 @@
  * TODO: purge triggers and procedures
  */
 
-$arguments = getopt("hp",array("help","preview"));
-if(isset($arguments["h"]) || isset($arguments["help"])){
+$arguments = getopt("hps::",array("help","preview","schema::"));
+$arguments += array(
+	"h" => null,
+	"p" => null,
+	"s" => null,
+);
+$arguments += array(
+	"help" => $arguments["h"],
+	"preview" => $arguments["p"],
+	"schema" => $arguments["s"],
+);
+
+if(isset($arguments["help"])){
 $script = $argv[0];
 echo ltrim("
 Cleares all objects in database.
@@ -21,6 +32,10 @@ For displaying this help message run
 
 For previewing what it's gonna happen to the database
  $ $script -p
+
+To destroy objects in a non-default schema
+ $ $script --schema=application
+ $ $script -sapplication
 ");
 exit(0);
 }
@@ -32,18 +47,27 @@ if(PRODUCTION && !ATK14_ENABLE_DESTROY_DATABASE_OBJECTS_IN_PRODUCTION){
 	exit(1);
 }
 
-$previewing = isset($arguments["p"]) || isset($arguments["preview"]);
+if(strlen($arguments["schema"])){
+	try{
+		Atk14Migration::SetDatabaseSchema($arguments["schema"],$dbmole);
+	}catch(Exception $e){
+		echo "Error: ",$e->getMessage(),"\n";
+		exit(1);
+	}
+}
+
+$previewing = isset($arguments["preview"]);
 $dbname = $dbmole->getDatabaseName();
-$schema = "public";
+$schema = Atk14Migration::GetDatabaseSchema($dbmole);
 
 if(!$previewing){
 
 	if(PRODUCTION){
 		echo "ATTENTION!!! You are on PRODUCTION!\n";
-		echo "Shall I wipe out all objects in the database $dbname?\n";
+		echo "Shall I wipe out all objects in the database $dbname in the schema $schema?\n";
 		echo "If you are sure, answer PLEASE_DO_SO > ";
 	}else{
-		echo "Shall I wipe out all objects in the database $dbname?\n";
+		echo "Shall I wipe out all objects in the database $dbname in the schema $schema?\n";
 		echo "Hit y, if so > ";
 	}
 

@@ -247,19 +247,12 @@ class Atk14Url{
 	 * ```
 	 *
 	 * ```
-	 * Atk14Url::BuildLink($params, ["with_hostname" => false, "ssl" => true])
-	 * ```
-	 * This code will generate `/en/products/detail/?id=10`
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => false, "ssl" => true]); // "/en/products/detail/?id=10"
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => true, "ssl" => true]); // "https://www.bestthings.com/en/products/detail/?id=10"
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => "supergadgets.ie", "ssl" => true]); // "https://supergadgets.ie/en/products/detail/?id=10"
 	 *
+	 * echo Atk14Url::BuildLink($params, ["basic_auth_string" => "preview", "basic_auth_password" => "s3cr3t"]); // "http://preview:s3cr3t@www.bestthings.com/en/products/detail/?id=10"
 	 * ```
-	 * Atk14Url::BuildLink($params, ["with_hostname" => true, "ssl" => true])
-	 * ```
-	 * This code will generate `https://www.bestthings.com/en/products/detail/?id=10`
-	 *
-	 * ```
-	 * Atk14Url::BuildLink($params, ["with_hostname" => "supergadgets.ie", "ssl" => true])
-	 * ```
-	 * This code will generate `https://supergadgets.ie/en/products/detail/?id=10`
 	 *
 	 *
 	 * @param array $params
@@ -273,6 +266,8 @@ class Atk14Url{
 	 * - **with_hostname** - boolean|string - when true the generated url will contain whole path including hostname and protocol. String specifies specific hostname.
 	 * - **anchor**
 	 * - **connector**
+	 * - ** basic_auth_username **
+	 * - ** basic_auth_password **
 	 * @return string generated URL
 	 *
 	 */
@@ -318,8 +313,14 @@ class Atk14Url{
 			"anchor" => null,
 			"with_hostname" => false,
 			"ssl" => null,
-			"port" => null
+			"port" => null,
+			"basic_auth_username" => "",
+			"basic_auth_password" => "",
 		),$options);
+
+		if(!$options["with_hostname"] && (strlen($options["basic_auth_username"]) || strlen($options["basic_auth_password"]))){
+			$options["with_hostname"] = true;
+		}
 	
 		if(is_string($options["with_hostname"])){
 			if($options["with_hostname"]=="true"){ $options["with_hostname"] = true;
@@ -441,18 +442,23 @@ class Atk14Url{
 		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out.Atk14Url::EncodeParams($get_params,array("connector" => $options["connector"]));
 		if(strlen($options["anchor"])>0){ $out .= "#$options[anchor]"; }
 
+		// Internally, the port 80 is treated as standard ssl port.
+		// It's quite common that Apache is running on non-ssl port 80 and ssl is provided by Nginx in reverse proxy mode. 
+		$_std_ssl_ports = array(443,80);
+		$_std_non_ssl_ports = array(80);
+
 		if($options["with_hostname"]){
 			$_server_port = isset($options["port"]) ? $options["port"] : $HTTP_REQUEST->getServerPort();
 			$hostname = (is_string($options["with_hostname"])) ? $options["with_hostname"] : $ATK14_GLOBAL->getHttpHost();
 			if($HTTP_REQUEST->ssl()){
-				$_exp_port = 443;
+				$_exp_ports = $_std_ssl_ports;
 				$_proto = "https";
 			}else{
-				$_exp_port = 80;
+				$_exp_ports = $_std_non_ssl_ports;
 				$_proto = "http";
 			}
 			$_port = "";
-			if($_server_port && $_server_port!=$_exp_port){
+			if($_server_port && !in_array($_server_port,$_exp_ports)){
 				$_port = ":".$_server_port;
 			}
 
@@ -460,20 +466,25 @@ class Atk14Url{
 				if($options["ssl"] && !$HTTP_REQUEST->ssl()){
 					$_port = "";
 					$_proto = "https";
-					if(isset($options["port"]) && $options["port"]!=443){
+					if(isset($options["port"]) && !in_array($options["port"],$_std_ssl_ports)){
 						$_port = ":$options[port]";
 					}
 				}
 				if(!$options["ssl"] && $HTTP_REQUEST->ssl()){
 					$_port = "";
 					$_proto = "http";
-					if(isset($options["port"]) && $options["port"]!=80){
+					if(isset($options["port"]) && !in_array($options["port"],$_std_non_ssl_ports)){
 						$_port = ":$options[port]";
 					}
 				}
 			}
 
-			$hostname = "$_proto://$hostname$_port";
+			$basic_auth_string = "";
+			if(strlen($options["basic_auth_username"]) || strlen($options["basic_auth_password"])){
+				$basic_auth_string = $options["basic_auth_username"].":".$options["basic_auth_password"]."@";
+			}
+
+			$hostname = "$_proto://$basic_auth_string$hostname$_port";
 			$out = $hostname.$out;
 		}
 
@@ -551,7 +562,12 @@ class Atk14Url{
 	}
 
 	/**
+	 * Get all routers used in application.
 	 *
+	 * The list can be narrowed by selecting a namespace.
+	 *
+	 * @param string $namespace
+	 * @return Atk14Router[] array of application routers
 	 */
 	static function GetRouters($namespace = ""){
 		return Atk14Url::_SetRouter_GetRouters($namespace);
@@ -587,7 +603,12 @@ class Atk14Url{
 	}
 
 	/**
+	 * Returns parameters from request uri.
+	 * ```
 	 * $params = Atk14Url::ParseParamsFromUri("/?id=123&format=xml"); // array("id" => "123", "format" => "xml");
+	 * ```
+	 * @param string $uri
+	 * @return array array with parsed parameters.
 	 */
 	static function ParseParamsFromUri($uri){
 		$params = parse_url($uri, PHP_URL_QUERY);

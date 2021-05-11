@@ -267,12 +267,23 @@ class String4{
 	 * $string = $string->gsub("/l/","x");
 	 * ```
 	 *
+	 * The same as above using callback
+	 * ```
+	 * $string = new String4("Hello World");
+	 * $string = $string->gsub("/l/", function($m){
+	 * 	return "x";
+	 * } );
+	 * ```
+	 *
 	 * @param string $pattern regexp string
-	 * @param string $replace string replacement
-	 * @return String4 Object of String4 class with replaced content
+	 * @param string|callable $replace_or_callable string replacement or callback function
+	 * @return String4 new instance of String4 class with replaced content
 	 */
-	function gsub($pattern,$replace){
-		return $this->_copy(preg_replace($pattern,$replace,$this->_String4));
+	function gsub($pattern,$replace_or_callable){
+		if (!is_string($replace_or_callable) && is_callable($replace_or_callable)) {
+			return $this->_copy(preg_replace_callback($pattern,$replace_or_callable,$this->_String4));
+		}
+		return $this->_copy(preg_replace($pattern,$replace_or_callable,$this->_String4));
 	}
 
 	/**
@@ -493,12 +504,14 @@ class String4{
 		);
 		$out = $this->_copy();
 		$s = &$out->_String4;
-		$s = preg_replace_callback("/_([a-z0-9])/i",function($matches){ return strtoupper($matches[1]); },$this->_String4);
+		$s = preg_replace_callback("/_([a-z0-9\p{Ll}])/ui",function($matches){ return mb_strtoupper($matches[1]); },$this->_String4);
 
-		if(isset($s[0])){
-			$s[0] = $options["lower"] ? strtolower($s[0]) : strtoupper($s[0]);
+		if(mb_strlen($s)){
+			$first = $out->substr( 0, 1);
+			$first = $options["lower"] ? mb_strtolower($first) : mb_strtoupper($first);
+			$s = $first.$out->substr(1);
 		}
-			
+
 		return $out;
 	}
 
@@ -563,7 +576,7 @@ class String4{
 	 */
 	function underscore(){
 		$out = $this->_copy();
-		$out->_String4 = strtolower(preg_replace("/([a-z0-9])([A-Z])/","\\1_\\2",$this->_String4));
+		$out->_String4 = mb_strtolower(preg_replace("/([a-z0-9\p{Ll}])([A-Z\p{Lu}])/u","\\1_\\2",$this->_String4));
 		return $out;
 	}
 
@@ -584,9 +597,18 @@ class String4{
 	function lower(){ return $this->downcase(); }
 
 	/**
-		* Returns instance with string in upper case
-		*
-		* @return String4
+	 * Returns true when all character in the string are lowercase
+	 *
+	 * @return bool
+	 */
+	function isLower(){ return $this->length()>0 && $this->toString()===$this->downcase()->toString(); }
+
+	/**
+	 * Returns instance with string in upper case
+	 *
+	 * For empty string it returns false.
+	 *
+	 * @return String4
 	 */
 	function upcase(){
 		return $this->_copy(Translate::Upper($this->toString(),$this->getEncoding()));
@@ -598,6 +620,35 @@ class String4{
 	 * @return String4
 	 */
 	function upper(){ return $this->upcase(); }
+
+	/**
+	 * Returns true when all character in the string are uppercase
+	 *
+	 * For empty string it returns false.
+	 *
+	 * @return bool
+	 */
+	function isUpper(){ return $this->length()>0 && $this->toString()===$this->upcase()->toString(); }
+
+	/**
+	 * Makes first character of string uppercase.
+	 *
+	 * @return String4
+	 */
+	function capitalize() {
+		$first = $this->substr(0,1)->upcase();
+		return $first->append($this->substr(1));
+	}
+
+	/**
+	 * Makes first character of string lowercase.
+	 *
+	 * @return String4
+	 */
+	function uncapitalize(){
+		$first = $this->substr(0,1)->downcase();
+		return $first->append($this->substr(1));
+	}
 
 	/**
 	 * Converts string to ASCII
@@ -617,11 +668,43 @@ class String4{
 	 * ```
 	 * this example outputs "amazing-facts-about-foxes"
 	 *
-	 * @param integer $max_length
+	 * max length
+	 * ```
+	 * echo $s->toSlug(["max_length" => 10]); // "amazing-fa"
+	 * // or
+	 * echo $s->toSlug(10); // "amazing-fa"
+	 * ```
+	 *
+	 * mandatory suffix
+	 * ```
+	 * echo $s->toSlug(["suffix" => "Really nice!"]); // "amazing-facts-about-foxes-really-nice"
+	 *
+	 * echo $s->toSlug(["suffix" => "123"]); // "amazing-facts-about-foxes-123"
+	 * echo $s->toSlug(["suffix" => 10, "suffix" => "123"]) // "amazin-123"
+	 * ```
+	 *
+	 * @param array $options
 	 * @return string
 	 */
-	function toSlug($max_length = null){
-		return $this->toAscii()->lower()->gsub('/[^a-z0-9]+/',' ')->substr(0,$max_length)->trim()->replace(' ','-');
+	function toSlug($options = array()){
+		if(!is_array($options)){
+			$options = array(
+				"max_length" => $options
+			);
+		}
+		$options += array(
+			"max_length" => null,
+			"suffix" => "",
+		);
+
+		$suffix = strlen($options["suffix"]) ? String4::ToObject($options["suffix"])->toSlug()->toString() : "";
+		$suffix = strlen($suffix) ? "-$suffix" : "";
+
+		$max_length = $options["max_length"] && strlen($suffix) ? $options["max_length"] - strlen($suffix) : $options["max_length"];
+		$max_length = $max_length<0 ? 0 : $max_length;
+
+		$slug = $this->toAscii()->lower()->gsub('/[^a-z0-9]+/',' ')->trim()->substr(0,$max_length)->trim()->replace(' ','-')->append($suffix)->gsub('/^-/','');
+		return $slug;
 	}
 
 	/**

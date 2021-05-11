@@ -60,7 +60,17 @@
 *             - test4.cz
 */
 class miniYAML{
-  var $_Lines = array();
+
+  protected $_Lines = array();
+  protected $nullable = true;
+
+  function __construct($options = array()){
+    $options += array(
+      "nullable" => true, // Whether to consider strings null and NULL as true NULL?
+    );
+
+    $this->nullable = $options["nullable"];
+  }
 
   /**
   * Prevede YAML zapis na pole.
@@ -75,10 +85,15 @@ class miniYAML{
 			"interpret_php" => false,
 			"values" => array(),
 		),$options);
+
 		if($options["interpret_php"]){
 			$yaml = miniYAML::InterpretPHP($yaml,$options["values"]);
 		}
-    $obj = new miniYAML();
+
+    unset($options["interpret_php"]);
+    unset($options["values"]);
+
+    $obj = new miniYAML($options);
     return $obj->_load($yaml);
   }
 
@@ -92,8 +107,8 @@ class miniYAML{
   * @param array $ar
   * @return string
   */
-  static function Dump($ar){
-    $obj = new miniYAML();
+  static function Dump($ar,$options = array()){
+    $obj = new miniYAML($options);
     $out = "---";
 		if($obj->_isIndexedArray($ar)){
 			$out .= "\n".$obj->_dumpIndexedArray($ar,0);
@@ -347,11 +362,15 @@ class miniYAML{
   }
 
   function _unescapeString(&$str){
-    if (preg_match('/^("(.*)"|\'(.*)\')/',$str,$matches)){
+    if(preg_match('/^("(.*)"|\'(.*)\')/',$str,$matches)){
       $str = end($matches);
       $str = preg_replace('/(\'\'|\\\\\')/',"'",$str);
       $str = preg_replace('/\\\\"/','"',$str);
       return true;
+    }
+    if($this->nullable && ($str==="null" || $str==="NULL")){
+       $str = null;
+       return true;
     }
     return false;
   }
@@ -389,7 +408,9 @@ class miniYAML{
 			"/:$/",
     );
 
-    if(is_numeric($str) || is_numeric(str_replace("_","",$str))){
+    if(is_null($str) && $this->nullable){
+      $str = "NULL";
+    }elseif(is_numeric($str) || is_numeric(str_replace("_","",$str))){
       $str = $this->_escapeString($str);
     }else{
       $_escaped = false;

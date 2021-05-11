@@ -53,7 +53,7 @@ class RadioInput
 
 	function is_checked()
 	{
-		return $this->value == $this->choice_value;
+		return (string)$this->value === (string)$this->choice_value;
 	}
 
 	function tag()

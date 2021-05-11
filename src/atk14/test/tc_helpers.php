@@ -1,5 +1,6 @@
 <?php
 class TcHelpers extends TcBase{
+
 	function test_javascript_script_tag(){
 		$out = $this->_run_action("helpers/javascript_script_tag");
 		$mtime = filemtime("public/javascripts/site.js");
@@ -33,6 +34,12 @@ class TcHelpers extends TcBase{
 		$this->assertContains('some_value after render: TOP_VALUE',$out);
 		$this->assertContains('some_value from the pit: LOWER_VALUE',$out);
 		$this->assertContains('some_value from the middle: LOWER_VALUE',$out);
+	}
+
+	function test_render_with_forms(){
+		$out = $this->_run_action("helpers/render_with_forms");
+		$this->assertContains('FirstForm: <form action="/first/" method="post" id="form_helpers_first">',$out);
+		$this->assertContains('SecondForm: <form action="/second/" method="post" id="form_helpers_second">',$out);
 	}
 
 	function test_render_component(){
@@ -103,7 +110,13 @@ prev_action: "render_component"',$content_rp);
 		$this->assertContains('<lyrics>Five little monkeys jumping on the bed. One fell off and bumped his head. Mama called the doctor and the doctor said, "No more monkeys jumping on the bed!"</lyrics>',$out);
 
 		$this->assertContains('<title>La Musique | DEMO</title>',$out);
+	}
 
-		//echo $out;
+	function test_cache(){
+		$out = $this->_run_action("helpers/cache");
+		$out2 = $this->_run_action("helpers/cache");
+
+		$this->assertEquals($out,$out2);
+		$this->assertNotContains('uniqid: ""',$out); // just to make sure that a proper $uniqid was assigned to the template
 	}
 }

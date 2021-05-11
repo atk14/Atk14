@@ -3,6 +3,12 @@
 /**
  * A test runner. Part of ATK14 Framework <http://www.atk14.net/>
  *
+ * Checking that all required dependencies are met:
+ *
+ *   $ run_unit_tests --check-dependencies && echo "ok"
+ *   # or
+ *   $ run_unit_tests -c && echo "ok"
+ *
  * In working directory it searches for tc_*.php files. Every of them loads and runs tests.
  *
  *   $ run_unit_tests
@@ -29,7 +35,7 @@
  * Automatization in testing
  * -------------------------
  *
- *   $ cd /path/to/test_files/ ; run_unit_tests && echo "TESTS ARE OK" || echo "THERE WERE ERRORS"
+ *   $ cd /path/to/test_files/ && run_unit_tests && echo "TESTS ARE OK" || echo "THERE WERE ERRORS"
  *
  */
 error_reporting(255);
@@ -38,12 +44,18 @@ if(preg_match("/^4/",phpversion())){
 	echo "Sorry! PHP4 is no more supported\n";
 	exit(1);
 }
-if(preg_match("/^5/",phpversion())){
+if(preg_match('/^5\./',phpversion())){
 	define("PHP5",true);
 	define("PHP7",false);
-}elseif(preg_match("/^7/",phpversion())){
+	define("PHP8",false);
+}elseif(preg_match('/^7\./',phpversion())){
 	define("PHP5",false);
 	define("PHP7",true);
+	define("PHP8",false);
+}elseif(preg_match('/^8\./',phpversion())){
+	define("PHP5",false);
+	define("PHP7",false);
+	define("PHP8",true);
 }else{
 	echo "Sorry! Your version of PHP is not supported\n";
 	exit(1);
@@ -55,8 +67,10 @@ $HOME = getenv("HOME"); // "/home/yarri"
 isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 
 isset($argv) || ($argv = array());
+$arguments = getopt("c",array("check-dependencies"));
 
 $SCRIPT = array_shift($argv);
+$SCRIPT_ABSOLUTE = __FILE__;
 $DIR = "";
 $RUN_TESTS_ONLY = array();
 while($_a = array_shift($argv)){
@@ -81,6 +95,19 @@ foreach(array(
 	}
 }
 
+$error_message = 
+"***************************************************************\n".
+"*  Missing dependency: PHPUnit or PHPUnit2                    *\n".
+"*  The following command may help you:                        *\n".
+"*                                                             *\n".
+"*  $ composer global require \"phpunit/phpunit=4.8.*|5.7.*\"    *\n".
+"*                                                             *\n".
+"*  or for the installation of the very old PHPUnit2 execute:  *\n".
+"*                                                             *\n".
+"*  $ sudo pear install --alldeps PHPUnit2                     *\n".
+"*                                                             *\n".
+"***************************************************************\n";
+
 if($exists) {
 	// $ composer global require "phpunit/phpunit=4.8.*"
 	require("$dir/$autoload");
@@ -100,27 +127,31 @@ if($exists) {
 	include_once 'Benchmark/Timer.php';
 
 	if(!class_exists("PHPUnit2_Framework_TestCase")){
-		echo "***************************************************************\n";
-		echo "*  Missing dependency: class PHPUnit_Framework_TestCase       *\n";
-		echo "*  The following command may help you:                        *\n";
-		echo "*                                                             *\n";
-		echo "*  $ composer global require \"phpunit/phpunit=4.8.*\"          *\n";
-		echo "*                                                             *\n";
-		echo "*  or for the installation of the very old PHPUnit2 execute:  *\n";
-		echo "*                                                             *\n";
-		echo "*  $ sudo pear install --alldeps PHPUnit2                     *\n";
-		echo "*                                                             *\n";
-		echo "***************************************************************\n";
+		echo $error_message;
 		exit(1);
 	}
 }
+
+if(isset($arguments["c"]) || isset($arguments["check-dependencies"])){
+	exit(0);
+}
+
 
 if(PHPUNIT2){
 	eval("class tc_super_base extends PHPUnit2_Framework_TestCase{ }");
 	eval("class TcSuperBase extends PHPUnit2_Framework_TestCase{ }");
 }else{
-	eval("class tc_super_base extends PHPUnit_Framework_TestCase{ }");
-	eval("class TcSuperBase extends PHPUnit_Framework_TestCase{ }");
+	if(!class_exists('PHPUnit\Framework\TestCase') && !class_exists('PHPUnit_Framework_TestCase')){
+		echo $error_message;
+		exit(1);
+	}
+	if(class_exists('PHPUnit\Framework\TestCase')){
+		eval("class tc_super_base extends PHPUnit\Framework\TestCase{ }");
+		eval("class TcSuperBase extends PHPUnit\Framework\TestCase{ }");
+	}else{
+		eval("class tc_super_base extends PHPUnit_Framework_TestCase{ }");
+		eval("class TcSuperBase extends PHPUnit_Framework_TestCase{ }");
+	}
 }
 
 if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
@@ -182,10 +213,10 @@ if(sizeof($tests_to_execute)==1){
 
 $exit_code = 0;
 foreach($tests_to_execute as $_f){
-	$cmd = escapeshellcmd($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
-	if(isset($_SERVER["_"])){
+	$cmd = escapeshellcmd($SCRIPT_ABSOLUTE)." ".escapeshellarg($_f)." 2>&1";
+	if(isset($_SERVER["_"]) && strlen($_SERVER["_"]) && $_SERVER["_"]!=$SCRIPT){
 		// v $_SERVER["_"] je interpret PHP: /usr/bin/php
-		$cmd = escapeshellcmd($_SERVER["_"])." ".escapeshellarg($SCRIPT)." ".escapeshellarg($_f)." 2>&1";
+		$cmd = escapeshellcmd($_SERVER["_"])." ".escapeshellarg($SCRIPT_ABSOLUTE)." ".escapeshellarg($_f)." 2>&1";
 	}
 	passthru($cmd,$_exit_code);
 	if($_exit_code!=0){
@@ -234,11 +265,23 @@ function _test_runner($filename,$DIR){
 
 	}else{
 
-		$printer = new PHPUnit_TextUI_ResultPrinter;
+		if(class_exists("PHPUnit\TextUI\ResultPrinter")){
+			$printer = new PHPUnit\TextUI\ResultPrinter();
+		}else{
+			// phpunit/phpunit 4.*|5.*
+			$printer = new PHPUnit_TextUI_ResultPrinter();
+		}
 
-		$suite  = new PHPUnit_Framework_TestSuite(
-			new ReflectionClass($classname)
-		);
+		if(class_exists("PHPUnit\Framework\TestSuite")){
+			$suite  = new PHPUnit\Framework\TestSuite(
+				new ReflectionClass($classname)
+			);
+		}else{
+			// phpunit/phpunit 4.*|5.*
+			$suite  = new PHPUnit_Framework_TestSuite(
+				new ReflectionClass($classname)
+			);
+		}
 
 		$result = $suite->run();
 		$printer->printResult($result);

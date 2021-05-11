@@ -21,6 +21,9 @@ $_document_root = defined("ATK14_DOCUMENT_ROOT") ? ATK14_DOCUMENT_ROOT : __DIR__
 require_once(file_exists("$_document_root/local_config/settings.php") ? "$_document_root/local_config/settings.php" : "$_document_root/config/settings.php");
 require_once(__DIR__."/default_settings.php");
 
+Files::SetDefaultFilePerms(FILES_DEFAULT_FILE_PERMS);
+Files::SetDefaultDirPerms(FILES_DEFAULT_DIR_PERMS);
+
 // Loading framework libraries.
 require_once(__DIR__."/src/class_autoload/load.php");
 require_once(__DIR__."/src/string4/load.php");
@@ -68,7 +71,7 @@ foreach(array(
 
 // global variable $dbmole holds database connection
 $__db_config__ = $ATK14_GLOBAL->getDatabaseConfig();
-$dbmole = DbMole::GetInstance("default",$__db_config__["adapter"]); // $dbmole = DbMole::GetInstance("default","postgresql");
+$GLOBALS["dbmole"] = DbMole::GetInstance("default",is_array($__db_config__) ? $__db_config__["adapter"] : array()); // $dbmole = DbMole::GetInstance("default","postgresql");
 unset($__db_config__);
 
 function &dbmole_connection(&$dbmole){
@@ -86,7 +89,17 @@ function &dbmole_connection(&$dbmole){
 
 	switch($dbmole->getDatabaseType()){
 		case "mysql":
+			$d += array(
+				"charset" => DEFAULT_CHARSET,
+			);
 			$out = mysqli_connect($d["host"], $d["username"], $d["password"], $d["database"] , $d["port"]);
+			if($out){
+				$charset = strtoupper($d["charset"]);
+				$charset = $charset=="UTF-8" ? "UTF8" : $charset;
+				if(strlen($charset)>0){
+					mysqli_set_charset($out,$charset);
+				}
+			}
 			break;
 
 		case "postgresql":
@@ -113,9 +126,13 @@ function dbmole_error_handler($dbmole){
 			$ATK14_LOGGER->flush();
 		}
 	}elseif(!TEST){
-		echo "<pre>";
-		echo h($dbmole->getErrorReport());
-		echo "</pre>";
+		if(php_sapi_name()=="cli"){
+			echo $dbmole->getErrorReport();
+		}else{
+			echo "<pre>";
+			echo h($dbmole->getErrorReport());
+			echo "</pre>";
+		}
 	}
 
 	throw new DbMoleException(get_class($dbmole)." on ".$dbmole->getDatabaseName().": ".$dbmole->getErrorMessage());
@@ -155,8 +172,8 @@ if(PHP_VERSION_ID < 50600){
 	ini_set('default_charset', DEFAULT_CHARSET);
 }
 
-// initializing locale for the default language (i.e. the first one in config/locale.yml)
-atk14_initialize_locale();
+// initializing locale for the default language (i.e. the first one in config/locale.yml or defined by the constant ATK14_DEFAULT_LANG)
+Atk14Locale::Initialize();
 
 // catching up assertion failures
 assert_options(ASSERT_ACTIVE, 1);
@@ -184,4 +201,18 @@ function __to_default_charset__(&$params){
 if(DEFAULT_CHARSET!="UTF-8"){
 	if($HTTP_REQUEST->xhr() && isset($_POST) && is_array($_POST)){ __to_default_charset__($_POST); }
 	if($HTTP_REQUEST->xhr() && isset($_GET) && is_array($_GET)){ __to_default_charset__($_GET); }
+}
+
+// Now the application is fully loaded and initialized.
+// The after initialize configuration can be loaded.
+if(ATK14_LOAD_AFTER_INITIALIZE_SETTINGS){
+	foreach(array(
+		ATK14_DOCUMENT_ROOT."/local_config/after_initialize.php",
+		ATK14_DOCUMENT_ROOT."/config/after_initialize.php",
+	) as $_after_initialization_config){
+		if(file_exists($_after_initialization_config)){
+			require($_after_initialization_config);
+			break;
+		}
+	}
 }

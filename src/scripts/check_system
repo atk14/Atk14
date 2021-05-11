@@ -55,7 +55,6 @@ else
 fi
 
 assert_command_exists 'env'
-assert_command_exists 'wget'
 assert_command_exists 'php'
 assert_command_exists 'psql'
 assert_command_exists 'git'
@@ -79,45 +78,14 @@ assert_php_function_exists 'json_encode'
 
 # assert_php_constant_defined 'SOME_CONSTANT'
 
-# version of php must be >= 5.3
-echo -n "version of php is 5.3 or newer... "
-php_version=$(php -v | head -1 | cut -d ' ' -f 2)
-if [ ! "$php_version" \> "5.3." ]; then
-	echo "fail"
-	echo "!!  version of currently installed php is $php_version"
-	exit_val=1
-else	
-	echo "ok"
-fi
-
-echo -n "PHPUnit or PHPUnit2 is installed... "
-cat << EOF | php
-<?php
-// PHPUnit should be installed globally by the composer
-@include_once getenv("HOME")."/.composer/vendor/autoload.php";
-
-// PHPUnit2
-set_include_path(get_include_path().":/usr/share/php"); // In Travis environment there are some difficulties to load the PHPUnit2... TODO: to be removed
-@include_once 'PHPUnit2/Framework/TestSuite.php';
-@include_once 'PHPUnit2/Framework/TestCase.php';
-@include_once 'PHPUnit2/TextUI/ResultPrinter.php';
-@include_once 'Benchmark/Timer.php';
-if(class_exists('PHPUnit2_Framework_TestCase') || class_exists('PHPUnit_Framework_TestCase')){
-	echo "ok\n";
-	exit(0);
-}else{
-	echo "fail\n";
-	echo "!!  do the following:\n";
-	echo "!!  $ composer global require \"phpunit/phpunit=4.8.*\"\n";
-	echo "!!\n";
-	echo "!!  or for installation of the very old PHPUnit2 execute:\n";
-	echo "!!  $ sudo pear install --alldeps PHPUnit2\n";
-	exit(1);
-}
-EOF
+echo -n ""
+echo -n "checking dependencies for run_unit_tests... "
+./run_unit_tests --check-dependencies
 
 if [ "$?" != "0" ]; then
 	exit_val=1
+else
+	echo "ok"
 fi
 
 exit $exit_val

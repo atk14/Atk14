@@ -9,20 +9,35 @@
 
 require_once(dirname(__FILE__)."/load.php");
 
+ini_set("log_errors","On");
+ini_set("error_log",LOG_DIR."/robots_error.log");
+
 $robots_dir = $ATK14_GLOBAL->getApplicationPath()."/../robots";
 
-$robot_name = "";
-if(isset($argv[1])){
+$robot_name = null;
+
+$arguments = getopt("",array("robot::"));
+if(isset($arguments["robot"])){
+	$robot_name = $arguments["robot"];
+}
+
+if(!$robot_name && isset($argv[1])){
+	$robot_name = $argv[1];
+}
+
+if(strlen($robot_name)){
 	// ImportUserRobot -> import_user
 	// import_user_robot.php -> import_user
 	// robots/import_user_robot.php -> import_user
-	$robot_name = String4::ToObject($argv[1])->underscore()->gsub('/_robot(\.php|\.inc|)$/','')->gsub('/^.+\/([^\/]+)$/','\1');
+	$robot_name = String4::ToObject($robot_name)->underscore()->gsub('/_robot(\.php|\.inc|)$/','')->gsub('/^.+\/([^\/]+)$/','\1');
 }
 
 if(!$robot_name){
 	echo "This script executes a robot.\n";
 	echo "You can run a given robot by calling:\n";
-	echo "$ $argv[0] robot_name\n\n";
+	echo "$ $argv[0] robot_name\n";
+	echo "# or\n";
+	echo "$ $argv[0] --robot=robot_name\n\n";
 	echo "Default robot log file is log/robots.log\n";
 	echo "Usually robots create lock files in ".LOCK_DIR."\n";
 	// print help message and exit

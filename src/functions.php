@@ -1,4 +1,6 @@
 <?php
+if(!defined("_ATK14_FUNCTIONS_LOADED_") && !function_exists("EasyReplace")){
+
 /**
  * Searches and replaces in a string
  *
@@ -156,4 +158,8 @@ if (!function_exists('array_column')) {
 
 		return $resultArray;
 	}
+}
+
+
+define("_ATK14_FUNCTIONS_LOADED_",__FILE__);
 }

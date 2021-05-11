@@ -23,6 +23,8 @@ class HTTPXFile extends HTTPUploadedFile{
 	var $_Request;
 
 	/**
+	 * Constructor
+	 *
 	 * @param array $options
 	 * - request HTTPRequest
 	 */
@@ -49,6 +51,9 @@ class HTTPXFile extends HTTPUploadedFile{
 		}
 	}
 
+	/**
+	 * Destructor
+	 */
 	function __destruct(){
 		$this->_autoCleanUp();
 	}
@@ -82,8 +87,23 @@ class HTTPXFile extends HTTPUploadedFile{
 		$request = $options["request"];
 
 		if($request->post() && (preg_match('/^attachment/',$request->getHeader("Content-Disposition")) || $request->getHeader("X-File-Name"))){
+			$content = $request->getRawPostData();
+
+			$content_length = $request->getHeader("Content-Length");
+			if(!is_null($content_length)){
+				$content_length = (int)$content_length;
+				if($content_length<0 || strlen($content)!=$content_length){
+					return;
+				}
+			}else{
+				if(strlen($content)==0){
+					// An empty file without "Content-Length" header? It doesn't look good.
+					return;
+				}
+			}
+
 			$out = new HTTPXFile(array("request" => $request));
-			$out->_writeTmpFile($request->getRawPostData());
+			$out->_writeTmpFile($content);
 			$out->_Name = $options["name"];
 			return $out;
 		}
@@ -96,6 +116,27 @@ class HTTPXFile extends HTTPUploadedFile{
 	 */
 	function chunkedUpload(){
 		return !is_null($this->_getChunkOrder()) && !($this->firstChunk() && $this->lastChunk());
+	}
+
+	/**
+	 * Returns the size of the uploaded file or the size of the current chunk in case of chunked upload
+	 */
+	function getFileSize(){
+		return parent::getFileSize();
+	}
+
+	/**
+	 * Returns the size of the uploaded file or the the size of the entire file in case of chunked upload
+	 */
+	function getTotalFileSize(){
+		if($this->chunkedUpload()){
+			$range_data = $this->_getContentRangeData();
+			if(!is_null($range_data) && isset($range_data["total_size"])){
+				return (int)$range_data["total_size"];
+			}
+			// TODO: handle the legacy way of chunked upload?
+		}
+		return parent::getTotalFileSize();
 	}
 
 	/**
@@ -239,11 +280,13 @@ class HTTPXFile extends HTTPUploadedFile{
 		Files::WriteToFile($this->_TmpFileName,$content,$err,$err_str);
 	}
 
+	/**
+	 * Method for cleanup
+	 */
 	private function _autoCleanUp(){
 		if($this->_TestingMode){ return; } // no auto file deletion in the testing mode
 		if(!$this->_FileMoved && ($tmp_file = $this->getTmpFileName()) && file_exists($tmp_file)){
 			Files::Unlink($tmp_file,$err,$err_str);
 		}
 	}
-
 }

@@ -7,7 +7,7 @@
  * Basic form of the tag is as follows:
  *
  * ```
- * {paginator finder=$finder} 
+ * {paginator finder=$finder}
  * ```
  *
  * You don't have to forward a finder when you have one in the $finder variable.
@@ -35,6 +35,11 @@
  * {paginator}
  * ```
  *
+ * Example of the parameter items_total_label usage:
+ * ```
+ * {paginator items_total_label="article total"}
+ * ```
+ *
  * @package Atk14\Helpers
  * @filesource
  */
@@ -47,101 +52,81 @@
  * @param array $content
  */
 function smarty_function_paginator($params,$template){
-	global $ATK14_GLOBAL;
-
 	$smarty = atk14_get_smarty_from_template($template);
 
 	$params += array(
-		"finder" => null,
-		//
-		"total_amount" => $smarty->getTemplateVars("total_amount"),
-		"max_amount" => $smarty->getTemplateVars("max_amount"),
-		//
-		"aria_label" => _("Pagination"),
-		"bootstrap4" => USING_BOOTSTRAP4,
-		"align" => "left", // "left", "rigth", "center"; it only matters when using Bootstrap4
+		"items_total_label" => _("items total"), // "articles", "products"...
 	);
 
-	$finder = null;
-	if($params["finder"]){
+	if(isset($params["finder"])){
 		$finder = $params["finder"];
 	}elseif(!is_null($smarty->getTemplateVars("finder"))){
 		$finder = $smarty->getTemplateVars("finder");
 	}
-	//
-	if($finder){
+
+	if(isset($finder)){
 		$total_amount = $finder->getTotalAmount();
 		$max_amount = $finder->getLimit();
 	}else{
-		$total_amount = (int)$params["total_amount"];
-		$max_amount = (int)$params["max_amount"];
+		$total_amount = isset($params["total_amount"]) ? (int)$params["total_amount"] : (int)$smarty->getTemplateVars("total_amount");
+		$max_amount = isset($params["max_amount"]) ? (int)$params["max_amount"] : (int)$smarty->getTemplateVars("max_amount");
 	}
+	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
 
 	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? ATK14_PAGINATOR_OFFSET_PARAM_NAME : "from";
 	$from_name = isset($params["$_from"]) ? $params["$_from"] : "$_from";
 
-	$bootstrap4 = $params["bootstrap4"];
-
-	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
+	$items_total_label = $params["items_total_label"];
 
 	$par = $smarty->getTemplateVars("params")->toArray();
-
-	if($smarty->getTemplateVars("rendering_component")){
-		$par["namespace"] = $smarty->getTemplateVars("prev_namespace");
-		$par["controller"] = $smarty->getTemplateVars("prev_controller");
-		$par["action"] = $smarty->getTemplateVars("prev_action");
-	}
-
 	// There is a possibility to change action, controller, lang and namespace variables.
 	// It is usefull when you display first page of some list on the frontpage and links from the paginator must point to an another controller/action.
 	foreach(array("action","controller","lang","namespace") as $_k){
-		if(isset($params[$_k])){ $par[$_k] = $params[$_k]; }
+		if(isset($params[$_k])){ $par[$_k] = $params["action"]; }
 	}
-
 	
 	$from = isset($par["$from_name"]) ? (int)$par["$from_name"] : 0;
 	if($from<0){ $from = 0;}
 
-	$out = array();
-
-	if($bootstrap4){
-		$ul_class = array('pagination');
-		$p_class = array('pager__items-count');
-		($params["align"]=="center") && ($ul_class[] = "justify-content-center") && ($p_class[] = 'text-center');
-		($params["align"]=="right") && ($ul_class[] = "justify-content-end") && ($p_class[] = 'text-right');
-		$ul_class = $ul_class ? ' class="'.join(" ",$ul_class).'"' : '';
-		$p_class = $p_class ? ' class="'.join(" ",$p_class).'"' : '';
-	}else{
-		$ul_class = $p_class = '';
+	$symbol_left = "&larr;";
+	$symbol_right = "&rarr;";
+	$label_left = _("Prev");
+	$label_right = _("Next");
+	if(USING_FONTAWESOME){
+		// Here we should be pretty sure that icons works, so the labels can be hidden.
+		$symbol_left = '<i class="fas fa-chevron-left" title="%s"></i>';
+		$symbol_right = '<i class="fas fa-chevron-right"></i>';
+		$label_left = "<span class=\"sr-only\">$label_left</span>";
+		$label_right = "<span class=\"sr-only\">$label_right</span>";
+	}elseif(!USING_BOOTSTRAP4){
+		// Perhaps Bootstrap 3, but who knows... Rather to not hide labels.
+		$symbol_left = '<i class="glyphicon glyphicon-chevron-left"></i>';
+		$symbol_right = '<i class="glyphicon glyphicon-chevron-right"></i>';
 	}
+
+	$out = array();
 
 	if($total_amount<=$max_amount){
 		if($total_amount>=5){
-			if($bootstrap4){
-				$out[] = sprintf('<nav class="pager" aria-label="%s">',h($params["aria_label"]));
-				$out[] = "<p$p_class>".sprintf(_("%s items total"),$total_amount)."</p>";
-				$out[] = "</nav>";
-			}else{
-				$out[] = "<div class=\"paginator\">";
-				$out[] = "<p>".sprintf(_("%s items total"),$total_amount)."</p>";
-				$out[] = "</div>";
-			}
+			$out[] = "<div class=\"pagination-container\">";
+			$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
+			$out[] = "</div>";
+			
 		}
 		return join("\n",$out);
 	}
 
-	$out[] = $bootstrap4 ? sprintf('<nav class="pager" aria-label="%s">',h($params["aria_label"])) : "<div class=\"paginator\">";
-	$out[] = $bootstrap4 ? "<ul$ul_class>" : "<ul>";
+	$out[] = "<div class=\"pagination-container\">";
+	$out[] = "<ul class=\"pagination\">";
 
 	$first_child = true;
 	if($from>0){
 		$par["$from_name"] = $from - $max_amount;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = $bootstrap4 ? '<li class="page-item"><a class="page-link" href="'.$url.'" tabindex="-1">'._("prev").'</a></li>': "<li class=\"first-child prev\"><a href=\"$url\">"._("prev")."</a></li>";
+		$out[] = "<li class=\"page-item first-child prev\"><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$symbol_left $label_left</span></a></li>";
 		$first_child = false;
 	}
 
-	$hellip_element = $bootstrap4 ? '<li class="page-item page-item--hellip">&hellip;</li>' : '<li class="skip">...</li>';
 	$cur_from = 0;
 	$screen = 1;
 	$steps = ceil($total_amount / $max_amount);
@@ -149,34 +134,31 @@ function smarty_function_paginator($params,$template){
 	while($cur_from < $total_amount){
 		$par["$from_name"] = $cur_from;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
+		$_class = array( "page-item" );
+		$cur_from==$from && ($_class[] = "active");
+		$first_child && ($_class[] = "first-child") && ($first_child = false);
 
-		$_class = array();
-		$bootstrap4 && ($_class[] = "page-item");
-		($cur_from==$from) && ($_class[] = "active");
-		if($first_child){
-			!$bootstrap4 && ($_class[] = "first-child");
-			$first_child = false;
-		}
-		if(!$bootstrap4 && $steps==$current_step && $screen==$current_step){
+		if($steps==$current_step && $screen==$current_step){
 			$_class[] = "last-child";
 		}
 
 		$_class = $_class ? " class=\"".join(" ",$_class)."\"" : "";
 
 		if($cur_from==$from){
-			$out[] = $bootstrap4 ? '<li'.$_class.'><span class="page-link">'.$screen.' <span class="sr-only">('._("current page").')</span></span></li>' : "<li$_class>$screen</li>";
+			$out[] = "<li$_class><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$screen</a></li>";
 		}else{
-			$out[] = $bootstrap4 ? '<li'.$_class.'><a class="page-link" href="'.$url.'">'.$screen.'</a></li>' : "<li$_class><a href=\"$url\">$screen</a></li>";
+			$out[] = "<li$_class><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$screen</a></li>";
 		}
 		$screen++;
-
+		
+		// skipped items ...
 		if($screen>2 && $current_step>6 && $screen<$current_step-4 && $screen<$steps-10){
-			$out[] = $hellip_element;
+			$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
 			while($screen<$current_step-4 && $screen<$steps-10){ $screen++; }
 		}
-
+		
 		if($screen>$current_step+4 && $steps-$screen>=2 && $screen>11){
-			$out[] = $hellip_element;
+			$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
 			while(($steps-$screen)>=2){ $screen++; }
 		}
 
@@ -186,13 +168,13 @@ function smarty_function_paginator($params,$template){
 	if(($from+$max_amount)<$total_amount){
 		$par["$from_name"] = $from + $max_amount;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = $bootstrap4 ? '<li class="page-item"><a class="page-link" href="'.$url.'">'._("next").'</a></li>' : "<li class=\"last-child next\"><a href=\"$url\">"._("next")."</a></li>";
+		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$label_right $symbol_right</a></li>";
 	}
 
 	$out[] = "</ul>";
 
-	$out[] = "<p$p_class>".sprintf(_("%s items total"),$total_amount)."</p>";
-	$out[] = $bootstrap4 ? '</nav>' : '</div>';
+	$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
+	$out[] = "</div>";
 
 	return join("\n",$out);
 }

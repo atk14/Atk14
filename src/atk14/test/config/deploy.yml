@@ -11,7 +11,8 @@ devel:
   - "@local grunt dist"
   rsync:
   - "public/dist/"
-  - "vendor/"
+  - "vendor"
+  - "public/sitemap.xml"
   after_deploy: "./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"
 
 acceptation:
@@ -19,7 +20,7 @@ acceptation:
   url: "http://acceptation.mushoomradar.net"
   directory: "/home/deploy/apps/mushoomradar_acc/"
   create_maintenance_file: 1
-  deploy_repository: "{{user}}@{{server}}:repos/mushoomradar_acc.git"
+  deploy_repository: "/home/{{user}}/repos/mushoomradar_acc.git"
   rsync: ""
 
 acceptation2:
@@ -29,6 +30,8 @@ acceptation2:
 
 production:
   server: "zeus.mushoomradar.net"
+  port: 2222
+  env: "PATH=/home/{{user}}/bin:$PATH"
   url: "http://www.mushoomradar.net"
   create_maintenance_file: "False"
 

@@ -6,13 +6,24 @@ cd $(dirname $0)
 exit_val=0
 
 # At first we need run script for checking the system
+echo "################"
+echo "# checking basic system requirements"
 ./check_system
 if [ "$?" != "0" ]; then
 	exit_val=1
 fi
 
-ROOT=$(./_get_application_path)../
+# Second, check requirements described in config/requirements.yml (if exists)
+echo "################"
+echo "# checking application requirements specified in config/requirements.yml"
+./_check_requirements
+if [ "$?" != "0" ]; then
+	exit_val=1
+fi
 
+echo "################"
+echo "# checking directories"
+ROOT=$(./_get_application_path)../
 # checking for tmp and log directories
 for i in "tmp" "log"; do
 	dir="$ROOT$i"
@@ -28,8 +39,10 @@ for i in "tmp" "log"; do
 	# TODO: directory must be writable for others (webserver user)
 done
 
+echo "################"
+echo "# checking hostname"
 http_host=$(./dump_settings ATK14_HTTP_HOST)
-echo -n "host $http_host could be resolved... "
+echo -n "host $http_host should be resolved... "
 etc_hosts_lines=$(egrep "^\s*[0-9a-fA-F\.:][^#]*\s$http_host(|#.*|\s.*)$" /etc/hosts | wc -l)
 if [ "$etc_hosts_lines" -eq "0" ]; then
 	if [ "$(host $http_host | grep 'not found' | wc -l)" -eq 1 ]; then
@@ -43,6 +56,12 @@ if [ "$etc_hosts_lines" -eq "0" ]; then
 	fi
 else
 	echo "ok"
+fi
+
+if [ "$exit_val" = "0" ]; then
+	echo "Everything seems to be ok"
+else
+	echo "Something went wrong"
 fi
 
 exit $exit_val

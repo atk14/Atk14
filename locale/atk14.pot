@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-13 17:53+0200\n"
+"POT-Creation-Date: 2020-01-30 12:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ATK14 Development Team\n"
@@ -25,39 +25,47 @@ msgstr ""
 msgid "This site is in maintenance. Please come back later."
 msgstr ""
 
-#: ../src/atk14/atk14_form.php:222
+#: ../src/atk14/atk14_form.php:247
 msgid "The form contains errors, therefore it cannot be processed."
 msgstr ""
 
-#: ../src/atk14/atk14_form.php:514
+#: ../src/atk14/atk14_form.php:539
 msgid "Please, submit the form again"
 msgstr ""
 
-#: ../src/atk14/atk14_locale.php:62
+#: ../src/atk14/atk14_locale.php:70
 msgid "atk14.date_format"
 msgstr ""
 
-#: ../src/atk14/atk14_locale.php:82
+#: ../src/atk14/atk14_locale.php:90
 msgid "atk14.parse_date_pattern"
 msgstr ""
 
-#: ../src/atk14/atk14_locale.php:116
+#: ../src/atk14/atk14_locale.php:124
 msgid "atk14.datetime_format"
 msgstr ""
 
-#: ../src/atk14/atk14_locale.php:129
+#: ../src/atk14/atk14_locale.php:137
 msgid "atk14.parse_datetime_pattern"
 msgstr ""
 
-#: ../src/atk14/atk14_locale.php:142
+#: ../src/atk14/atk14_locale.php:150
 msgid "atk14.datetime_with_seconds_format"
 msgstr ""
 
-#: ../src/atk14/atk14_locale.php:154
+#: ../src/atk14/atk14_locale.php:162
 msgid "atk14.parse_datetime_with_seconds_pattern"
 msgstr ""
 
-#: ../src/atk14/atk14_sorting.php:146
+#: ../src/atk14/atk14_locale.php:179
+msgid "atk14.number_format.decimal_point"
+msgstr ""
+
+#: ../src/atk14/atk14_locale.php:194
+msgid "atk14.number_format.thousands_separator"
+msgstr ""
+
+#: ../src/atk14/atk14_sorting.php:152
 msgid "Sort table by this column"
 msgstr ""
 
@@ -65,18 +73,16 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: ../src/atk14/helpers/function.paginator.php:97
-#: ../src/atk14/helpers/function.paginator.php:160
-#, php-format
-msgid "%s items total"
+#: ../src/atk14/helpers/function.paginator.php:58
+msgid "items total"
 msgstr ""
 
-#: ../src/atk14/helpers/function.paginator.php:111
-msgid "prev"
+#: ../src/atk14/helpers/function.paginator.php:93
+msgid "Prev"
 msgstr ""
 
-#: ../src/atk14/helpers/function.paginator.php:155
-msgid "next"
+#: ../src/atk14/helpers/function.paginator.php:94
+msgid "Next"
 msgstr ""
 
 #: ../src/atk14/helpers/function.to_sentence.php:13
@@ -221,7 +227,7 @@ msgstr ""
 msgid "Enter a whole number."
 msgstr ""
 
-#: ../src/forms/fields/ip_address_field.php:26
+#: ../src/forms/fields/ip_address_field.php:48
 msgid "Enter a valid IP address."
 msgstr ""
 

@@ -1,21 +1,56 @@
 #!/usr/bin/env php
 <?php
 /**
-* Initializes database! :)
-* Creates all necessaries in there.
-*
-* At the moment, it creates only the table schema_migrations.
-*
-* Usage:
-*  $ ATK14_ENV=DEVELOPMENT ./scripts/initialize_database
-*  $ ATK14_ENV=TEST ./scripts/initialize_database
-*/
+ * Initializes database! :)
+ *
+ * To see help, run
+ *
+ *	$ ./scripts/initialize_database --help
+ */
 
 require_once(dirname(__FILE__)."/load.php");
 
+$arguments = getopt("hs::",array("help","schema::"));
+$arguments += array(
+	"h" => null,
+	"s" => null,
+);
+$arguments += array(
+	"help" => $arguments["h"],
+	"schema" => $arguments["s"],
+);
+
+if(isset($arguments["help"])){
+$script = $argv[0];
+echo ltrim("
+Initializes database! :)
+Creates all necessaries in there.
+
+At the moment, it creates only the table schema_migrations.
+
+Usage:
+ $ ATK14_ENV=DEVELOPMENT $script
+ $ ATK14_ENV=TEST $script
+
+To initialize the database in a different database schema:
+ $ ATK14_ENV=DEVELOPMENT $script --schema=application
+ $ ATK14_ENV=TEST $script -sapplication
+");
+exit(0);
+}
+
+if(strlen($arguments["schema"])){
+	try{
+		Atk14Migration::SetDatabaseSchema($arguments["schema"],$dbmole);
+	}catch(Exception $e){
+		echo "Error: ",$e->getMessage(),"\n";
+		exit(1);
+	}
+}
+
 if(Atk14Migration::SchemaMigrationsTableExists($dbmole)){
 	echo "It seems the database has been already initialized\n";
-	exit(1);
+	exit(0);
 }
 
 Atk14Migration::CreateSchemaMigrationsTable($dbmole);

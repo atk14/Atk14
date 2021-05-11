@@ -67,19 +67,24 @@ class Atk14Fixture {
 		}
 
 		$class_name = $options["class_name"];
-
 		if(is_null($class_name)){
 			// In the fixture YAML file there can be class set this way:
 			//
 			// # class_name: Article
-			//
-			// This is an experimental feature!
 			if(preg_match('/^(.*\n|)# *class_name: +"?(?P<class_name>[a-zA-Z0-9_]+)"?\s*(\n.*|)$/s',$content,$matches)){
 				$class_name = $matches["class_name"];
 			}
 		}
 
-		if(is_null($class_name)){
+		$table_name = "";
+		if(preg_match('/^(.*\n|)# *table_name: +"?(?P<table_name>[a-zA-Z0-9_]+)"?\s*(\n.*|)$/s',$content,$matches)){
+			// In the fixture YAML file there can be table_name set this way:
+			//
+			// # table_name: article_images
+			$table_name = $matches["table_name"];
+		}
+
+		if(strlen($class_name)==0 && strlen($table_name)==0){
 			$class_name = String4::ToObject($name)->singularize()->camelize()->toString(); // "gallery_items" -> "GalleryItem"
 			if(!class_exists($class_name) || !method_exists($class_name,'CreateNewRecord')){
 				$class_name = "";
@@ -98,7 +103,11 @@ class Atk14Fixture {
 		foreach($data as $k => $values) {
 			if($class_name){
 				$o = $class_name::CreateNewRecord($values);
+			}elseif($table_name){
+				$dbmole->insertIntoTable($table_name,$values);
+				$o = $values;
 			}else{
+				// default
 				$dbmole->insertIntoTable($name,$values);
 				$o = $values;
 			}

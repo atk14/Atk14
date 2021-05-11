@@ -41,7 +41,8 @@ APACHE_CONF=$(cat <<EOF
    </Directory>
    $ADD_CONF
   </VirtualHost>
-EOF)
+EOF
+)
 
 if [ -z "$FORCE" ]; then
   echo "\

@@ -12,8 +12,8 @@ class tc_sendmail extends tc_base{
 		$this->assertEquals("test@file",$ar["from"]);
 		$this->assertEquals("Hello from unit test",$ar["subject"]);
 		$this->assertEquals("test@file",$ar["return_path"]);
-		$this->assertTrue((bool)preg_match("/From: test@file/",$ar["headers"]));
-		$this->assertTrue((bool)preg_match("/Content-Type: text\\/plain; charset=UTF-8/",$ar["headers"]));
+		$this->assertContains("From: test@file",$ar["headers"]);
+		$this->assertContains("Content-Type: text/plain; charset=UTF-8",$ar["headers"]);
 		$this->assertEquals(true,is_null($ar["accepted_for_delivery"])); // messages are not sent in testing environment
 		$this->assertEquals("-ftest@file",$ar["additional_parameters"]);
 
@@ -35,7 +35,7 @@ class tc_sendmail extends tc_base{
 			"subject" => "Hello from unit test",
 			"body" => "Hi there"
 		));
-		$this->assertTrue((bool)preg_match("/From: info@somewhere/",$ar["headers"]));
+		$this->assertContains("From: info@somewhere",$ar["headers"]);
 
 		$ar = sendmail(array(
 			"to" => "me@mydomain.com",
@@ -46,7 +46,7 @@ class tc_sendmail extends tc_base{
 			"mime_type" => "text/html",
 			"additional_parameters" => "-fbounce@example.com"
 		));
-		$this->assertTrue((bool)preg_match("/Content-Type: text\\/html; charset=UTF-8/",$ar["headers"]));
+		$this->assertContains("Content-Type: text/html; charset=UTF-8",$ar["headers"]);
 		$this->assertEquals("-fbounce@example.com",$ar["additional_parameters"]);
 
 		// pokud charset nastavime prazdny, nesmi se ve vystupu objevit
@@ -58,7 +58,7 @@ class tc_sendmail extends tc_base{
 			"charset" => "",
 			"mime_type" => "text/html"
 		));
-		$this->assertTrue((bool)preg_match("/Content-Type: text\\/html\\n/",$ar["headers"]));
+		$this->assertContains("Content-Type: text/html\n",$ar["headers"]);
 	}
 
 	function test_mail_compatible_calling(){
@@ -212,7 +212,7 @@ class tc_sendmail extends tc_base{
 			"body_charset" => "WINDOWS-1250",
 			"body_mime_type" => "text/html"
 		));
-		$this->assertTrue((bool)preg_match("/Content-Type: text\\/html; charset=WINDOWS-1250/",$ar["headers"]));
+		$this->assertContains("Content-Type: text/html; charset=WINDOWS-1250",$ar["headers"]);
 	}
 
 	function test_send_attachment(){
@@ -234,15 +234,15 @@ class tc_sendmail extends tc_base{
 				"mime_type" => "image/gif"
 			)
 		));
-		$this->assertTrue((bool)preg_match("/cc: his.father@mydomain.com\\n/",$ar["headers"]));
-		$this->assertTrue((bool)preg_match("/bcc: myself@localhost\\n/",$ar["headers"]));
-		$this->assertTrue((bool)preg_match("/From: me@mydomain.com\\n/",$ar["headers"]));
+		$this->assertContains("cc: his.father@mydomain.com\n",$ar["headers"]);
+		$this->assertContains("bcc: myself@localhost\n",$ar["headers"]);
+		$this->assertContains("From: me@mydomain.com\n",$ar["headers"]);
 
 		$this->assertTrue(strlen($ar["body"])>1000);
-		$this->assertTrue((bool)preg_match("/Content-Type: text\\/html; charset=\"us-ascii\"\\n/",$ar["body"]));
-		$this->assertTrue((bool)preg_match("/<p>sending attachment<\\/p>/",$ar["body"]));
-		$this->assertTrue((bool)preg_match("/Content-type: image\\/gif; name=\"fck.gif\";\\n/",$ar["body"]));
-		$this->assertTrue((bool)preg_match("/Content-disposition: attachment; filename=\"fck.gif\"\\n/",$ar["body"]));
+		$this->assertContains("Content-Type: text/html; charset=\"us-ascii\"\n",$ar["body"]);
+		$this->assertContains("<p>sending attachment</p>",$ar["body"]);
+		$this->assertContains('Content-Type: image/gif; name="fck.gif";',$ar["body"]);
+		$this->assertContains("Content-Disposition: attachment; filename=\"fck.gif\"\n",$ar["body"]);
 	}
 
 	function test_send_attachments(){
@@ -272,17 +272,17 @@ class tc_sendmail extends tc_base{
 			)
 		));
 		//echo $ar["headers"]."\n".$ar["body"]; exit;
-		$this->assertTrue((bool)preg_match("/cc: his.father@mydomain.com\\n/",$ar["headers"]));
-		$this->assertTrue((bool)preg_match("/bcc: myself@localhost\\n/",$ar["headers"]));
-		$this->assertTrue((bool)preg_match("/From: me@mydomain.com\\n/",$ar["headers"]));
+		$this->assertContains("cc: his.father@mydomain.com\n",$ar["headers"]);
+		$this->assertContains("bcc: myself@localhost\n",$ar["headers"]);
+		$this->assertContains("From: me@mydomain.com\n",$ar["headers"]);
 		$this->assertEquals('-fme@mydomain.com',$ar["additional_parameters"]);
 
 		$this->assertTrue(strlen($ar["body"])>1000);
-		$this->assertTrue((bool)preg_match("/Content-Type: text\\/html; charset=\"us-ascii\"\\n/",$ar["body"]));
-		$this->assertTrue((bool)preg_match("/<p>sending attachment<\\/p>/",$ar["body"]));
-		$this->assertTrue((bool)preg_match("/Content-type: image\\/gif; name=\"fck.gif\";\\n/",$ar["body"]));
-		$this->assertTrue((bool)preg_match("/Content-disposition: attachment; filename=\"fck.gif\"\\n/",$ar["body"]));
-		$this->assertTrue((bool)preg_match("/Content-disposition: attachment; filename=\"fck.txt\"\\n/",$ar["body"]));
+		$this->assertContains("Content-Type: text/html; charset=\"us-ascii\"\n",$ar["body"]);
+		$this->assertContains("<p>sending attachment</p>",$ar["body"]);
+		$this->assertContains("Content-Type: image/gif; name=\"fck.gif\";\n",$ar["body"]);
+		$this->assertContains("Content-Disposition: attachment; filename=\"fck.gif\"\n",$ar["body"]);
+		$this->assertContains("Content-Disposition: attachment; filename=\"fck.txt\"\n",$ar["body"]);
 	}
 
 	function test_transfer_encoding(){
@@ -293,7 +293,7 @@ class tc_sendmail extends tc_base{
 			"body" => "Pěkný pozdrav!\n\nZasílá Rosťa! ",
 		));
 		$this->assertEquals("Pěkný pozdrav!\n\nZasílá Rosťa! ",$ar_default["body"]);
-		$this->assertTrue((bool)preg_match("/Content-Transfer-Encoding: 8bit/",$ar_default["headers"]));
+		$this->assertContains("Content-Transfer-Encoding: 8bit",$ar_default["headers"]);
 
 		$ar_8bit = sendmail(array(
 			"to" => "me@mydomain.com",
@@ -312,7 +312,7 @@ class tc_sendmail extends tc_base{
 			"transfer_encoding" => "quoted-printable",
 		));
 		$this->assertEquals("P=C4=9Bkn=C3=BD pozdrav!\r\n\r\nZas=C3=ADl=C3=A1 Ros=C5=A5a!=20",$ar_qp["body"]);
-		$this->assertTrue((bool)preg_match("/Content-Transfer-Encoding: quoted-printable/",$ar_qp["headers"]));
+		$this->assertContains("Content-Transfer-Encoding: quoted-printable",$ar_qp["headers"]);
 	}
 
 	function test_lf_to_crlf(){

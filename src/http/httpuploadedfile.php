@@ -185,6 +185,19 @@ class HTTPUploadedFile{
 	}
 
 	/**
+	 * Gets total file size.
+	 *
+	 * This is an alias for getFileSize() in case of a normal file uploads.
+	 *
+	 * The size of the entire file is returned for a chunked upload.
+	 *
+	 * @see HTTPXFile::getTotalFileSize()
+	 */
+	function getTotalFileSize(){
+		return $this->getFileSize();
+	}
+
+	/**
 	 * Returns MIME type.
 	 *
 	 * Tries to determine MIME type using system command 'file'.
@@ -338,13 +351,14 @@ class HTTPUploadedFile{
 	 * @access private
 	 */
 	function _determineImageGeometry(){
-		if(isset($this->_ImageWidth)){ return; }
+		if(isset($this->_ImageGeomeryDetermined)){ return; }
 
 		$this->_ImageWidth = null;
 		$this->_ImageHeight = null;
 
 		if(!$this->isImage()){ return; }
-		$ar = getimagesize($this->getTmpFileName());
+		$ar = Files::GetImageSize($this->getTmpFileName());
+		$this->_ImageGeomeryDetermined = true;
 
 		list($this->_ImageWidth,$this->_ImageHeight) = $ar;
 	}

@@ -88,12 +88,24 @@ class TcString4 extends TcBase{
 		$this->assertEquals("Hello World",(string)$str->replace(array()));
 	}
 
-	function test_sub(){
+	function test_gsub(){
 		$str = new String4("hello");
 		$this->assertEquals("hexxo",(string)$str->gsub("/l/","x"));
 
 		$str = new String4("Hello_World!");
 		$this->assertEquals("Hello World!",(string)$str->gsub("/[^A-Z!]/i"," "));
+
+		$str = new String4("hello");
+		$out = $str->gsub("/^./", function($m) {
+			return mb_strtoupper($m[0]);
+		});
+		$this->assertEquals("Hello", (string)$out);
+
+		$str = new String4("hello");
+		$out = $str->gsub("/[l]/", function($m) {
+			return "X";
+		});
+		$this->assertEquals("heXXo", (string)$out);
 	}
 
 	function test_prepend_and_append(){
@@ -165,8 +177,12 @@ class TcString4 extends TcBase{
 	function test_camelize(){
 		foreach(array(
 			"hello_world" => "HelloWorld",
+			"hello_World" => "HelloWorld",
 			"hello_123" => "Hello123",
 			"a_b_c_d" => "ABCD",
+			"štika" => "Štika",
+			"šišatá_štika" => "ŠišatáŠtika",
+			"štika_šišatá" => "ŠtikaŠišatá",
 		) as $str => $result){
 			$str = new String4($str);
 			$this->assertEquals($result,$out = (string)$str->camelize());
@@ -178,6 +194,15 @@ class TcString4 extends TcBase{
 		$str = String4::ToObject("hello_world");
 		$this->assertEquals("helloWorld",(string)$str->camelize(array("lower" => true)));
 		$this->assertEquals("HelloWorld",(string)$str->camelize());
+
+		$str = String4::ToObject("Štika");
+		$this->assertEquals("štika",(string)$str->camelize(array("lower" => true)));
+
+		$str = String4::ToObject("ŠišatáŠtika");
+		$this->assertEquals("šišatáŠtika",(string)$str->camelize(array("lower" => true)));
+
+		$str = String4::ToObject("Šišatá štika");
+		$this->assertEquals("šišatá štika",(string)$str->camelize(array("lower" => true)));
 	}
 
 	function test_underscore(){
@@ -186,6 +211,8 @@ class TcString4 extends TcBase{
 			"ABCD" => "abcd",
 			"Hello123" => "hello123",
 			"123Hello" => "123_hello",
+			"ŠišatáŠtika" => "šišatá_štika",
+			"ŠtikaŠišatá" => "štika_šišatá",
 		) as $str => $result){
 			$str = new String4($str);
 			$this->assertEquals($result,(string)$str->underscore());
@@ -254,6 +281,63 @@ class TcString4 extends TcBase{
 		$this->assertEquals("UTF-8",$s->getEncoding());
 		$this->assertEquals("ŠPINAVÁ ŘEDKVIČKA",(string)$s->upcase());
 		$this->assertEquals("špinavá ředkvička",(string)$s->lower());
+
+		// camelize()
+
+		$s = new String4("špinavá ředkvička");
+		$this->assertEquals("Špinavá ředkvička",(string)$s->capitalize());
+		$this->assertEquals("špinavá ředkvička",(string)$s); // doesn't change the object itself
+
+		$s = new String4("špinavá paní Ředkvička");
+		$this->assertEquals("Špinavá paní Ředkvička",(string)$s->capitalize());
+
+		$s = new String4("x");
+		$this->assertEquals("X",(string)$s->capitalize());
+
+		$s = new String4("");
+		$this->assertEquals("",(string)$s->capitalize());
+
+		// uncapitalize()
+
+		$s = new String4("Nice Try!!!");
+		$this->assertEquals("nice Try!!!",(string)$s->uncapitalize());
+		$this->assertEquals("Nice Try!!!",(string)$s); // doesn't change the object itself
+
+		$s = new String4("X");
+		$this->assertEquals("x",(string)$s->uncapitalize());
+
+		$s = new String4("");
+		$this->assertEquals("",(string)$s->uncapitalize());
+
+		// isUpper() & isLower()
+
+		$s = new String4("HELLO!!!");
+		$this->assertEquals(true,$s->isUpper());
+		$this->assertEquals(false,$s->isLower());
+
+		$s = new String4("hello!!!");
+		$this->assertEquals(false,$s->isUpper());
+		$this->assertEquals(true,$s->isLower());
+
+		$s = new String4("Hello!!!");
+		$this->assertEquals(false,$s->isUpper());
+		$this->assertEquals(false,$s->isLower());
+
+		$s = new String4("ŠPINAVÁ ŘEDKVIČKA");
+		$this->assertEquals(true,$s->isUpper());
+		$this->assertEquals(false,$s->isLower());
+
+		$s = new String4("x");
+		$this->assertEquals(false,$s->isUpper());
+		$this->assertEquals(true,$s->isLower());
+
+		$s = new String4("!");
+		$this->assertEquals(true,$s->isUpper());
+		$this->assertEquals(true,$s->isLower());
+
+		$s = new String4("");
+		$this->assertEquals(false,$s->isUpper());
+		$this->assertEquals(false,$s->isLower());
 	}
 
 	function test_toAscii(){
@@ -319,8 +403,34 @@ class TcString4 extends TcBase{
 		$this->assertEquals("spinava-redkvicka",(string)$a);
 		$this->assertEquals("ASCII",$a->getEncoding());
 
+		// max_length
+		$this->assertEquals("spinava",(string)$s->toSlug(array("max_length" => 7)));
+		$this->assertEquals("spinava",(string)$s->toSlug(array("max_length" => 8)));
+		$this->assertEquals("spinava-r",(string)$s->toSlug(array("max_length" => 9)));
+		$this->assertEquals("",(string)$s->toSlug(array("max_length" => 0)));
+		$this->assertEquals("",(string)$s->toSlug(array("max_length" => -10)));
+
+		// shortcut for max_length
 		$this->assertEquals("spinava",(string)$s->toSlug(7));
 		$this->assertEquals("spinava",(string)$s->toSlug(8));
 		$this->assertEquals("spinava-r",(string)$s->toSlug(9));
+
+		// suffix
+		$this->assertEquals("spinava-redkvicka",(string)$s->toSlug(array("suffix" => "")));
+		$this->assertEquals("spinava-redkvicka-chutna",(string)$s->toSlug(array("suffix" => "chutná")));
+		$this->assertEquals("spinava-redkvicka",(string)$s->toSlug(array("suffix" => " ")));
+
+		// max_length & suffix combination
+		$this->assertEquals("spinava-redkvicka-12345",(string)$s->toSlug(array("max_length" => 100, "suffix" => "12345")));
+		$this->assertEquals("spinava-12345",(string)$s->toSlug(array("max_length" => 13, "suffix" => "12345")));
+		$this->assertEquals("spin-12345",(string)$s->toSlug(array("max_length" => 10, "suffix" => "12345")));
+		$this->assertEquals("s-12345",(string)$s->toSlug(array("max_length" => 7, "suffix" => "12345")));
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 5, "suffix" => "12345")));
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 6, "suffix" => "12345")));
+
+		// suffix has priority over max_length
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 4, "suffix" => "12345")));
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 0, "suffix" => "12345")));
+		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => -10, "suffix" => "12345")));
 	}
 }

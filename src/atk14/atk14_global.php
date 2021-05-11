@@ -2,17 +2,13 @@
 /**
  * Class for storing of application globals & settings.
  *
- * @package Atk14
- * @subpackage Core
  * @filesource
  */
 
 /**
  * Class for storing of globals.
  *
- * @package Atk14
- * @subpackage Core
- * @filesource
+ * @package Atk14\Core
  *
  */
 class Atk14Global{
@@ -20,7 +16,6 @@ class Atk14Global{
 	 * Array to store values.
 	 *
 	 * @var array
-	 * @ignore
 	 */
 	private $_Store = array();
 
@@ -272,18 +267,53 @@ class Atk14Global{
 					break;
 			}
 		}
+	
+		// replacing string values back into the configuration
+		//  {{username}}, {{database}}...
+		$replaces = array();
+		foreach($d as $k => $v){
+			if(is_string($v)){
+				$replaces['{{'.$k.'}}'] = $v;
+			}
+		}
+		$d = $this->_replace($d,$replaces);
 
 		return $d;
 	}
 
 	/**
-	 * Loads and returns configuration from conf/$config_name.yml
+	 * Replaces values with placeholders.
+	 *
+	 * @note Author please explain this method.
+	 * @param string|array $value accepts a string or can also replace strings in array of strings
+	 * @param array $replaces
+	 * @return string
+	 */
+	protected function _replace($value,$replaces){
+		if(!$replaces){ return $value; }
+		if(is_null($value)){ return null; }
+		if(is_array($value)){
+			foreach($value as $k => $v){
+				$value[$k] = $this->_replace($v,$replaces);
+			}
+			return $value;
+		}
+		$value = strtr($value,$replaces);
+		return $value;
+	}
+
+	/**
+	 * Loads and returns configuration from config/$config_name.yml or config/$config_name.json
+	 *
+	 * If the given config file exists in the directory local_config/ it will be used instead of the one located in the directory config/.
 	 *
 	 * Returns null when there is no such configuration file
 	 *
 	 * Example
 	 * ```
 	 * $ATK14_GLOBAL->getConfig("database");
+	 * $ATK14_GLOBAL->getConfig("theme/colors");
+	 * $ATK14_GLOBAL->getConfig("theme/colors.json");
 	 * ```
 	 *
 	 * @param string $config_name
@@ -302,11 +332,28 @@ class Atk14Global{
 			$this->getApplicationPath()."conf/", // legacy path, TODO: to be removed
 		);
 
+		$suffixes = array("",".yml",".json");
+
+		$filename = "";
 		foreach($paths as $path){
-			if(file_exists($_f = $path."$config_name.yml")){
-				$STORE[$config_name] = miniYAML::Load(Files::GetFileContent($_f),array("interpret_php" => true));
-				break;
+			foreach($suffixes as $suffix){
+				if(file_exists($_f = "$path$config_name$suffix")){
+					$filename = $_f;
+					break 2;
+				}
 			}
+		}
+
+		if($filename){
+			if(preg_match('/\.yml$/i',$filename)){
+				$_config = miniYAML::Load(Files::GetFileContent($filename),array("interpret_php" => true));
+			}elseif(preg_match('/\.json$/i',$filename)){
+				$_config = json_decode(Files::GetFileContent($filename),true);
+			}
+			if(is_null($_config)){
+				throw new Exception("Atk14Global::getConfig(\"$config_name\"): Unable to load config from $filename");
+			}
+			$STORE[$config_name] = $_config;
 		}
 
 		return $STORE[$config_name];

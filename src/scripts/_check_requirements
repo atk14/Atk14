@@ -1,0 +1,118 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Example of config file:
+ *
+ *   # file: config/requirements.yml
+ *   system:
+ *     binaries:
+ *     - "pngquant"
+ *   php:
+ *     functions:
+ *     - "curl_init"
+ *     - "curl_setopt"
+ *     - "curl_exec"
+ *     - "curl_getinfo"
+ *     extensions:
+ *     - "imagick"
+ *     - "posix"
+ *     - "readline"
+ *     constants:
+ *     - "CRYPT_BLOWFISH"
+ *     expressions:
+ *     - "CRYPT_BLOWFISH==1"
+ *     - "strlen(hash('sha256', 'Secret'))>0"
+ */
+
+require_once(dirname(__FILE__)."/load.php");
+
+$requirements = (array)$ATK14_GLOBAL->getConfig("requirements");
+
+$requirements += array(
+	"php" => array(),
+	"system" => array(),
+);
+$requirements["system"] = (array)$requirements["system"] + array(
+	"binaries" => array(),
+);
+$requirements["php"] = $requirements["php"] + array(
+	"functions" => array(),
+	"extensions" => array(),
+	"constants" => array(),
+	"expressions" => array(),
+);
+
+$exit_val = 0;
+
+// System binaries
+function binary_exists($binary){
+	exec("which ".escapeshellarg($binary),$output,$ret_val);
+	$output = trim(join("\n",$output));
+	return $ret_val===0 && strlen($output);
+}
+foreach((array)$requirements["system"]["binaries"] as $b){
+	echo "binary $b exists... ";
+	if(binary_exists($b)){
+		echo "ok";
+	}else{
+		echo "fail";
+		$exit_val = 1;
+	}
+	echo "\n";
+}
+
+// PHP functions
+foreach((array)$requirements["php"]["functions"] as $f){
+	echo "php function $f exists... ";
+	if(function_exists($f)){
+		echo "ok";
+	}else{
+		echo "fail";
+		$exit_val = 1;
+	}
+	echo "\n";
+}
+
+// PHP extensions
+$extensions = get_loaded_extensions();
+foreach((array)$requirements["php"]["extensions"] as $e){
+	echo "php extension $e installed... ";
+	if(in_array($e,$extensions)){
+		echo "ok";
+	}else{
+		echo "fail";
+		$exit_val = 1;
+	}
+	echo "\n";
+}
+
+// PHP constants
+foreach((array)$requirements["php"]["constants"] as $c){
+	echo "php constant $c defined... ";
+	if(defined("$c")){
+		echo "ok";
+	}else{
+		echo "fail";
+		$exit_val = 1;
+	}
+	echo "\n";
+}
+
+// PHP expressions
+function eval_expression($e){
+	$expression = "\$e = $e;";
+	eval($expression);
+	return $e;
+}
+foreach((array)$requirements["php"]["expressions"] as $e){
+	echo "php expression \"$e\"... ";
+	if(eval_expression($e)){
+		echo "ok";
+	}else{
+		echo "fail";
+		$exit_val = 1;
+	}
+	echo "\n";
+}
+
+exit($exit_val);

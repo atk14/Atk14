@@ -224,4 +224,44 @@ class TcForm extends TcBase{
 		$form->set_action("books/index");
 		$this->assertEquals("/en/books/",$form->get_action());
 	}
+
+	function test_changed(){
+		$form = new TestForm();
+		$this->assertTrue($form->changed() === null);
+
+		$form = new TestForm();
+		$form->validate(array(
+			"firstname" => "Paul",
+			"lastname" => "Smith",
+			"nickname" => "smither",
+		));
+		$this->assertTrue($form->changed() === true);
+
+		$form = new TestForm();
+		$form->set_initial("firstname","Paul");
+		$form->validate(array(
+			"firstname" => "Paul",
+			"lastname" => "Smith",
+			"nickname" => "smither",
+		));
+		$this->assertTrue($form->changed() === false);
+
+		$form = new TestForm();
+		$form->set_initial("firstname",new String4("Paul"));
+		$form->validate(array(
+			"firstname" => "Paul",
+			"lastname" => "Smith",
+			"nickname" => "smither",
+		));
+		$this->assertTrue($form->changed() === false);
+
+		$form = new TestForm();
+		$form->set_initial("firstname",new String4("George"));
+		$form->validate(array(
+			"firstname" => "Paul",
+			"lastname" => "Smith",
+			"nickname" => "smither",
+		));
+		$this->assertTrue($form->changed() === true);
+	}
 }

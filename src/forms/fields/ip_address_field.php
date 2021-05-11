@@ -1,15 +1,37 @@
 <?php
+/**
+ * Field for validation of IP address
+ *
+ * Extends {@link RegexField}
+ */
 
 /**
  * Field for validation of IP address
  *
  * Extends {@link RegexField}
  *
+ * Example
+ * ```
+ * $this->add_field("server_ip", new IpAddressField([
+ * 	"label" => "Server address",
+ * ]))
+ * ```
+ *
  * @package Atk14
  * @subpackage Forms
  */
 class IpAddressField extends RegexField
 {
+	/**
+	 * Constructor
+	 *
+	 * For more options see {@see RegexField::__construct()}
+	 *
+	 * @param array $options
+	 * - **null_empty_output** -
+	 * - **ipv4_only** -
+	 * - **ipv6_only** -
+	 */
 	function __construct($options = array()){
 		$options = array_merge(array(
 			"null_empty_output" => true,
@@ -26,6 +48,13 @@ class IpAddressField extends RegexField
 			"invalid" => _("Enter a valid IP address."),
 		));
 	}
+
+	/**
+	 * Method performing validation.
+	 *
+	 * @param string $value
+	 * @note Perhaps it is not necesary since it does not do other validation than the one used in parent class.
+	 */
 	function clean($value){
 		return parent::clean($value);
 	}

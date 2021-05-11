@@ -13,32 +13,42 @@ class tc_httpxfile extends tc_base{
 		$this->assertNull(HTTPXFile::GetInstance());
 
 		$request->setHeader("Content-Disposition",sprintf('attachment; filename="%s"',rawurlencode("hlavička.jpg")));
+		$request->setRawPostData(Files::GetFileContent(__DIR__ . "/hlava.jpg"));
 
 		$this->assertNotNull($file = HTTPXFile::GetInstance());
 		$this->assertEquals("hlavicka.jpg",$file->getFileName());
 		$this->assertEquals("hlavička.jpg",$file->getFileName(array("sanitize" => false)));
 		$this->assertEquals(false,$file->chunkedUpload());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(21727,$file->getTotalFileSize());
 
-		$request->setHeader("Content-Range","bytes 0-100/256");
-
+		$request->setHeader("Content-Range","bytes 0-21727/121727");
 		$this->assertEquals(true,$file->chunkedUpload());
 		$this->assertEquals(true,$file->firstChunk());
 		$this->assertEquals(false,$file->lastChunk());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(121727,$file->getTotalFileSize());
 
-		$request->setHeader("Content-Range","bytes 200-255/256");
+		$request->setHeader("Content-Range","bytes 99999-121726/121727");
 		$this->assertEquals(true,$file->chunkedUpload());
 		$this->assertEquals(false,$file->firstChunk());
 		$this->assertEquals(true,$file->lastChunk());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(121727,$file->getTotalFileSize());
 
-		$request->setHeader("Content-Range","bytes 100-200/256");
+		$request->setHeader("Content-Range","bytes 100-21827/121727");
 		$this->assertEquals(true,$file->chunkedUpload());
 		$this->assertEquals(false,$file->firstChunk());
 		$this->assertEquals(false,$file->lastChunk());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(121727,$file->getTotalFileSize());
 
-		$request->setHeader("Content-Range","bytes 0-255/256");
+		$request->setHeader("Content-Range","bytes 0-21726/21727");
 		$this->assertEquals(false,$file->chunkedUpload());
 		$this->assertEquals(true,$file->firstChunk());
 		$this->assertEquals(true,$file->lastChunk());
+		$this->assertEquals(21727,$file->getFileSize());
+		$this->assertEquals(21727,$file->getTotalFileSize());
 	}
 
 	function test__destruct(){
@@ -47,6 +57,7 @@ class tc_httpxfile extends tc_base{
 		$request = $HTTP_REQUEST;
 		$request->setMethod("post");
 		$request->setHeader("Content-Disposition",'attachment; filename="condor.jpg"');
+		$request->setRawPostData(Files::GetFileContent(__DIR__ . "/hlava.jpg"));
 
 		$this->assertNotNull($file = HTTPXFile::GetInstance());
 
@@ -84,12 +95,14 @@ class tc_httpxfile extends tc_base{
 		$req1->setRemoteAddr("10.20.30.40");
 		$req1->setHeader("Content-Disposition",'attachment; filename="hlava.jpg"');
 		$req1->setHeader("Content-Range","bytes 0-100/256");
+		$req1->setRawPostData(Files::GetFileContent(__DIR__ . "/hlava.jpg"));
 
 		$req2 = new HTTPRequest();
 		$req2->setMethod("post");
 		$req2->setRemoteAddr("10.20.30.40");
 		$req2->setHeader("Content-Disposition",'attachment; filename="hlava.jpg"');
 		$req2->setHeader("Content-Range","bytes 200-255/256");
+		$req2->setRawPostData(Files::GetFileContent(__DIR__ . "/hlava.jpg"));
 
 		$file1 = HTTPXFile::GetInstance(array("request" => $req1));
 		$file2 = HTTPXFile::GetInstance(array("request" => $req2));
@@ -157,5 +170,57 @@ class tc_httpxfile extends tc_base{
 		$HTTP_RAW_POST_DATA = null;
 		$HTTP_REQUEST->_HTTPRequest_headers = array();
 		$this->assertNull(HTTPXFile::GetInstance(array("name" => "file.jpg")));
+	}
+
+	function test_content_length(){
+		global $HTTP_REQUEST;
+		$HTTP_REQUEST = new HTTPRequest(); // reset
+		$request = $HTTP_REQUEST;
+
+		$content = Files::GetFileContent(__DIR__ . "/hlava.jpg");
+
+		$request->setMethod("post");
+		$request->setHeader("Content-Disposition",'attachment; filename="condor.jpg"');
+		$request->setRawPostData($content);
+
+		// without Content-Length header
+		$this->assertNotNull($file = HTTPXFile::GetInstance());
+
+		// proper Content-Length header
+		$request->setHeader("Content-Length",strlen($content));
+		$this->assertNotNull($file = HTTPXFile::GetInstance());
+
+		// improper Content-Length header
+		$request->setHeader("Content-Length",strlen($content)-1);
+		$this->assertNull($file = HTTPXFile::GetInstance());
+
+		// negative value in Content-Length header
+		$request->setHeader("Content-Length",-123);
+		$this->assertNull($file = HTTPXFile::GetInstance());
+	}
+
+	function test_empty_file(){
+		global $HTTP_REQUEST;
+		$HTTP_REQUEST = new HTTPRequest(); // reset
+		$request = $HTTP_REQUEST;
+
+		$request->setMethod("post");
+		$request->setHeader("Content-Disposition",'attachment; filename="condor.jpg"');
+		$request->setRawPostData("");
+
+		// without Content-Length header
+		$this->assertNull($file = HTTPXFile::GetInstance());
+
+		// proper Content-Length header
+		$request->setHeader("Content-Length",0);
+		$this->assertNotNull($file = HTTPXFile::GetInstance());
+
+		// improper Content-Length header
+		$request->setHeader("Content-Length",1);
+		$this->assertNull($file = HTTPXFile::GetInstance());
+
+		// negative value in Content-Length header
+		$request->setHeader("Content-Length",-1);
+		$this->assertNull($file = HTTPXFile::GetInstance());
 	}
 }

@@ -364,7 +364,7 @@ class TcWidgets extends TcBase
 	{
 		$DATA = array(
 			array(
-				'widget' => new Textarea(),
+				'widget' => new TextArea(),
 				'params' => array(
 					array(
 						'params' => array('name'=>'msg', 'value'=>'', 'options'=>array()),
@@ -390,7 +390,7 @@ class TcWidgets extends TcBase
 			),
 			// atributy se muzou nasadit i v konstruktoru
 			array(
-				'widget' => new Textarea($options=array('attrs'=>array('class'=>'pretty'))),
+				'widget' => new TextArea($options=array('attrs'=>array('class'=>'pretty'))),
 				'params' => array(
 					array(
 						'params' => array('name'=>'msg', 'value'=>'', 'options'=>array()),
@@ -404,7 +404,7 @@ class TcWidgets extends TcBase
 			),
 			// specifictejsi options prebiji obecnejsi
 			array(
-				'widget' => new Textarea($options=array('attrs'=>array('class'=>'pretty'))),
+				'widget' => new TextArea($options=array('attrs'=>array('class'=>'pretty'))),
 				'params' => array(
 					array(
 						'params' => array('name'=>'msg', 'value'=>'', 'options'=>array('attrs'=>array('class'=>'special'))),
@@ -780,43 +780,43 @@ class TcWidgets extends TcBase
 				'params' => array(
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('J'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" checked="checked" value="J" /> John</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="P" /> Paul</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" checked="checked" value="J" /> John</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="P" /> Paul</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
 					),
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('J', 'P'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" checked="checked" value="J" /> John</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" checked="checked" value="P" /> Paul</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" checked="checked" value="J" /> John</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" checked="checked" value="P" /> Paul</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
 					),
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('J', 'P', 'R'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" checked="checked" value="J" /> John</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" checked="checked" value="P" /> Paul</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" checked="checked" value="R" /> Ringo</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" checked="checked" value="J" /> John</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" checked="checked" value="P" /> Paul</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" checked="checked" value="R" /> Ringo</label></li>', '</ul>'))
 					),
 					// pokud je zadana hodnota null, pak se necheckne zadna z polozek seznamu
 					array(
 						'params' => array('name'=>'beatles', 'value'=>null, 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="J" /> John</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="P" /> Paul</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="J" /> John</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="P" /> Paul</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
 					),
 					// pokud je zadan popisek namisto hodnoty, nic se necheckne
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('John'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="J" /> John</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="P" /> Paul</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="J" /> John</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="P" /> Paul</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="G" /> George</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
 					),
 					// pokud je nektera ze zadanych hodnot neplatna, zaskrtnou se jen ty platne
 					array(
 						'params' => array('name'=>'beatles', 'value'=>array('J', 'G', 'foo'), 'options'=>array('choices'=>array('J'=>'John', 'P'=>'Paul', 'G'=>'George', 'R'=>'Ringo'))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" checked="checked" value="J" /> John</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="P" /> Paul</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" checked="checked" value="G" /> George</label></li>', '<li class="checkbox"><label><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" checked="checked" value="J" /> John</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="P" /> Paul</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" checked="checked" value="G" /> George</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="beatles[]" value="R" /> Ringo</label></li>', '</ul>'))
 					),
 					// zadane hodnoty jsou prevedeny na string
 					array(
 						'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array('choices'=>array('1'=>'1', '2'=>'2', '3'=>'3'))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '</ul>'))
 					),
 					array(
 						'params' => array('name'=>'nums', 'value'=>array('2'), 'options'=>array('choices'=>array(1=>1, 2=>2, 3=>3))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '</ul>'))
 					),
 					array(
 						'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array('choices'=>array(1=>1, 2=>2, 3=>3))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '</ul>'))
 					),
 				)
 			),
@@ -826,17 +826,17 @@ class TcWidgets extends TcBase
 				'params' => array(
 					array(
 						'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array()),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '</ul>'))
 					),
 					// volby zadane v konstruktoru i u fce render se sliji do jednoho pole
 					array(
 						'params' => array('name'=>'nums', 'value'=>array(2), 'options'=>array('choices'=>array(4=>4, 5=>5))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="4" /> 4</label></li>', '<li class="checkbox"><label><input type="checkbox" name="nums[]" value="5" /> 5</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="1" /> 1</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" checked="checked" value="2" /> 2</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="3" /> 3</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="4" /> 4</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="nums[]" value="5" /> 5</label></li>', '</ul>'))
 					),
 					// escapovani
 					array(
 						'params' => array('name'=>'escape', 'value'=>null, 'options'=>array('choices'=>array('bad'=>'you & me', 'good'=>'you &gt; me'))),
-						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label><input type="checkbox" name="escape[]" value="1" /> 1</label></li>', '<li class="checkbox"><label><input type="checkbox" name="escape[]" value="2" /> 2</label></li>', '<li class="checkbox"><label><input type="checkbox" name="escape[]" value="3" /> 3</label></li>', '<li class="checkbox"><label><input type="checkbox" name="escape[]" value="bad" /> you &amp; me</label></li>', '<li class="checkbox"><label><input type="checkbox" name="escape[]" value="good" /> you &amp;gt; me</label></li>', '</ul>'))
+						'result' => implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="escape[]" value="1" /> 1</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="escape[]" value="2" /> 2</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="escape[]" value="3" /> 3</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="escape[]" value="bad" /> you &amp; me</label></li>', '<li class="checkbox"><label class="control-label"><input type="checkbox" name="escape[]" value="good" /> you &amp;gt; me</label></li>', '</ul>'))
 					),
 				)
 			),
@@ -850,16 +850,16 @@ class TcWidgets extends TcBase
 						'result' => implode("\n",array(
 							'<ul class="list list--checkboxes">',
 							'<li class="list__item">',
-							'<div class="form-check"><input id="beatles_0" class="form-check-input" type="checkbox" name="beatles[]" checked="checked" value="J" /> <label class="form-check-label" for="beatles_0">John</label></div>',
+							'<div class="form-check custom-control custom-checkbox"><input class="form-check-input custom-control-input" id="beatles_0" type="checkbox" name="beatles[]" checked="checked" value="J" /> <label class="form-check-label custom-control-label" for="beatles_0">John</label></div>',
 							'</li>',
 							'<li class="list__item">',
-							'<div class="form-check"><input id="beatles_1" class="form-check-input" type="checkbox" name="beatles[]" checked="checked" value="P" /> <label class="form-check-label" for="beatles_1">Paul</label></div>',
+							'<div class="form-check custom-control custom-checkbox"><input class="form-check-input custom-control-input" id="beatles_1" type="checkbox" name="beatles[]" checked="checked" value="P" /> <label class="form-check-label custom-control-label" for="beatles_1">Paul</label></div>',
 							'</li>',
 							'<li class="list__item">',
-							'<div class="form-check"><input id="beatles_2" class="form-check-input" type="checkbox" name="beatles[]" value="G" /> <label class="form-check-label" for="beatles_2">George</label></div>',
+							'<div class="form-check custom-control custom-checkbox"><input class="form-check-input custom-control-input" id="beatles_2" type="checkbox" name="beatles[]" value="G" /> <label class="form-check-label custom-control-label" for="beatles_2">George</label></div>',
 							'</li>',
 							'<li class="list__item">',
-							'<div class="form-check"><input id="beatles_3" class="form-check-input" type="checkbox" name="beatles[]" checked="checked" value="R" /> <label class="form-check-label" for="beatles_3">Ringo</label></div>',
+							'<div class="form-check custom-control custom-checkbox"><input class="form-check-input custom-control-input" id="beatles_3" type="checkbox" name="beatles[]" checked="checked" value="R" /> <label class="form-check-label custom-control-label" for="beatles_3">Ringo</label></div>',
 							'</li>',
 							'</ul>'
 					)),

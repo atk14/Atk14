@@ -6,6 +6,15 @@
  *
  * @filesource
  */
+
+if(defined("FILES_DEFAULT_FILE_PERMS")){
+	Files::SetDefaultFilePerms(constant("FILES_DEFAULT_FILE_PERMS"));
+}
+
+if(defined("FILES_DEFAULT_DIR_PERMS")){
+	Files::SetDefaultDirPerms(constant("FILES_DEFAULT_DIR_PERMS"));
+}
+
 /**
  * Class for basic file management.
  *
@@ -17,7 +26,79 @@
  */
 class Files{
 
-	const VERSION = "1.2";
+	const VERSION = "1.6.1";
+
+	static protected $_DefaultFilePerms = 0666;
+
+	static protected $_DefaultDirPerms = 0777;
+
+	/**
+	 *
+	 *
+	 *	echo decoct(Files::GetDefaultFilePerms()); // e.g. "666"
+	 */
+	static function GetDefaultFilePerms(){
+		return self::$_DefaultFilePerms;
+	}
+
+	/**
+	 *
+	 *
+	 *	$prev_perms = Files::SetDefaultFilePerms(0640);
+	 */
+	static function SetDefaultFilePerms($perms){
+		$perms = (int)$perms;
+
+		$prev = self::$_DefaultFilePerms;
+		self::$_DefaultFilePerms = $perms;
+		return $prev;
+	}
+
+	/**
+	 *
+	 *
+	 *	echo decoct(Files::GetDefaultDirPerms()); // e.g. "777"
+	 */
+	static function GetDefaultDirPerms(){
+		return self::$_DefaultDirPerms;
+	}
+
+	/**
+	 *
+	 *
+	 *	$prev_perms = Files::SetDefaultDirPerms(0750);
+	 */
+	static function SetDefaultDirPerms($perms){
+		$perms = (int)$perms;
+
+		$prev = self::$_DefaultDirPerms;
+		self::$_DefaultDirPerms = $perms;
+		return $prev;
+	}
+
+	/**
+	 * Normalizes permissions of a file or a directory according the default perms
+	 *
+	 *	Files::NormalizeFilePerms("/path/to/a/file");
+	 *	Files::NormalizeFilePerms("/path/to/a/directory");
+	 */
+	static function NormalizeFilePerms($filename,&$error = null,&$error_str = null){
+		$error = false;
+		$error_str = "";
+
+		$perms = is_dir($filename) ? self::GetDefaultDirPerms() : self::GetDefaultFilePerms();
+		
+		$_old_umask = umask(0);
+		$_stat = chmod($filename,$perms);
+		umask($_old_umask);
+
+		if(!$_stat){
+			$error = true;
+			$error_str = "failed to do chmod on $filename";
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Creates a directory.
@@ -67,7 +148,7 @@ class Files{
 
 		// this is a temporary workaround
 		$old_umask = umask(0);
-		if(mkdir($dirname,0777,true)){
+		if(mkdir($dirname,self::GetDefaultDirPerms(),true)){
 			$out = 1;
 		}else{
 			if(preg_match('/^5\.3\./',phpversion())){
@@ -89,7 +170,7 @@ class Files{
 	 *	Files::MkdirForFile("/path/to/a/file.dat");
 	 * ```
 	 */
-	function MkdirForFile($filename,&$error = null,&$error_str = null){
+	static function MkdirForFile($filename,&$error = null,&$error_str = null){
 		$directory = preg_replace('/[^\/]+$/','',$filename);
 		if(!strlen($directory)){
 			$error = true;
@@ -147,10 +228,10 @@ class Files{
 		fclose($in);
 		fclose($out);
 		
-		//menit modsouboru, jenom, kdyz soubor drive neexistoval
+		//menit mod souboru, jenom, kdyz soubor drive neexistoval
 		if(!$__target_file_exists){
 			$_old_umask = umask(0);
-			$_stat = chmod($to_file,0666);
+			$_stat = chmod($to_file,self::GetDefaultFilePerms());
 			umask($_old_umask);
 
 			if(!$_stat && $error==false){
@@ -207,18 +288,24 @@ class Files{
 			$error_str = "failed to open file for writing";
 			return 0;
 		}
-		$bytes = fwrite($f,$content,strlen($content));
-		if($bytes!=strlen($content)){
-			$error = true;
-			$error_str = "failed to write ".strlen($content)." bytes; writen ".$bytes;
-			return $bytes;
+		$strlen = strlen($content);
+		if($strlen>0 || $options["file_open_mode"]=="w"){
+			$bytes = fwrite($f,$content,$strlen);
+			if($bytes!==$strlen){
+				$error = true;
+				$error_str = "failed to write $strlen bytes; writen $bytes";
+				return $bytes;
+			}
+		}
+		if($strlen == 0){
+			touch($file);
 		}
 		fclose($f);
 
-		//menit modsouboru, jenom, kdyz soubor drive neexistoval
+		//menit mod souboru, jenom, kdyz soubor drive neexistoval
 		if(!$_file_exists){
 			$_old_umask = umask(0);
-			$_stat = chmod($file,0666);
+			$_stat = chmod($file,self::GetDefaultFilePerms());
 			umask($_old_umask);
 	
 			if(!$_stat && $error==false){
@@ -245,6 +332,32 @@ class Files{
 	 */
 	static function AppendToFile($file,$content,&$error = null,&$error_str = null){
 		return Files::WriteToFile($file,$content,$error,$error_str,array("file_open_mode" => "a"));
+	}
+
+	/**
+	 * Sets access and modification time of file
+	 *
+	 * @param string $file name of the file
+	 * @param boolean &$error flag indicating that something went wrong
+	 * @param string &$error_str message describing the error
+	 * @return boolean false on error
+	 */
+	static function TouchFile($file,&$error = null,&$error_str = null){
+		Files::WriteToFile($file,"",$error,$error_str,array("file_open_mode" => "a"));
+		return !$error;
+	}
+
+	/**
+	 * Empties the given file
+	 *
+	 * @param string $file name of the file
+	 * @param boolean &$error flag indicating that something went wrong
+	 * @param string &$error_str message describing the error
+	 * @return boolean false on error
+	 */
+	static function EmptyFile($file,&$error = null,&$error_str = null){
+		Files::WriteToFile($file,"",$error,$error_str);
+		return !$error;
 	}
 
 	/**
@@ -452,8 +565,6 @@ class Files{
 		$error = false;
 		$error_str = "";
 
-		$out = "";
-		
 		settype($filename,"string");
 
 		if(!is_file($filename)){
@@ -462,17 +573,35 @@ class Files{
 			return null;		
 		}
 
+		if(!is_readable($filename)){
+			$error = false;
+			$error_str = "file $filename is not readable";
+			return null;
+		}
+
 		$filesize = filesize($filename);
 		if($filesize==0){ return ""; }
 
 		$f = fopen($filename,"r");
 		if(!$f){
 			$error = false;
-			$error_str = "can't open file $filename for writing";
-			return $out;
+			$error_str = "can't open file $filename for reading";
+			return null;
 		}
 		$out = fread($f,$filesize);
 		fclose($f);
+
+		if(strlen($out)==0){
+			$error = true;
+			$error_str = "can't read from file $filename";
+			return null;
+		}
+
+		if(strlen($out)!=$filesize){
+			$error = true;
+			$error_str = "can't read $filesize bytes from $filename (it was read ".strlen($out).")";
+			return null;
+		}
 
 		return $out;
 	}
@@ -510,11 +639,76 @@ class Files{
 	}
 
 	/**
-	 * Determines width and height of an image in parameter.
+	 * Determines width and height of an image
 	 *
 	 * Example
 	 * ```
-	 *	list($width,$height) = Files::GetImageSize($image_content,$err,$err_str);
+	 *	list($width,$height) = Files::GetImageSize($path_to_image,$err,$err_str);
+	 * ```
+	 * 
+	 * @param string $path_to_image
+	 * @param boolean $error Error flag
+	 * @param string $error_str Error description
+	 * @return array Image dimensions
+	 *
+	 */
+	static function GetImageSize($filename,&$error = null,&$error_str = null){
+		// preserve obsolete usage - first part
+		// TODO: to be removed
+		if(!class_exists("TypeError")){
+			// for PHP5
+			eval("class TypeError extends Exception { }");
+		}
+		$tmp_file_created = false;
+		try {
+			$file_exists = @file_exists($filename);
+		} catch ( TypeError $e ) {
+			// TypeError: file_exists() expects parameter 1 to be a valid path, string given
+			$file_exists = false;
+		}
+		if(!$file_exists){
+			trigger_error("Files::GetImageSize(): Use Files::GetImageSizeByContent() to determine image sizeof from content");
+			$filename = self::WriteToTemp($filename,$error,$error_str);
+			if($error){
+				return null;
+			}
+			$tmp_file_created = true;
+		}
+
+		if(!file_exists($filename)){
+			$error = true;
+			$error_str = "image $filename doesn't exist";
+			return null;
+		}
+
+		$out = getimagesize($filename);
+		if(!$out && class_exists("Imagick")){
+			try {
+				$imagick = new Imagick();
+				$imagick->readImage($filename);
+				if($imagick->getImageWidth()){
+					$out = array($imagick->getImageWidth(),$imagick->getImageHeight());
+				}
+			} catch (Exception $e) {
+				// no success, never mind...
+			}
+		}
+
+		// preserve obsolete usage - second part
+		if($tmp_file_created){
+			Files::Unlink($filename,$error,$error_str);
+		}
+
+		if(!is_array($out)){ $out = null; }
+		return $out;
+	}
+
+	/**
+	 * Determines width and height of an image by it's content
+	 *
+	 * Example
+	 * ```
+	 *	list($width,$height) = Files::GetImageSizeByContent($image_content,$err,$err_str);
 	 * ```
 	 * 
 	 * @param string $image_content Binary image data
@@ -523,13 +717,13 @@ class Files{
 	 * @return array Image dimensions
 	 *
 	 */
-	static function GetImageSize($image_content,&$error = null,&$error_str = null){
-		$temp = defined("TEMP") ? TEMP : "/tmp";
-		$filename = $temp."/get_image_filename_".posix_getpid();
-		if(!Files::WriteToFile($filename,$image_content,$error,$error_str)){ return null; }
-		$out = getimagesize($filename);
+	static function GetImageSizeByContent($image_content,&$error = null,&$error_str = null){
+		$filename = self::WriteToTemp($image_content,$error,$error_str);
+		if($error){
+			return null;
+		}
+		$out = Files::GetImageSize($filename,$error,$error_str);
 		Files::Unlink($filename,$error,$error_str);
-		if(!is_array($out)){ $out = null; }
 		return $out;
 	}
 
@@ -585,10 +779,12 @@ class Files{
 	 * @return string name of the newly created file
 	 */
 	static function GetTempFilename($prefix = "files_tmp_"){
+		$prefix = preg_replace('/[^0-9a-z_.-]/i','_',$prefix); // sanitization
+
 		// Might be better, but oddly it breaks tests
 		//return tempnam(self::GetTempDir(), $prefix);
 
-		$temp_filename = self::GetTempDir() . "/files_tmp_".uniqid("",true);
+		$temp_filename = self::GetTempDir() . "/$prefix".uniqid("",true);
 		return $temp_filename;
 	}
 
@@ -656,8 +852,9 @@ class Files{
 			"doc" =>				array("application/msword","application/vnd.ms-office"),
 			"ppt" =>				array("application/vnd.ms-powerpoint","application/vnd.ms-office","application/msword"),
 			"jpg|jpeg" =>		array("image/jpeg","image/jpg"),
-			"svg" =>				array("image/svg+xml","image/svg","text/plain"),
+			"svg" =>				array("image/svg+xml","image/svg","text/html","text/plain"),
 			"bmp" =>				array("image/bmp","image/x-bmp","image/x-ms-bmp","application/octet-stream"),
+			"webp" =>				array("image/webp","image/x-webp"),
 			"eps" =>				array("application/postscript","application/eps"),
 			"csv" =>				array("text/csv","text/plain"),
 			"docx" => 			array("application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/zip"),

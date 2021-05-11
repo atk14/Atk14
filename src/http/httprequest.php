@@ -254,6 +254,55 @@ class HTTPRequest{
 	function setUri($uri){ $this->setRequestUri($uri); }
 
 	/**
+	 * Returns Query sting
+	 *
+	 * ```
+	 * // consider URL https:/example.com/articles/list.php?tag=love&offset=20
+	 * echo $request->getQueryString(); // "tag=love&offset=20"
+	 * echo $request->getQueryString(true); // "?tag=love&offset=20"
+	 *
+	 * // consider URL https:/example.com/articles/list.php
+	 * echo $request->getQueryString(); // ""
+	 * echo $request->getQueryString(true); // ""
+	 * ```
+	 *
+	 * @return string
+	 */
+	function getQueryString($prepend_question_mark = false){
+		$uri = $this->getRequestUri();
+		$ary = explode('?',$uri);
+		array_shift($ary);
+		$query_string = join('?',$ary);
+		if($prepend_question_mark && strlen($query_string)){
+			return "?".$query_string;
+		}
+		return $query_string;
+	}
+
+	/**
+	 * Returns URL to the server
+	 *
+	 * Basically it returns request URL without the URI part.
+	 *
+	 * ```
+	 * $server_url = $request->getServerUrl(); // e.g. "https://www.test.com:444"
+	 * ```
+	 *
+	 * @returns string
+	 */
+	function getServerUrl(){
+		if($url = $this->_getForceValue("RequestAddress")){
+			$url = preg_replace('/^(https?:\/\/[^\/]+)(.*)/i','\1',$url);
+			return $url;
+		}
+
+		$scheme = $this->getScheme();
+		$port = $this->isServerOnStandardPort() ? "" : ":".$this->getServerPort();
+		$hostname = $this->getHttpHost();
+		return "$scheme://$hostname$port";
+	}
+
+	/**
 	 * Returns complete address for this request
 	 *
 	 * ```
@@ -267,17 +316,9 @@ class HTTPRequest{
 			return $url;
 		}
 
-		$proto = $this->sslActive() ? "https" : "http";
-		$port = "";
-		if($this->sslActive() && $this->getServerPort() && $this->getServerPort()!=443){
-			$port = ":".$this->getServerPort();
-		}
-		if(!$this->sslActive() && $this->getServerPort() && $this->getServerPort()!=80){
-			$port = ":".$this->getServerPort();
-		}
-		$hostname = $this->getHttpHost();
+		$server_url = $this->getServerUrl();
 		$uri = $this->getRequestUri();
-		return "$proto://$hostname$port$uri";
+		return "$server_url$uri";
 	}
 
 	function setRequestAddress($url){
@@ -393,10 +434,12 @@ class HTTPRequest{
 	 * 
 	 * @return bool
 	 */
-	function IsServerOnStandardPort(){
+	function isServerOnStandardPort(){
 		$port = $this->getServerPort();
-		if($this->ssl()){
-			return $this->getServerPort()==443;
+		if(strlen($port)==0){ return true; } // Apparently we're in a shell
+		if($this->sslActive()){
+			return $this->getServerPort()==443 ||
+				$this->getServerPort()==80; // It's quite common that Apache is running on non-ssl port 80 and ssl is provided by Nginx in reverse proxy mode.
 		}
 		return $this->getServerPort()==80;
 	}
@@ -414,6 +457,17 @@ class HTTPRequest{
 
 	function setHttpHost($host){
 		$this->_setForceValue("HttpHost",$host);
+	}
+
+	/**
+	 * Returns scheme
+	 *
+	 *	$scheme = $request->getScheme(); // "https" or "http"
+	 *
+	 * @return string
+	 */
+	function getScheme(){
+		return $this->sslActive() ? "https" : "http";
 	}
 
 	/**
@@ -699,7 +753,9 @@ class HTTPRequest{
 	 * @return bool
 	 */
 	function sslActive(){
-		if(isset($GLOBALS["_SERVER"]["HTTPS"]) && $GLOBALS["_SERVER"]["HTTPS"]=="on"){
+		if(!is_null($var = $this->_getForceValue("SslActive"))){ return $var; }
+
+		if(isset($GLOBALS["_SERVER"]["HTTPS"]) && in_array(strtolower($GLOBALS["_SERVER"]["HTTPS"]),array("on","true","1","yes","y"))){
 			return true;
 		}
 
@@ -707,6 +763,10 @@ class HTTPRequest{
 			return false;
 		}
 		return in_array($port,$this->_SSLPorts);
+	}
+
+	function setSslActive($ssl = true){
+		$this->_setForceValue("SslActive",(bool)$ssl);
 	}
 
 	/**

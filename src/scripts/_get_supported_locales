@@ -9,6 +9,8 @@
  *	en_US
  *	cs_CZ
  */
+
+define("ATK14_LOAD_AFTER_INITIALIZE_SETTINGS",false);
 require_once(dirname(__FILE__)."/load.php");
 
 foreach($ATK14_GLOBAL->getConfig("locale") as $l => $item){

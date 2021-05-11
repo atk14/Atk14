@@ -23,13 +23,21 @@ class Atk14Locale{
 	/**
 	 * Initializes locale
 	 *
+	 * <code>
 	 * $new_lang = "cs";
 	 * $prev_lang = Atk14Locale::Initialize($new_lang);
+	 *
+	 * // or just...
+	 * Atk14Locale::Initialize();
+	 * </code>
 	 */
-	static function Initialize(&$lang){
+	static function Initialize(&$lang = null){
 		global $ATK14_GLOBAL;
 
 		$lang = (string)$lang; // $lang may be a object or something... :)
+		if(!$lang){
+			$lang = $ATK14_GLOBAL->getDefaultLang();
+		}
 
 		$previous_lang = $ATK14_GLOBAL->getLang();
 
@@ -157,6 +165,64 @@ class Atk14Locale{
 		if(!$out = Atk14Locale::_ParseDateTime($localized_datetime,$pattern)){
 			$out = Atk14Locale::ParseDateTime($localized_datetime);
 		}
+		return $out;
+	}
+
+	/**
+	 * Returns decimal point for number formatting
+	 *
+	 * <code>
+	 * echo Atk14Locale::DecimalPoint(); // e.g. "."
+	 * </code>
+	 */
+	static function DecimalPoint(){
+		$decimal_point = _("atk14.number_format.decimal_point");
+		if($decimal_point == "atk14.number_format.decimal_point"){
+			$decimal_point = ","; 
+		}
+		return $decimal_point;
+	}
+
+	/**
+	 * Returns thousands separator for number formatting
+	 *
+	 * <code>
+	 * echo Atk14Locale::ThousandsSeparator(); // e.g. " "
+	 * </code>
+	 */
+	static function ThousandsSeparator(){
+		$thousands_separator = _("atk14.number_format.thousands_separator");
+		if($thousands_separator == "atk14.number_format.thousands_separator"){
+			$thousands_separator = " "; 
+		}
+		return $thousands_separator;
+	}
+
+	/**
+	 * Format number according to the current locale
+	 *
+	 * <code>
+	 * echo Atk14Locale::FormatNumber(33); // "33"
+	 * echo Atk14Locale::FormatNumber(-1234.56); // "-1 234,56"
+	 *
+	 * // setting decimal places
+	 * echo Atk14Locale::FormatNumber(33, 2); // "33,00"
+	 * echo Atk14Locale::FormatNumber(33.7777, 2); // "33,78"
+	 * echo Atk14Locale::FormatNumber(33.7777, 0); // "34"
+	 * </code>
+	 */
+	static function FormatNumber($number,$decimal_places = null){
+		if(!strlen("$number")){ return; }
+
+		if(strlen($decimal_places)==0){ // null, "", false...
+			$decimal_places = 0;
+			if(preg_match('/\.(\d*)$/',"$number",$matches)){
+				$decimal_places = strlen($matches[1]);
+			}
+		}
+
+		$out = number_format($number,$decimal_places,self::DecimalPoint(),self::ThousandsSeparator());
+
 		return $out;
 	}
 

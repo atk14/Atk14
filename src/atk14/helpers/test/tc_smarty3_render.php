@@ -20,6 +20,11 @@ class TcSmarty3Render extends TcBase{
 		next($this->array);
 		$smarty->fetch('tc_smarty_render.tpl');
 		$this->assertEquals($this->counter, 6);
+
+		$smarty = Atk14Utils::GetSmarty(array(__DIR__."/templates/"));
+		$smarty->assign("token","EXTERNAL");
+		$tokens = $smarty->fetch("tokens.tpl");
+		$this->assertEquals('tokens: EXTERNAL | INTERNAL | ASSIGNED | INTERNAL_AGAIN',trim($tokens));
 	}
 }
 

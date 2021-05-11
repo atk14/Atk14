@@ -66,6 +66,8 @@ if(!isset($STAGES[$stage])){
 	_exit_with_errors();
 }
 
+$stage_obj = $STAGES[$stage];
+
 // Listing all stages
 if(isset($arguments["l"]) || isset($arguments["list"])){
 	foreach($STAGES as $_stage){
@@ -147,9 +149,7 @@ foreach($config["rsync"] as $file){
 		_remote_exec("mkdir -p $file","gonna create directory $file if doesn't exist"); // creates directory when it is missing
 		!preg_match('/\/$/',$file) && ($file .= "/"); // "public/dist" -> "public/dist/"
 	}
-	$port_spec = $config["port"] ? " -e 'ssh -p $config[port]'" : "";
-	$user = $config["user"] ? "$config[user]@" : "";
-	echo _exec("rsync -av --delete$port_spec $file $user$config[server]:$config[directory]/$file","gonna synchronize $file");
+	echo _exec($stage_obj->compileRsyncCommand($file),"gonna synchronize $file");
 }
 
 _run_commands($config["after_deploy"],"after_deploy");
@@ -185,10 +185,8 @@ function _exec($cmd,$options = array()){
 }
 
 function _remote_exec($cmd,$options = array()){
-	global $config;
-	$port_spec = $config["port"] ? " -p $config[port]" : "";
-	$user = $config["user"] ? "$config[user]@" : "";
-	$cmd = "ssh $user$config[server]$port_spec \"cd $config[directory] && export ATK14_ENV=production && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
+	global $stage_obj;
+	$cmd = $stage_obj->compileRemoteShellCommand($cmd);
 	return _exec($cmd,$options);
 }
 

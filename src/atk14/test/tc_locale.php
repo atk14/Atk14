@@ -88,6 +88,53 @@ class TcLocale extends TcBase{
 		$this->assertEquals("cs",$lang);
 		$this->assertEquals("en",$previous);
 		$this->assertEquals("cs",$ATK14_GLOBAL->getLang());
+
+		// Initializing environment to the default language (cs)
+
+		// ... first set a language other than the default
+		$lang = "en";
+		Atk14Locale::Initialize($lang);
+		$this->assertEquals("en",$ATK14_GLOBAL->getLang());
+
+		// ... and now set the default language
+		Atk14Locale::Initialize();
+		$this->assertEquals("cs",$ATK14_GLOBAL->getLang());
+	}
+
+	function test_number_format(){
+		$this->_setLocale("cs");
+
+		$this->assertEquals(",",Atk14Locale::DecimalPoint());
+		$this->assertEquals(" ",Atk14Locale::ThousandsSeparator());
+
+		$this->assertEquals("123",Atk14Locale::FormatNumber(123));
+		$this->assertEquals("123",Atk14Locale::FormatNumber(123.0));
+		$this->assertEquals("123,0",Atk14Locale::FormatNumber("123.0"));
+		$this->assertEquals("1 234",Atk14Locale::FormatNumber(1234));
+		$this->assertEquals("-1 222,3333",Atk14Locale::FormatNumber(-1222.3333));
+		$this->assertEquals("-1 222,7777",Atk14Locale::FormatNumber(-1222.7777000));
+		$this->assertEquals("-1 222,0000",Atk14Locale::FormatNumber("-1222.0000"));
+
+		$this->assertEquals("-1 222,78",Atk14Locale::FormatNumber(-1222.7777000,2));
+		$this->assertEquals("-1 223",Atk14Locale::FormatNumber(-1222.7777000,0));
+		$this->assertEquals("-1 222,00",Atk14Locale::FormatNumber("-1222.0000",2));
+
+		$this->_setLocale("en");
+
+		$this->assertEquals(".",Atk14Locale::DecimalPoint());
+		$this->assertEquals(",",Atk14Locale::ThousandsSeparator());
+
+		$this->assertEquals("123",Atk14Locale::FormatNumber(123));
+		$this->assertEquals("123",Atk14Locale::FormatNumber(123.0));
+		$this->assertEquals("123.0",Atk14Locale::FormatNumber("123.0"));
+		$this->assertEquals("1,234",Atk14Locale::FormatNumber(1234));
+		$this->assertEquals("-1,222.3333",Atk14Locale::FormatNumber(-1222.3333));
+		$this->assertEquals("-1,222.7777",Atk14Locale::FormatNumber(-1222.7777000));
+		$this->assertEquals("-1,222.0000",Atk14Locale::FormatNumber("-1222.0000"));
+
+		$this->assertEquals("-1,222.78",Atk14Locale::FormatNumber(-1222.7777000,2));
+		$this->assertEquals("-1,223",Atk14Locale::FormatNumber(-1222.7777000,0));
+		$this->assertEquals("-1,222.00",Atk14Locale::FormatNumber("-1222.0000",2));
 	}
 
 	function _setLocale($lang){

@@ -202,10 +202,10 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		$HEADERS .= "From: $_from\n";
 		$HEADERS .= "Reply-To: $_reply_to\n";
 		if($BCC!=""){
-			$HEADERS .= "bcc: $BCC\n";
+			$HEADERS .= "Bcc: $BCC\n";
 		}
 		if($CC!=""){
-			$HEADERS .= "cc: $CC\n";
+			$HEADERS .= "Cc: $CC\n";
 		}
 
 		$HEADERS .= "MIME-Version: 1.0\n";

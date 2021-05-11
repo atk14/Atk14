@@ -13,6 +13,7 @@
  *	development
  */
 
+define("ATK14_LOAD_AFTER_INITIALIZE_SETTINGS",false);
 require_once(dirname(__FILE__)."/load.php");
 
 $env = $ATK14_GLOBAL->getEnvironment();

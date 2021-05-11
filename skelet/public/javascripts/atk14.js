@@ -81,8 +81,8 @@ var ATK14 = ( function() {
 			}
 
 			method = method || "GET"; // By default the method is GET
-			if ( method.toUpperCase() == "GET" ) {
-				url += url.indexOf("?")>=0 ? "&" : "?";
+			if ( method.toUpperCase() === "GET" ) {
+				url += url.indexOf( "?" ) >= 0 ? "&" : "?";
 				url += "__xhr_request=1";
 			}
 

@@ -6,6 +6,7 @@
  * @package Atk\Sessions
  * @filesource
  */
+
 /**
  * Sessions lifetime, count of seconds
  */
@@ -27,6 +28,7 @@ if(!defined("SESSION_STORER_DEFAULT_SECTION")){
 if(!defined("SESSION_STORER_COOKIE_NAME_SESSION")){
 	define("SESSION_STORER_COOKIE_NAME_SESSION","_%session_name%_"); // _ses_
 }
+
 /**
  * Checking cookie name
  *
@@ -53,7 +55,16 @@ if(!defined("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS")){
 	define("SESSION_STORER_SHARE_COOKIES_ON_SUBDOMAINS",false); 
 }
 
-defined("SESSION_STORER_AUTO_GARBAGE_COLLECTION") || define("SESSION_STORER_AUTO_GARBAGE_COLLECTION",true);
+if(!defined("SESSION_STORER_AUTO_GARBAGE_COLLECTION")){
+	define("SESSION_STORER_AUTO_GARBAGE_COLLECTION",true);
+}
+
+/**
+ *
+ */
+if(!defined("SESSION_STORER_SET_COOKIES_ONLY_ON_SSL_BY_DEFAULT")){
+	define("SESSION_STORER_SET_COOKIES_ONLY_ON_SSL_BY_DEFAULT",false);
+}
 
 /**
  * A class for storing and reading values into a session.
@@ -169,7 +180,7 @@ class SessionStorer{
 	 *
 	 * @var boolean
 	 */
-	protected $_SslOnly = false;
+	protected $_SslOnly;
 
 	/**
 	 * Cookie name
@@ -233,7 +244,7 @@ class SessionStorer{
 			"section" => $section,
 
 			"max_lifetime" => null, // for garbage collection
-			"ssl_only" => false,
+			"ssl_only" => SESSION_STORER_SET_COOKIES_ONLY_ON_SSL_BY_DEFAULT,
 			"cookie_name" => SESSION_STORER_COOKIE_NAME_SESSION,
 			"cookie_expiration" => 0,
 
@@ -500,9 +511,7 @@ class SessionStorer{
 			!$request->defined(SESSION_STORER_COOKIE_NAME_CHECK,"C") ||
 			$this->_getCurrentTime()-(int)$request->getCookieVar(SESSION_STORER_COOKIE_NAME_CHECK)>60*60*24*365*2 // the check cookie is older than 2 years
 		){
-			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,$this->_getCurrentTime(),$this->_getCurrentTime()+60*60*24*365*5,array(
-				"ssl_only" => false, // value of $this->_SslOnly does not matter
-			));
+			$this->_setCookie(SESSION_STORER_COOKIE_NAME_CHECK,$this->_getCurrentTime(),$this->_getCurrentTime()+60*60*24*365*5);
 		}
 	}
 
@@ -825,11 +834,15 @@ class SessionStorer{
 	 */
 	protected function _setCookie($name,$value,$time = 0,$options = array()){
 		$options += array(
-			"ssl_only" => $this->_SslOnly,
+			"ssl_only" => null,
 			"http_only" => true,
 			"domain" => $this->_getCookieDomain(),
 			"document_root" => $this->_getWebDocumentRoot(),
 		);
+
+		if($this->_SslOnly && is_null($options["ssl_only"])){
+			$options["ssl_only"] = $this->_SslOnly;
+		}
 
 		$request = $this->_getRequest();
 
@@ -876,14 +889,20 @@ class SessionStorer{
 	 * @param boolean $secure
 	 * @param boolean $http_only
 	 */
-	protected function __setCookie($name , $value, $expire, $path , $domain = null, $secure = false, $httponly = false){
-		$this->_response->addCookie(new HTTPCookie($name,$value,array(
+	protected function __setCookie($name , $value, $expire, $path , $domain = null, $secure = null, $httponly = null){
+
+		$options = array(
 			"expire" => $expire,
 			"path" => $path,
-			"domain" => $domain,
-			"secure" => $secure,
-			"httponly" => $httponly,
-		)));
+		);
+
+		// use a option if it is set, otherwise the default value is used
+		// see HTTPCookie::DefaultOptions()
+		if(!is_null($domain)){ $options["domain"] = $domain; }
+		if(!is_null($secure)){ $options["secure"] = $secure; }
+		if(!is_null($httponly)){ $options["httponly"] = $httponly; }
+
+		$this->_response->addCookie(new HTTPCookie($name,$value,$options));
 
 		/*
 		if(defined("TEST") && TEST){
@@ -1079,18 +1098,34 @@ class SessionStorer{
 						":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
 					)
 				);
-				$this->_dbmole->doQuery("
-					INSERT INTO session_values (session_id, section, key, value, expiration)
-					SELECT :session_id, :section, :key, :value, :expiration
-					WHERE NOT EXISTS (SELECT 1 FROM session_values WHERE session_id=:session_id AND section=:section AND key=:key)
-						", array(
-						":session_id" => $this->_SessionId,
-						":section" => $this->getSection(),
-						":key" => $key,
-						":value" => $this->_ValuesStore[$key]["packed_value"],
-						":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
-					)
-				);
+
+				if($this->_dbmole->getDatabaseServerVersion("as_float")<9.05){
+					// for Postgresql < 9.5
+					$query = "
+						DO $$
+						BEGIN
+							INSERT INTO session_values (session_id, section, key, value, expiration) VALUES (:session_id, :section, :key, :value, :expiration);
+						EXCEPTION WHEN unique_violation THEN
+							UPDATE session_values SET value=:value, expiration=:expiration WHERE session_id=:session_id AND section=:section AND key=:key;
+						END;
+						$$
+					";
+				}else{
+					// for Postgresql >= 9.5
+					$query = "
+						INSERT INTO session_values (session_id, section, key, value, expiration)
+						VALUES (:session_id, :section, :key, :value, :expiration)
+						ON CONFLICT (session_id, section, key) DO UPDATE SET value=:value, expiration=:expiration
+						RETURNING id
+					";
+				}
+				$this->_dbmole->doQuery($query,array(
+					":session_id" => $this->_SessionId,
+					":section" => $this->getSection(),
+					":key" => $key,
+					":value" => $this->_ValuesStore[$key]["packed_value"],
+					":expiration" => $this->_getIsoDateTime($this->_ValuesStore[$key]["expiration"]),
+				));
 			} else {
 				$id = $this->_dbmole->selectSingleValue("
 					SELECT id FROM session_values WHERE

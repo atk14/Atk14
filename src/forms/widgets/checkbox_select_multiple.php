@@ -22,23 +22,27 @@ class CheckboxSelectMultiple extends SelectMultiple
 			"input_attrs" => array(),
 			"label_attrs" => array(),
 			"wrap_attrs" => array(),
-			"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4
+			"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4,
 		);
+		$options += array(
+			"bootstrap4_customized" => $options["bootstrap4"] // whether or not add classes for checkbox customization in bootstrap4 (https://www.w3schools.com/bootstrap4/bootstrap_forms_custom.asp)
+		);
+
 		if($options["bootstrap4"]){
-			// This is done in CheckboxInput
-			//$options["input_attrs"] += array(
-			//	"class" => "form-check-input", 
-			//);
+			$options["input_attrs"] += array(
+				"class" => $options["bootstrap4_customized"] ? "form-check-input custom-control-input" : "form-check-input",
+			);
 			$options["label_attrs"] += array(
-				"class" => "form-check-label",
+				"class" => $options["bootstrap4_customized"] ? "form-check-label custom-control-label" : "form-check-label",
 			);
 			$options["wrap_attrs"] += array(
-				"class" => "form-check",
+				"class" => $options["bootstrap4_customized"] ? "form-check custom-control custom-checkbox" : "form-check",
 			);
 		}
 
 		$this->escape_labels = $options["escape_labels"];
 		$this->bootstrap4 = $options["bootstrap4"];
+		$this->bootstrap4_customized = $options["bootstrap4_customized"];
 		$this->input_attrs = $options["input_attrs"];
 		$this->label_attrs = $options["label_attrs"];
 		$this->wrap_attrs = $options["wrap_attrs"];
@@ -82,7 +86,7 @@ class CheckboxSelectMultiple extends SelectMultiple
 			$option_value = (string)$option_value;
 			$rendered_cb = $cb->render("{$name}[]", $option_value);
 			$label = ($this->escape_labels ? forms_htmlspecialchars($option_label) : $option_label);
-			$markup = $this->bootstrap4 ? '<div%wrap_attrs%>%checkbox% <label%label_attrs%>%label%</label></div>' : '<label>%checkbox% %label%</label>';
+			$markup = $this->bootstrap4 ? '<div%wrap_attrs%>%checkbox% <label%label_attrs%>%label%</label></div>' : '<label class="control-label">%checkbox% %label%</label>';
 			$output[] = $this->bootstrap4 ? '<li class="list__item">' : '<li class="checkbox">';
 			$output[] = strtr($markup,array(
 				"%checkbox%" => $rendered_cb,
@@ -101,7 +105,8 @@ class CheckboxSelectMultiple extends SelectMultiple
 
 	function id_for_label($id_)
 	{
-		if ($id_) {
+		if ($id_ && sizeof($this->choices)==1) {
+			// if there are more choices than one it is an unwanted feature to toggle checkbox of the first choice by clicking label
 			$id_ = $id_.'_0';
 		}
 		return $id_;

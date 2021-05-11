@@ -476,10 +476,36 @@ class DbMole{
 	 */
 	function _selectRows($query,&$bind_ar, $options = array()){
 		$options = array_merge(array(
+			"limit" => null,
+			"offset" => null,
 			"cache" => 0, // 0, 600, true, false
 			"recache" => false,
 		),$options);
 		$options["avoid_recursion"] = true; // protoze primo metoda selectRows() vola _selectRows() a naopak, mame tady tento ochranny parametr
+
+
+		if(isset($options["offset"]) || isset($options["limit"])){
+			$offset = $options["offset"];
+			$limit = $options["limit"];
+
+			if(!isset($offset)){ $offset = 0; }
+
+			if($offset<0 && isset($limit)){
+				$limit = $limit + $offset;
+			}
+
+			$offset = max((int)$offset,0);
+			if(isset($limit)){
+				$limit = max((int)$limit,0);
+			}
+
+			if(isset($limit) && $limit==0){
+				return array();
+			}
+
+			$options["offset"] = $offset;
+			$options["limit"] = $limit;
+		}
 
 		$cache = $options["cache"];
 		$recache = $options["recache"];
@@ -589,29 +615,38 @@ class DbMole{
 		$out[] = "bind_ar";
 		$out[] = "-------";
 		$out[] = print_r($this->getBindAr(),true);
-		if(isset($GLOBALS["_SERVER"]));{
-			$out[] = "";
-			$out[] = "server vars";
-			$out[] = "-----------";
+		if(php_sapi_name()=="cli"){
+			$out[] = "script";
+			$out[] = "------";
+			$out[] = $_SERVER["SCRIPT_FILENAME"];
+			$out[] = "argv";
+			$out[] = "----";
+			$out[] = print_r($GLOBALS["argv"],true);
+		}else{
+			if(isset($GLOBALS["_SERVER"]));{
+				$out[] = "";
+				$out[] = "server vars";
+				$out[] = "-----------";
 
-			// $_SERVER["PHP_AUTH_PW"] may contain a password in plain text form
-			$server_vars = $GLOBALS["_SERVER"];
-			if(isset($server_vars["PHP_AUTH_PW"])){
-				$server_vars["PHP_AUTH_PW"] = "*************";
+				// $_SERVER["PHP_AUTH_PW"] may contain a password in plain text form
+				$server_vars = $GLOBALS["_SERVER"];
+				if(isset($server_vars["PHP_AUTH_PW"])){
+					$server_vars["PHP_AUTH_PW"] = "*************";
+				}
+				$out[] = print_r($server_vars,true);
 			}
-			$out[] = print_r($server_vars,true);
-		}
-		if(isset($GLOBALS["_GET"]));{
-			$out[] = "";
-			$out[] = "get vars";
-			$out[] = "--------";
-			$out[] = print_r($GLOBALS["_GET"],true);
-		}
-		if(isset($GLOBALS["_POST"]));{
-			$out[] = "";
-			$out[] = "post vars";
-			$out[] = "--------";
-			$out[] = print_r($GLOBALS["_POST"],true);
+			if(isset($GLOBALS["_GET"]));{
+				$out[] = "";
+				$out[] = "get vars";
+				$out[] = "--------";
+				$out[] = print_r($GLOBALS["_GET"],true);
+			}
+			if(isset($GLOBALS["_POST"]));{
+				$out[] = "";
+				$out[] = "post vars";
+				$out[] = "--------";
+				$out[] = print_r($GLOBALS["_POST"],true);
+			}
 		}
 		return join("\n",$out);
 	}
@@ -1118,7 +1153,7 @@ class DbMole{
 		$query_values = array();
 		$bind_ar = array();
 		foreach($values as $_field_name => $_value){	
-			$query_fields[] = $_field_name;
+			$query_fields[] = $this->escapeColumnName4Sql($_field_name);
 			if(in_array($_field_name,$options["do_not_escape"])){
 				$query_values[] = $_value;
 				continue;
@@ -1171,7 +1206,7 @@ class DbMole{
 		// TODO: tady se zatim vubec neresi to, ze muze byt nastaveno $options["do_not_escape"] = array("id")
 		$_options = $options;
 		$_options["type"] = "integer";
-		$count = $this->selectSingleValue("SELECT COUNT(*) FROM $table_name WHERE $id_field=:id_value",array(":id_value" => $id_value),$_options);
+		$count = $this->selectSingleValue("SELECT COUNT(*) FROM ".$this->escapeTableName4Sql($table_name)." WHERE ".$this->escapeColumnName4Sql($id_field)."=:id_value",array(":id_value" => $id_value),$_options);
 
 		if($count==0){
 
@@ -1188,13 +1223,13 @@ class DbMole{
 				$bind_ar[":$_key"] = $_value;
 				if($_key == $id_field){ continue; }
 				if(!isset($options["do_not_escape"]["$_key"])){
-					$update_ar[] = "$_key=:$_key";	
+					$update_ar[] = $this->escapeColumnName4Sql($_key)."=:$_key";
 				}else{
-					$update_ar[] = "$_key=$_value";
+					$update_ar[] = $this->escapeColumnName4Sql($_key)."=$_value";
 				}
 			}
 			if(sizeof($update_ar)==0){ return true; } // je to podivne, ale tady se nic nemeni; nekdo vola nmetodu nesmyslne ve stylu: $dbmole->insertOrUpdateRecord("persons",array("id" => 20));
-			return $this->doQuery("UPDATE $table_name SET ".join(", ",$update_ar)." WHERE $id_field=:$id_field",$bind_ar,$options);
+			return $this->doQuery("UPDATE ".$this->escapeTableName4Sql($table_name)." SET ".join(", ",$update_ar)." WHERE ".$this->escapeColumnName4Sql($id_field)."=:$id_field",$bind_ar,$options);
 
 		}
 	}
@@ -1315,6 +1350,15 @@ class DbMole{
 		$this->_hookAfterQueryExecution();
 
 		return $out;
+	}
+
+	/**
+	 *
+	 * @param string $column_name
+	 * @return string
+	 */
+	function escapeColumnName4Sql($column_name){
+		return $column_name;
 	}
 
 	/**
@@ -1526,6 +1570,61 @@ class DbMole{
 			return (bool)$value;
 		}
 		return in_array(strtolower($value),array("t","true","y"));
+	}
+
+	/**
+	 *
+	 *	echo $dbmole->getDatabaseServerVersion(); // "9.6.19"
+	 *	var_dump($dbmole->getDatabaseServerVersion(["as_array" => true]);) // ["major" => 9, "minor" => 6, "patch" => 19]
+	 *	var_dump($dbmole->getDatabaseServerVersion("as_array");) // shortcut
+	 *	echo $dbmole->getDatabaseServerVersion("as_float"); // 9.6 - only major and minor
+	 */
+	final function getDatabaseServerVersion($options = array()){
+		return $this->_parseVersion($this->_getDatabaseServerVersion(),$options);
+	}
+
+	/**
+	 *
+	 *	echo $dbmole->getDatabaseServerVersion(); // "9.5.21"
+	 *	var_dump($dbmole->getDatabaseServerVersion(["as_array" => true]);) // ["major" => 9, "minor" => 5, "patch" => 21]
+	 *	var_dump($dbmole->getDatabaseClientVersion("as_array");) // shortcut
+	 *	echo $dbmole->getDatabaseClientVersion("as_float"); // 9.05016
+	 */
+	final function getDatabaseClientVersion($options = array()){
+		return $this->_parseVersion($this->_getDatabaseClientVersion(),$options);
+	}
+
+	function _parseVersion($version,$options){
+		if(is_string($options)){
+			$options = array($options => true);
+		}
+		$options += array(
+			"as_array" => false,
+			"as_float" => false,
+
+			// options for conversion to float
+			"minor_number_divider" => 100,
+			"patch_number_divider" => 100000,
+		);
+
+		if(strlen($version)==0){ return null; }
+		if($options["as_array"]){
+			$ary = explode(".",$version);
+			return array(
+				"major" => (int)$ary[0],
+				"minor" => isset($ary[1]) ? (int)$ary[1] : 0,
+				"patch" => isset($ary[2]) ? (int)$ary[2] : 0,
+			);
+		}
+		if($options["as_float"]){
+			$ar = $this->_parseVersion($version,array("as_array" => true));
+			return (float)($ar["major"] + ($ar["minor"] / $options["minor_number_divider"]) + ($ar["patch"] / $options["patch_number_divider"]));
+		}
+
+		if(preg_match('/^\d+\.\d+$/',$version)){
+			$version = "$version.0"; // "10.1" -> "10.1.0"
+		}
+		return $version;
 	}
 
 	/**

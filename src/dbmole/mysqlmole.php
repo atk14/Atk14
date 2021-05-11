@@ -53,6 +53,10 @@ class MysqlMole extends DbMole{
 		return $out;
 	}
 
+	function escapeColumnName4Sql($column_name){
+		return "`$column_name`";
+	}
+
 	function escapeString4Sql($s){
 		$connection = $this->_getDbConnect();
 		return "'".mysqli_real_escape_string($connection,$s)."'";
@@ -104,5 +108,24 @@ class MysqlMole extends DbMole{
 		} while ($connection->next_result());
 
 		return $result;
+	}
+
+	function _getDatabaseServerVersion(){
+		$connection = $this->_getDbConnect();
+		$ver = mysqli_get_server_version($connection);
+		$major = floor($ver/10000);
+		$minor = floor(($ver - ($major * 10000))/100);
+		$patch = $ver % 100;
+		$ver = "$major.$minor.$patch";
+		return $ver;
+	}
+
+	function _getDatabaseClientVersion(){
+		$ver = mysqli_get_client_version();
+		$major = floor($ver/10000);
+		$minor = floor(($ver - ($major * 10000))/100);
+		$patch = $ver % 100;
+		$ver = "$major.$minor.$patch";
+		return $ver;
 	}
 }

@@ -1,4 +1,16 @@
 <?php
+/**
+ * Class for working with deployment stages.
+ *
+ * @filesource
+ */
+
+/**
+ * Class for working with deployment stages.
+ *
+ * @package Atk14\Core
+ * @todo Some description explanation
+ */
 class Atk14DeploymentStage{
 
 	protected $data;
@@ -27,11 +39,14 @@ class Atk14DeploymentStage{
 	/**
 	 * Returns all deployment stages
 	 *
+	 * ```
 	 * $stages = Atk14DeploymentStage::GetStages();
 	 *
 	 * foreach($stages as $name => $stage){
 	 *
 	 * }
+	 * ```
+	 * @return Atk14DeploymentStage[]
 	 */
 	static function GetStages(){
 		global $ATK14_GLOBAL;
@@ -45,6 +60,7 @@ class Atk14DeploymentStage{
 			"user" => null,
 			"server" => null,
 			"port" => null, // ssh port, e.g. "2222"
+			"env" => "", // e.g. "PATH=/home/john/bin/:$PATH EDITOR=vim"; environment variable ATK14_ENV=production is set automatically
 			"directory" => null,
 			"create_maintenance_file" => "false",
 			"deploy_via" => "git_push", // there is only one way
@@ -78,6 +94,10 @@ class Atk14DeploymentStage{
 
 			$ar = self::_ReplaceVariables($ar,$name);
 
+			if(strlen($ar["deploy_repository"]) && strpos($ar["deploy_repository"],":")===false && strlen($ar["server"])){
+				$ar["deploy_repository"] = (strlen($ar["user"]) ? "$ar[user]@" : "")."$ar[server]:$ar[deploy_repository]"; // "/home/user/repos/myapp.git" -> "user@server:/home/user/repos/myapp.git"
+			}
+
 			/*
 			// TODO: add some checks
 			$raw_def_keys = array_keys($raw_def);
@@ -105,40 +125,102 @@ class Atk14DeploymentStage{
 		return $out;
 	}
 
-	protected static function _ReplaceVariables($ar,$name){
-		$replaces = array();
-		foreach($ar as $key => $value){
-			if(is_array($value)){ continue; }
-			$replaces['{{'.$key.'}}'] = $value;
-		}
-
-		$replaces['{{name}}'] = $name;
-		
-		foreach($ar as $key => $value){
-			$ar[$key] = self::_ReplaceVariablesInItem($value,$replaces);
-		}
-
-		return $ar;
+	function getName(){
+		return $this->name;
 	}
 
-	protected static function _ReplaceVariablesInItem($item,$replaces){
-		if(is_null($item)){ return $item; }
-		if(is_array($item)){
-			foreach($item as $k => $v){
-				$item[$k] = self::_ReplaceVariablesInItem($v,$replaces);
-			}
-			return $item;
-		}
-
-		// normalizing variable names
-		$item = preg_replace('/\{\{ ?([a-z_]+) ?\}\}/','{{\1}}',$item); // {{ user }} -> {{user}}
-
-		$item = strtr($item,$replaces);
-		return $item;
+	function getDirectory(){
+		return $this->directory;
 	}
 
 	/**
+	 * Returns URL of the deploy repository from the outside view
+	 *
+	 */
+	function getDeployRepository(){
+		$ar = $this->toArray();
+		if(strlen($ar["deploy_repository"]) && strpos($ar["deploy_repository"],":")===false && strlen($ar["server"])){
+			$ar["deploy_repository"] = (strlen($ar["user"]) ? "$ar[user]@" : "")."$ar[server]:$ar[deploy_repository]"; // "/home/user/repos/myapp.git" -> "user@server:/home/user/repos/myapp.git"
+		}
+		return $ar["deploy_repository"];
+	}
+
+	/**
+	 * Returns URL of the deploy repository from the views of the deployment server
+	 *
+	 */
+	function getDeployRepositoryRemoteDir(){
+		$ar = $this->toArray();
+		$deploy_repository_remote = $ar["deploy_repository"];
+		$deploy_repository_remote = preg_replace('/^.*?:/','',$deploy_repository_remote);
+		if(!preg_match('/^\//',$deploy_repository_remote)){ $deploy_repository_remote = "/home/$ar[user]/$deploy_repository_remote"; }
+		return $deploy_repository_remote;
+	}
+
+	/**
+	 *
+	 * @return string[]
+	 */
+	function getRsync(){
+		$out = $this->rsync;
+		if(!$out){ return array(); }
+		if(!is_array($out)){
+			$out = array($out);
+		}
+		return $out;
+	}
+
+	/**
+	 *
+	 * 	$cmd = $stage->compileRemoteShellCommand("./scripts/migrate"); // e.g. 'ssh deploy@devel.mushoomradar.net "cd /home/deploy/webapps/mushoomradar_devel/ && export ATK14_ENV=production && (./scripts/migrate)"'
+	 */
+	function compileRemoteShellCommand($cmd,$cd_to_project_directory = true){
+		$config = $this->toArray();
+
+		$cd_cmd = $cd_to_project_directory ? "cd $config[directory] && " : ""; // e.g. "cd /home/deploy/webapps/myapp/ && "
+
+		$port_spec = $config["port"] ? " -p $config[port]" : "";
+		$user = $config["user"] ? "$config[user]@" : "";
+		$env = "ATK14_ENV=production";
+		$env .= $config["env"] ? " $config[env]" : "";
+		$cmd = "ssh $user$config[server]$port_spec \"${cd_cmd}export $env && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
+		return $cmd;
+	}
+
+	/**
+	 *
+	 *	$cmd = $stage->compileRsyncCommand("public/dist/");
+	 */
+	function compileRsyncCommand($file){
+		$config = $this->toArray();
+		if(is_dir(ATK14_DOCUMENT_ROOT."/".$file)){
+			!preg_match('/\/$/',$file) && ($file .= "/"); // "public/dist" -> "public/dist/"
+		}
+		$port_spec = $config["port"] ? " -e 'ssh -p $config[port]'" : "";
+		$user = $config["user"] ? "$config[user]@" : "";
+		$dest = "$config[directory]/$file";
+		$dest = preg_replace('/\/{2,}/','/',$dest);
+		return "rsync -av --checksum --no-times --delete$port_spec $file $user$config[server]:$dest";
+	}
+
+	function toArray(){
+		// it's fine to have the name on the first position :)
+		$data = $this->data->toArray();
+		$out = array("name" => $data["name"]);
+		unset($data["name"]);
+		return $out + $data;
+	}
+
+	/**
+	 * Get instance of Atk14DeploymentStage by name
+	 *
+	 * ```
 	 * $preview = Atk14DeploymentStage::GetStage("preview"):
+	 * ```
+	 *
+	 * @param $name string
+	 * @return Atk14DeploymentStage
+	 * @todo maybe should return null when no stage is found
 	 */
 	static function GetStage($name){
 		foreach(Atk14DeploymentStage::GetStages() as $s){
@@ -150,12 +232,53 @@ class Atk14DeploymentStage{
 		foreach(Atk14DeploymentStage::GetStages() as $s){ return $s; }
 	}
 
-	function toArray(){
-		// it's fine to have the name on the first position :)
-		$data = $this->data->toArray();
-		$out = array("name" => $data["name"]);
-		unset($data["name"]);
-		return $out + $data;
+	protected static function _ReplaceVariables($ar,$name){
+		$replaces = array();
+		foreach($ar as $key => $value){
+			if(is_array($value)){ continue; }
+			$replaces['{{'.$key.'}}'] = $value;
+		}
+
+		$replaces['{{name}}'] = $name;
+
+		$cnt = 0;
+		while(1){
+			$something_replaced = false;
+			foreach($ar as $key => $value){
+				$ar[$key] = self::_ReplaceVariablesInItem($value,$replaces,$_something_replaced);
+				$something_replaced = $_something_replaced ? $_something_replaced : $something_replaced;
+			}
+			if(!$something_replaced){ break; }
+			//
+			$cnt++;
+			if($cnt>10){
+				throw new Exception("A circular reference found in deploy.yml in stage $name");
+			}
+		}
+
+		return $ar;
+	}
+
+	protected static function _ReplaceVariablesInItem($item,$replaces,&$something_replaced = false){
+		$something_replaced = false;
+	
+		if(is_null($item)){ return $item; }
+		if(is_array($item)){
+			foreach($item as $k => $v){
+				$_something_replaced = false;
+				$item[$k] = self::_ReplaceVariablesInItem($v,$replaces,$_something_replaced);
+				$something_replaced = $_something_replaced ? $_something_replaced : $something_replaced;
+			}
+			return $item;
+		}
+
+		// normalizing variable names
+		$item = preg_replace('/\{\{ ?([a-z_]+) ?\}\}/','{{\1}}',$item); // {{ user }} -> {{user}}
+
+		$orig = "$item";
+		$item = strtr($item,$replaces);
+		$something_replaced = $item!==$orig;
+		return $item;
 	}
 
 	function __toString(){

@@ -9,7 +9,7 @@ define("TEMP",dirname(__FILE__)."/temp/");
 define("DEFAULT_CHARSET","UTF-8");
 
 include("../httpuploadedfile.php");
-include("../../stringbuffer/stringbuffer.php");
+include("../../stringbuffer/load.php");
 include("../../string4/load.php");
 include("../../url_fetcher/url_fetcher.php");
 include("../../files/load.php");

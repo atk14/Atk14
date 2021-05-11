@@ -64,7 +64,45 @@ class HTTPCookie{
 	 *
 	 * @var boolean
 	 */
-	private $_Httponly;
+	private $_HttpOnly;
+
+	/**
+	 *
+	 * @var string
+	 */
+	private $_SameSite;
+
+
+	static protected $DEFAULT_OPTIONS = array(
+		"expire" => 0,
+		"path" => "/",
+		"domain" => "",
+		"secure" => false,
+		"httponly" => false,
+		"samesite" => "", // None || Lax  || Strict
+	);
+
+	/**
+	 *
+	 * ```
+	 *	HTTPCookie::DefaultOptions(["secure" => true, "samesite" => "None"]); // sets default options
+	 *	HTTPCookie::DefaultOptions(); // returns current default options
+	 *
+	 *	$def_secure = HTTPCookie::DefaultOptions("secure"); // returns default value of the given option
+	 * ```
+	 */
+	static function DefaultOptions($options = null){
+		if(isset($options) && !is_array($options)){
+			$name = (string)$options;
+			return self::$DEFAULT_OPTIONS[$name];
+		}
+
+		if(is_array($options)){
+			self::$DEFAULT_OPTIONS = $options + self::$DEFAULT_OPTIONS;
+		}
+
+		return self::$DEFAULT_OPTIONS;
+	}
 	
 	/**
 	 * Creates instantiated cookie object.
@@ -76,13 +114,7 @@ class HTTPCookie{
 		settype($cookie_name,"string");
 		settype($cookie_value,"string");
 
-		$options += array(
-			"expire" => 0,
-			"path" => "/",
-			"domain" => "",
-			"secure" => false,
-			"httponly" => false
-		);
+		$options += self::$DEFAULT_OPTIONS;
 
 		$this->_Name = $cookie_name;
 		$this->_Value = $cookie_value;
@@ -91,7 +123,8 @@ class HTTPCookie{
 		$this->_Path = $options["path"];
 		$this->_Domain = $options["domain"];
 		$this->_Secure = $options["secure"];
-		$this->_Httponly = $options["httponly"];
+		$this->_HttpOnly = $options["httponly"];
+		$this->_SameSite = $options["samesite"];
 	}
 
 	/**
@@ -180,8 +213,8 @@ class HTTPCookie{
 	 */
 	function isSecure(){ return $this->_Secure; }
 
-	function setHttponly($httponly = true){
-		$this->_Httponly = $httponly;
+	function setHttpOnly($httponly = true){
+		$this->_HttpOnly = $httponly;
 	}
 
 	/**
@@ -189,7 +222,30 @@ class HTTPCookie{
 	 *
 	 * @return boolean
 	 */
-	function isHttponly(){ return $this->_Httponly; }
+	function isHttpOnly(){ return $this->_HttpOnly; }
+
+	/**
+	 * Sets the SameSite option for the cookie
+	 *
+	 * Valid values are "None", "Lax" or "Strict".
+	 *
+	 * ```
+	 *	$cookie->setSameSite("None");
+	 * ```
+	 *
+	 * @param string $samesite
+	 */
+	function setSameSite($samesite){
+		$this->_SameSite = $samesite;
+	}
+
+	/**
+	 *
+	 * @return string
+	 */
+	function getSameSite(){
+		return $this->_SameSite;
+	}
 
 	/**
 	 * Does this cookie expire?

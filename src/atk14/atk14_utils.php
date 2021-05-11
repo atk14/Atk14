@@ -24,13 +24,13 @@ class Atk14Utils{
 	 * If none of them is defined it checks the system environment variable ATK14_ENV and when found it defines constants TEST,DEVELOPMENT and PRODUCTION depending on the value of ATK14_ENV
 	 *
 	 * When even ATK14_ENV is not defined it defines these constants depending on REMOTE_ADDRESS.
-	 * For localhost or addresses in 192.168.0.0 and 172.16.0.0 or no IP(script is run from console) it defines environment as DEVELOPMENT, otherwise PRODUCTION.
+	 * For localhost or no IP(script is run from console) it defines environment as DEVELOPMENT, otherwise PRODUCTION.
 	 *
 	 * ```
 	 * echo Atk14Utils::DetermineEnvironment(); // "PRODUCTION", "DEVELOPMENT" or "TEST"
 	 * ```
 	 *
-	 * @return string
+	 * @return string can be one of "PRODUCTION", "DEVELOPMENT", "TEST"
 	 */
 	static function DetermineEnvironment(){
 		global $HTTP_REQUEST;
@@ -65,7 +65,7 @@ class Atk14Utils{
 		// If there is an internal remote address or the script is running from a console,
 		// environment is treat as DEVELOPMENT.
 		}else{
-			define("DEVELOPMENT",in_array($HTTP_REQUEST->getRemoteAddr(),array("127.0.0.1","::1")) || php_sapi_name()=="cli");
+			define("DEVELOPMENT",Atk14Utils::_DetermineEnvironmentByRemoteAddr($HTTP_REQUEST->getRemoteAddr())==="DEVELOPMENT" || php_sapi_name()=="cli");
 			define("PRODUCTION",!DEVELOPMENT);
 			define("TEST",false);
 		}
@@ -77,11 +77,18 @@ class Atk14Utils{
 		return $out;
 	}
 
+	static function _DetermineEnvironmentByRemoteAddr($remote_addr){
+		if(in_array($remote_addr,array("127.0.0.1","::1"))){
+			return "DEVELOPMENT";
+		}
+		return "PRODUCTION";
+	}
+
 	/**
 	 * Load all config files.
 	 *
-	 * Loads all config files (*.inc) in directory $ATK14_GLOBAL->getApplicationPath()/../config/
-	 * Also tries to use formerly prefered directory $ATK14_GLOBAL->getApplicationPath()/conf
+	 * Loads all config files (*.inc) in directory `$ATK14_GLOBAL->getApplicationPath()/../config/`
+	 * Also tries to use formerly prefered directory `$ATK14_GLOBAL->getApplicationPath()/conf`
 	 *
 	 */
 	static function LoadConfig(){
@@ -96,7 +103,7 @@ class Atk14Utils{
 
 		$dir = opendir($path);
 		while($file = readdir($dir)){
-			if(preg_match('/^(local_|)settings\.(inc|php)$/',$file)){ continue; } // this is ugly hack :( i need to delay loading of ./config/settings.php
+			if(preg_match('/^(local_|)(settings|after_initialize)\.(inc|php)$/',$file)){ continue; } // this is ugly hack :( i need to delay loading of ./config/settings.php na ./config/after_initialize.php
 			if(preg_match('/\.(inc|php)$/',$file) && is_file($path.$file)){
 				require_once($path.$file);
 			}
@@ -330,9 +337,9 @@ class Atk14Utils{
 	 *
 	 * @param string $template_dir
 	 * @param array $options
-	 * - <b>controller_name</b>
-	 * - namespace
-	 * - compile_id_salt
+	 * - **controller_name**
+	 * - **namespace**
+	 * - **compile_id_salt**
 	 *
 	 * @return Smarty instance of Smarty
 	 */
@@ -418,7 +425,7 @@ class Atk14Utils{
 	 *
 	 * Example
 	 * ```
-	 *	Atk14Utils::ErrorLog("chybi sablona _item.tpl",$http_response);
+	 *	Atk14Utils::ErrorLog("Template _item.tpl not found",$http_response);
 	 * ```
 	 *
 	 * @param string $message
@@ -456,9 +463,12 @@ class Atk14Utils{
 	 *
 	 * Result of this call
 	 * ```
-	 *	Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d"));
+	 * Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d"));
 	 * ```
-	 * will be array("a","b","c","d")
+	 * will be
+	 * ```
+	 * array("a","b","c","d")
+	 * ```
 	 *
 	 * @return array joined arrays
 	 */
@@ -567,11 +577,20 @@ class Atk14Utils{
 	 *
 	 * ```
 	 * $book = Book::FindById(5);
-	 * echo Atk14Utils::ToScalar($book); // 5
-	 *
-	 * echo Atk14Utils::ToScalar(123); // 123
-	 * echo Atk14Utils::ToScalar("Text"); // "Text"
+	 * echo Atk14Utils::ToScalar($book);
 	 * ```
+	 * Outputs `5`
+	 *
+	 * ```
+	 * echo Atk14Utils::ToScalar(123);
+	 * ```
+	 * Outputs `123`
+	 * ```
+	 * echo Atk14Utils::ToScalar("Text");
+	 * ```
+	 * Outputs `"Text"`
+	 *
+	 * @param mixed $var
 	 */
 	static function ToScalar($var){
 		if(is_scalar($var) || is_null($var)){
@@ -605,7 +624,7 @@ class Atk14Utils{
  * it loads some/path/file.php or some/path/file.inc
  *
  * @param string $file
- */ 
+ */
 function atk14_require_once($file){
 	($_file = atk14_find_file($file)) || ($_file = $file);
 	return require_once($_file);

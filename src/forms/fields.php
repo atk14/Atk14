@@ -252,7 +252,6 @@ class Field
 		$this->help_text = $options['help_text'];
 		$this->hint = $options['hint'];
 		$this->hints = $options['hints'];
-		$this->hint_in_placeholder = false;
 		$this->disabled = $options['disabled'];
 		if (is_null($options['widget'])) {
 			$widget = $this->widget;
@@ -264,12 +263,14 @@ class Field
 			$widget->attrs = forms_array_merge($widget->attrs, $extra_attrs);
 		}
 
-		// this automatically adds placeholder and required to the attributes
+		// this automatically adds required to the attributes
 		if(is_subclass_of($widget,"Input")){
 			$_attr_keys = array_keys($widget->attrs);
-			if(sizeof($this->hints)==1 && !preg_match('/</',$this->hints[0])/* no-html */ && !in_array("placeholder",$_attr_keys)){
+			if(defined("FORMS_AUTOMATICALLY_MOVE_HINTS_TO_PLACEHOLDERS") && FORMS_AUTOMATICALLY_MOVE_HINTS_TO_PLACEHOLDERS && sizeof($this->hints)==1 && !preg_match('/</',$this->hints[0])/* no-html */ && !in_array("placeholder",$_attr_keys)){
+				// This was standard behavior in older versions of the ATK14 Framework.
 				$widget->attrs["placeholder"] = $this->hints[0];
-				$this->hint_in_placeholder = true;
+				$this->hint = '';
+				$this->hints = array();
 			}
 			if($this->required && !in_array("required",$_attr_keys)){
 				$widget->attrs["required"] = "required";

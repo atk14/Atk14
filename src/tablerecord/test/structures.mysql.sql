@@ -1,6 +1,7 @@
 -- mysql
 
 -- GRANT ALL PRIVILEGES ON test.* TO 'test'@'localhost' IDENTIFIED BY 'test';
+DROP TABLE IF EXISTS test_table;
 CREATE TABLE test_table (
     id INT(11) PRIMARY KEY auto_increment,
     title char(255),
