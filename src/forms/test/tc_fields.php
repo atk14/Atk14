@@ -1054,6 +1054,50 @@ class TcFields extends TcBase
 				array('clean' => ' 31.1.2008 ', 'error' => null, 'result' => '2008-01-31'),
 				array('clean' => ' 311.1.2008 ', 'error' => 'Enter a valid date.', 'result' => null),
 			)
+		),array(
+			'field' => new DateField(array("required" => false, "max_date" => "2021-05-11", "min_date" => "2021-05-01")),
+			'params' => array(
+				array('clean' => '', 'error' => null, 'result' => null),
+				array('clean' => ' 11.5.2021 ', 'error' => null, 'result' => '2021-05-11'),
+				array('clean' => ' 1.5.2021 ', 'error' => null, 'result' => '2021-05-01'),
+				array('clean' => ' 12.5.2021 ', 'error' => 'Ensure this date is not newer than 11.5.2021.', 'result' => null),
+				array('clean' => ' 30.4.2021 ', 'error' => 'Ensure this date is not older than 1.5.2021.', 'result' => null),
+			)
+		)
+		);
+
+		$this->_check($DATA);
+	}
+
+	function test_datetimefield(){
+		$DATA = array(array(
+			'field' => new DateTimeField(array("required" => false)),
+			'params' => array(
+				array('clean' => '', 'error' => null, 'result' => null),
+				array('clean' => ' ', 'error' => null, 'result' => null),
+				array('clean' => ' 31.1.2008 ', 'error' => null, 'result' => '2008-01-31 00:00:00'),
+				array('clean' => ' 31.1.2008 12:33 ', 'error' => null, 'result' => '2008-01-31 12:33:00'),
+				array('clean' => ' 31.1.2008 77:99 ', 'error' => 'Enter a valid date, hours and minutes.', 'result' => null),
+			)
+		),array(
+			'field' => new DateTimeField(array("required" => false, "null_empty_output" => false)),
+			'params' => array(
+				array('clean' => '', 'error' => null, 'result' => ''),
+				array('clean' => ' ', 'error' => null, 'result' => ''),
+				array('clean' => ' 31.1.2008 ', 'error' => null, 'result' => '2008-01-31 00:00:00'),
+				array('clean' => ' 31.1.2008 77:99', 'error' => 'Enter a valid date, hours and minutes.', 'result' => null),
+			)
+		),array(
+			'field' => new DateTimeField(array("required" => false, "max_date" => "2021-05-11 22:39", "min_date" => "2021-05-01 12:00")),
+			'params' => array(
+				array('clean' => '', 'error' => null, 'result' => null),
+				array('clean' => ' 11.5.2021 ', 'error' => null, 'result' => '2021-05-11 00:00:00'),
+				array('clean' => ' 1.5.2021 13:00 ', 'error' => null, 'result' => '2021-05-01 13:00:00'),
+				array('clean' => ' 1.5.2021 12:00 ', 'error' => null, 'result' => '2021-05-01 12:00:00'),
+				array('clean' => ' 11.5.2021 22:39 ', 'error' => null, 'result' => '2021-05-11 22:39:00'),
+				array('clean' => ' 11.5.2021 22:40', 'error' => 'Ensure this date is not newer than 11.5.2021 22:39.', 'result' => null),
+				array('clean' => ' 1.5.2021 11:00', 'error' => 'Ensure this date is not older than 1.5.2021 12:00.', 'result' => null),
+			)
 		)
 		);
 
