@@ -29,7 +29,7 @@ class DateField extends CharField
 		if ($value == '') {
 			return array(null, $value);
 		}
-		eval('$value = Atk14Locale::'.$this->_parse_function.'($value);');
+		$value = call_user_func_array(array("Atk14Locale",$this->_parse_function),array($value));
 		if(!$value){
 			return array($this->messages['invalid'], null);
 		}
