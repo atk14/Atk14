@@ -104,7 +104,7 @@ class Atk14Robot{
 		global $ATK14_GLOBAL;
 
 		if(!$this->default_log_file){
-			$this->default_log_file = $ATK14_GLOBAL->getApplicationPath()."/../log/robots.log";
+			$this->default_log_file = $ATK14_GLOBAL->getDocumentRoot()."/log/robots.log";
 		}
 		
 		$this->dbmole = &$GLOBALS["dbmole"];
