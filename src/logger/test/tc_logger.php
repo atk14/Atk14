@@ -24,6 +24,48 @@ class TcLogger extends TcBase{
 
 		$this->_test_log_file_creation(new Logger("special_robot"),"special.log");
 		$this->_test_log_file_creation(new Logger("special_robot",array("default_log_file" => __DIR__."/log/another.log")),"special.log");
+
+		//
+
+		$log_file = __DIR__."/log/default.log";
+
+		$this->assertFalse(file_exists($log_file));
+
+		$logger = new Logger("robot",array(
+			"log_to_stdout" => true,
+		));
+		$logger->info("TEST");
+		ob_start();
+		$logger->flushAll();
+		$content = ob_get_clean();
+		$this->assertFalse(file_exists($log_file));
+		$this->assertContains("TEST",$content);
+
+		$logger = new Logger("robot",array(
+			"log_to_stdout" => true,
+			"log_to_file" => true,
+		));
+		$logger->info("TST2");
+		ob_start();
+		$logger->flushAll();
+		$content = ob_get_clean();
+		$this->assertTrue(file_exists($log_file));
+		$this->assertContains("TST2",$content);
+
+		unlink($log_file);
+
+		$logger = new Logger("robot",array(
+			"log_to_stdout" => false,
+			"log_to_file" => true,
+		));
+		$logger->info("TST3");
+		ob_start();
+		$logger->flushAll();
+		$content = ob_get_clean();
+		$this->assertTrue(file_exists($log_file));
+		$this->assertEquals("",$content);
+
+		unlink($log_file);
 	}
 
 	function test_prefixes(){
