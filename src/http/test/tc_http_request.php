@@ -483,6 +483,9 @@ class tc_http_request extends tc_base{
 		$_SERVER["HTTP_X_FORWARDED_SSL"] = "off";
 		$this->assertEquals(false,$request->sslActive());
 
+		unset($_SERVER["HTTP_X_FORWARDED_SSL"]);
+		$this->assertEquals(false,$request->sslActive());
+
 		// Forcing value
 		$request->setSslActive();
 		$this->assertEquals(true,$request->sslActive());
