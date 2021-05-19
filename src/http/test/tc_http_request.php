@@ -468,6 +468,21 @@ class tc_http_request extends tc_base{
 		$request->setServerPort(80);
 		$this->assertEquals(false,$request->sslActive());
 
+		$_SERVER["HTTP_X_FORWARDED_PROTO"] = "http";
+		$this->assertEquals(false,$request->sslActive());
+
+		$_SERVER["HTTP_X_FORWARDED_PROTO"] = "https";
+		$this->assertEquals(true,$request->sslActive());
+
+		unset($_SERVER["HTTP_X_FORWARDED_PROTO"]);
+		$this->assertEquals(false,$request->sslActive());
+
+		$_SERVER["HTTP_X_FORWARDED_SSL"] = "on";
+		$this->assertEquals(true,$request->sslActive());
+
+		$_SERVER["HTTP_X_FORWARDED_SSL"] = "off";
+		$this->assertEquals(false,$request->sslActive());
+
 		// Forcing value
 		$request->setSslActive();
 		$this->assertEquals(true,$request->sslActive());
