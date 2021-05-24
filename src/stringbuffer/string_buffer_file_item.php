@@ -48,6 +48,7 @@ class StringBufferFileItem extends StringBufferItem{
 
 	function flush(){
 		if(isset($this->_String)){ return parent::flush(); }
+		if((!defined("TEST") || !constant("TEST")) && ob_get_level()>0){ ob_end_clean(); } // The output buffering may be active. Skip this check in testing.
 		readfile($this->_Filename);
 	}
 
