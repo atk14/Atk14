@@ -37,6 +37,7 @@ class IntegerField extends Field
 
 	function clean($value)
 	{
+		$value = trim($value);
 		list($error, $value) = parent::clean($value);
 		if (!is_null($error)) {
 			return array($error, $value);
@@ -45,7 +46,7 @@ class IntegerField extends Field
 			return array(null, null);
 		}
 
-		$value = trim((string)$value);
+		$value = preg_replace("/ +/","",$value);
 		if (!preg_match("/^(0|[+-]?[1-9][0-9]*)$/",$value)) {
 			return array($this->messages['invalid'], null);
 		}
