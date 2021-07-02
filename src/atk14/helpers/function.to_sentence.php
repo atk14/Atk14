@@ -6,7 +6,7 @@
  * 
  * There is also smarty`s modifier with the same name.
  */
-function smarty_function_to_sentence($params,$template){
+function smarty_function_to_sentence($params,$template = null){
 	$params = array_merge(array(
 		"var" => array(),
 		"words_connector" => ", ",
