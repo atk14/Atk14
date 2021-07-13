@@ -53,7 +53,7 @@
  */
 class UrlFetcher {
 
-	const VERSION = "1.6.2";
+	const VERSION = "1.6.3";
 
 	/**
 	 * Authentication type
@@ -324,6 +324,9 @@ class UrlFetcher {
 		$f = stream_socket_client("$_proto://$this->_Server:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);
 
 		if(!$f){
+			if(strpos($errstr,"getaddrinfo failed")){
+				$errstr = "could not resolve host: $this->_Server ($errstr)";
+			}
 			return $this->_setError("failed to open socket: $errstr [$errno]");
 		}
 		stream_set_blocking($f,0);

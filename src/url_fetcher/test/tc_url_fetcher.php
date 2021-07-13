@@ -253,4 +253,12 @@ class tc_url_fetcher extends tc_base{
 			$this->assertEquals($item["mime_type"],$data["mime_type"]);
 		}
 	}
+
+	function test_error_unresolvable_domain(){
+		$f = new UrlFetcher("http://www.nonsence-nonsence-nonsence-nonsence.com/data.txt");
+		set_error_handler(function() { /* ignore errors */ });
+		$this->assertEquals(false,$f->found());
+		restore_error_handler();
+		$this->assertEquals("failed to open socket: could not resolve host: www.nonsence-nonsence-nonsence-nonsence.com (php_network_getaddresses: getaddrinfo failed: Name or service not known) [0]",$f->getErrorMessage());
+	}
 }
