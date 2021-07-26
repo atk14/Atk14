@@ -77,9 +77,10 @@ class Atk14Session{
 	 *
 	 * @param string $name
 	 * @param mixed $value
+	 * @param int $expiration number of seconds after which the value expires
 	 */
-	function setValue($name,$value){
-		$this->_SessionStorer->writeValue($name,$value);
+	function setValue($name,$value,$expiration=null){
+		$this->_SessionStorer->writeValue($name,$value, $expiration);
 	}
 
 	/**
@@ -88,8 +89,9 @@ class Atk14Session{
 	 * {@see SessionStorer->writeValue()}
 	 * @param string $name
 	 * @param mixed $value
+	 * @param int $expiration number of seconds after which the value expires
 	 */
-	function s($name,$value){ return $this->setValue($name,$value); }
+	function s($name,$value,$expiration=null){ return $this->setValue($name,$value,$expiration); }
 
 	/**
 	 * Get value from a session
