@@ -9,6 +9,8 @@ require(__DIR__."/../modifier.count.php");
 require(__DIR__."/../modifier.slugify.php");
 require(__DIR__."/../modifier.format_number.php");
 require(__DIR__."/../block.javascript_tag.php");
+require_once(__DIR__."/../block.no_spam.php");
+require_once(__DIR__."/../modifier.no_spam.php");
 
 require(__DIR__."/../../../functions.php");
 require(__DIR__."/../block.replace_html.php");
