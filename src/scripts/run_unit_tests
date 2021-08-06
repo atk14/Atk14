@@ -87,6 +87,7 @@ foreach(array(
 		"../vendor/phpunit" => "../autoload.php",
 		"$HOME/.composer/vendor/phpunit" => "../autoload.php",
 		"$HOME/.config/composer/vendor/phpunit" => "../autoload.php",
+		"$HOME/.phpenv/versions/".preg_replace('/^(\d+\.\d+)\..*/','\1',phpversion())."/composer/vendor/phpunit" => "../autoload.php", // "7.2.34-21+ubuntu16.04.1+deb.sury.org+1" -> "7.2"
 		"/usr/share/php/PHPUnit" => "Autoload.php"
 	) as $dir => $autoload) {
 	if(file_exists($dir)) {
