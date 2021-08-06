@@ -1,5 +1,10 @@
 # vim:ts=2:sw=2:et
-dist: trusty
+os: linux
+
+# Partner Queue Solution, no credits are consumed
+arch: ppc64le
+
+dist: xenial
 
 language: php
 
@@ -11,32 +16,30 @@ addons:
   postgresql: "9.6"
 
 php:
-  - 5.4
-  - 5.5
   - 5.6
   - 7.0
   - 7.1
   - 7.2
   - 7.3
   - 7.4
-  - nightly
+  - 8.0
 
 before_install:
-  - echo 'en_US.UTF-8 UTF-8' | sudo tee --append /var/lib/locales/supported.d/local
-  - echo 'cs_CZ.UTF-8 UTF-8' | sudo tee --append /var/lib/locales/supported.d/local
-  - sudo locale-gen
+  - sudo locale-gen en_US.UTF-8
+  - sudo locale-gen cs_CZ.UTF-8
+  - sudo update-locale
   - locale -a
   - composer global require "phpunit/phpunit=~4.8|~5.7|~6.0"
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
-
-before_script:
-  - psql -c "CREATE DATABASE test;" -U postgres
-  - psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
-  - psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres
-  - mysql -e "CREATE DATABASE test;" -uroot
-  - mysql -e "GRANT ALL PRIVILEGES ON test.* TO 'test'@'localhost' IDENTIFIED BY 'test';" -uroot
-  - mysql -e "GRANT ALL PRIVILEGES ON test.* TO 'test'@'127.0.0.1' IDENTIFIED BY 'test';" -uroot
-  - mysql -e "GRANT ALL PRIVILEGES ON test.* TO 'test'@'::1' IDENTIFIED BY 'test';" -uroot
+  - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres
+  - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
+  - sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres
+  - sudo mysql -u root -e "USE mysql; UPDATE user SET Grant_priv='Y' WHERE User='root';" # What? root does not have Grant privilege?
+  - sudo mysql -u root -e "FLUSH PRIVILEGES;"
+  - sudo mysql -u root -e "CREATE DATABASE test;"
+  - sudo mysql -u root -e "CREATE USER test@localhost IDENTIFIED BY 'test';"
+  - sudo mysql -u root -e "GRANT ALL PRIVILEGES ON test.* TO test@localhost;"
+  - sudo mysql -u root -e "FLUSH PRIVILEGES;"
 
 script:
   - ./src/scripts/run_all_tests_on_atk14 && echo "EVERYTHING IS FINE"
