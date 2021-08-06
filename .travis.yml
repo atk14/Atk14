@@ -2,9 +2,11 @@
 os: linux
 
 # Partner Queue Solution, no credits are consumed
-arch: ppc64le
+#arch: ppc64le
+# ... but on the ppc64le, testing in PHP5.4 and PHP5.5 is not possible
+arch: amd64
 
-dist: xenial
+dist: precise
 
 language: php
 
@@ -16,13 +18,9 @@ addons:
   postgresql: "9.6"
 
 php:
-  - 5.6
-  - 7.0
-  - 7.1
-  - 7.2
-  - 7.3
-  - 7.4
-  - 8.0
+  - 5.3
+  - 5.4
+  - 5.5
 
 before_install:
   - sudo locale-gen en_US.UTF-8
@@ -31,6 +29,7 @@ before_install:
   - locale -a
   - composer global require "phpunit/phpunit=~4.8|~5.7|~6.0"
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
+  - sudo service postgresql restart # What? Postgresql is not running?
   - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres
   - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
   - sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres
