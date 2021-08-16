@@ -107,12 +107,18 @@ function &dbmole_connection(&$dbmole){
 			break;
 
 		case "sqlsrv":
+			$d += array(
+				"charset" => DEFAULT_CHARSET,
+			);
 			$serverName = $d["host"];
 			if($d["port"]){ $serverName .= ", $d[port]"; }
+			$charset = strtoupper($d["charset"]);
+			$charset = $charset=="UTF-8" ? "UTF8" : $charset;
 			$connectionInfo = array(
 				"Database" => $d["database"],
 				"UID" => $d["username"],
 				"PWD" => $d["password"],
+				"CharacterSet" => $d["charset"],
 			);
 			$out = sqlsrv_connect($serverName,$connectionInfo);
 			break;
