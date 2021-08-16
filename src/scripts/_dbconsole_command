@@ -20,23 +20,28 @@ if(!$d){
 	exit(1);
 }
 
+$e = array();
+foreach($d as $k => $v){
+	$e[$k] = escapeshellarg($v);
+}
+
 switch($d["adapter"]){
 	case "postgresql":
 		$host = $host_gui = $port = $port_gui = "";
 		if($d["host"]){
-			$host = " -h $d[host]";
-			$port = " -p $d[port]";
+			$host = " -h $e[host]";
+			$port = " -p $e[port]";
 			$host_gui = " host=$d[host]";
 			$port_gui = " port=$d[port]";
 		}
 		if( $gui ) {
-			$cmd = "pgadmin3 -qc 'dbname=$d[database] user=$d[username]$host_gui$port_gui'";
+			$cmd = "pgadmin3 -qc ".escapeshellarg("dbname=$d[database] user=$d[username]$host_gui$port_gui");
 		} else {
-			$cmd = "psql -U $d[username] $d[database]$host$port";
+			$cmd = "psql -U $e[username] $e[database]$host$port";
 		}
 		break;
 	case "mysql":
-		$cmd = "mysql --user=$d[username] --host=$d[host] --port=$d[port] --host=$d[host] --password=$d[password] $d[database]";
+		$cmd = "mysql --user=$e[username] --host=$e[host] --port=$e[port] --host=$e[host] --password=$e[password] $e[database]";
 		break;
 	default:
 		exit(1);
