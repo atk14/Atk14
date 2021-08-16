@@ -106,6 +106,17 @@ function &dbmole_connection(&$dbmole){
 			$out = pg_connect("dbname=$d[database] ".($d["host"] ? " host=$d[host]" : "").($d["port"] ? " port=$d[port]" : "")." user=$d[username] password=$d[password]");
 			break;
 
+		case "sqlsrv":
+			$serverName = $d["host"];
+			if($d["port"]){ $serverName .= ", $d[port]"; }
+			$connectionInfo = array(
+				"Database" => $d["database"],
+				"UID" => $d["username"],
+				"PWD" => $d["password"],
+			);
+			$out = sqlsrv_connect($serverName,$connectionInfo);
+			break;
+
 		case "oracle":
 			// TODO
 			break;
