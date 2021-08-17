@@ -24,7 +24,7 @@ if(!$d){
 
 $e = array();
 foreach($d as $k => $v){
-	$e[$k] = escapeshellarg($v);
+	$e[$k] = is_string($v) ? escapeshellarg($v) : $v;
 }
 
 switch($d["adapter"]){
