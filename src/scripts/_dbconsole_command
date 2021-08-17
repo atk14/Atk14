@@ -45,6 +45,12 @@ switch($d["adapter"]){
 	case "mysql":
 		$cmd = "mysql --user=$e[username] --host=$e[host] --port=$e[port] --host=$e[host] --password=$e[password] $e[database]";
 		break;
+	case "sqlsrv":
+		$host = "$d[host]";
+		if($d["port"]){ $host .= ",".$d["port"]; }
+		$host = escapeshellarg($host);
+		$cmd = "sqlcmd -S $host -U $e[username] -d $e[database] -P $e[password]";
+		break;
 	default:
 		exit(1);
 }
