@@ -1014,6 +1014,34 @@ class TcFields extends TcBase
 					),
 				)
 			),
+			array(
+				'field' => new MultipleChoiceField(array('choices'=>array('1'=>'1', '2'=>'2', '3'=>'3'), 'required'=>true, 'max_choice_items' => 1)),
+				'params' => array(
+					array(
+						'clean'=>'', 'error'=>'Please, choose the right options.', 'result'=>null
+					),
+					array(
+						'clean'=>array('3'), 'error'=>null, 'result'=>array('3')
+					),
+					array(
+						'clean'=>array('1','2','3'), 'error'=>'Please, select only one item.', 'result'=>null
+					),
+				)
+			),
+			array(
+				'field' => new MultipleChoiceField(array('choices'=>array('1'=>'1', '2'=>'2', '3'=>'3'), 'required'=>false, 'max_choice_items' => 2)),
+				'params' => array(
+					array(
+						'clean'=>'', 'error'=>null, 'result'=>array()
+					),
+					array(
+						'clean'=>array('1','3'), 'error'=>null, 'result'=>array('1','3')
+					),
+					array(
+						'clean'=>array('1','2','3'), 'error'=>'Please, select up to 2 items.', 'result'=>null
+					),
+				)
+			)
 		);
 
 		$this->_check($DATA);

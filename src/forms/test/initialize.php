@@ -13,3 +13,5 @@ require_once("../../xmole/xmole.php");
 require_once("./custom_fields/url_field.php");
 require_once("../../translate/load.php");
 require_once("../../string4/load.php");
+
+setlocale(LC_NUMERIC,"C"); // we need to display float like 123.456
