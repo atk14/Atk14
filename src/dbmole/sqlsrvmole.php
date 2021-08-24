@@ -36,13 +36,6 @@ class SqlsrvMole extends DbMole {
 		$out = array();
 
 		while($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)){
-			foreach($row as $k => $v){
-				if(is_a($v,"DateTime")){
-					$row[$k] = $v->format("Y-m-d H:i:s");
-				}elseif(is_object($v)){
-					$row[$k] = (string)$v;
-				}
-			}
 			$out[] = $row;
 		}
 		sqlsrv_free_stmt($result);

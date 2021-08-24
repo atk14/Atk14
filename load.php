@@ -119,6 +119,7 @@ function &dbmole_connection(&$dbmole){
 				"UID" => $d["username"],
 				"PWD" => $d["password"],
 				"CharacterSet" => $d["charset"],
+				"ReturnDatesAsStrings" => true,
 			);
 			$out = sqlsrv_connect($serverName,$connectionInfo);
 			break;
