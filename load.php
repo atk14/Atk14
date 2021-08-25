@@ -80,6 +80,9 @@ function &dbmole_connection(&$dbmole){
 	$out = null;
 
 	if(!$d = $ATK14_GLOBAL->getDatabaseConfig($dbmole->getConfigurationName())){
+		if(!function_exists("custom_database_connection")){
+			throw new Exception(sprintf("Don't know how to connect to %s database %s",$dbmole->getDatabaseType(),$dbmole->getConfigurationName()));
+		}
 		// make sure that the function custom_database_connection() exists somewhere within your application
 		return custom_database_connection($dbmole);
 	}
