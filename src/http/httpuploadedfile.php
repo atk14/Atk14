@@ -233,15 +233,15 @@ class HTTPUploadedFile{
 	 *
 	 * You can specify custom filename, or method generates unique filename.
 	 *
-	 * <code>
+	 * ```
 	 * $filename = $file->moveToTemp();
 	 * $filename = $file->moveToTemp("my_image.jpg");
 	 * $filename = $file->moveToTemp("/path/to/a/disrectory/");
-	 * </code>
+	 * ```
 	 *
 	 * @param string $filename custom filename
-	 * @uses @moveTo()
-	 * @return mixed, (string) filename or false when error occurred
+	 * @uses moveTo()
+	 * @return mixed filename as string or false when error occurred
 	 */
 	function moveToTemp($filename = ""){
 		if(!$filename){
