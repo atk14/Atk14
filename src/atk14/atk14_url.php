@@ -252,12 +252,22 @@ class Atk14Url{
 	 * ```
 	 *
 	 * ```
-	 * echo Atk14Url::BuildLink($params, ["with_hostname" => false, "ssl" => true]); // "/en/products/detail/?id=10"
-	 * echo Atk14Url::BuildLink($params, ["with_hostname" => true, "ssl" => true]); // "https://www.bestthings.com/en/products/detail/?id=10"
-	 * echo Atk14Url::BuildLink($params, ["with_hostname" => "supergadgets.ie", "ssl" => true]); // "https://supergadgets.ie/en/products/detail/?id=10"
-	 *
-	 * echo Atk14Url::BuildLink($params, ["basic_auth_string" => "preview", "basic_auth_password" => "s3cr3t"]); // "http://preview:s3cr3t@www.bestthings.com/en/products/detail/?id=10"
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => false, "ssl" => true]);
 	 * ```
+	 * returns `/en/products/detail/?id=10`
+	 * ```
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => true, "ssl" => true]);
+	 * ```
+	 * returns `https://www.bestthings.com/en/products/detail/?id=10`
+	 * ```
+	 * echo Atk14Url::BuildLink($params, ["with_hostname" => "supergadgets.ie", "ssl" => true]);
+	 * ```
+	 * returns `https://supergadgets.ie/en/products/detail/?id=10`
+	 *
+	 * ```
+	 * echo Atk14Url::BuildLink($params, ["basic_auth_string" => "preview", "basic_auth_password" => "s3cr3t"]);
+	 * ```
+	 * returns `http://preview:s3cr3t@www.bestthings.com/en/products/detail/?id=10`
 	 *
 	 *
 	 * @param array $params
