@@ -432,7 +432,7 @@ class Logger{
 	 *
 	 * @param integer|string $level
 	 * @return string color hex code
-	 * @see $_colors
+	 * @see self::$_colors
 	 */
 	function level_to_color($level){
 		if(is_numeric($level)){ $level = $this->level_to_str($level); }
@@ -565,7 +565,7 @@ class Logger{
 	/**
 	 * Alias to flush_all
 	 *
-	 * @return 0
+	 * @return int 0
 	 * @see flush_all()
 	 */
 	function flushAll(){ return $this->flush_all(); }

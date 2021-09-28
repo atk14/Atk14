@@ -99,7 +99,7 @@ class SqlsrvMole extends DbMole {
 			foreach($errs as $err){
 				$messages[] = "$err[message] (SQLSTATE=$err[SQLSTATE], code=$err[code])";
 			}
-			return "sqlsrv_errors: ".join(", ",$message);
+			return "sqlsrv_errors: ".join(", ",$messages);
 		}
 	}
 
