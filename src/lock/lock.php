@@ -105,9 +105,15 @@ class Lock{
 				exit;
 			}
 		}
-		$f = fopen($lock_file,"w");
+
 		$_string_to_write = time()." ".$my_pid."\n";
-		$_bytes_written = fwrite($f,$_string_to_write,strlen($_string_to_write));
+		$_bytes_written = 0;
+		$f = fopen($lock_file,"w");
+		if(flock($f, LOCK_EX)){
+			$_bytes_written = fwrite($f,$_string_to_write,strlen($_string_to_write));
+			fflush($f);
+			flock($f, LOCK_UN);
+		}
 		fclose($f);
 
 		if(strlen($_string_to_write)!=$_bytes_written){
