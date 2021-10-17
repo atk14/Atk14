@@ -470,7 +470,6 @@ class Logger{
 		$_log_file_existed = file_exists($this->_log_file);
 
 		if($this->_log_to_file){
-			$fp = fopen($this->_log_file,"a");
 		}
 
 		if(!$this->_notify_level_reached){
@@ -481,6 +480,8 @@ class Logger{
 				}
 			}
 		}
+
+		$fp = null;
 
 		foreach($this->_log_store as $rec){
 
@@ -495,6 +496,9 @@ class Logger{
 				echo $str;
 			}
 			if($this->_log_to_file){
+				if(!$fp){
+					$fp = fopen($this->_log_file,"a");
+				}
 				fwrite($fp,$str,strlen($str));
 			}
 
@@ -503,7 +507,7 @@ class Logger{
 			}
 		}
 
-		if($this->_log_to_file){
+		if($fp){
 			fclose($fp);
 		}
 
