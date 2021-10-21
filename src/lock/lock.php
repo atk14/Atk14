@@ -172,7 +172,7 @@ class Lock{
 	*	@param logger &$logger
 	*	@return integer									vzdy 0
 	*/
-	static function Unlock($lock_name = "",&$logger){
+	static function Unlock($lock_name = "",&$logger=null){
 		$lock_name = Lock::_ValidLockName($lock_name);
 		$lock_path = LOCK_DIR;
 		$lock_file = "$lock_path/$lock_name";
