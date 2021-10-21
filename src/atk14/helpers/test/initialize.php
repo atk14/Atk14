@@ -1,5 +1,6 @@
 <?php
 define("TEST",true);
+setlocale(LC_NUMERIC,"C");
 require(__DIR__."/../../../string4/load.php");
 require(__DIR__."/../../../translate/load.php");
 require(__DIR__."/../function.to_json.php");
