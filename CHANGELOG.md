@@ -2,6 +2,23 @@
 
 All notable changes to ATK14 Framework will be documented in this file.
 
+## [1.7] - 2021-10-24
+
+* d095f72 - [Lock] Using flock() before writing to the lock_file
+* 4d55a0b - [Atk14] Added hook method Atk14Mailer::_before_send()
+* ec0d123 - [TableRecord_ListerItem] Added method TableRecord_ListerItem::toArray()
+* 30b3c5f - [TableRecord] reading structure in sqlsrv tables
+* 7db8112 - [Forms] Added <span class="label__text"></span> around text in widget RadioInput
+* 04631dc - [Atk14] An exception is thrown when the configuration for the requested database connection is missing
+* 0a36562, c903100, 8189bdb, 3b99e74 - [DbMole, SqlsrvMole] Added support for Microsoft SQL Server
+* 9ce19c7 - [Atk14] Helper no_spam improved - added options class, title and text
+* 1e3f8d3, 0c63d85 - [Http] SSL is detected according to $_SERVER["HTTP_X_FORWARDED_SSL"] and $_SERVER["HTTP_X_FORWARDED_PROTO"]
+* 49f45e2 - [Atk14] Migration log is being written to a log file (log/migration.log)
+* e9e71a8 - [Logger] Added new option log_to_file (by default it is true, when log_to_stdout is false)
+* 1b4f7a6 - [Forms] Added new options to DateField: max_date and min_date
+* 90cdcd0 - [miniYAML] miniYAML::Load() has new option "nullable" (it is true by default) to consider strings null and NULL as true NULL
+* 4cb8d68 - [Files] Method Files::GetImageSize() accepts filename as the first parameter, but obsolete usage is preserved; Added method Files::GetImageSizeByContent(); It gonna be BC BREAK!
+
 ## [1.6] - 2021-02-12
 
 ### BC BREAKS
