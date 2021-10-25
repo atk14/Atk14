@@ -37,9 +37,11 @@ class TableRecord extends inobj {
 	 *
 	 * @var array
 	 */
-	static protected $_TableStructuresCache;
+	static protected $_TableStructuresCache = array();
 
-	static protected $_TableStructureKeysCache;
+	static protected $_TableStructureKeysCache = array();
+
+	static protected $_IdFieldTypesCache = array();
 
 	/**
 	 * Database interface.
@@ -85,14 +87,12 @@ class TableRecord extends inobj {
 	protected $_IdFieldName = "id";
 
 	/**
-	 * Type of primary key column.
-	 *
-	 * By default integer is used but can be changed in constructor.
+	 * Type of primary key column if autodection is not accurate enough
 	 *
 	 * @var string
 	 * @access private
 	 */
-	protected $_IdFieldType = null; // "integer" or "string"
+	protected $_IdFieldTypeForce = null; // "integer" or "string"
 
 	/**
 	 * Columns which values shouldn't be read in during instantiation of object.
@@ -164,7 +164,7 @@ class TableRecord extends inobj {
 		self::$_DoNotReadValues = $options["do_not_read_values"];
 
 		$this->_IdFieldName = $options["id_field_name"];
-		$this->_IdFieldType = $options["id_field_type"];
+		$this->_IdFieldTypeForce = $options["id_field_type"];
 
 		if(!isset($DEFAULT_OPTIONS[$class_name])){
 			// things may be a little faster next time
@@ -1611,12 +1611,18 @@ class TableRecord extends inobj {
 	}
 
 	protected function _getIdFieldType(){
-		if(is_null($this->_IdFieldType)){
+		if(!is_null($this->_IdFieldTypeForce)){
+			return $this->_IdFieldTypeForce;
+		}
+
+		$cache_key = $this->dbmole->getDatabaseType().".".$this->dbmole->getConfigurationName().".".$this->getTableName();
+		if(!isset(self::$_IdFieldTypesCache[$cache_key])){
 			// autodetection
 			$structure = $this->_getTableStructure();
-			$this->_IdFieldType = preg_match('/char/i',$structure[$this->_IdFieldName]) ? "string" : "integer";
+			self::$_IdFieldTypesCache[$cache_key] = preg_match('/char/i',$structure[$this->_IdFieldName]) ? "string" : "integer";
 		}
-		return $this->_IdFieldType;
+
+		return self::$_IdFieldTypesCache[$cache_key];
 	}
 
 	/**
