@@ -64,7 +64,7 @@ class TcCache extends TcBase{
 		$cached_r2b = Cache::Get("TestTable",$record2);
 		$this->assertEquals(array($record2->getId() => $record2->getId()),Cache::CachedIds("TestTable"));
 
-		$this->assertEquals(array($record2, null),Cache::GetObjectCacher("TestTable")->getCached( array($record2->getId(), $record1->getId() ) ));
+		$this->assertArrayOfObjectsEquals(array($record2, null),Cache::GetObjectCacher("TestTable")->getCached( array($record2->getId(), $record1->getId() ) ));
 		$cached_r1b = Cache::Get("TestTable",$record1);
 		$this->assertEquals(array($cached_r2b, $cached_r1b),Cache::GetObjectCacher("TestTable")->getCached( array($record2->getId(), $record1->getId() ) ));
 		Cache::Clear("TestTable",$record2);
@@ -164,19 +164,32 @@ class TcCache extends TcBase{
 		Cache::Prepare("Article",123);
 
 		$this->assertEquals(array(),$cacher->getCached());
-		$this->assertEquals(array(123 => $a123),$cacher->getCached(true));
+		$this->assertArrayOfObjectsEquals(array(123 => $a123),$cacher->getCached(true));
 
-		$this->assertEquals(array($a123,null,null),$cacher->getCached(array(123,124,125)));
+		$this->assertArrayOfObjectsEquals(array($a123,null,null),$cacher->getCached(array(123,124,125)));
 
 		Cache::Prepare("Article",124);
 
-		$this->assertEquals(array($a123,null,null),$cacher->getCached(array(123,124,125)));
-		$this->assertEquals(array($a123,$a124,null),$cacher->getCached(array(123,124,125),true));
+		$this->assertArrayOfObjectsEquals(array($a123,null,null),$cacher->getCached(array(123,124,125)));
+		$this->assertArrayOfObjectsEquals(array($a123,$a124,null),$cacher->getCached(array(123,124,125),true));
 
 		Cache::Get("Article",125);
 
-		$this->assertEquals(array($a123,$a124,$a125),$cacher->getCached(array(123,124,125)));
-		$this->assertEquals(array(123 => $a123,124 => $a124,125 => $a125),$cacher->getCached());
+		$this->assertArrayOfObjectsEquals(array($a123,$a124,$a125),$cacher->getCached(array(123,124,125)));
+		$this->assertArrayOfObjectsEquals(array(123 => $a123,124 => $a124,125 => $a125),$cacher->getCached());
 	}
 
+	function assertArrayOfObjectsEquals($exp_ar,$ar,$message = ""){
+		//$this->assertEquals($exp_ar,$ar,$message); // TODO: this should be enough, but it actually fails!
+
+		$exp_classes = array_map(function($o){ return $o ? get_class($o) : null; },$exp_ar);
+		$classes = array_map(function($o){ return $o ? get_class($o) : null; },$ar);
+		$this->assertEquals($exp_classes,$classes,$message);
+
+		$exp_ids = array_map(function($o){ return $o ? $o->getId() : null; },$exp_ar);
+		$ids = array_map(function($o){ return $o ? $o->getId() : null; },$ar);
+		$this->assertEquals($exp_ids,$ids,$message);
+
+		$this->assertEquals(array_keys($exp_ar),array_keys($ar),$message);
+	}
 }
