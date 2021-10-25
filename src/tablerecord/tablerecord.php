@@ -163,11 +163,10 @@ class TableRecord extends inobj {
 		$this->_SequenceName = $options["sequence_name"];
 		self::$_DoNotReadValues = $options["do_not_read_values"];
 
-		$structure = $this->_getTableStructure();
-
 		$this->_IdFieldName = $options["id_field_name"];
 		if(is_null($options["id_field_type"])){
 			// autodetection
+			$structure = $this->_getTableStructure();
 			$options["id_field_type"] = preg_match('/char/i',$structure[$this->_IdFieldName]) ? "string" : "integer";
 		}
 		$this->_IdFieldType = $options["id_field_type"];
