@@ -12,6 +12,9 @@ class TcStripHtml extends TcBase {
 					color: red;
 				}
 			</style>
+			<!--
+				<em>Inside a comment...</em>
+			-->
 			<h1>Lorem<sup>*</sup> <small>Ipsum</small></h1>
 			<noframes>Sorry no frames!</noframes>
 			<p>
