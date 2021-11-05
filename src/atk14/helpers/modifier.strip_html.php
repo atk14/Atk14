@@ -1,5 +1,5 @@
 <?php
-function smarty_modifier_strip_tags($content){
+function smarty_modifier_strip_html($content){
 	$inline_elements = array(
 		"a",
 		"abbr",
