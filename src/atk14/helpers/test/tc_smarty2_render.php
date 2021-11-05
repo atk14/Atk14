@@ -38,6 +38,12 @@ class TcSmarty2Render extends TcBase{
 }
 
 function smarty_function_assert($params, $template) {
+	$params += [
+		'smarty3' => null,
+		'var' => null,
+		'message' => null,
+		'comment' => null,
+	];
 	if($params['smarty3']) {
 		return;
 	}

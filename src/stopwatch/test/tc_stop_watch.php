@@ -1,5 +1,6 @@
 <?php
 class TcStopWatch extends TcBase{
+
 	function test(){
 		$sw = new StopWatch();
 
@@ -9,7 +10,7 @@ class TcStopWatch extends TcBase{
 		usleep(10);
 		$sw->stop("short");
 		
-		usleep(10000);
+		usleep(15000);
 
 		$sw->stop();
 

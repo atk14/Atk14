@@ -80,7 +80,7 @@ class RadioInput
 		}
 
 		if($this->bootstrap4){
-			return strtr('<div%wrap_attrs%>%tag% <label%label_attrs%>%label%</label></div>',array(
+			return strtr('<div%wrap_attrs%>%tag% <label%label_attrs%><span class="label__text">%label%</span></label></div>',array(
 				"%tag%" => $this->tag(),
 				"%wrap_attrs%" => flatatt($this->wrap_attrs),
 				"%label_attrs%" => flatatt($this->label_attrs),

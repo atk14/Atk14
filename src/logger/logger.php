@@ -432,7 +432,7 @@ class Logger{
 	 *
 	 * @param integer|string $level
 	 * @return string color hex code
-	 * @see $_colors
+	 * @see self::$_colors
 	 */
 	function level_to_color($level){
 		if(is_numeric($level)){ $level = $this->level_to_str($level); }
@@ -470,7 +470,6 @@ class Logger{
 		$_log_file_existed = file_exists($this->_log_file);
 
 		if($this->_log_to_file){
-			$fp = fopen($this->_log_file,"a");
 		}
 
 		if(!$this->_notify_level_reached){
@@ -481,6 +480,8 @@ class Logger{
 				}
 			}
 		}
+
+		$fp = null;
 
 		foreach($this->_log_store as $rec){
 
@@ -495,6 +496,9 @@ class Logger{
 				echo $str;
 			}
 			if($this->_log_to_file){
+				if(!$fp){
+					$fp = fopen($this->_log_file,"a");
+				}
 				fwrite($fp,$str,strlen($str));
 			}
 
@@ -503,7 +507,7 @@ class Logger{
 			}
 		}
 
-		if($this->_log_to_file){
+		if($fp){
 			fclose($fp);
 		}
 
@@ -565,7 +569,7 @@ class Logger{
 	/**
 	 * Alias to flush_all
 	 *
-	 * @return 0
+	 * @return int 0
 	 * @see flush_all()
 	 */
 	function flushAll(){ return $this->flush_all(); }

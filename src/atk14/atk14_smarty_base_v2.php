@@ -95,7 +95,7 @@ class Atk14SmartyBase extends Smarty{
 
 	function getTemplateVars($key = null){
 		if(isset($key)){
-			return $this->_tpl_vars[$key];
+			return isset($this->_tpl_vars[$key]) ? $this->_tpl_vars[$key] : null;
 		}
 		return $this->_tpl_vars;
 	}

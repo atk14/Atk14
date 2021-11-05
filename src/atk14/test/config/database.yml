@@ -3,15 +3,30 @@ development:
   host: 127.0.0.1
   username: test
   password: test
+  create_command:
+    - CREATE DATABASE test;
+    - \c test
+    - CREATE EXTENSION unaccent;
+    - \c template1
 
 test:
   database: test
   host: 127.0.0.1
   username: test
   password: test
+  create_command:
+    - CREATE DATABASE test;
+    - \c test
+    - CREATE EXTENSION unaccent;
+    - \c template1
 
 production:
   database: test
   host: 127.0.0.1
   username: test
   password: test
+  create_command:
+    - CREATE DATABASE test;
+    - \c test
+    - CREATE EXTENSION unaccent;
+    - \c template1

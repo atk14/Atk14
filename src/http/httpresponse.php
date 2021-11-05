@@ -358,7 +358,7 @@ class HTTPResponse{
 	 *
 	 * ```
 	 * $gmdate = gmdate("D, d M Y H:i:s \G\M\T");
-	 * $response->setHeader("Last-Modified",$gmdate");
+	 * $response->setHeader("Last-Modified",$gmdate);
 	 * $response->setHeader("Last-Modified: $gmdate");
 	 * ```
 	 *

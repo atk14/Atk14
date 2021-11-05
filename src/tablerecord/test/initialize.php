@@ -1,5 +1,8 @@
 <?php
 // struktura testovaci databaze je k dispozici v souboru testing_structures.sql
+
+setlocale(LC_NUMERIC,"C"); // we need to display float like 123.456
+
 require("../../dbmole/dbmole.php");
 require("../../dbmole/pgmole.php");
 require("../../dbmole/mysqlmole.php");

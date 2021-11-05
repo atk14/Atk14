@@ -37,9 +37,11 @@ class TableRecord extends inobj {
 	 *
 	 * @var array
 	 */
-	static protected $_TableStructuresCache;
+	static protected $_TableStructuresCache = array();
 
-	static protected $_TableStructureKeysCache;
+	static protected $_TableStructureKeysCache = array();
+
+	static protected $_IdFieldTypesCache = array();
 
 	/**
 	 * Database interface.
@@ -85,14 +87,12 @@ class TableRecord extends inobj {
 	protected $_IdFieldName = "id";
 
 	/**
-	 * Type of primary key column.
-	 *
-	 * By default integer is used but can be changed in constructor.
+	 * Type of primary key column if autodection is not accurate enough
 	 *
 	 * @var string
 	 * @access private
 	 */
-	protected $_IdFieldType = "integer";
+	protected $_IdFieldTypeForce = null; // "integer" or "string"
 
 	/**
 	 * Columns which values shouldn't be read in during instantiation of object.
@@ -163,14 +163,8 @@ class TableRecord extends inobj {
 		$this->_SequenceName = $options["sequence_name"];
 		self::$_DoNotReadValues = $options["do_not_read_values"];
 
-		$structure = $this->_getTableStructure();
-
 		$this->_IdFieldName = $options["id_field_name"];
-		if(is_null($options["id_field_type"])){
-			// autodetection
-			$options["id_field_type"] = preg_match('/char/i',$structure[$this->_IdFieldName]) ? "string" : "integer";
-		}
-		$this->_IdFieldType = $options["id_field_type"];
+		$this->_IdFieldTypeForce = $options["id_field_type"];
 
 		if(!isset($DEFAULT_OPTIONS[$class_name])){
 			// things may be a little faster next time
@@ -528,7 +522,7 @@ class TableRecord extends inobj {
 			return Cache::Get(get_class($this),$id);
 		}
 
-		settype($id,$this->_IdFieldType);
+		settype($id,$this->_getIdFieldType());
 		$this->_Id = $id;
 		if(!$this->_readValues()){
 			return null;
@@ -1034,7 +1028,7 @@ class TableRecord extends inobj {
 		foreach($ids as $_key => $id){
 			if(is_object($id)){ $id = $id->getId(); }
 			if(!isset($id)){ continue; } // v poli se muze klidne nachazet nejaky null
-			settype($id,$this->_IdFieldType);
+			settype($id,$this->_getIdFieldType());
 			$bind_ar[":id$i"] = $id;
 			$i++;
 		}
@@ -1614,6 +1608,21 @@ class TableRecord extends inobj {
 	function _readTableStructure($options = array()){
 		$accessor_class = "TableRecord_DatabaseAccessor_".$this->dbmole->getDatabaseType();
 		return $accessor_class::ReadTableStructure($this,$options);
+	}
+
+	protected function _getIdFieldType(){
+		if(!is_null($this->_IdFieldTypeForce)){
+			return $this->_IdFieldTypeForce;
+		}
+
+		$cache_key = $this->dbmole->getDatabaseType().".".$this->dbmole->getConfigurationName().".".$this->getTableName();
+		if(!isset(self::$_IdFieldTypesCache[$cache_key])){
+			// autodetection
+			$structure = $this->_getTableStructure();
+			self::$_IdFieldTypesCache[$cache_key] = preg_match('/char/i',$structure[$this->_IdFieldName]) ? "string" : "integer";
+		}
+
+		return self::$_IdFieldTypesCache[$cache_key];
 	}
 
 	/**

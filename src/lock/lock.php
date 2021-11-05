@@ -46,6 +46,8 @@ class Lock{
 			$output .= "file $lock_file exists!\n";
 			$f = fopen($lock_file,"r");
 			$stat = fread($f,1024);
+			fclose($f);
+			$stat = trim($stat);
 			$stat_pid = false;
 			if(preg_match('/^([0-9]{1,}) ([0-9]{1,})$/',$stat,$pieces)){
 				$stat = $pieces[1];
@@ -100,16 +102,21 @@ class Lock{
 				$logger->info($output);
 				$logger->flush_all();
 				unset($logger);
-				exit; 
+				exit;
 			}
 		}
+
+		$_string_to_write = time()." ".$my_pid."\n";
+		$_bytes_written = 0;
 		$f = fopen($lock_file,"w");
-		$_string_to_write = time()." ".$my_pid;
-		$_bytes_written = fwrite($f,$_string_to_write,strlen($_string_to_write));
+		if(flock($f, LOCK_EX)){
+			$_bytes_written = fwrite($f,$_string_to_write,strlen($_string_to_write));
+			fflush($f);
+			flock($f, LOCK_UN);
+		}
 		fclose($f);
 
 		if(strlen($_string_to_write)!=$_bytes_written){
-			$stat_date = date("Y-m-d H:i:s",$stat);
 			$output .= "(current time: ".date("Y-m-d H:i:s").", my pid is $my_pid)\n";
 			$output .= "the writing to the lock file failed\n";
 			$output .= "the lock file is $lock_file\n";
@@ -119,7 +126,33 @@ class Lock{
 			$logger->flush_all();
 			unset($logger);
 			unlink($lock_file);
-			exit; 
+			exit;
+		}
+
+		clearstatcache();
+		if(!file_exists($lock_file)){
+			$output .= "(current time: ".date("Y-m-d H:i:s").", my pid is $my_pid)\n";
+			$output .= "the writing to the lock file was successful\n";
+			$output .= "but the lock file $lock_file doesn't exist\n";
+			$output .= "(exiting...)\n";
+			$logger->info($output);
+			$logger->flush_all();
+			unset($logger);
+			exit;
+		}
+
+		$f = fopen($lock_file,"r");
+		$stat = fread($f,1024);
+		fclose($f);
+		if($stat!==$_string_to_write){
+			$output .= "(current time: ".date("Y-m-d H:i:s").", my pid is $my_pid)\n";
+			$output .= "the writing to the lock file was successful\n";
+			$output .= "but the lock file $lock_file is corrupted\n";
+			$output .= "(exiting...)\n";
+			$logger->info($output);
+			$logger->flush_all();
+			unset($logger);
+			exit;
 		}
 
 		if(strlen($output)>0){
@@ -139,7 +172,7 @@ class Lock{
 	*	@param logger &$logger
 	*	@return integer									vzdy 0
 	*/
-	static function Unlock($lock_name = "",&$logger){
+	static function Unlock($lock_name = "",&$logger=null){
 		$lock_name = Lock::_ValidLockName($lock_name);
 		$lock_path = LOCK_DIR;
 		$lock_file = "$lock_path/$lock_name";
@@ -151,8 +184,8 @@ class Lock{
 	* Zjisti, zda je pripojen adresar /proc/.
 	*	Prakticky se hleda v tomto adresari prvni podadresar, ktery ma ve jmene pouze cislice.
 	* Pak je rozhodnuto, ze /proc je pripojen.
-	* 
-	*	@static 
+	*
+	*	@static
 	* @access private
 	* @return boolean
 	*/

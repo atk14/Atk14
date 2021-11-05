@@ -327,6 +327,7 @@ class Atk14Mailer{
 
 		$args = func_get_args();
 		call_user_func_array(array($this,"_render_message"),$args);
+		$this->_before_send();
 		return $this->_send();
 	}
 
@@ -348,6 +349,7 @@ class Atk14Mailer{
 	function build(){
 		$args = func_get_args();
 		call_user_func_array(array($this,"_render_message"),$args);
+		$this->_before_send();
 		return $this->_send(array("build_message_only" => true));
 	}
 
@@ -576,6 +578,8 @@ class Atk14Mailer{
 	 * @access protected
 	 */
 	function _after_filter(){ }
+
+	function _before_send(){ }
 
 	/**
 	 * Calls sendmail function and pass it all important fields to construct the message and send it.

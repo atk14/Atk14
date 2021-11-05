@@ -345,11 +345,11 @@ class TcSessionStorer extends TcBase{
 
 		$this->assertEquals(false,$s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time)));
 		$this->assertEquals(false,$s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60)));
-		$this->assertEquals(true,$s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60 * 10)));
+		$this->assertEquals(true,$s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60 * 20)));
 
 		$trues = $falses = 0;
 		for($i=0;$i<100;$i++){
-			$ret = $s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60 * 5));
+			$ret = $s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60 * 8));
 			if($ret){ $trues++; }else{ $falses++; }
 		}
 		$this->assertTrue($trues>0);
