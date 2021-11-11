@@ -689,6 +689,7 @@ class Logger{
 				if(!$this->_silent_mode){
 					echo $this->_build_message($rec);
 				}
+				$this->flush();
 				break;
 			case "stop":
 				$_log = "STOP";
