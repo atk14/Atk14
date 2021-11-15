@@ -13,13 +13,18 @@ class TcStripHtml extends TcBase {
 				}
 			</style>
 			<!--
+				TRUE: 1 > 0
 				<em>Inside a comment...</em>
 			-->
 			<h1>Lorem<sup>*</sup> <small>Ipsum</small></h1>
 			<noframes>Sorry no frames!</noframes>
 			<p>
-				Lorem ipsum dolor sit amet, consectetur Adipiscing &amp; Elit. <a href="http://lorem.ipsum.com/">Maecenas hendrerit risus neque</a>, et semper ligula mattis a. Morbi ma<i>lesu</i>ada augue vel massa commodo.
+				Lorem ipsum dolor sit amet, consectetur Adipiscing &amp; Elit. <a href="http://lorem.ipsum.com/">Maecenas hendrerit risus neque</a>, et semper ligula mattis a. Morbi ma<i>lesu</i>ada augue vel mass<!-- double s! -->a commodo.
 			</p>
+			<!--
+				TRUE: 2 > 1
+				<em>Inside another comment...</em>
+			-->
 		';
 		$out = 'Lorem* Ipsum Lorem ipsum dolor sit amet, consectetur Adipiscing & Elit. Maecenas hendrerit risus neque, et semper ligula mattis a. Morbi malesuada augue vel massa commodo.';
 		$this->assertEquals($out,smarty_modifier_strip_html($src));

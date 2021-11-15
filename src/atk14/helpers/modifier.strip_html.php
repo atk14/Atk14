@@ -1,5 +1,8 @@
 <?php
 function smarty_modifier_strip_html($content){
+	// removing HTML comments
+	$content = preg_replace('/<!--[^-].*?[^-]-->/s','',$content);
+
 	// the following tags are removed with their content
 	$tags = array(
 		"head",
