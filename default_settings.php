@@ -160,8 +160,16 @@ __defaults__(array(
 ));
 
 __defaults__(array(
-	"USING_BOOTSTRAP4" => false, // HTML snippets rendered from some parts of the framework can be tuned for Bootstrap4
+	// HTML snippets rendered from some parts of the framework can be tuned for Bootstrap 4 or Bootstrap 5
+	"USING_BOOTSTRAP4" => false, 
+	"USING_BOOTSTRAP5" => false,
+
 	"USING_FONTAWESOME" => false, // Is it OK to decorate internal HTML snippets with something like <span class="fas fa-arrow-up"></span> (see https://fontawesome.com/)
+));
+
+__defaults__(array(
+	// Using Bootstrap 3 is a fallback
+	"USING_BOOTSTRAP3" => !USING_BOOTSTRAP4 && !USING_BOOTSTRAP5
 ));
 
 __defaults__(array(
