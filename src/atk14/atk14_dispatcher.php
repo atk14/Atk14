@@ -31,7 +31,8 @@
  * @todo Write some explanation
  */
 class Atk14Dispatcher{
-	function Atk14Dispatcher($options = array()){
+
+	function __construct($options = array()){
 		
 	}
 
