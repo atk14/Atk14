@@ -163,7 +163,7 @@ class HTTPUploadedFile{
 		$filename = trim(preg_replace('/^.*(\/|\\\\)([^\/\\\\]*)$/','\2',$filename));
 
 		// Malá_hnědá_lištička.pdf -> Mala_hneda_listicka.pdf
-		$charset = defined("DEFAULT_CHARSET") ? DEFAULT_CHARSET : "UTF-8";
+		$charset = defined("DEFAULT_CHARSET") ? constant("DEFAULT_CHARSET") : "UTF-8";
 		if(class_exists("Translate") && Translate::CheckEncoding($filename,$charset)){
 			$filename = Translate::Trans($filename,$charset,"ASCII");
 		}
