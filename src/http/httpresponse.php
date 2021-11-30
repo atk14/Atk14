@@ -685,8 +685,8 @@ class HTTPResponse{
 	 */
 	function flushAll(){
 		if(!$this->_OutputBuffer_Flush_Started){
+			$this->setHeader("Content-Length",$this->getContentLength());
 			$this->_flushHeaders();
-			Header("Content-Length: ".$this->getContentLength());
 		}
 
 		if($this->getContentLength()>0){
@@ -715,38 +715,55 @@ class HTTPResponse{
 	 */
 	protected function _flushHeaders(){
 		$_status_message = $this->getStatusMessage();
-		header("HTTP/1.0 $this->_StatusCode $_status_message");
+		$this->_header("HTTP/1.0 $this->_StatusCode $_status_message");
 		
 		$_content_type_header = "Content-Type: $this->_ContentType";
 		if($this->_ContentCharset){ $_content_type_header .= "; charset=$this->_ContentCharset";}
-		header($_content_type_header);
+		$this->_header($_content_type_header);
 
 		if(strlen($this->_Location)>0){
-			header("Location: $this->_Location");
+			$this->_header("Location: $this->_Location");
 		}
 
 		$headers = $this->getHeaders();
 		foreach($headers as $_key => $_value){
-			header("$_key: $_value");
+			$this->_header("$_key: $_value");
 		}
 
-		foreach($this->getCookies() as $cookie){
-			if(PHP_VERSION_ID >= 70300){
-				setcookie($cookie->getName(),$cookie->getValue(),array(
-					"expires" => $cookie->getExpire(),
-					"path" => $cookie->getPath(),
-					"domain" => $cookie->getDomain(),
-					"secure" => $cookie->isSecure(),
-					"httponly" => $cookie->isHttponly(),
-					"samesite" => $cookie->getSameSite(),
-				));
-			}else{
-				// Note that there is no samesite parameter for older versions of PHP.
-				setcookie($cookie->getName(),$cookie->getValue(),$cookie->getExpire(),$cookie->getPath(),$cookie->getDomain(),$cookie->isSecure(),$cookie->isHttponly());
-				if($cookie->getSameSite()!=""){
-					trigger_error(sprintf("HTTPResponse: can't set cookie %s with samesite option; PHP>=7.3 is needed; the cookie was set without samesite option",$cookie->getName()));
+		if(php_sapi_name() !== "cli"){
+			// TODO: It would be nice to print out cookies to stdout in cli
+
+			foreach($this->getCookies() as $cookie){
+				if(PHP_VERSION_ID >= 70300){
+					setcookie($cookie->getName(),$cookie->getValue(),array(
+						"expires" => $cookie->getExpire(),
+						"path" => $cookie->getPath(),
+						"domain" => $cookie->getDomain(),
+						"secure" => $cookie->isSecure(),
+						"httponly" => $cookie->isHttponly(),
+						"samesite" => $cookie->getSameSite(),
+					));
+				}else{
+					// Note that there is no samesite parameter for older versions of PHP.
+					setcookie($cookie->getName(),$cookie->getValue(),$cookie->getExpire(),$cookie->getPath(),$cookie->getDomain(),$cookie->isSecure(),$cookie->isHttponly());
+					if($cookie->getSameSite()!=""){
+						trigger_error(sprintf("HTTPResponse: can't set cookie %s with samesite option; PHP>=7.3 is needed; the cookie was set without samesite option",$cookie->getName()));
+					}
 				}
 			}
+
+		}
+
+		if(php_sapi_name()==="cli"){
+			echo "\n";
+		}
+	}
+
+	protected function _header($header){
+		if(php_sapi_name()==="cli"){
+			echo "$header\n";
+		}else{
+			header($header);
 		}
 	}
 
