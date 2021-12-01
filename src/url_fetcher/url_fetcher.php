@@ -312,64 +312,11 @@ class UrlFetcher {
 	
 		$this->_buildRequestHeaders();
 
-		$errno = null;
-		$errstr = "";
-		$_proto = "tcp";
-		$context_options = array();
-		if($this->_Ssl){
-			$_proto = "ssl";
-			$context_options["ssl"] = array('verify_peer' => false);
-		}
-		$context = stream_context_create($context_options);
-		$f = stream_socket_client("$_proto://$this->_Server:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);
+		$ret = $this->_makeWritingAndReading();
+		if(!is_array($ret)){ return $ret; }
 
-		if(!$f){
-			if(strpos($errstr,"getaddrinfo failed")){
-				$errstr = "could not resolve host: $this->_Server ($errstr)";
-			}
-			return $this->_setError("failed to open socket: $errstr [$errno]");
-		}
-		stream_set_blocking($f,0);
-		$_buffer = new StringBuffer($this->_RequestHeaders);
-		if($this->_RequestMethod=="POST"){
-			$_buffer->addStringBuffer($this->_PostData);
-		}
-		$stat = $this->_fwriteStream($f,$_buffer);
-
-		if(!$stat || $stat!=$_buffer->getLength()){
-			fclose($f);
-			return $this->_setError(sprintf("cannot write to socket (bytes written: %s, bytes needed to be written: %s)",$stat,$_buffer->getLength()));
-		}
-
-		$headers = "";
-		$_buffer = new StringBufferTemporary();
-		while(!feof($f) && $f){
-			$_b = fread($f,1024 * 256); // 256kB
-			if(strlen($_b)==0){
-				usleep(20000);
-				continue;
-			}
-			$_buffer->addString($_b);
-
-			if(!strlen($headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$_buffer->toString(),$matches)){
-				$headers = $matches[1];
-				$_b = $matches[2];
-				$_buffer = new StringBufferTemporary();
-				(strlen($_b)>0) && ($_buffer->addString($_b));
-			}
-		}
-		fclose($f);
-
-		if(!strlen($headers)){
-			return $this->_setError("failed to read from socket");
-		}
-
-		if(!strlen($headers)){
-			return $this->_setError("can't find response headers");
-		}
-
-		$this->_ResponseHeaders = $headers;
-		$this->_Content = $_buffer;
+		$this->_ResponseHeaders = $ret[0]; // string
+		$this->_Content = $ret[1]; // StringBufferTemporary
 
 		$this->_Fetched = true;
 
@@ -759,6 +706,65 @@ class UrlFetcher {
 		$this->_RequestHeaders = join("\r\n",$out);
 	}
 
+	protected function _makeWritingAndReading(){
+		$errno = null;
+		$errstr = "";
+		$_proto = "tcp";
+		$context_options = array();
+		if($this->_Ssl){
+			$_proto = "ssl";
+			$context_options["ssl"] = array('verify_peer' => false);
+		}
+		$context = stream_context_create($context_options);
+		$f = stream_socket_client("$_proto://$this->_Server:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);
+
+		if(!$f){
+			if(strpos($errstr,"getaddrinfo failed")){
+				$errstr = "could not resolve host: $this->_Server ($errstr)";
+			}
+			return $this->_setError("failed to open socket: $errstr [$errno]");
+		}
+		stream_set_blocking($f,0);
+		$_buffer = new StringBuffer($this->_RequestHeaders);
+		if($this->_RequestMethod=="POST"){
+			$_buffer->addStringBuffer($this->_PostData);
+		}
+		$stat = $this->_fwriteStream($f,$_buffer);
+
+		if(!$stat || $stat!=$_buffer->getLength()){
+			fclose($f);
+			return $this->_setError(sprintf("cannot write to socket (bytes written: %s, bytes needed to be written: %s)",$stat,$_buffer->getLength()));
+		}
+
+		$headers = "";
+		$_buffer = new StringBufferTemporary();
+		while(!feof($f) && $f){
+			$_b = fread($f,1024 * 256); // 256kB
+			if(strlen($_b)==0){
+				usleep(20000);
+				continue;
+			}
+			$_buffer->addString($_b);
+
+			if(!strlen($headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$_buffer->toString(),$matches)){
+				$headers = $matches[1];
+				$_b = $matches[2];
+				$_buffer = new StringBufferTemporary();
+				(strlen($_b)>0) && ($_buffer->addString($_b));
+			}
+		}
+		fclose($f);
+
+		if(!$_buffer->getLength()){
+			return $this->_setError("failed to read from socket");
+		}
+
+		if(!strlen($headers)){
+			return $this->_setError("can't find response headers");
+		}
+
+		return array($headers,$_buffer);
+	}
 
 	/**
 	 * Writes string to a network socket
