@@ -1,0 +1,76 @@
+#!/usr/bin/env php
+<?php
+/**
+ *
+ * $ ./scripts/simulate_http_request
+ * GET / HTTP/1.0
+ * Host: www.example.com
+ *
+ * $ ./scripts/simulate_http_request --remote-address=10.20.30.40
+ * 
+ */
+$arguments = getopt("r::",array("remote-address::"));
+$arguments += array(
+	"r" => null,
+);
+$arguments += array(
+	"remote-address" => $arguments["r"],
+);
+
+$stdin = fopen("php://stdin", "r");
+$headers = [];
+$content = "";
+$content_length = 0;
+while($line = fgets($stdin)){
+	$line = rtrim($line);
+	if($line==""){
+		break;
+	}
+	$headers[] = $line;
+	if(preg_match('/^Content-Length: ([1-9]\d{0,10})$/i',$line,$matches)){
+		$content_length = $matches[1];
+	}
+}
+if(!$headers){
+	$headers[] = "GET / HTTP/1.0";
+}
+if($content_length){
+	$content = fread($stdin,$content_length);
+}
+fclose($stdin);
+
+if(!preg_match('/^(GET|POST) ([^ ]+) /',$headers[0],$matches)){
+	_bad_request("Bad request");
+	exit;
+}
+$GLOBALS["_SERVER"]["REQUEST_METHOD"] = $matches[1];
+$GLOBALS["_SERVER"]["REQUEST_URI"] = $matches[2];
+
+$GLOBALS["_SERVER"]["QUERY_STRING"] = "";
+$GLOBALS["_GET"] = array();
+if(preg_match('/^.*?\?(.*)$/',$GLOBALS["_SERVER"]["REQUEST_URI"],$matches)){
+	$GLOBALS["_SERVER"]["QUERY_STRING"] = $matches[1];
+	$GLOBALS["_GET"] = parse_str($GLOBALS["_SERVER"]["QUERY_STRING"]);
+}
+
+$GLOBALS["_SERVER"]["POST"] = array();
+if(strlen($content)){
+	$GLOBALS["_SERVER"]["POST"] = parse_str($content);
+}
+
+$GLOBALS["_SERVER"]["REMOTE_ADDR"] = "127.0.0.1";
+if($arguments["remote-address"]){
+	$GLOBALS["_SERVER"]["REMOTE_ADDR"] = $arguments["remote-address"];
+}
+
+require(__DIR__ . "/../../../dispatcher.php");
+
+function _bad_request($message){
+	$message .= "\n";
+	echo "HTTP 400 Bad Request\n";
+	echo "Content-Type: text/plain; charset=UTF-8\n";
+	echo "Content-Length: ".strlen($message)."\n";
+	echo "\n";
+	echo "$message";
+}
+
