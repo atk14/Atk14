@@ -9,17 +9,21 @@
  * $ ./scripts/simulate_http_request --remote-address=10.20.30.40
  * 
  */
-$arguments = getopt("r::",array("remote-address::"));
-$arguments += array(
-	"r" => null,
+$def_arguments = array(
+	"remote-addr" => "127.0.0.1",
+	"remote-port" => "12345",
+	"server-addr" => "127.0.0.1",
+	"server-port" => "80"
 );
-$arguments += array(
-	"remote-address" => $arguments["r"],
-);
+$arg_keys = array_keys($def_arguments);
+$arg_keys = array_map(function($k){ return "$k::"; },$arg_keys);
+$arguments = getopt("",$arg_keys);
+$arguments += $def_arguments;
 
 $stdin = fopen("php://stdin", "r");
 $headers = [];
 $content = "";
+$content_type = "";
 $content_length = 0;
 while($line = fgets($stdin)){
 	$line = rtrim($line);
@@ -27,6 +31,10 @@ while($line = fgets($stdin)){
 		break;
 	}
 	$headers[] = $line;
+
+	if(preg_match('/Content-Type: "?(.+)"?$/',$line,$matches)){
+		$content_type = $matches[1];
+	}
 	if(preg_match('/^Content-Length: ([1-9]\d{0,10})$/i',$line,$matches)){
 		$content_length = $matches[1];
 	}
@@ -50,18 +58,26 @@ $GLOBALS["_SERVER"]["QUERY_STRING"] = "";
 $GLOBALS["_GET"] = array();
 if(preg_match('/^.*?\?(.*)$/',$GLOBALS["_SERVER"]["REQUEST_URI"],$matches)){
 	$GLOBALS["_SERVER"]["QUERY_STRING"] = $matches[1];
-	$GLOBALS["_GET"] = parse_str($GLOBALS["_SERVER"]["QUERY_STRING"]);
+	parse_str($GLOBALS["_SERVER"]["QUERY_STRING"],$vars);
+	if(is_array($vars)){
+		$GLOBALS["_GET"] = $vars;
+	}
 }
 
-$GLOBALS["_SERVER"]["POST"] = array();
-if(strlen($content)){
-	$GLOBALS["_SERVER"]["POST"] = parse_str($content);
+$GLOBALS["_POST"] = array();
+if(strlen($content) && $content_type==="application/x-www-form-urlencoded"){
+	parse_str($content,$vars);
+	if(is_array($vars)){
+		$GLOBALS["_POST"] = $vars;
+	}
 }
 
-$GLOBALS["_SERVER"]["REMOTE_ADDR"] = "127.0.0.1";
-if($arguments["remote-address"]){
-	$GLOBALS["_SERVER"]["REMOTE_ADDR"] = $arguments["remote-address"];
-}
+$GLOBALS["_SERVER"] += array(
+	"REMOTE_ADDR" => $arguments["remote-addr"],
+	"REMOTE_PORT" => $arguments["remote-port"],
+	"SERVER_ADDR" => $arguments["server-addr"],
+	"SERVER_PORT" => $arguments["server-port"],
+);
 
 require(__DIR__ . "/../../../dispatcher.php");
 
