@@ -755,7 +755,7 @@ class UrlFetcher {
 		}
 		fclose($f);
 
-		if(!$_buffer->getLength()){
+		if(!$_buffer->getLength() && !strlen($headers)){ // content ($_buffer) may be empty
 			return $this->_setError("failed to read from socket");
 		}
 
