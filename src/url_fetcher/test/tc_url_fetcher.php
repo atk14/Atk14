@@ -64,6 +64,12 @@ class tc_url_fetcher extends tc_base{
 		$headers = $f->getRequestHeaders();
 		$this->assertNotContains("User-Agent: UrlFetcher",$headers);
 		$this->assertContains("User-Agent: curl",$headers);
+
+		// Empty response
+		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing/empty_response.php");
+		$this->assertTrue($f->found());
+		$this->assertEquals(200,$f->getStatusCode());
+		$this->assertEquals("",$f->getContent());
 	}
 
 	function test_authorization(){
