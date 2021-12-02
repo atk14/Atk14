@@ -1,10 +1,10 @@
 <?php
-class CliUrlFetcher extends UrlFetcher {
+class UrlFetcherViaCommand extends UrlFetcher {
 
-	protected $cli_command;
+	protected $command;
 
-	function __construct($cli_command,$url = "",$options = array()){
-		$this->cli_command = $cli_command;
+	function __construct($command,$url = "",$options = array()){
+		$this->command = $command;
 		parent::__construct($url,$options);
 	}
 
@@ -18,7 +18,7 @@ class CliUrlFetcher extends UrlFetcher {
 		$cwd = getcwd();
 		$env = array();
 
-		$process = proc_open($this->cli_command, $descriptorspec, $pipes, $cwd, $env);
+		$process = proc_open($this->command, $descriptorspec, $pipes, $cwd, $env);
 
 		if(!is_resource($process)){
 			return $this->_setError("cannot do proc_open");
