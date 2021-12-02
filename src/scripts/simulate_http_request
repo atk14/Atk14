@@ -33,10 +33,14 @@ while($line = fgets($stdin)){
 	}
 	$headers[] = $line;
 
-	if(preg_match('/Content-Type: "?(.+)"?$/',$line,$matches)){
+	if(preg_match('/Host: ?"?(.+)"?$/',$line,$matches)){
+		$GLOBALS["_SERVER"]["HTTP_HOST"] = $matches[1];
+	}
+
+	if(preg_match('/Content-Type: ?"?(.+)"?$/',$line,$matches)){
 		$content_type = $matches[1];
 	}
-	if(preg_match('/^Content-Length: ([1-9]\d{0,10})$/i',$line,$matches)){
+	if(preg_match('/^Content-Length: ?([1-9]\d{0,10})$/i',$line,$matches)){
 		$content_length = $matches[1];
 	}
 	if(preg_match('/^([^ :]+):(.*)$/',$line,$matches)){
