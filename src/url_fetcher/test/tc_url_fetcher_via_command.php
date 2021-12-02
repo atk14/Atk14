@@ -13,5 +13,11 @@ class tc_url_fetcher_via_command extends tc_base {
 		$this->assertEquals(201,$f->getStatusCode());
 		$this->assertEquals("TEST!",(string)$f->getContent());
 		$this->assertEquals("text/plain",$f->getContentType());
+
+		$cmd = __DIR__ . "/empty_response.sh";
+		$f = new UrlFetcherViaCommand($cmd,"http://www.example.com/");
+		$this->assertEquals(200,$f->getStatusCode());
+		$this->assertEquals("",(string)$f->getContent());
+		$this->assertEquals("text/html",$f->getContentType());
 	}
 }
