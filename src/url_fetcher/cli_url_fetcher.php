@@ -12,7 +12,7 @@ class CliUrlFetcher extends UrlFetcher {
 		$descriptorspec = array(
 			0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
 			1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
-			2 => array("file", "/tmp/error-output.txt", "a") // stderr is a file to write to
+			2 => array("pipe", "w") // stderr is a pipe that the child will write to
 		);
 
 		$cwd = getcwd();
@@ -30,6 +30,10 @@ class CliUrlFetcher extends UrlFetcher {
 		}
 		$stat = $this->_fwriteStream($pipes[0],$_buffer);
 		fclose($pipes[0]);
+
+		// stderr
+		$err = fread($pipes[2],1024 * 256);
+		fclose($pipes[2]);
 		
 		if(!$stat || $stat!=$_buffer->getLength()){
 			return $this->_setError(sprintf("cannot write to proc (bytes written: %s, bytes needed to be written: %s)",$stat,$_buffer->getLength()));
@@ -55,8 +59,8 @@ class CliUrlFetcher extends UrlFetcher {
 		}
 		fclose($f);
 
-		if(!$_buffer->getLength()){
-			return $this->_setError("failed to read from socket");
+		if(!$_buffer->getLength() && !strlen($headers)){ // content ($_buffer) may be empty
+			return $this->_setError("failed to read from proc");
 		}
 
 		if(!strlen($headers)){
