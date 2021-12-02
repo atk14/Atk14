@@ -22,6 +22,7 @@ $arguments += $def_arguments;
 
 $stdin = fopen("php://stdin", "r");
 $headers = [];
+$getallheaders_data = [];
 $content = "";
 $content_type = "";
 $content_length = 0;
@@ -38,6 +39,9 @@ while($line = fgets($stdin)){
 	if(preg_match('/^Content-Length: ([1-9]\d{0,10})$/i',$line,$matches)){
 		$content_length = $matches[1];
 	}
+	if(preg_match('/^([^ :]+):(.*)$/',$line,$matches)){
+		$getallheaders_data[$matches[1]] = trim($matches[2]);
+	}
 }
 if(!$headers){
 	$headers[] = "GET / HTTP/1.0";
@@ -46,6 +50,11 @@ if($content_length){
 	$content = fread($stdin,$content_length);
 }
 fclose($stdin);
+
+define("_GETALLHEADERS_DATA_",serialize($getallheaders_data));
+function getallheaders(){
+	return unserialize(_GETALLHEADERS_DATA_);
+}
 
 if(strlen($content)>0 && $content_type!=="application/x-www-form-urlencoded"){
 	$GLOBALS["HTTP_RAW_POST_DATA"] = $content;
