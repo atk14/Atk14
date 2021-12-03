@@ -12,7 +12,8 @@ class UrlFetcherViaCommand extends UrlFetcher {
 		$descriptorspec = array(
 			0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
 			1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
-			2 => array("pipe", "w") // stderr is a pipe that the child will write to
+			2 => array("file", "/dev/null", "a")
+			//2 => array("pipe", "w") // stderr is a pipe that the child will write to
 		);
 
 		$cwd = getcwd();
@@ -29,11 +30,9 @@ class UrlFetcherViaCommand extends UrlFetcher {
 			$_buffer->addStringBuffer($this->_PostData);
 		}
 		$stat = $this->_fwriteStream($pipes[0],$_buffer);
-		fclose($pipes[0]);
 
 		// stderr
-		$err = fread($pipes[2],1024 * 256);
-		fclose($pipes[2]);
+		//$err = fread($pipes[2],1024 * 256);
 		
 		if(!$stat || $stat!=$_buffer->getLength()){
 			return $this->_setError(sprintf("cannot write to proc (bytes written: %s, bytes needed to be written: %s)",$stat,$_buffer->getLength()));
@@ -41,8 +40,14 @@ class UrlFetcherViaCommand extends UrlFetcher {
 
 		$headers = "";
 		$_buffer = new StringBufferTemporary();
+		$content_length = null;
+
 		$f = $pipes[1];
+		stream_set_blocking($f,0);
 		while(!feof($f) && $f){
+			if(isset($content_length) && $_buffer->getLength()==$content_length){
+				break;
+			}
 			$_b = fread($f,1024 * 256); // 256kB
 			if(strlen($_b)==0){
 				usleep(20000);
@@ -55,9 +60,15 @@ class UrlFetcherViaCommand extends UrlFetcher {
 				$_b = $matches[2];
 				$_buffer = new StringBufferTemporary();
 				(strlen($_b)>0) && ($_buffer->addString($_b));
+				if(preg_match('/Content-Length: ([1-9]\d+)/i',$headers,$matches)){
+					$content_length = $matches[1];
+				}
 			}
 		}
-		fclose($f);
+
+		fclose($pipes[0]);
+		fclose($pipes[1]);
+		//fclose($pipes[2]);
 
 		if(!$_buffer->getLength() && !strlen($headers)){ // content ($_buffer) may be empty
 			return $this->_setError("failed to read from proc");
