@@ -43,14 +43,16 @@ class UrlFetcherViaCommand extends UrlFetcher {
 		$content_length = null;
 
 		$f = $pipes[1];
+
 		stream_set_blocking($f,0);
 		while(!feof($f) && $f){
-			if(isset($content_length) && $_buffer->getLength()==$content_length){
+			if(isset($content_length) && $_buffer->getLength()>=$content_length){
 				break;
 			}
-			$_b = fread($f,1024 * 256); // 256kB
+			$_b = fread($f,1024 * 60); // 60kB
 			if(strlen($_b)==0){
-				usleep(20000);
+				// TODO: exit cycle after $this->_SocketTimeout
+				usleep(1000); // 1ms
 				continue;
 			}
 			$_buffer->addString($_b);
@@ -69,6 +71,12 @@ class UrlFetcherViaCommand extends UrlFetcher {
 		fclose($pipes[0]);
 		fclose($pipes[1]);
 		//fclose($pipes[2]);
+
+		$return_value = proc_close($process);
+
+		if($return_value!==0){
+			return $this->_setError("command '$this->command' returned error code $return_value");
+		}
 
 		if(!$_buffer->getLength() && !strlen($headers)){ // content ($_buffer) may be empty
 			return $this->_setError("failed to read from proc");
