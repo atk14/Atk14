@@ -17,8 +17,8 @@ class TcStopWatch extends TcBase{
 		$time = $sw->getResult();
 		$short_time = $sw->getResult("short");
 
-		$this->assertTrue($time>=0.001);
-		$this->assertTrue($short_time<0.001);
+		$this->assertTrue($time>=0.001,"$time");
+		$this->assertTrue($short_time<0.001,"$short_time");
 	}
 
 	function test_toString(){
