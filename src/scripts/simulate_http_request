@@ -17,7 +17,7 @@ $def_arguments = array(
 );
 $arg_keys = array_keys($def_arguments);
 $arg_keys = array_map(function($k){ return "$k::"; },$arg_keys);
-$arguments = getopt("",$arg_keys);
+$arguments = (array)getopt("",$arg_keys);
 $arguments += $def_arguments;
 
 $stdin = fopen("php://stdin", "r");
@@ -56,8 +56,10 @@ if($content_length){
 fclose($stdin);
 
 define("_GETALLHEADERS_DATA_",serialize($getallheaders_data));
-function getallheaders(){
-	return unserialize(_GETALLHEADERS_DATA_);
+if(!function_exists("getallheaders")){
+	function getallheaders(){
+		return unserialize(_GETALLHEADERS_DATA_);
+	}
 }
 
 if(strlen($content)>0 && $content_type!=="application/x-www-form-urlencoded"){
