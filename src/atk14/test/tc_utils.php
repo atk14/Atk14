@@ -82,7 +82,9 @@ class TcUtils extends TcBase{
 			"with_border" => true,
 			"with_decoration" => false,
 			"drop_shadow" => true,
-		),Atk14Utils::StringToOptions('color=red,with_border,with_decoration=false,drop_shadow=true'));
+			"class" => "",
+			"max_amount" => null,
+		),Atk14Utils::StringToOptions('color=red,with_border,with_decoration=false,drop_shadow=true,class=,max_amount=null'));
 
 		$this->assertEquals(array(),Atk14Utils::StringToOptions(""));
 		$this->assertEquals(array(),Atk14Utils::StringToOptions(array()));

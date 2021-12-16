@@ -324,6 +324,8 @@ class Atk14Utils{
 				$value = true;
 			}elseif(strtolower($value)==="false"){
 				$value = false;
+			}elseif(strtolower($value)==="null"){
+				$value = null;
 			}
 			$options[$key] = $value;
 		}
