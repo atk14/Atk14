@@ -348,6 +348,79 @@ class String4{
 		return $this->_copy(strip_tags($this->_String4));
 	}
 
+	function stripHtml(){
+		$content = $this->_String4;
+
+		// removing HTML comments
+		$content = preg_replace('/<!--[^-].*?[^-]-->/s','',$content);
+
+		// the following tags are removed with their content
+		$tags = array(
+			"head",
+			"style",
+			"script",
+			"object",
+			"embed",
+			"applet",
+			"noframes",
+			"noscript",
+			"noembed",
+		);
+		$tags = join('|',$tags);
+		$content = preg_replace("#<($tags)[^>]*?>.*?</\\1>#siu"," ", $content);
+
+		// remove inline tags
+		$inline_tags = array(
+			"a",
+			"abbr",
+			"acronym",
+			"b",
+			"bdo",
+			"big",
+			"br",
+			"button",
+			"cite",
+			"code",
+			"dfn",
+			"em",
+			"i",
+			"img",
+			"input",
+			"kbd",
+			"label",
+			"map",
+			"object",
+			"output",
+			"q",
+			"samp",
+			"script",
+			"select",
+			"small",
+			"span",
+			"strong",
+			"sub",
+			"sup",
+			"textarea",
+			"time",
+			"tt",
+			"var",
+		);
+		$inline_tags = join('|',$inline_tags);
+		$content = preg_replace("#<($inline_tags)(|\\s[^>]*?)>#si","",$content);
+		$content = preg_replace("#</($inline_tags)>#si","",$content);
+
+		//
+		$content = preg_replace('#<[^>]*?>#s',' ',$content);
+
+		$content = html_entity_decode($content); // e.g. "&amp;" -> "&"
+
+		$content = trim($content);
+		$content = preg_replace('#[\t\r\n]#',' ',$content);
+		$content = preg_replace('#\s{2,}#',' ',$content);
+
+		return $this->_copy($content);
+	}
+
 	/**
 	 * Returns the number of times pattern matches the string.
 	 *
@@ -753,6 +826,66 @@ class String4{
 	}
 
 	/**
+	 *
+	 */
+	function fixEncoding($options = array()){
+		if(is_string($options)){
+			$options = array("replacement" => $options);
+		}
+
+		$options += array(
+			"replacement" => "�", // U+FFFD REPLACEMENT CHARACTER used to replace an unknown, unrecognized or unrepresentable character
+		);
+
+		$replacement = $options["replacement"];
+
+		$text = $this->_String4;
+
+		if(Translate::_GetCharsetByName($this->getEncoding())!=="utf8"){
+			return $this->_copy($text);
+		}
+
+		// Source code for this method taken from https://github.com/yarri/Utf8Cleaner
+
+		// https://stackoverflow.com/questions/1401317/remove-non-utf8-characters-from-string
+		$regex = <<<'END'
+/
+  (
+    (?: [\x00-\x7F]               # single-byte sequences   0xxxxxxx
+    |   [\xC0-\xDF][\x80-\xBF]    # double-byte sequences   110xxxxx 10xxxxxx
+    |   [\xE0-\xEF][\x80-\xBF]{2} # triple-byte sequences   1110xxxx 10xxxxxx * 2
+    |   [\xF0-\xF7][\x80-\xBF]{3} # quadruple-byte sequence 11110xxx 10xxxxxx * 3 
+    ){1,100}                      # ...one or more times
+  )
+| ( [\x80-\xBF] )                 # invalid byte in range 10000000 - 10111111
+| ( [\xC0-\xFF] )                 # invalid byte in range 11000000 - 11111111
+/x
+END;
+			$replacer = function($captures) use ($replacement) {
+				if ($captures[1] != "") {
+					// Valid byte sequence. Return unmodified.
+					return $captures[1];
+				}
+				elseif ($captures[2] != "") {
+					// Invalid byte of the form 10xxxxxx.
+					// Encode as 11000010 10xxxxxx.
+					//return "\xC2".$captures[2];
+					return $replacement;
+				}
+				else {
+					// Invalid byte of the form 11xxxxxx.
+					// Encode as 11000011 10xxxxxx.
+					//return "\xC3".chr(ord($captures[3])-64);
+					return $replacement;
+				}
+			};
+			$text = preg_replace_callback($regex, $replacer, $text);
+			// return $text;
+
+			return $this->_copy($text);
+	}
+
+	/**
 	 * Returns copy of the object.
 	 *
 	 * @return String4
@@ -764,7 +897,7 @@ class String4{
 	 */
 	function _copy($string = null,$encoding = null){
 		if(!isset($string)){ $string = $this->_String4; }
-		if(!isset($encoding)){ $encoding = $this->_Encoding; }
+		if(!isset($encoding)){ $encoding = $this->getEncoding(); }
 		return new self($string,$encoding);
 	}
 
