@@ -53,6 +53,7 @@ class TcAtk14Router extends TcAtk14Base {
 			"controller" => $this->router->controller,
 			"action" => $this->router->action,
 			"lang" => $this->router->lang,
+			"params" => $this->router->params
 		);
 	}
 
