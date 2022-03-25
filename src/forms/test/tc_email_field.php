@@ -19,5 +19,9 @@ class TcEmailField extends TcBase {
 		list($err,$value) = $field->clean(" @ ");
 		$this->assertEquals("This field is required.",$err);
 		$this->assertNull($value);
+
+		list($err,$value) = $field->clean("~ john@doe.com ");
+		$this->assertEquals("Enter a valid e-mail address.",$err);
+		$this->assertNull($value);
 	}
 }
