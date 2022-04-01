@@ -17,7 +17,9 @@ class Atk14Global{
 	 *
 	 * @var array
 	 */
-	private $_Store = array();
+	protected $_Store = array();
+
+	protected static $_ConfigFromPhpFileStore = array();
 
 	/**
 	 * Static method to get a singleton.
@@ -321,15 +323,16 @@ class Atk14Global{
 	 */
 	function getConfig($config_name){
 		static $STORE = array();
+
 		if(in_array($config_name,array_keys($STORE))){ return $STORE[$config_name]; }
 
 		$STORE[$config_name] = null;
 
-		// paths in which the configuration file is searched
+		// paths in which the configuration file is being searched
 		$paths = array(
 			$this->getDocumentRoot()."/local_config/",
 			$this->getDocumentRoot()."/config/",
-			$this->getApplicationPath()."conf/", // legacy path, TODO: to be removed
+			$this->getApplicationPath()."/conf/", // legacy path, TODO: to be removed
 		);
 
 		$suffixes = array("",".yml",".json");
@@ -356,7 +359,19 @@ class Atk14Global{
 			$STORE[$config_name] = $_config;
 		}
 
+		if(is_null($STORE[$config_name]) && isset(self::$_ConfigFromPhpFileStore[$config_name])){
+			$STORE[$config_name] = self::$_ConfigFromPhpFileStore[$config_name];
+		}
+
 		return $STORE[$config_name];
+	}
+
+	/**
+	 * @ignore
+	 */
+	function __setConfigFromPhpFile($config_name,$config){
+		$config_name = (string)$config_name;
+		self::$_ConfigFromPhpFileStore[$config_name] = $config;
 	}
 
 	/**

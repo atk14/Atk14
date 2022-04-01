@@ -48,5 +48,13 @@ class TcGlobal extends TcBase{
 		// subfolders
 		$this->assertEquals(array(0,1.25,2.5),$global->getConfig("theme/spacers"));
 		$this->assertEquals(array("primary" => "#334455", "warning" => "#ff0000"),$global->getConfig("theme/colors")); // this one is redefined in local_config/theme/colors.json
+
+		// PHP configs
+
+		// file config/animals.php
+		$this->assertEquals(array("lamb","lion"),$global->getConfig("animals"));
+
+		// file local_config/heroes.php, not config/heroes.php
+		$this->assertEquals(array("Sandokan","Falcon_guardian_of_the_night","Indiana_Jones"),$global->getConfig("heroes"));
 	} 
 }
