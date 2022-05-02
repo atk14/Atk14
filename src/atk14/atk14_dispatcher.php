@@ -105,39 +105,41 @@ class Atk14Dispatcher{
 			$_GET = array_merge($_GET,$route_ar["get_params"]);
 			Atk14Timer::Stop("Atk14Url::RecognizeRoute");
 
-			if(strlen($uri)==strlen($route_ar["force_redirect"])){
-				// Here solving PHP's dot to underscore conversion.
-				// If the uri contains a parametr with dot in it's name, PHP silently converts it to underscore.
-				// Thus such URL:
-				// 		http://www.myapp.com/en/books/detail/?id=1&in.format=xml
-				// should not be redirected to
-				// 		http://www.myapp.com/en/books/detail/?id=1&in_format=xml
-				$_meaningful_redirect = false;
-				for($i=0;$i<strlen($uri);$i++){
-					if($uri[$i]==$route_ar["force_redirect"][$i]){ continue; }
-					if($uri[$i]=="." && $route_ar["force_redirect"][$i]=="_"){ continue; }
-					$_meaningful_redirect = true;
-					break;
-				}
-				if(!$_meaningful_redirect){ $route_ar["force_redirect"] = null; }
-			}
-
-			if($request->get() && strlen($route_ar["force_redirect"])>0 && !$request->xhr()){
-				$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
-				$options["display_response"] && $HTTP_RESPONSE->flushAll();
-
-				$ctrl = null;
-				if($options["return_controller"]){
-					$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
-						"page_title" => $route_ar["page_title"],
-						"page_description" => $route_ar["page_description"],
-						"return_controller" => true,
-						"request" => $request
-					));
-					$ctrl->response->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
+			if($route_ar["force_redirect"] !== null) {
+				if(strlen($uri)==strlen($route_ar["force_redirect"])){
+					// Here solving PHP's dot to underscore conversion.
+					// If the uri contains a parametr with dot in it's name, PHP silently converts it to underscore.
+					// Thus such URL:
+					// 		http://www.myapp.com/en/books/detail/?id=1&in.format=xml
+					// should not be redirected to
+					// 		http://www.myapp.com/en/books/detail/?id=1&in_format=xml
+					$_meaningful_redirect = false;
+					for($i=0;$i<strlen($uri);$i++){
+						if($uri[$i]==$route_ar["force_redirect"][$i]){ continue; }
+						if($uri[$i]=="." && $route_ar["force_redirect"][$i]=="_"){ continue; }
+						$_meaningful_redirect = true;
+						break;
+					}
+					if(!$_meaningful_redirect){ $route_ar["force_redirect"] = null; }
 				}
 
-				return Atk14Dispatcher::_ReturnResponseOrController($HTTP_RESPONSE,$ctrl,$options);
+				if($request->get() && strlen($route_ar["force_redirect"])>0 && !$request->xhr()){
+					$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
+					$options["display_response"] && $HTTP_RESPONSE->flushAll();
+
+					$ctrl = null;
+					if($options["return_controller"]){
+						$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
+							"page_title" => $route_ar["page_title"],
+							"page_description" => $route_ar["page_description"],
+							"return_controller" => true,
+							"request" => $request
+						));
+						$ctrl->response->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
+					}
+
+					return Atk14Dispatcher::_ReturnResponseOrController($HTTP_RESPONSE,$ctrl,$options);
+				}
 			}
 
 			// prestehovano Atk14Url::RecognizeRoute()
@@ -154,7 +156,8 @@ class Atk14Dispatcher{
 			));
 
 			// ajaxove presmerovani...
-			if(strlen($ctrl->response->getLocation())>0 && $request->xhr() && !preg_match('/^(text|application)\/(html|json|xml)/',$request->getHeader("Accept"))){
+			$location = (string) $ctrl->response->getLocation();
+			if(strlen($location)>0 && $request->xhr() && !preg_match('/^(text|application)\/(html|json|xml)/',$request->getHeader("Accept"))){
 				// tohle by snad melo byt vraceno pokud je v requestu
 				//	Accept: */*
 				//	Accept: text/javascript

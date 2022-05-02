@@ -467,8 +467,9 @@ class Atk14Utils{
 	 * @return boolean true - output produced, false - nothing produced
 	 */
 	static function ResponseProduced(&$controller){
+		$location = $controller->response->getLocation();
 		return !(
-			strlen($controller->response->getLocation())==0 &&
+			($location === null || strlen($location)==0) &&
 			!$controller->action_executed &&
 			$controller->response->buffer->getLength()==0 &&
 			$controller->response->getStatusCode()==200

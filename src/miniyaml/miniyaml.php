@@ -183,6 +183,9 @@ class miniYAML{
   * @return int
   */
   function _getIndent($line){
+		if($line === null) {
+			return 0;
+    }
     preg_match("/^( *)/",$line,$matches);
     return strlen($matches[1]);
   }
@@ -332,7 +335,7 @@ class miniYAML{
       $key = $matches[1];
       $_values = trim($matches[2]);
       $next_line_indent = $this->_getIndent($next_line);
-      if($next_line_indent>0 || preg_match("/^- /",$next_line)){
+			if($next_line_indent>0 || preg_match("/^- /",(string) $next_line)){
         $value_block = $this->_cutOutBlock_Stripped($i+1,$next_line_indent,$block);
         $value = $this->_readVar($value_block,$li);
         $i += $li;

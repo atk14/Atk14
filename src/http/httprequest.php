@@ -644,8 +644,9 @@ class HTTPRequest{
 		if(isset($_SERVER["X_ORIGINAL_REQUEST_URI"]) && preg_match('/(&|\?)__xhr_request=1(|&.*)$/',$_SERVER["X_ORIGINAL_REQUEST_URI"])){
 			return true;
 		}
-		
-		return strtolower($this->getHeader("X-Requested-With"))=="xmlhttprequest";
+
+		$xrequested=$this->getHeader("X-Requested-With");
+		return $xrequested != null && strtolower($xrequested) == "xmlhttprequest";
 	}
 
 	/**
