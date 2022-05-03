@@ -30,7 +30,7 @@ function h($string, $flags = null, $encoding = null){
 		// I think that the encoding ISO-8859-1 works well in UTF-8 applications
 		$encoding = "ISO-8859-1";
 	}
-	return htmlspecialchars($string,$flags,$encoding);
+	return htmlspecialchars((string)$string,$flags,$encoding);
 }
 
 /**
