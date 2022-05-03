@@ -721,7 +721,7 @@ class HTTPResponse{
 		if($this->_ContentCharset){ $_content_type_header .= "; charset=$this->_ContentCharset";}
 		$this->_header($_content_type_header);
 
-		if(strlen($this->_Location)>0){
+		if(strlen((string)$this->_Location)>0){
 			$this->_header("Location: $this->_Location");
 		}
 
