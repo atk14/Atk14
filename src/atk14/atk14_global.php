@@ -582,7 +582,7 @@ class Atk14Global{
 
 		// pokud se zajimeme o konkretni path,
 		// prihodime nakonec i vychozi (nepojmenovane) routy
-		if(strlen($path = $options["path"])){
+		if(strlen($path = (string)$options["path"])){
 			$out = array();
 			if(isset($ROUTES_BY_PATH[$namespace][$path])){ $out = $ROUTES_BY_PATH[$namespace][$path]; }
 			foreach($ROUTES_WITH_NO_PATH[$namespace] as $k => $v){

@@ -105,7 +105,7 @@ class Atk14Dispatcher{
 			$_GET = array_merge($_GET,$route_ar["get_params"]);
 			Atk14Timer::Stop("Atk14Url::RecognizeRoute");
 
-			if(strlen($uri)==strlen($route_ar["force_redirect"])){
+			if(strlen($uri)==strlen((string)$route_ar["force_redirect"])){
 				// Here solving PHP's dot to underscore conversion.
 				// If the uri contains a parametr with dot in it's name, PHP silently converts it to underscore.
 				// Thus such URL:
@@ -122,7 +122,7 @@ class Atk14Dispatcher{
 				if(!$_meaningful_redirect){ $route_ar["force_redirect"] = null; }
 			}
 
-			if($request->get() && strlen($route_ar["force_redirect"])>0 && !$request->xhr()){
+			if($request->get() && strlen((string)$route_ar["force_redirect"])>0 && !$request->xhr()){
 				$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
 				$options["display_response"] && $HTTP_RESPONSE->flushAll();
 
@@ -154,7 +154,7 @@ class Atk14Dispatcher{
 			));
 
 			// ajaxove presmerovani...
-			if(strlen($ctrl->response->getLocation())>0 && $request->xhr() && !preg_match('/^(text|application)\/(html|json|xml)/',$request->getHeader("Accept"))){
+			if(strlen((string)$ctrl->response->getLocation())>0 && $request->xhr() && !preg_match('/^(text|application)\/(html|json|xml)/',$request->getHeader("Accept"))){
 				// tohle by snad melo byt vraceno pokud je v requestu
 				//	Accept: */*
 				//	Accept: text/javascript
