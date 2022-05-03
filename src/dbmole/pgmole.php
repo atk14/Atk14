@@ -104,7 +104,7 @@ class PgMole Extends DbMole{
 	}
 
 	function escapeString4Sql($s){
-		return "'".pg_escape_string($s)."'";
+		return "'".pg_escape_string($this->_getDbConnect(), $s)."'";
 	}
 
 	function _runQuery($query){
