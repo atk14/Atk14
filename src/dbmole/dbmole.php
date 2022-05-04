@@ -1607,9 +1607,11 @@ class DbMole{
 			"patch_number_divider" => 100000,
 		);
 
+		$version = preg_replace('/^([^ ]+) .*/','\1',$version); // "11.2 (Ubuntu 11.2-1.pgdg16.04+1)" -> "11.2"
+
 		if(strlen($version)==0){ return null; }
 		if($options["as_array"]){
-			$ary = explode(".",preg_replace('/ .*$/','',$version)); // "11.2 (Ubuntu 11.2-1.pgdg16.04+1)" -> "11.2"
+			$ary = explode(".",$version);
 			return array(
 				"major" => (int)$ary[0],
 				"minor" => isset($ary[1]) ? (int)$ary[1] : 0,
