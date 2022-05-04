@@ -627,7 +627,7 @@ class Atk14Utils{
 	static function _CorrectActionForUrl(&$params){
 		// shortcut to define both controller and action through the action only
 		// action="books/detail" -> controller="books", action="detail"
-		if(preg_match('/(.+)\/(.+)/',$params["action"],$matches)){
+		if(preg_match('/(.+)\/(.+)/',(string)$params["action"],$matches)){
 			$params["controller"] = $matches[1];
 			$params["action"] = $matches[2];
 		}
