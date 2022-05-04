@@ -265,6 +265,9 @@ class tc_url_fetcher extends tc_base{
 		set_error_handler(function() { /* ignore errors */ });
 		$this->assertEquals(false,$f->found());
 		restore_error_handler();
-		$this->assertEquals("failed to open socket: could not resolve host: www.nonsence-nonsence-nonsence-nonsence.com (php_network_getaddresses: getaddrinfo failed: Name or service not known) [0]",$f->getErrorMessage());
+		$this->assertTrue(in_array($f->getErrorMessage(),array(
+			"failed to open socket: could not resolve host: www.nonsence-nonsence-nonsence-nonsence.com (php_network_getaddresses: getaddrinfo failed: Name or service not known) [0]",
+			"failed to open socket: php_network_getaddresses: getaddrinfo for www.nonsence-nonsence-nonsence-nonsence.com failed: Name or service not known [0]", // error message in PHP8.1
+		)),$f->getErrorMessage());
 	}
 }
