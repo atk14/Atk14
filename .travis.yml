@@ -18,16 +18,20 @@ addons:
   postgresql: "9.6"
 
 php:
-  - 5.3
-  - 5.4
+#  - 5.3
+#  - 5.4
   - 5.5
 
 before_install:
+  - sudo update-ca-certificates -v -f
+  - wget https://getcomposer.org/download/2.2.12/composer.phar --no-check-certificate
   - sudo locale-gen en_US.UTF-8
   - sudo locale-gen cs_CZ.UTF-8
   - sudo update-locale
   - locale -a
-  - composer global require "phpunit/phpunit=~4.8|~5.7|~6.0"
+  - php composer.phar config --global disable-tls true
+  - php composer.phar config --global secure-http false
+  - php composer.phar global require "phpunit/phpunit=~4.8|~5.7|~6.0"
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
   - sudo service postgresql restart # What? Postgresql is not running?
   - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres
