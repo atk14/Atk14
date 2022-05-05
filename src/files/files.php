@@ -26,7 +26,7 @@ if(defined("FILES_DEFAULT_DIR_PERMS")){
  */
 class Files{
 
-	const VERSION = "1.6.1";
+	const VERSION = "1.6.2";
 
 	static protected $_DefaultFilePerms = 0666;
 
@@ -858,6 +858,8 @@ class Files{
 			"eps" =>				array("application/postscript","application/eps"),
 			"csv" =>				array("text/csv","text/plain"),
 			"docx" => 			array("application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/zip"),
+			"apk" =>				array("application/vnd.android.package-archive","application/java-archive","application/jar"),
+			"jar" =>				array("application/java-archive","application/jar"),
 		);
 
 		foreach($tr_table as $suffixes => $mime_types){

@@ -1,5 +1,6 @@
 <?php
 class TcString4 extends TcBase{
+
 	function test_get_id(){
 		$s = new String4("Hi");
 		$this->assertTrue(is_string($s->getId()));
@@ -377,6 +378,16 @@ class TcString4 extends TcBase{
 		$this->assertEquals(false,$s->toBoolean());
 	}
 
+	function test_stripTags_stripHtml(){
+		$html = " <html> <!-- Comment? --> <head> <title> TITLE </title> <style> .body{ color: red; } </style> </head> <body>\n <p> <span>Good</span>  Try</p><p>But  &lt;&lt;Wrong&gt;&gt;</p> </body> </html> ";
+		$s = new String4($html);
+
+		$this->assertEquals("     TITLE   .body{ color: red; }   \n  Good  TryBut  &lt;&lt;Wrong&gt;&gt;   ",(string)$s->stripTags());
+		$this->assertEquals("Good Try But <<Wrong>>",(string)$s->stripHtml());
+
+		$this->assertEquals($html,(string)$s);
+	}
+
 	function test_substr(){
 		$s = new String4("Lorem Ipsum");
 		$this->assertEquals("Lorem",(string)$s->substr(0,5));
@@ -432,5 +443,30 @@ class TcString4 extends TcBase{
 		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 4, "suffix" => "12345")));
 		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => 0, "suffix" => "12345")));
 		$this->assertEquals("12345",(string)$s->toSlug(array("max_length" => -10, "suffix" => "12345")));
+	}
+
+	function test_fixEncoding(){
+		$invalid = chr(200);
+
+		$s = new String4("");
+		$this->assertEquals("",$s->fixEncoding());
+
+		$s = new String4("Příliš žluťoučký kůň úpěl ďábelské ódy");
+		$this->assertEquals("Příliš žluťoučký kůň úpěl ďábelské ódy",$s->fixEncoding());
+
+		$src = "{$invalid}Příliš{$invalid} žl{$invalid}uťoučký kůň úpěl ďábelské ódy{$invalid}";
+		$this->assertFalse(Translate::CheckEncoding($src,"UTF-8"));
+		$s = new String4($src);
+		$out = (string)$s->fixEncoding();
+		$this->assertEquals("�Příliš� žl�uťoučký kůň úpěl ďábelské ódy�",$out);
+		$this->assertTrue(Translate::CheckEncoding($out,"UTF-8"));
+
+		$out = (string)$s->fixEncoding(array("replacement" => "?"));
+		$this->assertEquals("?Příliš? žl?uťoučký kůň úpěl ďábelské ódy?",$out);
+		$this->assertTrue(Translate::CheckEncoding($out,"UTF-8"));
+
+		$out = (string)$s->fixEncoding("▒");
+		$this->assertEquals("▒Příliš▒ žl▒uťoučký kůň úpěl ďábelské ódy▒",$out);
+		$this->assertTrue(Translate::CheckEncoding($out,"UTF-8"));
 	}
 }

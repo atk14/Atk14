@@ -795,6 +795,19 @@ class TableRecord_ListerItem{
 		));
 	}
 
+	function toArray(){
+		$out = [];
+		$out += [
+			"table_name" => $this->_options["table_name"],
+		];
+		$out += [
+			"owner_class_name" => get_class($this->_owner),
+			"record_class_name" => $this->_options["class_name"],
+		];
+		$out += $this->_row_data;
+		return $out;
+	}
+
 	/**
 	 * Internal method to get value from association table.
 	 *

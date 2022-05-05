@@ -155,22 +155,13 @@ if(PHPUNIT2){
 	}
 }
 
-if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
-
-if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
-	require_once($_f);
-}else{
-	eval("class tc_base extends tc_super_base{ }");
-	eval("class TcBase extends TcSuperBase{ }");
-}
-
 $ALLOWED_TESTS = array();
 $ALLOWED_DANGEROUS_TESTS = array();
 $tests_to_execute = array();
 
 $dir = opendir("./");
 while($file = readdir($dir)){
-	if(in_array($file,array(".","..","initialize.inc","initialize.php","state.inc","state.php","tc_base.inc","tc_base.php"))){ continue; } // tyto souboryu ignorujeme
+	if(in_array($file,array(".","..","initialize.inc","initialize.php","state.inc","state.php","tc_base.inc","tc_base.php"))){ continue; } // These files are ignored
 
 	if(preg_match("/^(tc_.*)\\.(inc|php)$/",$file,$matches)){
 		$ALLOWED_TESTS[$file] = $matches[1];
@@ -201,7 +192,22 @@ if(sizeof($tests_to_execute)==0){
 	exit(1);
 }
 
+// Only one test case should be processed in the current thread
 if(sizeof($tests_to_execute)==1){
+	// global variable $_TEST may be useful in some special cases
+	$GLOBALS["_TEST"] = array(
+		"FILENAME" => getcwd()."/".$tests_to_execute[0]
+	);
+
+	if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
+
+	if(file_exists($_f = "tc_base.inc") || file_exists($_f = "tc_base.php")){
+		require_once($_f);
+	}else{
+		eval("class tc_base extends tc_super_base{ }");
+		eval("class TcBase extends TcSuperBase{ }");
+	}
+
 	$result = _test_runner($tests_to_execute[0],$DIR);
 
 	if(!$result || !$result->wasSuccessful()){
@@ -235,11 +241,6 @@ function _test_runner($filename,$DIR){
 	$alt_classname = preg_replace('/_/',"",$classname);
 
 	require($filename);
-
-	// global variable $_TEST may be useful in some special cases
-	$GLOBALS["_TEST"] = array(
-		"FILENAME" => getcwd()."/$filename"
-	);
 
 	if(class_exists($alt_classname)){ $classname = $alt_classname; }
 

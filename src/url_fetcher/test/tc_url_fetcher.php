@@ -64,6 +64,12 @@ class tc_url_fetcher extends tc_base{
 		$headers = $f->getRequestHeaders();
 		$this->assertNotContains("User-Agent: UrlFetcher",$headers);
 		$this->assertContains("User-Agent: curl",$headers);
+
+		// Empty response
+		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing/empty_response.php");
+		$this->assertTrue($f->found());
+		$this->assertEquals(200,$f->getStatusCode());
+		$this->assertEquals("",$f->getContent());
 	}
 
 	function test_authorization(){
@@ -259,6 +265,9 @@ class tc_url_fetcher extends tc_base{
 		set_error_handler(function() { /* ignore errors */ });
 		$this->assertEquals(false,$f->found());
 		restore_error_handler();
-		$this->assertEquals("failed to open socket: could not resolve host: www.nonsence-nonsence-nonsence-nonsence.com (php_network_getaddresses: getaddrinfo failed: Name or service not known) [0]",$f->getErrorMessage());
+		$this->assertTrue(in_array($f->getErrorMessage(),array(
+			"failed to open socket: could not resolve host: www.nonsence-nonsence-nonsence-nonsence.com (php_network_getaddresses: getaddrinfo failed: Name or service not known) [0]",
+			"failed to open socket: php_network_getaddresses: getaddrinfo for www.nonsence-nonsence-nonsence-nonsence.com failed: Name or service not known [0]", // error message in PHP8.1
+		)),$f->getErrorMessage());
 	}
 }

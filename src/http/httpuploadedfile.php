@@ -163,7 +163,7 @@ class HTTPUploadedFile{
 		$filename = trim(preg_replace('/^.*(\/|\\\\)([^\/\\\\]*)$/','\2',$filename));
 
 		// Malá_hnědá_lištička.pdf -> Mala_hneda_listicka.pdf
-		$charset = defined("DEFAULT_CHARSET") ? DEFAULT_CHARSET : "UTF-8";
+		$charset = defined("DEFAULT_CHARSET") ? constant("DEFAULT_CHARSET") : "UTF-8";
 		if(class_exists("Translate") && Translate::CheckEncoding($filename,$charset)){
 			$filename = Translate::Trans($filename,$charset,"ASCII");
 		}
@@ -233,15 +233,15 @@ class HTTPUploadedFile{
 	 *
 	 * You can specify custom filename, or method generates unique filename.
 	 *
-	 * <code>
+	 * ```
 	 * $filename = $file->moveToTemp();
 	 * $filename = $file->moveToTemp("my_image.jpg");
 	 * $filename = $file->moveToTemp("/path/to/a/disrectory/");
-	 * </code>
+	 * ```
 	 *
 	 * @param string $filename custom filename
-	 * @uses @moveTo()
-	 * @return mixed, (string) filename or false when error occurred
+	 * @uses moveTo()
+	 * @return mixed filename as string or false when error occurred
 	 */
 	function moveToTemp($filename = ""){
 		if(!$filename){

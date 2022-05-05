@@ -645,7 +645,7 @@ class HTTPRequest{
 			return true;
 		}
 		
-		return strtolower($this->getHeader("X-Requested-With"))=="xmlhttprequest";
+		return strtolower((string)$this->getHeader("X-Requested-With"))=="xmlhttprequest";
 	}
 
 	/**

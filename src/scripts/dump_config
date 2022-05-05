@@ -1,16 +1,53 @@
 #!/usr/bin/env php
 <?php
 /**
-* Dumps configuration from a conf/*.yml file
+* Dumps configuration from a conf/*.(yml|json) file
 */
 
-require_once(dirname(__FILE__)."/load.php");
+$arguments = getopt("hf::",array("help","format::"));
+$arguments += array(
+	"h" => null,
+	"f" => null,
+);
+$arguments += array(
+	"help" => $arguments["h"],
+	"format" => $arguments["f"],
+);
 
-if(!isset($argv[1])){
-	echo "Usage:\n";
-	echo "$ $argv[0] config_name\n\n";
-	echo "Tries to load and parse configuration from conf/config_name.yml\n";
+$config_name = "";
+for($i=1;$i<sizeof($argv);$i++){
+	if(!preg_match('/^-/',$argv[$i])){
+		$config_name = $argv[$i];
+		break;
+	}
+}
+
+if(!$config_name || !is_null($arguments["help"])){
+	echo "Usage $argv[0] [OPTIONS] name\n";
+	echo "Dumps configuration from a conf/*.(yml|json) file\n";
+	echo "\n";
+	echo "For dumping configuration from file conf/config_file.yml or conf/config_file.json run\n";
+	echo " $ $argv[0] config_file\n";
+	echo "\n";
+	echo "Use option format to specify the output format\n";
+	echo " $ $argv[0] --format=json config_file\n";
+	echo " $ $argv[0] --format=yaml config_file\n";
 	exit(1);
 }
 
-print_r($ATK14_GLOBAL->getConfig($argv[1]));
+require_once(dirname(__FILE__)."/load.php");
+
+$config = $ATK14_GLOBAL->getConfig($config_name);
+
+if($arguments["format"]==="json"){
+	echo json_encode($config,JSON_PRETTY_PRINT);
+	echo "\n";
+	exit;
+}
+
+if($arguments["format"]==="yaml"){
+	echo miniYAML::Dump($config);
+	exit;
+}
+
+print_r($config);

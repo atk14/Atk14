@@ -1,4 +1,6 @@
 <?php
+if(!function_exists("forms_htmlspecialchars")){
+
 
 /**
  * Converts 'first_name' to 'First name'.
@@ -130,4 +132,7 @@ function my_array_merge($data)
 		}
 	}
 	return $output;
+}
+
+
 }

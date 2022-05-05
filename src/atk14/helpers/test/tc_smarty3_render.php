@@ -18,12 +18,12 @@ class TcSmarty3Render extends TcBase{
 		$this->counter=0;
 		end($this->array);
 		next($this->array);
-		$smarty->fetch('tc_smarty_render.tpl');
+		@$smarty->fetch('tc_smarty_render.tpl'); // this produces enormous error log in PHP 8.1
 		$this->assertEquals($this->counter, 6);
 
 		$smarty = Atk14Utils::GetSmarty(array(__DIR__."/templates/"));
 		$smarty->assign("token","EXTERNAL");
-		$tokens = $smarty->fetch("tokens.tpl");
+		$tokens = @$smarty->fetch("tokens.tpl");
 		$this->assertEquals('tokens: EXTERNAL | INTERNAL | ASSIGNED | INTERNAL_AGAIN',trim($tokens));
 	}
 }

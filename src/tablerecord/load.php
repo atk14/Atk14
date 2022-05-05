@@ -5,6 +5,7 @@ if(!class_exists("inobj")){
 require_once(__DIR__."/itablerecord_databaseccessor.php");
 require_once(__DIR__."/tablerecord_databaseccessor_postgresql.php");
 require_once(__DIR__."/tablerecord_databaseccessor_mysql.php");
+require_once(__DIR__."/tablerecord_databaseaccessor_sqlsrv.php");
 require_once(__DIR__."/tablerecord.php");
 require_once(__DIR__."/tablerecord.php");
 require_once(__DIR__."/tablerecord_finder.php");

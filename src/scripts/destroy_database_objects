@@ -108,9 +108,13 @@ foreach(get_list_of_sequencies($dbmole,$schema) as $sequence){
 
 if($dbmole->getDatabaseType()=="postgresql"){ // TODO: MySQL
 
+	// In Postgres 11 proisagg was replaced with prokind in the system catalog pg_proc.
+	$has_proisagg = $dbmole->selectInt("SELECT COUNT(*) FROM information_schema.columns WHERE table_name='pg_proc' and column_name='proisagg'");
+	$proisagg = $has_proisagg ? "proisagg" : "prokind='a'"; // prokind | char | f for a normal function, p for a procedure, a for an aggregate function, or w for a window function
+
 	foreach($dbmole->selectRows("
 		SELECT
-			proisagg AS is_aggregate,
+			$proisagg AS is_aggregate,
 			proname || '(' || oidvectortypes(proargtypes) || ')' AS function_name
 		FROM pg_proc INNER JOIN pg_namespace ns ON (pg_proc.pronamespace = ns.oid)
 		WHERE ns.nspname = '$schema' AND pg_proc.proowner=:userid ORDER BY proname

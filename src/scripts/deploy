@@ -7,7 +7,7 @@
  *	$ ./scripts/deploy --help
  */
 
-$arguments = getopt("hld",array("help","list","dump"));
+$arguments = getopt("hld",array("help","list","dump","skip-before-deploy"));
 
 if(isset($arguments["h"]) || isset($arguments["help"])){
 $script = $argv[0];
@@ -37,6 +37,9 @@ To dump deployment recipes for all stages
 To dump the deployment recipe for a given stage
  $ $script -d production
  $ $script --dump production
+
+To deploy to the specific stage without executing before_deploy section
+ $ $section --skip-before-deploy production
 ");
 exit(0);
 }
@@ -124,7 +127,11 @@ if(sizeof($matches[1])==0){
 
 //$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create the maintenance file');
 
-_run_commands($config["before_deploy"],"before_deploy");
+if(isset($arguments["skip-before-deploy"])){
+	echo "[WARN] Section before_deploy skipped\n";
+}else{
+	_run_commands($config["before_deploy"],"before_deploy");
+}
 
 _create_maintenance_file_if_required(); // we are trying to create the maintenance file as late as possible
 

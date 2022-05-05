@@ -22,14 +22,21 @@ class MultipleChoiceField extends ChoiceField {
 	function __construct($options=array())
 	{
 		$options += array(
-			"widget" => new SelectMultiple()
+			"widget" => new SelectMultiple(),
+			"max_choice_items" => null,
 		);
+
+		$this->max_choice_items = $options["max_choice_items"];
+		unset($options["max_choice_items"]);
+
 		$this->hidden_widget = new MultipleHiddenInput(); // we need this in order to call $bound_field->as_hidden();
 		parent::__construct($options);
 		$this->update_messages(array(
 			'invalid_choice' => _('Select a valid choice. %value% is not one of the available choices.'),
 			'invalid_list' => _('Enter a list of values.'),
 			'required' => _('Please, choose the right options.'),
+			'max_choice_items_1' => _('Please, select only one item.'),
+			'max_choice_items' => _('Please, select up to %max_choice_items% items.'),
 		));
 	}
 
@@ -66,6 +73,13 @@ class MultipleChoiceField extends ChoiceField {
 				return array(EasyReplace($this->messages['invalid_choice'], array('%value%'=> h($val))), null);
 			}
 		}
+
+		if(isset($this->max_choice_items) && sizeof($new_value)>$this->max_choice_items){
+			$err_msg = $this->max_choice_items==1 ? $this->messages["max_choice_items_1"] : $this->messages["max_choice_items"];
+			$err_msg = str_replace("%max_choice_items%",$this->max_choice_items,$err_msg);
+			return array($err_msg,null);
+		}
+
 		return array(null, $new_value);
 	}
 }

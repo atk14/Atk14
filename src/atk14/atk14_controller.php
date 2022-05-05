@@ -590,7 +590,7 @@ class Atk14Controller{
 
 		$this->action_executed = true;
 
-		if(strlen($this->response->getLocation())>0){
+		if(strlen((string)$this->response->getLocation())>0){
 			return;
 		}
 

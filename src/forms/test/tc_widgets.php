@@ -741,10 +741,10 @@ class TcWidgets extends TcBase
 						'result' => implode("\n",array(
 							'<ul class="list list--radios">',
 							'<li class="list__item">',
-							'<div class="form-check"><input id="direction_0" class="form-check-input" type="radio" name="direction" value="left" /> <label class="form-check-label" for="direction_0">Left</label></div>',
+							'<div class="form-check"><input id="direction_0" class="form-check-input" type="radio" name="direction" value="left" /> <label class="form-check-label" for="direction_0"><span class="label__text">Left</span></label></div>',
 							'</li>',
 							'<li class="list__item">',
-							'<div class="form-check"><input id="direction_1" class="form-check-input" type="radio" name="direction" value="right" checked="checked" /> <label class="form-check-label" for="direction_1">Right</label></div>',
+							'<div class="form-check"><input id="direction_1" class="form-check-input" type="radio" name="direction" value="right" checked="checked" /> <label class="form-check-label" for="direction_1"><span class="label__text">Right</span></label></div>',
 							'</li>',
 							'</ul>'
 						))

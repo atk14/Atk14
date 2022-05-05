@@ -757,7 +757,7 @@ class SessionStorer{
 	 */
 	function _isTimeToUpdateLastAccess($current_last_access){
 		$min_delta = 60 * 4; // 4 minutes
-		$max_delta = 60 * 6; // 6 minutes
+		$max_delta = 60 * 12; // 12 minutes
 
 		$delta = $this->_getCurrentTime()-strtotime($current_last_access);
 

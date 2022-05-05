@@ -1,5 +1,6 @@
 <?php
 class tc_http_response extends tc_base{
+
 	function test_location(){
 		$response = new HTTPResponse();
 		$this->assertEquals(200,$response->getStatusCode());
@@ -272,6 +273,23 @@ class tc_http_response extends tc_base{
 		$r->setHeader("Content-Type: text/html; charset=WINDOWS-1250");
 		$this->assertEquals("text/html",$r->getContentType());
 		$this->assertEquals("WINDOWS-1250",$r->getContentCharset());
+	}
+
+	function test_flushAll(){
+		$r = new HTTPResponse();
+		$r->setContentCharset("UTF-8");
+		$r->setContentType("text/plain");
+		$r->write("TEST");
+
+		ob_start();
+		$r->flushAll();
+		$output = ob_get_contents();
+
+		$this->assertEquals('HTTP/1.0 200 OK
+Content-Type: text/plain; charset=UTF-8
+Content-Length: 4
+
+TEST',$output);
 	}
 
 	function _fetch_response($response){

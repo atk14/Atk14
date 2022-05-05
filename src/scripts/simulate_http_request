@@ -1,0 +1,111 @@
+#!/usr/bin/env php
+<?php
+/**
+ *
+ * $ ./scripts/simulate_http_request
+ * GET / HTTP/1.0
+ * Host: www.example.com
+ *
+ * $ ./scripts/simulate_http_request --remote-address=10.20.30.40
+ * 
+ */
+$def_arguments = array(
+	"remote-addr" => "127.0.0.1",
+	"remote-port" => "12345",
+	"server-addr" => "127.0.0.1",
+	"server-port" => "80"
+);
+$arg_keys = array_keys($def_arguments);
+$arg_keys = array_map(function($k){ return "$k::"; },$arg_keys);
+$arguments = (array)getopt("",$arg_keys);
+$arguments += $def_arguments;
+
+$stdin = fopen("php://stdin", "r");
+$headers = [];
+$getallheaders_data = [];
+$content = "";
+$content_type = "";
+$content_length = 0;
+while($line = fgets($stdin)){
+	$line = rtrim($line);
+	if($line==""){
+		break;
+	}
+	$headers[] = $line;
+
+	if(preg_match('/Host: ?"?(.+)"?$/',$line,$matches)){
+		$GLOBALS["_SERVER"]["HTTP_HOST"] = $matches[1];
+	}
+
+	if(preg_match('/Content-Type: ?"?(.+)"?$/',$line,$matches)){
+		$content_type = $matches[1];
+	}
+	if(preg_match('/^Content-Length: ?([1-9]\d{0,10})$/i',$line,$matches)){
+		$content_length = $matches[1];
+	}
+	if(preg_match('/^([^ :]+):(.*)$/',$line,$matches)){
+		$getallheaders_data[$matches[1]] = trim($matches[2]);
+	}
+}
+if(!$headers){
+	$headers[] = "GET / HTTP/1.0";
+}
+if($content_length){
+	$content = fread($stdin,$content_length);
+}
+fclose($stdin);
+
+define("_GETALLHEADERS_DATA_",serialize($getallheaders_data));
+if(!function_exists("getallheaders")){
+	function getallheaders(){
+		return unserialize(_GETALLHEADERS_DATA_);
+	}
+}
+
+if(strlen($content)>0 && $content_type!=="application/x-www-form-urlencoded"){
+	$GLOBALS["HTTP_RAW_POST_DATA"] = $content;
+}
+
+if(!preg_match('/^(GET|POST) ([^ ]+) /',$headers[0],$matches)){
+	_bad_request("Bad request");
+	exit;
+}
+$GLOBALS["_SERVER"]["REQUEST_METHOD"] = $matches[1];
+$GLOBALS["_SERVER"]["REQUEST_URI"] = $matches[2];
+
+$GLOBALS["_SERVER"]["QUERY_STRING"] = "";
+$GLOBALS["_GET"] = array();
+if(preg_match('/^.*?\?(.*)$/',$GLOBALS["_SERVER"]["REQUEST_URI"],$matches)){
+	$GLOBALS["_SERVER"]["QUERY_STRING"] = $matches[1];
+	parse_str($GLOBALS["_SERVER"]["QUERY_STRING"],$vars);
+	if(is_array($vars)){
+		$GLOBALS["_GET"] = $vars;
+	}
+}
+
+$GLOBALS["_POST"] = array();
+if(strlen($content) && $content_type==="application/x-www-form-urlencoded"){
+	parse_str($content,$vars);
+	if(is_array($vars)){
+		$GLOBALS["_POST"] = $vars;
+	}
+}
+
+$GLOBALS["_SERVER"] += array(
+	"REMOTE_ADDR" => $arguments["remote-addr"],
+	"REMOTE_PORT" => $arguments["remote-port"],
+	"SERVER_ADDR" => $arguments["server-addr"],
+	"SERVER_PORT" => $arguments["server-port"],
+);
+
+require(__DIR__ . "/../../../dispatcher.php");
+
+function _bad_request($message){
+	$message .= "\n";
+	echo "HTTP 400 Bad Request\n";
+	echo "Content-Type: text/plain; charset=UTF-8\n";
+	echo "Content-Length: ".strlen($message)."\n";
+	echo "\n";
+	echo "$message";
+}
+

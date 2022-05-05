@@ -44,7 +44,7 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 	);
 
 	$expire = $params["expire"]; unset($params["expire"]);
-	$key = $params["key"]; unset($params["key"]);
+	$key = (string)$params["key"]; unset($params["key"]);
 	$if = $params["if"]; unset($params["if"]);
 
 	if(!$if){
@@ -54,7 +54,7 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 	}
 
 	if(!strlen($key)){
-		$current_template = $smarty->_current_file; // "/home/bob/devel/project_x/app/views/shared/_menu.tpl"
+		$current_template = (string)$smarty->_current_file; // "/home/bob/devel/project_x/app/views/shared/_menu.tpl"
 		if(strlen($current_template)==0){
 			throw new Exception('smarty_block_cache: $current_template is empty string, specify parameter "key" on the given {cache} block');
 		}

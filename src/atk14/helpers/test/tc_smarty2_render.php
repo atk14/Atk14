@@ -27,17 +27,23 @@ class TcSmarty2Render extends TcBase{
 		$smarty->register_function('die', 'smarty_function_die', false);
 		$smarty->register_modifier('dump', 'var_dump', false);
 		$smarty->register_function('assert_consume', 'smarty_function_assert_consume', false);
-		$smarty->fetch('tc_smarty_render.tpl');
+		@$smarty->fetch('tc_smarty_render.tpl'); // this produces enormous error log in PHP 8.1
 		$this->assertEquals($this->counter, 6);
 
 		$smarty = Atk14Utils::GetSmarty(array(__DIR__."/templates/"));
 		$smarty->assign("token","EXTERNAL");
-		$tokens = $smarty->fetch("tokens.tpl");
+		$tokens = @$smarty->fetch("tokens.tpl");
 		$this->assertEquals('tokens: EXTERNAL | INTERNAL | ASSIGNED | INTERNAL_AGAIN',trim($tokens));
 	}
 }
 
 function smarty_function_assert($params, $template) {
+	$params += [
+		'smarty3' => null,
+		'var' => null,
+		'message' => null,
+		'comment' => null,
+	];
 	if($params['smarty3']) {
 		return;
 	}

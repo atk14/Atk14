@@ -1,5 +1,6 @@
 <?php
 class TcFiles extends TcBase{
+
 	function test_get_file_content(){
 		$content = Files::GetFileContent("test.txt",$err,$err_str);
 		$this->assertFalse($err);
@@ -328,6 +329,55 @@ class TcFiles extends TcBase{
  		) as $file => $mime_type){
 			$file = __DIR__."/sample_files/sample.$file";
 			$this->assertEquals($mime_type,Files::DetermineFileType($file),$file);
+		}
+
+		foreach(array(
+			array(
+				"urls" => array("https://filesamples.com/samples/video/mov/sample_960x540.mov"),
+				"mime_types" => array("video/quicktime"),
+			),
+			array(
+				"urls" => array("https://filesamples.com/samples/video/wmv/sample_640x360.wmv"),
+				"mime_types" => array("video/x-ms-asf"),
+			),
+			array(
+				"urls" => array("https://filesamples.com/samples/video/avi/sample_640x360.avi"),
+				"mime_types" => array("video/x-msvideo"),
+			),
+			array(
+				"urls" => array("https://filesamples.com/samples/video/mp4/sample_640x360.mp4"),
+				"mime_types" => array("video/mp4"),
+			),
+			array(
+				"urls" => array("https://filesamples.com/samples/video/mkv/sample_960x540.mkv"),
+				"mime_types" => array("video/x-matroska"),
+			),
+			array(
+				"urls" => array(
+					"https://github.com/appium-boneyard/sample-code/blob/master/sample-code/apps/ContactManager/ContactManager.apk?raw=true",
+					"https://github.com/katalon-studio-samples/android-mobile-tests/blob/master/androidapp/APIDemos.apk?raw=true",
+					"https://github.com/appium/sample-apps/blob/master/pre-built/selendroid-test-app.apk?raw=true"
+				),
+				"mime_types" => array("application/vnd.android.package-archive"),
+			),
+			array(
+				"urls" => array("https://github.com/MeetMe/AppRate/blob/master/AppRateDownloads/AppRate_0.8.jar?raw=true"),
+				"mime_types" => array("application/java-archive"),
+			)
+		) as $item){
+			$urls = $item["urls"];
+			$mime_types = $item["mime_types"];
+			foreach($urls as $url){
+				$filename = $url;
+				$filename = preg_replace('/\?.*$/','',$filename);
+				$filename = preg_replace('/^.*\//','',$filename);
+				$uf = new UrlFetcher($url);
+				$this->assertTrue($uf->found(),"$url");
+				$file = Files::WriteToTemp($uf->getContent());
+				$mime_type = Files::DetermineFileType($file,array("original_filename" => $filename));
+				$this->assertTrue(in_array($mime_type,$mime_types),"$url - $mime_type not in [".join(", ",$mime_types)."]");
+				unlink($file);
+			}
 		}
 	}
 

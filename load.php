@@ -80,6 +80,9 @@ function &dbmole_connection(&$dbmole){
 	$out = null;
 
 	if(!$d = $ATK14_GLOBAL->getDatabaseConfig($dbmole->getConfigurationName())){
+		if(!function_exists("custom_database_connection")){
+			throw new Exception(sprintf("Don't know how to connect to %s database %s",$dbmole->getDatabaseType(),$dbmole->getConfigurationName()));
+		}
 		// make sure that the function custom_database_connection() exists somewhere within your application
 		return custom_database_connection($dbmole);
 	}
@@ -106,6 +109,24 @@ function &dbmole_connection(&$dbmole){
 			$out = pg_connect("dbname=$d[database] ".($d["host"] ? " host=$d[host]" : "").($d["port"] ? " port=$d[port]" : "")." user=$d[username] password=$d[password]");
 			break;
 
+		case "sqlsrv":
+			$d += array(
+				"charset" => DEFAULT_CHARSET,
+			);
+			$serverName = $d["host"];
+			if($d["port"]){ $serverName .= ", $d[port]"; }
+			$charset = strtoupper($d["charset"]);
+			$charset = $charset=="UTF-8" ? "UTF8" : $charset;
+			$connectionInfo = array(
+				"Database" => $d["database"],
+				"UID" => $d["username"],
+				"PWD" => $d["password"],
+				"CharacterSet" => $d["charset"],
+				"ReturnDatesAsStrings" => true,
+			);
+			$out = sqlsrv_connect($serverName,$connectionInfo);
+			break;
+
 		case "oracle":
 			// TODO
 			break;
@@ -127,7 +148,7 @@ function dbmole_error_handler($dbmole){
 		}
 	}elseif(!TEST){
 		if(php_sapi_name()=="cli"){
-			echo $dbmole->getErrorReport();
+			trigger_error($dbmole->getErrorReport());
 		}else{
 			echo "<pre>";
 			echo h($dbmole->getErrorReport());

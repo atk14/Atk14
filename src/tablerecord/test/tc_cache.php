@@ -178,5 +178,4 @@ class TcCache extends TcBase{
 		$this->assertEquals(array($a123,$a124,$a125),$cacher->getCached(array(123,124,125)));
 		$this->assertEquals(array(123 => $a123,124 => $a124,125 => $a125),$cacher->getCached());
 	}
-
 }

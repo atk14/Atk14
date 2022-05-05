@@ -87,28 +87,43 @@ class Atk14Utils{
 	/**
 	 * Load all config files.
 	 *
-	 * Loads all config files (*.inc) in directory `$ATK14_GLOBAL->getApplicationPath()/../config/`
+	 * Loads all config files (*.php) in directory `$ATK14_GLOBAL->getApplicationPath()/../config/`
 	 * Also tries to use formerly prefered directory `$ATK14_GLOBAL->getApplicationPath()/conf`
 	 *
 	 */
 	static function LoadConfig(){
 		global $ATK14_GLOBAL;
-		if(!file_exists($path = $ATK14_GLOBAL->getDocumentRoot()."/config/")){
-			$path = $ATK14_GLOBAL->getApplicationPath()."conf/";
-		}
 
-		if(file_exists("$path/routers/")){
-			class_autoload("$path/routers/");
-		}
+		// paths in which the configuration files are being searched
+		$paths = array(
+			$ATK14_GLOBAL->getDocumentRoot()."/local_config/",
+			$ATK14_GLOBAL->getDocumentRoot()."/config/",
+			$ATK14_GLOBAL->getApplicationPath()."/conf/", // legacy path, TODO: to be removed
+		);
 
-		$dir = opendir($path);
-		while($file = readdir($dir)){
-			if(preg_match('/^(local_|)(settings|after_initialize)\.(inc|php)$/',$file)){ continue; } // this is ugly hack :( i need to delay loading of ./config/settings.php na ./config/after_initialize.php
-			if(preg_match('/\.(inc|php)$/',$file) && is_file($path.$file)){
-				require_once($path.$file);
+		$configs_loaded = array();
+
+		foreach($paths as $path){
+			if(!file_exists($path)){ continue; }
+
+			if(file_exists("$path/routers/")){
+				class_autoload("$path/routers/");
 			}
+
+			$dir = opendir($path);
+			while($file = readdir($dir)){
+				if(!preg_match('/\.(inc|php)$/',$file) || !is_file($path.$file)){ continue; }
+				$config_name = preg_replace('/\.(inc|php)$/','',$file); // e.g. "colors.php" -> "colors"
+				if(in_array($config_name,array("settings","after_initialize","local_settings","local_after_initialize"))){ continue; } // this is ugly hack :( i need to delay loading of ./config/settings.php na ./config/after_initialize.php
+
+				if(in_array($config_name,$configs_loaded)){ continue; }
+
+				$output = require_once($path.$file);
+				$configs_loaded[] = $config_name;
+				$ATK14_GLOBAL->__setConfigFromPhpFile($config_name,$output);
+			}
+			closedir($dir);
 		}
-		closedir($dir);
 	}
 
 	/**
@@ -324,6 +339,8 @@ class Atk14Utils{
 				$value = true;
 			}elseif(strtolower($value)==="false"){
 				$value = false;
+			}elseif(strtolower($value)==="null"){
+				$value = null;
 			}
 			$options[$key] = $value;
 		}
@@ -451,7 +468,7 @@ class Atk14Utils{
 	 */
 	static function ResponseProduced(&$controller){
 		return !(
-			strlen($controller->response->getLocation())==0 &&
+			strlen((string)$controller->response->getLocation())==0 &&
 			!$controller->action_executed &&
 			$controller->response->buffer->getLength()==0 &&
 			$controller->response->getStatusCode()==200
@@ -610,7 +627,7 @@ class Atk14Utils{
 	static function _CorrectActionForUrl(&$params){
 		// shortcut to define both controller and action through the action only
 		// action="books/detail" -> controller="books", action="detail"
-		if(preg_match('/(.+)\/(.+)/',$params["action"],$matches)){
+		if(preg_match('/(.+)\/(.+)/',(string)$params["action"],$matches)){
 			$params["controller"] = $matches[1];
 			$params["action"] = $matches[2];
 		}

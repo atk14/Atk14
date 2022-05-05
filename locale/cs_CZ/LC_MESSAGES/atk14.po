@@ -7,22 +7,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-30 12:26+0100\n"
-"PO-Revision-Date: 2020-01-30 12:28+0100\n"
+"POT-Creation-Date: 2021-08-22 14:40+0200\n"
+"PO-Revision-Date: 2021-08-22 15:17+0200\n"
 "Last-Translator: Jaromir Tomek <jaromir.tomek@gmail.com>\n"
 "Language-Team: ATK14 Development Team\n"
 "Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: ../src/atk14/atk14_dispatcher.php:67
+#: ../src/atk14/atk14_dispatcher.php:73
 msgid "Service Unavailable"
 msgstr "Služba je nedostupná"
 
-#: ../src/atk14/atk14_dispatcher.php:68
+#: ../src/atk14/atk14_dispatcher.php:74
 msgid "This site is in maintenance. Please come back later."
 msgstr "Probíhá údržba této stránky. Přijďte prosím později."
 
@@ -32,7 +32,7 @@ msgstr "Formulář obsahuje chyby, proto nemůže být zpracován."
 
 #: ../src/atk14/atk14_form.php:539
 msgid "Please, submit the form again"
-msgstr "Prosím, odešlete formulář znovu."
+msgstr "Prosím, odešlete formulář znovu"
 
 #: ../src/atk14/atk14_locale.php:70
 msgid "atk14.date_format"
@@ -71,7 +71,7 @@ msgstr ","
 msgid "atk14.number_format.thousands_separator"
 msgstr " "
 
-#: ../src/atk14/atk14_sorting.php:152
+#: ../src/atk14/atk14_sorting.php:162
 msgid "Sort table by this column"
 msgstr "Třídit tabulku podle tohoto sloupce"
 
@@ -92,6 +92,7 @@ msgid "Next"
 msgstr "Další"
 
 #: ../src/atk14/helpers/function.to_sentence.php:13
+#: ../src/atk14/helpers/modifier.to_sentence.php:12
 msgid "and"
 msgstr "a"
 
@@ -128,9 +129,17 @@ msgstr ""
 msgid "Please, choose the right option."
 msgstr "Prosím, vyberte správnou možnost."
 
-#: ../src/forms/fields/date_field.php:17
+#: ../src/forms/fields/date_field.php:21
 msgid "Enter a valid date."
 msgstr "Zadejde platné datum."
+
+#: ../src/forms/fields/date_field.php:22
+msgid "Ensure this date is not newer than %value%."
+msgstr "Tento datum nesmí být novější než %value%."
+
+#: ../src/forms/fields/date_field.php:23
+msgid "Ensure this date is not older than %value%."
+msgstr "Tento datum nesmí být starší než %value%."
 
 #: ../src/forms/fields/date_time_field.php:14
 msgid "Enter a valid date, hours and minutes."
@@ -140,7 +149,7 @@ msgstr "Zadejte platné datum, hodiny a minuty."
 msgid "Enter a valid date, hours, minutes and seconds."
 msgstr "Zadejte platné datum, hodiny, minuty a sekundy."
 
-#: ../src/forms/fields/email_field.php:20
+#: ../src/forms/fields/email_field.php:21
 msgid "Enter a valid e-mail address."
 msgstr "Zadejte platnou e-mailovou adresu."
 
@@ -232,11 +241,11 @@ msgstr ""
 
 #: ../src/forms/fields/image_field.php:29
 msgid "Ensure this image is at least %min% pixels wide (it is %width%)."
-msgstr "Obrázek musí mít alespoň %min% bodů na šířku (nyní má %width%). "
+msgstr "Obrázek musí mít alespoň %min% bodů na šířku (nyní má %width%)."
 
 #: ../src/forms/fields/image_field.php:30
 msgid "Ensure this image is at least %min% pixels high (it is %height%)."
-msgstr "Obrázek musí mít alespoň %min% bodů na výšku (nyní má %height%). "
+msgstr "Obrázek musí mít alespoň %min% bodů na výšku (nyní má %height%)."
 
 #: ../src/forms/fields/image_field.php:32
 msgid "Ensure this image is in a required format (it is %mime_type%)."
@@ -250,21 +259,29 @@ msgstr "Zadejte celé číslo."
 msgid "Enter a valid IP address."
 msgstr "Vložte platnou IP adresu."
 
-#: ../src/forms/fields/multiple_choice_field.php:30
+#: ../src/forms/fields/multiple_choice_field.php:35
 msgid "Select a valid choice. %value% is not one of the available choices."
 msgstr "Vyberte platnou hodnotu. %value% není jedna z nabízených možností."
 
-#: ../src/forms/fields/multiple_choice_field.php:31
+#: ../src/forms/fields/multiple_choice_field.php:36
 msgid "Enter a list of values."
 msgstr "Zadejte seznam hodnot."
 
-#: ../src/forms/fields/multiple_choice_field.php:32
+#: ../src/forms/fields/multiple_choice_field.php:37
 msgid "Please, choose the right options."
 msgstr "Prosím, vyberte správné možnosti."
 
+#: ../src/forms/fields/multiple_choice_field.php:38
+msgid "Please, select only one item."
+msgstr "Vyberte prosím pouze jednu položku."
+
+#: ../src/forms/fields/multiple_choice_field.php:39
+msgid "Please, select up to %max_choice_items% items."
+msgstr "Vyberte prosím nejvýše %max_choice_items% položek."
+
 #: ../src/forms/fields.php:235
 msgid "This field is required."
-msgstr "Toto pole je povinné"
+msgstr "Toto pole je povinné."
 
 #: ../src/forms/fields.php:236
 msgid "Enter a valid value."
