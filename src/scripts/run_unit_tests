@@ -146,13 +146,32 @@ if(PHPUNIT2){
 		echo $error_message;
 		exit(1);
 	}
-	if(class_exists('PHPUnit\Framework\TestCase')){
-		eval("class tc_super_base extends PHPUnit\Framework\TestCase{ }");
-		eval("class TcSuperBase extends PHPUnit\Framework\TestCase{ }");
-	}else{
-		eval("class tc_super_base extends PHPUnit_Framework_TestCase{ }");
-		eval("class TcSuperBase extends PHPUnit_Framework_TestCase{ }");
+	$_base_class = class_exists('PHPUnit\Framework\TestCase') ? 'PHPUnit\Framework\TestCase' : 'PHPUnit_Framework_TestCase';
+	eval("class __TcCheck extends $_base_class{ }");
+	$_tc_check = new __TcCheck();
+	$_methods_def = '';
+	if(!method_exists($_tc_check,"assertStringContains")){
+		$_methods_def .= '
+			function assertStringContains($needle, $haystack, $message = ""){
+				return $this->assertContains($needle, $haystack, $message);
+			}
+			function assertStringNotContains($needle, $haystack, $message = ""){
+				return $this->assertNotContains($needle, $haystack, $message);
+			}
+		';
 	}
+	if(!method_exists($_tc_check,"assertContains")){
+		$_methods_def .= '
+			function assertContains($needle, $haystack, $message = ""){
+				return $this->assertStringContains($needle, $haystack, $message);
+			}
+			function assertNotContains($needle, $haystack, $message = ""){
+				return $this->assertStringNotContains($needle, $haystack, $message);
+			}
+		';
+	}
+	eval("class tc_super_base extends $_base_class{ $_methods_def }");
+	eval("class TcSuperBase extends $_base_class{ $_methods_def }");
 }
 
 $ALLOWED_TESTS = array();
