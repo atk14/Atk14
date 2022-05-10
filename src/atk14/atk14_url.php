@@ -612,7 +612,7 @@ class Atk14Url{
 	 */
 	static function ParseParamsFromUri($uri){
 		$params = parse_url($uri, PHP_URL_QUERY);
-		parse_str( $params, $out );
+		parse_str((string)$params, $out);
 		return $out;
 	}
 
