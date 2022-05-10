@@ -616,7 +616,7 @@ class SessionStorer{
 				return false;
 			}
 		}
-		return strlen($this->getSecretToken())>0;
+		return strlen((string)$this->getSecretToken())>0;
 	}
 
 	/**
