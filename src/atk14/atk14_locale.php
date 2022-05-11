@@ -64,6 +64,7 @@ class Atk14Locale{
 	 * @static
 	 */
 	static function FormatDate($iso_date,$pattern = ""){
+		$iso_date = (string)$iso_date;
 		if(strlen($iso_date)==0){ return ""; }
 
 		if(!strlen($pattern)){
