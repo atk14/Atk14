@@ -4,25 +4,33 @@ os: linux
 # Partner Queue Solution, no credits are consumed
 arch: ppc64le
 
-dist: focal
-
 language: php
 
 services:
   - mysql
   - postgresql
 
-php:
-  - 7.4
-  - 8.0
-  - 8.1
+jobs:
+  include:
+    - php: 7.1
+      dist: xenial
+    - php: 7.2
+      dist: xenial
+    - php: 7.3
+      dist: xenial
+    - php: 7.4
+      dist: xenial
+    - php: 8.0
+      dist: focal
+    - php: 8.1
+      dist: focal
 
 before_install:
   - sudo locale-gen en_US.UTF-8
   - sudo locale-gen cs_CZ.UTF-8
   - sudo update-locale
   - locale -a
-  - composer global require "phpunit/phpunit=^7.0" --ignore-platform-reqs
+  - composer global require "phpunit/phpunit=^7.5" --ignore-platform-reqs
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
   - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres
   - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
