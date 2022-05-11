@@ -654,7 +654,8 @@ class Atk14Mailer{
 			Files::WriteToFile("$dir/$filename",$message);
 
 			// (Re)creating symlink latest
-			if(file_exists("$dir/latest")){ unlink("$dir/latest"); }
+			if(file_exists("$dir/latest-")){ unlink("$dir/latest-"); }
+			if(file_exists("$dir/latest")){ rename("$dir/latest","$dir/latest-"); }
 			symlink("$filename","$dir/latest");
 
 			//$this->logger->info(
