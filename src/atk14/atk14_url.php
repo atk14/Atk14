@@ -504,7 +504,7 @@ class Atk14Url{
 			}
 			return join($options["connector"],$out);
 		}
-		return urlencode($_key)."=".urlencode($_value);
+		return urlencode($_key)."=".urlencode((string)$_value);
 	}
 
 	static function EncodeParams($params, $options = array()){
