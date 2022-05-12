@@ -215,7 +215,7 @@ class Atk14Locale{
 	static function FormatNumber($number,$decimal_places = null){
 		if(!strlen("$number")){ return; }
 
-		if(strlen($decimal_places)==0){ // null, "", false...
+		if(strlen((string)$decimal_places)==0){ // null, "", false...
 			$decimal_places = 0;
 			if(preg_match('/\.(\d*)$/',"$number",$matches)){
 				$decimal_places = strlen($matches[1]);
