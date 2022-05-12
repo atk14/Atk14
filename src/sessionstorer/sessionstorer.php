@@ -651,7 +651,7 @@ class SessionStorer{
 
 		// Cookie: check=1490347093; session=4881.a13fhJVULIxDlrnp97ogE8K4bmc0twQF; session=14227.J7vPy5fhDVcRd3KEnHeQrsqCSbFO6xal; session=650142.AobSw960vtlPzrq8eFH7ODRsVfhUpWMg; session=681433.ExdUe0wl12pTKysc26ShP27IKR93j0vW
 		$cookies = $request->getHeader("Cookie");
-		foreach(explode(";",$cookies) as $c){
+		foreach(explode(";",(string)$cookies) as $c){
 			$ar = explode("=",trim($c));
 			if(urlencode($ar[0])==$c_name){
 				$this->__addCookieValueToPairs(urlencode($ar[1]),$pairs);
