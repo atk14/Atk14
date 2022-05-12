@@ -19,5 +19,6 @@ class TcFunctions extends TcBase{
 
 	function test_EasyReplace(){
 		$this->assertEquals("Hi Universe!",EasyReplace("Hello World!",array("Hello" => "Hi", "World" => "Universe")));
+		$this->assertEquals("Hi Universe!",EasyReplace("0Hello0 0World0!",array("Hello" => "Hi", "World" => "Universe", 0 => null)));
 	}
 }
