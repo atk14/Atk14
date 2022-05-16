@@ -504,7 +504,7 @@ class Atk14Url{
 			}
 			return join($options["connector"],$out);
 		}
-		return urlencode($_key)."=".urlencode($_value);
+		return urlencode($_key)."=".urlencode((string)$_value);
 	}
 
 	static function EncodeParams($params, $options = array()){
@@ -612,7 +612,7 @@ class Atk14Url{
 	 */
 	static function ParseParamsFromUri($uri){
 		$params = parse_url($uri, PHP_URL_QUERY);
-		parse_str( $params, $out );
+		parse_str((string)$params, $out);
 		return $out;
 	}
 

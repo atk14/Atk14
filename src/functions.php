@@ -13,8 +13,14 @@ if(!defined("_ATK14_FUNCTIONS_LOADED_") && !function_exists("EasyReplace")){
  *	@return	strig
  */
 function EasyReplace($str,$replaces){
-	settype($replaces,"array");
-	return str_replace(array_keys($replaces),array_values($replaces),$str);
+	$str = (string)$str;
+	$replaces = (array)$replaces;
+	if(!sizeof($replaces)){ return $str; }
+	$keys = array_keys($replaces);
+	$values = array_values($replaces);
+	$keys = array_map(function($item){ return (string)$item; },$keys);
+	$values = array_map(function($item){ return (string)$item; },$values);
+	return str_replace($keys,$values,$str);
 }
 
 /**

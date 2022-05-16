@@ -288,7 +288,7 @@ class HTTPResponse{
 	 *
 	 * @return bool
 	 */
-	function redirected(){ return strlen($this->getLocation())>0; }
+	function redirected(){ return strlen((string)$this->getLocation())>0; }
 
 	/**
 	 * Sets Content-Type response header.

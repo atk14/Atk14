@@ -436,7 +436,7 @@ class HTTPRequest{
 	 */
 	function isServerOnStandardPort(){
 		$port = $this->getServerPort();
-		if(strlen($port)==0){ return true; } // Apparently we're in a shell
+		if(strlen((string)$port)==0){ return true; } // Apparently we're in a shell
 		if($this->sslActive()){
 			return $this->getServerPort()==443 ||
 				$this->getServerPort()==80; // It's quite common that Apache is running on non-ssl port 80 and ssl is provided by Nginx in reverse proxy mode.
@@ -486,7 +486,7 @@ class HTTPRequest{
 	function getBasicAuthString(){
 		$username = $this->getBasicAuthUsername();
 		$password = $this->getBasicAuthPassword();
-		if(strlen($username)>0 || strlen($password)>0){
+		if(strlen((string)$username)>0 || strlen((string)$password)>0){
 			return "$username:$password";
 		}
 	}
