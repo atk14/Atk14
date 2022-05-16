@@ -1,5 +1,6 @@
 <?php
-class MainController extends ApplicationController{
+class MainController extends SpaceController{
+
 	function index(){
 		$this->render_template = false;
 	}

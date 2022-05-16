@@ -1,5 +1,6 @@
 <?php
 class TcMailer extends TcBase{
+
 	function test_loading(){
 		$controller = $this->client->get("en/testing/test");
 		$this->assertEquals("",$controller->namespace);
@@ -14,6 +15,11 @@ class TcMailer extends TcBase{
 		$controller = $this->client->get("universe/en/planets/index");
 		$this->assertEquals("universe",$controller->namespace);
 		$this->assertEquals("",$controller->mailer->namespace);
+
+		// in namespace space, there is SpaceMailer
+		$controller = $this->client->get("space/en/galaxies/index");
+		$this->assertEquals("space",$controller->namespace);
+		$this->assertEquals("space",$controller->mailer->namespace);
 	}
 
 	function test_sending(){
