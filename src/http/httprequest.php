@@ -567,7 +567,7 @@ class HTTPRequest{
 
 		if(isset($GLOBALS["_SERVER"]["REQUEST_METHOD"])){
 			$out = $GLOBALS["_SERVER"]["REQUEST_METHOD"];
-			if($out == "POST" && ($_method = strtoupper($this->getVar("_method","PG")))){
+			if($out == "POST" && ($_method = strtoupper((string)$this->getVar("_method","PG")))){
 				$out = in_array($_method,array("DELETE","PUT")) ? $_method : $out;
 			}
 			return $out;
