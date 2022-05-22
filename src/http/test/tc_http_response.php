@@ -284,6 +284,7 @@ class tc_http_response extends tc_base{
 		ob_start();
 		$r->flushAll();
 		$output = ob_get_contents();
+		ob_end_flush();
 
 		$this->assertEquals('HTTP/1.0 200 OK
 Content-Type: text/plain; charset=UTF-8
