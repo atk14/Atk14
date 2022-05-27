@@ -2,6 +2,43 @@
 
 All notable changes to ATK14 Framework will be documented in this file.
 
+## Unreleased
+
+* 867c522 - [Atk14] Mailer in a namespace (e.g. admin) can be named after the namespace (e.g. AdminMailer)
+* c3b1842 - [Atk14] In DEVELOPMENT, Atk14Mailer::_send() creates symlinks to the last and the penultimate message
+* [Smarty3] Smarty upgrade 3.1.30 -> 3.1.45
+* 0af3bfb - [Smarty2] Smarty updated: 2.6.31 -> 2.6.32
+* d83f968 - [Smarty2, Smarty3, PHP8.1] HACK!!! Patching Smarty (both v2 and v3) to not use deprecated strftime() in selected places
+* [Atk14] Added helper modifier.strip_html (far more better than strip_tags)
+* 6596e9f - [Tester] Added methods assertStringContains and assertStringNotContains, resp. assertContains and assertNotContains if they dont exist
+* a4d58ed - [Forms] Prevented to unwanted redefining of functions
+* 6f9081c - [Atk14] Current version of scripts/run_unit_tests
+* 070d5a7 - [Atk14] Atk14Utils::LoadConfig() improved; Atk14Global::getConfig() returns config also from php files
+* f90b430 - [Atk14] Script scripts/dump_config accepts parameter --format=json  or --format=yaml and change its output accordingly
+* 073d48d - [Forms] Pattern in EmailField improved
+* f096be7 - [Atk14] Added optional argument --skipped-before-deploy to ./scripts/deploy
+* af576d6 - [String4] String4 installed in version 0.4
+* 12ba63e - [Atk14] Atk14Utils::StringToOptions() treats "null" or "NULL" as null
+* 0157c7e - [UrlFetcher] UrlFetcher installed in version 1.7.1
+* ad8b451 - [UrlFetcher] UrlFetcherViaCommand tuned & fixed
+* 63d400e - [UrlFetcher] UrlFetcher installed in version 1.7
+* 9440267 - [UrlFetcher] UrlFetcherViaCommand improved
+* 5e01322 - [Atk14] scripts/simulate_http_request fixed
+* 8304092 - [UrlFetcher] Class CliUrlFetcher renamed to UrlFetcherViaCommand
+* 5d99d78 - [UrlFetcher] CliUrlFetcher fixed
+* 02be01e - [Atk14] Function getallheaders() is created in scripts/simulate_http_request
+* d9ad41d - [UrlFetcher] Added experimental class CliUrlFetcher for fetching not from network socket but from a cli command
+* cfc32cb - [Atk14] scripts/simulate_http_request tuned
+* ba2378c - [Atk14] ./scripts/simulate_http_request improved
+* 4c72de1 - [Atk14] Added scripts/simulate_http_request - initial release
+* 924f049 - [Http] HTTPResponse::_flushHeaders() prints headers to stdout in cli
+* bf62ba5 - [Atk14] Added constants USING_BOOTSTRAP3 and USING_BOOTSTRAP5
+* 1547964 - [Logger] Flush is being called in Logger::prepared_log("start")
+* 0fdc7ff - [Files] Files in version 1.6.2
+* b76ac33 - [Atk14] Error report from DbMole is outputted using trigger_error rather than echo in CLI and DEVELOPMENT or TEST environment
+* 7dbcbfc - [TableRecord] Id field types are cached in a static property
+* 4948a29 - [TableRecord] Table structure is being readed in case of need, not earlier
+
 ## [1.7] - 2021-10-24
 
 * d095f72 - [Lock] Using flock() before writing to the lock_file
