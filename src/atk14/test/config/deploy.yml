@@ -26,7 +26,14 @@ acceptation:
 acceptation2:
   extends: acceptation
   directory: "/home/deploy/apps/mushoomradar_acc2/"
-  deploy_repository: "{{user}}@{{server}}:repos/mushoomradar_acc2.git"
+  deploy_repository: "ssh://{{user}}@{{server}}/repos/mushoomradar_acc2.git"
+
+acceptation3:
+  server: "europe.mushoomradar.net"
+  user: "www"
+  home_dir: "/var/www/"
+  directory: "/var/www/acc3.mushoomradar.net/"
+  deploy_repository: "ssh://({user})@{{server}}/.repos/mushoomradar_acc3.git"
 
 production:
   server: "zeus.mushoomradar.net"

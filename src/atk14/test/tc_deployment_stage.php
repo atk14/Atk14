@@ -4,8 +4,8 @@ class TcDeploymentStage extends TcBase{
 	function test(){
 		$stages = Atk14DeploymentStage::GetStages();
 
-		$this->assertEquals(4,sizeof($stages));
-		$this->assertEquals(array("devel","acceptation","acceptation2","production"),array_keys($stages));
+		$this->assertEquals(5,sizeof($stages));
+		$this->assertEquals(array("devel","acceptation","acceptation2","acceptation3","production"),array_keys($stages));
 
 		$first_stage = Atk14DeploymentStage::GetFirstStage();
 		$this->assertEquals("devel",$first_stage->name);
@@ -106,13 +106,19 @@ class TcDeploymentStage extends TcBase{
 			"env" => "",
 			"directory" => "/home/deploy/apps/mushoomradar_acc2/",
 			"deploy_via" => "git_push",
-			"deploy_repository" => "deploy@zeus.mushoomradar.net:repos/mushoomradar_acc2.git",
+			"deploy_repository" => "ssh://deploy@zeus.mushoomradar.net/repos/mushoomradar_acc2.git",
 			"deploy_branch" => "master",
 			"create_maintenance_file" => true,
 			"before_deploy" => array("@local composer update", "@local grunt dist"),
 			"rsync" => array(),
 			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
 		),$acceptation2->toArray());
+		$this->assertEquals("/home/deploy",$acceptation2->getHomeDir());
+		$this->assertEquals("/home/deploy/repos/mushoomradar_acc2.git",$acceptation2->getDeployRepositoryRemoteDir());
+
+		$acceptation3 = Atk14DeploymentStage::GetStage("acceptation3");
+		$this->assertEquals("/var/www",$acceptation3->getHomeDir());
+		$this->assertEquals("/var/www/.repos/mushoomradar_acc3.git",$acceptation3->getDeployRepositoryRemoteDir());
 
 		// it is unable to set a value
 		$exception_thrown = false;

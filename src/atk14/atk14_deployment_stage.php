@@ -134,6 +134,25 @@ class Atk14DeploymentStage{
 	}
 
 	/**
+	 * Returns home dir of the user on the remote server
+	 *
+	 * Ending slash is removed.
+	 *
+	 *	echo $stage->getHomeDir(); // "/home/deploy"
+	 *
+	 * @return string
+	 */
+	function getHomeDir(){
+		$ar = $this->toArray();
+		$home_dir = "/home/$ar[user]";
+		if(isset($ar["home_dir"]) && strlen((string)$ar["home_dir"])>0){
+			$home_dir = (string)$ar["home_dir"];
+		}
+		$home_dir = preg_replace('/(.)\/$/','\1',$home_dir); // "/home/devel/" -> "/home/devel"; "/" -> "/"
+		return $home_dir;
+	}
+
+	/**
 	 * Returns URL of the deploy repository from the outside view
 	 *
 	 */
@@ -151,9 +170,18 @@ class Atk14DeploymentStage{
 	 */
 	function getDeployRepositoryRemoteDir(){
 		$ar = $this->toArray();
-		$deploy_repository_remote = $ar["deploy_repository"];
+		$home_dir = $this->getHomeDir();
+
+		$deploy_repository = $ar["deploy_repository"];
+
+		// "ssh://user@server/repos/project.git" -> "/home/user/repos/project.git"
+		if(preg_match('/^ssh:\/\/[^\/]+(\/.+)$/',$deploy_repository,$matches)){
+			return "$home_dir$matches[1]";
+		}
+
+		$deploy_repository_remote = $deploy_repository;
 		$deploy_repository_remote = preg_replace('/^.*?:/','',$deploy_repository_remote);
-		if(!preg_match('/^\//',$deploy_repository_remote)){ $deploy_repository_remote = "/home/$ar[user]/$deploy_repository_remote"; }
+		if(!preg_match('/^\//',$deploy_repository_remote)){ $deploy_repository_remote = "$home_dir/$deploy_repository_remote"; }
 		return $deploy_repository_remote;
 	}
 
