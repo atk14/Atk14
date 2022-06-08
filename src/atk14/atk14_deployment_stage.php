@@ -176,7 +176,7 @@ class Atk14DeploymentStage{
 
 		// "ssh://user@server/repos/project.git" -> "/home/user/repos/project.git"
 		if(preg_match('/^ssh:\/\/[^\/]+(\/.+)$/',$deploy_repository,$matches)){
-			return "$home_dir$matches[1]";
+			return "$matches[1]";
 		}
 
 		$deploy_repository_remote = $deploy_repository;

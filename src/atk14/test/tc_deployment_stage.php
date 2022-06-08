@@ -106,7 +106,7 @@ class TcDeploymentStage extends TcBase{
 			"env" => "",
 			"directory" => "/home/deploy/apps/mushoomradar_acc2/",
 			"deploy_via" => "git_push",
-			"deploy_repository" => "ssh://deploy@zeus.mushoomradar.net/repos/mushoomradar_acc2.git",
+			"deploy_repository" => "ssh://deploy@zeus.mushoomradar.net/home/deploy/repos/mushoomradar_acc2.git",
 			"deploy_branch" => "master",
 			"create_maintenance_file" => true,
 			"before_deploy" => array("@local composer update", "@local grunt dist"),
