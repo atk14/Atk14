@@ -29,9 +29,9 @@ cd $ATK14_DOCUMENT_ROOT
 
 if [ -t 0 ]; then
 	# STDIN is attached to TTY
-	exec php -a --php-ini "./scripts/_console/php.ini"
+	exec php -a -d auto_prepend_file=./scripts/_console/auto_prepend.php
 else
 	# STDIN is attached to a pipe
 	# An opening php tag needs to be added before the content of the STDIN
-	(echo -n '<?php ' && cat) | exec php --php-ini "./scripts/_console/php.ini"
+	(echo -n '<?php ' && cat) | exec php -d auto_prepend_file=./scripts/_console/auto_prepend.php
 fi
