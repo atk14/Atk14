@@ -1,5 +1,6 @@
 <?php
 class TcLocale extends TcBase{
+
 	function test_string_translation(){
 		$this->_setLocale("cs");
 		$this->assertEquals("Heslo",_("Password"));
@@ -17,6 +18,8 @@ class TcLocale extends TcBase{
 		$this->assertEquals("30.1.1977 12:33",Atk14Locale::FormatDateTime("1977-01-30 12:33:00"));
 		$this->assertEquals("30.1.1977",Atk14Locale::FormatDate("1977-01-30 12:33:00"));
 		$this->assertEquals("30.1.",Atk14Locale::FormatDate("1977-01-30 12:33:00","j.n."));
+		$this->assertEquals("",Atk14Locale::FormatDate(""));
+		$this->assertEquals("",Atk14Locale::FormatDate(null));
 
 		$this->_setLocale("en");
 		$this->assertEquals("01/30/1977 12:33",Atk14Locale::FormatDateTime("1977-01-30 12:33:00"));
@@ -43,6 +46,7 @@ class TcLocale extends TcBase{
 		// errors
 		$this->assertEquals(null,Atk14Locale::ParseDateTime("nonsence"));
 		$this->assertEquals(null,Atk14Locale::ParseDateTime("30.1.1977 12:33:22"));
+		$this->assertEquals(null,Atk14Locale::ParseDateTime(null));
 
 		$this->_setLocale("en");
 		$this->assertEquals("1977-01-30 12:33:00",Atk14Locale::ParseDateTime("01/30/1977 12:33"));
