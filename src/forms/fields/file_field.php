@@ -100,6 +100,7 @@ class FileField extends Field{
 	 * $f->_fileSize2Int("1M"); // 1024
 	 */
 	function _fileSize2Int($size){
+		$size = (string)$size;
 		$size = preg_replace('/\s/','',$size);
 		if(is_numeric($size)){ return (int)$size; }
 		if(preg_match('/([0-9\.]+)(M|k|K)B?/',$size,$matches)){
