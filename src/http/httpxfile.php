@@ -86,7 +86,7 @@ class HTTPXFile extends HTTPUploadedFile{
 
 		$request = $options["request"];
 
-		if($request->post() && (preg_match('/^attachment/',$request->getHeader("Content-Disposition")) || $request->getHeader("X-File-Name"))){
+		if($request->post() && (preg_match('/^attachment/',(string)$request->getHeader("Content-Disposition")) || strlen((string)$request->getHeader("X-File-Name")))){
 			$content = $request->getRawPostData();
 
 			$content_length = $request->getHeader("Content-Length");
@@ -193,7 +193,7 @@ class HTTPXFile extends HTTPUploadedFile{
 		}
 
 		// legacy way
-		$ch = $this->_Request->getHeader("X-File-Chunk");
+		$ch = (string)$this->_Request->getHeader("X-File-Chunk");
 		if(preg_match('/^(\d+)\/(\d+)$/',$ch,$matches)){
 			$order = $matches[1]+0;
 			$total = $matches[2]+0;
@@ -207,7 +207,7 @@ class HTTPXFile extends HTTPUploadedFile{
 	 * @return array
 	 */
 	protected function _getContentRangeData(){
-		$content_range = $this->_Request->getHeader("Content-Range"); // Content-Range: bytes 0-1048575/2344594
+		$content_range = (string)$this->_Request->getHeader("Content-Range"); // Content-Range: bytes 0-1048575/2344594
 		if(preg_match('/^bytes (\d+)-(\d+)\/(\d+)$/',$content_range,$matches)){
 			$start_offset = $matches[1];
 			$end_offset = $matches[2];
