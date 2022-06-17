@@ -94,7 +94,7 @@ class String{
 			'length' => $length,
 		);
 
-		srand ((double) microtime() * 1000000);
+		srand(floor((double) microtime() * 1000000));
 		$chars = array('a','i','o','s','t','u','v','3','4','5','8','B','C','D','E','F','7','G','H','I','J','K','L','M','N','O','j','k','l','6','P','Q','W','b','c','d','e','f','g','h','p','q','r','x','y','z','0','1','S','T','U','w','2','9','A','R','V','m','n');
 		foreach(preg_split('//',$options['extra_chars']) as $ch){
 			strlen($ch) && ($chars[] = $ch);
