@@ -5,6 +5,7 @@ define("SENDMAIL_DO_NOT_SEND_MAILS",true);
 
 require("../logger.php");
 require("../../files/load.php");
+require("../../stringbuffer/load.php");
 require("../../sendmail/load.php");
 require("../../translate/load.php");
 

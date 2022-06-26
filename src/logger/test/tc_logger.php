@@ -130,6 +130,27 @@ class TcLogger extends TcBase{
 		$this->assertEquals("import.notification@doe.com",$logger->get_notify_email()); // see $LOGGER_CONFIGURATION in initialize.php
 	}
 
+	function test_log_to_buffer(){
+		$logger = new Logger("test",array("log_to_file" => false));
+		$this->assertNull($logger->buffer);
+
+		$logger = new Logger("test",array("log_to_file" => false, "log_to_buffer" => false));
+		$this->assertNull($logger->buffer);
+
+		$logger = new Logger("test",array("log_to_file" => false, "log_to_buffer" => true));
+		$this->assertNotNull($logger->buffer);
+		$this->assertTrue(is_a($logger->buffer,"StringBuffer"));
+
+		$logger->info("Writing to buffer");
+
+		$this->assertTrue($logger->buffer->getLength() === 0);
+
+		$logger->flush();
+
+		$this->assertFalse($logger->buffer->getLength() === 0);
+		$this->assertTrue(!!preg_match('/test\[\d+\]: Writing to buffer/',$logger->buffer)); // e.g. "2022-06-26 17:18:27 test[50604]: Writing to buffer"
+	}
+
 	function _test_log_file_creation($logger,$log_name){
 		$this->assertFalse(file_exists($f = __DIR__."/log/$log_name"));
 
