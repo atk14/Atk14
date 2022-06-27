@@ -110,10 +110,16 @@ class Atk14Robot{
 		$this->dbmole = &$GLOBALS["dbmole"];
 		$robot_name = String4::ToObject(get_class($this))->underscore()->gsub('/_robot$/','');
 		$this->robot_name = $robot_name;
-		$this->logger = new Logger("$robot_name",array(
+
+		$logger_options = array(
 			"default_log_file" => $this->default_log_file,
 			"automatically_log_to_stdout_on_terminal" => true,
-		));
+		);
+		if(TEST){
+			$logger_options["log_to_file"] = false;
+			$logger_options["log_to_buffer"] = true;
+		}
+		$this->logger = new Logger("$robot_name",$logger_options);
 
 		$ATK14_GLOBAL->setLogger($this->logger);
 
