@@ -29,7 +29,7 @@ ATK14 consists of
   * a tool for sending proper emails
   * tools for parsing YAML and XML and so on
 
-ATK14 requires UNIX environment, PHP 5.3 or newer and Postgresql as a database engine.
+ATK14 requires UNIX environment, PHP 5.6 or newer and Postgresql as a database engine.
 
 ### Installation
 
@@ -38,6 +38,7 @@ You can start work with ATK14 Framework by installing one of the available Skele
 * [ATK14 Embryo](https://github.com/atk14/Atk14Embryo)
 * [ATK14 Skelet](https://github.com/atk14/Atk14Skelet)
 * [ATK14 Catalog](https://github.com/atk14/Atk14Catalog)
+* [ATK14 Eshop](https://github.com/atk14/Atk14Eshop)
 
 ### License
 
