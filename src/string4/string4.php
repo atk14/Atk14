@@ -188,18 +188,50 @@ class String4{
 	/**
 	 * Returns encoding of the stored string.
 	 *
+	 * ```
+	 * echo $s->getEncoding(); // "UTF-8", "UTF8","utf-8"...
+	 * echo $s->getEncoding(true); // always "utf8" for UTF-8 encoding
+	 * ```
+	 *
+	 *
 	 * @return string encoding
 	 */
-	function getEncoding(){ return $this->_Encoding; }
+	function getEncoding($normalize = false){
+		if($normalize){
+			return Translate::_GetCharsetByName($this->_Encoding);
+		}
+		return $this->_Encoding;
+	}
 
 	/**
 	 * Returns array of chars.
 	 *
-	 * @todo: make it work with multibyte strings
+	 *
+	 *
 	 * @return array
 	 */
-	function chars(){
-		return str_split($this->toString());
+	function chars($options = array()){
+		$options += array(
+			"stringify" => false,
+		);
+
+		if($this->length()===0){ return array(); }
+
+		$u = $this->getEncoding(true)==="utf8" ? "u" : "";
+		$chars = preg_split("//s$u",$this->_String4,-1,PREG_SPLIT_NO_EMPTY);
+		if($chars === false){
+			$chars = str_split($this->_String4);
+		}
+
+		if($options["stringify"]){
+			return $chars;
+		}
+
+		$out = array();
+		foreach($chars as $ch){
+			$out[] = $this->_copy($ch);
+		}
+		return $out;
 	}
 
 	/**
@@ -841,7 +873,7 @@ class String4{
 
 		$text = $this->_String4;
 
-		if(Translate::_GetCharsetByName($this->getEncoding())!=="utf8"){
+		if($this->getEncoding(true)!=="utf8"){
 			return $this->_copy($text);
 		}
 
