@@ -1031,6 +1031,21 @@ class DbMole{
 	 *	)
 	 * ```
 	 *
+	 * sql specifies just one field:
+	 *
+	 * ```
+	 * $articles = $dbmole->selectIntoAssociativeArray("SELECT id FROM articles WHERE source_id=100010");
+	 * ```
+	 * can return this
+	 * ```
+	 *	array(
+	 *		"12" => "12",
+	 *		"3342" => "3342",
+	 *		...
+	 *	)
+	 * ```
+	 *	
+	 *
 	 * @param string $query
 	 * @param array $bind_ar
 	 * @param array $options
@@ -1043,6 +1058,8 @@ class DbMole{
 			$keys = array_keys($row);
 			if(sizeof($keys)==2){
 				$out[$row[$keys[0]]] = $row[$keys[1]];
+			}elseif(sizeof($keys)==1){
+				$out[$row[$keys[0]]] = $row[$keys[0]];
 			}else{
 				$k = $row[$keys[0]];
 				unset($row[$keys[0]]);

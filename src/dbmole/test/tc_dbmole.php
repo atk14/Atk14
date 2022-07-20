@@ -564,12 +564,11 @@ class tc_dbmole extends tc_base{
 			"33" => array("f1" => "34", "f2" => "35", "f3" => null)
 		),$ar);
 
-		// je docela dobry nesmysl vybirat do asociativniho pole jeden sloupec
 		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer FROM test_table ORDER BY an_integer",array());
 		$this->assertEquals(array(
-			"11" => array(),
-			"22" => array(),
-			"33" => array(),
+			"11" => "11",
+			"22" => "22",
+			"33" => "33",
 		),$ar);
 
 		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=44 WHERE an_integer=22"));
