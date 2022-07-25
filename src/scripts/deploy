@@ -224,12 +224,13 @@ function _create_maintenance_file_if_required(){
 }
 
 function _exit_with_errors(){
+	global $stage;
 	echo '
   _____       _  _   _ 
  |  ___|____ (_)| | | |
  | |_  / _  || || | | |
  |  _|| (_| || || | |_|
- |_|   \__,_||_||_| (_)
+ |_|   \__,_||_||_| (_) (in '.$stage.')
                 	
 ';
 	exit(1);
