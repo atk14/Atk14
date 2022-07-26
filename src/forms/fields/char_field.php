@@ -41,6 +41,7 @@ class CharField extends Field
 		if (is_array($value)) {
 			$value = var_export($value, true);
 		}
+		$value = (string)$value;
 		$this->trim_value && ($value = trim($value)); // Char by se mel defaultne trimnout; pridal yarri 2008-06-25
 
 		list($error, $value) = parent::clean($value);
