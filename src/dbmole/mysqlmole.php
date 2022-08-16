@@ -64,7 +64,9 @@ class MysqlMole extends DbMole{
 
 	function _getDbLastErrorMessage(){
 		$connection = $this->_getDbConnect();
-		return "mysqli_error: ".mysqli_error($connection);
+		if($connection && ($err = mysqli_error($connection))){
+			return "mysqli_error: $err";
+		}
 	}
 
 	function _freeResult(&$result){
