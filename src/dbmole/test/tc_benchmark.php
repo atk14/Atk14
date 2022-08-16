@@ -1,6 +1,8 @@
 <?php
 class tc_benchmark extends tc_base{
+
 	function test(){
+		$this->assertTrue(true);
 		return;
 		// this is an internal test
 		$dbmole = $this->ora;
