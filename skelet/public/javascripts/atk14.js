@@ -17,6 +17,18 @@ var ATK14 = ( function() {
 		}
 	} );
 
+	// Here is onClick on a button with a "name" attribute.
+	// Values of attributes "name" and "value" have to be put together into an extra parameter and passed to handleRemote.
+	$( document ).on( "click", "form[data-remote] button[type=\"submit\"][name]", function( e ) {
+		var $button = $( this ), $form = $button.closest( "form" );
+		e.preventDefault();
+		ATK14.handleRemote( $form[ 0 ], [ {
+			name: $button.attr( "name" ),
+			value: $button.attr( "value" )
+		} ] );
+		return false;
+	} );
+
 	$( document ).on( "submit", "form[data-remote]", function( e ) {
 		ATK14.handleRemote( this );
 		e.preventDefault();
@@ -63,33 +75,50 @@ var ATK14 = ( function() {
 
 		action: $( "meta[name='x-action']" ).attr( "content" ),
 
-		handleRemote: function( element ) {
-			var method, url, data, $link, $form,
+		handleRemote: function( element, extraParams ) {
+			var method, url, data, formData, $link, $form,
 				$element = $( element ),
+				settings,
 				dataType = $element.data( "type" ) || $.ajaxSettings.dataType;
+
+			if ( element instanceof jQuery ) {
+				element = element[ 0 ];
+			}
+
+			if ( extraParams === undefined ) { // [ { name: "name1", value: "value1" }, { name: "name2", value: "value2" }, ... ]
+				extraParams = [];
+			}
+
+			method = $element.is( "form" ) ? $element.attr( "method" ) : $element.data( "method" );
+			method = method || "GET"; // By default the method is GET
+			method = method.toUpperCase();
 
 			if ( $element.is( "form" ) ) {
 				$form = $element; // Remove later
-				method = $element.attr( "method" );
 				url = $element.attr( "action" );
-				data = $element.serializeArray();
+				if ( method == "POST" && ( "FormData" in window ) ) {
+					formData = new FormData( element );
+					for ( var i in extraParams ) {
+						formData.append( extraParams[ i ].name, extraParams[ i ].value );
+					}
+				} else{
+					data = $element.serializeArray();
+					data = data.concat( extraParams );
+				}
 			} else {
 				$link = $element; // Remove later
-				method = $element.data( "method" );
 				url = $element.attr( "href" );
 				data = null;
 			}
 
-			method = method || "GET"; // By default the method is GET
-			if ( method.toUpperCase() === "GET" ) {
-				url += url.indexOf( "?" ) >= 0 ? "&" : "?";
+			if ( method == "GET" ) {
+				url += url.indexOf("?")>=0 ? "&" : "?";
 				url += "__xhr_request=1";
 			}
 
-			$.ajax( {
+			settings = {
 				url: url,
 				type: method,
-				data: data,
 				dataType: dataType,
 				beforeSend: function( xhr, settings ) {
 					return fire( $element, "ajax:beforeSend", [ xhr, settings ] );
@@ -107,7 +136,18 @@ var ATK14 = ( function() {
 				error: function( xhr, status, error ) {
 					$element.trigger( "ajax:error", [ xhr, status, error ] );
 				}
-			} );
+			}
+
+			if ( formData ) {
+				// https://www.mattlunn.me.uk/blog/2012/05/sending-formdata-with-jquery-ajax/
+				settings.data = formData;
+				settings.contentType = false;
+				settings.processData = false;
+			} else {
+				settings.data = data;
+			}
+
+			$.ajax( settings );
 		}
 	};
 
