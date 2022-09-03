@@ -504,7 +504,8 @@ class UrlFetcher {
 	 * @return string
 	 */
 	function getContentType(){
-		$c_type = (string)$this->getHeaderValue("content-type");
+		$c_type = $this->getHeaderValue("content-type");
+		if(is_null($c_type)){ return null; }
 		$c_type = trim(preg_replace("/(.*?);.*/","\\1",$c_type));
 		return $c_type;
 	}
