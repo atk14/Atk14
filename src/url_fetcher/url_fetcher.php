@@ -668,7 +668,7 @@ class UrlFetcher {
 			$file = preg_replace('/(\/\.){1,}\//','/',$file); // "/././file.dat" -> "/file.dat"
 			$file = preg_replace('/^(\/+\.\.){1,}\//','/',$file); // "/../about/" -> "/about/"
 			while(1){
-				$_file = preg_replace('/\/([^\/]+\/+\.\.)\//','/',$file); // "/about/../" -> "/"
+				$_file = preg_replace('/^(.*?)\/([^\/]+\/+\.\.)\//','\1/',$file); // "/about/../" -> "/"
 				if($_file==$file){ break; }
 				$file = $_file;
 			}
