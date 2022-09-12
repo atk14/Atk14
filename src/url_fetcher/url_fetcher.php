@@ -372,7 +372,7 @@ class UrlFetcher {
 		if(is_array($data)){
 			$d = array();
 			foreach($data as $k => $v){
-				$d[] = urlencode($k)."=".urlencode($v);
+				$d[] = urlencode($k)."=".urlencode((string) $v);
 			}
 			$data = join("&",$d);
 		}
