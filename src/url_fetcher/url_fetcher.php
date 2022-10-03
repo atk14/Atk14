@@ -53,7 +53,7 @@
  */
 class UrlFetcher {
 
-	const VERSION = "1.7.2";
+	const VERSION = "1.7.3";
 
 	/**
 	 * Authentication type
@@ -122,6 +122,8 @@ class UrlFetcher {
 	 */
 	protected $_UserAgent = "UrlFetcher";
 
+	protected $_ForceContentLength = null;
+
 	/**
 	 * @ignore
 	 */
@@ -139,6 +141,8 @@ class UrlFetcher {
 
 		$this->_RequestHeaders = "";
 		$this->_ResponseHeaders = "";
+
+		$this->_ForceContentLength = null;
 
 		$this->_Content = null; // StringBufferTemporary
 	}
@@ -352,6 +356,15 @@ class UrlFetcher {
 			return $this->fetchContent($location);
 		}
 
+		if($this->getHeaderValue("content-encoding") === "gzip"){
+			$_content = gzdecode((string)$this->_Content);
+			if($_content === false){
+				return $this->_setError("failed to gzdecode content");
+			}
+			$this->_ForceContentLength = strlen($_content);
+			$this->_Content = new StringBufferTemporary($_content);
+		}
+
 		if(!preg_match('/^2/',$this->getStatusCode())){
 			return $this->_setError("status code is ".$this->getStatusCode());
 		}
@@ -529,6 +542,9 @@ class UrlFetcher {
 	 * @return string
 	 */
 	function getContentLength(){
+		if(!is_null($this->_ForceContentLength)){
+			return (string)$this->_ForceContentLength;
+		}
 		$length = $this->getHeaderValue("content-length");
 		if(strlen($length)){
 			return $length;
