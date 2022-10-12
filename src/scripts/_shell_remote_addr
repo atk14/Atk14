@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+define("ATK14_LOAD_AFTER_INITIALIZE_SETTINGS",false);
+require_once(dirname(__FILE__)."/load.php");
+
+$remote_addr = Atk14Utils::ShellRemoteAddr();
+if($remote_addr){
+	echo $remote_addr,"\n";
+}
