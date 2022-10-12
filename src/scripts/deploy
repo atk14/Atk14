@@ -52,21 +52,18 @@ $STAGES = Atk14DeploymentStage::GetStages();
 $FIRST_STAGE = Atk14DeploymentStage::GetFirstStage();
 
 if(!$STAGES){
-	echo file_exists("./config/deploy.yml") ? "It looks like the file ./config/deploy.yml is corrupted (beware of usage of tabulators)\n" : "It looks like there is no file ./config/deploy.yml\n";
-	_exit_with_errors();
+	_exit_with_errors(file_exists("./config/deploy.yml") ? "It looks like the file ./config/deploy.yml is corrupted (beware of usage of tabulators)" : "It looks like there is no file ./config/deploy.yml");
 }
 
 $stage_explicit = (sizeof($argv)>1 && !preg_match('/^-/',$argv[sizeof($argv)-1])) ? $argv[sizeof($argv)-1] : null; // the last parameter without '-' at the beginning
 $stage = isset($stage_explicit) ? $stage_explicit : $FIRST_STAGE->name;
 
 if($stage_explicit && !isset($STAGES[$stage_explicit])){
-	echo "sorry, in ./config/deploy.yml I have no information about a stage $stage_explicit\n";
-	_exit_with_errors();
+	_exit_with_errors("sorry, in ./config/deploy.yml I have no information about a stage $stage_explicit");
 }
 
 if(!isset($STAGES[$stage])){
-	echo "sorry, in ./config/deploy.yml I have no information about a stage $stage\n";
-	_exit_with_errors();
+	_exit_with_errors("sorry, in ./config/deploy.yml I have no information about a stage $stage");
 }
 
 $stage_obj = $STAGES[$stage];
@@ -104,8 +101,7 @@ if($cwd!=getcwd()){
 $current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD","getting name of the branch you are on"));
 echo "$current_branch\n";
 if($current_branch=="HEAD"){
-	echo "You are not currently on a branch\n";
-	_exit_with_errors();
+	_exit_with_errors("You are not currently on a branch");
 }
 
 $out = _exec("git remote -v","checking out existing remote URLs");
@@ -124,6 +120,11 @@ if(sizeof($matches[1])==0){
 	echo "and then deploy again...";
 	_exit_with_errors();
 }
+
+$current_commit = trim(_exec("git rev-parse --short HEAD",array("quiet" => true)));
+$current_commit_remote = trim(_remote_exec("git rev-parse --short HEAD",array("quiet" => true)));
+
+_append_to_log("starting to deploy application from $current_commit_remote to $current_commit");
 
 //$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create the maintenance file');
 
@@ -163,6 +164,8 @@ _run_commands($config["after_deploy"],"after_deploy");
 
 $config["create_maintenance_file"] && _remote_exec("rm config/maintenance.php","gonna remove the maintenance file");
 
+_append_to_log("completed application deployment to $current_commit");
+
 echo "Everything now looks suspiciously good in $stage...\n";
 exit(0);
 
@@ -173,10 +176,14 @@ function _exec($cmd,$options = array()){
 	$options += array(
 		"description" => null,
 		"tip_for_repair" => "",
+		"quiet" => false,
+		"exit_on_error" => true,
 	);
-	echo "################\n";
-	if($options["description"]){ echo "# $options[description]\n"; }
-	echo "$ $cmd\n";
+	if(!$options["quiet"]){
+		echo "################\n";
+		if($options["description"]){ echo "# $options[description]\n"; }
+		echo "$ $cmd\n";
+	}
 	exec("($cmd) 2>&1",$output,$err); // we need to redirect std error to std output
 	if($err){
 		echo join("\n",$output),"\n";
@@ -185,7 +192,10 @@ function _exec($cmd,$options = array()){
 			echo "\n";
 			echo $options["tip_for_repair"],"\n";
 		}
-		_exit_with_errors();
+		if($options["exit_on_error"]){
+			_exit_with_errors();
+		}
+		$output = array();
 	}
 	$output && ($output[] = "");
 	return join("\n",$output);
@@ -223,8 +233,41 @@ function _create_maintenance_file_if_required(){
 	$already_created = true;
 }
 
-function _exit_with_errors(){
+function _append_to_log($message){
+	static $username, $hostname, $remote_addr, $remote_host, $first_call = true;
+
+	if($first_call){
+		$username = posix_getpwuid(posix_geteuid());
+		$username = $username["name"];
+		$hostname = gethostname();
+		$remote_addr = trim(_remote_exec("./scripts/_shell_remote_addr",array("quiet" => true, "exit_on_error" => false)));
+		$remote_host = trim(_remote_exec("./scripts/_shell_remote_host",array("quiet" => true, "exit_on_error" => false)));
+
+		//_remote_exec("mkdir -p log",array("quiet" => true));
+
+		$first_call = false;
+	}
+
+	$log = array();
+	$log[] = "[".date("Y-m-d H:i:s")."]";
+	$log[] = $message;
+	$log[] = $username ? "$username@$hostname" : "";
+	$log[] = $remote_addr;
+	$log[] = $remote_host;
+
+	$log = join(" - ",$log);
+
+	$cmd = 'echo '.escapeshellarg($log).' | tee --append log/deploy.log';
+	_remote_exec($cmd,array("quiet" => true));
+}
+
+function _exit_with_errors($error_message = ""){
 	global $stage;
+
+	if(strlen($error_message)){
+		echo $error_message,"\n";
+	}
+
 	echo '
   _____       _  _   _ 
  |  ___|____ (_)| | | |
