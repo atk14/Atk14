@@ -622,6 +622,37 @@ class Atk14Utils{
 	}
 
 	/**
+	 * When working in a remote shell (entered by using e.g. ./scripts/shell production) this method returns the remote address
+	 *
+	 *
+	 * ```
+	 * echo Atk14Utils::ShellRemoteAddr(); // e.g. "192.158.1.38" or null if the remote address cannot be detected
+	 * ```
+	 */
+	static function ShellRemoteAddr(){
+		$SSH_CLIENT = (string)getenv("SSH_CLIENT");
+		if(strlen($SSH_CLIENT)>0 && ($ar = explode(" ",$SSH_CLIENT))){
+			return $ar[0];
+		}
+	}
+
+	/**
+	 * When working in a remote shell (entered by using e.g. ./scripts/shell production) this method returns the remote hostname
+	 *
+	 *
+	 * ```
+	 * echo Atk14Utils::ShellRemoteHost(); // e.g. "office.atk14guys.net" or null if the remote hostname cannot be detected
+	 * ```
+	 */
+	static function ShellRemoteHost(){
+		$remote_addr = self::ShellRemoteAddr();
+		if($remote_addr){
+			return gethostbyaddr($remote_addr);
+		}
+	}
+
+
+	/**
 	 * @ignore
 	 */ 
 	static function _CorrectActionForUrl(&$params){

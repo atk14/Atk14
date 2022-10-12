@@ -102,4 +102,16 @@ class TcUtils extends TcBase{
 		$this->assertEquals("PRODUCTION",Atk14Utils::_DetermineEnvironmentByRemoteAddr("192.168.1.2"));
 		$this->assertEquals("PRODUCTION",Atk14Utils::_DetermineEnvironmentByRemoteAddr("10.20.30.40"));
 	}
+
+	function test_ShellRemoteAddr(){
+		putenv("SSH_CLIENT=8.8.8.8 1234 22");
+
+		$this->assertEquals("8.8.8.8",Atk14Utils::ShellRemoteAddr());
+		$this->assertEquals("dns.google",Atk14Utils::ShellRemoteHost());
+
+		putenv("SSH_CLIENT=");
+
+		$this->assertEquals(null,Atk14Utils::ShellRemoteAddr());
+		$this->assertEquals(null,Atk14Utils::ShellRemoteHost());
+	}
 }
