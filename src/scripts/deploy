@@ -124,7 +124,7 @@ if(sizeof($matches[1])==0){
 $current_commit = trim(_exec("git rev-parse --short HEAD",array("quiet" => true)));
 $current_commit_remote = trim(_remote_exec("git rev-parse --short HEAD",array("quiet" => true)));
 
-_append_to_log("starting to deploy application from $current_commit_remote to $current_commit");
+_append_to_remote_log("starting to deploy application from $current_commit_remote to $current_commit");
 
 //$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create the maintenance file');
 
@@ -164,7 +164,7 @@ _run_commands($config["after_deploy"],"after_deploy");
 
 $config["create_maintenance_file"] && _remote_exec("rm config/maintenance.php","gonna remove the maintenance file");
 
-_append_to_log("completed application deployment to $current_commit");
+_append_to_remote_log("finished application deployment from $current_commit_remote to $current_commit");
 
 echo "Everything now looks suspiciously good in $stage...\n";
 exit(0);
@@ -233,7 +233,7 @@ function _create_maintenance_file_if_required(){
 	$already_created = true;
 }
 
-function _append_to_log($message){
+function _append_to_remote_log($message){
 	static $username, $hostname, $remote_addr, $remote_host, $first_call = true;
 
 	if($first_call){
