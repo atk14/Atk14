@@ -121,11 +121,6 @@ if(sizeof($matches[1])==0){
 	_exit_with_errors();
 }
 
-$current_commit = trim(_exec("git rev-parse --short HEAD",array("quiet" => true)));
-$current_commit_remote = trim(_remote_exec("git rev-parse --short HEAD",array("quiet" => true)));
-
-_append_to_remote_log("starting to deploy application from $current_commit_remote to $current_commit");
-
 //$config["create_maintenance_file"] && _remote_exec('echo "<'.'?php /* added by scripts/deploy */ define(\"MAINTENANCE\",true);" > config/maintenance.php','gonna create the maintenance file');
 
 if(isset($arguments["skip-before-deploy"])){
@@ -133,6 +128,11 @@ if(isset($arguments["skip-before-deploy"])){
 }else{
 	_run_commands($config["before_deploy"],"before_deploy");
 }
+
+$current_commit = trim(_exec("git rev-parse --short HEAD",array("quiet" => true)));
+$current_commit_remote = trim(_remote_exec("git rev-parse --short HEAD",array("quiet" => true)));
+
+_append_to_remote_log("starting to deploy application from $current_commit_remote to $current_commit");
 
 _create_maintenance_file_if_required(); // we are trying to create the maintenance file as late as possible
 
