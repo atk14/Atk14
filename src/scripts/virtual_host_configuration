@@ -56,7 +56,7 @@ if [ -z "$FORCE" ]; then
 #
 #   $ $0 | sudo tee /etc/apache2/sites-available/$APACHE_CONF_FILENAME > /dev/null
 #   $ sudo a2ensite $HOSTNAME
-#   $ echo '127.0.0.1 $HOSTNAME' | sudo tee --append /etc/hosts > /dev/null
+#   $ echo '127.0.0.1 $HOSTNAME' | sudo tee -a /etc/hosts > /dev/null
 #
 # now reload apache
 #   $ sudo service apache2 reload
@@ -103,7 +103,7 @@ else
     # grep -q '^\s*NameVirtualHost\s*\*\s*:\s*80' /etc/apache2/httpd.conf ||
     # (
     #  echo " Add NamedVirtualHost directive to /etc/apache2/httpd.conf"
-    #  echo " NameVirtualHost *:80" | sudo tee --append /etc/apache2/httpd.conf;> /dev/null
+    #  echo " NameVirtualHost *:80" | sudo tee -a /etc/apache2/httpd.conf;> /dev/null
     # )
 
     echo ""
@@ -129,7 +129,7 @@ egrep -q "^[^#]+\s$HOSTNAME" /etc/hosts  || (
   echo "About to add 127.0.0.1 $HOSTNAME record to /etc/hosts"
   echo "
 # $HOSTNAME added by atk14_init.sh
-127.0.0.1 $HOSTNAME" | sudo tee --append  /etc/hosts > /dev/null
+127.0.0.1 $HOSTNAME" | sudo tee -a /etc/hosts > /dev/null
 ) || exit 1
 
 echo ""
