@@ -320,6 +320,22 @@ class TcUrl extends TcBase{
 		$this->assertEquals("application",$data["controller"]);
 		$this->assertEquals("error404",$data["action"]);
 		$this->assertEquals(array(),$data["get_params"]);
+
+		$data = Atk14Url::RecognizeRoute('/invoice/12345.pdf');
+		$this->assertEquals("invoices",$data["controller"]);
+		$this->assertEquals("detail",$data["action"]);
+		$this->assertEquals(array("id" => "12345", "format" => "pdf"),$data["get_params"]);
+
+		$data = Atk14Url::RecognizeRoute('/invoice/12345.pdf?bgcolor=black');
+		$this->assertEquals("invoices",$data["controller"]);
+		$this->assertEquals("detail",$data["action"]);
+		$this->assertEquals(array("id" => "12345", "format" => "pdf", "bgcolor" => "black"),$data["get_params"]);
+
+		// There are two parameters id in the URI
+		$data = Atk14Url::RecognizeRoute('/invoice/12345.pdf?bgcolor=black&id=67890');
+		$this->assertEquals("application",$data["controller"]);
+		$this->assertEquals("error404",$data["action"]);
+		$this->assertEquals(array(),$data["get_params"]);
 	}
 
 	function test_BuildLink(){

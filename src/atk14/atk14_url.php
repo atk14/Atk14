@@ -141,12 +141,17 @@ class Atk14Url{
 		// stejne tak akce "error404", "error403" a "error500" neni mozne linkovat primo.
 		if(!isset($out) || in_array($out["controller"],array("application","atk14")) || in_array($out["action"],array("error404","error403","error500"))){
 			Atk14Locale::Initialize($out["lang"]);
-			return  Atk14Url::_NotFound($namespace);
+			return Atk14Url::_NotFound($namespace);
 		}
 
 		$get_params = array();
 		foreach($out as $key => $_value){	
 			if(in_array($key,array("controller","action","lang","__page_title__","__page_description__","__omit_trailing_slash__"))){ continue; }
+			if(array_key_exists($key,$options["get_params"])){
+				// The same parameter is already in the URL.
+				// That shouldn't happen.
+				return Atk14Url::_NotFound($namespace);
+			}
 			$get_params[$key] = $out[$key];
 		}
 
@@ -154,7 +159,7 @@ class Atk14Url{
 		Atk14Locale::Initialize($out["lang"]); // zde muze byt dojit ke zmene $out["lang"]
 		if($out["lang"]!=$lang_orig){
 			// In the URI there is a language which is not supported by the configuration
-			return  Atk14Url::_NotFound($namespace);
+			return Atk14Url::_NotFound($namespace);
 		}
 
 		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
