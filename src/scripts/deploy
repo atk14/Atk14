@@ -257,7 +257,7 @@ function _append_to_remote_log($message){
 
 	$log = join(" - ",$log);
 
-	$cmd = 'echo '.escapeshellarg($log).' | tee --append log/deploy.log';
+	$cmd = 'echo '.escapeshellarg($log).' | tee -a log/deploy.log';
 	_remote_exec($cmd,array("quiet" => true));
 }
 
