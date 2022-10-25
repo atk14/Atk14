@@ -256,47 +256,51 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 		$prev_offset = $this->getOffset() - $this->getLimit();
 		return $prev_offset<=0 ? null : $prev_offset;
 	}
-	
+
 	/*** functions implementing array like access ***/
+	#[\ReturnTypeWillChange]
 	function offsetGet($value){
 		$x=$this->getRecords();
 		return $x[$value];
 	}
-	
-	function offsetSet($value, $name){
+
+	function offsetSet($value, $name): void{
 		$this->getRecords();
-		$this->_Records[$name]=$value;	
+		$this->_Records[$name]=$value;
 	}
-	
-	function offsetUnset($value){
+
+	function offsetUnset($value):void {
 		$this->getRecords();
-		unset($this->_Records[$name]);	
+		unset($this->_Records[$name]);
 	}
-	
-	function offsetExists($value){
+
+	function offsetExists($value):bool {
 		$this->getRecords();
-		return array_key_exists($name, $this->_Records);				
+		return array_key_exists($name, $this->_Records);
 	}
-	
+
 	/*** functions implementing iterator like access (foreach cycle)***/
+	#[\ReturnTypeWillChange]
 	public function current(){
 		return current($this->_Records);
 	}
-		
+
+	#[\ReturnTypeWillChange]
 	public function key(){
 		return key($this->_Records);
 	}
-	public function next(){
-		return next($this->_Records);
+	public function next():void {
+		next($this->_Records);
 	}
-  public function rewind(){
+  public function rewind():void {
    $this->getRecords();
- 	 return reset($this->_Records);
-	} 
-	public function valid(){
+	 reset($this->_Records);
+	}
+	public function valid():bool {
 		return isset($this->_Records) && current($this->_Records);
 	}
-	
+
+	#[\ReturnTypeWillChange]
 	public function count(){
 		return $this->getRecordsDisplayed();
 	}
