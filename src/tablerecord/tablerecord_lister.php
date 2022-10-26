@@ -602,6 +602,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange]
 	function offsetExists($offset):bool {
 		$items = $this->getItems();
 		return array_key_exists($offset, $items);

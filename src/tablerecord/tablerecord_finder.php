@@ -274,6 +274,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 		unset($this->_Records[$name]);
 	}
 
+	#[\ReturnTypeWillChange]
 	function offsetExists($value):bool {
 		$this->getRecords();
 		return array_key_exists($name, $this->_Records);
