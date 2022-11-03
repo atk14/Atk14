@@ -387,9 +387,12 @@ class DbMole{
 				"</pre>" => "\n",
 				"&times;" => "x",
 			));
-			$out = preg_replace('/<.*?>/','',$out); // all other tags
+			$out = preg_replace('/<.*?'.'>/','',$out); // all other tags
 			$out = preg_replace('/\ntotal time/s','total time',$out);
 			$out = html_entity_decode($out);
+			$out = strtr($out,array(
+				"&#039;" => "'", // strange, this is not handled by html_entity_decode()
+			));
 			$out = trim($out);
 		}
 
