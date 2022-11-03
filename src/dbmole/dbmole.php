@@ -331,8 +331,12 @@ class DbMole{
 	 *
 	 * @return string
 	 */
-	function getStatistics(){
+	function getStatistics($options = array()){
 		global $__DMOLE_STATISTICS__;
+
+		$options += array(
+			"format" => "html", // "html", "plain"
+		);
 
 		if(!isset($__DMOLE_STATISTICS__)){ $__DMOLE_STATISTICS__ = array(); }
 
@@ -373,7 +377,23 @@ class DbMole{
 		}
 		$out[] = "</div>";
 
-		return join("\n",$out);
+		$out = join("\n",$out);
+
+		if($options["format"] == "plain"){
+			$out = strtr($out,array(
+				"<h3>" => "",
+				"</h3>" => "\n",
+				"<pre>" => "",
+				"</pre>" => "\n",
+				"&times;" => "x",
+			));
+			$out = preg_replace('/<.*?>/','',$out); // all other tags
+			$out = preg_replace('/\ntotal time/s','total time',$out);
+			$out = html_entity_decode($out);
+			$out = trim($out);
+		}
+
+		return $out;
 	}
 
 	/**
