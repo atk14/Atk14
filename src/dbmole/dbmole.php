@@ -329,14 +329,35 @@ class DbMole{
 	/**
 	 * Returns database usage statistics.
 	 *
+	 *
+	 * ```
+	 * echo $dbmole->getStatistics();
+	 * // or
+	 * echo $dbmole->getStatistics("plain");
+	 * // or
+	 * echo $dbmole->getStatistics(["format" => "plain"]);
+	 * // or
+	 * echo $dbmole->getStatistics("html");
+	 * // or
+	 * echo $dbmole->getStatistics(["format" => "html"]);
+	 * ```
+	 *
 	 * @return string
 	 */
 	function getStatistics($options = array()){
 		global $__DMOLE_STATISTICS__;
 
+		if(!is_array($options)){
+			$options = ["format" => $options];
+		}
+
 		$options += array(
-			"format" => "html", // "html", "plain"
+			"format" => null, // "html", "plain", null (auto)
 		);
+
+		if(is_null($options["format"])){
+			$options["format"] = php_sapi_name()=="cli" ? "plain" : "html";
+		}
 
 		if(!isset($__DMOLE_STATISTICS__)){ $__DMOLE_STATISTICS__ = array(); }
 
