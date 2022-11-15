@@ -42,6 +42,13 @@
  * </tr>
  * </code>
  *
+ * There is also an optional parameter title
+ * <code>
+ * <tr>
+ *		{sortable key=name title="Sort by book name"}<td>Name</td>{/sortable} 
+ * </tr>
+ * </code>
+ *
  * @package Atk14
  * @subpackage Helpers
  */
@@ -62,11 +69,14 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$params = array_merge(array(
-		// ??? TODO: neco jako wrap_with_th_tag => true
-	),$params);
-	$key = $params["key"];
 	$sorting = $smarty->getTemplateVars("sorting");
+	$key = $params["key"];
+
+	$params += array(
+		"title" => $sorting->getTitle($key)
+		// ??? TODO: neco jako wrap_with_th_tag => true
+	);
+
 	$_params = $smarty->getTemplateVars("params")->copy();
 	$_params->delete(ATK14_PAGINATOR_OFFSET_PARAM_NAME); // smazani parametru pro strankovani
 	$_key = "$key";
@@ -93,7 +103,7 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 	}
 	$_class = " class=\"{$_class_orig}sortable$_active\"";
 	if(preg_match("/^<([^>]+)>(.+)(<\\/[^>]+>)$/s",$content,$matches)){
-		return "<$matches[1]$_class><a href=\"$href\" title=\"".h($sorting->getTitle($key))."\" rel=\"nofollow\">$matches[2]$_arrow</a>$matches[3]";
+		return "<$matches[1]$_class><a href=\"$href\" title=\"".h($params["title"])."\" rel=\"nofollow\">$matches[2]$_arrow</a>$matches[3]";
 	}
-	return "<a href=\"$href\" title=\"".h($sorting->getTitle($key))."\" rel=\"nofollow\"$_class>$content$_arrow</a>";
+	return "<a href=\"$href\" title=\"".h($params["title"])."\" rel=\"nofollow\"$_class>$content$_arrow</a>";
 }

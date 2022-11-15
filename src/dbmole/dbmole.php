@@ -329,10 +329,35 @@ class DbMole{
 	/**
 	 * Returns database usage statistics.
 	 *
+	 *
+	 * ```
+	 * echo $dbmole->getStatistics();
+	 * // or
+	 * echo $dbmole->getStatistics("plain");
+	 * // or
+	 * echo $dbmole->getStatistics(["format" => "plain"]);
+	 * // or
+	 * echo $dbmole->getStatistics("html");
+	 * // or
+	 * echo $dbmole->getStatistics(["format" => "html"]);
+	 * ```
+	 *
 	 * @return string
 	 */
-	function getStatistics(){
+	function getStatistics($options = array()){
 		global $__DMOLE_STATISTICS__;
+
+		if(!is_array($options)){
+			$options = ["format" => $options];
+		}
+
+		$options += array(
+			"format" => null, // "html", "plain", null (auto)
+		);
+
+		if(is_null($options["format"])){
+			$options["format"] = php_sapi_name()=="cli" ? "plain" : "html";
+		}
 
 		if(!isset($__DMOLE_STATISTICS__)){ $__DMOLE_STATISTICS__ = array(); }
 
@@ -373,7 +398,26 @@ class DbMole{
 		}
 		$out[] = "</div>";
 
-		return join("\n",$out);
+		$out = join("\n",$out);
+
+		if($options["format"] == "plain"){
+			$out = strtr($out,array(
+				"<h3>" => "",
+				"</h3>" => "\n",
+				"<pre>" => "",
+				"</pre>" => "\n",
+				"&times;" => "x",
+			));
+			$out = preg_replace('/<.*?'.'>/','',$out); // all other tags
+			$out = preg_replace('/\ntotal time/s','total time',$out);
+			$out = html_entity_decode($out);
+			$out = strtr($out,array(
+				"&#039;" => "'", // strange, this is not handled by html_entity_decode()
+			));
+			$out = trim($out);
+		}
+
+		return $out;
 	}
 
 	/**

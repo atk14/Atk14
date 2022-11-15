@@ -147,8 +147,8 @@ class Atk14Url{
 		$get_params = array();
 		foreach($out as $key => $_value){	
 			if(in_array($key,array("controller","action","lang","__page_title__","__page_description__","__omit_trailing_slash__"))){ continue; }
-			if(array_key_exists($key,$options["get_params"])){
-				// The same parameter is already in the URL.
+			if(array_key_exists($key,$options["get_params"]) && $_value!=$options["get_params"][$key]){
+				// The same parameter with a different value is already in the URL.
 				// That shouldn't happen.
 				return Atk14Url::_NotFound($namespace);
 			}

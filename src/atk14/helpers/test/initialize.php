@@ -16,6 +16,7 @@ require_once(__DIR__."/../modifier.strip_html.php");
 require_once(__DIR__."/../block.strip_html.php");
 require(__DIR__."/../modifier.strlen.php");
 require_once(__DIR__."/../block.jstring.php");
+require(__DIR__."/../block.sortable.php");
 
 require(__DIR__."/../../../functions.php");
 require(__DIR__."/../block.replace_html.php");

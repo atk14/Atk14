@@ -755,6 +755,28 @@ class Files{
 	}
 
 	/**
+	 * Copy file to a temporary file.
+	 *
+	 * Example
+	 * ```
+	 *	$tmp_filename = Files::CopyToTemp($source_filename);
+	 * ```
+	 *
+	 * @param string $filename source file
+	 * @param boolean &$error flag indicating a problem when calling this method
+	 * @param string &$error_str
+	 * @return string name of the temporary file
+	 */
+	static function CopyToTemp($filename, &$error = null, &$error_str = null){
+		$temp_filename = Files::GetTempFilename();
+
+		$out = Files::CopyFile($filename,$temp_filename,$error,$error_str);
+		if(!$error){
+			return $temp_filename;
+		}
+	}
+
+	/**
 	 * Returns the temporary directory
 	 *
 	 * ```
