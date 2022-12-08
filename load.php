@@ -148,7 +148,9 @@ function dbmole_error_handler($dbmole){
 		}
 	}elseif(!TEST){
 		if(php_sapi_name()=="cli"){
-			trigger_error($dbmole->getErrorReport());
+			echo "\n";
+			echo $dbmole->getErrorReport();
+			echo "\n";
 		}else{
 			echo "<pre>";
 			echo h($dbmole->getErrorReport());
