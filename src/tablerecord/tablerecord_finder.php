@@ -264,12 +264,12 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 		return $x[$value];
 	}
 
-	function offsetSet($value, $name): void{
+	function offsetSet($value, $name){
 		$this->getRecords();
 		$this->_Records[$name]=$value;
 	}
 
-	function offsetUnset($value):void {
+	function offsetUnset($value){
 		$this->getRecords();
 		unset($this->_Records[$name]);
 	}
@@ -289,10 +289,10 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	public function key(){
 		return key($this->_Records);
 	}
-	public function next():void {
+	public function next(){
 		next($this->_Records);
 	}
-  public function rewind():void {
+  public function rewind(){
    $this->getRecords();
 	 reset($this->_Records);
 	}
