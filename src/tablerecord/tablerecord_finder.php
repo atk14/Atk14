@@ -264,7 +264,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 		return $x[$value];
 	}
 
-	function offsetSet($value, $name): void{
+	function offsetSet($value, $name):void {
 		$this->getRecords();
 		$this->_Records[$name]=$value;
 	}
