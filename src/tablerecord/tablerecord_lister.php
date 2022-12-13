@@ -652,7 +652,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	public function count():int {
+	public function count(){
 		$items = $this->getItems();
 		return count($items);
 	}
