@@ -297,7 +297,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
    $this->getRecords();
 	 reset($this->_Records);
 	}
-	public function valid():bool {
+	public function valid(){
 		return isset($this->_Records) && current($this->_Records);
 	}
 
