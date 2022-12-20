@@ -676,7 +676,7 @@ class UrlFetcher {
 			$this->_Port = $this->_Ssl ? 443 : 80;
 		}
 		
-		if(preg_match("/^(.+):(.+)@(.+)$/",$_server,$matches)){
+		if(preg_match("/^(.+):(.+)@(.+?)$/",$_server,$matches)){
 			$_username = $matches[1];
 			$_password = $matches[2];
 			$_server = $matches[3];
