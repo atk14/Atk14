@@ -556,7 +556,7 @@ class UrlFetcher {
 			return (string)$this->_ForceContentLength;
 		}
 		$length = $this->getHeaderValue("content-length");
-		if(strlen($length)){
+		if(strlen((string)$length)){
 			return $length;
 		}
 		if($this->_Content){
