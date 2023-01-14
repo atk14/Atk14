@@ -37,7 +37,7 @@ class IntegerField extends Field
 
 	function clean($value)
 	{
-		$value = trim($value);
+		$value = trim((string)$value);
 		list($error, $value) = parent::clean($value);
 		if (!is_null($error)) {
 			return array($error, $value);
