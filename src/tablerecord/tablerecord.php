@@ -655,7 +655,7 @@ class TableRecord extends inobj {
 			$query = "SELECT ".$this->_escapeColumnName4Sql($this->_IdFieldName)." FROM $query";
 		}
 
-		if(strlen($options["order"])>0){
+		if(strlen((string)$options["order"])>0){
 			$query .= " ORDER BY $options[order]";
 		}
 
