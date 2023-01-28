@@ -5,7 +5,7 @@
 */
 error_reporting(255);
 
-define("ATK14_VERSION","1.7");
+define("ATK14_VERSION","1.8");
 
 // We need to load Atk14Utils first, then using it determine environment and then finally load the rest of ATK14...
 // HTTP* classes give us right advices about environment & configuration
@@ -148,7 +148,9 @@ function dbmole_error_handler($dbmole){
 		}
 	}elseif(!TEST){
 		if(php_sapi_name()=="cli"){
-			trigger_error($dbmole->getErrorReport());
+			fwrite(STDERR, "\n");
+			fwrite(STDERR, $dbmole->getErrorReport());
+			fwrite(STDERR, "\n");
 		}else{
 			echo "<pre>";
 			echo h($dbmole->getErrorReport());

@@ -1299,7 +1299,7 @@ class Atk14Controller{
 		$logging = 0;
 		$logger = &$this->logger;
 
-		if(preg_match("/^([a-f0-9]{32})-([0-9]{1,3})$/",$this->request->getVar("step_id"),$matches)){
+		if(preg_match("/^([a-f0-9]{32})-([0-9]{1,3})$/",(string)$this->request->getVar("step_id"),$matches)){
 			$step_unique = $matches[1];
 			$request_index = (int)$matches[2];
 		}else{

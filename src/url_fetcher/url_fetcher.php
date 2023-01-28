@@ -1,4 +1,6 @@
 <?php
+defined("URL_FETCHER_VERIFY_PEER") || define("URL_FETCHER_VERIFY_PEER",true);
+
 /**
  * Class providing methods to make http requests
  *
@@ -53,7 +55,7 @@
  */
 class UrlFetcher {
 
-	const VERSION = "1.7.3";
+	const VERSION = "1.7.4";
 
 	/**
 	 * Authentication type
@@ -122,6 +124,12 @@ class UrlFetcher {
 	 */
 	protected $_UserAgent = "UrlFetcher";
 
+	/**
+	 *
+	 * @var boolean
+	 */
+	protected $_VerifyPeer;
+
 	protected $_ForceContentLength = null;
 
 	/**
@@ -174,7 +182,8 @@ class UrlFetcher {
 		$options = array_merge(array(
 			"additional_headers" => array(),
 			"max_redirections" => $this->_MaxRedirections,
-			"user_agent" => "UrlFetcher/".self::VERSION
+			"user_agent" => "UrlFetcher/".self::VERSION,
+			"verify_peer" => URL_FETCHER_VERIFY_PEER,
 		),$options);
 
 		if(strlen($url)>0){
@@ -184,6 +193,7 @@ class UrlFetcher {
 		$this->_ConstructorAdditionalHeaders = $options["additional_headers"];
 		$this->_MaxRedirections = $options["max_redirections"];
 		$this->_UserAgent = $options["user_agent"];
+		$this->_VerifyPeer = $options["verify_peer"];
 	}
 	
 	/**
@@ -546,7 +556,7 @@ class UrlFetcher {
 			return (string)$this->_ForceContentLength;
 		}
 		$length = $this->getHeaderValue("content-length");
-		if(strlen($length)){
+		if(strlen((string)$length)){
 			return $length;
 		}
 		if($this->_Content){
@@ -666,7 +676,7 @@ class UrlFetcher {
 			$this->_Port = $this->_Ssl ? 443 : 80;
 		}
 		
-		if(preg_match("/^(.+):(.+)@(.+)$/",$_server,$matches)){
+		if(preg_match("/^(.+):(.+)@(.+?)$/",$_server,$matches)){
 			$_username = $matches[1];
 			$_password = $matches[2];
 			$_server = $matches[3];
@@ -730,7 +740,7 @@ class UrlFetcher {
 		$context_options = array();
 		if($this->_Ssl){
 			$_proto = "ssl";
-			$context_options["ssl"] = array('verify_peer' => false);
+			$context_options["ssl"] = array("verify_peer" => $this->_VerifyPeer);
 		}
 		$context = stream_context_create($context_options);
 		$f = stream_socket_client("$_proto://$this->_Server:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);

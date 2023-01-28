@@ -567,7 +567,8 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	function offsetGet($offset) {
+	#[\ReturnTypeWillChange]
+	function offsetGet($offset){
 		$items = $this->getItems();
 		return $items[$offset]->getRecord();
 	}
@@ -575,7 +576,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	function offsetSet($offset, $record)	{
+	function offsetSet($offset, $record){
 		$items = $this->getItems();
 		if (is_null($offset)) {
 			$this->append($record);
@@ -601,7 +602,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	function offsetExists($offset) {
+	function offsetExists($offset){
 		$items = $this->getItems();
 		return array_key_exists($offset, $items);
 	}
@@ -611,7 +612,8 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	public function current() {
+	#[\ReturnTypeWillChange]
+	public function current(){
 		$items = $this->getItems();
 		return $items[$this->iterator_offset]->getRecord();
 	}
@@ -619,28 +621,29 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	public function key() {
+	#[\ReturnTypeWillChange]
+	public function key(){
 		return $this->iterator_offset;
 	}
 
 	/**
 	 * @ignore
 	 */
-	public function next() {
+	public function next(){
 		++$this->iterator_offset;
 	}
 
 	/**
 	 * @ignore
 	 */
-	public function rewind() {
+	public function rewind(){
 		$this->iterator_offset = 0;
 	}
 
 	/**
 	 * @ignore
 	 */
-	public function valid()	{
+	public function valid(){
 		$items = $this->getItems();
 		return isset($items[$this->iterator_offset]);
 	}
@@ -648,8 +651,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	public function count()
-	{
+	public function count(){
 		$items = $this->getItems();
 		return count($items);
 	}

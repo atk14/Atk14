@@ -4,9 +4,17 @@ All notable changes to ATK14 Framework will be documented in this file.
 
 ## Unreleased
 
+## [1.8] - 2022-12-26
+
+* 6fa73f9 - [UrlFetcher] In case of communication via SSL, the peer is verified by default + added constant URL_FETCHER_VERIFY_PEER
+* 83cfa9d - [DbMole] Method DbMole::getStatistics() is able to produce output in plain text format
+* 3877ad2 - [Files] Added method Files::CopyToTemp()
+* 9837c5c - [Atk14] Script scripts/deploy logs some information into log/deploy.log
+* 19cb78e - [Atk14] Function myAssert() added to src/functions.php
+* ce991f3 - [Atk14] Added method Atk14DeploymentStage::getHomeDir(); in config/deploy.yml, in a stage recipe the home_dir dir can be set
 * 867c522 - [Atk14] Mailer in a namespace (e.g. admin) can be named after the namespace (e.g. AdminMailer)
 * c3b1842 - [Atk14] In DEVELOPMENT, Atk14Mailer::_send() creates symlinks to the last and the penultimate message
-* [Smarty3] Smarty upgrade 3.1.30 -> 3.1.45
+* [Smarty3] Smarty upgrade 3.1.30 -> 3.1.47
 * 0af3bfb - [Smarty2] Smarty updated: 2.6.31 -> 2.6.32
 * d83f968 - [Smarty2, Smarty3, PHP8.1] HACK!!! Patching Smarty (both v2 and v3) to not use deprecated strftime() in selected places
 * [Atk14] Added helper modifier.strip_html (far more better than strip_tags)
