@@ -56,5 +56,41 @@ class TcGlobal extends TcBase{
 
 		// file local_config/heroes.php, not config/heroes.php
 		$this->assertEquals(array("Sandokan","Falcon_guardian_of_the_night","Indiana_Jones"),$global->getConfig("heroes"));
-	} 
+	}
+
+	function test_setConfig(){
+		$global = new Atk14Global();
+
+		$this->assertEquals(array("cs","en","sk"),$global->getSupportedLangs()); // see config/locale.yml
+
+		$locale = $global->getConfig("locale");
+		$locale["hu"] = array(
+			"LANG" => "hu_HU.UTF-8",
+		);
+		$global->setConfig("locale",$locale);
+
+		$this->assertEquals(array("cs","en","sk","hu"),$global->getSupportedLangs());
+
+		//
+
+		$this->assertEquals(null,$global->getConfig("main_colors"));
+		
+		$global->setConfig("main_colors",array(
+			"primary" => "red",
+			"secondary" => "blue",
+			"background" => "white",
+		));
+
+		$this->assertEquals(array(
+			"primary" => "red",
+			"secondary" => "blue",
+			"background" => "white",
+		),$global->getConfig("main_colors"));
+
+		//
+
+		$global2 = new Atk14Global();
+
+		$this->assertEquals(array("cs","en","sk"),$global2->getSupportedLangs());
+	}
 }
