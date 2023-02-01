@@ -12,12 +12,20 @@
  *
  */
 class Atk14Global{
+
 	/**
 	 * Array to store values.
 	 *
 	 * @var array
 	 */
 	protected $_Store = array();
+
+	/**
+	 * Array to store config values.
+	 *
+	 * @var array
+	 */
+	protected $_ConfigStore = array();
 
 	protected static $_ConfigFromPhpFileStore = array();
 
@@ -322,7 +330,7 @@ class Atk14Global{
 	 * @return string|null
 	 */
 	function getConfig($config_name){
-		static $STORE = array();
+		$STORE = $this->_ConfigStore;
 
 		if(in_array($config_name,array_keys($STORE))){ return $STORE[$config_name]; }
 
@@ -364,6 +372,18 @@ class Atk14Global{
 		}
 
 		return $STORE[$config_name];
+	}
+
+	/**
+	 *
+	 *	$ATK14_GLOBAL->setConfig("main_colors",[
+	 *		"primary" => "red",
+	 *		"secondary" => "blue",
+	 * 		"background" => "white",
+	 *	]);
+	 */
+	function setConfig($name,$value){
+		$this->_ConfigStore[$name] = $value;
 	}
 
 	/**
