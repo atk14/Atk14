@@ -37,6 +37,9 @@ $stage_name = $stage->getName();
 $out = array();
 
 $out[] = "cd ".getcwd()."/";
+$out[] = $stage->compileRemoteShellCommand("mkdir -p ".$stage->getDirectory(),false);
+// check if the remote directory is empty - not sure it nice enough :)
+$out[] = "[ $( ".$stage->compileRemoteShellCommand('ls -A . | wc -l')." ) != 0 ] && echo 'Fatal: remote directory is not empty' 2>&1 && exit 1 || exit 0";
 $out[] = $stage->compileRemoteShellCommand("mkdir -p ".$stage->getDeployRepositoryRemoteDir(),false);
 $out[] = $stage->compileRemoteShellCommand("git init --bare $deploy_repository_remote_dir",false);
 $current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD","getting name of the branch you are on"));
@@ -46,7 +49,6 @@ if($current_branch=="HEAD"){
 }
 $out[] = "git remote set-url $stage_name ".$stage->getDeployRepository()." || git remote add $stage_name ".$stage->getDeployRepository();
 $out[] = "git push $stage_name $current_branch:master";
-$out[] = $stage->compileRemoteShellCommand("mkdir -p ".$stage->getDirectory(),false);
 $out[] = $stage->compileRemoteShellCommand("git clone $deploy_repository_remote_dir .");
 $out[] = $stage->compileRemoteShellCommand("git submodule init");
 $out[] = $stage->compileRemoteShellCommand("git submodule update");
