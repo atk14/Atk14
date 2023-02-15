@@ -55,8 +55,20 @@ if(!$STAGES){
 	_exit_with_errors(file_exists("./config/deploy.yml") ? "It looks like the file ./config/deploy.yml is corrupted (beware of usage of tabulators)" : "It looks like there is no file ./config/deploy.yml");
 }
 
+$current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD",array("description" => "getting name of the branch you are on", "quiet" => true)));
+if($current_branch=="HEAD"){
+	_exit_with_errors("You are not currently on a branch");
+}
+
 $stage_explicit = (sizeof($argv)>1 && !preg_match('/^-/',$argv[sizeof($argv)-1])) ? $argv[sizeof($argv)-1] : null; // the last parameter without '-' at the beginning
-$stage = isset($stage_explicit) ? $stage_explicit : $FIRST_STAGE->name;
+
+if($stage_explicit){
+	$stage = $stage_explicit;
+}elseif(isset($STAGES[$current_branch])){
+	$stage = $current_branch;
+}else{
+	$stage = $FIRST_STAGE->name;
+}
 
 if($stage_explicit && !isset($STAGES[$stage_explicit])){
 	_exit_with_errors("sorry, in ./config/deploy.yml I have no information about a stage $stage_explicit");
@@ -98,11 +110,7 @@ if($cwd!=getcwd()){
 	echo "NOTICE: working directory changed to ".getcwd()."\n";
 }
 
-$current_branch = trim(_exec("git rev-parse --abbrev-ref HEAD","getting name of the branch you are on"));
-echo "$current_branch\n";
-if($current_branch=="HEAD"){
-	_exit_with_errors("You are not currently on a branch");
-}
+echo "current_branch: $current_branch\n";
 
 $out = _exec("git remote -v","checking out existing remote URLs");
 // searching for:
