@@ -102,7 +102,7 @@ if(isset($arguments["d"]) || isset($arguments["dump"])){
 
 $config = $STAGES[$stage]->toArray();
 
-$_label = "features/$current_branch -> $stage";
+$_label = "$current_branch -> $stage";
 $_label_l = strlen($_label);
 $_padding = ceil((50 - $_label_l) / 2);
 $_padding = max($_padding,2);
