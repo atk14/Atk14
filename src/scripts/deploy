@@ -102,7 +102,17 @@ if(isset($arguments["d"]) || isset($arguments["dump"])){
 
 $config = $STAGES[$stage]->toArray();
 
-echo "gonna deploy to $stage\n";
+$_label = "features/$current_branch -> $stage";
+$_label_l = strlen($_label);
+$_padding = ceil((50 - $_label_l) / 2);
+$_padding = max($_padding,2);
+echo ltrim("
+**".str_repeat("*",$_padding*2 + $_label_l)."**
+**".str_repeat(" ",$_padding*2 + $_label_l)."**
+**".str_repeat(" ",$_padding).$_label.str_repeat(" ",$_padding)."**
+**".str_repeat(" ",$_padding*2 + $_label_l)."**
+**".str_repeat("*",$_padding*2 + $_label_l)."**
+");
 echo miniYAML::Dump(array("$stage" => $config));
 sleep(1);
 
