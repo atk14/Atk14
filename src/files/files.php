@@ -881,7 +881,7 @@ class Files{
 			"eps" =>				array("application/postscript","application/eps"),
 			"csv" =>				array("text/csv","text/plain"),
 			"docx" => 			array("application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/zip"),
-			"apk" =>				array("application/vnd.android.package-archive","application/java-archive","application/jar"),
+			"apk" =>				array("application/vnd.android.package-archive","application/java-archive","application/jar","application/zip"),
 			"jar" =>				array("application/java-archive","application/jar"),
 		);
 
