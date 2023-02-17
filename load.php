@@ -123,6 +123,7 @@ function &dbmole_connection(&$dbmole){
 				"PWD" => $d["password"],
 				"CharacterSet" => $d["charset"],
 				"ReturnDatesAsStrings" => true,
+				"TrustServerCertificate" => true,
 			);
 			$out = sqlsrv_connect($serverName,$connectionInfo);
 			break;
