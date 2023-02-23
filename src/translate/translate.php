@@ -310,6 +310,7 @@ class Translate{
 	 * @return string
 	 */
 	static function Lower($text,$charset = null){
+		$text = (string)$text;
 		static $TR_TABLES = array();
 
 		$charset = self::_GetCharsetByName($charset);
