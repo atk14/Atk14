@@ -149,9 +149,13 @@ function dbmole_error_handler($dbmole){
 		}
 	}elseif(!TEST){
 		if(php_sapi_name()=="cli"){
-			fwrite(STDERR, "\n");
-			fwrite(STDERR, $dbmole->getErrorReport());
-			fwrite(STDERR, "\n");
+			if(defined("STDERR")){ // no constant STDERR is defined in the interactive shell
+				fwrite(constant("STDERR"), "\n");
+				fwrite(constant("STDERR"), $dbmole->getErrorReport());
+				fwrite(constant("STDERR"), "\n");
+			}else{
+				echo "\n",$dbmole->getErrorReport(),"\n";
+			}
 		}else{
 			echo "<pre>";
 			echo h($dbmole->getErrorReport());
