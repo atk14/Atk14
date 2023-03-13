@@ -55,7 +55,7 @@ defined("URL_FETCHER_VERIFY_PEER") || define("URL_FETCHER_VERIFY_PEER",true);
  */
 class UrlFetcher {
 
-	const VERSION = "1.7.4";
+	const VERSION = "1.8";
 
 	/**
 	 * Authentication type
@@ -130,6 +130,8 @@ class UrlFetcher {
 	 */
 	protected $_VerifyPeer;
 
+	protected $_Proxy = "";
+
 	protected $_ForceContentLength = null;
 
 	/**
@@ -179,12 +181,13 @@ class UrlFetcher {
 			$url = "";
 		}
 
-		$options = array_merge(array(
+		$options += array(
 			"additional_headers" => array(),
 			"max_redirections" => $this->_MaxRedirections,
 			"user_agent" => "UrlFetcher/".self::VERSION,
 			"verify_peer" => URL_FETCHER_VERIFY_PEER,
-		),$options);
+			"proxy" => "", // e.g. "tcp://127.0.0.1:8118"
+		);
 
 		if(strlen($url)>0){
 			$this->_setUrl($url);
@@ -194,6 +197,7 @@ class UrlFetcher {
 		$this->_MaxRedirections = $options["max_redirections"];
 		$this->_UserAgent = $options["user_agent"];
 		$this->_VerifyPeer = $options["verify_peer"];
+		$this->_Proxy = $options["proxy"];
 	}
 	
 	/**
@@ -742,55 +746,92 @@ class UrlFetcher {
 			$_proto = "ssl";
 			$context_options["ssl"] = array("verify_peer" => $this->_VerifyPeer);
 		}
-		$context = stream_context_create($context_options);
-		$f = stream_socket_client("$_proto://$this->_Server:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);
 
-		if(!$f){
-			if(strpos($errstr,"getaddrinfo failed")){
-				$errstr = "could not resolve host: $this->_Server ($errstr)";
+		$content_buffer = new StringBuffer();
+		$response_headers = "";
+		$response_buffer = new StringBufferTemporary();
+		$f = null;
+
+		if(!$this->_Proxy){
+
+			$context = stream_context_create($context_options);
+			$f = stream_socket_client("$_proto://$this->_Server:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);
+
+			if(!$f){
+				if(strpos($errstr,"getaddrinfo failed")){
+					$errstr = "could not resolve host: $this->_Server ($errstr)";
+				}
+				return $this->_setError("failed to open socket: $errstr [$errno]");
 			}
-			return $this->_setError("failed to open socket: $errstr [$errno]");
-		}
-		stream_set_blocking($f,0);
-		$_buffer = new StringBuffer($this->_RequestHeaders);
-		if($this->_RequestMethod=="POST"){
-			$_buffer->addStringBuffer($this->_PostData);
-		}
-		$stat = $this->_fwriteStream($f,$_buffer);
+			stream_set_blocking($f,0);
+			$content_buffer->addString($this->_RequestHeaders);
 
-		if(!$stat || $stat!=$_buffer->getLength()){
-			fclose($f);
-			return $this->_setError(sprintf("cannot write to socket (bytes written: %s, bytes needed to be written: %s)",$stat,$_buffer->getLength()));
+			if($this->_RequestMethod=="POST"){
+				$content_buffer->addStringBuffer($this->_PostData);
+			}
+
+		}else{
+
+			// Proxy
+			$_header = preg_replace('/^.*?\r\n.*?\r\n/s','',$this->_RequestHeaders);
+			$context_options["http"] = array(
+				"method" => $this->_RequestMethod,
+				"timeout" => $this->_SocketTimeout,
+				"ignore_errors" => true,
+				"proxy" => $this->_Proxy,
+				"request_fulluri"=> !$this->_Ssl,
+				"header" => $_header,
+				"content" => (string)$this->_PostData,
+			);
+			$context = stream_context_create($context_options);
+			$http_response_header = null;
+			$f = @fopen("$this->_Url","r",false,$context);
+			if(!$f){
+				$err_ar = error_get_last();
+				$errstr = "could not connect to proxy server $this->_Proxy";
+				return $this->_setError("failed to open socket: $errstr ($err_ar[message])");
+			}
+			if(!is_null($http_response_header)){
+				$response_headers = join("\n\r",$http_response_header);
+			}
+
 		}
 
-		$headers = "";
-		$_buffer = new StringBufferTemporary();
+		if($content_buffer->getLength()){
+			$stat = $this->_fwriteStream($f,$content_buffer);
+
+			if(!$stat || $stat!=$content_buffer->getLength()){
+				fclose($f);
+				return $this->_setError(sprintf("cannot write to socket (bytes written: %s, bytes needed to be written: %s)",$stat,$content_buffer->getLength()));
+			}
+		}
+
 		while(!feof($f) && $f){
 			$_b = fread($f,1024 * 256); // 256kB
 			if(strlen($_b)==0){
 				usleep(20000);
 				continue;
 			}
-			$_buffer->addString($_b);
+			$response_buffer->addString($_b);
 
-			if(!strlen($headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$_buffer->toString(),$matches)){
-				$headers = $matches[1];
+			if(!strlen($response_headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$response_buffer->toString(),$matches)){
+				$response_headers = $matches[1];
 				$_b = $matches[2];
-				$_buffer = new StringBufferTemporary();
-				(strlen($_b)>0) && ($_buffer->addString($_b));
+				$response_buffer = new StringBufferTemporary();
+				(strlen($_b)>0) && ($response_buffer->addString($_b));
 			}
 		}
 		fclose($f);
 
-		if(!$_buffer->getLength() && !strlen($headers)){ // content ($_buffer) may be empty
+		if(!$response_buffer->getLength() && !strlen($response_headers)){ // content ($response_buffer) may be empty
 			return $this->_setError("failed to read from socket");
 		}
 
-		if(!strlen($headers)){
-			return $this->_setError("can't find response headers");
+		if(!strlen($response_headers)){
+			return $this->_setError("can't find response response_headers");
 		}
 
-		return array($headers,$_buffer);
+		return array($response_headers,$response_buffer);
 	}
 
 	/**
