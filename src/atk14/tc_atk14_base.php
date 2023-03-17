@@ -9,7 +9,7 @@ if(!class_exists("TcSuperBase")){
 class TcAtk14Base extends TcSuperBase {
 	var $dbmole = null;
 
-	function setUp():void{
+	function setUp(){
 		$this->dbmole->begin(array(
 			"execute_after_connecting" => true,
 		));
@@ -17,7 +17,7 @@ class TcAtk14Base extends TcSuperBase {
 		parent::setUp();
 	}
 
-	function tearDown():void{
+	function tearDown(){
 		$this->dbmole->rollback();
 		parent::tearDown();
 	}
