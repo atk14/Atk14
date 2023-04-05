@@ -32,14 +32,14 @@ class TcAtk14Router extends TcAtk14Base {
 	 */
 	function assertBuildable($params = array(),&$ret_params = null){
 		$uri = $this->_build($params,$ret_params);
-		$this->assertNotNull($uri);
+		$this->assertNotNull($uri,"URI cannot be built from ".print_r($params,true));
 
 		return $uri;
 	}
 
 	function assertNotBuildable($params = array()){
 		$uri = $this->_build($params);
-		$this->assertNull($uri);
+		$this->assertNull($uri,"URI $uri was built from ".print_r($params,true));
 	}
 
 	function assertRecognizable($uri,&$params = array()){
