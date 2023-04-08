@@ -119,10 +119,10 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 
 	$BCC = array();
 	if($params['bcc']){ $BCC[] = _sendmail_correct_address($params['bcc']);}
-	if(strlen(SENDMAIL_BCC_TO)){
-		$BCC[] = SENDMAIL_BCC_TO;
-	}elseif(defined("BCC_EMAIL") && BCC_EMAIL!=""){
-		$BCC[] = BCC_EMAIL;
+	if(strlen((string)SENDMAIL_BCC_TO)){
+		$BCC[] = (string)SENDMAIL_BCC_TO;
+	}elseif(defined("BCC_EMAIL") && strlen((string)constant("BCC_EMAIL"))>0){
+		$BCC[] = (string)constant("BCC_EMAIL");
 	}
 	$BCC = join(", ",$BCC);
 	$CC = _sendmail_correct_address($params['cc']);
@@ -377,7 +377,7 @@ function _sendmail_get_boundary(){
 	static $counter;
 	if(!isset($counter)){ $counter = 0; }
 	$counter++;
-	return "----=_".$counter."a".substr(md5(uniqid('').$counter),0,27-strlen($counter));
+	return "----=_".$counter."a".substr(md5(uniqid('').$counter),0,27-strlen((string)$counter));
 }
 
 function _sendmail_correct_address($addr){
@@ -418,8 +418,8 @@ function _sendmail_escape_email_name($from_name,$charset = null){
  * 	echo $from_name; // "John Doe"
  */
 function _sendmail_parse_email_and_name($from,$from_name){
-	$FROM = trim($from);
-	$FROM_NAME = $from_name;
+	$FROM = trim((string)$from);
+	$FROM_NAME = (string)$from_name;
 	
 	// "John Doe <john.doe@example.com>" -> "John Doe", "john.doe@example.com"
 	if(preg_match('/^[\'"]?(.+?)[\'"]?\s+<([^@<>"\']+@[^@<>"\']+)>$/',$FROM,$matches)){
