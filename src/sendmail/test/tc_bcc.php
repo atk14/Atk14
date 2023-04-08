@@ -1,6 +1,9 @@
 <?php
 define("SENDMAIL_BCC_TO","big.brother@somewhere.com");
 
+// If SENDMAIL_BCC_TO is defined, the BCC_EMAIL has no effect
+define("BCC_EMAIL","bcc_email@default.com");
+
 class tc_bcc extends tc_base {
 
 	function test(){
