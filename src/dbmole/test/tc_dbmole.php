@@ -146,6 +146,16 @@ class tc_dbmole extends tc_base{
 		$this->assertTrue($queries_executed2>$queries_executed);
 	}
 
+	function test_getDbConnection(){
+		$dbmole = $this->pg;
+		$dbmole->closeConnection();
+
+		$this->assertEquals(false,$dbmole->isConnected());
+		$connection = $dbmole->getConnection();
+		$this->assertTrue(!!$connection);
+		$this->assertEquals(true,$dbmole->isConnected());
+	}
+
 	function _test_begin_transaction($dbmole){
 		$dbmole->closeConnection();
 		$this->assertEquals(false,$dbmole->isConnected());

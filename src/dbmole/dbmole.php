@@ -434,6 +434,19 @@ class DbMole{
 	}
 
 	/**
+	 * Returns database connection
+	 *
+	 * If the database connection has not yet been established, it will be created.
+	 *
+	 * The return value type depends on the database type.
+	 *
+	 * @return mixed
+	 */
+	final function getConnection(){
+		return $this->_getDbConnect();
+	}
+
+	/**
 	 * @ignore
 	 */
 	function _formatSeconds($sec){
@@ -453,7 +466,7 @@ class DbMole{
 
 		settype($set,"bool");
 		//settype($error_handler,"string"); // could be an anonymous function
-
+ 
 		$prev_error_handler = null;
 		if(isset($_ERROR_HANDLER_)){
 			$prev_error_handler = $_ERROR_HANDLER_;
@@ -765,7 +778,7 @@ class DbMole{
 	function _raiseDBError($message){
     $this->_ErrorMessage = "$message";
 
-		if(strlen($db_error = $this->_getDbLastErrorMessage())>0){
+		if(strlen($db_error = (string)$this->_getDbLastErrorMessage())>0){
 			$this->_ErrorMessage .= " ".$db_error;
 		}
 
