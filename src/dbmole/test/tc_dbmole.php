@@ -146,6 +146,16 @@ class tc_dbmole extends tc_base{
 		$this->assertTrue($queries_executed2>$queries_executed);
 	}
 
+	function test_getDbConnection(){
+		$dbmole = $this->pg;
+		$dbmole->closeConnection();
+
+		$this->assertEquals(false,$dbmole->isConnected());
+		$connection = $dbmole->getConnection();
+		$this->assertTrue(!!$connection);
+		$this->assertEquals(true,$dbmole->isConnected());
+	}
+
 	function _test_begin_transaction($dbmole){
 		$dbmole->closeConnection();
 		$this->assertEquals(false,$dbmole->isConnected());
@@ -408,7 +418,10 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals(array("major" => 9, "minor" => 6, "patch" => 0),$dbmole->parseVersion("9.6",array("as_array" => true)));
 
 		$this->assertEquals(9.06016,$dbmole->parseVersion("9.6.16",array("as_float" => true)));
-		$this->assertEquals(9.616,$dbmole->parseVersion("9.6.16",array("as_float" => true,"minor_number_divider" => 10, "patch_number_divider" => 1000)));
+		$this->assertEquals(
+			"9.616",
+			sprintf("%.3f",$dbmole->parseVersion("9.6.16",array("as_float" => true,"minor_number_divider" => 10, "patch_number_divider" => 1000)))
+		);
 	}
 
 	function test_escapeColumnName4Sql(){
