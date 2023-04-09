@@ -466,7 +466,7 @@ class DbMole{
 
 		settype($set,"bool");
 		//settype($error_handler,"string"); // could be an anonymous function
- 
+
 		$prev_error_handler = null;
 		if(isset($_ERROR_HANDLER_)){
 			$prev_error_handler = $_ERROR_HANDLER_;
