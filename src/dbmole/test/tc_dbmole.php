@@ -418,7 +418,10 @@ class tc_dbmole extends tc_base{
 		$this->assertEquals(array("major" => 9, "minor" => 6, "patch" => 0),$dbmole->parseVersion("9.6",array("as_array" => true)));
 
 		$this->assertEquals(9.06016,$dbmole->parseVersion("9.6.16",array("as_float" => true)));
-		$this->assertEquals(round(9.616,3),round($dbmole->parseVersion("9.6.16",array("as_float" => true,"minor_number_divider" => 10, "patch_number_divider" => 1000)),3));
+		$this->assertEquals(
+			"9.616",
+			sprintf("%.3f",$dbmole->parseVersion("9.6.16",array("as_float" => true,"minor_number_divider" => 10, "patch_number_divider" => 1000)))
+		);
 	}
 
 	function test_escapeColumnName4Sql(){
