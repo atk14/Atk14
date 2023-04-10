@@ -1587,6 +1587,9 @@ class DbMole{
 			return null;
 		}
 		$cache = Files::GetFileContent($filename,$error,$error_str);
+		if($error){
+			return null;
+		}
 		$rows = unserialize($cache);
 		if(!is_array($rows)){
 			return null;
