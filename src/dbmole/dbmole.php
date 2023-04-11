@@ -1698,7 +1698,7 @@ class DbMole{
 		if($options["as_float"]){
 			$ar = $this->_parseVersion($version,array("as_array" => true));
 			$out = (float)($ar["major"] + ($ar["minor"] / $options["minor_number_divider"]) + ($ar["patch"] / $options["patch_number_divider"]));
-			$out = round($out,log(max($options["minor_number_divider"],$options["patch_number_divider"]),10));
+			$out = round($out,log10(max($options["minor_number_divider"],$options["patch_number_divider"])));
 			return $out;
 		}
 
