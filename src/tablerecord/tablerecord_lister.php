@@ -568,7 +568,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * @ignore
 	 */
 	#[\ReturnTypeWillChange]
-	function offsetGet($offset){
+	function offsetGet($offset) {
 		$items = $this->getItems();
 		return $items[$offset]->getRecord();
 	}
@@ -576,7 +576,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	function offsetSet($offset, $record){
+	function offsetSet($offset, $record):void{
 		$items = $this->getItems();
 		if (is_null($offset)) {
 			$this->append($record);
@@ -593,7 +593,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	function offsetUnset($offset) {
+	function offsetUnset($offset):void {
 		$items = $this->getItems();
 		$items[$offset]->destroy();
 		$this->_clearCache();
@@ -602,7 +602,8 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	function offsetExists($offset){
+	#[\ReturnTypeWillChange]
+	function offsetExists($offset):bool {
 		$items = $this->getItems();
 		return array_key_exists($offset, $items);
 	}
@@ -613,7 +614,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * @ignore
 	 */
 	#[\ReturnTypeWillChange]
-	public function current(){
+	public function current() {
 		$items = $this->getItems();
 		return $items[$this->iterator_offset]->getRecord();
 	}
@@ -622,28 +623,28 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * @ignore
 	 */
 	#[\ReturnTypeWillChange]
-	public function key(){
+	public function key() {
 		return $this->iterator_offset;
 	}
 
 	/**
 	 * @ignore
 	 */
-	public function next(){
+	public function next():void {
 		++$this->iterator_offset;
 	}
 
 	/**
 	 * @ignore
 	 */
-	public function rewind(){
+	public function rewind():void {
 		$this->iterator_offset = 0;
 	}
 
 	/**
 	 * @ignore
 	 */
-	public function valid(){
+	public function valid():bool {
 		$items = $this->getItems();
 		return isset($items[$this->iterator_offset]);
 	}
@@ -651,7 +652,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	/**
 	 * @ignore
 	 */
-	public function count(){
+	public function count():int {
 		$items = $this->getItems();
 		return count($items);
 	}
