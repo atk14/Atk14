@@ -4,6 +4,14 @@ All notable changes to ATK14 Framework will be documented in this file.
 
 ## Unreleased
 
+## [1.9] - 2023-04-15
+
+* 817d5d5 - [DbMole] Added method DbMole::getConnection()
+* fe5f05a - [Smarty3] Smarty upgrade 3.1.47 -> 3.1.48
+* d81ee57 - [UrlFetcher] Installed UrlFetcher 1.8 with proxy feature
+* 26a64ba - [Atk14] Script scripts/deploy improved - if no stage name specified by the argument, the stage name may be determined by the current branch name
+* fb91444 - [Atk14] Added method Atk14Global::setConfig($name,$value)
+
 ## [1.8] - 2022-12-26
 
 * 6fa73f9 - [UrlFetcher] In case of communication via SSL, the peer is verified by default + added constant URL_FETCHER_VERIFY_PEER
