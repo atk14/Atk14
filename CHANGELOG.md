@@ -4,6 +4,8 @@ All notable changes to ATK14 Framework will be documented in this file.
 
 ## Unreleased
 
+* ATK14 Framework requires PHP>=7.1; BC BREAK!
+
 ## [1.9] - 2023-04-15
 
 * 817d5d5 - [DbMole] Added method DbMole::getConnection()
