@@ -24,6 +24,7 @@ class EmailField extends RegexField
 
 	function clean($value)
 	{
+		$value = (string)$value;
 		$value = trim($value);
 		if($value==="@"){ $value = ""; }
 
