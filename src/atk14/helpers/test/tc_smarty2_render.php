@@ -1,5 +1,6 @@
 <?php
 define("ATK14_USE_SMARTY3", false);
+define("ATK14_USE_SMARTY4", false);
 define("ATK14_DOCUMENT_ROOT", __DIR__ );
 require_once('../../../../load.php');
 

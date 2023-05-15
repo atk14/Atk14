@@ -43,7 +43,13 @@ class TcUtils extends TcBase{
 
 	function test_get_smarty(){
 		$smarty = Atk14Utils::GetSmarty("template_path");
-		$version = ATK14_USE_SMARTY3 ? "3" : "2";
+		if(ATK14_USE_SMARTY4){
+			$version = "4";
+		}elseif(ATK14_USE_SMARTY3){
+			$version = "3";
+		}else{
+			$version = "2";
+		}
 		$this->assertEquals("atk14_smarty{$version}___",$smarty->compile_id);
 
 		$smarty = Atk14Utils::GetSmarty("template_path",array(

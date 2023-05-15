@@ -1,10 +1,10 @@
 <?php
-define("ATK14_USE_SMARTY3", true);
-define("ATK14_USE_SMARTY4", false);
+define("ATK14_USE_SMARTY3", false);
+define("ATK14_USE_SMARTY4", true);
 define("ATK14_DOCUMENT_ROOT", __DIR__ );
 require_once('../../../../load.php');
 
-class TcSmarty3Render extends TcBase{
+class TcSmarty4Render extends TcBase{
 
 	function test() {
 		$smarty = Atk14Utils::GetSmarty(array(__DIR__."/templates/"));
