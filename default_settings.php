@@ -43,6 +43,13 @@ __defaults__(array(
 	"DEFAULT_CHARSET" => "UTF-8",
 ));
 
+if(defined("ATK14_USE_SMARTY4")){
+	definedef("ATK14_USE_SMARTY3",!constant("ATK14_USE_SMARTY4"));
+}
+if(defined("ATK14_USE_SMARTY3")){
+	definedef("ATK14_USE_SMARTY4",!constant("ATK14_USE_SMARTY3"));
+}
+
 __defaults__(array(
 	"ATK14_APPLICATION_NAME" => "Our Website",
 	"ATK14_APPLICATION_DESCRIPTION" => "Yet another application running on ATK14 Framework", // default description
@@ -56,6 +63,7 @@ __defaults__(array(
 	"ATK14_DEFAULT_LANG" => "auto", // "en", "cs"... when it is "auto", the default lang will be determined by config/locale.yml
 
 	"ATK14_USE_SMARTY3" => true,
+	"ATK14_USE_SMARTY4" => false,
 	"ATK14_SMARTY_DEFAULT_MODIFIER" => 'h', // 'h' is a goog one, see http://www.smarty.net/docs/en/variable.default.modifiers.tpl
 	"ATK14_SMARTY_DIR_PERMS" => 0771, # default Smartys directory permissions
 	"ATK14_SMARTY_FILE_PERMS" => 0644, # default Smartys file permissions

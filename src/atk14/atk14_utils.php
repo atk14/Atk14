@@ -417,7 +417,13 @@ class Atk14Utils{
 		}
 
 		// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
-		$smarty_version_salt = ATK14_USE_SMARTY3 ? "smarty3" : "smarty2";
+		if(ATK14_USE_SMARTY4){
+			$smarty_version_salt = "smarty4";
+		}elseif(ATK14_USE_SMARTY3){
+			$smarty_version_salt = "smarty3";
+		}else{
+			$smarty_version_salt = "smarty2";
+		}
 		$default_modifiers_salt = $smarty->default_modifiers ? "_".md5(serialize($smarty->default_modifiers)) : "";
 
 		$smarty->compile_id = $smarty->compile_id."atk14{$options["compile_id_salt"]}_{$smarty_version_salt}{$default_modifiers_salt}_{$options["namespace"]}_{$options["controller_name"]}_";

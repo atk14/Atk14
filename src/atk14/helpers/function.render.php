@@ -48,7 +48,7 @@
  * @param array $content
  */
 function smarty_function_render($params,$template){
-	if(ATK14_USE_SMARTY3){
+	if(ATK14_USE_SMARTY3 || ATK14_USE_SMARTY4){
 
 	// -*-*-*-*-*-*-*-*-*- NEW IMPLEMENTATION ONLY FOR SMARTY3 -*-*-*-*-*-*-*-*-*-
 	$orig_params = $params;
