@@ -23,3 +23,9 @@ require(__DIR__."/../block.replace_html.php");
 require(__DIR__."/../../atk14_utils.php");
 require(__DIR__."/../../atk14_locale.php");
 require(__DIR__."/../../atk14_require.php");
+
+require(__DIR__."/../modifier.date.php");
+require(__DIR__."/../modifier.json_encode.php");
+require(__DIR__."/../modifier.sizeof.php");
+require(__DIR__."/../modifier.array_filter.php");
+require(__DIR__."/../modifier.preg_split.php");
