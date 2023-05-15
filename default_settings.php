@@ -43,6 +43,13 @@ __defaults__(array(
 	"DEFAULT_CHARSET" => "UTF-8",
 ));
 
+if(defined("ATK14_USE_SMARTY4")){
+	definedef("ATK14_USE_SMARTY3",!constant("ATK14_USE_SMARTY4"));
+}
+if(defined("ATK14_USE_SMARTY3")){
+	definedef("ATK14_USE_SMARTY4",!constant("ATK14_USE_SMARTY3"));
+}
+
 __defaults__(array(
 	"ATK14_APPLICATION_NAME" => "Our Website",
 	"ATK14_APPLICATION_DESCRIPTION" => "Yet another application running on ATK14 Framework", // default description
