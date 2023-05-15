@@ -716,7 +716,7 @@ class UrlFetcher {
 		$out = array();
 		$out[] = "$this->_RequestMethod $this->_Uri HTTP/1.0";
 		$_server = $this->_Server;
-		if((!$this->_Ssl && $this->_Port!=80) || ($this->_Ssl && $this->_Port!=443)){ $_server.":$this->_Port"; }
+		if((!$this->_Ssl && $this->_Port!=80) || ($this->_Ssl && $this->_Port!=443)){ $_server .= ":$this->_Port"; }
 		$out[] = "Host: $_server";
 		$out[] = "Connection: close";
 		$out[] = "User-Agent: $this->_UserAgent";
