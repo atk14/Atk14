@@ -14,6 +14,22 @@ class Atk14SmartyBase extends Smarty{
 		}
 		$this->setErrorReporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 	}
+
+  public function createTemplate($template, $cache_id = null, $compile_id = null, $parent = null, $do_clone = true) {
+		$d = $this->_debug;
+		$out = parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone);
+		$this->_debug = $d;
+		return $out;
+	}
+
+	function start_template_render($template) {
+		$template_fullpath = substr($template->source->filepath, strlen(realpath(__DIR__ . '/../../../')) + 1); // +1 cuts off the leading slash: "/app/view/main/index.tpl" -> "app/view/main/index.tpl"
+		self::$ATK14_RENDERED_TEMPLATES->enter($template_fullpath);
+	}
+
+	function end_template_render($template) {
+		self::$ATK14_RENDERED_TEMPLATES->leave();
+	}
 }
 
 class Atk14SmartyDebug extends Smarty_Internal_Debug {
