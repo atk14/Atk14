@@ -62,8 +62,8 @@ __defaults__(array(
 	"ATK14_SORTING_PARAM_NAME" => "order",
 	"ATK14_DEFAULT_LANG" => "auto", // "en", "cs"... when it is "auto", the default lang will be determined by config/locale.yml
 
-	"ATK14_USE_SMARTY3" => false,
-	"ATK14_USE_SMARTY4" => true,
+	"ATK14_USE_SMARTY3" => true,
+	"ATK14_USE_SMARTY4" => false,
 	"ATK14_SMARTY_DEFAULT_MODIFIER" => 'h', // 'h' is a goog one, see http://www.smarty.net/docs/en/variable.default.modifiers.tpl
 	"ATK14_SMARTY_DIR_PERMS" => 0771, # default Smartys directory permissions
 	"ATK14_SMARTY_FILE_PERMS" => 0644, # default Smartys file permissions
