@@ -48,8 +48,12 @@ class Atk14DeploymentStage{
 	 * ```
 	 * @return Atk14DeploymentStage[]
 	 */
-	static function GetStages(){
+	static function GetStages($options = array()){
 		global $ATK14_GLOBAL;
+
+		$options += array(
+			"include_templates" => false,
+		);
 
 		$out = array();
 		$defaults =
@@ -120,6 +124,15 @@ class Atk14DeploymentStage{
 			$ar = $_ar;
 
 			$out[$name] = new Atk14DeploymentStage($name,$ar);
+		}
+
+		if(!$options["include_templates"]){
+			$_out = array();
+			foreach($out as $name => $s){
+				if(preg_match('/^_/',$name)){ continue; }
+				$_out[$name] = $s;
+			}
+			$out = $_out;
 		}
 
 		return $out;
