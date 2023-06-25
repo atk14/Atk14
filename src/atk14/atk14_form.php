@@ -1158,6 +1158,20 @@ class Atk14Form extends Form
 	}
 
 	/**
+	 * Returns all enabled fields as associative array
+	 *
+	 * ```
+	 * $fields = $form->get_enabled_fields();
+	 * ```
+	 * @return BoundField[]
+	 */
+	function get_enabled_fields(){
+		$fields = $this->get_fields();
+		$fields = array_filter($fields,function($field){ return !$field->disabled; });
+		return $fields;
+	}
+
+	/**
 	 * Returns names of the fields as array.
 	 *
 	 * @return array
@@ -1165,6 +1179,16 @@ class Atk14Form extends Form
 	function get_field_keys(){
 		$this->_call_super_constructor();
 		return parent::get_field_keys();
+	}
+
+	/**
+	 * Returns names of the enabled fields as array.
+	 *
+	 * @return array
+	 */
+	function get_enabled_field_keys(){
+		$fields = $this->get_enabled_fields();
+		return array_keys($fields);
 	}
 
 	/**

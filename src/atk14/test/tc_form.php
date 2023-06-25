@@ -41,11 +41,23 @@ class TcForm extends TcBase{
 	}
 
 	function test_get_fields(){
-		$form = Atk14Form::GetInstanceByControllerAndAction("main","hello_world");
-		$fields = $form->get_fields();
+		$form = new TestForm();
 
-		$this->assertEquals(array("greeting"),array_keys($fields));
-		$this->assertContains('id="id_greeting"',$fields["greeting"]->as_widget());
+		$fields = $form->get_fields();
+		$this->assertEquals(array("firstname","lastname","nickname"),array_keys($fields));
+
+		$keys = $form->get_field_keys();
+		$this->assertEquals(array("firstname","lastname","nickname"),$keys);
+	}
+
+	function test_get_enabled_field(){
+		$form = new TestForm();
+
+		$fields = $form->get_enabled_fields();
+		$this->assertEquals(array("firstname"),array_keys($fields));
+
+		$keys = $form->get_enabled_field_keys();
+		$this->assertEquals(array("firstname"),$keys);
 	}
 
 	function test_constructor(){
