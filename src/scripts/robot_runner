@@ -1,10 +1,17 @@
 #!/usr/bin/env php
 <?php
 /**
- * $ ./scripts/robot_runner import_articles
- * $ ./scripts/robot_runner import_articles_robot
- * $ ./scripts/robot_runner ImportArticles
- * $ ./scripts/robot_runner ImportArticlesRobot
+ * Usage:
+ *   $ ./scripts/robot_runner import_articles
+ *   $ ./scripts/robot_runner import_articles_robot
+ *   $ ./scripts/robot_runner ImportArticles
+ *   $ ./scripts/robot_runner ImportArticlesRobot
+ *
+ * Using options:
+ *   $ ./scripts/robot_runner --robot=import_articles
+ *
+ * In this way, additional options can be passed to the robot:
+ *   $ ./scripts/robot_runner --robot=import_articles --reimport
  */
 
 require_once(dirname(__FILE__)."/load.php");
