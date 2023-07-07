@@ -346,7 +346,7 @@ class TcFiles extends TcBase{
 				"mime_types" => array("video/x-msvideo"),
 			),
 			array(
-				"urls" => array("https://filesamples.com/samples/video/mp4/sample_640x360.mp4"),
+				"urls" => array("https://download.samplelib.com/mp4/sample-5s.mp4"),
 				"mime_types" => array("video/mp4"),
 			),
 			array(
