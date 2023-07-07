@@ -929,6 +929,20 @@ class TcFields extends TcBase
 					),
 				)
 			),
+			array(
+				'field' => new ChoiceField(array('choices'=>array('J'=>'John', 'P'=>'Paul', '2' => 'both'),'disabled_choices' => array('P',2))),
+				'params' => array(
+					array(
+						'clean'=>'J', 'error'=>null, 'result'=>'J'
+					),
+					array(
+						'clean'=>'P', 'error'=>'This choice cannot be selected.', 'result'=>null
+					),
+					array(
+						'clean'=>'2', 'error'=>'This choice cannot be selected.', 'result'=>null
+					),
+				)
+			),
 
 		);
 

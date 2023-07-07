@@ -16,6 +16,10 @@ class Select extends Widget
 {
 	var $input_type = "select";
 
+	var $choices = array();
+
+	var $disabled_choices = array();
+
 	function __construct($options=array())
 	{
 		$options = forms_array_merge(array('attrs'=>null, 'choices'=>array()), $options);
@@ -46,11 +50,15 @@ class Select extends Widget
 		foreach ($choices as $option_value => $option_label) {
 			if ((string)$option_value === (string)$value) { // yarri: tady pridavam 3. rovnitko: jinak bylo "" to same jako "0"
 				$selected = ' selected="selected"';
-			}
-			else {
+			} else {
 				$selected = '';
 			}
-			$output[] = '<option value="'.forms_htmlspecialchars($option_value).'"'.$selected.'>'.forms_htmlspecialchars($option_label).'</option>';
+			if (in_array($option_value,$this->disabled_choices)) {
+				$disabled = ' disabled';
+			} else {
+				$disabled = '';
+			}
+			$output[] = '<option value="'.forms_htmlspecialchars($option_value).'"'.$selected.$disabled.'>'.forms_htmlspecialchars($option_label).'</option>';
 		}
 		$output[] = '</select>';
 		return implode("\n", $output);

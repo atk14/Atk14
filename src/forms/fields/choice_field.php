@@ -19,6 +19,8 @@ class ChoiceField extends Field
 	 */
 	protected $choices = array();
 
+	protected $disabled_choices = array();
+
 	/**
 	 * Constructor
 	 *
@@ -35,10 +37,14 @@ class ChoiceField extends Field
 		parent::__construct($options);
 		$this->update_messages(array(
 			'invalid_choice' => _('Select a valid choice. That choice is not one of the available choices.'),
+			'disabled_choice' => _('This choice cannot be selected.'),
 			'required' => _('Please, choose the right option.'),
 		));
 		if (isset($options['choices'])) {
 			$this->set_choices($options['choices']);
+		}
+		if (isset($options['disabled_choices'])) {
+			$this->set_disabled_choices($options['disabled_choices']);
 		}
 	}
 
@@ -73,6 +79,11 @@ class ChoiceField extends Field
 		$this->widget->choices = $value;
 	}
 
+	function set_disabled_choices($disabled_choices) {
+		$this->disabled_choices = $disabled_choices;
+		$this->widget->disabled_choices = $disabled_choices;
+	}
+
 	function clean($value)
 	{
 		list($error, $value) = parent::clean($value);
@@ -98,6 +109,10 @@ class ChoiceField extends Field
 		if (!$found) {
 			// neni!
 			return array($this->messages['invalid_choice'], null);
+		}
+		$disabled_choices = array_map(function($item){ return (string)$item; },$this->disabled_choices);
+		if (in_array($value,$disabled_choices)) {
+			return array($this->messages['disabled_choice'], null);
 		}
 		return array(null, (string)$value);
 	}
