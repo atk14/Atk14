@@ -29,6 +29,10 @@ class Atk14Global{
 
 	protected static $_ConfigFromPhpFileStore = array();
 
+	protected function __construct(){
+
+	}
+
 	/**
 	 * Static method to get a singleton.
 	 *
@@ -37,7 +41,7 @@ class Atk14Global{
 	static function &GetInstance(){
 		static $instance;
 		if(!isset($instance)){
-			$instance = new Atk14Global();
+			$instance = new self();
 		}
 		return $instance;
 	}

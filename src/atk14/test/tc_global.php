@@ -2,7 +2,7 @@
 class TcGlobal extends TcBase{
 
 	function test_paths(){
-		$global = new Atk14Global();
+		$global = Atk14Global::GetInstance();
 
 		$this->assertEquals(__DIR__ . "/",$global->getDocumentRoot());
 		$this->assertEquals(__DIR__ . "/app/",$global->getApplicationPath());
@@ -13,7 +13,7 @@ class TcGlobal extends TcBase{
 	}
 
 	function test_locales(){
-		$global = new Atk14Global();
+		$global = Atk14Global::GetInstance();
 
 		$this->assertEquals(array("cs","en","sk"),$global->getSupportedLangs()); // see config/locale.yml
 
@@ -27,7 +27,7 @@ class TcGlobal extends TcBase{
 	}
 
 	function test_getConfig(){
-		$global = new Atk14Global();
+		$global = Atk14Global::GetInstance();
 
 		$this->assertEquals(array(
 			"name" => "Magic Plugin",
@@ -59,7 +59,7 @@ class TcGlobal extends TcBase{
 	}
 
 	function test_setConfig(){
-		$global = new Atk14Global();
+		$global = Atk14Global::GetInstance();
 
 		$this->assertEquals(array("cs","en","sk"),$global->getSupportedLangs()); // see config/locale.yml
 
@@ -86,11 +86,5 @@ class TcGlobal extends TcBase{
 			"secondary" => "blue",
 			"background" => "white",
 		),$global->getConfig("main_colors"));
-
-		//
-
-		$global2 = new Atk14Global();
-
-		$this->assertEquals(array("cs","en","sk"),$global2->getSupportedLangs());
 	}
 }
