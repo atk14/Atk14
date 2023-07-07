@@ -19,6 +19,11 @@ class ChoiceField extends Field
 	 */
 	protected $choices = array();
 
+	/**
+	 * List of disabled choices
+	 *
+	 * @var array
+	 */
 	protected $disabled_choices = array();
 
 	/**
@@ -26,8 +31,16 @@ class ChoiceField extends Field
 	 *
 	 * This class extends $options with the following. For default options see {@link Field} class.
 	 *
+	 * ```
+	 * new ChoiceField([
+	 *  "choices" => ["" => "-- select class --", "a" => "Class A", "b" => "Class B", "c" => "Class C"],
+	 *  "disabled_choices" => ["c"]
+	 * ]);
+	 * ```
+	 *
 	 * @param array $options 
 	 * - choices array list of choices to render as list of options in select input field
+	 * - disabled_choices array list of disabled choices
 	 * @see Field::__construct()
 	 */
 	function __construct($options=array()) {
