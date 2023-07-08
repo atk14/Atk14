@@ -334,19 +334,19 @@ class TcFiles extends TcBase{
 
 		foreach(array(
 			array(
-				"urls" => array("https://filesamples.com/samples/video/mov/sample_960x540.mov"),
+				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.mov"),
 				"mime_types" => array("video/quicktime"),
 			),
 			array(
-				"urls" => array("https://filesamples.com/samples/video/wmv/sample_640x360.wmv"),
+				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.wmv"),
 				"mime_types" => array("video/x-ms-asf"),
 			),
 			array(
-				"urls" => array("https://filesamples.com/samples/video/avi/sample_640x360.avi"),
+				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.avi"),
 				"mime_types" => array("video/x-msvideo"),
 			),
 			array(
-				"urls" => array("https://download.samplelib.com/mp4/sample-5s.mp4"),
+				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.mp4"),
 				"mime_types" => array("video/mp4"),
 			),
 			array(
