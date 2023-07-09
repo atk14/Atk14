@@ -348,7 +348,7 @@ class TcSessionStorer extends TcBase{
 		$this->assertEquals(true,$s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60 * 20)));
 
 		$trues = $falses = 0;
-		for($i=0;$i<100;$i++){
+		for($i=0;$i<1000;$i++){
 			$ret = $s->_isTimeToUpdateLastAccess(date("Y-m-d H:i:s",$time - 60 * 8));
 			if($ret){ $trues++; }else{ $falses++; }
 		}
