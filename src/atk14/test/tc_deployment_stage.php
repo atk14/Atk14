@@ -176,6 +176,16 @@ class TcDeploymentStage extends TcBase{
 		$this->assertEquals("rsync -av --checksum --no-times --delete -e 'ssh -p 2222' vendor/ deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/vendor/",$production->compileRsyncCommand("vendor"));
 	}
 
+	function test_compileReverseRsyncCommand(){
+		$devel = Atk14DeploymentStage::GetStage("devel");
+		$this->assertEquals('rsync -av --checksum --no-times deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/ /tmp/dist/',$devel->compileReverseRsyncCommand("public/dist/","/tmp/dist/"));
+		$this->assertEquals('rsync -av --checksum --no-times --delete deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/ /tmp/dist/',$devel->compileReverseRsyncCommand("public/dist/","/tmp/dist/",array("delete" => true)));
+
+		$production = Atk14DeploymentStage::GetStage("production");
+		$this->assertEquals("rsync -av --checksum --no-times -e 'ssh -p 2222' deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/ /tmp/dist/",$production->compileReverseRsyncCommand("public/dist/","/tmp/dist/"));
+		$this->assertEquals("rsync -av --checksum --no-times --delete -e 'ssh -p 2222' deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/ /tmp/dist/",$production->compileReverseRsyncCommand("public/dist/","/tmp/dist/",array("delete" => true)));
+	}
+
 	function _compareArrays($exp_ar,$ar){
 		foreach($exp_ar as $key => $exp){
 			$this->assertEquals($exp,$ar[$key],$key);

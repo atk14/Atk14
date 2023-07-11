@@ -229,19 +229,55 @@ class Atk14DeploymentStage{
 	}
 
 	/**
+	 * Compiles an rsync call to synchronize something from the local to the given stage
 	 *
 	 *	$cmd = $stage->compileRsyncCommand("public/dist/");
 	 */
-	function compileRsyncCommand($file){
+	function compileRsyncCommand($file,$options = array()){
+		$options += array(
+			"delete" => true,
+
+			// do not set underscore options
+			"_local_file_path" => "",
+			"_reverse" => false,
+		);
+
 		$config = $this->toArray();
 		if(is_dir(ATK14_DOCUMENT_ROOT."/".$file)){
 			!preg_match('/\/$/',$file) && ($file .= "/"); // "public/dist" -> "public/dist/"
 		}
+
+		$delete = $options["delete"] ? " --delete" : "";
+
 		$port_spec = $config["port"] ? " -e 'ssh -p $config[port]'" : "";
 		$user = $config["user"] ? "$config[user]@" : "";
 		$dest = "$config[directory]/$file";
 		$dest = preg_replace('/\/{2,}/','/',$dest);
-		return "rsync -av --checksum --no-times --delete$port_spec $file $user$config[server]:$dest";
+
+		$source = $options["_local_file_path"] ? $options["_local_file_path"] : $file;
+		$destination = "$user$config[server]:$dest";
+
+		if($options["_reverse"]){
+			$_destination = $source;
+			$source = $destination;
+			$destination = $_destination;
+		}
+
+		return "rsync -av --checksum --no-times$delete$port_spec $source $destination";
+	}
+
+	/**
+	 * Compiles an rsync call to synchronize something from the given stage to the local
+	 *
+	 *	$cmd = $stage->compileReverseRsyncCommand("local_config/","/backup/local_config/");
+	 */
+	function compileReverseRsyncCommand($file,$local_file_path,$options = array()){
+		$options += array(
+			"delete" => false
+		);
+		$options["_reverse"] = true;
+		$options["_local_file_path"] = $local_file_path;
+		return $this->compileRsyncCommand($file,$options);
 	}
 
 	function toArray(){
