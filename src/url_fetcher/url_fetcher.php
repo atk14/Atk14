@@ -853,7 +853,15 @@ class UrlFetcher {
 			if(is_null($chunk)){
 				$chunk = $buffer->substr($bytes_written,$length);
 			}
-			$fwrite = @fwrite($fp, $chunk, $length);
+
+			// $fwrite = @fwrite($fp, $chunk, $length);
+			$max_retries = 5;
+			while($max_retries>0){
+				$fwrite = @fwrite($fp, $chunk, $length);
+				if($fwrite !== false){ break; }
+				$max_retries--;
+				usleep(10000); // 0.01s
+			}
 
 			if($fwrite === false){
 				return $bytes_written;
