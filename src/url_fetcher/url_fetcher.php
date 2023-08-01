@@ -55,7 +55,7 @@ defined("URL_FETCHER_VERIFY_PEER") || define("URL_FETCHER_VERIFY_PEER",true);
  */
 class UrlFetcher {
 
-	const VERSION = "1.8.1";
+	const VERSION = "1.8.3";
 
 	/**
 	 * Authentication type
@@ -85,7 +85,7 @@ class UrlFetcher {
 	 *
 	 * @var integer
 	 */
-	protected $_SocketTimeout = 5;
+	protected $_SocketTimeout = 5.0;
 
 	/**
 	 * Redirections counter
@@ -273,9 +273,14 @@ class UrlFetcher {
 	/**
 	 * Set timeout for connection
 	 *
-	 * @param int $timeout timeout in seconds
+	 * @param float $timeout timeout in seconds
+	 * @return float previous timeout
 	 */
-	function setSocketTimeout($timeout){ $this->_SocketTimeout = $timeout; }
+	function setSocketTimeout($timeout){
+		$current_socket_timeout = $this->_SocketTimeout;
+		$this->_SocketTimeout = $timeout;
+		return $current_socket_timeout;
+	}
 
 	/**
 	 * Resets authentization parameters so it is not used in the request
