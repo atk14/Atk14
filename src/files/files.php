@@ -285,7 +285,7 @@ class Files{
 		$f = fopen($file,$options["file_open_mode"]);
 		if(!$f){
 			$error = true;
-			$error_str = "failed to open file for writing";
+			$error_str = "failed to open file for writing (file: $file)";
 			return 0;
 		}
 		$strlen = strlen($content);
@@ -293,7 +293,7 @@ class Files{
 			$bytes = fwrite($f,$content,$strlen);
 			if($bytes!==$strlen){
 				$error = true;
-				$error_str = "failed to write $strlen bytes; writen $bytes";
+				$error_str = "failed to write $strlen bytes; writen $bytes (file: $file)";
 				return $bytes;
 			}
 		}
@@ -317,6 +317,31 @@ class Files{
 
 
 		return $bytes;
+	}
+
+	/**
+	 * Writes a string to a file that is considered a cache file
+	 *
+	 * Basically it do the same thing as the Files::WriteToFile() method with a mechanism
+	 * preventing a race condition situation where two processes write to the same file at the same time.
+	 *
+	 * @param string $file Name of a file
+	 * @param string $content String to write
+	 * @param boolean &$error Error flag
+	 * @param string &$error_str Error description
+	 * @return int Number of written bytes
+	 */
+	static function WriteToCacheFile($file,$content,&$error = null,&$error_str = null){
+		$cache_file = $file.".cache.".uniqid();
+		$ret = self::WriteToFile($cache_file,$content,$error,$error_str);
+		if($error){
+			return 0;
+		}
+		self::MoveFile($cache_file,$file,$error,$error_str);
+		if($error){
+			return 0;
+		}
+		return $ret;
 	}
 
 	/**

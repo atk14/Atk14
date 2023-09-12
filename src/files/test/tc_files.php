@@ -625,4 +625,27 @@ class TcFiles extends TcBase{
 		rmdir($dir);
 		unlink($file);
 	}
+
+	function test_WriteToCacheFile(){
+		$ret = Files::WriteToCacheFile("temp/cache_file","Cache_Content",$err,$err_str);
+		$this->assertFalse($err);
+		$this->assertEquals(null,$err_str);
+		$this->assertEquals(13,$ret);
+		
+		$this->assertTrue(file_exists("temp/cache_file"));
+		$this->assertEquals("Cache_Content",Files::GetFileContent("temp/cache_file"));
+
+		//
+
+		$ret = @Files::WriteToCacheFile("non_existing_dir/cache_file","Cache_Content",$err,$err_str);
+		$this->assertTrue($err);
+		$this->assertContains("failed to open file for writing",$err_str);
+		$this->assertEquals(0,$ret);
+
+		$this->assertFalse(file_exists("non_existing_dir/cache_file"));
+
+		// Cleaning
+
+		unlink("temp/cache_file");
+	}
 }
