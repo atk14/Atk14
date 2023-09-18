@@ -586,7 +586,7 @@ class Atk14Global{
 				foreach($params as $name => $val){
 					if(preg_match("/^__/",$name)){ continue; }
 					$params[$name] = array(
-						"regexp" => (bool)preg_match("/^\\/.*\\/$/",$val),
+						"regexp" => (bool)preg_match("/^\\/.*\\/$/",(string)$val),
 						"value" => $val,
 					);
 					$routes[$uri] = $params;
