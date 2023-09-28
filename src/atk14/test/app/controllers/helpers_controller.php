@@ -30,6 +30,10 @@ class HelpersController extends ApplicationController{
 		
 	}
 
+	function render_component_with_multiple_redirection(){
+
+	}
+
 	function a(){
 		$this->lang = "en";
 	}

@@ -190,7 +190,7 @@ class Atk14Dispatcher{
 	 */
 	static function ExecuteAction($controller_name,$action,$options = array()){
 		global $ATK14_GLOBAL;
-		static $prev_rc_controller; // previous rendering component controller
+		static $prev_rc_controllers = array(); // previous rendering component controllers
 
 		$logger = $ATK14_GLOBAL->getLogger();
 
@@ -211,7 +211,7 @@ class Atk14Dispatcher{
 		$requested_action = $action;
 
 		if(!$options["apply_render_component_hacks"]){
-			$prev_rc_controller = null;
+			$prev_rc_controllers = array();
 		}
 
 		if($options["apply_render_component_hacks"]){
@@ -300,18 +300,22 @@ class Atk14Dispatcher{
 		$controller->atk14__runAfterFilters();
 
 		if($options["apply_render_component_hacks"]){
-			$prev_rc_controller = $controller;
+			$prev_rc_controllers[] = $controller;
 			$ATK14_GLOBAL->setValue("namespace",$prev_namespace);
 			$ATK14_GLOBAL->setValue("controller",$prev_controller_name);
 			$ATK14_GLOBAL->setValue("action",$prev_action);
 		}
 
-		if(!$options["apply_render_component_hacks"] && $prev_rc_controller && $controller->response->getStatusCode()==200 && $prev_rc_controller->response->getLocation()){
+		if(!$options["apply_render_component_hacks"] && $prev_rc_controllers && $controller->response->getStatusCode()==200){
 			// Beware that a redirection from the previous rendering_component controller is passed to the current controller
 			// (but as you can see higher, a redirection from a before filter is silently discarded)
-			$controller->response->setLocation($prev_rc_controller->response->getLocation());
-			$controller->response->setStatusCode($prev_rc_controller->response->getStatusCode());
-			$controller->response->buffer->clear();
+			foreach($prev_rc_controllers as $prev_rc_controller){
+				if(!$prev_rc_controller->response->getLocation()){ continue; }
+				$controller->response->setLocation($prev_rc_controller->response->getLocation());
+				$controller->response->setStatusCode($prev_rc_controller->response->getStatusCode());
+				$controller->response->buffer->clear();
+				break;
+			}
 		}
 
 		return Atk14Dispatcher::_ReturnResponseOrController($controller->response,$controller,$options);
