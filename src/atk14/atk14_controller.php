@@ -248,6 +248,8 @@ class Atk14Controller{
 	 */
 	var $tpl_data = array();
 
+	var $walking_state;
+
 	/**
 	 * Data returned by multistep form actions.
 	 *
@@ -1463,5 +1465,11 @@ class Atk14Controller{
 	 */
 	function _before_walking(){
 
+	}
+
+	function _clear_walking_state(){
+		$state = &$this->walking_state;
+		if(!$state){ return; }
+		$this->session->clear($state["step_session_name"]);
 	}
 }
