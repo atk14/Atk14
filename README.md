@@ -36,6 +36,7 @@ ATK14 requires UNIX environment, PHP 7.1 or newer and Postgresql as a database e
 You can start work with ATK14 Framework by installing one of the available Skeletons:
 
 * [ATK14 Embryo](https://github.com/atk14/Atk14Embryo)
+* [ATK14 Mini Skelet](https://github.com/atk14/Atk14MiniSkelet)
 * [ATK14 Skelet](https://github.com/atk14/Atk14Skelet)
 * [ATK14 Catalog](https://github.com/atk14/Atk14Catalog)
 * [ATK14 Eshop](https://github.com/atk14/Atk14Eshop)
