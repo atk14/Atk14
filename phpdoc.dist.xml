@@ -1,46 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<phpdoc>
+<phpdocumentor configVersion="3.0">
 	<title>Atk14 documentation</title>
-	<parser>
-		<default-package-name>Atk14</default-package-name>
-		<target>doc-cache</target>
-		<extensions>
-			<extension>php</extension>
-			<extension>inc</extension>
-		</extensions>
-	</parser>
-	<transformer>
-		<target>../tmp/documentation</target>
-	</transformer>
-	<transformations>
-		<!-- can be one of abstract,checkstyle,clean,new-black,old-ocean,responsive,responsive-twig,xml,zend -->
-		<template name="clean" />
-	</transformations>
-	<files>
-		<directory>src/atk14</directory>
-		<directory>src/dates</directory>
-		<directory>src/dbmole</directory>
-		<directory>src/dictionary</directory>
-		<directory>src/files</directory>
-		<directory>src/forms</directory>
-		<directory>src/http</directory>
-		<directory>src/logger</directory>
-		<directory>src/sessionstorer</directory>
-		<directory>src/string4</directory>
-		<directory>src/stringbuffer</directory>
-		<directory>src/tablerecord</directory>
-		<directory>src/translate</directory>
-		<directory>src/url_fetcher</directory>
-		<directory>src/xmole</directory>
+  <paths>
+		<output>../tmp/documentation</output>
+    <!--Optional:-->
+		<cache>../tmp/doc-cache</cache>
+  </paths>
+  <!--Zero or more repetitions:-->
+  <version number="3.0">
+    <!--Optional:-->
+    <folder>latest</folder>
+    <!--Zero or more repetitions:-->
+    <api format="php">
+      <source dsn=".">
+        <!--1 or more repetitions:-->
+        <path>src</path>
+      </source>
+      <!--Optional:-->
+      <output>api</output>
+      <!--Optional:-->
+      <ignore hidden="true" symlinks="true">
+        <!--1 or more repetitions:-->
+        <path>**/load.php</path>
+        <path>test/**/*</path>
+				<path>src/**/test/**/*</path>
+				<path>src/smarty</path>
+				<path>src/smarty3</path>
+				<path>src/smarty4</path>
+      </ignore>
+      <!--Optional:-->
+      <extensions>
+        <!--1 or more repetitions:-->
+        <extension>php</extension>
+      </extensions>
+      <!--Optional:-->
+      <visibility>private</visibility>
+      <!--Optional:-->
+      <default-package-name>Atk14</default-package-name>
+      <!--Optional:-->
+      <include-source>true</include-source>
+      <!--Optional:-->
+      <markers>
+        <!--1 or more repetitions:-->
+        <marker>TODO</marker>
+        <marker>FIXME</marker>
+      </markers>
+    </api>
+    <!--Zero or more repetitions:-->
+    <guide format="rst">
+      <source dsn=".">
+        <!--1 or more repetitions:-->
+        <path>support/docs</path>
+      </source>
+      <!--Optional:-->
+      <output>docs</output>
+    </guide>
+  </version>
+  <!--Zero or more repetitions:-->
+  <setting name="string" value="string"/>
+</phpdocumentor>
 
-		<ignore>*/test/*.inc</ignore>
-		<ignore>*/test/*.php</ignore>
-		<ignore>tc_*.php</ignore>
-		<ignore>tc_*.inc</ignore>
-		<ignore>*/load.inc</ignore>
-		<ignore>*/load.php</ignore>
-		<ignore>initialize.inc</ignore>
-		<ignore>*/demo/*</ignore>
-
-	</files>
-</phpdoc>
