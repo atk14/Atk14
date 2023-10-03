@@ -3,14 +3,14 @@
  * Widget for text input field.
  *
  * Outputs field of this type:
- * <code>
+ *
+ * ```
  * <input type="text" />
- * </code>
+ * ```
  *
  * By default the element has attribute class set to "text"
  *
- * @package Atk14
- * @subpackage Forms
+ * @package Atk14\Forms
  */
 class TextInput extends Input
 {

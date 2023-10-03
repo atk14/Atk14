@@ -1,6 +1,8 @@
 <?php
 /**
  * Table defining conversion from utf-8 to windows-1250
+ *
+ * @ignore
  */
 $TR_TABLES["utf8"] =
 					 array(

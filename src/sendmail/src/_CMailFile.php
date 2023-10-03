@@ -1,29 +1,35 @@
 <?php
-/* notes from Dan Potter:
-Sure. I changed a few other things in here too though. One is that I let
-you specify what the destination filename is (i.e., what is shows up as in
-the attachment). This is useful since in a web submission you often can't
-tell what the filename was supposed to be from the submission itself. I
-also added my own version of chunk_split because our production version of
-PHP doesn't have it. You can change that back or whatever though =).
-Finally, I added an extra "\n" before the message text gets added into the
-MIME output because otherwise the message text wasn't showing up.
-/*
-note: someone mentioned a command-line utility called 'mutt' that 
-can mail attachments.
-*/
-/* 
-If chunk_split works on your system, change the call to my_chunk_split
-to chunk_split 
-*/
-/* Note: if you don't have base64_encode on your sytem it will not work */
+/**
+ * notes from Dan Potter:
+ *
+ * Sure. I changed a few other things in here too though. One is that I let
+ * you specify what the destination filename is (i.e., what is shows up as in
+ * the attachment). This is useful since in a web submission you often can't
+ * tell what the filename was supposed to be from the submission itself. I
+ * also added my own version of chunk_split because our production version of
+ * PHP doesn't have it. You can change that back or whatever though =).
+ * Finally, I added an extra "\n" before the message text gets added into the
+ * MIME output because otherwise the message text wasn't showing up.
+ *
+ * note: someone mentioned a command-line utility called 'mutt' that 
+ * can mail attachments.
+ *
+ *
+ * If chunk_split works on your system, change the call to my_chunk_split
+ * to chunk_split 
+ *
+ * Note: if you don't have base64_encode on your sytem it will not work
 
-// simple class that encapsulates mail() with addition of mime file attachment.
-
-// usage - mimetype example "image/gif"
-// $mailfile = new _CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
-// $mailfile->sendfile();
-// TODO: zbavit se zavislosti na teto tride
+ * simple class that encapsulates mail() with addition of mime file attachment.
+ *
+ * usage - mimetype example "image/gif"
+ * $mailfile = new _CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
+ * $mailfile->sendfile();
+ *
+ * @todo: zbavit se zavislosti na teto tride
+ *
+ * @ignore
+ */
 class _CMailFile {
 	var $subject;
 	var $addr_to;

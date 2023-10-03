@@ -2,6 +2,8 @@
 /**
  * Source of this transformation table is https://github.com/jbroadway/urlify/blob/master/URLify.php on revision 68e3dd9 - some native speaker kazakh improvement.
  * Thank you guys!
+ *
+ * @ignore
  */
 $tr_table = array(
 		//'de' => array ( /* German */

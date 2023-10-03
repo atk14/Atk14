@@ -28,9 +28,6 @@
 				<path>src/smarty3</path>
 				<path>src/smarty4</path>
 				<path>src/scripts</path>
-				<path>src/translate/tr_tables</path>
-				<path>src/string4/_inflect.php</path>
-				<path>src/sendmail/src/_CMailFile.php</path>
       </ignore>
       <!--Optional:-->
       <extensions>

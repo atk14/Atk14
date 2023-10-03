@@ -1,8 +1,11 @@
 <?php
 /**
- * <code>
- *  <input type="email" />    
- * </code>
+ *
+ * Creates form field for typing and validating email address.
+ *
+ * ```
+ *  <input type="email" />
+ * ```
  *
  * @package Atk14\Forms
  */
