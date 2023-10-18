@@ -9,18 +9,23 @@ ATK14 is a classy MVC framework.
 
 ATK14 emphasizes Convention over Configuration principle.
 
+ATK14 framework is well-tuned for continuous integration development.
+
 If one dares to dip into ATK14, she or he gains:
 
 * funny modelling, templating and controlling
 * awesome form validations
 * database schema migrations
 * easy testing setup with automation and fixtures support
+* reliable deployment tools
 * perfect headaches
 * big-boy-like feeling
 
 ATK14 consists of
 
+* Mighty ATK14 core with some Ruby on Rails-inspired concepts
 * Form framework rewritten from Django by Mr. Valousek
+* Rowerful built-in routing mechanism
 * A smart template engine - [Smarty](http://www.smarty.net/)
 * Excellent jQuery integration library by Mr. Ganicky (https://github.com/atk14/Atk14Js)
 * A few PHP libraries developed by Mr. Tomek over last years, mainly:
@@ -30,6 +35,8 @@ ATK14 consists of
   * tools for parsing YAML and XML and so on
 
 ATK14 requires UNIX environment, PHP 7.1 or newer and Postgresql as a database engine.
+
+In the production environment, the Apache web server with mod_rewrite enabled is required.
 
 ### Installation
 
