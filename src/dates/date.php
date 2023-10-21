@@ -180,7 +180,11 @@ class Date{
 	 * @return integer
 	 */
 	function getUnixTimestamp(){
-		return (int)strtotime($this->getDate());
+		$date = $this->getDate();
+		if(is_null($date)){
+			return null;
+		}
+		return (int)strtotime($date);
 	}
 	
 	/**

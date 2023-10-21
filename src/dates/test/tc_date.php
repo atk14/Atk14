@@ -311,4 +311,12 @@ class TcDate extends TcBase{
 		$date = Date::ByDate("2008-02-29");
 		$this->assertEquals(gmdate('D, d M Y H:i:s \G\M\T',$date->getUnixTimestamp()),$date->toGmdate());
 	}
+
+	function test_getUnixTimestamp(){
+		$date = new Date("2023-10-21");
+		$this->assertEquals(1697839200,$date->getUnixTimestamp());
+
+		$date = new Date("nonsence");
+		$this->assertNull($date->getUnixTimestamp());
+	}
 }	
