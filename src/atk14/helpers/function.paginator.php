@@ -98,7 +98,7 @@ function smarty_function_paginator($params,$template){
 		$symbol_right = '<i class="fas fa-chevron-right"></i>';
 		$label_left = "<span class=\"sr-only\">$label_left</span>";
 		$label_right = "<span class=\"sr-only\">$label_right</span>";
-	}elseif(!USING_BOOTSTRAP4){
+	}elseif(USING_BOOTSTRAP3){
 		// Perhaps Bootstrap 3, but who knows... Rather to not hide labels.
 		$symbol_left = '<i class="glyphicon glyphicon-chevron-left"></i>';
 		$symbol_right = '<i class="glyphicon glyphicon-chevron-right"></i>';
