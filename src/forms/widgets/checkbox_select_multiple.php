@@ -23,12 +23,13 @@ class CheckboxSelectMultiple extends SelectMultiple
 			"label_attrs" => array(),
 			"wrap_attrs" => array(),
 			"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4,
+			"bootstrap5" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP5,
 		);
 		$options += array(
-			"bootstrap4_customized" => $options["bootstrap4"] // whether or not add classes for checkbox customization in bootstrap4 (https://www.w3schools.com/bootstrap4/bootstrap_forms_custom.asp)
+			"bootstrap4_customized" => $options["bootstrap4"] || $options["bootstrap5"] // whether or not add classes for checkbox customization in bootstrap4 (https://www.w3schools.com/bootstrap4/bootstrap_forms_custom.asp)
 		);
 
-		if($options["bootstrap4"]){
+		if($options["bootstrap4"] || $options["bootstrap5"]){
 			$options["input_attrs"] += array(
 				"class" => $options["bootstrap4_customized"] ? "form-check-input custom-control-input" : "form-check-input",
 			);
@@ -41,7 +42,6 @@ class CheckboxSelectMultiple extends SelectMultiple
 		}
 
 		$this->escape_labels = $options["escape_labels"];
-		$this->bootstrap4 = $options["bootstrap4"];
 		$this->bootstrap4_customized = $options["bootstrap4_customized"];
 		$this->input_attrs = $options["input_attrs"];
 		$this->label_attrs = $options["label_attrs"];
@@ -64,7 +64,7 @@ class CheckboxSelectMultiple extends SelectMultiple
 		$final_attrs = $this->build_attrs($this->input_attrs,$options['attrs']);
 		$output = array();
 
-		$output[] = $this->bootstrap4 ? '<ul class="list list--checkboxes">' : '<ul class="checkboxes">';
+		$output[] = ($this->bootstrap4 || $this->bootstrap5) ? '<ul class="list list--checkboxes">' : '<ul class="checkboxes">';
 
 		$choices = my_array_merge(array($this->choices, $options['choices']));
 		$str_values = array();
@@ -82,12 +82,12 @@ class CheckboxSelectMultiple extends SelectMultiple
 				$final_attrs['id'] = $options['attrs']['id'].'_'.$i;
 				$label_attrs["for"] = $final_attrs['id'];
 			}
-			$cb = new CheckboxInput(array('attrs'=>$final_attrs, 'check_test'=>array($this, 'my_check_test'), 'bootstrap4' => $this->bootstrap4));
+			$cb = new CheckboxInput(array('attrs'=>$final_attrs, 'check_test'=>array($this, 'my_check_test'), 'bootstrap3' => $this->bootstrap3, 'bootstrap4' => $this->bootstrap4, 'bootstrap5' => $this->bootstrap5));
 			$option_value = (string)$option_value;
 			$rendered_cb = $cb->render("{$name}[]", $option_value);
 			$label = ($this->escape_labels ? forms_htmlspecialchars($option_label) : $option_label);
-			$markup = $this->bootstrap4 ? '<div%wrap_attrs%>%checkbox% <label%label_attrs%>%label%</label></div>' : '<label class="control-label">%checkbox% %label%</label>';
-			$output[] = $this->bootstrap4 ? '<li class="list__item">' : '<li class="checkbox">';
+			$markup = ($this->bootstrap4 || $this->bootstrap5) ? '<div%wrap_attrs%>%checkbox% <label%label_attrs%>%label%</label></div>' : '<label class="control-label">%checkbox% %label%</label>';
+			$output[] = ($this->bootstrap4 || $this->bootstrap5) ? '<li class="list__item">' : '<li class="checkbox">';
 			$output[] = strtr($markup,array(
 				"%checkbox%" => $rendered_cb,
 				"%wrap_attrs%" => flatatt($this->wrap_attrs),
