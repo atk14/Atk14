@@ -40,6 +40,11 @@
  * {paginator items_total_label="article total"}
  * ```
  *
+ * The anchor of the list beginning can be also specified:
+ * ```
+ * {paginator anchor=list_table}
+ * ```
+ *
  * @package Atk14\Helpers
  * @filesource
  */
@@ -56,7 +61,13 @@ function smarty_function_paginator($params,$template){
 
 	$params += array(
 		"items_total_label" => _("items total"), // "articles", "products"...
+		"anchor" => "", // e.g "list_table", "#list_table"
 	);
+
+	$anchor = $params["anchor"];
+	if($anchor && !preg_match("/^#/",$anchor)){
+		$anchor = "#$anchor";
+	}
 
 	if(isset($params["finder"])){
 		$finder = $params["finder"];
@@ -123,7 +134,7 @@ function smarty_function_paginator($params,$template){
 	if($from>0){
 		$par["$from_name"] = $from - $max_amount;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = "<li class=\"page-item first-child prev\"><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$symbol_left $label_left</span></a></li>";
+		$out[] = "<li class=\"page-item first-child prev\"><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$symbol_left $label_left</span></a></li>";
 		$first_child = false;
 	}
 
@@ -145,9 +156,9 @@ function smarty_function_paginator($params,$template){
 		$_class = $_class ? " class=\"".join(" ",$_class)."\"" : "";
 
 		if($cur_from==$from){
-			$out[] = "<li$_class><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$screen</a></li>";
+			$out[] = "<li$_class><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$screen</a></li>";
 		}else{
-			$out[] = "<li$_class><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$screen</a></li>";
+			$out[] = "<li$_class><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$screen</a></li>";
 		}
 		$screen++;
 		
@@ -168,7 +179,7 @@ function smarty_function_paginator($params,$template){
 	if(($from+$max_amount)<$total_amount){
 		$par["$from_name"] = $from + $max_amount;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url\" rel=\"nofollow\">$label_right $symbol_right</a></li>";
+		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$label_right $symbol_right</a></li>";
 	}
 
 	$out[] = "</ul>";
