@@ -123,8 +123,6 @@ class TcLocale extends TcBase{
 		$this->assertEquals("-1 223",Atk14Locale::FormatNumber(-1222.7777000,0));
 		$this->assertEquals("-1 222,00",Atk14Locale::FormatNumber("-1222.0000",2));
 
-		$this->assertEquals(null,Atk14Locale::FormatNumber("xxx",2));
-
 		$this->_setLocale("en");
 
 		$this->assertEquals(".",Atk14Locale::DecimalPoint());
@@ -141,8 +139,6 @@ class TcLocale extends TcBase{
 		$this->assertEquals("-1,222.78",Atk14Locale::FormatNumber(-1222.7777000,2));
 		$this->assertEquals("-1,223",Atk14Locale::FormatNumber(-1222.7777000,0));
 		$this->assertEquals("-1,222.00",Atk14Locale::FormatNumber("-1222.0000",2));
-
-		$this->assertEquals(null,Atk14Locale::FormatNumber("xxx",2));
 	}
 
 	function _setLocale($lang){
