@@ -227,6 +227,10 @@ class Atk14Locale{
 			}
 		}
 
+		if(!is_numeric($number)){
+			return;
+		}
+
 		$out = number_format($number,$decimal_places,self::DecimalPoint(),self::ThousandsSeparator());
 
 		return $out;
