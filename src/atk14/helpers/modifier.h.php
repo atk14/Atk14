@@ -20,5 +20,5 @@
  * @param string $content content to be escaped
  */
 function smarty_modifier_h($content){
-	return h($content);
+	return h((string)$content);
 }

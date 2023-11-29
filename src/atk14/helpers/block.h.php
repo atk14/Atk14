@@ -22,5 +22,5 @@
  */
 function smarty_block_h($params, $content, $template, &$repeat){
 	if($repeat){ return; }
-	return h($content);
+	return h((string)$content);
 }
