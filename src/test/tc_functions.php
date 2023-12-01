@@ -8,6 +8,8 @@ class TcFunctions extends TcBase{
 		$this->assertEquals('hello&#039; dolly',h("hello' dolly"));
 
 		$this->assertEquals('My name is &quot;Nobody&quot;',h('My name is "Nobody"'));
+
+		$this->assertEquals('',h(null));
 	}
 
 	function test_definedef(){
