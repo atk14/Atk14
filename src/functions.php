@@ -27,6 +27,9 @@ function EasyReplace($str,$replaces){
  * Alias for htmlspecialchars()
  */
 function h($string, $flags = null, $encoding = null){
+	if(!is_string($string)){
+		$string = (string)$string;
+	}
 	if(!isset($flags)){
 		$flags =  ENT_COMPAT | ENT_QUOTES;
 		if(defined("ENT_HTML401")){ $flags = $flags | ENT_HTML401; }
