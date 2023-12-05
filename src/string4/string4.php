@@ -17,6 +17,16 @@
 class String4{
 
 	/**
+	 * @var string
+	 */
+	protected $_String4;
+
+	/**
+	 * @var string
+	 */
+	protected $_Encoding;
+
+	/**
 	 * Constructor
 	 *
 	 * Setup new instance.
