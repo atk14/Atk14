@@ -15,6 +15,16 @@
 class Atk14Controller{
 
 	/**
+	 * @var string
+	 */
+	var $page_title;
+
+	/**
+	 * @var string
+	 */
+	var $page_description;
+
+	/**
 	 * HTTP request object
 	 *
 	 * Contains information about current browsers HTTP request.
