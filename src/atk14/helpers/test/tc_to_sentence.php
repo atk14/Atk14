@@ -7,5 +7,9 @@ class TcToSentence extends TcBase {
 		$this->assertEquals("George Michael and Boy George", smarty_modifier_to_sentence($singers));
 		$singers[] = "Jimmy Somerville";
 		$this->assertEquals("George Michael, Boy George and Jimmy Somerville", smarty_modifier_to_sentence($singers));
+
+		$this->assertEquals("George Michael, Boy George, Jimmy Somerville", smarty_modifier_to_sentence($singers,", "));
+		$this->assertEquals("George Michael, Boy George, Jimmy Somerville", smarty_modifier_to_sentence($singers,","));
+		$this->assertEquals("George Michael, Boy George and finally Jimmy Somerville", smarty_modifier_to_sentence($singers,"and finally"));
 	}
 }

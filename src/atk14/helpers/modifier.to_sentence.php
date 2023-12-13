@@ -10,12 +10,16 @@
  */
 function smarty_modifier_to_sentence($ar,$connector = null){
 	if(is_null($connector)){ $connector = _("and"); }
+	if($connector===","){ $connector = ", "; }
+	if($connector!==", "){
+		$connector = " $connector "; // "and" => " and "
+	}
 	$out = '';
 	$index = 0;
 	$sizeof = sizeof($ar);
 	foreach($ar as $item){
 		if(($index>0) && ($index==$sizeof-1)){
-			$out .= " $connector $item";
+			$out .= "$connector$item";
 		}elseif($index>0){
 			$out .= ", $item";
 		}else{
