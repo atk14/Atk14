@@ -12,6 +12,9 @@
  */
 class RegexField extends CharField
 {
+
+	var $regex;
+
 	/**
 	 * Constructor
 	 *

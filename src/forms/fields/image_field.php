@@ -6,6 +6,15 @@
  * @subpackage Forms
  */
 class ImageField extends FileField{
+	
+	var $width;
+	var $height;
+	var $max_width;
+	var $max_height;
+	var $min_width;
+	var $min_height;
+	var $file_formats;
+
 	function __construct($options = array()){
 		$options = array_merge(array(
 			"width" => null,

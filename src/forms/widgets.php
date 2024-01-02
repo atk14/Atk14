@@ -36,6 +36,9 @@
  */
 class Widget
 {
+	var $is_hidden;
+	var $attrs;
+
 	/**
 	 * Is multipart encoding required for form submission?
 	 */

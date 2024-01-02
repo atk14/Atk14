@@ -15,6 +15,11 @@
  * @subpackage Forms
  */
 class JsValidator{
+
+	var $_messages;
+	var $_rules;
+	var $_field_name;
+
 	/**
 	 * Constructor
 	 *
@@ -195,6 +200,15 @@ class Field
 	 * @var array
 	 */
 	var $messages = array();
+
+	var $hidden_widget;
+	var $required;
+	var $label;
+	var $initial;
+	var $help_text;
+	var $hint;
+	var $hints;
+	var $disabled;
 
 	/**
 	 * Constructor.

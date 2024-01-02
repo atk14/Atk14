@@ -12,6 +12,7 @@
 class CheckboxInput extends Widget
 {
 	var $input_type = "checkbox";
+	var $check_test;
 
 	function __construct($options=array())
 	{

@@ -9,6 +9,9 @@
 class CheckboxSelectMultiple extends SelectMultiple
 {
 	var $input_type = "select";
+	var $escape_labels;
+	var $input_attrs;
+	var $label_attrs;
 
 	/**
 	 * @param array $options

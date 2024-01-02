@@ -16,6 +16,9 @@
  */
 class FileField extends Field{
 
+	var $max_file_size;
+	var $allowed_mime_types;
+
 	function __construct($options = array()){
 		$options += array(
 			"max_file_size" => null, // 1024, "1.5MB",

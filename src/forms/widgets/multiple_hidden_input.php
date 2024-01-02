@@ -6,6 +6,8 @@
 */
 class MultipleHiddenInput extends HiddenInput
 {
+	var $choices;
+
 	function __construct($options=array())
 	{
 			$options = forms_array_merge(array('attrs'=>null, 'choices'=>array()), $options);

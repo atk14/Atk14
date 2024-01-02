@@ -7,6 +7,13 @@
  */
 class CharField extends Field
 {
+
+	var $max_length;
+	var $min_length;
+	var $charset;
+	var $trim_value;
+	var $null_empty_output;
+
 	function __construct($options=array())
 	{
 		$charset = defined('DEFAULT_CHARSET')?DEFAULT_CHARSET:'utf8';

@@ -55,6 +55,10 @@ class RadioSelect extends Select
 {
 	var $input_type = "radio";
 	var $convert_html_special_chars = true;
+	var $input_attrs;
+	var $label_attrs;
+	var $wrap_attrs;
+
 
 	function __construct($options = array()){
 		$options += array(

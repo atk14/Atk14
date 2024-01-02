@@ -10,6 +10,14 @@ class RadioInput
 	var $input_type = "radio";
 	var $convert_html_special_chars = true;
 
+	var $name;
+	var $value;
+	var $attrs;
+	var $index;
+	var $label_attrs;
+	var $wrap_attrs;
+	var $choice_value;
+
 	var $bootstrap3;
 	var $bootstrap4;
 	var $bootstrap5;

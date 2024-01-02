@@ -16,6 +16,7 @@
 class SelectMultiple extends Widget
 {
 	var $input_type = "select";
+	var $choices;
 
 	/**
 	 * Constructor

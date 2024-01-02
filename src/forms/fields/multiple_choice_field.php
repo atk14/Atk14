@@ -14,6 +14,9 @@
  * @internal NOTE: v PHP to funguje, pokude se parametr ve formulare nazve takto: &lt;select name="choices[]" multiple="multiple">... (yarri)
  */
 class MultipleChoiceField extends ChoiceField {
+
+	var $max_choice_items;
+
 	/**
 	 * Constructor
 	 *

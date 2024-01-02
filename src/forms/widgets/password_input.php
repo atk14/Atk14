@@ -15,6 +15,7 @@
 class PasswordInput extends Input
 {
 	var $input_type = 'password';
+	var $render_value;
 
 	/**
 	 * Constructor.

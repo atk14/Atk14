@@ -7,6 +7,12 @@
  */
 class DateField extends CharField
 {
+
+	var $max_date;
+	var $min_date;
+	var $_format_function;
+	var $_parse_function;
+
 	function __construct($options=array())
 	{
 		$options = array_merge(array(

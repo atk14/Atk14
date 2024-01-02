@@ -7,6 +7,10 @@
  */
 class IntegerField extends Field
 {
+
+	var $max_value;
+	var $min_value;
+
 	function __construct($options=array())
 	{
 		$options = forms_array_merge(array(
