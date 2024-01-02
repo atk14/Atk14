@@ -1,6 +1,8 @@
 <?php
 class PgMole Extends DbMole{
 
+	protected $_AffectedRows = null;
+
 	/**
 	* Vrati instanci objektu pro danou konfiguraci.
 	* Vraci vzdy stejny objekt pro stejnou konfiguraci.

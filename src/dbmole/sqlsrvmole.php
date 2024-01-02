@@ -1,6 +1,8 @@
 <?php
 class SqlsrvMole extends DbMole {
 
+	protected $_AffectedRows = null;
+
 	function usesSequencies(){ return true; }
 
 	function selectRows($query,$bind_ar = array(), $options = array()){
