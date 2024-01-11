@@ -437,8 +437,8 @@ class Atk14Url{
 				if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
 				if($_key=="namespace"){ continue; } // namespace se umistuje vzdy do URL; neprenasi se v GET parametrech
 				if(isset($rules[$_key]["regexp"]) && !preg_match("/^\\/.*\\//",$rules[$_key]["value"])){ continue; }
-				if(is_int(strpos($out,"<$_key>"))){
-					$out = str_replace("<$_key>",urlencode($_value),$out);
+				if(is_int(strpos($out,"<$_key>")) && !is_array($_value)){
+					$out = str_replace("<$_key>",urlencode((string)$_value),$out);
 					continue;
 				}
 				if($_key=="controller" && isset($rules["controller"])){ continue; }
@@ -611,9 +611,10 @@ class Atk14Url{
 	static protected function _ParamMatches($rule,&$param){
 		return
 			isset($param) &&
+			!is_array($param) &&
 			(
 				(!$rule["regexp"] && "$rule[value]"==="$param") ||
-				($rule["regexp"] && preg_match($rule["value"],$param))
+				($rule["regexp"] && preg_match($rule["value"],(string)$param))
 			);
 	}
 
