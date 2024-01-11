@@ -1,5 +1,6 @@
 <?php
 class TcUrl extends TcBase{
+
 	function test(){
 		global $_GET;
 
@@ -13,7 +14,6 @@ class TcUrl extends TcBase{
 			"force_redirect" => null,
 			"get_params" => array("format" => "rss"),
 		));
-
 
 		$this->_test_route("/cs/articles/overview/",array(
 			"namespace" => "",
@@ -42,7 +42,7 @@ class TcUrl extends TcBase{
 			"action" => "overview",
 			"force_redirect" => null,
 		),array("format" => "xml"));
-	
+
 		$_GET = array();
 	}
 
@@ -281,6 +281,12 @@ class TcUrl extends TcBase{
 			"format" => "raw"
 		));
 		$this->_test_404_route("/post-123.pdf");
+
+		// id as an array
+		$this->assertEquals("/cs/posts/detail/?id%5B%5D=123&id%5B%5D=124",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => array("123", "124"), "lang" => "cs")));
+		$data = Atk14Url::RecognizeRoute("/cs/posts/detail/?id%5B%5D=123&id%5B%5D=124");
+		$this->assertEquals(array("id" => array("123","124")),$data["get_params"]);
+		$this->assertNull($data["force_redirect"]);
 	}
 
 	function test_ParseParamsFromUri(){
