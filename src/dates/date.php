@@ -61,6 +61,9 @@
  * @filesource
  */
 class Date{
+
+	protected $_Date;
+
 	/**
 	 * Constructor
 	 *
