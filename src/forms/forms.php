@@ -89,6 +89,9 @@ class JsFormValidator{
  * @package Atk14\InternalLibraries
  */
 class BoundField {
+
+	var $form;
+
 	/**
 	 * @var Field
 	 */
@@ -98,6 +101,22 @@ class BoundField {
 	 * @var Widget
 	 */
 	var $widget;
+
+	var $name;
+
+	var $html_name;
+
+	var $label;
+
+	var $help_text;
+
+	var $hint;
+
+	var $hints;
+
+	var $required;
+
+	var $disabled;
 
 	function __construct($form, $field, $name)
 	{
@@ -372,6 +391,7 @@ class BoundField {
  */
 class Form implements ArrayAccess
 {
+
 	/**
 	 * @var string
 	 * @access private
