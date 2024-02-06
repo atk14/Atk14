@@ -42,6 +42,12 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 
 	protected $iterator_offset = 0;
 
+	var $_owner;
+
+	var $_dbmole;
+
+	var $_options;
+
 	/**
 	 * Constructor
 	 *
