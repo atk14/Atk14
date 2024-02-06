@@ -57,6 +57,30 @@ class UrlFetcher {
 
 	const VERSION = "1.8.3";
 
+	protected $_Fetched;
+
+	protected $_RequestMethod;
+
+	protected $_PostData;
+
+	protected $_Url;
+
+	protected $_Ssl;
+
+	protected $_Port;
+
+	protected $_Server;
+
+	protected $_Uri;
+
+	protected $_ErrorMessage;
+
+	protected $_RequestHeaders;
+
+	protected $_ResponseHeaders;
+
+	protected $_Content;
+
 	/**
 	 * Authentication type
 	 *
