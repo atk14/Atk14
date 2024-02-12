@@ -42,11 +42,11 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 
 	protected $iterator_offset = 0;
 
-	var $_owner;
+	protected $_owner;
 
-	var $_dbmole;
+	protected $_dbmole;
 
-	var $_options;
+	protected $_options;
 
 	/**
 	 * Constructor
@@ -104,6 +104,18 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 		$this->_owner = &$owner;
 		$this->_dbmole = &$owner->dbmole;
 		$this->_options = $options;
+	}
+
+	function getOwner(){
+		return $this->_owner;
+	}
+
+	function getDbmole(){
+		return $this->_dbmole;
+	}
+
+	function getOptions(){
+		return $this->_options;
 	}
 
 	/**
@@ -692,10 +704,10 @@ class TableRecord_ListerItem{
 	 */
 	function __construct(&$lister,$row_data,$rank){
 		$this->_lister = &$lister;
-		$this->_options = $lister->_options;
+		$this->_options = $lister->getOptions();
 		$this->_row_data = $row_data;
-		$this->_owner = &$lister->_owner;
-		$this->_dbmole = &$lister->_dbmole;
+		$this->_owner = $lister->getOwner();
+		$this->_dbmole = $lister->getDbmole();
 		$this->_rank = (int)$rank;
 	}
 
