@@ -35,6 +35,18 @@
 class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 
 	protected $associative = null;
+	protected $_Query;
+	protected $_QueryCount;
+	protected $_BindAr;
+	protected $_QueryOptions;
+	protected $_ClassName;
+	protected $_UseCache;
+	protected $_dbmole;
+	protected $_Records;
+	protected $_RecordsCount;
+	protected $_RecordIds;
+	protected $_RecordKey;
+	protected $_RecordData;
 
 	/**
 	 * Constructor

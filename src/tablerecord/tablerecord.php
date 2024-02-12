@@ -674,7 +674,6 @@ class TableRecord extends inobj {
 			"bind_ar" => $bind_ar,
 			"use_cache" => $use_cache
 		),$this->dbmole);
-		$finder->dbmole = &$this->dbmole;
 
 		// TODO: toto by melo byt v TableRecord_Finder
 		if($use_cache){
