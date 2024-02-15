@@ -71,6 +71,11 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	protected $_OrderingStrings = array();
 
 	/**
+	 * @ignore
+	 */
+	protected $_ActiveKey;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Dictionary $params Parameters from request
