@@ -7,6 +7,6 @@
  *	{$number|format_number:0} -> 1,235
  */
 function smarty_modifier_format_number($number,$decimal_places = null){
-	if(!strlen($number)){ return ""; }
+	if(!strlen((string)$number)){ return ""; }
 	return Atk14Locale::FormatNumber($number,$decimal_places);
 }
