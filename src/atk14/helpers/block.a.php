@@ -50,7 +50,7 @@
  * - **domain_name** - Generated url will contain this domain_name when used with _with_hostname=true
  * - ___with_hostname__ - see domain_name parameter
  * - ___anchor__ - generates anchor
- * - ___method__ - GET or POST. Defaults to GET.
+ * - ___method__ - post, delete
  * - ___confirm__ - dialog that pops up after the link is clicked
  *
  * @param string $content content of the Smarty {a} block tag
@@ -59,15 +59,14 @@ function smarty_block_a($params, $content, $template, &$repeat){
 	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$params = array_merge(array(
-		"_method" => "get",
+	$params += array(
+		"_method" => null, // "post", "delete", even "get" is fine
 		"_confirm" => null,
-	),$params);
-
+	);
 
 	Atk14Timer::Start("helper block.a");
 	$attrs = array();
-	if($params["_method"]!="get"){
+	if($params["_method"]){
 		$attrs["data-method"] = $params["_method"];
 	}
 	if($params["_confirm"]){
