@@ -11,6 +11,7 @@ DBNAME=$(./_database_database)
 DBPASSWORD=$(./_database_password)
 ENVIRONMENT=$(./_atk14_env)
 CREATE_DATABASE_COMMAND=$(./_create_database_command)
+PORT=$(./_database_server_port)
 environment=$(echo -n  $ENVIRONMENT | tr A-Z a-z)
 
 sql=$( cat <<EOF
@@ -35,7 +36,7 @@ fi
 
 fi
 
-echo "$sql" | sudo -u $PG_USER -s psql template1 || exit 1
+echo "$sql" | sudo -u $PG_USER -s psql template1 -p $PORT || exit 1
 
 if [ "$1" != '-f' ] ; then
 

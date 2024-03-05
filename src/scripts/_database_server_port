@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+define("ATK14_LOAD_AFTER_INITIALIZE_SETTINGS",false);
+require_once(dirname(__FILE__)."/load.php");
+
+$d = $ATK14_GLOBAL->getDatabaseConfig();
+
+$default_port = $d["adapter"]==="mysql" ? 3306 : 5432;
+
+$port = $d["port"] ? $d["port"] : $default_port;
+
+echo $port, "\n";
