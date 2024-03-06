@@ -88,6 +88,8 @@ foreach(array(
 		"../../vendor/phpunit" => "../autoload.php",
 		"../../../vendor/phpunit" => "../autoload.php",
 		"../../../../vendor/phpunit" => "../autoload.php", // ... uf :)
+		"../../../../../vendor/phpunit" => "../autoload.php", // ... uf :)
+		"../../../../../../vendor/phpunit" => "../autoload.php", // ... uf :)
 		"$HOME/.composer/vendor/phpunit" => "../autoload.php",
 		"$HOME/.config/composer/vendor/phpunit" => "../autoload.php",
 		"$HOME/.phpenv/versions/".preg_replace('/^(\d+\.\d+)\..*/','\1',phpversion())."/composer/vendor/phpunit" => "../autoload.php", // "7.2.34-21+ubuntu16.04.1+deb.sury.org+1" -> "7.2"
