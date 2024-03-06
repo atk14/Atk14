@@ -6,9 +6,11 @@ arch: ppc64le
 
 language: php
 
+addons:
+  postgresql: "9.6"
+
 services:
   - mysql
-  - postgresql
 
 jobs:
   include:
@@ -20,10 +22,16 @@ jobs:
       dist: xenial
     - php: 7.4
       dist: focal
+      addons:
+        postgresql: "12"
     - php: 8.0
       dist: focal
+      addons:
+        postgresql: "12"
     - php: 8.1
       dist: focal
+      addons:
+        postgresql: "12"
 
 before_install:
   - sudo locale-gen en_US.UTF-8
@@ -35,6 +43,7 @@ before_install:
   - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres
   - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
   - sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres
+  - sudo -u postgres psql -c "GRANT ALL ON SCHEMA public TO test" -U postgres test
   - sudo mysql -u root -e "USE mysql; UPDATE user SET Grant_priv='Y' WHERE User='root';" # What? root does not have Grant privilege?
   - sudo mysql -u root -e "FLUSH PRIVILEGES;"
   - sudo mysql -u root -e "CREATE DATABASE test;"
@@ -43,7 +52,6 @@ before_install:
   - sudo mysql -u root -e "FLUSH PRIVILEGES;"
   - sudo apt-get install privoxy # privoxy is needed for UrlFetcher testing
   - sudo /etc/init.d/privoxy start
-
 
 script:
   - ./src/scripts/run_all_tests_on_atk14 && echo "EVERYTHING IS FINE"
