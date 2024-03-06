@@ -43,6 +43,8 @@ jobs:
         - sudo apt update
         - sudo apt install php8.2 php8.2-mbstring php8.2-cli php8.2-pgsql php8.2-readline php8.2-gd php8.2-xml
         - php -v
+        - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/16/main/postgresql.conf 2>&1
+        - sudo service postgresql restart 2>&1
 
 install:
   - sudo locale-gen en_US.UTF-8
