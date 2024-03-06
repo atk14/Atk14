@@ -51,10 +51,10 @@ install:
   - locale -a
   - composer global require "phpunit/phpunit=^7.5" --ignore-platform-reqs
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
-  - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres
-  - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
-  - sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres
-  - sudo -u postgres psql -c "GRANT ALL ON SCHEMA public TO test" -U postgres test
+  - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres 2>&1
+  - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres 2>&1
+  - sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres 2>&1
+  - sudo -u postgres psql -c "GRANT ALL ON SCHEMA public TO test" -U postgres test 2>&1
   - sudo mysql -u root -e "USE mysql; UPDATE user SET Grant_priv='Y' WHERE User='root';" # What? root does not have Grant privilege?
   - sudo mysql -u root -e "FLUSH PRIVILEGES;"
   - sudo mysql -u root -e "CREATE DATABASE test;"
