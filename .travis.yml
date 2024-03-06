@@ -64,7 +64,7 @@ install:
   - sudo mysql -u root -e "GRANT ALL PRIVILEGES ON test.* TO test@localhost;"
   - sudo mysql -u root -e "FLUSH PRIVILEGES;"
   - sudo apt-get install privoxy # privoxy is needed for UrlFetcher testing
-  - sudo /etc/init.d/privoxy start
+  - sudo service privoxy start 2>&1 || echo "Starting privoxy failed"
 
 script:
   - ./src/scripts/run_all_tests_on_atk14 && echo "EVERYTHING IS FINE"
