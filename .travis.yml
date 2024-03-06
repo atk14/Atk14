@@ -67,7 +67,7 @@ install:
   - sudo service privoxy start 2>&1 || echo "Starting privoxy failed"
   - sudo service privoxy status 2>&1 || echo "Failed"
   - sudo systemctl status privoxy.service 2>&1 || echo "Failed"
-  - sudo privoxy /etc/privoxy/config 2>&1 || "Failed"
+  - sudo privoxy /etc/privoxy/config 2>&1 || echo "Failed"
 
 script:
   - ./src/scripts/run_all_tests_on_atk14 && echo "EVERYTHING IS FINE"
