@@ -14,26 +14,37 @@ services:
 
 jobs:
   include:
-    - php: 7.1
-      dist: xenial
-    - php: 7.2
-      dist: xenial
-    - php: 7.3
-      dist: xenial
-    - php: 7.4
-      dist: focal
+#    - php: 7.1
+#      dist: xenial
+#    - php: 7.2
+#      dist: xenial
+#    - php: 7.3
+#      dist: xenial
+#    - php: 7.4
+#      dist: focal
+#      addons:
+#        postgresql: "12"
+#    - php: 8.0
+#      dist: focal
+#      addons:
+#        postgresql: "12"
+#    - php: 8.1
+#      dist: focal
+#      addons:
+#        postgresql: "12"
+    - name: "PHP: 8.2"
+      dist: jammy
+      language: ruby
       addons:
-        postgresql: "12"
-    - php: 8.0
-      dist: focal
-      addons:
-        postgresql: "12"
-    - php: 8.1
-      dist: focal
-      addons:
-        postgresql: "12"
+        postgresql: "16"
+      before_install:
+        - sudo apt install software-properties-common
+        - sudo add-apt-repository ppa:ondrej/php
+        - sudo apt update
+        - sudo apt install php8.2 php8.2-mbstring php8.2-cli php8.2-pgsql php8.2-readline php8.2-gd php8.2-xml
+        - php -v
 
-before_install:
+install:
   - sudo locale-gen en_US.UTF-8
   - sudo locale-gen cs_CZ.UTF-8
   - sudo update-locale
