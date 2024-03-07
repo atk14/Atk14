@@ -6,13 +6,15 @@ arch: ppc64le
 
 language: php
 
+addons:
+  postgresql: "9.6"
+
 services:
   - mysql
-  - postgresql
 
 jobs:
   include:
-    - php: 7.1
+#    - php: 7.1
       dist: xenial
     - php: 7.2
       dist: xenial
@@ -20,21 +22,55 @@ jobs:
       dist: xenial
     - php: 7.4
       dist: focal
+      addons:
+        postgresql: "12"
     - php: 8.0
       dist: focal
+      addons:
+        postgresql: "12"
     - php: 8.1
       dist: focal
+      addons:
+        postgresql: "12"
+    - name: "PHP: 8.2"
+      dist: jammy
+      language: ruby
+      addons:
+      before_install:
+        - sudo apt install software-properties-common
+        - sudo add-apt-repository ppa:ondrej/php
+        - sudo apt update
+        - sudo apt install php8.2 php8.2-mbstring php8.2-cli php8.2-pgsql php8.2-readline php8.2-gd php8.2-xml php8.2-mysql
+        - php -v
+        - sudo apt-get install postgresql-16 postgresql-client-16
+        - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/16/main/postgresql.conf 2>&1
+        - sudo service postgresql restart 2>&1
+    - name: "PHP: 8.3"
+      dist: jammy
+      language: ruby
+      addons:
+      before_install:
+        - sudo apt install software-properties-common
+        - sudo add-apt-repository ppa:ondrej/php
+        - sudo apt update
+        - sudo apt install php8.3 php8.3-mbstring php8.3-cli php8.3-pgsql php8.3-readline php8.3-gd php8.3-xml php8.3-mysql
+        - php -v
+        - sudo apt-get install postgresql-16 postgresql-client-16
+        - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/16/main/postgresql.conf 2>&1
+        - sudo service postgresql restart 2>&1
 
-before_install:
+
+install:
   - sudo locale-gen en_US.UTF-8
   - sudo locale-gen cs_CZ.UTF-8
   - sudo update-locale
   - locale -a
   - composer global require "phpunit/phpunit=^7.5" --ignore-platform-reqs
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
-  - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres
-  - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres
-  - sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres
+  - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres 2>&1
+  - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres 2>&1
+  - sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE test TO test" -U postgres 2>&1
+  - sudo -u postgres psql -c "GRANT ALL ON SCHEMA public TO test" -U postgres test 2>&1
   - sudo mysql -u root -e "USE mysql; UPDATE user SET Grant_priv='Y' WHERE User='root';" # What? root does not have Grant privilege?
   - sudo mysql -u root -e "FLUSH PRIVILEGES;"
   - sudo mysql -u root -e "CREATE DATABASE test;"
@@ -42,8 +78,10 @@ before_install:
   - sudo mysql -u root -e "GRANT ALL PRIVILEGES ON test.* TO test@localhost;"
   - sudo mysql -u root -e "FLUSH PRIVILEGES;"
   - sudo apt-get install privoxy # privoxy is needed for UrlFetcher testing
-  - sudo /etc/init.d/privoxy start
-
+  - sudo service privoxy start 2>&1 || echo "Starting privoxy failed" # privoxy doesn't start on Linux Jammy! Why?
+  - sudo service privoxy status 2>&1 || echo "Failed"
+  - sudo systemctl status privoxy.service 2>&1 || echo "Failed"
+  - sudo privoxy /etc/privoxy/config 2>&1 || echo "Failed"
 
 script:
   - ./src/scripts/run_all_tests_on_atk14 && echo "EVERYTHING IS FINE"
