@@ -15,36 +15,36 @@ services:
 jobs:
   include:
 #    - php: 7.1
-#      dist: xenial
-#    - php: 7.2
-#      dist: xenial
-#    - php: 7.3
-#      dist: xenial
-#    - php: 7.4
-#      dist: focal
-#      addons:
-#        postgresql: "12"
-#    - php: 8.0
-#      dist: focal
-#      addons:
-#        postgresql: "12"
-#    - php: 8.1
-#      dist: focal
-#      addons:
-#        postgresql: "12"
-#    - name: "PHP: 8.2"
-#      dist: jammy
-#      language: ruby
-#      addons:
-#      before_install:
-#        - sudo apt install software-properties-common
-#        - sudo add-apt-repository ppa:ondrej/php
-#        - sudo apt update
-#        - sudo apt install php8.2 php8.2-mbstring php8.2-cli php8.2-pgsql php8.2-readline php8.2-gd php8.2-xml php8.2-mysql
-#        - php -v
-#        - sudo apt-get install postgresql-16 postgresql-client-16
-#        - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/16/main/postgresql.conf 2>&1
-#        - sudo service postgresql restart 2>&1
+      dist: xenial
+    - php: 7.2
+      dist: xenial
+    - php: 7.3
+      dist: xenial
+    - php: 7.4
+      dist: focal
+      addons:
+        postgresql: "12"
+    - php: 8.0
+      dist: focal
+      addons:
+        postgresql: "12"
+    - php: 8.1
+      dist: focal
+      addons:
+        postgresql: "12"
+    - name: "PHP: 8.2"
+      dist: jammy
+      language: ruby
+      addons:
+      before_install:
+        - sudo apt install software-properties-common
+        - sudo add-apt-repository ppa:ondrej/php
+        - sudo apt update
+        - sudo apt install php8.2 php8.2-mbstring php8.2-cli php8.2-pgsql php8.2-readline php8.2-gd php8.2-xml php8.2-mysql
+        - php -v
+        - sudo apt-get install postgresql-16 postgresql-client-16
+        - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/16/main/postgresql.conf 2>&1
+        - sudo service postgresql restart 2>&1
     - name: "PHP: 8.3"
       dist: jammy
       language: ruby
@@ -78,7 +78,7 @@ install:
   - sudo mysql -u root -e "GRANT ALL PRIVILEGES ON test.* TO test@localhost;"
   - sudo mysql -u root -e "FLUSH PRIVILEGES;"
   - sudo apt-get install privoxy # privoxy is needed for UrlFetcher testing
-  - sudo service privoxy start 2>&1 || echo "Starting privoxy failed"
+  - sudo service privoxy start 2>&1 || echo "Starting privoxy failed" # privoxy doesn't start on Linux Jammy! Why?
   - sudo service privoxy status 2>&1 || echo "Failed"
   - sudo systemctl status privoxy.service 2>&1 || echo "Failed"
   - sudo privoxy /etc/privoxy/config 2>&1 || echo "Failed"
