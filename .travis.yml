@@ -65,8 +65,7 @@ install:
   - sudo locale-gen cs_CZ.UTF-8
   - sudo update-locale
   - locale -a
-  - composer global require "phpunit/phpunit=^7.5" --ignore-platform-reqs
-  - composer global config bin-dir --absolute
+  - composer require "phpunit/phpunit=^7.5" --ignore-platform-reqs
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
   - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres 2>&1
   - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres 2>&1
