@@ -83,18 +83,21 @@ if($DIR){
 }
 
 $exists = false;
-foreach(array(
-		"../vendor/phpunit" => "../autoload.php",
-		"../../vendor/phpunit" => "../autoload.php",
-		"../../../vendor/phpunit" => "../autoload.php",
-		"../../../../vendor/phpunit" => "../autoload.php", // ... uf :)
-		"../../../../../vendor/phpunit" => "../autoload.php", // ... uf :)
-		"../../../../../../vendor/phpunit" => "../autoload.php", // ... uf :)
-		"$HOME/.composer/vendor/phpunit" => "../autoload.php",
-		"$HOME/.config/composer/vendor/phpunit" => "../autoload.php",
-		"$HOME/.phpenv/versions/".preg_replace('/^(\d+\.\d+)\..*/','\1',phpversion())."/composer/vendor/phpunit" => "../autoload.php", // "7.2.34-21+ubuntu16.04.1+deb.sury.org+1" -> "7.2"
-		"/usr/share/php/PHPUnit" => "Autoload.php"
-	) as $dir => $autoload) {
+$_phpunit_path_ar = array();
+$_phpunit_path_ar["../vendor/phpunit"] = "../autoload.php";
+$_phpunit_path_ar["../../vendor/phpunit"] = "../autoload.php";
+$_phpunit_path_ar["../../../vendor/phpunit"] = "../autoload.php";
+$_phpunit_path_ar["../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
+$_phpunit_path_ar["../../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
+$_phpunit_path_ar["../../../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
+if(exec("which composer") && ($_global_path = exec("composer -n config --global home"))){
+	$_phpunit_path_ar["$_global_path/vendor/phpunit"] = "../autoload.php";
+}
+$_phpunit_path_ar["$HOME/.composer/vendor/phpunit"] = "../autoload.php";
+$_phpunit_path_ar["$HOME/.config/composer/vendor/phpunit"] = "../autoload.php";
+$_phpunit_path_ar["$HOME/.phpenv/versions/".preg_replace('/^(\d+\.\d+)\..*/','\1',phpversion())."/composer/vendor/phpunit"] = "../autoload.php"; // "7.2.34-21+ubuntu16.04.1+deb.sury.org+1" -> "7.2"
+$_phpunit_path_ar["/usr/share/php/PHPUnit"] = "Autoload.php";
+foreach($_phpunit_path_ar as $dir => $autoload){
 	if(file_exists($dir)) {
 		$exists = true;
 		break;
