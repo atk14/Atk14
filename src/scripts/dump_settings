@@ -25,12 +25,14 @@ $constants = array_merge(array(
 $requested_constants = array();
 $json = false;
 $help = false;
+$ignore_missing = false;
 
 $command = array_shift($argv);
 foreach($argv as $a){
 	if(preg_match('/^[A-Z]/',$a)){ $requested_constants[] = $a; }
 	elseif(preg_match('/^(-j|--json)$/',$a)){ $json = true; }
 	elseif(preg_match('/^(-h|--help)$/',$a)){ $help = true; }
+	elseif(preg_match('/^(-i|--ignore-missing)$/',$a)){ $ignore_missing = true; }
 	else{
 		_exit_with_error("Unknown option $a");
 	}
@@ -38,7 +40,7 @@ foreach($argv as $a){
 
 if($help){
 	echo trim("
-Usage: ./scripts/dump_settings [-j|--json] [CONSTANT_NAME] [CONSTANT_NAME]...
+Usage: ./scripts/dump_settings [-j|--json] [-i|--ignore-missing] [CONSTANT_NAME] [CONSTANT_NAME]...
 
 Dumps configuration constants
 
@@ -60,6 +62,11 @@ You can check out how configuration varies in different environments:
  $ ATK14_ENV=DEVELOPMENT ./scripts/dump_settings
  $ ATK14_ENV=TEST ./scripts/dump_settings
 
+You can dump a constant which may or may not be defined:
+
+ $ ./scripts/dump_settings --ignore-missing NOT_SURE_IF_DEFINED
+ $ ./scripts/dump_settings -i NOT_SURE_IF_DEFINED
+
 Exporting data in JSON format:
 
  $ ./scripts/dump_settings --json
@@ -68,6 +75,7 @@ Exporting data in JSON format:
  $ ./scripts/dump_settings -j ATK14_APPLICATION_NAME
 
  $ ./scripts/dump_settings -j BCC_EMAIL DEFAULT_EMAIL
+ $ ./scripts/dump_settings -j -i BCC_EMAIL DEFAULT_EMAIL NOT_SURE_IF_DEFINED
 	"),"\n";
 	exit(0);
 }
@@ -78,14 +86,16 @@ foreach($requested_constants as $rc){
 	if(!in_array($rc,array_keys($constants))){
 		if(defined($rc)){
 			$constants[$rc] = constant($rc);
-		}else{
+		}elseif(!$ignore_missing){
 			_exit_with_error("There is no constant $rc");
+		}else{
+			continue;
 		}
 	}
 	$out[$rc] = $constants[$rc];
 }
 
-if(!$out){
+if(!$requested_constants){
 	$out = $constants;
 }
 
@@ -107,10 +117,15 @@ if($json){
 
 foreach($out as &$c){ if(is_bool($c)){ $c = $c ? "true" : "false"; } }
 
-if(sizeof($out)==1){
-	$out = array_values($out);
-	echo $out[0],"\n";
-	exit(0);
+if(sizeof($requested_constants)==1){
+	if(sizeof($out)==0){
+		exit(0);
+	}
+	if(sizeof($out)==1){
+		$out = array_values($out);
+		echo $out[0],"\n";
+		exit(0);
+	}
 }
 
 print_r($out);
