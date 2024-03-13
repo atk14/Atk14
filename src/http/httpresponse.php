@@ -542,6 +542,15 @@ class HTTPResponse{
 		$this->_writeStatusMessage($message);
 	}
 
+	function temporarilyUnavailable($message = null){
+		$this->setStatusCode(503);
+		$this->clearOutputBuffer();
+		if(!isset($message)){
+			$message = "The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.";
+		}
+		$this->_writeStatusMessage($message);
+	}
+
 	/**
 	 * Writes status message to output buffer.
 	 *
