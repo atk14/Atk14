@@ -87,7 +87,7 @@ class Atk14Utils{
 	/**
 	 * Load all config files.
 	 *
-	 * Loads all config files (*.php) in directory `$ATK14_GLOBAL->getApplicationPath()/../config/`
+	 * Loads all config files (*.php) in directories `$ATK14_GLOBAL->getDocumentRoot()/local_config/` and `$ATK14_GLOBAL->getDocumentRoot()/config/`
 	 * Also tries to use formerly prefered directory `$ATK14_GLOBAL->getApplicationPath()/conf`
 	 *
 	 */
