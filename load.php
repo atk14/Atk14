@@ -21,6 +21,30 @@ $_document_root = defined("ATK14_DOCUMENT_ROOT") ? ATK14_DOCUMENT_ROOT : __DIR__
 require_once(file_exists("$_document_root/local_config/settings.php") ? "$_document_root/local_config/settings.php" : "$_document_root/config/settings.php");
 require_once(__DIR__."/default_settings.php");
 
+if(defined("MAINTENANCE") && constant("MAINTENANCE") && php_sapi_name()!="cli"){
+
+	$HTTP_RESPONSE->setStatusCode(503);
+	if(file_exists(ATK14_DOCUMENT_ROOT."/config/error_pages/error503.phtml")){
+		ob_start();
+		include(ATK14_DOCUMENT_ROOT."/config/error_pages/error503.phtml");
+		$content = ob_get_contents();
+		ob_end_clean();
+	}else{
+		$content = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">
+			<html><head>
+			<title>503: Service Unavailable</title>
+			</head><body>
+			<h1>"._("Service Unavailable")."</h1>
+			<p>"._("This site is in maintenance. Please come back later.")."</p>
+			</body></html>
+		";
+	}
+	$HTTP_RESPONSE->write($content);
+	$HTTP_RESPONSE->flushAll();
+	die;
+
+}
+
 Files::SetDefaultFilePerms(FILES_DEFAULT_FILE_PERMS);
 Files::SetDefaultDirPerms(FILES_DEFAULT_DIR_PERMS);
 

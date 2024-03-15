@@ -58,117 +58,87 @@ class Atk14Dispatcher{
 
 		$logger = $ATK14_GLOBAL->getLogger();
 
-		if(defined("MAINTENANCE") && MAINTENANCE){
+		Atk14Timer::Start("Atk14Url::RecognizeRoute");
+		$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri(),array(
+			"get_params" => $request->getGetVars(),
+		));
+		$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
 
-			$HTTP_RESPONSE->setStatusCode(503);
-			if(file_exists(ATK14_DOCUMENT_ROOT."/config/error_pages/error503.phtml")){
-				ob_start();
-				include(ATK14_DOCUMENT_ROOT."/config/error_pages/error503.phtml");
-				$content = ob_get_contents();
-				ob_end_clean();
+		if(DEVELOPMENT){
+			// logging
+			if($route_ar["action"]=="error404"){
+				$logger->warn("no route for ".$request->getRequestUri());
 			}else{
-				$content = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">
-					<html><head>
-					<title>503: Service Unavailable</title>
-					</head><body>
-					<h1>"._("Service Unavailable")."</h1>
-					<p>"._("This site is in maintenance. Please come back later.")."</p>
-					</body></html>
-				";
+				$logger->info($request->getRequestMethod()." ".$request->getUrl()); // GET http://myapp.localhost/en/main/about/
 			}
-			$HTTP_RESPONSE->write($content);
-			$HTTP_RESPONSE->flushAll();
-			die;
+			$logger->flush();
+		}
 
-			// We can't do this here! Routers are not loaded at the time of calling this.
-			// Some errors may occur in before filters.
-			//$ctrl = Atk14Dispatcher::ExecuteAction("application","error503",array("namespace" => "", "request" => $request, "return_controller" => true));
+		$_GET = array_merge($_GET,$route_ar["get_params"]);
+		Atk14Timer::Stop("Atk14Url::RecognizeRoute");
 
-		}else{
-
-			Atk14Timer::Start("Atk14Url::RecognizeRoute");
-			$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri(),array(
-				"get_params" => $request->getGetVars(),
-			));
-			$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
-
-			if(DEVELOPMENT){
-				// logging
-				if($route_ar["action"]=="error404"){
-					$logger->warn("no route for ".$request->getRequestUri());
-				}else{
-					$logger->info($request->getRequestMethod()." ".$request->getUrl()); // GET http://myapp.localhost/en/main/about/
-				}
-				$logger->flush();
+		if(strlen($uri)==strlen((string)$route_ar["force_redirect"])){
+			// Here solving PHP's dot to underscore conversion.
+			// If the uri contains a parametr with dot in it's name, PHP silently converts it to underscore.
+			// Thus such URL:
+			// 		http://www.myapp.com/en/books/detail/?id=1&in.format=xml
+			// should not be redirected to
+			// 		http://www.myapp.com/en/books/detail/?id=1&in_format=xml
+			$_meaningful_redirect = false;
+			for($i=0;$i<strlen($uri);$i++){
+				if($uri[$i]==$route_ar["force_redirect"][$i]){ continue; }
+				if($uri[$i]=="." && $route_ar["force_redirect"][$i]=="_"){ continue; }
+				$_meaningful_redirect = true;
+				break;
 			}
+			if(!$_meaningful_redirect){ $route_ar["force_redirect"] = null; }
+		}
 
-			$_GET = array_merge($_GET,$route_ar["get_params"]);
-			Atk14Timer::Stop("Atk14Url::RecognizeRoute");
+		if($request->get() && strlen((string)$route_ar["force_redirect"])>0 && !$request->xhr()){
+			$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
+			$options["display_response"] && $HTTP_RESPONSE->flushAll();
 
-			if(strlen($uri)==strlen((string)$route_ar["force_redirect"])){
-				// Here solving PHP's dot to underscore conversion.
-				// If the uri contains a parametr with dot in it's name, PHP silently converts it to underscore.
-				// Thus such URL:
-				// 		http://www.myapp.com/en/books/detail/?id=1&in.format=xml
-				// should not be redirected to
-				// 		http://www.myapp.com/en/books/detail/?id=1&in_format=xml
-				$_meaningful_redirect = false;
-				for($i=0;$i<strlen($uri);$i++){
-					if($uri[$i]==$route_ar["force_redirect"][$i]){ continue; }
-					if($uri[$i]=="." && $route_ar["force_redirect"][$i]=="_"){ continue; }
-					$_meaningful_redirect = true;
-					break;
-				}
-				if(!$_meaningful_redirect){ $route_ar["force_redirect"] = null; }
+			$ctrl = null;
+			if($options["return_controller"]){
+				$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
+					"page_title" => $route_ar["page_title"],
+					"page_description" => $route_ar["page_description"],
+					"return_controller" => true,
+					"request" => $request
+				));
+				$ctrl->response->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
 			}
 
-			if($request->get() && strlen((string)$route_ar["force_redirect"])>0 && !$request->xhr()){
-				$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
-				$options["display_response"] && $HTTP_RESPONSE->flushAll();
+			return Atk14Dispatcher::_ReturnResponseOrController($HTTP_RESPONSE,$ctrl,$options);
+		}
 
-				$ctrl = null;
-				if($options["return_controller"]){
-					$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
-						"page_title" => $route_ar["page_title"],
-						"page_description" => $route_ar["page_description"],
-						"return_controller" => true,
-						"request" => $request
-					));
-					$ctrl->response->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
-				}
+		// prestehovano Atk14Url::RecognizeRoute()
+		//i18n::init_translation($route_ar["lang"]); // inicializace gettextu
 
-				return Atk14Dispatcher::_ReturnResponseOrController($HTTP_RESPONSE,$ctrl,$options);
-			}
+		$ATK14_GLOBAL->setValue("namespace",$route_ar["namespace"]);
+		$ATK14_GLOBAL->setValue("lang",$route_ar["lang"]);
 
-			// prestehovano Atk14Url::RecognizeRoute()
-			//i18n::init_translation($route_ar["lang"]); // inicializace gettextu
+		$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
+			"page_title" => $route_ar["page_title"],
+			"page_description" => $route_ar["page_description"],
+			"return_controller" => true,
+			"request" => $request
+		));
 
-			$ATK14_GLOBAL->setValue("namespace",$route_ar["namespace"]);
-			$ATK14_GLOBAL->setValue("lang",$route_ar["lang"]);
-
-			$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
-				"page_title" => $route_ar["page_title"],
-				"page_description" => $route_ar["page_description"],
-				"return_controller" => true,
-				"request" => $request
-			));
-
-			// ajaxove presmerovani...
-			if(strlen((string)$ctrl->response->getLocation())>0 && $request->xhr() && !preg_match('/^(text|application)\/(html|json|xml)/',(string)$request->getHeader("Accept"))){
-				// tohle by snad melo byt vraceno pokud je v requestu
-				//	Accept: */*
-				//	Accept: text/javascript
-				//	neco dalsiho?
-				//
-				// regularni vyraz ma vyradit toto:
-				//	Accept: text/html, ...
-				//	Accept: text/json, ...
-				//	Accept: application/json, ...
-				//	Accept: text/xml, ...
-				$ctrl->response->write("location.replace('".$ctrl->response->getLocation()."');"); // watch out, it's javascript
-				$ctrl->response->setLocation(null);
-			}
-
+		// ajaxove presmerovani...
+		if(strlen((string)$ctrl->response->getLocation())>0 && $request->xhr() && !preg_match('/^(text|application)\/(html|json|xml)/',(string)$request->getHeader("Accept"))){
+			// tohle by snad melo byt vraceno pokud je v requestu
+			//	Accept: */*
+			//	Accept: text/javascript
+			//	neco dalsiho?
+			//
+			// regularni vyraz ma vyradit toto:
+			//	Accept: text/html, ...
+			//	Accept: text/json, ...
+			//	Accept: application/json, ...
+			//	Accept: text/xml, ...
+			$ctrl->response->write("location.replace('".$ctrl->response->getLocation()."');"); // watch out, it's javascript
+			$ctrl->response->setLocation(null);
 		}
 
 		$HTTP_RESPONSE->concatenate($ctrl->response);
