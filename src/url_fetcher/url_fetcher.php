@@ -61,7 +61,7 @@ class UrlFetcher {
 
 	protected $_RequestMethod;
 
-	protected $_PostData;
+	protected $_BodyData;
 
 	protected $_Url;
 
@@ -164,7 +164,7 @@ class UrlFetcher {
 	function _reset(){
 		$this->_Fetched = null;
 		$this->_RequestMethod = "GET";
-		$this->_PostData = new StringBuffer();
+		$this->_BodyData = new StringBuffer();
 		$this->_AdditionalHeaders = array();
 		$this->_Url = "";
 		$this->_Ssl = false;
@@ -347,10 +347,33 @@ class UrlFetcher {
 
 		$options += array(
 			"request_method" => null, // "GET", "POST", "PUT", "DELETE"
+
+			"content" => "", // "TEST",
+			"content_type" => "", // "text/plain",
+
+			"additional_headers" => array(),
 		);
 
 		if($options["request_method"]){
 			$this->_RequestMethod = $options["request_method"];
+		}
+
+		$content = $options["content"]	;
+		if(!is_a($content,"StringBuffer")){
+			$content = new StringBuffer($content);
+		}
+
+		$content_type = $options["content_type"];
+
+		if($content->getLength() && !$content_type){
+			$content_type = "application/x-www-form-urlencoded";
+		}
+
+		$this->_BodyData->addStringBuffer($content);
+
+		$this->_AdditionalHeaders = $options["additional_headers"];
+		if($content_type){
+			$this->_AdditionalHeaders[] = "Content-Type: $content_type";
 		}
 
 		if(isset($this->_Fetched)){ return $this->_Fetched; }
@@ -433,21 +456,14 @@ class UrlFetcher {
 			$data = join("&",$d);
 		}
 
-		if(!is_a($data,"StringBuffer")){
-			$data = new StringBuffer($data);
-		}
-
-		$options = array_merge(array(
-			"content_type" => "application/x-www-form-urlencoded",
+		$options += array(
+			"request_method" => "POST",
+			"content" => $data,
+			"content_type" => strlen($data) ? "application/x-www-form-urlencoded" : "",
 			"additional_headers" => array(),
-		),$options);
+		);
 
-		$this->_RequestMethod = "POST";
-		$this->_PostData->addStringBuffer($data);
-		$this->_AdditionalHeaders = $options["additional_headers"];
-		$this->_AdditionalHeaders[] = "Content-Type: $options[content_type]";
-
-		return $this->fetchContent();
+		return $this->fetchContent($options);
 	}
 
 	/**
@@ -752,8 +768,8 @@ class UrlFetcher {
 		if($this->_AuthType=="basic"){
 			$out[] = "Authorization: Basic ".base64_encode("$this->_Username:$this->_Password");
 		}
-		if($this->_RequestMethod=="POST"){
-			$out[] = "Content-Length: ".$this->_PostData->getLength();
+		if($this->_RequestMethod=="POST" || $this->_BodyData->getLength()>0){
+			$out[] = "Content-Length: ".$this->_BodyData->getLength();
 		}
 		foreach($this->_ConstructorAdditionalHeaders as $h){
 			$out[] = $h;
@@ -795,8 +811,8 @@ class UrlFetcher {
 			stream_set_blocking($f,0);
 			$content_buffer->addString($this->_RequestHeaders);
 
-			if($this->_RequestMethod=="POST"){
-				$content_buffer->addStringBuffer($this->_PostData);
+			if($this->_BodyData->getLength()){
+				$content_buffer->addStringBuffer($this->_BodyData);
 			}
 
 		}else{
@@ -810,7 +826,7 @@ class UrlFetcher {
 				"proxy" => $this->_Proxy,
 				"request_fulluri"=> !$this->_Ssl,
 				"header" => $_header,
-				"content" => (string)$this->_PostData,
+				"content" => (string)$this->_BodyData,
 			);
 			$context = stream_context_create($context_options);
 			$http_response_header = null;
