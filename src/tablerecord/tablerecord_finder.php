@@ -229,6 +229,14 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	}
 
 	/**
+	 * In the future, the limit could be higher than page size - i.e. the result can shows more pages
+	 *
+	 */
+	function getPageSize(){
+		return $this->getLimit();
+	}
+
+	/**
 	 * Getter for offset option.
 	 *
 	 * @return integer

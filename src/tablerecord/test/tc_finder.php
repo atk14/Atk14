@@ -22,6 +22,9 @@ class TcFinder extends TcBase{
 			"limit" => 1,
 		));
 
+		$this->assertEquals(1,$finder->getLimit());
+		$this->assertEquals(1,$finder->getPageSize());
+
 		$records = $finder->getRecords();
 		$this->assertEquals(3,$finder->getTotalAmount());
 		$this->assertEquals(1,$finder->getRecordsDisplayed());
@@ -36,6 +39,9 @@ class TcFinder extends TcBase{
 			"limit" => 2,
 			"offset" => 1,
 		));
+
+		$this->assertEquals(2,$finder->getLimit());
+		$this->assertEquals(2,$finder->getPageSize());
 
 		$records = $finder->getRecords();
 		$this->assertEquals(3,$finder->getTotalAmount());
@@ -80,6 +86,9 @@ class TcFinder extends TcBase{
 
 		// --
 		$finder = TestTable::Finder("an_integer",10,array("order_by" => "UPPER(title) DESC"));
+
+		$this->assertEquals(20,$finder->getLimit()); // default
+		$this->assertEquals(20,$finder->getPageSize());
 
 		$records = $finder->getRecords();
 		$record_ids = $finder->getRecordIds();
