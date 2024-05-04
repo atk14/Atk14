@@ -188,7 +188,7 @@ function smarty_function_paginator($params,$template){
 		$cur_from = ($screen-1) * $max_amount;
 	}
 
-	if(($from+$max_amount)<$total_amount){
+	if(($from+$limit)<$total_amount){
 		$par["$from_name"] = $from + $max_amount;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
 		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$label_right $symbol_right</a></li>";
