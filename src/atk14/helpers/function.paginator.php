@@ -77,14 +77,16 @@ function smarty_function_paginator($params,$template){
 
 	if(isset($finder)){
 		$total_amount = $finder->getTotalAmount();
-		$max_amount = $finder->getLimit();
+		$max_amount = method_exists($finder,"getPageSize") ? $finder->getPageSize() : $finder->getLimit(); // e.g. "20"
+		$limit = $finder->getLimit(); // e.g. "20", "40", "60"...
 	}else{
 		$total_amount = isset($params["total_amount"]) ? (int)$params["total_amount"] : (int)$smarty->getTemplateVars("total_amount");
 		$max_amount = isset($params["max_amount"]) ? (int)$params["max_amount"] : (int)$smarty->getTemplateVars("max_amount");
+		$limit = $max_amount;
 	}
 	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
 
-	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? ATK14_PAGINATOR_OFFSET_PARAM_NAME : "from";
+	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? constant("ATK14_PAGINATOR_OFFSET_PARAM_NAME") : "from";
 	$from_name = isset($params["$_from"]) ? $params["$_from"] : "$_from";
 
 	$items_total_label = $params["items_total_label"];
@@ -95,7 +97,10 @@ function smarty_function_paginator($params,$template){
 	foreach(array("action","controller","lang","namespace") as $_k){
 		if(isset($params[$_k])){ $par[$_k] = $params["action"]; }
 	}
-	
+
+	$_count = defined("ATK14_PAGINATOR_COUNT_PARAM_NAME") ? constant("ATK14_PAGINATOR_COUNT_PARAM_NAME") : "count";
+	unset($par["$_count"]);
+
 	$from = isset($par["$from_name"]) ? (int)$par["$from_name"] : 0;
 	if($from<0){ $from = 0;}
 
@@ -146,7 +151,14 @@ function smarty_function_paginator($params,$template){
 		$par["$from_name"] = $cur_from;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
 		$_class = array( "page-item" );
-		$cur_from==$from && ($_class[] = "active");
+
+		// more items can be active
+		if(
+			$cur_from==$from ||
+			($cur_from>$from && $cur_from<$from+$limit)
+		){
+			$_class[] = "active";
+		}
 		$first_child && ($_class[] = "first-child") && ($first_child = false);
 
 		if($steps==$current_step && $screen==$current_step){
