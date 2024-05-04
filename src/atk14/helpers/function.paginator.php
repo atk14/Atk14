@@ -37,7 +37,9 @@
  *
  * Example of the parameter items_total_label usage:
  * ```
- * {paginator items_total_label="article total"}
+ * {paginator items_total_label="articles total"}
+ *
+ * {paginator items_total_label=""} {* no total amount information will be displayed *}
  * ```
  *
  * The anchor of the list beginning can be also specified:
@@ -60,7 +62,7 @@ function smarty_function_paginator($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
 	$params += array(
-		"items_total_label" => _("items total"), // "articles", "products"...
+		"items_total_label" => _("items total"), // "articles total", "products total"...; if set to "", no information about the total amount will be displayed
 		"anchor" => "", // e.g "list_table", "#list_table"
 	);
 
@@ -123,7 +125,7 @@ function smarty_function_paginator($params,$template){
 	$out = array();
 
 	if($total_amount<=$max_amount){
-		if($total_amount>=5){
+		if($total_amount>=5 && $items_total_label){
 			$out[] = "<div class=\"pagination-container\">";
 			$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
 			$out[] = "</div>";
@@ -196,7 +198,9 @@ function smarty_function_paginator($params,$template){
 
 	$out[] = "</ul>";
 
-	$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
+	if($items_total_label){
+		$out[] = "<p><span class=\"badge badge-secondary\">".$total_amount."</span> ".$items_total_label."</p>";
+	}
 	$out[] = "</div>";
 
 	return join("\n",$out);
