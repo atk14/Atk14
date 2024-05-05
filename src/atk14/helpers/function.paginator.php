@@ -177,21 +177,36 @@ function smarty_function_paginator($params,$template){
 		$screen++;
 		
 		// skipped items ...
-		if($screen>2 && $current_step>6 && $screen<$current_step-4 && $screen<$steps-10){
+		$at_begining = 1; // def. 2
+		$steps_before_current = 1; // def. 4
+		$threshold = 4; // def. 4
+		$at_end = 1; // def. 2
+		$steps_after_current = 4; // def. 4
+		//
+		if(
+			$screen>$at_begining &&
+			$current_step>($at_begining + $steps_before_current) &&
+			$screen<($current_step-$steps_before_current) &&
+			$screen<($steps-$at_begining-$steps_before_current-$threshold)
+		){
 			$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
-			while($screen<$current_step-4 && $screen<$steps-10){ $screen++; }
+			while($screen<($current_step-$steps_before_current) && $screen<$steps-$at_begining-$steps_before_current-$threshold){ $screen++; }
 		}
-		
-		if($screen>$current_step+4 && $steps-$screen>=2 && $screen>11){
+		//
+		if(
+			$screen>($current_step+$steps_after_current) &&
+			($steps-$screen)>=$at_end &&
+			$screen>($at_begining+$steps_before_current+$threshold+1) // 11 ??
+		){
 			$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
-			while(($steps-$screen)>=2){ $screen++; }
+			while(($steps-$screen)>=$at_end){ $screen++; }
 		}
 
 		$cur_from = ($screen-1) * $max_amount;
 	}
 
 	if(($from+$limit)<$total_amount){
-		$par["$from_name"] = $from + $max_amount;
+		$par["$from_name"] = $from + $limit;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
 		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$label_right $symbol_right</a></li>";
 	}
