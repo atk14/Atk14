@@ -178,14 +178,14 @@ function smarty_function_paginator($params,$template){
 		
 		// skipped items ...
 		$at_begining = 1; // def. 2
-		$steps_before_current = 1; // def. 4
-		$threshold = 4; // def. 4
+		$steps_before_current = 2; // def. 4
+		$threshold = 0; // def. 4
 		$at_end = 1; // def. 2
-		$steps_after_current = 4; // def. 4
+		$steps_after_current = (ceil($limit / $max_amount) - 1) + 2; // def. 4
 		//
 		if(
 			$screen>$at_begining &&
-			$current_step>($at_begining + $steps_before_current) &&
+			$current_step>($at_begining + $steps_before_current + 2) && // 2: nedava smysl komprimovat do "..." jenom jednu stranku
 			$screen<($current_step-$steps_before_current) &&
 			$screen<($steps-$at_begining-$steps_before_current-$threshold)
 		){
@@ -194,6 +194,7 @@ function smarty_function_paginator($params,$template){
 		}
 		//
 		if(
+			$current_step<($steps-$at_end-$steps_after_current-1) && // 1: nedava smysl komprimovat do "..." jenom jednu stranku
 			$screen>($current_step+$steps_after_current) &&
 			($steps-$screen)>=$at_end &&
 			$screen>($at_begining+$steps_before_current+$threshold+1) // 11 ??
