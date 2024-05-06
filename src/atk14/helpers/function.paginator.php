@@ -179,34 +179,35 @@ function smarty_function_paginator($params,$template){
 		// skipped items ...
 		$at_begining = 1; // def. 2
 		$steps_before_current = 2; // def. 4
-		$threshold = 0; // def. 4
 		$at_end = 1; // def. 2
 		$steps_after_current = (ceil($limit / $max_amount) - 1) + 2; // def. 4
 		//
-		if(
-			$screen>$at_begining &&
-			$current_step>($at_begining + $steps_before_current + 2) && // 2: nedava smysl komprimovat do "..." jenom jednu stranku
-			$screen<($current_step-$steps_before_current) &&
-			$screen<($steps-$at_begining-$steps_before_current-$threshold)
-		){
-			$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
-			while($screen<($current_step-$steps_before_current) && $screen<$steps-$at_begining-$steps_before_current-$threshold){ $screen++; }
-		}
-		//
-		if(
-			$current_step<($steps-$at_end-$steps_after_current-1) && // 1: nedava smysl komprimovat do "..." jenom jednu stranku
-			$screen>($current_step+$steps_after_current) &&
-			($steps-$screen)>=$at_end &&
-			$screen>($at_begining+$steps_before_current+$threshold+1) // 11 ??
-		){
-			$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
-			while(($steps-$screen)>=$at_end){ $screen++; }
+		if($steps > ($at_begining + $steps_before_current + 1 + $steps_after_current + $at_end + 1)){ // +1: current step; +1: to have something to compress
+			if(
+				$screen > $at_begining &&
+				$current_step > ($at_begining + $steps_before_current + 2) && // 2: it doesn't make sense to compress only one page into "..."
+				$screen < ($current_step - $steps_before_current) &&
+				$screen < ($steps - $at_begining - $steps_before_current)
+			){
+				$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
+				while($screen < ($current_step - $steps_before_current) && $screen < $steps - $at_begining - $steps_before_current){ $screen++; }
+			}
+			//
+			if(
+				$current_step < ($steps - $at_end - $steps_after_current - 1) && // 1: it doesn't make sense to compress only one page into "..."
+				$screen > ($current_step + $steps_after_current) &&
+				($steps - $screen) >= $at_end &&
+				$screen > ($at_begining + $steps_before_current + 1)
+			){
+				$out[] = "<li class=\"page-item skip disabled\"><span class=\"page-link\">&hellip;</span></li>";
+				while(($steps - $screen) >= $at_end){ $screen++; }
+			}
 		}
 
 		$cur_from = ($screen-1) * $max_amount;
 	}
 
-	if(($from+$limit)<$total_amount){
+	if(($from + $limit) < $total_amount){
 		$par["$from_name"] = $from + $limit;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
 		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$label_right $symbol_right</a></li>";
