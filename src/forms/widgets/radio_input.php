@@ -17,6 +17,7 @@ class RadioInput
 	var $label_attrs;
 	var $wrap_attrs;
 	var $choice_value;
+	var $choice_label;
 
 	var $bootstrap3;
 	var $bootstrap4;
