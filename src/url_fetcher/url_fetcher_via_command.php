@@ -27,7 +27,7 @@ class UrlFetcherViaCommand extends UrlFetcher {
 
 		$_buffer = new StringBuffer($this->_RequestHeaders);
 		if($this->_RequestMethod=="POST"){
-			$_buffer->addStringBuffer($this->_PostData);
+			$_buffer->addStringBuffer($this->_BodyData);
 		}
 		$stat = $this->_fwriteStream($pipes[0],$_buffer);
 
