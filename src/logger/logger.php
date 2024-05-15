@@ -755,6 +755,10 @@ class Logger{
 		return join("\n",$buff);
 	}
 
+	function __toString(){
+		return $this->toString();
+	}
+
 	/**
 	 * @ignore
 	 */

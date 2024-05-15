@@ -176,11 +176,15 @@ class TcLogger extends TcBase{
 		$logger = new Logger("test");
 
 		$this->assertEquals("",$logger->toString());
+		$this->assertEquals("",(string)$logger);
 
 		$logger->info("Hello");
 
 		$this->assertContains("Hello",$logger->toString());
 		$this->assertNotContains("World",$logger->toString());
+		
+		$this->assertContains("Hello",(string)$logger);
+		$this->assertNotContains("World",(string)$logger);
 
 		$logger->info("World");
 
