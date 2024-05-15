@@ -211,8 +211,6 @@ class TcLogger extends TcBase{
 
 		$logger->flushAll();
 
-		$this->assertNotContains("Hello",$logger->toString());
-		$this->assertNotContains("World",$logger->toString());
-		$this->assertContains("Greetings!",$logger->toString());
+		$this->assertEquals("",$logger->toString());
 	}
 }

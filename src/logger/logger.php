@@ -582,10 +582,8 @@ class Logger{
 		if($this->_notify_level_reached && $this->_notify_email!=""){
 			$this->_send_email_notification();
 		}
-		if($this->_log_store_whole){
-			$this->_flushed_log_store = $this->_log_store_whole;
-			$this->_log_store_whole = array();
-		}
+		$this->_flushed_log_store = $this->_log_store_whole;
+		$this->_log_store_whole = array();
 		return 0;
 	}
 
