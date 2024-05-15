@@ -135,7 +135,7 @@ class Logger{
 	/**
 	 * @access private
 	 */
-	var $_flushed_log_stores = array();
+	var $_flushed_log_store = array();
 	
 	/**
 	 * @access private
@@ -582,8 +582,10 @@ class Logger{
 		if($this->_notify_level_reached && $this->_notify_email!=""){
 			$this->_send_email_notification();
 		}
-		$this->_flushed_log_stores[] = $this->_log_store_whole;
-		$this->_log_store_whole = array();
+		if($this->_log_store_whole){
+			$this->_flushed_log_store = $this->_log_store_whole;
+			$this->_log_store_whole = array();
+		}
 		return 0;
 	}
 
@@ -732,18 +734,24 @@ class Logger{
 		return 0;
 	}
 
+	/**
+	 * Returns either current messages or last completely flushed log as a string
+	 *
+	 * @return string
+	 */
 	function toString(){
 		$buff = [];
-		foreach($this->_flushed_log_stores as $log_stores){
-			foreach($log_stores as $rec){
-				$buff[] = $this->_build_message($rec);
-			}
-		}
 		foreach($this->_log_store_whole as $rec){
 			$buff[] = $this->_build_message($rec);
 		}
 		foreach($this->_log_store as $rec){
 			$buff[] = $this->_build_message($rec);
+		}
+
+		if(!$buff){
+			foreach($this->_flushed_log_store as $rec){
+				$buff[] = $this->_build_message($rec);
+			}
 		}
 
 		return join("\n",$buff);
