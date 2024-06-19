@@ -1,4 +1,6 @@
 <?php
+require_once(__DIR__ . "/../constants.php");
+
 /**
  * Widget for radio button input field.
  *

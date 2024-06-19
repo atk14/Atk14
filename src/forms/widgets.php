@@ -1,4 +1,6 @@
 <?php
+require_once(__DIR__ . "/constants.php");
+
 /**
  * Widgets -- HTML representation of form fields.
  *
