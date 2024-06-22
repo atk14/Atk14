@@ -33,3 +33,6 @@ require(__DIR__."/../modifier.preg_split.php");
 require(__DIR__."/../modifier.join.php");
 require(__DIR__."/../modifier.html_entity_decode.php");
 require(__DIR__."/../modifier.constant.php");
+
+require(__DIR__."/../block.trim.php");
+require(__DIR__."/../modifier.trim.php");

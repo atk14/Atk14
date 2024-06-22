@@ -23,5 +23,18 @@
  */
 function smarty_block_trim($params, $content, $template, &$repeat){
 	if($repeat){ return; }
-	return trim((string)$content);
+
+	$params += [
+		"each_line" => false,
+	];
+
+	$content = (string)$content;
+
+	if($params["each_line"]){
+		$content = explode("\n",$content);
+		$content = array_map(function($line){ return trim($line); },$content);
+		$content = join("\n",$content);
+	}
+
+	return trim($content);
 }
