@@ -804,6 +804,10 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals("Blue Savannah",$rec2->g("title"));
 		$this->assertEquals(99.99,$rec2->g("price"));
 		$this->assertEquals(-20,$rec2->g("an_integer"));
+
+		$rec_int = TestTable::CreateNewRecord(["id" => -123]);
+		$record->setValuesVirtually(["an_integer" => $rec_int]); // automatic conversion of object to id
+		$this->assertEquals(-123,$record->g("an_integer"));
 	}
 
 	function test__readValues(){

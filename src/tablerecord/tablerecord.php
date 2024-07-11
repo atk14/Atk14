@@ -1314,7 +1314,7 @@ class TableRecord extends inobj {
 
 		foreach($values as $_key => $_value){
 			if(in_array($_key,$keys)){
-				$this->_RecordValues[$_key] = $_value;
+				$this->_RecordValues[$_key] = self::ObjToId($_value);
 			}
 		}
 	}
