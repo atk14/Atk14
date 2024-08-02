@@ -229,15 +229,17 @@ if(PHP_VERSION_ID < 50600){
 // initializing locale for the default language (i.e. the first one in config/locale.yml or defined by the constant ATK14_DEFAULT_LANG)
 Atk14Locale::Initialize();
 
-// catching up assertion failures
-assert_options(ASSERT_ACTIVE, 1);
-assert_options(ASSERT_WARNING, 0);
-assert_options(ASSERT_BAIL, 1);
-assert_options(ASSERT_CALLBACK, 'assert_callback');
-function assert_callback($script, $line, $message) {
-	$msg = "Assertion failed: Script: $script; Line: $line; Condition: $message";
-	error_log($msg);
-	throw new Exception($msg);
+if(PHP_VERSION_ID<80300){
+	// catching up assertion failures; not effective in PHP>=8.3
+	assert_options(constant("ASSERT_ACTIVE"), 1);
+	assert_options(constant("ASSERT_WARNING"), 0);
+	assert_options(constant("ASSERT_BAIL"), 1);
+	assert_options(constant("ASSERT_CALLBACK"), "assert_callback");
+	function assert_callback($script, $line, $message) {
+		$msg = "Assertion failed: Script: $script; Line: $line; Condition: $message";
+		error_log($msg);
+		throw new Exception($msg);
+	}
 }
 
 // on non-UTF-8 apps following hack converts UTF-8 params to DEFAULT_CHARSET
