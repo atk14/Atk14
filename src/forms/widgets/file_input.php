@@ -12,7 +12,7 @@ class FileInput extends Input{
 	{
 		if(!isset($this->attrs["class"])){ // if a class was not defined in the constructor
 			!isset($options["attrs"]) && ($options["attrs"] = array());
-			$class = (FORMS_MARKUP_TUNED_FOR_BOOTSTRAP3 || FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4) ? "form-control-file" : "form-control";
+			$class = (FORMS_MARKUP_TUNED_FOR_BOOTSTRAP3 || FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4 || FORMS_MARKUP_TUNED_FOR_BOOTSTRAP5) ? "form-control-file" : "form-control";
 			$options["attrs"] = forms_array_merge(array(
 				"class" => $class,
 			),$options["attrs"]);
