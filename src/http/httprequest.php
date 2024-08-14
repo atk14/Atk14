@@ -1132,7 +1132,28 @@ class HTTPRequest{
 	 * @return array array of HTTPUploadedFile instances
 	 */
 	function getUploadedFiles($options = array()){
+		if($forced_uf = $this->_getForceValue("UploadedFiles")){ return $forced_uf; }
 		return HTTPUploadedFile::GetInstances($options);
+	}
+
+	/**
+	 *
+	 *	$image = HTTPUploadedFile::GetInstance(
+	 *		[
+	 *			"tmp_name" => __DIR__ . "/sample_files/sample.jpg",
+	 *			"name" => "sample.jpg",
+	 *			"error" => 0,
+	 *		],
+	 *		"image",
+	 *		["testing_mode" => true]
+	 *	);
+	 *	$request->setUploadedFiles([$image]);
+	 *
+	 *	// clearing previous forced value
+	 *	$request->setUploadedFiles(null);
+	 */
+	function setUploadedFiles($uploaded_files){
+		$this->_setForceValue("UploadedFiles",$uploaded_files);
 	}
 
 	/**
@@ -1176,7 +1197,7 @@ class HTTPRequest{
 			}
 		}
 
-		if(!$out){ $out = HTTPXFile::GetInstance(array("name" => $name)); }
+		if(!$out){ $out = HTTPXFile::GetInstance(array("name" => $name, "request" => $this)); }
 
 		return $out;
 	}
