@@ -1,9 +1,6 @@
 <?php
 class TcLock extends TcBase{
-	/**
-	* TODO: dodelat tento test.
-	* Zatim to jenom tisken na STDOUT.
-	*/
+
 	function test_auto_kill(){
 		$pid = pcntl_fork();
 
@@ -21,6 +18,7 @@ class TcLock extends TcBase{
 			Lock::Mklock("test",$logger);
 			Lock::Unlock("test",$logger);
 			$logger->stop();
+			$this->assertTrue(true); // tady se dostaneme
 		}else{
 			// jsme v child
 			$logger = $this->_new_logger();
@@ -31,6 +29,7 @@ class TcLock extends TcBase{
 			sleep(3);
 			Lock::Unlock("test",$logger);
 			$logger->stop();
+			$this->assertTrue(false); // sem se dostat nesmime
 		}
 	}
 
