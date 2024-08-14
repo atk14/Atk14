@@ -424,11 +424,13 @@ class Atk14Client{
 	private function _doRequest($method,$path,$options = array()){
 		global $ATK14_GLOBAL;
 
-		$options = array_merge(array(
+		$options += array(
 			"params" => array(),
 			"raw_post_data" => null,
 			"content_type" => null,
-		),$options);
+			"headers" => array(), // e.g. ['Content-Disposition: attachment; filename="sample.jpg"'],
+			"uploaded_files" => null, // HTTPUploadedFile[]
+		);
 
 		// converting objects to scalars
 		foreach($options["params"] as &$v){
@@ -461,6 +463,21 @@ class Atk14Client{
 
 		if(isset($options["raw_post_data"])){
 			$request->setRawPostData($options["raw_post_data"]);
+		}
+
+		foreach($options["headers"] as $header){
+			$_ar = explode(":",$header);
+			$_header_key = array_shift($_ar);
+			$_header_value = join(":",$_ar);
+			$request->setHeader($_header_key,$_header_value);
+		}
+
+		if($options["uploaded_files"]){
+			$request->setUploadedFiles($options["uploaded_files"]);
+			$GLOBALS["HTTP_REQUEST"]->setUploadedFiles($options["uploaded_files"]); // !! danger !! global variable manipulation
+		}else{
+			$request->setUploadedFiles(null);
+			$GLOBALS["HTTP_REQUEST"]->setUploadedFiles(null); // !! danger !! global variable manipulation
 		}
 
 		if($this->_BasicAuthUsername){ $request->setBasicAuthUsername($this->_BasicAuthUsername); }
