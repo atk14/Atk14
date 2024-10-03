@@ -34,6 +34,8 @@ class Atk14SmartyBase extends Smarty{
 
 class Atk14SmartyDebug extends Smarty_Internal_Debug {
 
+	var $smarty;
+
 	function start_render(Smarty_Internal_Template $template, $mode = null) {
 		parent::start_render($template, $mode);
 		$this->smarty->start_template_render($template);
