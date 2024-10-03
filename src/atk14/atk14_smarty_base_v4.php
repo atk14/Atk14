@@ -51,6 +51,10 @@ class Atk14SmartyDebug extends Smarty_Internal_Debug {
 
 class Atk14TemplateIndexItem implements ArrayAccess {
 
+	var $parent;
+	var $template;
+	var $children;
+
 	function __construct($template, $parent) {
 		$this->parent = $parent;
 		$this->template = $template;
