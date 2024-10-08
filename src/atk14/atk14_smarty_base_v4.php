@@ -34,6 +34,8 @@ class Atk14SmartyBase extends Smarty{
 
 class Atk14SmartyDebug extends Smarty_Internal_Debug {
 
+	var $smarty;
+
 	function start_render(Smarty_Internal_Template $template, $mode = null) {
 		parent::start_render($template, $mode);
 		$this->smarty->start_template_render($template);
@@ -50,6 +52,10 @@ class Atk14SmartyDebug extends Smarty_Internal_Debug {
 }
 
 class Atk14TemplateIndexItem implements ArrayAccess {
+
+	var $parent;
+	var $template;
+	var $children;
 
 	function __construct($template, $parent) {
 		$this->parent = $parent;
