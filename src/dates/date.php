@@ -134,8 +134,9 @@ class Date{
 		if(is_array($date)){
 			$date = sprintf("%d-%02d-%02d",$date["year"],$date["month"],$date["day"]);
 		}
+		$date = (string)$date;
 		$date = substr($date,0,10); // odseknuti casu
-		$out = new Date("$date"); if(!$out->getDate()){ return null; }
+		$out = new Date($date); if(!$out->getDate()){ return null; }
 		return $out;
 	}	
 	
