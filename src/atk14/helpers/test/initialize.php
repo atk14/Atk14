@@ -34,5 +34,8 @@ require(__DIR__."/../modifier.join.php");
 require(__DIR__."/../modifier.html_entity_decode.php");
 require(__DIR__."/../modifier.constant.php");
 
+require(__DIR__."/../modifier.strtolower.php");
+require(__DIR__."/../modifier.strtoupper.php");
+
 require(__DIR__."/../block.trim.php");
 require(__DIR__."/../modifier.trim.php");
