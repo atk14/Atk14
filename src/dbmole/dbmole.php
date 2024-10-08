@@ -144,6 +144,11 @@ class DbMole{
 	protected $_BeginTransactionDelayed = false;
 
 	/**
+	 * @ignore
+	 */
+	protected $_start_utime;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $configuration_name
