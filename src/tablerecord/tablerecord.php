@@ -113,6 +113,11 @@ class TableRecord extends inobj {
 	protected $_RecordValues = array();
 
 	/**
+	 * @ignore
+	 */
+	protected $_dbmole_wakeup_data_;
+
+	/**
 	 * Constructor
 	 *
 	 * @param mixed $table_name_or_options
