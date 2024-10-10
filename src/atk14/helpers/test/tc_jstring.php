@@ -13,5 +13,11 @@ class TcJstring extends TcBase {
 		// <script> tag special care
 		$this->assertEquals('"<scr" + "ipt></scr" + "ipt>"',smarty_block_jstring(array(),'<script></script>',$template,$repeat));
 		$this->assertEquals('"<script></script>"',smarty_block_jstring(array("escape" => "json"),'<script></script>',$template,$repeat));
+
+		//
+		$this->assertEquals('"hnědá lištička"',smarty_block_jstring(array(),"hnědá lištička",$template,$repeat));
+
+		// special ascii chars \x00-\x1F
+		$this->assertEquals('"\u0001 \u0005 \u001F"',smarty_block_jstring(array(),join(" ",array(chr(1),chr(5),chr(31))),$template,$repeat));
 	}
 }
