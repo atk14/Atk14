@@ -49,18 +49,5 @@ function smarty_block_jstring($params,$content,$template,&$repeat){
 		$content = str_replace('" + "','',$content);
 	}
 
-	$content = str_replace("\x02","\\u0002",$content);
-
-	// \x02 -> '\u0002'
-	$content = preg_replace_callback('/([\x00-\x1F])/',function($char){
-	return '\u'.
-		str_pad(
-			strtoupper(dechex(ord($char[1]))),
-			4,
-			"0",
-			STR_PAD_LEFT
-		);
-	},$content);
-
 	return '"'.$content.'"';
 }

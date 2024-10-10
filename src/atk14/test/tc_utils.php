@@ -120,4 +120,12 @@ class TcUtils extends TcBase{
 		$this->assertEquals(null,Atk14Utils::ShellRemoteAddr());
 		$this->assertEquals(null,Atk14Utils::ShellRemoteHost());
 	}
+
+	function test_EscapeForJavascript(){
+		//
+		$this->assertEquals('hnědá lištička',Atk14Utils::EscapeForJavascript("hnědá lištička"));
+
+		// special ascii chars \x00-\x1F
+		$this->assertEquals('\u0001 \u0005 \t \u001F',Atk14Utils::EscapeForJavascript(join(" ",array(chr(1),chr(5),chr(9),chr(31)))));
+	}
 }

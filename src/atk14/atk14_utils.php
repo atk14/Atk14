@@ -187,7 +187,20 @@ class Atk14Utils{
 	 * @return string escaped string
 	 */
 	static function EscapeForJavascript($content){
-		return EasyReplace($content,array("\\" => "\\\\", "\n" => "\\n","\r" => "\\r","\t" => "\\t","\"" => "\\\"", "<script" => '<scr" + "ipt', "</script>" => '</scr" + "ipt>'));
+		$content = EasyReplace($content,array("\\" => "\\\\", "\n" => "\\n","\r" => "\\r","\t" => "\\t","\"" => "\\\"", "<script" => '<scr" + "ipt', "</script>" => '</scr" + "ipt>'));
+		
+		// \x02 -> '\u0002'; \x09 === "\t"
+		$content = preg_replace_callback('/([\x00-\x08\x0A-\x1F])/',function($char){
+			return '\u'.
+				str_pad(
+					strtoupper(dechex(ord($char[1]))),
+					4,
+					"0",
+					STR_PAD_LEFT
+				);
+		},$content);
+
+		return $content;
 	}
 
 	/**
