@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+define("ATK14_LOAD_AFTER_INITIALIZE_SETTINGS",false);
+require_once(dirname(__FILE__)."/load.php");
+
+$d = $ATK14_GLOBAL->getDatabaseConfig();
+
+if(!$d){
+	exit(1);
+}
+
+$e = array_map(function($v){ return is_string($v) ? escapeshellarg($v) : $v; }, $d);
+
+$host = $host_gui = $port = $port_gui = "";
+if($d["host"]){
+	$host = " -h $e[host]";
+	$port = " -p $e[port]";
+}
+
+$cmd = "pg_restore -U $e[username] -d $e[database]$host$port";
+
+echo $cmd, "\n";

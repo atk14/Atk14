@@ -1,0 +1,14 @@
+#!/bin/sh
+
+#	 $ ./scripts/shell production dump_db --format=tar > dump.tar
+#
+#  $ cat dump.tag | ./scripts/pg_restore
+#  $ cat dump.tag | ATK14_ENV=development ./scripts/pg_restore
+#  $ cat dump.tag | ATK14_ENV=production ./scripts/pg_restore
+
+dirname=$(dirname $0)
+cd $dirname;
+
+cmd=$(./_pg_restore_command);
+
+sh -c "$cmd"
