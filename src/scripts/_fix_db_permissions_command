@@ -12,6 +12,10 @@ define("ATK14_LOAD_AFTER_INITIALIZE_SETTINGS",false);
 require_once(dirname(__FILE__)."/load.php");
 require_once(dirname(__FILE__)."/__dump_db_utils.php");
 
-$config = $ATK14_GLOBAL->getDatabaseConfig();
+$d = $ATK14_GLOBAL->getDatabaseConfig();
 
-echo "sudo -u postgres psql $config[database] -c 'ALTER SCHEMA public OWNER TO $config[username];'", "\n";
+if(!$d){
+	exit(1);
+}
+
+echo "sudo -u postgres psql $d[database] -c 'ALTER SCHEMA public OWNER TO $d[username];'", "\n";
