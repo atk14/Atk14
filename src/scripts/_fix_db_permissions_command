@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+// This script provides shell command for fixing database permissions
+//
+// Usage:
+//
+//	./scripts/_fix_db_permissions_command | sh
+//	ATK14_ENV=development ./scripts/_fix_db_permissions_command | sh
+//	ATK14_ENV=test ./scripts/_fix_db_permissions_command | sh
+
+define("ATK14_LOAD_AFTER_INITIALIZE_SETTINGS",false);
+require_once(dirname(__FILE__)."/load.php");
+require_once(dirname(__FILE__)."/__dump_db_utils.php");
+
+$config = $ATK14_GLOBAL->getDatabaseConfig();
+
+echo "sudo -u postgres psql $config[database] -c 'ALTER SCHEMA public OWNER TO $config[username];'", "\n";
