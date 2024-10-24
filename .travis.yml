@@ -14,20 +14,6 @@ services:
 
 jobs:
   include:
-    - php: 7.1
-      dist: xenial
-    - php: 7.2
-      dist: xenial
-    - php: 7.3
-      dist: xenial
-    - php: 7.4
-      dist: focal
-      addons:
-        postgresql: "12"
-    - php: 8.0
-      dist: focal
-      addons:
-        postgresql: "12"
     - php: 8.1
       dist: focal
       addons:
@@ -78,10 +64,22 @@ install:
   - sudo mysql -u root -e "GRANT ALL PRIVILEGES ON test.* TO test@localhost;"
   - sudo mysql -u root -e "FLUSH PRIVILEGES;"
   - sudo apt-get install privoxy # privoxy is needed for UrlFetcher testing
-  - sudo service privoxy start 2>&1 || echo "Starting privoxy failed" # privoxy doesn't start on Linux Jammy! Why?
+  - sudo sed -i 's/listen-address  .::1.:8118/# &/' /etc/privoxy/config 2>&1
+  - sudo sed -i 's/^#\(debug \)/\1/' /etc/privoxy/config 2>&1
+  - sudo sed -i 's/^#\(single-threaded 1\)/\1/' /etc/privoxy/config 2>&1
+  - sudo sed -i 's/^buffer-limit 4096/buffer-limit 256/' /etc/privoxy/config 2>&1
+  - sudo sed -i 's/^#max-client-connections 256/max-client-connections 1/' /etc/privoxy/config 2>&1
+  - sudo mkdir -p /var/log/privoxy 2>&1 || echo "Failed"
+  - sudo touch /var/log/privoxy/logfile 2>&1 || echo "Failed"
+  - sudo chmod 666 /var/log/privoxy/logfile 2>&1 || echo "Failed"
+  - sudo chown privoxy:adm /var/log/privoxy 2>&1 || echo "Failed"
+  - sudo service privoxy restart 2>&1 || echo "Starting privoxy failed" # privoxy doesn't start on Linux Jammy! Why?
   - sudo service privoxy status 2>&1 || echo "Failed"
   - sudo systemctl status privoxy.service 2>&1 || echo "Failed"
+  - sudo journalctl -xeu privoxy.service 2>&1 || echo "Failed"
   - sudo privoxy /etc/privoxy/config 2>&1 || echo "Failed"
+  - sudo cat /etc/privoxy/config 2>&1 || echo "Failed"
+  - sudo cat /var/log//privoxy/logfile 2>&1 || echo "Failed"
 
 script:
   - ./src/scripts/run_all_tests_on_atk14 && echo "EVERYTHING IS FINE"
