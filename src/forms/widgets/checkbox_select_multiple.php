@@ -12,6 +12,9 @@ class CheckboxSelectMultiple extends SelectMultiple
 	var $escape_labels;
 	var $input_attrs;
 	var $label_attrs;
+	var $bootstrap4_customized;
+	var $wrap_attrs;
+	protected $_my_str_values;
 
 	/**
 	 * @param array $options
