@@ -2,6 +2,12 @@
 class TcProxy extends TcBase {
 
 	function test(){
+		if(!$this->_is_privoxy_running()){
+			file_put_contents("php://stderr","WARNING: privoxy is not running; skip testing");
+			$this->assertEquals(1,1);
+			return;
+		}
+
 		// http
 		$uf = new UrlFetcher("http://example.com/",["proxy" => "tcp://127.0.0.1:8118"]);
 		$this->assertEquals(200,$uf->getStatusCode());
@@ -20,6 +26,11 @@ class TcProxy extends TcBase {
 	}
 	
 	function test_privoxy_config(){
+		if(!$this->_is_privoxy_running()){
+			$this->assertEquals(1,1);
+			return;
+		}
+
 		$uf = new UrlFetcher("http://config.privoxy.org/",["proxy" => "tcp://127.0.0.1:8118"]);
 		$this->assertEquals(200,$uf->getStatusCode());
 		$this->assertTrue(!!preg_match("/<title>Privoxy@(ip6-|)localhost<\/title>/",(string)$uf->getContent()));
@@ -34,5 +45,13 @@ class TcProxy extends TcBase {
 		$this->assertFalse($uf->found());
 		$this->assertNull($uf->getStatusCode());
 		$this->assertContains("could not connect to proxy server tcp://127.0.0.1:8888",$uf->getErrorMessage());
+	}
+
+	function _is_privoxy_running(){
+		$uf = new UrlFetcher("http://127.0.0.1:8118/");
+		if(@is_null($uf->getStatusCode())){
+			return false;
+		}
+		return true;
 	}
 }
