@@ -861,6 +861,7 @@ class Files{
 		}
 		
 
+		$mime_type = null;
 		if(function_exists("mime_content_type")){
 			$mime_type = mime_content_type($filename);
 		}elseif(function_exists("finfo_open")){
@@ -875,8 +876,16 @@ class Files{
 			// -> image/gif
 			if(preg_match("/^.*?:\\s*([^\\s]+\\/[^\\s;]+)/",$out,$matches)){
 				$mime_type = $matches[1];
-			}else{
-				$mime_type = "application/octet-stream";
+			}
+		}
+
+		// Using Imagick to determine mime type
+		if(is_null($mime_type) && class_exists("Imagick")){
+			try {
+				$im = new Imagick($filename);
+				$mime_type = $im->getImageMimeType();
+			} catch(Exception $e) {
+				
 			}
 		}
 
@@ -900,7 +909,7 @@ class Files{
 			"ppt" =>				array("application/vnd.ms-powerpoint","application/vnd.ms-office","application/msword"),
 			"jpg|jpeg" =>		array("image/jpeg","image/jpg"),
 			"svg" =>				array("image/svg+xml","image/svg","text/html","text/plain"),
-			"bmp" =>				array("image/bmp","image/x-bmp","image/x-ms-bmp","application/octet-stream"),
+			"bmp" =>				array("image/bmp","image/x-bmp","image/x-ms-bmp","image/x-bmp3","application/octet-stream"),
 			"webp" =>				array("image/webp","image/x-webp","application/octet-stream"),
 			"avif" =>				array("image/avif","application/octet-stream"),
 			"eps" =>				array("application/postscript","application/eps"),
