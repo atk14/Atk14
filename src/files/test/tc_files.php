@@ -68,6 +68,17 @@ class TcFiles extends TcBase{
 	function test_deterine_file_type(){
 		$this->assertEquals("image/jpeg",Files::DetermineFileType("hlava.jpg"));
 		$this->assertEquals("text/plain",Files::DetermineFileType("test.txt"));
+
+		$this->assertEquals("image/jpeg",Files::DetermineFileType("hlava.jpg",array(),$preferred_suffix));
+		$this->assertEquals("jpg",$preferred_suffix);
+		$this->assertEquals("text/plain",Files::DetermineFileType("test.txt",array(),$preferred_suffix));
+		$this->assertEquals("txt",$preferred_suffix);
+
+		$tmp_file = Files::CopyToTemp("hlava.jpg");
+		$this->assertEquals("image/jpeg",Files::DetermineFileType($tmp_file,array(),$preferred_suffix));
+		$this->assertEquals("jpg",$preferred_suffix);
+		$this->assertEquals("image/jpeg",Files::DetermineFileType($tmp_file,array("original_filename" => "image.bmp")));
+		$this->assertEquals("jpg",$preferred_suffix);
 	}
 
 	function test_write_to_temp(){

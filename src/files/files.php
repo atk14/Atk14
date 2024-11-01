@@ -26,7 +26,7 @@ if(defined("FILES_DEFAULT_DIR_PERMS")){
  */
 class Files{
 
-	const VERSION = "1.6.4";
+	const VERSION = "1.6.6";
 
 	static protected $_DefaultFilePerms = 0666;
 
@@ -917,15 +917,46 @@ class Files{
 			"docx" => 			array("application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/zip"),
 			"apk" =>				array("application/vnd.android.package-archive","application/java-archive","application/jar","application/zip"),
 			"jar" =>				array("application/java-archive","application/jar"),
+			"zip" =>				array("application/zip"),
 		);
 
+		// mime types with no doubt about the file suffix
+		$clear_mime_types = array(
+			"xls" =>				array("application/vnd.ms-excel","application/msexcel"),
+			"xlsx" =>				array("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+			"ppt" =>				array("application/vnd.ms-powerpoint"),
+			"doc" =>				array("application/msword"),
+			"jpg" => 				array("image/jpeg","image/jpg"),
+			"svg" =>				array("image/svg+xml","image/svg"),
+			"bmp" =>				array("image/bmp","image/x-bmp","image/x-ms-bmp","image/x-bmp3"),
+			"webp" =>				array("image/webp","image/x-webp"),
+			"avif" =>				array("image/avif"),
+			"docx" => 			array("application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+		);
+
+		$got_match = false;
 		foreach($tr_table as $suffixes => $mime_types){
 			$suffixes = explode("|",$suffixes);
 			if(in_array($original_suffix,$suffixes) && in_array($mime_type,$mime_types)){
 				$mime_type = $mime_types[0];
 				$preferred_suffix = $suffixes[0];
+				$got_match = true;
 				break;
 			}
+		}
+
+		if(!$got_match){
+			foreach($clear_mime_types as $suffix => $mime_types){
+				if(in_array($mime_type,$mime_types)){
+					$mime_type = $mime_types[0];
+					$preferred_suffix = $suffix;
+					break;
+				}
+			}
+		}
+
+		if(!$mime_type){
+			$mime_type = "application/octet-stream";
 		}
 		
 		return $mime_type;
