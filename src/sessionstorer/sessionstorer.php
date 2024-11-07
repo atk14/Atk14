@@ -1051,22 +1051,40 @@ class SessionStorer{
 	protected function _garbageCollection(){
 		if(!SESSION_STORER_AUTO_GARBAGE_COLLECTION){ return; }
 
-		// if(rand(1,10)!=2){ return; } // TODO: HACK to improve speed
-		$this->_dbmole->doQuery("
+		if(rand(1,20)!=2 && (!defined("TEST") || !constant("TEST"))){ return; } // HACK to improve speed
+
+		$bind_ar = array(
+			":min_last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $this->_MaxLifetime),
+			":session_name" => $this->getSessionName(),
+		);
+		//
+		$something_to_delete = $this->_dbmole->selectRow("
+			SELECT * FROM sessions WHERE
+				last_access<:min_last_access AND
+				session_name=:session_name
+			LIMIT 1	
+		",$bind_ar);
+		//
+		$something_to_delete && $this->_dbmole->doQuery("
 			DELETE FROM sessions WHERE
 				last_access<:min_last_access AND
 				session_name=:session_name
-		",array(
-			":min_last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $this->_MaxLifetime),
-			":session_name" => $this->getSessionName(),
-		));
+		",$bind_ar);
 
-		$this->_dbmole->doQuery("
+		$bind_ar = array(
+			":now" => $this->_getNow()
+		);
+		//
+		$something_to_delete = $this->_dbmole->selectRow("
+			SELECT * FROM session_values WHERE
+				expiration<:now
+			LIMIT 1	
+		",$bind_ar);
+		//
+		$something_to_delete && $this->_dbmole->doQuery("
 			DELETE FROM session_values WHERE
 				expiration<:now
-		",array(
-			":now" => $this->_getNow()
-		));
+		",$bind_ar);
 	}
 
 	/**
