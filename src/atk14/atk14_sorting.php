@@ -132,10 +132,10 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 			$options = $options_or_asc_ordering;
 		}
 
-		if(is_string($options_or_asc_ordering)){
+		if(!is_array($options_or_asc_ordering)){ // $options_or_asc_ordering can be actually SqlBuilder\SqlJoinOrder
 			$asc_ordering = $options_or_asc_ordering;
 			if(!isset($desc_ordering)){
-				$desc_ordering = trim($asc_ordering);
+				$desc_ordering = trim((string)$asc_ordering);
 
 				$uniqid = uniqid();
 				$desc_ordering = preg_replace('/\bASC\b/i',"DESC$uniqid",$desc_ordering);

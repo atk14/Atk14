@@ -129,6 +129,33 @@ class TcSorting extends TcBase{
 		),$ary);
 	}
 
+	function test_SpecialOrderingObject(){
+		// both orderings are members of SpecialOrderingObject
+		$sorting = new Atk14Sorting();
+		$sorting->add("default",new SpecialOrderingObject("articles.id DESC"),new SpecialOrderingObject("articles.id"));
+		
+		$order = $sorting->getOrder("default");
+		$order_desc = $sorting->getOrder("default-desc");
+
+		$this->assertEquals("articles.id DESC",(string)$order);
+		$this->assertTrue(is_a($order,"SpecialOrderingObject"));
+
+		$this->assertEquals("articles.id",(string)$order_desc);
+		$this->assertTrue(is_a($order_desc,"SpecialOrderingObject"));
+
+		// only ascending orderings is a member of SpecialOrderingObject
+		$sorting = new Atk14Sorting();
+		$sorting->add("default",new SpecialOrderingObject("articles.created_at DESC"));
+		
+		$order = $sorting->getOrder("default");
+		$order_desc = $sorting->getOrder("default-desc");
+
+		$this->assertEquals("articles.created_at DESC",(string)$order);
+		$this->assertTrue(is_a($order,"SpecialOrderingObject"));
+
+		$this->assertEquals("articles.created_at ASC",(string)$order_desc);
+		$this->assertTrue(is_string($order_desc));
+	}
 
 	function _get_sorting($order = null){
 		$params = new Dictionary();
@@ -156,5 +183,18 @@ class TcSorting extends TcBase{
 		$sorting->add("borrowed","borrowed DESC, borrowed_date ASC");
 
 		return $sorting;
+	}
+}
+
+class SpecialOrderingObject {
+
+	protected $ordering;
+
+	function __construct($ordering){
+		$this->ordering = (string)$ordering;
+	}
+
+	function __toString(){
+		return $this->ordering;
 	}
 }
