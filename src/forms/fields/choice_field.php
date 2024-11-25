@@ -59,6 +59,10 @@ class ChoiceField extends Field
 		if (isset($options['disabled_choices'])) {
 			$this->set_disabled_choices($options['disabled_choices']);
 		}
+
+		if($this->required && !array_key_exists("required",$this->widget->attrs)){
+			$this->widget->attrs["required"] = "required";
+		}
 	}
 
 	/**

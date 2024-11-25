@@ -999,7 +999,7 @@ class TcForms extends TcBase
 		$form = new FrameworkForm(array('auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select name="language" class="form-control">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select required="required" name="language" class="form-control">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 
@@ -1008,7 +1008,7 @@ class TcForms extends TcBase
 		$form = new FrameworkForm(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select name="language" class="form-control">', '<option value="P" selected="selected">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select required="required" name="language" class="form-control">', '<option value="P" selected="selected">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 
@@ -1017,7 +1017,7 @@ class TcForms extends TcBase
 		$form = new FrameworkForm2(array('auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select name="language" class="form-control">', '<option value="" selected="selected">------</option>', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select required="required" name="language" class="form-control">', '<option value="" selected="selected">------</option>', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 
@@ -1026,13 +1026,13 @@ class TcForms extends TcBase
 		$form = new FrameworkForm3(array('auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select class="foo" name="language">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select class="foo" required="required" name="language">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 		$form = new FrameworkForm3(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select class="foo" name="language">', '<option value="P" selected="selected">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select class="foo" required="required" name="language">', '<option value="P" selected="selected">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 
@@ -1041,13 +1041,13 @@ class TcForms extends TcBase
 		$form = new FrameworkForm4(array('auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select class="foo" name="language">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select class="foo" required="required" name="language">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 		$form = new FrameworkForm4(array('data'=>$data, 'auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select class="foo" name="language">', '<option value="P" selected="selected">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select class="foo" required="required" name="language">', '<option value="P" selected="selected">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 
@@ -1055,12 +1055,12 @@ class TcForms extends TcBase
 		$form = new FrameworkForm5(array('auto_id'=>false));
 		$field = $form->get_field('language');
 		$this->assertEquals(
-			implode("\n", array('<select name="language" class="form-control">', '</select>')),
+			implode("\n", array('<select required="required" name="language" class="form-control">', '</select>')),
 			$field->as_widget()
 		);
 		$field->field->set_choices(array('P'=>'Python', 'J'=>'Java'));
 		$this->assertEquals(
-			implode("\n", array('<select name="language" class="form-control">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
+			implode("\n", array('<select required="required" name="language" class="form-control">', '<option value="P">Python</option>', '<option value="J">Java</option>', '</select>')),
 			$field->as_widget()
 		);
 	}
@@ -1073,88 +1073,98 @@ class TcForms extends TcBase
 		// polozky selektitka se nemusi definovat ve formularove tride
 		$form = new FrameworkForm6(array('auto_id'=>false));
 		$field = $form->get_field('language');
-		$this->assertTrue($this->_compare_html(
-			implode("\n", array('<ul class="radios">', '<li><label><input type="radio" name="language" value="P" /> Python</label></li>', '<li><label><input type="radio" name="language" value="J" /> Java</label></li>', '</ul>')),
+		$this->assertHtmlEquals(
+			implode("\n", array(
+				'<ul class="radios">',
+				'<li><label><input required="required" type="radio" name="language" value="P" /> Python</label></li>',
+				'<li><label><input required="required" type="radio" name="language" value="J" /> Java</label></li>',
+				'</ul>'
+			)),
 			$field->as_widget()
-		));
+		);
 
 		// kontrola generovani celeho formulare
-		$this->assertTrue($this->_compare_html(
+		$this->assertHtmlEquals(
 			implode(
 				"\n", 
 				array(
 					'<tr><th>Name:</th><td><input required="required" type="text" name="name" class="text form-control" /></td></tr>',
 					'<tr><th>Language:</th><td><ul class="radios">',
-					'<li><label><input type="radio" name="language" value="P" /> Python</label></li>',
-					'<li><label><input type="radio" name="language" value="J" /> Java</label></li>',
+					'<li><label><input required="required" type="radio" name="language" value="P" /> Python</label></li>',
+					'<li><label><input required="required" type="radio" name="language" value="J" /> Java</label></li>',
 					'</ul></td></tr>'
 				)
 			),
 			$form->as_table()
-		));
-		$this->assertTrue($this->_compare_html(
+		);
+		$this->assertHtmlEquals(
 			implode(
 				"\n", 
 				array(
 					'<li>Name: <input required="required" type="text" name="name" class="text form-control" /></li>',
 					'<li>Language: <ul class="radios">',
-					'<li><label><input type="radio" name="language" value="P" /> Python</label></li>',
-					'<li><label><input type="radio" name="language" value="J" /> Java</label></li>',
+					'<li><label><input required="required" type="radio" name="language" value="P" /> Python</label></li>',
+					'<li><label><input required="required" type="radio" name="language" value="J" /> Java</label></li>',
 					'</ul></li>'
 				)
 			),
 			$form->as_ul()
-		));
+		);
 
 		// id u RadioSelect se generuji i s poradovym cislem
 		$form = new FrameworkForm6(array('auto_id'=>'id_%s'));
 		$field = $form->get_field('language');
-		$this->assertTrue($this->_compare_html(
-			implode("\n", array('<ul class="radios">', '<li><label><input id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>', '<li><label><input id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>', '</ul>')),
+		$this->assertHtmlEquals(
+			implode("\n", array(
+				'<ul class="radios">',
+				'<li><label><input required="required" id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
+				'<li><label><input required="required" id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
+				'</ul>'
+			)),
 			$field->as_widget()
-		));
+		);
 
 		// pokud se pouzije RadioSelect s parametrem auto_id, tag <label> bude 
 		// ukazovat na *prvni* z polozek radio buttonu.
-		$this->assertTrue($this->_compare_html(
+		$this->assertHtmlEquals(
 			implode(
 				"\n", 
 				array(
 					'<tr><th><label for="id_name">Name:</label></th><td><input required="required" type="text" name="name" class="text form-control" id="id_name" /></td></tr>',
 					'<tr><th><label for="id_language_0">Language:</label></th><td><ul class="radios">',
-					'<li><label><input id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
-					'<li><label><input id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
+					'<li><label><input required="required" id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
+					'<li><label><input required="required" id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
 					'</ul></td></tr>'
 				)
 			),
 			$form->as_table()
-		));
-		$this->assertTrue($this->_compare_html(
+		);
+		$this->assertHtmlEquals(
 			implode(
 				"\n", 
 				array(
 					'<li><label for="id_name">Name:</label> <input required="required" type="text" name="name" class="text form-control" id="id_name" /></li>',
 					'<li><label for="id_language_0">Language:</label> <ul class="radios">',
-					'<li><label><input id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
-					'<li><label><input id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
+					'<li><label><input required="required" id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
+					'<li><label><input required="required" id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
 					'</ul></li>'
 				)
 			),
 			$form->as_ul()
-		));
-		$this->assertTrue($this->_compare_html(
+		);
+		$this->assertHtmlEquals(
 			implode(
 				"\n", 
 				array(
 					'<p><label for="id_name">Name:</label> <input required="required" type="text" name="name" class="text form-control" id="id_name" /></p>',
 					'<p><label for="id_language_0">Language:</label> <ul class="radios">',
-					'<li><label><input id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
-					'<li><label><input id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
+					'<li><label><input required="required" id="id_language_0" type="radio" name="language" value="P" /> Python</label></li>',
+					'<li><label><input required="required" id="id_language_1" type="radio" name="language" value="J" /> Java</label></li>',
 					'</ul></p>'
 				)
 			),
 			$form->as_p()
-		));
+		);
 	}
 
 	/**
@@ -1168,14 +1178,14 @@ class TcForms extends TcBase
 		$form = new SongForm(array('auto_id'=>false));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<select multiple="multiple" name="composers[]" class="form-control">', '</select>')),
+			implode("\n", array('<select required="required" multiple="multiple" name="composers[]" class="form-control">', '</select>')),
 			$field->as_widget()
 		);
 		// MultipleChoiceField s choices definovanymi v konstruktoru
 		$form = new SongForm2(array('auto_id'=>false));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<select multiple="multiple" name="composers[]" class="form-control">', '<option value="J">John Lennon</option>', '<option value="P">Paul McCartney</option>', '</select>')),
+			implode("\n", array('<select required="required" multiple="multiple" name="composers[]" class="form-control">', '<option value="J">John Lennon</option>', '<option value="P">Paul McCartney</option>', '</select>')),
 			$field->as_widget()
 		);
 		// formular naplneny vstupnimi daty
@@ -1188,7 +1198,7 @@ class TcForms extends TcBase
 		);
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<select multiple="multiple" name="composers[]" class="form-control">', '<option value="J">John Lennon</option>', '<option value="P" selected="selected">Paul McCartney</option>', '</select>')),
+			implode("\n", array('<select required="required" multiple="multiple" name="composers[]" class="form-control">', '<option value="J">John Lennon</option>', '<option value="P" selected="selected">Paul McCartney</option>', '</select>')),
 			$field->as_widget()
 		);
 		// Pokud se MultipleChoiceField vykresluje jako hidden prvek, jde o specialni pripad:
@@ -1211,19 +1221,34 @@ class TcForms extends TcBase
 		$form = new SongForm3(array('auto_id'=>false));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input name="composers[]" type="checkbox" value="J" /> John Lennon</label></li>', '<li class="checkbox"><label class="control-label"><input name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
+			implode("\n", array(
+				'<ul class="checkboxes">',
+				'<li class="checkbox"><label class="control-label"><input required="required" type="checkbox" name="composers[]" value="J" /> John Lennon</label></li>',
+				'<li class="checkbox"><label class="control-label"><input required="required" type="checkbox" name="composers[]" value="P" /> Paul McCartney</label></li>',
+				'</ul>'
+			)),
 			$field->as_widget()
 		);
 		$form = new SongForm3(array('data'=>array('composers'=>array('J')), 'auto_id'=>false));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input name="composers[]" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li class="checkbox"><label class="control-label"><input name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
+			implode("\n", array(
+				'<ul class="checkboxes">',
+				'<li class="checkbox"><label class="control-label"><input required="required" type="checkbox" name="composers[]" checked="checked" value="J" /> John Lennon</label></li>',
+				'<li class="checkbox"><label class="control-label"><input required="required" type="checkbox" name="composers[]" value="P" /> Paul McCartney</label></li>',
+				'</ul>'
+			)),
 			$field->as_widget()
 		);
 		$form = new SongForm3(array('data'=>array('composers'=>array('J', 'P')), 'auto_id'=>false));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input name="composers[]" type="checkbox" checked="checked" value="J" /> John Lennon</label></li>', '<li class="checkbox"><label class="control-label"><input name="composers[]" type="checkbox" checked="checked" value="P" /> Paul McCartney</label></li>', '</ul>')),
+			implode("\n", array(
+				'<ul class="checkboxes">',
+				'<li class="checkbox"><label class="control-label"><input required="required" type="checkbox" name="composers[]" checked="checked" value="J" /> John Lennon</label></li>',
+				'<li class="checkbox"><label class="control-label"><input required="required" type="checkbox" name="composers[]" checked="checked" value="P" /> Paul McCartney</label></li>',
+				'</ul>'
+			)),
 			$field->as_widget()
 		);
 		// id jednotlivych checkboxu jsou specialni pripad -- jsou k nim
@@ -1231,7 +1256,12 @@ class TcForms extends TcBase
 		$form = new SongForm3(array('auto_id'=>'%s_id'));
 		$field = $form->get_field('composers');
 		$this->assertHtmlEquals(
-			implode("\n", array('<ul class="checkboxes">', '<li class="checkbox"><label class="control-label"><input id="composers_id_0" name="composers[]" type="checkbox" value="J" /> John Lennon</label></li>', '<li class="checkbox"><label class="control-label"><input id="composers_id_1" name="composers[]" type="checkbox" value="P" /> Paul McCartney</label></li>', '</ul>')),
+			implode("\n", array(
+				'<ul class="checkboxes">',
+				'<li class="checkbox"><label class="control-label"><input required="required" type="checkbox" id="composers_id_0" name="composers[]" value="J" /> John Lennon</label></li>',
+				'<li class="checkbox"><label class="control-label"><input required="required" type="checkbox" id="composers_id_1" name="composers[]" value="P" /> Paul McCartney</label></li>',
+				'</ul>'
+			)),
 			$field->as_widget()
 		);
 		// spravne zadana data a prazdne error pole
