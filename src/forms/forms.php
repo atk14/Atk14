@@ -27,6 +27,8 @@ class JsFormValidator{
 	 */
 	var $validators = array();
 
+	var $_fields_html_names;
+
 	/**
 	 * Constructor
 	 *
