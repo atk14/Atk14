@@ -3,7 +3,7 @@
 * There are a few components needs to be loaded.
 * Atk14 connects these components to the right order.
 */
-error_reporting(4294967295);
+error_reporting(255 | E_USER_ERROR | E_USER_WARNING | E_USER_NOTICE);
 
 define("ATK14_VERSION","1.9");
 
