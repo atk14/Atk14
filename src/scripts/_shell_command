@@ -17,7 +17,7 @@ $stage = "";
 $ssh_argv = array();
 $shell_argv = array();
 
-while(strlen($_p = array_shift($argv))){
+while(strlen($_p = (string)array_shift($argv))){
 	if(!$stage && !$shell_argv && isset($stages[strtolower($_p)])){
 		$stage = strtolower($_p);
 		continue;
