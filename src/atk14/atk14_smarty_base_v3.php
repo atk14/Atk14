@@ -34,6 +34,8 @@ class Atk14SmartyBase extends SmartyBC{
 
 class Atk14SmartyDebug extends Smarty_Internal_Debug {
 
+	var $smarty;
+
 	function start_render(Smarty_Internal_Template $template, $mode = null) {
 		parent::start_render($template, $mode);
 		$this->smarty->start_template_render($template);
@@ -51,6 +53,10 @@ class Atk14SmartyDebug extends Smarty_Internal_Debug {
 
 class Atk14TemplateIndexItem implements ArrayAccess {
 
+	var $parent;
+	var $template;
+	var $children;
+
 	function __construct($template, $parent) {
 		$this->parent = $parent;
 		$this->template = $template;
@@ -63,18 +69,22 @@ class Atk14TemplateIndexItem implements ArrayAccess {
 		return $item;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetExists($o) {
 		return true;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetGet($offset) {
 		return $this->$offset;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetSet($key, $val) {
 		throw Exception("Not supported");
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetUnset($key) {
 		throw Exception("Not supported");
 	}
@@ -94,6 +104,7 @@ class Atk14TemplateIndex implements IteratorAggregate {
 		$this->actual = $this->actual->parent;
 	}
 
+	#[\ReturnTypeWillChange]
 	function getIterator() {
 		return new ArrayIterator($this->root->children);
 	}

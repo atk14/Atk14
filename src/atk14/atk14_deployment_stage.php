@@ -224,7 +224,7 @@ class Atk14DeploymentStage{
 		$user = $config["user"] ? "$config[user]@" : "";
 		$env = "ATK14_ENV=production";
 		$env .= $config["env"] ? " $config[env]" : "";
-		$cmd = "ssh $user$config[server]$port_spec \"${cd_cmd}export $env && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
+		$cmd = "ssh $user$config[server]$port_spec \"{$cd_cmd}export $env && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
 		return $cmd;
 	}
 

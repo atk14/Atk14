@@ -69,24 +69,31 @@ class Atk14TemplateIndexItem implements ArrayAccess {
 		return $item;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetExists($o) {
 		return true;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetGet($offset) {
 		return $this->$offset;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetSet($key, $val) {
 		throw Exception("Not supported");
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetUnset($key) {
 		throw Exception("Not supported");
 	}
 }
 
 class Atk14TemplateIndex implements IteratorAggregate {
+
+	var $root;
+	var $actual;
 
 	function __construct() {
 		$this->root = $this->actual = new Atk14TemplateIndexItem(null, null);
@@ -100,6 +107,7 @@ class Atk14TemplateIndex implements IteratorAggregate {
 		$this->actual = $this->actual->parent;
 	}
 
+	#[\ReturnTypeWillChange]
 	function getIterator() {
 		return new ArrayIterator($this->root->children);
 	}

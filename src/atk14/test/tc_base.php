@@ -1,4 +1,5 @@
 <?php
+#[\AllowDynamicProperties]
 class TcBase extends TcSuperBase{
 
 	// Without this the test TcSession::test_initialization() fails in PHPUnit 4.8

@@ -186,6 +186,7 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	 *
 	 * Iterates over keys of defined orderings.
 	 */
+	#[\ReturnTypeWillChange]
 	function getIterator() {
 		return new ArrayIterator(array_keys($this->_Ordering));
 	}
@@ -268,6 +269,7 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange]
 	function offsetExists($key){
 		return isset($this->_Ordering[$key]);
 	}
@@ -278,6 +280,7 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	 *
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange]
 	function offsetSet($key,$value){
 		if(is_array($value) && isset($value[0]) && isset($value[1])){
 			$value = array(
@@ -291,6 +294,7 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange]
 	function offsetGet($key){
 		if(isset($this->_Ordering[$key])){
 			return array(
@@ -303,6 +307,7 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange]
 	function offsetUnset($key){
 		unset($this->_Ordering[$key]);
 		unset($this->_OrderingStrings["$key"]);
@@ -315,6 +320,7 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	 * > echo count($sorting);
 	 * > echo $sorting->count();
 	 **/
+	#[\ReturnTypeWillChange]
 	function count() {
 		return count($this->_Ordering);
 	}

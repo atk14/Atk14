@@ -282,7 +282,7 @@ class Atk14Client{
 	function getBasicAuthString(){
 		$username = $this->getBasicAuthUsername();
 		$password = $this->getBasicAuthPassword();
-		if(strlen($username)>0 || strlen($password)>0){
+		if(strlen((string)$username)>0 || strlen((string)$password)>0){
 			return "$username:$password";
 		}
 	}

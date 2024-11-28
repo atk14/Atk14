@@ -6,6 +6,8 @@ if(!class_exists("TcSuperBase")){
 /**
  * Common base class for other ATK14 testing classes
  */
+ 
+#[\AllowDynamicProperties]
 class TcAtk14Base extends TcSuperBase {
 	var $dbmole = null;
 

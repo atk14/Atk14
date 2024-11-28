@@ -84,7 +84,7 @@ class Atk14Fixture {
 			$table_name = $matches["table_name"];
 		}
 
-		if(strlen($class_name)==0 && strlen($table_name)==0){
+		if(strlen((string)$class_name)==0 && strlen((string)$table_name)==0){
 			$class_name = String4::ToObject($name)->singularize()->camelize()->toString(); // "gallery_items" -> "GalleryItem"
 			if(!class_exists($class_name) || !method_exists($class_name,'CreateNewRecord')){
 				$class_name = "";
