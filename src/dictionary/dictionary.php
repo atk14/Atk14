@@ -339,11 +339,13 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange] 
 	function offsetGet($value){ return $this->getValue($value);	}
 
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange]
 	function offsetSet($key, $value){
 		if(is_null($key)){
 			$keys = array_keys($this->_Values);
@@ -357,36 +359,43 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange]
 	function offsetUnset($value){ $this->unsetValue($value);	}
 
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange] 
 	function offsetExists($value){ return $this->defined($value);	}
 
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange] 
 	function current(){ return current($this->_Values); }
 
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange]
 	function key(){ return key($this->_Values); }
 
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange] 
 	function next(){ return next($this->_Values); }
 
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange] 
 	function rewind(){ reset($this->_Values); }
 
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange] 
 	function valid(){
 		$key = key($this->_Values);
 		return ($key !== null && $key !== false);
@@ -395,5 +404,6 @@ class Dictionary implements ArrayAccess, Iterator, Countable{
 	/**
 	 * @ignore
 	 */
+	#[\ReturnTypeWillChange] 
 	function count(){ return $this->size(); }
 }
