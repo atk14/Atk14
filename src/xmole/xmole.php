@@ -97,7 +97,7 @@ class XMole{
 		 * @var string
 		 * @see XMole::get_error_message()
 		 */
-		private $_error_msg = null;
+		protected $_error_msg = null;
 
 		/**
 		 * @ignore Internal storage of xml data
@@ -118,7 +118,7 @@ class XMole{
 		 * @var string
 		 * @see XMole::set_input_encoding() set_input_encoding
 		 */
-		private $_input_encoding = null;
+		protected $_input_encoding = null;
 
 		/**
 		 * Output encoding
@@ -128,25 +128,27 @@ class XMole{
 		 * @var string
 		 * @see XMole::set_output_encoding() set_output_encoding
 		 */
-		private $_output_encoding = null;
+		protected $_output_encoding = null;
 
 		/**
 		 * Input encoding differs from output encoding so translation is needed
  		 */
-		private $_translate=false;
+		protected $_translate=false;
 		
 		/**
 		 * Xml elements tree
 		 *
 		 * @var array
 		 */
-		private $_tree = array();
+		protected $_tree = array();
 
 		/**
 		 * @ignore Internal array to store structures
 		 * @var array
 		 */
-		private $_tree_references = array();
+		protected $_tree_references = array();
+
+		protected $_trim_data;
 
 	/**
 	 * Creates new instance.
@@ -926,7 +928,7 @@ class XMole{
 		
 		//odstraneni posledni reference
 		array_pop($this->_tree_references);
-}
+	}
 
 	/**
 	 * Handler of a function used by xml_parser.
