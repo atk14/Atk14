@@ -21,33 +21,33 @@ class TcHelpers extends TcBase{
 
 	function test_h(){
 		$out = $this->_run_action("helpers/h");
-		$this->assertContains('escaped value: The book &lt;strong&gt;is mine!&lt;/strong&gt;',$out);
-		$this->assertContains('plain value: The book <strong>is mine!</strong>',$out);
-		$this->assertContains('escaped value (in a block): The book &lt;strong&gt;is mine!&lt;/strong&gt;',$out);
+		$this->assertStringContains('escaped value: The book &lt;strong&gt;is mine!&lt;/strong&gt;',$out);
+		$this->assertStringContains('plain value: The book <strong>is mine!</strong>',$out);
+		$this->assertStringContains('escaped value (in a block): The book &lt;strong&gt;is mine!&lt;/strong&gt;',$out);
 	}
 
 	function test_render(){
 		$out = $this->_run_action("helpers/render");
-		$this->assertContains('<li class="red">ADVENTURE: The Adventures of Tom Sawyer by Mark Twain (index=0, 1/2, first)</li>',$out);
-		$this->assertContains('<li class="red">ADVENTURE: Swallows and Amazons by Arthur Ransome (index=1, 2/2, last)</li>',$out);
+		$this->assertStringContains('<li class="red">ADVENTURE: The Adventures of Tom Sawyer by Mark Twain (index=0, 1/2, first)</li>',$out);
+		$this->assertStringContains('<li class="red">ADVENTURE: Swallows and Amazons by Arthur Ransome (index=1, 2/2, last)</li>',$out);
 
-		$this->assertContains('some_value after render: TOP_VALUE',$out);
-		$this->assertContains('some_value from the pit: LOWER_VALUE',$out);
-		$this->assertContains('some_value from the middle: LOWER_VALUE',$out);
+		$this->assertStringContains('some_value after render: TOP_VALUE',$out);
+		$this->assertStringContains('some_value from the pit: LOWER_VALUE',$out);
+		$this->assertStringContains('some_value from the middle: LOWER_VALUE',$out);
 	}
 
 	function test_render_with_forms(){
 		$out = $this->_run_action("helpers/render_with_forms");
-		$this->assertContains('FirstForm: <form action="/first/" method="post" id="form_helpers_first">',$out);
-		$this->assertContains('SecondForm: <form action="/second/" method="post" id="form_helpers_second">',$out);
+		$this->assertStringContains('FirstForm: <form action="/first/" method="post" id="form_helpers_first">',$out);
+		$this->assertStringContains('SecondForm: <form action="/second/" method="post" id="form_helpers_second">',$out);
 	}
 
 	function test_render_component(){
 		global $ATK14_GLOBAL;
 		$out = $this->_run_action("helpers/render_component");
 
-		$this->assertContains('<div id="external_content">Hello World from Mars!</div>',$out);
-		$this->assertContains('<div id="external_content_from_other_namespace">Hello from Venus, an planet from the Universe</div>',$out);
+		$this->assertStringContains('<div id="external_content">Hello World from Mars!</div>',$out);
+		$this->assertStringContains('<div id="external_content_from_other_namespace">Hello from Venus, an planet from the Universe</div>',$out);
 
 		$this->assertEquals("helpers",$ATK14_GLOBAL->getValue("controller"));
 		$this->assertEquals("render_component",$ATK14_GLOBAL->getValue("action"));
@@ -58,14 +58,14 @@ class TcHelpers extends TcBase{
 		$content = $this->_run_action("universe/planets/controller_state");
 		$content_rp = $this->_run_action("helpers/render_component");
 
-		$this->assertContains('namespace: "universe"
+		$this->assertStringContains('namespace: "universe"
 controller: "planets"
 action: "controller_state"
 prev_namespace: ""
 prev_controller: ""
 prev_action: ""',$content);
 
-		$this->assertContains('namespace: "universe"
+		$this->assertStringContains('namespace: "universe"
 controller: "planets"
 action: "controller_state"
 prev_namespace: ""
@@ -86,10 +86,10 @@ prev_action: "render_component"',$content_rp);
 
 	function test_a(){
 		$out = $this->_run_action("helpers/a");
-		$this->assertContains('<a href="/en/books/">List Books</a>',$out);
-		$this->assertContains('<a title="Book info" href="/en/books/detail/?id=123">Book#123</a>',$out);
-		$this->assertContains('<a href="/en/books/detail/?id=456#detail">Book#456</a>',$out);
-		$this->assertContains('<a class="active" href="/en/books/detail/?id=7890#detail">Book#7890</a>',$out);
+		$this->assertStringContains('<a href="/en/books/">List Books</a>',$out);
+		$this->assertStringContains('<a title="Book info" href="/en/books/detail/?id=123">Book#123</a>',$out);
+		$this->assertStringContains('<a href="/en/books/detail/?id=456#detail">Book#456</a>',$out);
+		$this->assertStringContains('<a class="active" href="/en/books/detail/?id=7890#detail">Book#7890</a>',$out);
 	}
 
 	function test_link_to(){
@@ -100,8 +100,8 @@ prev_action: "render_component"',$content_rp);
 		$this->assertEquals("en",$ATK14_GLOBAL->getLang());
 
 		$out = $this->_run_action("helpers/link_to");
-		$this->assertContains('Book#1200 URL: http://www.testing.cz/en/books/detail/?id=1200&amp;format=xml',$out);
-		$this->assertContains('Kniha#600 URL: https://secure.testing.cz/cs/books/detail/?id=600#detail',$out);
+		$this->assertStringContains('Book#1200 URL: http://www.testing.cz/en/books/detail/?id=1200&amp;format=xml',$out);
+		$this->assertStringContains('Kniha#600 URL: https://secure.testing.cz/cs/books/detail/?id=600#detail',$out);
 	}
 
 	function test_content(){
@@ -109,11 +109,11 @@ prev_action: "render_component"',$content_rp);
 
 		$out = str_replace("<content>A song just for fun\n</content>","<content>A song just for fun</content>",$out); // HACK: In Smarty3 there is an extra new line, dont know why
 
-		$this->assertContains("<content>A song just for fun</content>",$out);
-		$this->assertContains('<greeting>Hello</greeting>',$out);
-		$this->assertContains('<lyrics>Five little monkeys jumping on the bed. One fell off and bumped his head. Mama called the doctor and the doctor said, "No more monkeys jumping on the bed!"</lyrics>',$out);
+		$this->assertStringContains("<content>A song just for fun</content>",$out);
+		$this->assertStringContains('<greeting>Hello</greeting>',$out);
+		$this->assertStringContains('<lyrics>Five little monkeys jumping on the bed. One fell off and bumped his head. Mama called the doctor and the doctor said, "No more monkeys jumping on the bed!"</lyrics>',$out);
 
-		$this->assertContains('<title>La Musique | DEMO</title>',$out);
+		$this->assertStringContains('<title>La Musique | DEMO</title>',$out);
 	}
 
 	function test_cache(){
@@ -121,6 +121,6 @@ prev_action: "render_component"',$content_rp);
 		$out2 = $this->_run_action("helpers/cache");
 
 		$this->assertEquals($out,$out2);
-		$this->assertNotContains('uniqid: ""',$out); // just to make sure that a proper $uniqid was assigned to the template
+		$this->assertStringNotContains('uniqid: ""',$out); // just to make sure that a proper $uniqid was assigned to the template
 	}
 }

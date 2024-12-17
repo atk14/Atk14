@@ -19,25 +19,25 @@ class TcForm extends TcBase{
 
 		$form->set_initial("greeting","Hello Guys!");
 		$field = $form->get_field("greeting");
-		$this->assertContains('value="Hello Guys!"',$field->as_widget());
+		$this->assertStringContains('value="Hello Guys!"',$field->as_widget());
 
-		$this->assertContains('id="form_main_hello_world"',$form->begin());
+		$this->assertStringContains('id="form_main_hello_world"',$form->begin());
 
 		$form = Atk14Form::GetInstanceByControllerAndAction("main","hello_world",null,array("attrs" => array("id" => "a_tiny_form")));
 		$this->assertEquals(true,!!is_object($form));
-		$this->assertContains('id="a_tiny_form"',$form->begin());
+		$this->assertStringContains('id="a_tiny_form"',$form->begin());
 
 		$form = Atk14Form::GetForm("HelloWorldForm");
 		$this->assertEquals(true,!!is_object($form));
-		$this->assertContains('id="form_main_hello_world"',$form->begin());
+		$this->assertStringContains('id="form_main_hello_world"',$form->begin());
 
 		$form = Atk14Form::GetForm("HelloWorldForm",null,array("attrs" => array("id" => "a_small_form")));
 		$this->assertEquals(true,!!is_object($form));
-		$this->assertContains('id="a_small_form"',$form->begin());
+		$this->assertStringContains('id="a_small_form"',$form->begin());
 
 		$form = Atk14Form::GetForm("HelloWorldForm",null,array("attrs" => array("id" => "")));
 		$this->assertEquals(true,!!is_object($form));
-		$this->assertNotContains('id=""',$form->begin());
+		$this->assertStringNotContains('id=""',$form->begin());
 	}
 
 	function test_get_fields(){
@@ -192,17 +192,17 @@ class TcForm extends TcBase{
 	function test_multipart(){
 		$form = new TestForm();
 		$form->add_field("name",new CharField());
-		$this->assertNotContains('enctype="multipart/form-data"',$form->begin());
+		$this->assertStringNotContains('enctype="multipart/form-data"',$form->begin());
 
 		$form = new TestForm();
 		$form->add_field("name",new CharField());
 		$form->add_field("image",new ImageField());
-		$this->assertContains('enctype="multipart/form-data"',$form->begin());
+		$this->assertStringContains('enctype="multipart/form-data"',$form->begin());
 
 		$form = new TestForm();
 		$form->add_field("name",new CharField());
 		$form->enable_multipart();
-		$this->assertContains('enctype="multipart/form-data"',$form->begin());
+		$this->assertStringContains('enctype="multipart/form-data"',$form->begin());
 	}
 
 	function test_set_action(){

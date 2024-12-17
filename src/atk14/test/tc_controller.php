@@ -143,16 +143,16 @@ class TcController extends TcBase{
 
 	function test_before_filter(){
 		$this->client->get("testing/test");
-		$this->assertContains("there_is_a_value_assigned_from_action_method",$this->client->getContent());
-		$this->assertContains("there_is_a_value_assigned_usually_from_before_render",$this->client->getContent());
-		$this->assertContains("there_is_a_value_assigned_directly_from_before_render",$this->client->getContent());
+		$this->assertStringContains("there_is_a_value_assigned_from_action_method",$this->client->getContent());
+		$this->assertStringContains("there_is_a_value_assigned_usually_from_before_render",$this->client->getContent());
+		$this->assertStringContains("there_is_a_value_assigned_directly_from_before_render",$this->client->getContent());
 	}
 
 	function test_render(){
 		$controller = $this->client->get("testing/test_render");
 
-		$this->assertContains("John Doe",$controller->snippet);
-		$this->assertContains("John Doe",$this->client->getContent());
+		$this->assertStringContains("John Doe",$controller->snippet);
+		$this->assertStringContains("John Doe",$this->client->getContent());
 	}
 
 	function test_render_collection(){
@@ -160,14 +160,14 @@ class TcController extends TcBase{
 
 		$content = $controller->response->buffer->toString();
 		
-		$this->assertContains('First article',$content);
-		$this->assertContains('Second article',$content);
+		$this->assertStringContains('First article',$content);
+		$this->assertStringContains('Second article',$content);
 
-		$this->assertContains('Third article',$content);
-		$this->assertContains('Fourth article',$content);
+		$this->assertStringContains('Third article',$content);
+		$this->assertStringContains('Fourth article',$content);
 
-		$this->assertContains('Fifth article',$content);
-		$this->assertContains('Sixth article',$content);
+		$this->assertStringContains('Fifth article',$content);
+		$this->assertStringContains('Sixth article',$content);
 	}
 
 	function test_error404(){
@@ -175,12 +175,12 @@ class TcController extends TcBase{
 		$controller = $client->get("nonsence/nonsence");
 		$this->assertEquals(404,$client->getStatusCode());
 		$this->assertEquals("ApplicationController",get_class($controller));
-		$this->assertContains("this is views/application/error404.tpl",$client->getContent());
+		$this->assertStringContains("this is views/application/error404.tpl",$client->getContent());
 
 		$controller = $client->get("admin/en/nonsence/nonsence");
 		$this->assertEquals(404,$client->getStatusCode());
 		$this->assertEquals("AdminController",get_class($controller)); // there is AdminController in file controllers/admin/admin.php
-		$this->assertContains("error404 template in views/admin/admin/error404.tpl",$client->getContent());
+		$this->assertStringContains("error404 template in views/admin/admin/error404.tpl",$client->getContent());
 
 		$controller = $client->get("universe/en/nonsence/nonsence");
 		$this->assertEquals(404,$client->getStatusCode());
@@ -236,11 +236,11 @@ class TcController extends TcBase{
 		$this->assertEquals(200,$client->getStatusCode());
 		$content_6 = $client->getContent();
 
-		$this->assertContains("random_value: ",$content_1);
+		$this->assertStringContains("random_value: ",$content_1);
 		$this->assertEquals($content_1,$content_2);
-		$this->assertContains("random_value: ",$content_3);
+		$this->assertStringContains("random_value: ",$content_3);
 		$this->assertEquals($content_3,$content_4);
-		$this->assertContains("random_value: ",$content_5);
+		$this->assertStringContains("random_value: ",$content_5);
 		$this->assertEquals($content_5,$content_6);
 
 		$this->assertNotEquals($content_1,$content_3);
@@ -252,7 +252,7 @@ class TcController extends TcBase{
 		$this->assertEquals("utf-8",$client->getContentCharset());
 		$this->assertEquals(200,$client->getStatusCode());
 		$content_3 = $client->getContent();
-		$this->assertContains("random_value: ",$content_3);
+		$this->assertStringContains("random_value: ",$content_3);
 		$this->assertNotEquals($content_1,$content_3);
 
 		// no template
@@ -287,19 +287,19 @@ class TcController extends TcBase{
 		$client->get("testing/test_caching_with_layout_set_in_action");
 		$content_1 = $client->getContent();
 		$this->assertTrue(!!preg_match('/random_value: /',$content_1));
-		$this->assertContains("<!-- custom layout -->",$content_1);
+		$this->assertStringContains("<!-- custom layout -->",$content_1);
 
 		$client->get("testing/test_caching_with_layout_set_in_action");
 		$content_2 = $client->getContent();
 		$this->assertTrue(!!preg_match('/random_value: /',$content_2));
-		$this->assertContains("<!-- custom layout -->",$content_2);
+		$this->assertStringContains("<!-- custom layout -->",$content_2);
 
 		$this->assertEquals($content_1,$content_2);
 
 		$client->get("testing/test_caching_with_layout_set_in_action",array("disable_cache" => "1"));
 		$content_3 = $client->getContent();
 		$this->assertTrue(!!preg_match('/random_value: /',$content_3));
-		$this->assertContains("<!-- custom layout -->",$content_3);
+		$this->assertStringContains("<!-- custom layout -->",$content_3);
 
 		$this->assertNotEquals($content_1,$content_3);
 	}
