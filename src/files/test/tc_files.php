@@ -85,7 +85,7 @@ class TcFiles extends TcBase{
 		$content = Files::GetFileContent("hlava.jpg");
 		$tmp_filename = Files::WriteToTemp($content);
 		$this->assertTrue(file_exists($tmp_filename));
-		$this->assertNotContains("hlava.jpg",$tmp_filename);
+		$this->assertStringNotContains("hlava.jpg",$tmp_filename);
 		$tmp_content = Files::GetFileContent($tmp_filename);
 		$this->assertEquals($content,$tmp_content);
 
@@ -108,22 +108,22 @@ class TcFiles extends TcBase{
 		$t2 = Files::GetTempFilename();
 		$t3 = Files::GetTempFilename("pdf_creator_");
 
-		$this->assertContains(TEMP,$t1);
-		$this->assertContains(TEMP,$t2);
-		$this->assertContains(TEMP,$t3);
+		$this->assertStringContains(TEMP,$t1);
+		$this->assertStringContains(TEMP,$t2);
+		$this->assertStringContains(TEMP,$t3);
 
-		$this->assertContains("files_tmp_",$t1); // default prefix
-		$this->assertContains("files_tmp_",$t2);
-		$this->assertNotContains("files_tmp_",$t3);
-		$this->assertContains("pdf_creator_",$t3);
+		$this->assertStringContains("files_tmp_",$t1); // default prefix
+		$this->assertStringContains("files_tmp_",$t2);
+		$this->assertStringNotContains("files_tmp_",$t3);
+		$this->assertStringContains("pdf_creator_",$t3);
 
 		$this->assertTrue($t1!=$t2);
 
 		// prefix sanitization
 		$t = Files::GetTempFilename("bad/joke");
 
-		$this->assertNotContains("bad/joke",$t);
-		$this->assertContains("bad_joke",$t);
+		$this->assertStringNotContains("bad/joke",$t);
+		$this->assertStringContains("bad_joke",$t);
 	}
 
 	function test_move_file(){
@@ -650,7 +650,7 @@ class TcFiles extends TcBase{
 
 		$ret = @Files::WriteToCacheFile("non_existing_dir/cache_file","Cache_Content",$err,$err_str);
 		$this->assertTrue($err);
-		$this->assertContains("failed to open file for writing",$err_str);
+		$this->assertStringContains("failed to open file for writing",$err_str);
 		$this->assertEquals(0,$ret);
 
 		$this->assertFalse(file_exists("non_existing_dir/cache_file"));
