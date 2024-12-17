@@ -39,7 +39,7 @@ class TcLogger extends TcBase{
 		$logger->flushAll();
 		$content = ob_get_clean();
 		$this->assertFalse(file_exists($log_file));
-		$this->assertContains("TEST",$content);
+		$this->assertStringContains("TEST",$content);
 
 		$logger = new Logger("robot",array(
 			"log_to_stdout" => true,
@@ -50,7 +50,7 @@ class TcLogger extends TcBase{
 		$logger->flushAll();
 		$content = ob_get_clean();
 		$this->assertTrue(file_exists($log_file));
-		$this->assertContains("TST2",$content);
+		$this->assertStringContains("TST2",$content);
 
 		unlink($log_file);
 
@@ -164,10 +164,10 @@ class TcLogger extends TcBase{
 
 		$content = Files::GetFileContent($f);
 
-		$this->assertContains("START",$content);
-		$this->assertContains("doing some normal job",$content);
-		$this->assertContains("ERROR: Damn, this is bad!",$content);
-		$this->assertContains("STOP",$content);
+		$this->assertStringContains("START",$content);
+		$this->assertStringContains("doing some normal job",$content);
+		$this->assertStringContains("ERROR: Damn, this is bad!",$content);
+		$this->assertStringContains("STOP",$content);
 
 		unlink($f);
 	}
@@ -180,38 +180,38 @@ class TcLogger extends TcBase{
 
 		$logger->info("Hello");
 
-		$this->assertContains("Hello",$logger->toString());
-		$this->assertNotContains("World",$logger->toString());
+		$this->assertStringContains("Hello",$logger->toString());
+		$this->assertStringNotContains("World",$logger->toString());
 		
-		$this->assertContains("Hello",(string)$logger);
-		$this->assertNotContains("World",(string)$logger);
+		$this->assertStringContains("Hello",(string)$logger);
+		$this->assertStringNotContains("World",(string)$logger);
 
 		$logger->info("World");
 
-		$this->assertContains("Hello",$logger->toString());
-		$this->assertContains("World",$logger->toString());
+		$this->assertStringContains("Hello",$logger->toString());
+		$this->assertStringContains("World",$logger->toString());
 
 		$logger->flush();
 
-		$this->assertContains("Hello",$logger->toString());
-		$this->assertContains("World",$logger->toString());
+		$this->assertStringContains("Hello",$logger->toString());
+		$this->assertStringContains("World",$logger->toString());
 
 		$logger->flushAll();
 
-		$this->assertContains("Hello",$logger->toString());
-		$this->assertContains("World",$logger->toString());
+		$this->assertStringContains("Hello",$logger->toString());
+		$this->assertStringContains("World",$logger->toString());
 
 		$logger->info("Greetings!");
 
-		$this->assertNotContains("Hello",$logger->toString());
-		$this->assertNotContains("World",$logger->toString());
-		$this->assertContains("Greetings!",$logger->toString());
+		$this->assertStringNotContains("Hello",$logger->toString());
+		$this->assertStringNotContains("World",$logger->toString());
+		$this->assertStringContains("Greetings!",$logger->toString());
 
 		$logger->flushAll();
 
-		$this->assertNotContains("Hello",$logger->toString());
-		$this->assertNotContains("World",$logger->toString());
-		$this->assertContains("Greetings!",$logger->toString());
+		$this->assertStringNotContains("Hello",$logger->toString());
+		$this->assertStringNotContains("World",$logger->toString());
+		$this->assertStringContains("Greetings!",$logger->toString());
 
 		$logger->flushAll();
 
