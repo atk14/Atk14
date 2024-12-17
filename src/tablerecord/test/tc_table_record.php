@@ -51,7 +51,7 @@ class TcTableRecord extends TcBase{
 		$article = Article::CreateNewRecord(array("title" => "La Title", "body" => "La Body"));
 		$article = Article::GetInstanceById($article->getId());
 
-		$this->assertNotContains("body",$dbmole->getQuery());
+		$this->assertStringNotContains("body",$dbmole->getQuery());
 
 		$q_cnt = $dbmole->getQueriesExecuted();
 
@@ -59,7 +59,7 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals("La Body",$array["body"]);
 
 		$this->assertEquals($q_cnt+1,$dbmole->getQueriesExecuted());
-		$this->assertContains("body",$dbmole->getQuery());
+		$this->assertStringContains("body",$dbmole->getQuery());
 
 		$array = $article->toArray();
 
@@ -483,7 +483,7 @@ class TcTableRecord extends TcBase{
 
 		$article = Article::GetInstanceById($article->getId());
 
-		$this->assertNotContains("body",$dbmole->getQuery()); // ensure that body was not read
+		$this->assertStringNotContains("body",$dbmole->getQuery()); // ensure that body was not read
 		$q_cnt = $dbmole->getQueriesExecuted();
 
 		$this->assertEquals("La Title",$article->getTitle());
@@ -496,7 +496,7 @@ class TcTableRecord extends TcBase{
 
 		$this->assertEquals("La Body",$article->getBody());
 
-		$this->assertContains("body",$dbmole->getQuery());
+		$this->assertStringContains("body",$dbmole->getQuery());
 		$this->assertEquals($q_cnt+1,$dbmole->getQueriesExecuted());
 
 		$this->assertEquals("La Body",$article->getBody());
@@ -914,14 +914,14 @@ class TcTableRecord extends TcBase{
 			"title" => "My Title",
 		));
 		$dbmole = $rec->getDbmole();
-		$this->assertContains("SELECT id,title,znak,an_integer",$dbmole->getQuery());
+		$this->assertStringContains("SELECT id,title,znak,an_integer",$dbmole->getQuery());
 
 		// MySQL
 		$rec = MyTestTable::CreateNewRecord(array(
 			"title" => "My Title",
 		));
 		$dbmole = $rec->getDbmole();
-		$this->assertContains("SELECT `id`,`title`,`znak`,`an_integer`",$dbmole->getQuery());
+		$this->assertStringContains("SELECT `id`,`title`,`znak`,`an_integer`",$dbmole->getQuery());
 	}
 
 	function _test_fall($recs){
