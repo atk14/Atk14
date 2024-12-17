@@ -11,7 +11,7 @@ class TcProxy extends TcBase {
 		// http
 		$uf = new UrlFetcher("http://example.com/",["proxy" => "tcp://127.0.0.1:8118"]);
 		$this->assertEquals(200,$uf->getStatusCode());
-		$this->assertContains("Example Domain",(string)$uf->getContent());
+		$this->assertStringContains("Example Domain",(string)$uf->getContent());
 
 		// https
 		$uf = new UrlFetcher("https://www.atk14.net/api/en/http_requests/detail/?format=json&requested_response_code=417",["proxy" => "tcp://127.0.0.1:8118"]);
@@ -37,14 +37,14 @@ class TcProxy extends TcBase {
 
 		$uf = new UrlFetcher("http://config.privoxy.org/");
 		$this->assertEquals(200,$uf->getStatusCode());
-		$this->assertContains("<title>Privoxy is not being used</title>",(string)$uf->getContent());
+		$this->assertStringContains("<title>Privoxy is not being used</title>",(string)$uf->getContent());
 	}
 
 	function test_proxy_server_is_down(){
 		$uf = new UrlFetcher("http://example.com/",["proxy" => "tcp://127.0.0.1:8888"]); // no proxy server is running on this port
 		$this->assertFalse($uf->found());
 		$this->assertNull($uf->getStatusCode());
-		$this->assertContains("could not connect to proxy server tcp://127.0.0.1:8888",$uf->getErrorMessage());
+		$this->assertStringContains("could not connect to proxy server tcp://127.0.0.1:8888",$uf->getErrorMessage());
 	}
 
 	function _is_privoxy_running(){

@@ -35,7 +35,7 @@ class tc_url_fetcher extends tc_base{
 		$this->assertTrue($f->errorOccurred());
 		$this->assertEquals(404,$f->getStatusCode()); // Not Found
 		$this->assertEquals("Not Found",$f->getStatusMessage());
-		$this->assertContains('<title>404 Not Found</title>',(string)$f->getContent());
+		$this->assertStringContains('<title>404 Not Found</title>',(string)$f->getContent());
 
 		// notice: connecting to port 8124 causes warning messages appearance 
 		$f = new UrlFetcher("http://127.0.0.1:8124/pretty-stupid-port");
@@ -55,15 +55,15 @@ class tc_url_fetcher extends tc_base{
 		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing/dungeon-master.png");
 		$this->assertTrue($f->found());
 		$headers = $f->getRequestHeaders();
-		$this->assertContains("User-Agent: UrlFetcher",$headers);
-		$this->assertNotContains("User-Agent: curl",$headers);
+		$this->assertStringContains("User-Agent: UrlFetcher",$headers);
+		$this->assertStringNotContains("User-Agent: curl",$headers);
 		
 		// Custom User-Agent
 		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing/dungeon-master.png",array("user_agent" => "curl/7.35.0"));
 		$this->assertTrue($f->found());
 		$headers = $f->getRequestHeaders();
-		$this->assertNotContains("User-Agent: UrlFetcher",$headers);
-		$this->assertContains("User-Agent: curl",$headers);
+		$this->assertStringNotContains("User-Agent: UrlFetcher",$headers);
+		$this->assertStringContains("User-Agent: curl",$headers);
 
 		// Empty response
 		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing/empty_response.php");
@@ -146,8 +146,8 @@ class tc_url_fetcher extends tc_base{
 		$this->assertEquals("POST",$f->getRequestMethod());
 
 		$headers = $f->getRequestHeaders();
-		$this->assertContains("User-Agent: UrlFetcher",$headers);
-		$this->assertNotContains("User-Agent: curl",$headers);
+		$this->assertStringContains("User-Agent: UrlFetcher",$headers);
+		$this->assertStringNotContains("User-Agent: curl",$headers);
 		$this->assertTrue((bool)preg_match("/Content-Length: 21/",$headers));
 		$this->assertTrue((bool)preg_match("/Content-Type: application\\/x-www-form-urlencoded/",$headers));
 	}
