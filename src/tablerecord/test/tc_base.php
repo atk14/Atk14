@@ -1,6 +1,7 @@
 <?php
 class TcBase extends tc_super_base{
-	function setUp(){
+
+	function _setUp(){
 		Cache::Clear();
 		$this->dbmole = $GLOBALS["dbmole"];
 
@@ -8,7 +9,7 @@ class TcBase extends tc_super_base{
 		$this->_empty_test_table();
 	}
  
-	function tearDown(){
+	function _tearDown(){
 		$this->dbmole->rollback();
 	}
 
