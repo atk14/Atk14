@@ -5,7 +5,7 @@ class TcBase extends TcSuperBase{
 	// Without this the test TcSession::test_initialization() fails in PHPUnit 4.8
 	protected $backupGlobals = false;
 
-	function setUp(){
+	function _setUp(){
 		global $dbmole;
 
 		$this->dbmole = $dbmole;
@@ -14,7 +14,7 @@ class TcBase extends TcSuperBase{
 		$this->client = new Atk14Client();
 	}
 
-	function tearDown(){
+	function _tearDown(){
 		$this->dbmole->rollback();
 	}
 

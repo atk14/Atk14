@@ -1,11 +1,11 @@
 <?php
 class TcSession extends TcBase{
 
-	function setUp(){
+	function _setUp(){
 		global $_COOKIE,$HTTP_REQUEST;
 		$HTTP_REQUEST->setRemoteAddr("127.0.0.1");
 		$_COOKIE[SESSION_STORER_COOKIE_NAME_CHECK] = "1";
-		parent::setUp();
+		parent::_setUp();
 	}
 
 	function test(){

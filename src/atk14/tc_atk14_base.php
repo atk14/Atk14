@@ -9,19 +9,20 @@ if(!class_exists("TcSuperBase")){
  
 #[\AllowDynamicProperties]
 class TcAtk14Base extends TcSuperBase {
+
 	var $dbmole = null;
 
-	function setUp(){
+	function _setUp(){
 		$this->dbmole->begin(array(
 			"execute_after_connecting" => true,
 		));
 		$this->setUpFixtures();
-		parent::setUp();
+		parent::_setUp();
 	}
 
-	function tearDown(){
+	function _tearDown(){
 		$this->dbmole->rollback();
-		parent::tearDown();
+		parent::_tearDown();
 	}
 	
 	function __construct($name = NULL, array $data = array(), $dataName = ''){
@@ -76,12 +77,12 @@ class TcAtk14Base extends TcSuperBase {
 	 * // file: test/models/tc_base.php
 	 * class TcBase extends TcAtk14Model {
 	 *
-	 *  function setUp(){
+	 *  function _setUp(){
 	 *    $this->dbmole->begin();
 	 *    $this->setUpFixtures();
 	 *  }
 	 *
-	 *  function tearDown(){
+	 *  function _tearDown(){
 	 *    $this->dbmole->rollback();
 	 *  }
 	 * }
