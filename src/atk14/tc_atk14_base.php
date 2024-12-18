@@ -112,7 +112,7 @@ class TcAtk14Base extends TcSuperBase {
 		return Atk14Fixture::Load($name);
 	}
 
-	function getAnnotations(){
+	function getAnnotations():array{
 		if(is_callable("parent::getAnnotations")){
 			// in case of PHPUnit <= 8.*
 			return parent::getAnnotations();
