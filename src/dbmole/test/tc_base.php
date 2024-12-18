@@ -1,6 +1,7 @@
 <?php
 class tc_base extends tc_super_base{
-	function setUp(){
+
+	function _setUp(){
 		$m = &$this->_get_moles();
 		$this->my = $m["my"];
 		$this->pg	= $m["pg"];
@@ -8,7 +9,7 @@ class tc_base extends tc_super_base{
 		$this->base = $m["base"];
 	}
 
-	function tearDown(){
+	function _tearDown(){
 	}
 
 	/**
