@@ -156,15 +156,37 @@ if(PHPUNIT2){
 	}
 	$_base_class = class_exists('PHPUnit\Framework\TestCase') ? 'PHPUnit\Framework\TestCase' : 'PHPUnit_Framework_TestCase';
 	eval("class __TcCheck extends $_base_class{ }");
-	$_tc_check = new __TcCheck();
+	$_tc_check = new __TcCheck("__TcCheck");
 	$_methods_def = '';
+	if(PHP_VERSION_ID>=70100){
+		$_methods_def .= '
+			function setUp():void{
+				$this->_setUp();
+			}
+			function tearDown():void{
+				$this->_tearDown();
+			}
+		';
+	}else{
+		$_methods_def .= '
+			function setUp(){
+				$this->_setUp();
+			}
+		';
+	}
+	$_methods_def .= '	
+		function _setUp(){
+		}
+		function _tearDown(){
+		}
+	';
 	if(!method_exists($_tc_check,"assertStringContains")){
 		$_methods_def .= '
 			function assertStringContains($needle, $haystack, $message = ""){
-				return $this->assertContains($needle, $haystack, $message);
+				return $this->assertTrue(is_int(strpos($haystack, $needle)), $message);
 			}
 			function assertStringNotContains($needle, $haystack, $message = ""){
-				return $this->assertNotContains($needle, $haystack, $message);
+				return $this->assertTrue(is_bool(strpos($haystack, $needle)), $message);
 			}
 		';
 	}
@@ -294,14 +316,28 @@ function _test_runner($filename,$DIR){
 
 	}else{
 
-		if(class_exists("PHPUnit\TextUI\ResultPrinter")){
+		/*
+		// TODO: PHPUnit 10, 11
+		if(class_exists('PHPUnit\TextUI\Output\DefaultPrinter')){
+			$printer = PHPUnit\TextUI\Output\DefaultPrinter::standardOutput();
+		}
+		*/
+		if(class_exists('PHPUnit\TextUI\DefaultResultPrinter')){
+			$printer = new PHPUnit\TextUI\DefaultResultPrinter();
+		}elseif(class_exists('PHPUnit\TextUI\ResultPrinter')){
 			$printer = new PHPUnit\TextUI\ResultPrinter();
 		}else{
 			// phpunit/phpunit 4.*|5.*
 			$printer = new PHPUnit_TextUI_ResultPrinter();
 		}
 
-		if(class_exists("PHPUnit\Framework\TestSuite")){
+		if(class_exists('PHPUnit\Framework\TestSuite')){
+			/*
+			// TODO: PHPUnit 10, 11
+			$suite = PHPUnit\Framework\TestSuite::fromClassReflector(
+				new ReflectionClass($classname)
+			);
+			*/
 			$suite  = new PHPUnit\Framework\TestSuite(
 				new ReflectionClass($classname)
 			);
@@ -313,6 +349,7 @@ function _test_runner($filename,$DIR){
 		}
 
 		$result = $suite->run();
+
 		$printer->printResult($result);
 
 	}
