@@ -111,4 +111,25 @@ class TcAtk14Base extends TcSuperBase {
 	function loadFixture($name){
 		return Atk14Fixture::Load($name);
 	}
+
+	function getAnnotations(){
+		if(is_callable("parent::getAnnotations")){
+			// in case of PHPUnit <= 8.*
+			return parent::getAnnotations();
+		}
+
+		$annotations = array("class" => array());
+
+		$ref = new ReflectionClass(get_class($this));
+		$docComment = $ref->getDocComment();
+		preg_match_all('/@(\w+)\s+(.*)/', $docComment, $matches, PREG_SET_ORDER);
+		foreach ($matches as $match) {
+			if(!isset($annotations["class"][$match[1]])){
+				$annotations["class"][$match[1]] = array();
+			}
+			$annotations["class"][$match[1]][] = trim($match[2]);
+		}
+
+		return $annotations;
+	}
 }
