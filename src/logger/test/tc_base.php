@@ -1,6 +1,7 @@
 <?php
 class TcBase extends TcSuperBase{
-	function setUp(){
+
+	function _setUp(){
 		$this->_remove_log_files();
 	}
 
