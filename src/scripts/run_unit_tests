@@ -172,6 +172,9 @@ if(PHPUNIT2){
 			function setUp(){
 				$this->_setUp();
 			}
+			function tearDown(){
+				$this->_tearDown();
+			}
 		';
 	}
 	$_methods_def .= '	
