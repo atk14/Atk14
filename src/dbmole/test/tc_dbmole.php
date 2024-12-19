@@ -87,12 +87,12 @@ class tc_dbmole extends tc_base{
 			$this->assertEquals(true,$dbmole->doQuery("SELECT * FROM test_table WHERE title=:title",array(":title" => "Nice title")));
 
 			$msg = $this->_execute_with_error($dbmole,"doQuery","SELECT * FROM test_table WHERE title=:title",array("123" => "Nice title"));
-			$this->assertContains("there is a suspicious key in bind_ar",$msg);
+			$this->assertStringContains("there is a suspicious key in bind_ar",$msg);
 
 			$this->assertEquals(true,$dbmole->doQuery("SELECT * FROM test_table WHERE title=:title",array(":title" => "Nice title")));
 
 			$msg = $this->_execute_with_error($dbmole,"selectFirstRow","SELECT * FROM test_table WHERE title=:title",array("123" => "Nice title"));
-			$this->assertContains("there is a suspicious key in bind_ar",$msg);
+			$this->assertStringContains("there is a suspicious key in bind_ar",$msg);
 			
 			$this->assertEquals(null,$dbmole->selectFirstRow("SELECT * FROM test_table WHERE title=:title",array(":title" => "Nice title")));
 		}
