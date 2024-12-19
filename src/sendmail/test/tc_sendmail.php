@@ -12,8 +12,8 @@ class tc_sendmail extends tc_base{
 		$this->assertEquals("test@file",$ar["from"]);
 		$this->assertEquals("Hello from unit test",$ar["subject"]);
 		$this->assertEquals("test@file",$ar["return_path"]);
-		$this->assertContains("From: test@file",$ar["headers"]);
-		$this->assertContains("Content-Type: text/plain; charset=UTF-8",$ar["headers"]);
+		$this->assertStringContains("From: test@file",$ar["headers"]);
+		$this->assertStringContains("Content-Type: text/plain; charset=UTF-8",$ar["headers"]);
 		$this->assertEquals(true,is_null($ar["accepted_for_delivery"])); // messages are not sent in testing environment
 		$this->assertEquals("-ftest@file",$ar["additional_parameters"]);
 
@@ -35,7 +35,7 @@ class tc_sendmail extends tc_base{
 			"subject" => "Hello from unit test",
 			"body" => "Hi there"
 		));
-		$this->assertContains("From: info@somewhere",$ar["headers"]);
+		$this->assertStringContains("From: info@somewhere",$ar["headers"]);
 
 		$ar = sendmail(array(
 			"to" => "me@mydomain.com",
@@ -46,7 +46,7 @@ class tc_sendmail extends tc_base{
 			"mime_type" => "text/html",
 			"additional_parameters" => "-fbounce@example.com"
 		));
-		$this->assertContains("Content-Type: text/html; charset=UTF-8",$ar["headers"]);
+		$this->assertStringContains("Content-Type: text/html; charset=UTF-8",$ar["headers"]);
 		$this->assertEquals("-fbounce@example.com",$ar["additional_parameters"]);
 
 		// pokud charset nastavime prazdny, nesmi se ve vystupu objevit
@@ -58,7 +58,7 @@ class tc_sendmail extends tc_base{
 			"charset" => "",
 			"mime_type" => "text/html"
 		));
-		$this->assertContains("Content-Type: text/html\n",$ar["headers"]);
+		$this->assertStringContains("Content-Type: text/html\n",$ar["headers"]);
 	}
 
 	function test_mail_compatible_calling(){
@@ -71,7 +71,7 @@ class tc_sendmail extends tc_base{
 		//
 		$ar = sendmail("somebody@example.com","This is a message","Hello,\nthis is a testing e-mail.","From: jon@doe.com");
 		$this->assertEquals("somebody@example.com",$ar["to"]);
-		$this->assertContains("From: jon@doe.com",$ar["headers"]);
+		$this->assertStringContains("From: jon@doe.com",$ar["headers"]);
 		$this->assertEquals("This is a message",$ar["subject"]);
 		$this->assertEquals("Hello,\nthis is a testing e-mail.",$ar["body"]);
 		$this->assertTrue(!isset($ar["from"]));
@@ -83,14 +83,14 @@ class tc_sendmail extends tc_base{
 			"from_name" => "John Doe",
 		));
 		$this->assertEquals("john.doe@example.com",$ar["from"]);
-		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertStringContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
 		$this->assertEquals("-fjohn.doe@example.com",$ar["additional_parameters"]);
 
 		$ar = sendmail($params = array(
 			"from" => "Samantha Doe <samantha.doe@example.com>",
 		));
 		$this->assertEquals("samantha.doe@example.com",$ar["from"]);
-		$this->assertContains('From: "Samantha Doe" <samantha.doe@example.com>',$ar["headers"]);
+		$this->assertStringContains('From: "Samantha Doe" <samantha.doe@example.com>',$ar["headers"]);
 		$this->assertEquals("-fsamantha.doe@example.com",$ar["additional_parameters"]);
 
 		$ar = sendmail($params = array(
@@ -98,7 +98,7 @@ class tc_sendmail extends tc_base{
 			"from_name" => 'John Doe "aka" John D.',
 		));
 		$this->assertEquals("john.doe@example.com",$ar["from"]);
-		$this->assertContains('From: "John Doe \"aka\" John D." <john.doe@example.com>',$ar["headers"]);
+		$this->assertStringContains('From: "John Doe \"aka\" John D." <john.doe@example.com>',$ar["headers"]);
 
 		$ar = sendmail(array(
 			"from" => "vesela-prochazka@example.com",
@@ -106,14 +106,14 @@ class tc_sendmail extends tc_base{
 			"charset" => "UTF-8",
 		));
 		$this->assertEquals("vesela-prochazka@example.com",$ar["from"]);
-		$this->assertContains('From: =?UTF-8?Q?Vesel=C3=A1_Proch=C3=A1zka?= <vesela-prochazka@example.com>',$ar["headers"]);
+		$this->assertStringContains('From: =?UTF-8?Q?Vesel=C3=A1_Proch=C3=A1zka?= <vesela-prochazka@example.com>',$ar["headers"]);
 
 		$ar = sendmail(array(
 			"from" => '"Veselá Procházka" <vesela-prochazka@example.com>',
 			"charset" => "UTF-8",
 		));
 		$this->assertEquals("vesela-prochazka@example.com",$ar["from"]);
-		$this->assertContains('From: =?UTF-8?Q?Vesel=C3=A1_Proch=C3=A1zka?= <vesela-prochazka@example.com>',$ar["headers"]);
+		$this->assertStringContains('From: =?UTF-8?Q?Vesel=C3=A1_Proch=C3=A1zka?= <vesela-prochazka@example.com>',$ar["headers"]);
 	}
 
 	function test_reply_to(){
@@ -122,8 +122,8 @@ class tc_sendmail extends tc_base{
 			"from_name" => "John Doe",
 		));
 		$this->assertEquals("john.doe@example.com",$ar["from"]);
-		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
-		$this->assertContains('Reply-To: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertStringContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertStringContains('Reply-To: "John Doe" <john.doe@example.com>',$ar["headers"]);
 
 		$ar = sendmail($params = array(
 			"from" => "john.doe@example.com",
@@ -132,8 +132,8 @@ class tc_sendmail extends tc_base{
 			"reply_to_name" => "Samantha Doe",
 		));
 		$this->assertEquals("john.doe@example.com",$ar["from"]);
-		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
-		$this->assertContains('Reply-To: "Samantha Doe" <samantha@doe.com>',$ar["headers"]);
+		$this->assertStringContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertStringContains('Reply-To: "Samantha Doe" <samantha@doe.com>',$ar["headers"]);
 
 		$ar = sendmail($params = array(
 			"from" => "john.doe@example.com",
@@ -141,8 +141,8 @@ class tc_sendmail extends tc_base{
 			"reply_to" => "samantha@doe.com",
 		));
 		$this->assertEquals("john.doe@example.com",$ar["from"]);
-		$this->assertContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
-		$this->assertContains('Reply-To: samantha@doe.com',$ar["headers"]);
+		$this->assertStringContains('From: "John Doe" <john.doe@example.com>',$ar["headers"]);
+		$this->assertStringContains('Reply-To: samantha@doe.com',$ar["headers"]);
 	}
 
 	function test_missing_from_address(){
@@ -212,7 +212,7 @@ class tc_sendmail extends tc_base{
 			"body_charset" => "WINDOWS-1250",
 			"body_mime_type" => "text/html"
 		));
-		$this->assertContains("Content-Type: text/html; charset=WINDOWS-1250",$ar["headers"]);
+		$this->assertStringContains("Content-Type: text/html; charset=WINDOWS-1250",$ar["headers"]);
 	}
 
 	function test_send_attachment(){
@@ -234,15 +234,15 @@ class tc_sendmail extends tc_base{
 				"mime_type" => "image/gif"
 			)
 		));
-		$this->assertContains("cc: his.father@mydomain.com\n",$ar["headers"]);
-		$this->assertContains("bcc: myself@localhost\n",$ar["headers"]);
-		$this->assertContains("From: me@mydomain.com\n",$ar["headers"]);
+		$this->assertStringContains("cc: his.father@mydomain.com\n",$ar["headers"]);
+		$this->assertStringContains("bcc: myself@localhost\n",$ar["headers"]);
+		$this->assertStringContains("From: me@mydomain.com\n",$ar["headers"]);
 
 		$this->assertTrue(strlen($ar["body"])>1000);
-		$this->assertContains("Content-Type: text/html; charset=\"us-ascii\"\n",$ar["body"]);
-		$this->assertContains("<p>sending attachment</p>",$ar["body"]);
-		$this->assertContains('Content-Type: image/gif; name="fck.gif";',$ar["body"]);
-		$this->assertContains("Content-Disposition: attachment; filename=\"fck.gif\"\n",$ar["body"]);
+		$this->assertStringContains("Content-Type: text/html; charset=\"us-ascii\"\n",$ar["body"]);
+		$this->assertStringContains("<p>sending attachment</p>",$ar["body"]);
+		$this->assertStringContains('Content-Type: image/gif; name="fck.gif";',$ar["body"]);
+		$this->assertStringContains("Content-Disposition: attachment; filename=\"fck.gif\"\n",$ar["body"]);
 	}
 
 	function test_send_attachments(){
@@ -272,17 +272,17 @@ class tc_sendmail extends tc_base{
 			)
 		));
 		//echo $ar["headers"]."\n".$ar["body"]; exit;
-		$this->assertContains("cc: his.father@mydomain.com\n",$ar["headers"]);
-		$this->assertContains("bcc: myself@localhost\n",$ar["headers"]);
-		$this->assertContains("From: me@mydomain.com\n",$ar["headers"]);
+		$this->assertStringContains("cc: his.father@mydomain.com\n",$ar["headers"]);
+		$this->assertStringContains("bcc: myself@localhost\n",$ar["headers"]);
+		$this->assertStringContains("From: me@mydomain.com\n",$ar["headers"]);
 		$this->assertEquals('-fme@mydomain.com',$ar["additional_parameters"]);
 
 		$this->assertTrue(strlen($ar["body"])>1000);
-		$this->assertContains("Content-Type: text/html; charset=\"us-ascii\"\n",$ar["body"]);
-		$this->assertContains("<p>sending attachment</p>",$ar["body"]);
-		$this->assertContains("Content-Type: image/gif; name=\"fck.gif\";\n",$ar["body"]);
-		$this->assertContains("Content-Disposition: attachment; filename=\"fck.gif\"\n",$ar["body"]);
-		$this->assertContains("Content-Disposition: attachment; filename=\"fck.txt\"\n",$ar["body"]);
+		$this->assertStringContains("Content-Type: text/html; charset=\"us-ascii\"\n",$ar["body"]);
+		$this->assertStringContains("<p>sending attachment</p>",$ar["body"]);
+		$this->assertStringContains("Content-Type: image/gif; name=\"fck.gif\";\n",$ar["body"]);
+		$this->assertStringContains("Content-Disposition: attachment; filename=\"fck.gif\"\n",$ar["body"]);
+		$this->assertStringContains("Content-Disposition: attachment; filename=\"fck.txt\"\n",$ar["body"]);
 	}
 
 	function test_transfer_encoding(){
@@ -293,7 +293,7 @@ class tc_sendmail extends tc_base{
 			"body" => "Pěkný pozdrav!\n\nZasílá Rosťa! ",
 		));
 		$this->assertEquals("Pěkný pozdrav!\n\nZasílá Rosťa! ",$ar_default["body"]);
-		$this->assertContains("Content-Transfer-Encoding: 8bit",$ar_default["headers"]);
+		$this->assertStringContains("Content-Transfer-Encoding: 8bit",$ar_default["headers"]);
 
 		$ar_8bit = sendmail(array(
 			"to" => "me@mydomain.com",
@@ -312,7 +312,7 @@ class tc_sendmail extends tc_base{
 			"transfer_encoding" => "quoted-printable",
 		));
 		$this->assertEquals("P=C4=9Bkn=C3=BD pozdrav!\r\n\r\nZas=C3=ADl=C3=A1 Ros=C5=A5a!=20",$ar_qp["body"]);
-		$this->assertContains("Content-Transfer-Encoding: quoted-printable",$ar_qp["headers"]);
+		$this->assertStringContains("Content-Transfer-Encoding: quoted-printable",$ar_qp["headers"]);
 	}
 
 	function test_lf_to_crlf(){
