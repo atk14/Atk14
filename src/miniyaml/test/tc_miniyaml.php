@@ -302,7 +302,7 @@ key2: <?php echo $hodnota_2?>
 			$a = miniYAML::Load($data);
 			$this->fail();
 		}catch(Exception $e){
-			$this->assertContains("token cannot begin with tabulator",$e->getMessage());
+			$this->assertStringContains("token cannot begin with tabulator",$e->getMessage());
 		}
 	}
 
