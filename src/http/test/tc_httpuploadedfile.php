@@ -110,7 +110,7 @@ class tc_httpuploadedfile extends tc_base{
 		$hlava->moveToTemp(__DIR__."/another_temp");
 
 		$tmp_name = $hlava->getTmpFilename();
-		$this->assertContains('/another_temp/',$tmp_name);
+		$this->assertStringContains('/another_temp/',$tmp_name);
 
 		$this->assertTrue(file_exists($tmp_name));
 		$this->assertFalse(file_exists(TEMP."/$brand_new_tmp_file"));

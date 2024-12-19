@@ -354,8 +354,8 @@ class tc_http_request extends tc_base{
 
 		$content = (string)$uf->getContent();
 
-		$this->assertContains("content-type: text/plain",$content);
-		$this->assertContains("content-charset: UTF-8",$content);
+		$this->assertStringContains("content-type: text/plain",$content);
+		$this->assertStringContains("content-charset: UTF-8",$content);
 	}
 
 	function test_get_user_agent(){
