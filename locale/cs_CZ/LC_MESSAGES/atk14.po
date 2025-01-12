@@ -7,22 +7,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-22 14:40+0200\n"
-"PO-Revision-Date: 2021-08-22 15:17+0200\n"
+"POT-Creation-Date: 2025-01-12 17:22+0100\n"
+"PO-Revision-Date: 2025-01-12 17:25+0100\n"
 "Last-Translator: Jaromir Tomek <jaromir.tomek@gmail.com>\n"
 "Language-Team: ATK14 Development Team\n"
 "Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.4.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: ../src/atk14/atk14_dispatcher.php:73
+#: ../load.php:37
 msgid "Service Unavailable"
 msgstr "Služba je nedostupná"
 
-#: ../src/atk14/atk14_dispatcher.php:74
+#: ../load.php:38
 msgid "This site is in maintenance. Please come back later."
 msgstr "Probíhá údržba této stránky. Přijďte prosím později."
 
@@ -34,44 +34,44 @@ msgstr "Formulář obsahuje chyby, proto nemůže být zpracován."
 msgid "Please, submit the form again"
 msgstr "Prosím, odešlete formulář znovu"
 
-#: ../src/atk14/atk14_locale.php:70
+#: ../src/atk14/atk14_locale.php:71
 msgid "atk14.date_format"
 msgstr "j. n. Y"
 
-#: ../src/atk14/atk14_locale.php:90
+#: ../src/atk14/atk14_locale.php:92
 msgid "atk14.parse_date_pattern"
 msgstr ""
 "/^(?<day>[0-9]{1,2})\\.[  ]*(?<month>[0-9]{1,2})\\.[  ]*(?<year>[0-9]{4})$/"
 
-#: ../src/atk14/atk14_locale.php:124
+#: ../src/atk14/atk14_locale.php:127
 msgid "atk14.datetime_format"
 msgstr "j. n. Y H:i"
 
-#: ../src/atk14/atk14_locale.php:137
+#: ../src/atk14/atk14_locale.php:141
 msgid "atk14.parse_datetime_pattern"
 msgstr ""
-"/^(?<day>[0-9]{1,2})\\.[  ]*(?<month>[0-9]{1,2})\\.[  ]*(?<year>[0-9]{4})\\s"
-"+(?<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"
+"/^(?<day>[0-9]{1,2})\\.[  ]*(?<month>[0-9]{1,2})\\.[  ]*(?<year>[0-9]"
+"{4})\\s+(?<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"
 
-#: ../src/atk14/atk14_locale.php:150
+#: ../src/atk14/atk14_locale.php:155
 msgid "atk14.datetime_with_seconds_format"
 msgstr "j. n. Y H:i:s"
 
-#: ../src/atk14/atk14_locale.php:162
+#: ../src/atk14/atk14_locale.php:168
 msgid "atk14.parse_datetime_with_seconds_pattern"
 msgstr ""
 "/^(?<day>[0-9]{1,2})\\.[  ]*(?<month>[0-9]{1,2})\\.[  ]*(?<year>[0-9]{4}) (?"
 "<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})$/"
 
-#: ../src/atk14/atk14_locale.php:179
+#: ../src/atk14/atk14_locale.php:185
 msgid "atk14.number_format.decimal_point"
 msgstr ","
 
-#: ../src/atk14/atk14_locale.php:194
+#: ../src/atk14/atk14_locale.php:200
 msgid "atk14.number_format.thousands_separator"
 msgstr " "
 
-#: ../src/atk14/atk14_sorting.php:162
+#: ../src/atk14/atk14_sorting.php:167
 msgid "Sort table by this column"
 msgstr "Třídit tabulku podle tohoto sloupce"
 
@@ -79,15 +79,15 @@ msgstr "Třídit tabulku podle tohoto sloupce"
 msgid "Are you sure?"
 msgstr "Jste si jistý?"
 
-#: ../src/atk14/helpers/function.paginator.php:58
+#: ../src/atk14/helpers/function.paginator.php:65
 msgid "items total"
 msgstr "položek celkem"
 
-#: ../src/atk14/helpers/function.paginator.php:93
+#: ../src/atk14/helpers/function.paginator.php:111
 msgid "Prev"
 msgstr "Předchozí"
 
-#: ../src/atk14/helpers/function.paginator.php:94
+#: ../src/atk14/helpers/function.paginator.php:112
 msgid "Next"
 msgstr "Další"
 
@@ -96,48 +96,52 @@ msgstr "Další"
 msgid "and"
 msgstr "a"
 
-#: ../src/forms/fields/char_field.php:27 ../src/forms/fields/regex_field.php:25
+#: ../src/forms/fields/char_field.php:34 ../src/forms/fields/regex_field.php:28
 msgid "Ensure this value has at most %max% characters (it has %length%)."
 msgstr "Hodnota musí být dlouhá nejvýše %max% znaků (teď má %length%)."
 
-#: ../src/forms/fields/char_field.php:28 ../src/forms/fields/regex_field.php:26
+#: ../src/forms/fields/char_field.php:35 ../src/forms/fields/regex_field.php:29
 msgid "Ensure this value has at least %min% characters (it has %length%)."
 msgstr "Hodnota musí mít alespoň %min% znaků (teď má %length%)."
 
-#: ../src/forms/fields/char_field.php:29
+#: ../src/forms/fields/char_field.php:36
 msgid "Ensure this value has at most %max% characters."
 msgstr "Tato hodnota může mít nejvýše %max% znaků."
 
-#: ../src/forms/fields/char_field.php:30
+#: ../src/forms/fields/char_field.php:37
 msgid "Ensure this value has at least %min% characters."
 msgstr "Hodnota musí mít alespoň %min% znaků."
 
-#: ../src/forms/fields/char_field.php:31
+#: ../src/forms/fields/char_field.php:38
 msgid "Ensure this value has between %min% and %max% characters."
 msgstr "Délka řetězce musí být mezi %min% a %max% znaky."
 
-#: ../src/forms/fields/char_field.php:32
+#: ../src/forms/fields/char_field.php:39
 msgid "Invalid byte sequence for charset %charset%."
 msgstr "Neplatná posloupnost bajtů pro znakovou sadu %charset%."
 
-#: ../src/forms/fields/choice_field.php:37
+#: ../src/forms/fields/choice_field.php:52
 msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr ""
 "Vyberte platnou hodnotu. Vybraná hodnota není ani jedna z nabízených hodnot."
 
-#: ../src/forms/fields/choice_field.php:38
+#: ../src/forms/fields/choice_field.php:53
+msgid "This choice cannot be selected."
+msgstr "Tuto možnost nelze zvolit."
+
+#: ../src/forms/fields/choice_field.php:54
 msgid "Please, choose the right option."
 msgstr "Prosím, vyberte správnou možnost."
 
-#: ../src/forms/fields/date_field.php:21
+#: ../src/forms/fields/date_field.php:27
 msgid "Enter a valid date."
 msgstr "Zadejde platné datum."
 
-#: ../src/forms/fields/date_field.php:22
+#: ../src/forms/fields/date_field.php:28
 msgid "Ensure this date is not newer than %value%."
 msgstr "Tento datum nesmí být novější než %value%."
 
-#: ../src/forms/fields/date_field.php:23
+#: ../src/forms/fields/date_field.php:29
 msgid "Ensure this date is not older than %value%."
 msgstr "Tento datum nesmí být starší než %value%."
 
@@ -153,17 +157,17 @@ msgstr "Zadejte platné datum, hodiny, minuty a sekundy."
 msgid "Enter a valid e-mail address."
 msgstr "Zadejte platnou e-mailovou adresu."
 
-#: ../src/forms/fields/file_field.php:39
+#: ../src/forms/fields/file_field.php:42
 msgid "Ensure this file has at most %max_file_size% bytes (it has %file_size%)"
 msgstr ""
 "Ujistěte se, že velikost souboru nepřekročí %max_file_size% bytů (teď má "
 "%file_size%)"
 
-#: ../src/forms/fields/file_field.php:40
+#: ../src/forms/fields/file_field.php:43
 msgid "Unsupported file type: %mime_type%"
 msgstr "Nepodporovaný typ souboru: %mime_type%"
 
-#: ../src/forms/fields/file_field.php:42
+#: ../src/forms/fields/file_field.php:45
 msgid ""
 "The uploaded file exceeds the max file size value that is set on the server "
 "(%upload_max_filesize%)"
@@ -171,7 +175,7 @@ msgstr ""
 "Nahraný soubor překračuje maximální velikost souboru, která je nastavena na "
 "serveru (%upload_max_filesize%)"
 
-#: ../src/forms/fields/file_field.php:43
+#: ../src/forms/fields/file_field.php:46
 msgid ""
 "The uploaded file exceeds the max file size directive that was specified in "
 "the HTML form (%MAX_FILE_SIZE%)"
@@ -179,79 +183,79 @@ msgstr ""
 "Velikost nahraného souboru přesahuje maximální velikost, která je nastavena "
 "v HTML formuláři (%MAX_FILE_SIZE%)"
 
-#: ../src/forms/fields/file_field.php:44
+#: ../src/forms/fields/file_field.php:47
 msgid "The uploaded file was only partially uploaded"
 msgstr "Nahraný soubor byl nahrán jen částečně"
 
-#: ../src/forms/fields/file_field.php:45
+#: ../src/forms/fields/file_field.php:48
 msgid "Missing a temporary folder"
 msgstr "Adresář pro dočasné soubory chybí"
 
-#: ../src/forms/fields/file_field.php:46
+#: ../src/forms/fields/file_field.php:49
 msgid "Failed to write file to disk"
 msgstr "Soubor se nepodařilo zapsat na disk"
 
-#: ../src/forms/fields/file_field.php:47
+#: ../src/forms/fields/file_field.php:50
 msgid "File upload stopped by an extension installed on the server"
 msgstr "Nahrávání souboru bylo zastaveno rozšířením nainstalovaným na serveru"
 
-#: ../src/forms/fields/file_field.php:48
+#: ../src/forms/fields/file_field.php:51
 msgid "An error occurred during file upload"
 msgstr "Během nahrávání souboru došlo k chybě"
 
-#: ../src/forms/fields/float_field.php:22
+#: ../src/forms/fields/float_field.php:25
 msgid "Enter a number."
 msgstr "Zadejte číslo."
 
-#: ../src/forms/fields/float_field.php:23
-#: ../src/forms/fields/integer_field.php:33
+#: ../src/forms/fields/float_field.php:26
+#: ../src/forms/fields/integer_field.php:37
 msgid "Ensure this value is less than or equal to %value%."
 msgstr "Hodnota musí být rovna nebo  menší než %value%."
 
-#: ../src/forms/fields/float_field.php:24
-#: ../src/forms/fields/integer_field.php:34
+#: ../src/forms/fields/float_field.php:27
+#: ../src/forms/fields/integer_field.php:38
 msgid "Ensure this value is greater than or equal to %value%."
 msgstr "Hodnota musí být rovna nebo větší než %value%."
 
-#: ../src/forms/fields/image_field.php:22
+#: ../src/forms/fields/image_field.php:31
 msgid "Ensure this file is image (it is %mime_type%)."
 msgstr "Soubor musí být obrázek (teď je to %mime_type%)."
 
-#: ../src/forms/fields/image_field.php:24
+#: ../src/forms/fields/image_field.php:33
 msgid "Ensure this image is %width_required% pixels wide (it is %width%)."
 msgstr ""
-"Ujistěte se, že je šířka obrázku %width_required% bodů (teď je šířoký %width"
-"%)."
+"Ujistěte se, že je šířka obrázku %width_required% bodů (teď je šířoký "
+"%width%)."
 
-#: ../src/forms/fields/image_field.php:25
+#: ../src/forms/fields/image_field.php:34
 msgid "Ensure this image is %height_required% pixels high (it is %height%)."
 msgstr ""
 "Ujistěte se, že výška obrázku je %height_required% bodů (teď je vysoký "
 "%height%)."
 
-#: ../src/forms/fields/image_field.php:27
+#: ../src/forms/fields/image_field.php:36
 msgid "Ensure this image is at most %max% pixels wide (it is %width%)."
 msgstr ""
 "Ujistěte se, že šířka obrázku nepřekročí %max% bodů (teď je šíroký %width%)."
 
-#: ../src/forms/fields/image_field.php:28
+#: ../src/forms/fields/image_field.php:37
 msgid "Ensure this image is at most %max% pixels high (it is %height%)."
 msgstr ""
 "Ujistěte se, že výška obrázku nepřekročí %max% bodů (teď je vysoký %height%)."
 
-#: ../src/forms/fields/image_field.php:29
+#: ../src/forms/fields/image_field.php:38
 msgid "Ensure this image is at least %min% pixels wide (it is %width%)."
 msgstr "Obrázek musí mít alespoň %min% bodů na šířku (nyní má %width%)."
 
-#: ../src/forms/fields/image_field.php:30
+#: ../src/forms/fields/image_field.php:39
 msgid "Ensure this image is at least %min% pixels high (it is %height%)."
 msgstr "Obrázek musí mít alespoň %min% bodů na výšku (nyní má %height%)."
 
-#: ../src/forms/fields/image_field.php:32
+#: ../src/forms/fields/image_field.php:41
 msgid "Ensure this image is in a required format (it is %mime_type%)."
 msgstr "Obrázek musí být požadovaného formátu (teď je to %mime_type%)."
 
-#: ../src/forms/fields/integer_field.php:32
+#: ../src/forms/fields/integer_field.php:36
 msgid "Enter a whole number."
 msgstr "Zadejte celé číslo."
 
@@ -259,30 +263,30 @@ msgstr "Zadejte celé číslo."
 msgid "Enter a valid IP address."
 msgstr "Vložte platnou IP adresu."
 
-#: ../src/forms/fields/multiple_choice_field.php:35
+#: ../src/forms/fields/multiple_choice_field.php:38
 msgid "Select a valid choice. %value% is not one of the available choices."
 msgstr "Vyberte platnou hodnotu. %value% není jedna z nabízených možností."
 
-#: ../src/forms/fields/multiple_choice_field.php:36
+#: ../src/forms/fields/multiple_choice_field.php:39
 msgid "Enter a list of values."
 msgstr "Zadejte seznam hodnot."
 
-#: ../src/forms/fields/multiple_choice_field.php:37
+#: ../src/forms/fields/multiple_choice_field.php:40
 msgid "Please, choose the right options."
 msgstr "Prosím, vyberte správné možnosti."
 
-#: ../src/forms/fields/multiple_choice_field.php:38
+#: ../src/forms/fields/multiple_choice_field.php:41
 msgid "Please, select only one item."
 msgstr "Vyberte prosím pouze jednu položku."
 
-#: ../src/forms/fields/multiple_choice_field.php:39
+#: ../src/forms/fields/multiple_choice_field.php:42
 msgid "Please, select up to %max_choice_items% items."
 msgstr "Vyberte prosím nejvýše %max_choice_items% položek."
 
-#: ../src/forms/fields.php:235
+#: ../src/forms/fields.php:249
 msgid "This field is required."
 msgstr "Toto pole je povinné."
 
-#: ../src/forms/fields.php:236
+#: ../src/forms/fields.php:250
 msgid "Enter a valid value."
 msgstr "Vložte správnou hodnotu."

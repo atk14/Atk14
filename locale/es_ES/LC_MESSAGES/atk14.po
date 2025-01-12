@@ -1,70 +1,64 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: ATK14 Framework\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-12 17:22+0100\n"
-"PO-Revision-Date: 2017-03-31 17:37+0100\n"
-"Last-Translator: \n"
-"Language-Team: ATK14 Development Team\n"
-"Language: hu_HU\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Jaromir Tomek <jaromir.tomek@gmail.com>\n"
+"Language-Team: \n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
-"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: ../load.php:37
 msgid "Service Unavailable"
-msgstr "A szolgáltatás nem elérhető"
+msgstr "Servicio no es disponible"
 
 #: ../load.php:38
 msgid "This site is in maintenance. Please come back later."
-msgstr "Az oldal szerkesztés alatt van Kérjük, jöjjön vissza később."
+msgstr "Esta página está en mantenimiento. Por favor, vuelva más tarde"
 
 #: ../src/atk14/atk14_form.php:247
 msgid "The form contains errors, therefore it cannot be processed."
-msgstr "Az űrlap hibákat tartalmaz, ezért nem lehet feldolgozni."
+msgstr "El formulario contiene errores, por lo que no puede ser procesado"
 
 #: ../src/atk14/atk14_form.php:539
 msgid "Please, submit the form again"
-msgstr "Kérjük küldje el újra az űrlapot"
+msgstr "Por favor, complete el formulario de nuevo"
 
 #: ../src/atk14/atk14_locale.php:71
 msgid "atk14.date_format"
-msgstr "j.n.Y"
+msgstr "d/m/Y"
 
 #: ../src/atk14/atk14_locale.php:92
 msgid "atk14.parse_date_pattern"
-msgstr "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4})$/"
+msgstr "/^(?<day>[0-9]{1,2})\\/(?<month>[0-9]{1,2})\\/(?<year>[0-9]{4})$/"
 
 #: ../src/atk14/atk14_locale.php:127
 msgid "atk14.datetime_format"
-msgstr "j.n.Y H:i"
+msgstr "d/m/Y H:i"
 
 #: ../src/atk14/atk14_locale.php:141
 msgid "atk14.parse_datetime_pattern"
 msgstr ""
-"/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
+"/^(?<day>[0-9]{1,2})\\/(?<month>[0-9]{1,2})\\/(?<year>[0-9]{4}) (?"
 "<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"
 
 #: ../src/atk14/atk14_locale.php:155
 msgid "atk14.datetime_with_seconds_format"
-msgstr "j.n.Y H:i:s"
+msgstr "d/m/Y H:i:s"
 
 #: ../src/atk14/atk14_locale.php:168
 msgid "atk14.parse_datetime_with_seconds_pattern"
 msgstr ""
-"/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?"
+"/^(?<day>[0-9]{1,2})\\/(?<month>[0-9]{1,2})\\/(?<year>[0-9]{4}) (?"
 "<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})$/"
 
 #: ../src/atk14/atk14_locale.php:185
 msgid "atk14.number_format.decimal_point"
-msgstr ""
+msgstr ","
 
 #: ../src/atk14/atk14_locale.php:200
 msgid "atk14.number_format.thousands_separator"
@@ -72,224 +66,235 @@ msgstr ""
 
 #: ../src/atk14/atk14_sorting.php:167
 msgid "Sort table by this column"
-msgstr "A táblázat e szerint az oszlop szerint rendeződik"
+msgstr "Ordenar la tabla por esta columna"
 
 #: ../src/atk14/helpers/block.a_destroy.php:42
 msgid "Are you sure?"
-msgstr "Biztos benne?"
+msgstr "¿Está seguro?"
 
 #: ../src/atk14/helpers/function.paginator.php:65
 msgid "items total"
-msgstr ""
+msgstr "Total de artículos"
 
 #: ../src/atk14/helpers/function.paginator.php:111
 msgid "Prev"
-msgstr ""
+msgstr "Anterior"
 
 #: ../src/atk14/helpers/function.paginator.php:112
 msgid "Next"
-msgstr ""
+msgstr "Siguinete"
 
 #: ../src/atk14/helpers/function.to_sentence.php:13
 #: ../src/atk14/helpers/modifier.to_sentence.php:12
 msgid "and"
-msgstr "és"
+msgstr "y"
 
 #: ../src/forms/fields/char_field.php:34 ../src/forms/fields/regex_field.php:28
 msgid "Ensure this value has at most %max% characters (it has %length%)."
-msgstr "Az értéknek legfeljebb %max% karaktere lehet (ez már %length%)."
+msgstr ""
+"El valor debe tener como máximo %max% caracteres (actualmente tiene "
+"%length% )"
 
 #: ../src/forms/fields/char_field.php:35 ../src/forms/fields/regex_field.php:29
 msgid "Ensure this value has at least %min% characters (it has %length%)."
 msgstr ""
-"Az értéknek legalább %min% karaktere kel hogy legyen (ez most %length%)."
+"El valor debe tener al menos %min% caracteres (actualmente tiene %length%)"
 
 #: ../src/forms/fields/char_field.php:36
 msgid "Ensure this value has at most %max% characters."
-msgstr " Ez az érték"
+msgstr "Este valor"
 
 #: ../src/forms/fields/char_field.php:37
 msgid "Ensure this value has at least %min% characters."
-msgstr "Az értéknek legalább %min% karaktere kel hogy legyen."
+msgstr "El valor debe tener al menos %min% caracteres"
 
 #: ../src/forms/fields/char_field.php:38
 msgid "Ensure this value has between %min% and %max% characters."
-msgstr "Az érték karakterjének a %min% és %max% között kel lennie."
+msgstr "La longitud de la cadena debe estar entre %min% y %max% caracteres"
 
 #: ../src/forms/fields/char_field.php:39
 msgid "Invalid byte sequence for charset %charset%."
-msgstr ""
+msgstr "Secuencia de bytes no válida para el conjunto de caracteres %charset%"
 
 #: ../src/forms/fields/choice_field.php:52
 msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr ""
-"Válasszon egy érvényes értéket. A kiválasztott érték nem szerepel a "
-"felkínált értékek között."
+"Seleccione un valor válido. El valor seleccionado no está entre las opciones "
+"disponibles"
 
 #: ../src/forms/fields/choice_field.php:53
 msgid "This choice cannot be selected."
-msgstr ""
+msgstr "Esta opción no puede ser seleccionada"
 
 #: ../src/forms/fields/choice_field.php:54
 msgid "Please, choose the right option."
-msgstr "Kérjük válassza ki a megfelelő opciót."
+msgstr "Por favor, seleccione la opción correcta"
 
 #: ../src/forms/fields/date_field.php:27
 msgid "Enter a valid date."
-msgstr "Adjon meg egy érvényes dátumot."
+msgstr "Introduzca fecha válida"
 
 #: ../src/forms/fields/date_field.php:28
 msgid "Ensure this date is not newer than %value%."
-msgstr ""
+msgstr "Asegúrese de que esta fecha no sea más reciente que %value%"
 
 #: ../src/forms/fields/date_field.php:29
 msgid "Ensure this date is not older than %value%."
-msgstr ""
+msgstr "Asegúrese de que esta fecha no sea más antigua que %value%"
 
 #: ../src/forms/fields/date_time_field.php:14
 msgid "Enter a valid date, hours and minutes."
-msgstr "Adjon meg egy érvényes dátumot, óra és perc."
+msgstr "Introduzca una fecha válida, horas y minutos"
 
 #: ../src/forms/fields/date_time_with_seconds_field.php:14
 msgid "Enter a valid date, hours, minutes and seconds."
-msgstr "Adjon meg egy érvényes dátumot, óra, perc és másodperc."
+msgstr "Ingrese una fecha, hora, minutos y segundos válidos"
 
 #: ../src/forms/fields/email_field.php:21
 msgid "Enter a valid e-mail address."
-msgstr ".Adjon meg egy érvényes e-mail címet."
+msgstr "Introduzca correo electrónico válido"
 
 #: ../src/forms/fields/file_field.php:42
 msgid "Ensure this file has at most %max_file_size% bytes (it has %file_size%)"
 msgstr ""
-"Győződjön meg róla, hogy a fájl nagysága nemlépi túl a %max_file_size% "
-"bájtot (most már %file_size%)"
+"Asegúrese de que el tamaño del archivo no supere los %max_file_size% bytes "
+"(actualmente tiene %file_size%)"
 
 #: ../src/forms/fields/file_field.php:43
 msgid "Unsupported file type: %mime_type%"
-msgstr "Nem támogatott fájl típus: %mime_type%"
+msgstr "Tipo de archivo no compatible: %mime_type%"
 
 #: ../src/forms/fields/file_field.php:45
 msgid ""
 "The uploaded file exceeds the max file size value that is set on the server "
 "(%upload_max_filesize%)"
 msgstr ""
+"El archivo cargado excede el tamaño máximo permitido, que está configurado "
+"en el servidor (%upload_max_filesize%)"
 
 #: ../src/forms/fields/file_field.php:46
 msgid ""
 "The uploaded file exceeds the max file size directive that was specified in "
 "the HTML form (%MAX_FILE_SIZE%)"
 msgstr ""
+"El archivo cargado excede el tamaño máximo de archivo especificado en el "
+"formulario HTML (%MAX_FILE_SIZE%)"
 
 #: ../src/forms/fields/file_field.php:47
 msgid "The uploaded file was only partially uploaded"
-msgstr ""
+msgstr "El archivo se ha cargado solo parcialmente"
 
 #: ../src/forms/fields/file_field.php:48
 msgid "Missing a temporary folder"
-msgstr ""
+msgstr "Falta el directorio temporal"
 
 #: ../src/forms/fields/file_field.php:49
 msgid "Failed to write file to disk"
-msgstr ""
+msgstr "Falló la escritura en el disco"
 
 #: ../src/forms/fields/file_field.php:50
 msgid "File upload stopped by an extension installed on the server"
 msgstr ""
+"La carga del archivo fue detenida por una extensión instalada en el servidor"
 
 #: ../src/forms/fields/file_field.php:51
 msgid "An error occurred during file upload"
-msgstr ""
+msgstr "Se ha producido un error al cargar el archivo"
 
 #: ../src/forms/fields/float_field.php:25
 msgid "Enter a number."
-msgstr "Adja meg a számot."
+msgstr "Introduzca número"
 
 #: ../src/forms/fields/float_field.php:26
 #: ../src/forms/fields/integer_field.php:37
 msgid "Ensure this value is less than or equal to %value%."
-msgstr "Az értéknek kisebb vagy egyenlőnek kel lennie, mint% valuek%."
+msgstr "El valor debe ser igual o menor que %value%"
 
 #: ../src/forms/fields/float_field.php:27
 #: ../src/forms/fields/integer_field.php:38
 msgid "Ensure this value is greater than or equal to %value%."
-msgstr "Az értéknek egyenlőnek vagy nagyobbnak kel lennie mint% valuek%."
+msgstr "El valor debe ser igual o mayor que %value%"
 
 #: ../src/forms/fields/image_field.php:31
 msgid "Ensure this file is image (it is %mime_type%)."
 msgstr ""
+"Asegúrese de que este archivo sea una imagen (actualmente es %mime_type%)"
 
 #: ../src/forms/fields/image_field.php:33
 msgid "Ensure this image is %width_required% pixels wide (it is %width%)."
 msgstr ""
-"Győződjön meg róla, hogy ez a kép %width_required% pixel széles (most "
-"%width% széles)."
+"Asegúrese de que el ancho de la imagen sea de %width_required% píxeles "
+"(actualmente tiene %width%"
 
 #: ../src/forms/fields/image_field.php:34
 msgid "Ensure this image is %height_required% pixels high (it is %height%)."
 msgstr ""
-"Győződjön meg róla, hogy ez a kép %height_required% pixel magas (most "
-"%height%magas)."
+"Asegúrese de que la altura de la imagen sea de %width_required% píxeles "
+"(actualmente tiene %width% )"
 
 #: ../src/forms/fields/image_field.php:36
 msgid "Ensure this image is at most %max% pixels wide (it is %width%)."
 msgstr ""
-"Ellenőrizze, hogy a kép szélessége nem lépi túl a %max% pixelt (most "
-"%width%széles)."
+"Asegúrese de que el ancho de la imagen no supere los %max% píxeles "
+"(actualmente tiene %width%)"
 
 #: ../src/forms/fields/image_field.php:37
 msgid "Ensure this image is at most %max% pixels high (it is %height%)."
 msgstr ""
-"Ellenőrizze, hogy a kép magassága nem lépi túl a %max% pixelt (most "
-"%height%magas)."
+"Asegúrese de que la altura de la imagen sea de %width_required% píxeles "
+"(actualmente tiene %width%"
 
 #: ../src/forms/fields/image_field.php:38
 msgid "Ensure this image is at least %min% pixels wide (it is %width%)."
 msgstr ""
-"A kép szélességének legalább %min% pixelnek kel lennie (ez most %width%)."
+"La imagen debe tener al menos %min% píxeles de ancho (actualmente tiene "
+"%width%) "
 
 #: ../src/forms/fields/image_field.php:39
 msgid "Ensure this image is at least %min% pixels high (it is %height%)."
 msgstr ""
-"A kép magasságának legalább %min% pixelnek kel lennie (ez most %height%)."
+"La imagen debe tener al menos %min% píxeles de altura (actualmente tiene "
+"%height%)"
 
 #: ../src/forms/fields/image_field.php:41
 msgid "Ensure this image is in a required format (it is %mime_type%)."
 msgstr ""
+"Asegúrese de que esta imagen esté en el formato requerido (actualmente es "
+"%mime_type%)"
 
 #: ../src/forms/fields/integer_field.php:36
 msgid "Enter a whole number."
-msgstr "Írjon be egy egész számot."
+msgstr "Ingrese un número completo"
 
 #: ../src/forms/fields/ip_address_field.php:48
 msgid "Enter a valid IP address."
-msgstr ".Adjon meg egy érvényes IP-címet."
+msgstr "Introduzca una dirección IP válida"
 
 #: ../src/forms/fields/multiple_choice_field.php:38
 msgid "Select a valid choice. %value% is not one of the available choices."
 msgstr ""
-"Válasszon egy érvényes értéket. %value% nem egy rendelkezésre álló "
-"választási lehetőség."
+"Seleccione una opción válida. %value% no es una de las opciones disponibles"
 
 #: ../src/forms/fields/multiple_choice_field.php:39
 msgid "Enter a list of values."
-msgstr "Adja meg az értékek listáját."
+msgstr "Introduzca una lista de valores"
 
 #: ../src/forms/fields/multiple_choice_field.php:40
 msgid "Please, choose the right options."
-msgstr " Kérjük válassza ki a megfelelő beállításokat."
+msgstr "Por favor, seleccione opciones correctas"
 
 #: ../src/forms/fields/multiple_choice_field.php:41
 msgid "Please, select only one item."
-msgstr ""
+msgstr "Por favor, seleccione solo un elemento"
 
 #: ../src/forms/fields/multiple_choice_field.php:42
 msgid "Please, select up to %max_choice_items% items."
-msgstr ""
+msgstr "Por favor, seleccione hasta %max_choice_items% elementos"
 
 #: ../src/forms/fields.php:249
 msgid "This field is required."
-msgstr "Ez a mező kötelező."
+msgstr "Este campo es obligatorio"
 
 #: ../src/forms/fields.php:250
 msgid "Enter a valid value."
-msgstr "Adjon meg egy érvényes értéket."
+msgstr "Introduzca el valor correcto"
