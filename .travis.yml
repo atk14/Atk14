@@ -58,6 +58,19 @@ jobs:
         - sudo apt-get install postgresql-16 postgresql-client-16
         - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/16/main/postgresql.conf 2>&1
         - sudo service postgresql restart 2>&1
+    - name: "PHP: 8.4"
+      dist: jammy
+      language: ruby
+      addons:
+      before_install:
+        - sudo apt install software-properties-common
+        - sudo add-apt-repository ppa:ondrej/php
+        - sudo apt update
+        - sudo apt install php8.4 php8.4-mbstring php8.4-cli php8.4-pgsql php8.4-readline php8.4-gd php8.4-xml php8.4-mysql
+        - php -v
+        - sudo apt-get install postgresql-16 postgresql-client-16
+        - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/16/main/postgresql.conf 2>&1
+        - sudo service postgresql restart 2>&1
 
 
 install:
