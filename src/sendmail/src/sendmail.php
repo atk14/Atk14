@@ -114,14 +114,11 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	//if(is_array($params["cc"])){ $params["cc"] = join(", ",array_unique($params["cc"])); }
 	//if(is_array($params["bcc"])){ $params["bcc"] = join(", ",array_unique($params["bcc"])); }
 
+	$BODY_CHARSET = $params["charset"];
+
 	list($FROM,$FROM_NAME) = _sendmail_parse_email_and_name($params["from"],$params["from_name"]);
 	list($REPLY_TO,$REPLY_TO_NAME) = _sendmail_parse_email_and_name($params["reply_to"],$params["reply_to_name"]);
-	if($params["to_name"]){
-		list($TO,$TO_NAME) = _sendmail_parse_email_and_name($params["to"],$params["to_name"]);
-	}else{
-		$TO = _sendmail_correct_address($params["to"]);
-		$TO_NAME = "";
-	}
+	$TO = _sendmail_render_email_address(_sendmail_correct_address($params["to"]),$params["to_name"],$BODY_CHARSET);
 
 	$BCC = array();
 	if($params['bcc']){ $BCC[] = _sendmail_correct_address($params['bcc']);}
@@ -186,7 +183,6 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	}
 
 	$BODY_MIME_TYPE = $params["mime_type"];
-	$BODY_CHARSET = $params["charset"];
 
 	$ATTACHMENTS = array();
 	if($params['attachments']){
@@ -231,7 +227,6 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 			"subject" => $SUBJECT,
 
 			"to" => $TO,
-			"to_name" => $TO_NAME,
 			"from" => $FROM,
 			"from_name" => $FROM_NAME,
 			"cc" => $CC,
@@ -258,7 +253,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	$HEADERS = trim($HEADERS); // na konci hlavicky byl prazdny radek, ve zprave tak byly hlavicky a telo oddeleny 2 radky
 
 	$out = array(
-		"to" => _sendmail_render_email_address($TO,$TO_NAME,$BODY_CHARSET),
+		"to" => $TO, 
 		"from" => $FROM,
 		"bcc" => $BCC,
 		"cc" => $CC,
