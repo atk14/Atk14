@@ -127,6 +127,13 @@ class Atk14Mailer{
 	var $to = "";
 
 	/**
+	 * recipients name
+	 *
+	 * @var string
+	 */
+	var $to_name = "";
+
+	/**
 	 * Subject
 	 * 
 	 * @var string
@@ -618,6 +625,7 @@ class Atk14Mailer{
 			"reply_to" => $this->reply_to,
 			"reply_to_name" => $this->reply_to_name,
 			"to" => $this->to,
+			"to_name" => $this->to_name,
 			"cc" => $this->cc,
 			"bcc" => $this->bcc,
 			"subject" => $this->subject,
