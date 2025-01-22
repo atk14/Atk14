@@ -152,7 +152,7 @@ class _CMailFile {
 		$_from = $from_name ? _sendmail_escape_email_name($from_name,$this->text_body_charset)." <$from>" : $from;
 		$_to = $to_name ? _sendmail_escape_email_name($to_name,$this->text_body_charset)." <$to>" : $to;
 		$out = "From: $_from\n";
-		$out = $out . "To: $_to\n";
+		//$out = $out . "To: $_to\n";
 		$out = $out . "Reply-To: $from\n";
 		$out = $out . "X-Mailer: mole 0.1\n";
 		$out = $out . "X-Sender: $from\n";

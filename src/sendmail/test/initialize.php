@@ -5,4 +5,7 @@ define("SENDMAIL_DEFAULT_FROM","info@somewhere.com");
 define("SENDMAIL_EMPTY_TO_REPLACE","dummy@localhost");
 define("DEFAULT_CHARSET","UTF-8");
 
-require(__DIR__ . "/../vendor/autoload.php");
+require("../../files/load.php");
+require("../../translate/translate.php");
+require("../../class_autoload/load.php");
+require("../load.php");
