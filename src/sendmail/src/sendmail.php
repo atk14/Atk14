@@ -81,6 +81,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		"from" => SENDMAIL_DEFAULT_FROM, // john.doe@example.com
 		"from_name" => SENDMAIL_DEFAULT_FROM_NAME, // "John Doe"
 		"to" => $to,
+		"to_name" => null,
 		"cc" => null,
 		"bcc" => null,
 		"return_path" => null,
@@ -113,9 +114,11 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	//if(is_array($params["cc"])){ $params["cc"] = join(", ",array_unique($params["cc"])); }
 	//if(is_array($params["bcc"])){ $params["bcc"] = join(", ",array_unique($params["bcc"])); }
 
+	$BODY_CHARSET = $params["charset"];
+
 	list($FROM,$FROM_NAME) = _sendmail_parse_email_and_name($params["from"],$params["from_name"]);
 	list($REPLY_TO,$REPLY_TO_NAME) = _sendmail_parse_email_and_name($params["reply_to"],$params["reply_to_name"]);
-
+	$TO = _sendmail_render_email_address(_sendmail_correct_address($params["to"]),$params["to_name"],$BODY_CHARSET);
 
 	$BCC = array();
 	if($params['bcc']){ $BCC[] = _sendmail_correct_address($params['bcc']);}
@@ -134,14 +137,12 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		// we don't want to prepend SENDMAIL_BODY_AUTO_PREFIX when the message is just being built
 		$BODY = SENDMAIL_BODY_AUTO_PREFIX.$BODY;
 	}
-	$TO = _sendmail_correct_address($params['to']);
 	if(strlen(SENDMAIL_USE_TESTING_ADDRESS_TO)>0){
 		$BODY = "PUVODNI ADRESAT: $TO\nPUVODNI CC: $CC\nPUVODNI BCC: $BCC\n\n$BODY"; // TODO: put this information into messages header
 		$TO = SENDMAIL_USE_TESTING_ADDRESS_TO;
 		$CC = "";
 		$BCC = "";
 	}
-
 
 	if(preg_match("/([^@<>\"']+)@([^@<>\"']+)/",$RETURN_PATH,$matches)){
 		putenv("QMAILUSER=$matches[1]");
@@ -182,7 +183,6 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	}
 
 	$BODY_MIME_TYPE = $params["mime_type"];
-	$BODY_CHARSET = $params["charset"];
 
 	$ATTACHMENTS = array();
 	if($params['attachments']){
@@ -253,7 +253,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	$HEADERS = trim($HEADERS); // na konci hlavicky byl prazdny radek, ve zprave tak byly hlavicky a telo oddeleny 2 radky
 
 	$out = array(
-		"to" => $TO,
+		"to" => $TO, 
 		"from" => $FROM,
 		"bcc" => $BCC,
 		"cc" => $CC,

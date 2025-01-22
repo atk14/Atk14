@@ -116,6 +116,19 @@ class tc_sendmail extends tc_base{
 		$this->assertStringContains('From: =?UTF-8?Q?Vesel=C3=A1_Proch=C3=A1zka?= <vesela-prochazka@example.com>',$ar["headers"]);
 	}
 
+	function test_to_name(){
+		$ar = sendmail($params = array(
+			"to" => "john.doe@example.com",
+		));
+		$this->assertEquals("john.doe@example.com",$ar["to"]);
+
+		$ar = sendmail($params = array(
+			"to" => "john.doe@example.com",
+			"to_name" => "John Doe",
+		));
+		$this->assertEquals('"John Doe" <john.doe@example.com>',$ar["to"]);
+	}
+
 	function test_reply_to(){
 		$ar = sendmail($params = array(
 			"from" => "john.doe@example.com",

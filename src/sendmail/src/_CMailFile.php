@@ -31,6 +31,7 @@
  * @ignore
  */
 class _CMailFile {
+
 	var $subject;
 	var $addr_to;
 	var $text_body;
@@ -67,7 +68,7 @@ class _CMailFile {
 		
 		$this->subject = $options["subject"];
 		$this->addr_to = $options["to"];
-		$this->smtp_headers = $this->write_smtpheaders($options["from"],$options["cc"],$options["bcc"],$options["from_name"]);
+		$this->smtp_headers = $this->write_smtpheaders($options["from"],$options["from_name"],$options["cc"],$options["bcc"]);
 		$this->text_body = $this->write_body($options["body"]);
 		$this->_first_attachment = true;
 		$this->text_encoded = $this->_attach_file($options["filename"],$file_content,$options["mime_type"]);
@@ -146,12 +147,12 @@ class _CMailFile {
 		return $out;
 	}
 
-	function write_smtpheaders($addr_from,$cc,$bcc,$from_name = "") {
-		$_from = $from_name ? _sendmail_escape_email_name($from_name,$this->text_body_charset)." <$addr_from>" : $addr_from;
+	function write_smtpheaders($from,$from_name,$cc,$bcc) {
+		$_from = $from_name ? _sendmail_escape_email_name($from_name,$this->text_body_charset)." <$from>" : $from;
 		$out = "From: $_from\n";
-		$out = $out . "Reply-To: $addr_from\n";
+		$out = $out . "Reply-To: $from\n";
 		$out = $out . "X-Mailer: mole 0.1\n";
-		$out = $out . "X-Sender: $addr_from\n";
+		$out = $out . "X-Sender: $from\n";
 		if($cc!=""){
 			$out = $out . "cc: $cc\n";
 		}
