@@ -81,6 +81,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		"from" => SENDMAIL_DEFAULT_FROM, // john.doe@example.com
 		"from_name" => SENDMAIL_DEFAULT_FROM_NAME, // "John Doe"
 		"to" => $to,
+		"to_name" => null,
 		"cc" => null,
 		"bcc" => null,
 		"return_path" => null,
@@ -115,7 +116,12 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 
 	list($FROM,$FROM_NAME) = _sendmail_parse_email_and_name($params["from"],$params["from_name"]);
 	list($REPLY_TO,$REPLY_TO_NAME) = _sendmail_parse_email_and_name($params["reply_to"],$params["reply_to_name"]);
-
+	if($params["to_name"]){
+		list($TO,$TO_NAME) = _sendmail_parse_email_and_name($params["to"],$params["to_name"]);
+	}else{
+		$TO = _sendmail_correct_address($params["to"]);
+		$TO_NAME = "";
+	}
 
 	$BCC = array();
 	if($params['bcc']){ $BCC[] = _sendmail_correct_address($params['bcc']);}
@@ -134,14 +140,12 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		// we don't want to prepend SENDMAIL_BODY_AUTO_PREFIX when the message is just being built
 		$BODY = SENDMAIL_BODY_AUTO_PREFIX.$BODY;
 	}
-	$TO = _sendmail_correct_address($params['to']);
 	if(strlen(SENDMAIL_USE_TESTING_ADDRESS_TO)>0){
 		$BODY = "PUVODNI ADRESAT: $TO\nPUVODNI CC: $CC\nPUVODNI BCC: $BCC\n\n$BODY"; // TODO: put this information into messages header
 		$TO = SENDMAIL_USE_TESTING_ADDRESS_TO;
 		$CC = "";
 		$BCC = "";
 	}
-
 
 	if(preg_match("/([^@<>\"']+)@([^@<>\"']+)/",$RETURN_PATH,$matches)){
 		putenv("QMAILUSER=$matches[1]");
@@ -197,9 +201,11 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 	
 	$HEADERS = "";
 	if(sizeof($ATTACHMENTS)==0){
+		$_to = _sendmail_render_email_address($TO,$TO_NAME,$BODY_CHARSET);
 		$_from = _sendmail_render_email_address($FROM,$FROM_NAME,$BODY_CHARSET);
 		$_reply_to = $REPLY_TO ? _sendmail_render_email_address($REPLY_TO,$REPLY_TO_NAME,$BODY_CHARSET) : $_from;
 		$HEADERS .= "From: $_from\n";
+		$HEADERS .= "To: $_to\n";
 		$HEADERS .= "Reply-To: $_reply_to\n";
 		if($BCC!=""){
 			$HEADERS .= "Bcc: $BCC\n";
@@ -227,6 +233,7 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 			"subject" => $SUBJECT,
 
 			"to" => $TO,
+			"to_name" => $TO_NAME,
 			"from" => $FROM,
 			"from_name" => $FROM_NAME,
 			"cc" => $CC,
