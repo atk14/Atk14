@@ -9,9 +9,9 @@ class TcProxy extends TcBase {
 		}
 
 		// http
-		$uf = new UrlFetcher("http://example.com/",["proxy" => "tcp://127.0.0.1:8118"]);
+		$uf = new UrlFetcher("http://atk14.net/",["proxy" => "tcp://127.0.0.1:8118"]);
 		$this->assertEquals(200,$uf->getStatusCode());
-		$this->assertStringContains("Example Domain",(string)$uf->getContent());
+		$this->assertStringContains("ATK14 is a PHP framework for fearless guys",(string)$uf->getContent());
 
 		// https
 		$uf = new UrlFetcher("https://www.atk14.net/api/en/http_requests/detail/?format=json&requested_response_code=417",["proxy" => "tcp://127.0.0.1:8118"]);
