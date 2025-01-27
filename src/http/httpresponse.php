@@ -178,6 +178,11 @@ class HTTPResponse{
 		//cerpano z
 		//http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 		$status = array(
+			// Informational 1xx
+			"100 " => "Continue",
+			"101 " => "Switching protocols",
+			"102 " => "Processing",
+			"103 " => "Early Hints",
 			// Successful 2xx
 			"200" => "OK",
 			"201" => "Created",
@@ -186,6 +191,9 @@ class HTTPResponse{
 			"204" => "No Content",
 			"205" => "Reset Content",
 			"206" => "Partial Content",
+			"207 " => "Multi-Status",
+			"208 " => "Already Reported",
+			"226 " => "IM Used",
 			// Redirection 3xx
 			"300" => "Multiple Choices",
 			"301" => "Moved Permanently",
@@ -193,8 +201,9 @@ class HTTPResponse{
 			"303" => "See Other",
 			"304" => "Not Modified",
 			"305" => "Use Proxy",
-			// (306 Unused)
+			"306" => "Switch Proxy", // unused in some lists
 			"307" => "Temporary Redirect",
+			"308 " => "Permanent Redirect",
 			// Client Error 4xx
 			"400" => "Bad Request",
 			"401" => "Unauthorized",
@@ -215,6 +224,16 @@ class HTTPResponse{
 			"416" => "Requested Range Not Satisfiable",
 			"417" => "Expectation Failed",
 			"418" => "I'm a teapot",
+			"421 " => "Misdirected Request",
+			"422 " => "Unprocessable Entity",
+			"423 " => "Locked",
+			"424 " => "Failed Dependency",
+			"425 " => "Too Early",
+			"426 " => "Upgrade Required",
+			"428 " => "Precondition Required",
+			"429 " => "Too Many Requests",
+			"431 " => "Request Header Fields Too Large",
+			"451 " => "Unavailable For Legal Reasons",
 			// Server Error 5xx
 			"500" => "Internal Server Error",
 			"501" => "Not Implemented",
@@ -224,6 +243,9 @@ class HTTPResponse{
 			"505" => "HTTP Version Not Supported",
 			"506" => "Variant Also Negotiates",
 			"507" => "Insufficient Storage",
+			"508 " => "Loop Detected",
+			"510 " => "Not Extended",
+			"511 " => "Network Authentication Required",
 		);
 		return isset($status["$this->_StatusCode"]) ? $status["$this->_StatusCode"] : "Unknown";
 	}
