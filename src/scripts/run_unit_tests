@@ -104,18 +104,19 @@ foreach($_phpunit_path_ar as $dir => $autoload){
 	}
 }
 
-$error_message = 
-"***************************************************************\n".
-"*  Missing dependency: PHPUnit or PHPUnit2                    *\n".
-"*  The following command may help you:                        *\n".
-"*                                                             *\n".
-"*  $ composer global require \"phpunit/phpunit=4.8.*|5.7.*\"    *\n".
-"*                                                             *\n".
-"*  or for the installation of the very old PHPUnit2 execute:  *\n".
-"*                                                             *\n".
-"*  $ sudo pear install --alldeps PHPUnit2                     *\n".
-"*                                                             *\n".
-"***************************************************************\n";
+$error_message = ltrim('
+********************************************************************************
+*  Missing dependency: PHPUnit or PHPUnit2                                     *
+*  The following command may help you:                                         *
+*                                                                              *
+*  $ composer global require "phpunit/phpunit=~4.8|~5.7|~6.0|~7.5|~8.5|~9.6"   *
+*                                                                              *
+*  or for the installation of the very old PHPUnit2 execute:                   *
+*                                                                              *
+*  $ sudo pear install --alldeps PHPUnit2                                      *
+*                                                                              *
+********************************************************************************
+');
 
 if($exists) {
 	// $ composer global require "phpunit/phpunit=4.8.*"
