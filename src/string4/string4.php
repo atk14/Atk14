@@ -245,6 +245,47 @@ class String4{
 	}
 
 	/**
+	 * Divides str into substrings based on a delimiter, returning an array of these substrings.
+	 *
+	 * The separator can be a regular expression. In this case, the `preg_split` option must be set to true.
+	 *
+	 *	$words = $s->split(" ");
+	 *	$words = $s->split('\s+',["preg_split" => true]);
+	 */
+	function split($separator,$options = array()){
+		$options += array(
+			"preg_split" => false,
+			"stringify" => false,
+		);
+
+		if(!$this->length()){
+			return array();
+		}
+		$separator = (string)$separator;
+		$chunks = $options["preg_split"] ? preg_split($separator,$this->toString()) : explode($separator,$this->toString());
+
+		if($options["stringify"]){
+			return $chunks;
+		}
+
+		$out = array();
+		foreach($chunks as $chunk){
+			$out[] = $this->_copy($chunk);
+		}
+		return $out;
+	}
+
+	/**
+	 * Alias for String4::split($separator,["preg_split" => true])
+	 *
+	 *	$words = $s->pregSplit('\s+');
+	 */
+	function pregSplit($separator,$options = array()){
+		$options["preg_split"] = true;
+		return $this->split($separator,$options);
+	}
+
+	/**
 	 * Returns length of string.
 	 *
 	 * @return integer length of the string
@@ -628,6 +669,39 @@ class String4{
 		}
 
 		return $out;
+	}
+
+	/**
+	 * Capitalizes all the words and replaces some characters in the string to create a nicer looking title
+	 *
+	 * The trailing ‘_id’,‘Id’.. can be kept and capitalized by setting the optional parameter keep_id_suffix to true. By default, this parameter is false.
+	 *
+	 *	$string = new String4("x-men: the last stand");
+	 *	echo $string->titleize(); // "X Men: The Last Stand"
+	 */
+	function titleize($options = array()){
+		$options += array(
+			"keep_id_suffix" => false,
+		);
+		$string = $this->_copy();
+
+		if(!$options["keep_id_suffix"]){
+			$string = $string->gsub('/[_\s]id$/i','');
+		}
+
+		$chunks = $string
+			->gsub('/([a-z0-9])([A-Z])/','\1 \2')
+			->gsub('/[_-]/',' ')
+			->gsub('/\s+/',' ')
+			->trim()
+			->split(" ");
+
+		$out = array();
+		foreach($chunks as $chunk){
+			$out[] = $chunk->capitalize()->toString();
+		}
+
+		return $this->_copy(join(" ",$out));
 	}
 
 	/**

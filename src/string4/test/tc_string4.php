@@ -37,6 +37,40 @@ class TcString4 extends TcBase{
 		*/
 	}
 
+	function test_split(){
+		$s = new String4("Hello World!");
+		$chunks = $s->split(" ");
+		$this->assertTrue(is_array($chunks));
+		$this->assertEquals(2,sizeof($chunks));
+		$this->assertEquals("Hello",$chunks[0]->toString());
+		$this->assertEquals("World!",$chunks[1]->toString());
+
+		$this->assertEquals(array(
+			"Hello",
+			"World!"
+		),$s->split(" ",array("stringify" => true)));
+
+		$s = new String4("Hello  Universe!");
+		$chunks = $s->split('/\s+/',array("preg_split" => true));
+		$this->assertTrue(is_array($chunks));
+		$this->assertEquals(2,sizeof($chunks));
+		$this->assertEquals("Hello",$chunks[0]->toString());
+		$this->assertEquals("Universe!",$chunks[1]->toString());
+
+		$s = new String4("");
+		$chunks = $s->split(" ");
+		$this->assertEquals(0,sizeof($chunks));
+
+		$s = new String4("  Hello  People!  ");
+		$chunks = $s->pregSplit('/\s+/');
+		$this->assertTrue(is_array($chunks));
+		$this->assertEquals(4,sizeof($chunks));
+		$this->assertEquals("",$chunks[0]->toString());
+		$this->assertEquals("Hello",$chunks[1]->toString());
+		$this->assertEquals("People!",$chunks[2]->toString());
+		$this->assertEquals("",$chunks[3]->toString());
+	}
+
 	function test_random_string(){
 		$s1 = String4::RandomString();
 		$s2 = String4::RandomString();
@@ -243,6 +277,21 @@ class TcString4 extends TcBase{
 			$str = new String4($str);
 			$this->assertEquals($result,(string)$str->underscore());
 		}	
+	}
+
+	function test_titleize(){
+		foreach(array(
+			"Book" => "Book",
+			"BlogPost" => "Blog Post",
+			"man from the boondocks" => "Man From The Boondocks",
+			"x-men: the last stand" => "X Men: The Last Stand",
+			"string_ending_with_id" => "String Ending With",
+		) as $string => $expected){
+			$str = new String4($string);
+			$this->assertEquals($expected,(string)$str->titleize());
+		}
+
+		$this->assertEquals("String Ending With Id",String4::ToObject("string_ending_with_id")->titleize(array("keep_id_suffix" => true))->toString());
 	}
 
 	function test_tableize(){
