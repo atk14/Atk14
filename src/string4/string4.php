@@ -460,7 +460,6 @@ class String4{
 			"b",
 			"bdo",
 			"big",
-			"br",
 			"button",
 			"cite",
 			"code",

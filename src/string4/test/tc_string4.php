@@ -460,6 +460,8 @@ class TcString4 extends TcBase{
 		$this->assertEquals("Good Try But <<Wrong>>",(string)$s->stripHtml());
 
 		$this->assertEquals($html,(string)$s);
+
+		$this->assertEquals("Hello There!",String4::ToObject("<p>Hello<br>There!</p>")->stripHtml()->toString());
 	}
 
 	function test_substr(){
