@@ -1051,7 +1051,7 @@ class Atk14Form extends Form
 			 $out[""] = array_merge($out[""],$this->atk14_errors);
 		 }
 		 if(isset($on_field)){
-			if(!isset($out[$on_field])){ $on_field[$on_field] = array(); }
+			if(!isset($out[$on_field])){ $out[$on_field] = array(); }
 			return $out[$on_field];
 		 }
 		 return $out;
