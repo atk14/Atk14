@@ -34,7 +34,7 @@ class TcLock extends TcBase{
 	}
 
 	function _new_logger(){
-		$logger = new logger("test",array(
+		$logger = new Logger("test",array(
 			"log_to_stdout" => true
 		));
 		return $logger;

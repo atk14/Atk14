@@ -83,7 +83,7 @@ class Atk14Migration{
 		static $logger;
 
 		if(!isset($logger)){
-			$logger = new logger("migration",array(
+			$logger = new Logger("migration",array(
 				"log_to_stdout" => true,
 				"log_to_file" => true,
 				"default_log_file" => $ATK14_GLOBAL->getDocumentRoot()."/log/".(TEST ? "test_migration.log" : "migration.log")

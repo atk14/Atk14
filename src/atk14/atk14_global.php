@@ -631,7 +631,7 @@ class Atk14Global{
 		global $ATK14_LOGGER;
 
 		if(!isset($ATK14_LOGGER)){
-			$ATK14_LOGGER = new logger("atk14",array("disable_start_and_stop_marks" => true));
+			$ATK14_LOGGER = new Logger("atk14",array("disable_start_and_stop_marks" => true));
 			$ATK14_LOGGER->start();
 		}
 		return $ATK14_LOGGER;
