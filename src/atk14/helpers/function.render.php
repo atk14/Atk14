@@ -75,6 +75,7 @@ function smarty_function_render($params,$template){
 	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
 
 	$smarty = clone($template->getSmarty());
+	$smarty->assign($template->getTemplateVars());
 
 	$out = array();
 
