@@ -30,7 +30,6 @@ class Atk14SmartyBase extends Smarty\Smarty{
 			"is_a",
 			"is_null",
 			"is_string",
-			"mt_rand",
 			"strstr",
 		] as $fn){
 			$this->registerPlugin("modifier", $fn, $fn);
