@@ -57,6 +57,11 @@ class Atk14SmartyBase extends Smarty\Smarty{
 		}
 	}
 
+	public function addPluginsDir($plugins_dir){
+		// An user deprecated error is triggered in parent::addPluginsDir() (Smarty 5.4.3)
+		return @parent::addPluginsDir($plugins_dir);
+	}
+
 	public function assignByRef($tpl_var, $value){
 		return $this->assign($tpl_var, $value);
 	}
