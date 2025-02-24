@@ -24,8 +24,13 @@ class Atk14SmartyBase extends Smarty\Smarty{
 		//	// native PHP functions used as modifiers need to be registered
 		//	$smarty->registerPlugin('modifier', 'substr', 'substr');
 		foreach([
+			"array_slice",
+			"defined",
+			"get_class",
+			"is_a",
 			"is_null",
 			"is_string",
+			"mt_rand",
 			"strstr",
 		] as $fn){
 			$this->registerPlugin("modifier", $fn, $fn);
