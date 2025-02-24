@@ -430,7 +430,9 @@ class Atk14Utils{
 		}
 
 		// do compile_id zahrneme jmeno controlleru, aby nedochazelo ke kolizim se sablonama z ruznych controlleru, ktere se jmenuji stejne
-		if(ATK14_USE_SMARTY4){
+		if(ATK14_USE_SMARTY5){
+			$smarty_version_salt = "smarty5";
+		}elseif(ATK14_USE_SMARTY4){
 			$smarty_version_salt = "smarty4";
 		}elseif(ATK14_USE_SMARTY3){
 			$smarty_version_salt = "smarty3";
@@ -441,15 +443,26 @@ class Atk14Utils{
 
 		$smarty->compile_id = $smarty->compile_id."atk14{$options["compile_id_salt"]}_{$smarty_version_salt}{$default_modifiers_salt}_{$options["namespace"]}_{$options["controller_name"]}_";
 
-		$plugins = $smarty->getPluginsDir();
-	
-		$smarty->setPluginsDir(array_merge(array(
-			$ATK14_GLOBAL->getApplicationPath()."helpers/$options[namespace]/$options[controller_name]/",
-			$ATK14_GLOBAL->getApplicationPath()."helpers/$options[namespace]/",
-			$ATK14_GLOBAL->getApplicationPath()."helpers/",
-			dirname(__FILE__)."/helpers/",
-			$PATH_SMARTY."/plugins/",
-		),$plugins));
+		$plugins = [];
+		if($options["controller_name"]){
+			$plugins[] = $ATK14_GLOBAL->getApplicationPath()."helpers/$options[namespace]/$options[controller_name]/";
+		}
+		if($options["namespace"]){
+			$plugins[] = $ATK14_GLOBAL->getApplicationPath()."helpers/$options[namespace]/";
+		}
+		$plugins[] = $ATK14_GLOBAL->getApplicationPath()."helpers/";
+		$plugins[] = dirname(__FILE__)."/helpers/";
+		$plugins[] = $PATH_SMARTY."/plugins/";
+		foreach($smarty->getPluginsDir() as $_dir){
+			$plugins[] = $_dir;
+		}
+		$plugins = array_unique($plugins);
+
+		$smarty->setPluginsDir($plugins);
+
+		if(ATK14_USE_SMARTY5){
+			$smarty->addPluginsDir(ATK14_DOCUMENT_ROOT."/vendor/smarty/smarty/src/Extension");
+		}
 
 		$smarty->registerFilter('pre','atk14_smarty_prefilter');
 

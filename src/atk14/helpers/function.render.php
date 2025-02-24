@@ -48,7 +48,101 @@
  * @param array $content
  */
 function smarty_function_render($params,$template){
-	if(ATK14_USE_SMARTY3 || ATK14_USE_SMARTY4){
+	if(ATK14_USE_SMARTY5){
+
+	// -*-*-*-*-*-*-*-*-*- NEW IMPLEMENTATION ONLY FOR SMARTY5 -*-*-*-*-*-*-*-*-*-
+	$orig_params = $params;
+
+	$params += array(
+		"partial" => "",
+		"from" => null,
+	);
+
+	if(!is_null($params["from"])){
+		// default item value
+		$params += array(
+			"item" => String4::ToObject($params["partial"])->gsub('/^.*\/(.+?)$/','\1')->gsub('/_item$/','')->toString() // "shared/article_item" -> "article" or "shared/person" -> "person"
+		);
+	}
+
+	Atk14Timer::Start("helper function.render");
+	$template_name = $partial = $params["partial"];
+	unset($params["partial"]);
+
+	$template_name = preg_replace("/([^\\/]+)$/","_\\1",$template_name);
+	$template_name .= ".tpl";
+
+	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
+
+	$smarty = clone($template->getSmarty());
+
+	$out = array();
+
+	if(!isset($params["from"])){
+
+		foreach($params as $key => $value){
+			$smarty->assign($key,$value);
+		}
+		$out[] = $smarty->fetch($template_name);
+
+	}else{
+
+		$key = null;
+		
+		if(!is_numeric($params["from"])){
+			$collection = $params["from"];
+			$key = isset($params["key"]) ? $params["key"] : null;
+			unset($params["key"]);
+		}else{
+			$collection = array();
+			$to = isset($params["to"]) ? (int)$params["to"] : 0;
+			// TODO: poresit zaporny stepping
+			$step = isset($params["step"]) ? (int)$params["step"] : 1;
+			$step==0 && ($step = 1);
+			
+			for($i=(int)$params["from"];$i<=$to;$i += $step){
+				$collection[] = $i;
+			}
+			unset($params["to"]);
+			unset($params["step"]);
+		}
+
+		$item = null;
+		if(isset($params["item"])){
+			$item = $params["item"];
+		}elseif(preg_match("/([^\\/]+)$/",$partial,$matches)){
+			$item = $matches[1];
+		}
+
+		unset($params["item"]);
+		unset($params["from"]);
+
+		$collection_size = sizeof($collection);
+		$counter = 0;
+		foreach($params as $k => $value){
+			$smarty->assign($k,$value);
+		}
+
+		foreach($collection as $_key => $_item){
+			if(isset($key)){ $smarty->assign($key,$_key);}
+			if(isset($item)){ $smarty->assign($item,$_item); }
+			$smarty->assign("__counter__",$counter); // consider $__counter__ as obsolete, use $__index__ instead
+			$smarty->assign("__index__",$counter);
+			$smarty->assign("__iteration__",$counter+1);
+			$smarty->assign("__first__",$counter==0);
+			$smarty->assign("__last__",$counter==($collection_size-1));
+			$smarty->assign("__total__",$collection_size);
+			$out[] = $smarty->fetch($template_name);
+			$counter++;
+		}
+	}
+
+	Atk14Timer::Stop("helper function.render");
+
+	return join("",$out);
+	// -*-*-*-*-*-*-*-*-*- END OF NEW IMPLEMENTATION -*-*-*-*-*-*-*-*-*-
+
+	}elseif(ATK14_USE_SMARTY3 || ATK14_USE_SMARTY4){
 
 	// -*-*-*-*-*-*-*-*-*- NEW IMPLEMENTATION ONLY FOR SMARTY3 -*-*-*-*-*-*-*-*-*-
 	$orig_params = $params;

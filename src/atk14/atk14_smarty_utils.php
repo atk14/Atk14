@@ -77,6 +77,9 @@ set_error_handler("atk14_error_handler");
  * Actually the previous implementation causes troubles.
  */
 function atk14_get_smarty_from_template($template){
+	if(ATK14_USE_SMARTY5){
+		return $template->getSmarty();
+	}
 	return $template;
 	//return isset($template->smarty) ? $template->smarty : $template; // the previous implementation
 }
