@@ -59,12 +59,14 @@ require_once(__DIR__."/src/xmole/load.php");
 require_once(__DIR__."/src/stopwatch/load.php");
 require_once(__DIR__."/src/logger/load.php");
 require_once(__DIR__."/src/lock/load.php");
-if(ATK14_USE_SMARTY4){
-	require_once(__DIR__."/src/smarty4/libs/Smarty.class.php");
-}elseif(ATK14_USE_SMARTY3){
-	require_once(__DIR__."/src/smarty3/libs/SmartyBC.class.php");
-}else{
-	require_once(__DIR__."/src/smarty/libs/Smarty.class.php");
+if(ATK14_USE_INTERNAL_SMARTY){
+	if(ATK14_USE_SMARTY4){
+		require_once(__DIR__."/src/smarty4/libs/Smarty.class.php");
+	}elseif(ATK14_USE_SMARTY3){
+		require_once(__DIR__."/src/smarty3/libs/SmartyBC.class.php");
+	}else{
+		require_once(__DIR__."/src/smarty/libs/Smarty.class.php");
+	}
 }
 require_once(__DIR__."/src/dbmole/load.php");
 require_once(__DIR__."/src/tablerecord/load.php");

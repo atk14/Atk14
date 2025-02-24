@@ -22,7 +22,9 @@ require_once("$__PATH__/atk14_migration.php");
 require_once("$__PATH__/atk14_robot.php");
 require_once("$__PATH__/atk14_deployment_stage.php");
 require_once("$__PATH__/atk14_smarty_utils.php");
-if(ATK14_USE_SMARTY4){
+if(ATK14_USE_SMARTY5){
+	require_once("$__PATH__/atk14_smarty_base_v5.php");
+}elseif(ATK14_USE_SMARTY4){
 	require_once("$__PATH__/atk14_smarty_base_v4.php");
 }elseif(ATK14_USE_SMARTY3){
 	require_once("$__PATH__/atk14_smarty_base_v3.php");
