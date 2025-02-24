@@ -101,7 +101,7 @@ class Atk14Require{
 		}
 
 		if(!$smarty){ $smarty = Atk14Utils::GetSmarty(); }
-		$plugins_dir = $smarty->plugins_dir;
+		$plugins_dir = $smarty->getPluginsDir();
 		foreach($plugins_dir as $dir){
 			if(file_exists("$dir/$filename")){
 				require_once("$dir/$filename");

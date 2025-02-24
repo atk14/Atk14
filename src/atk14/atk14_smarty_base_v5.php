@@ -65,6 +65,18 @@ class Atk14SmartyBase extends Smarty\Smarty{
 	public function assignByRef($tpl_var, $value){
 		return $this->assign($tpl_var, $value);
 	}
+
+	public function registerPlugin($type, $name, $callback, $cacheable = true) {
+		if (isset($this->registered_plugins[$type][$name])) {
+			// throw new Exception("Plugin tag '{$name}' already registered");
+			$this->registered_plugins[$type][$name] = [$callback, (bool)$cacheable];
+		} elseif (!is_callable($callback) && !class_exists($callback)) {
+			throw new Exception("Plugin '{$name}' not callable");
+		} else {
+			$this->registered_plugins[$type][$name] = [$callback, (bool)$cacheable];
+		}
+		return $this;
+	}
 }
 
 class Atk14SmartyDebug extends Smarty\Debug {
