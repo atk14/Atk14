@@ -1,5 +1,5 @@
 <?php
-function smarty_modifier_uniqid($prefix){
+function smarty_modifier_uniqid($prefix = ""){
 	$prefix = (string)$prefix;
 	return uniqid($prefix);
 }
