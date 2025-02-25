@@ -79,7 +79,7 @@ install:
   - sudo update-locale
   - locale -a
   - composer global require "phpunit/phpunit=^7.5" --ignore-platform-reqs
-  - cd src/atk14/helpers/test/ && composer update --dev 2>&1
+  - cd src/atk14/helpers/test/ && composer update --dev 2>&1 && cd ../../../../
   - ./src/scripts/check_system || echo "FIX REQUIREMENTS!"
   - sudo -u postgres psql -c "CREATE DATABASE test;" -U postgres 2>&1
   - sudo -u postgres psql -c "CREATE USER test WITH ENCRYPTED PASSWORD 'test'" -U postgres 2>&1
