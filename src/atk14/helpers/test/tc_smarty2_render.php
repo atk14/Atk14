@@ -5,6 +5,12 @@ define("ATK14_USE_SMARTY5", false);
 define("ATK14_DOCUMENT_ROOT", __DIR__ );
 require_once('../../../../load.php');
 
+// Why do we need theese requires? Don't know...
+require_once(__DIR__ . "/app/helpers/function.assert_consume.php");
+require_once(__DIR__ . "/app/helpers/function.assert.php");
+require_once(__DIR__ . "/app/helpers/function.die.php");
+require_once(__DIR__ . "/app/helpers/function.increment_counter.php");
+
 class TcSmarty2Render extends TcBase{
 
 	function test() {
@@ -36,41 +42,5 @@ class TcSmarty2Render extends TcBase{
 		$smarty->assign("token","EXTERNAL");
 		$tokens = @$smarty->fetch("tokens.tpl");
 		$this->assertEquals('tokens: EXTERNAL | INTERNAL | ASSIGNED | INTERNAL_AGAIN',trim($tokens));
-	}
-}
-
-function smarty_function_assert($params, $template) {
-	$params += [
-		'smarty3' => null,
-		'var' => null,
-		'message' => null,
-		'comment' => null,
-	];
-	if($params['smarty3']) {
-		return;
-	}
-	$var = $template->getTemplateVars($params['var']);
-	$template->getTemplateVars('test')->assertEquals($params['value'], $var, 'FAILED TEST: '. $params['message']. " - " . $params['comment']);
-}
-
-function smarty_function_die() {
-	die();
-}
-
-function smarty_function_increment_counter($params, $template) {
-	$template->getTemplateVars('test')->counter++;
-}
-
-function smarty_function_assert_consume($params, $template) {
-	$test = $template->getTemplateVars('test');
-	$array = &$test->array;
-	if(current($array)===false) {
-		reset($array);
-		$test->assertEquals(null, $params['key']);
-		$test->assertEquals(null, $params['value']);
-	} else {
-		$test->assertEquals(key($array), $params['key']);
-		$test->assertEquals(current($array), $params['value']);
-		next($array);
 	}
 }

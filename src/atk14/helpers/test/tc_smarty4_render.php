@@ -29,30 +29,3 @@ class TcSmarty4Render extends TcBase{
 		$this->assertEquals('tokens: EXTERNAL | INTERNAL | ASSIGNED | INTERNAL_AGAIN',trim($tokens));
 	}
 }
-
-function smarty_function_assert($params, $template) {
-	$var = $template->getTemplateVars($params['var']);
-	$template->getTemplateVars('test')->assertEquals($params['value'], $var, 'FAILED TEST: '. $params['message']. " - " . $params['comment']);
-}
-
-function smarty_function_die() {
-	die();
-}
-
-function smarty_function_increment_counter($params, $template) {
-	$template->getTemplateVars('test')->counter++;
-}
-
-function smarty_function_assert_consume($params, $template) {
-	$test = $template->getTemplateVars('test');
-	$array = &$test->array;
-	if(current($array)===false) {
-		reset($array);
-		$test->assertEquals(null, $params['key']);
-		$test->assertEquals(null, $params['value']);
-	} else {
-		$test->assertEquals(key($array), $params['key']);
-		$test->assertEquals(current($array), $params['value']);
-		next($array);
-	}
-}
