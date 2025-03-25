@@ -270,21 +270,26 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("http://www.fake.cz/index.php",$req->getHttpReferer());
 	}
 
-	function test_request_uri(){
+	function test_getRequestUri(){
 		global $_SERVER;
 
 		unset($_SERVER["REQUEST_URI"]);
 
 		$req = new HTTPRequest();
 
-		$this->assertEquals("",$req->getUri());
+		$this->assertEquals(null,$req->getRequestUri());
+		$this->assertTrue(is_null($req->getRequestUri()),'$req->getRequestUri() should be NULL: '.var_export($req->getRequestUri(),true));
+
+		$this->assertEquals(null,$req->getUri());
+		$this->assertTrue(is_null($req->getUri()),'$req->getUri() should be NULL: '.var_export($req->getUri(),true));
 
 		$_SERVER["REQUEST_URI"] = "/test-uri/";
+		$this->assertEquals("/test-uri/",$req->getRequestUri());
 		$this->assertEquals("/test-uri/",$req->getUri());
 
 		$req->setUri("/force-uri/");
+		$this->assertEquals("/force-uri/",$req->getRequestUri());
 		$this->assertEquals("/force-uri/",$req->getUri());
-		
 	}
 
 	function test_set_xhr(){
@@ -505,17 +510,6 @@ class tc_http_request extends tc_base{
 		$this->assertEquals("just-for-testing.com",$request->getServerName());
 	}
 
-	function test_getRequestUri(){
-		global $_SERVER;
-		$_SERVER["REQUEST_URI"] = "/index.aspx";
-
-		$request = new HTTPRequest();
-		$this->assertEquals("/index.aspx",$request->getRequestUri());
-
-		$request->setRequestUri("/index.php");
-		$this->assertEquals("/index.php",$request->getRequestUri());
-	}
-
 	function test_getQueryString(){
 		global $_SERVER;
 
@@ -594,6 +588,15 @@ class tc_http_request extends tc_base{
 
 		$this->assertEquals("https://www.testiq.cz/contact.php",$request->getRequestAddress());
 		$this->assertEquals("https://www.testiq.cz/contact.php",$request->getUrl());
+
+		unset($_SERVER["REQUEST_URI"]);
+		unset($_SERVER["HTTPS"]);
+		unset($_SERVER["SERVER_PORT"]);
+		unset($_SERVER["HTTP_HOST"]);
+		$request = new HTTPRequest();
+
+		$this->assertEquals(null,$request->getUrl());
+		$this->assertTrue(is_null($request->getUrl()),'$request->getUrl() should be NULL: '.var_export($request->getUrl(),true));
 	}
 
 	function test_getGetVars(){

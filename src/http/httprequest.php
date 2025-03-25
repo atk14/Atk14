@@ -236,7 +236,7 @@ class HTTPRequest{
 	function getRequestUri(){
 		global $_SERVER;
 		if($uri = $this->_getForceValue("RequestUri")){ return $uri; }
-		return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : "";
+		return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
 	}
 
 	/**
@@ -296,9 +296,13 @@ class HTTPRequest{
 			return $url;
 		}
 
+		$hostname = $this->getHttpHost();
+		if(!$hostname){
+			return null;
+		}
+
 		$scheme = $this->getScheme();
 		$port = $this->isServerOnStandardPort() ? "" : ":".$this->getServerPort();
-		$hostname = $this->getHttpHost();
 		return "$scheme://$hostname$port";
 	}
 
@@ -317,6 +321,10 @@ class HTTPRequest{
 		}
 
 		$server_url = $this->getServerUrl();
+		if(!$server_url){
+			return null;
+		}
+
 		$uri = $this->getRequestUri();
 		return "$server_url$uri";
 	}
