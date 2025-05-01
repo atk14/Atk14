@@ -41,6 +41,7 @@ class _CMailFile {
 	var $mime_headers;
 	var $mime_boundary;
 	var $smtp_headers;
+	var $_first_attachment;
 	
 	//2009-01-06: konstruktor byl predelan
 	//$subject,$to,$from,$cc,$bcc,$msg,$msg_mimetype,$msg_charset,$filename,&$file_content,$mimetype = "application/octet-stream", $mime_filename = false) 
