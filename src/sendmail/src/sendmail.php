@@ -143,7 +143,6 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		$original_to = $TO;
 		$original_cc = $CC;
 		$original_bcc = $BCC;
-		$BODY = "PUVODNI ADRESAT: $TO\nPUVODNI CC: $CC\nPUVODNI BCC: $BCC\n\n$BODY"; // TODO: put this information into messages header
 		$TO = SENDMAIL_USE_TESTING_ADDRESS_TO;
 		$CC = "";
 		$BCC = "";
