@@ -137,7 +137,12 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		// we don't want to prepend SENDMAIL_BODY_AUTO_PREFIX when the message is just being built
 		$BODY = SENDMAIL_BODY_AUTO_PREFIX.$BODY;
 	}
+
+	$original_to = $original_cc = $original_bcc = "";
 	if(strlen(SENDMAIL_USE_TESTING_ADDRESS_TO)>0){
+		$original_to = $TO;
+		$original_cc = $CC;
+		$original_bcc = $BCC;
 		$BODY = "PUVODNI ADRESAT: $TO\nPUVODNI CC: $CC\nPUVODNI BCC: $BCC\n\n$BODY"; // TODO: put this information into messages header
 		$TO = SENDMAIL_USE_TESTING_ADDRESS_TO;
 		$CC = "";
@@ -206,6 +211,16 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		}
 		if($CC!=""){
 			$HEADERS .= "Cc: $CC\n";
+		}
+
+		if($original_to){
+			$HEADERS .= "X-Original-To: "._sendmail_escape_subject($original_to)."\n";
+		}
+		if($original_cc){
+			$HEADERS .= "X-Original-Cc: "._sendmail_escape_subject($original_cc)."\n";
+		}
+		if($original_bcc){
+			$HEADERS .= "X-Original-Bcc: "._sendmail_escape_subject($original_bcc)."\n";
 		}
 
 		$HEADERS .= "MIME-Version: 1.0\n";
