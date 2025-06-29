@@ -1075,7 +1075,7 @@ END;
 		}else{
 			$empty_lines_counter++;
 
-			if($empty_lines_counter<$options["max_empty_lines"]){
+			if($empty_lines_counter<=$options["max_empty_lines"]){
 				if($options["trim_empty_lines"]){
 					$line = trim($line);
 				}
