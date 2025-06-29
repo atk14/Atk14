@@ -1034,6 +1034,58 @@ END;
 		}
 		return (bool)$this->toString();
 	}
+
+	function removeEmptyLines($options = []){
+		$options += [
+			"max_empty_lines" => 0,
+			"trim_empty_lines" => true,
+		];
+
+		$text = $this->_String4;
+		$out = [];
+		$empty_lines_counter = 0;
+		while(preg_match('/^(.*?)(\r\n|\n\r|\n|\r)/s',$text,$matches)){
+			$line = $matches[1];
+			$ending = $matches[2];
+
+			$text = substr($text,strlen($line) + strlen($ending));
+
+			if(trim($line)!==""){
+				$empty_lines_counter = 0;
+			}else{
+				$empty_lines_counter++;
+
+				if($empty_lines_counter>$options["max_empty_lines"]){
+					continue;
+				}
+
+				if($options["trim_empty_lines"]){
+					$line = trim($line);
+				}
+			}
+
+			$out[] = $line;
+			$out[] = $ending;
+		}
+
+		$line = $text;
+
+		if(trim($line)!==""){
+			$out[] = $line;
+		}else{
+			$empty_lines_counter++;
+
+			if($empty_lines_counter<$options["max_empty_lines"]){
+				if($options["trim_empty_lines"]){
+					$line = trim($line);
+				}
+
+				$out[] = $line;
+			}
+		}
+
+		return $this->_copy(join("",$out));
+	}
 	
 	/**
 	 * Magic method

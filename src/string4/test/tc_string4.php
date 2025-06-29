@@ -545,4 +545,19 @@ class TcString4 extends TcBase{
 		$this->assertEquals("▒Příliš▒ žl▒uťoučký kůň úpěl ďábelské ódy▒",$out);
 		$this->assertTrue(Translate::CheckEncoding($out,"UTF-8"));
 	}
+
+	function test_removeEmptyLines(){
+		$s = new String4(" AHOY! ");
+		$this->assertEquals(" AHOY! ",$s->removeEmptyLines()->toString());
+
+		$s = new String4("\n\n \nHello\n \n \n \nWorld! \n \n ");
+		$this->assertEquals("Hello\nWorld! \n",$s->removeEmptyLines()->toString());
+
+		$s = new String4(" \r\n \r\nHello\r\n \r\n \r\n \r\nWorld! \r\n \r\n ");
+		$this->assertEquals("Hello\r\nWorld! \r\n",$s->removeEmptyLines()->toString());
+		$this->assertEquals("\r\nHello\r\n\r\nWorld! \r\n\r\n",$s->removeEmptyLines(["max_empty_lines" => 1])->toString());
+		$this->assertEquals(" \r\nHello\r\n \r\nWorld! \r\n \r\n",$s->removeEmptyLines(["max_empty_lines" => 1,"trim_empty_lines" => false])->toString());
+		$this->assertEquals("\r\n\r\nHello\r\n\r\n\r\nWorld! \r\n\r\n",$s->removeEmptyLines(["max_empty_lines" => 2])->toString());
+		$this->assertEquals(" \r\n \r\nHello\r\n \r\n \r\nWorld! \r\n \r\n",$s->removeEmptyLines(["max_empty_lines" => 2,"trim_empty_lines" => false])->toString());
+	}
 }
