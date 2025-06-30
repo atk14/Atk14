@@ -404,21 +404,93 @@ class String4{
 	}
 
 	/**
-	 * Removes all whitespace.
+	 * Strip whitespace (or other characters) from the beginning and end of the string
+	 *
+	 * If optional parameter $remove_hidden_characters is set to true, it also remove hidden characters.
 	 *
 	 * @return String4
 	 */
-	function trim(){
-		return $this->_copy(trim($this->_String4));
+	function trim($remove_hidden_characters = false){
+		return $this->_copy($this->_trim($this->_String4,$remove_hidden_characters));
+	}
+
+	protected function _trim($string,$remove_hidden_characters = false){
+		$encoding = $this->getEncoding(true);
+		if($encoding!=="utf8"){
+			//if($remove_hidden_characters){ return preg_replace('/^(\s|\x00){0,}(.*?)(\s|\x00){0,}$/s','\2',$string); }
+			return trim($string);
+		}
+
+		static $white_characters, $white_and_invisible_characters;
+		if(!$white_characters){
+			$white_characters = [
+				'\x09', // Horizontal Tab
+				'\x0A', // Line Feed
+				'\x0B', // Vertical Tab
+				'\x0C', // Form Feed
+				'\x0D', // Carriage Return
+				'\x20', // Space
+				'\xC2\x85', // Next Line
+				'\xC2\xA0', // No-Break Space (NBSP)
+				'\xE1\x9A\x80', // Ogham Space Mark
+				'\xE1\xA0\x8E', // Mongolian Vowel Separator
+				'\xE2\x80\x80', // En Quad
+				'\xE2\x80\x81', // Em Quad
+				'\xE2\x80\x82', // En Space
+				'\xE2\x80\x83', // Em Space
+				'\xE2\x80\x84', // Three-Per-Em Space
+				'\xE2\x80\x85', // Four-Per-Em Space
+				'\xE2\x80\x86', // Six-Per-Em Space
+				'\xE2\x80\x87', // Figure Space
+				'\xE2\x80\x88', // Punctuation Space
+				'\xE2\x80\x89', // Thin Space
+				'\xE2\x80\x8A', // Hair Space
+				'\xE2\x80\xA8', // Line Separator
+				'\xE2\x80\xA9', // Paragraph Separator
+				'\xE2\x80\xAF', // Narrow No-Break Space
+				'\xE2\x81\x9F', // Medium Mathematical Space
+				'\xE3\x80\x80', // Ideographic Space
+			];
+
+			$invisible_characters = [
+				'\x00', // Null byte
+				'\xC2\xAD', // Soft Hyphen
+				'\xCD\x8F', // Combining Grapheme Joiner
+				'\xE1\xA0\x8E', // Mongolian Vowel Separator
+				'\xE2\x80\x8B', // Zero Width Space (ZWSP)
+				'\xE2\x80\x8C', // Zero Width Non-Joiner (ZWNJ)
+				'\xE2\x80\x8D', // Zero Width Joiner (ZWJ)
+				'\xE2\x81\xA0', // Word Joiner
+				'\xE2\x80\xAA', // Left-to-Right Embedding (LRE)
+				'\xE2\x80\xAB', // Right-to-Left Embedding (RLE)
+				'\xE2\x80\xAC', // Pop Directional Formatting (PDF)
+				'\xE2\x80\xAD', // Left-to-Right Override (LRO)
+				'\xE2\x80\xAE', // Right-to-Left Override (RLO)
+				'\xE2\x81\xA1', // Function Application
+				'\xE2\x81\xA2', // Invisible Times
+				'\xE2\x81\xA3', // Invisible Separator
+				'\xE2\x81\xA4', // Invisible Plus
+				'\xEF\xBB\xBF', // Byte Order Mark (BOM)
+			];
+
+			$white_and_invisible_characters = array_merge($white_characters,$invisible_characters);
+			$white_and_invisible_characters = "(".join("|",$white_and_invisible_characters).")";
+
+			$white_characters = "(".join("|",$white_characters).")";
+		}
+		if($remove_hidden_characters){
+			return preg_replace("/^$white_and_invisible_characters{0,}(.*?)$white_and_invisible_characters{0,}$/s",'\2',$string);
+		}
+		return preg_replace("/^$white_characters{0,}(.*?)$white_characters{0,}$/s",'\2',$string);
 	}
 
 	/**
-	 * First removes all whitespace on both ends of the string, and then changes remaining consecutive whitespace groups into one space each.
+	 * First removes all whitespaces and hidden characters on both ends of the string, and then changes remaining consecutive whitespace groups into one space each.
 	 *
 	 * @return String4
 	 */
 	function squish(){
-		$out = $this->trim();
+		$out = $this->trim(true);
 		return $out->gsub('/\s+/',' ');
 	}
 
@@ -496,7 +568,7 @@ class String4{
 
 		$content = html_entity_decode($content); // e.g. "&amp;" -> "&"
 
-		$content = trim($content);
+		$content = $this->_trim($content);
 		$content = preg_replace('#[\t\r\n]#',' ',$content);
 		$content = preg_replace('#\s{2,}#',' ',$content);
 
@@ -1050,7 +1122,7 @@ END;
 
 			$text = substr($text,strlen($line) + strlen($ending));
 
-			if(trim($line)!==""){
+			if($this->_trim($line,true)!==""){
 				$empty_lines_counter = 0;
 			}else{
 				$empty_lines_counter++;
@@ -1060,7 +1132,7 @@ END;
 				}
 
 				if($options["trim_empty_lines"]){
-					$line = trim($line);
+					$line = $this->_trim($line);
 				}
 			}
 
@@ -1070,14 +1142,14 @@ END;
 
 		$line = $text;
 
-		if(trim($line)!==""){
+		if($this->_trim($line,true)!==""){
 			$out[] = $line;
 		}else{
 			$empty_lines_counter++;
 
 			if($empty_lines_counter<=$options["max_empty_lines"]){
 				if($options["trim_empty_lines"]){
-					$line = trim($line);
+					$line = $this->_trim($line);
 				}
 
 				$out[] = $line;

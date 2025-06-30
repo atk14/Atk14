@@ -179,9 +179,24 @@ class TcString4 extends TcBase{
 	}
 
 	function test_trim_and_squish(){
-		$string = new String4("  Hello\n World \n\r ");
-		$this->assertEquals("Hello\n World",(string)$string->trim());
+		$null_byte = chr(0x00);
+
+		$string = new String4(" \t$null_byte Hello\n World \n\r ");
+		$this->assertEquals("$null_byte Hello\n World",(string)$string->trim()); // trim() by default doesn't remove hidden characters
+		$this->assertEquals("Hello\n World",(string)$string->trim(true));
 		$this->assertEquals("Hello World",(string)$string->squish());
+
+		// trimming an UTF-8 string
+
+		$nbsp = chr(0xC2).chr(0xA0);
+		$en_quad = chr(0xE2).chr(0x80).chr(0x80);
+
+		$string = new String4("$en_quad $nbsp $null_byte x\n$nbsp\n $en_quad\r\t");
+		$this->assertEquals("$null_byte x",(string)$string->trim());
+		$this->assertEquals("x",(string)$string->trim(true));
+
+		$string = new String4(" $nbsp x $nbsp\n \t \r \x00 ","iso-8859-2");
+		$this->assertEquals("$nbsp x $nbsp",(string)$string->trim());
 	}
 
 	function test_match(){
