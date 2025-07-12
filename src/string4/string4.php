@@ -1158,6 +1158,76 @@ END;
 
 		return $this->_copy(join("",$out));
 	}
+
+	/**
+	 * Applies the callback to the every line of the content
+	 *
+	 * ```
+	 * // trim every line
+	 * $string = $string->eachLineMap(function($line){ return $line->trim(); });
+	 * ```
+	 */
+	function eachLineMap($callback){
+		$text = $this->_String4;
+		$out = [];
+		while(preg_match('/^(.*?)(\r\n|\n\r|\n|\r)/s',$text,$matches)){
+			$line = $matches[1];
+			$ending = $matches[2];
+
+			$text = substr($text,strlen($line) + strlen($ending));
+
+			$out[] = (string)$callback($this->_copy($line));
+			$out[] = $ending;
+		}
+
+		if(strlen($text)>0){
+			$out[] = (string)$callback($this->_copy($text));
+		}
+
+		return $this->_copy(join("",$out));
+	}
+
+	/**
+	 * Filters lines of the content using a callback function
+	 *
+	 * ```
+	 * // filter out empty lines
+	 * $string = $string->eachLineFilter(function($line){ return $line->trim()->length()>0; });
+	 * ```
+	 */
+	function eachLineFilter(callable $filter = null){
+		if(!$filter){
+			$filter = function($line){ return $line->length()>0; };
+		}
+
+		$text = $this->_String4;
+		$out = [];
+		$ending = "";
+		while(preg_match('/^(.*?)(\r\n|\n\r|\n|\r)/s',$text,$matches)){
+			$prev_ending = $ending;
+
+			$line = $matches[1];
+			$ending = $matches[2];
+
+			$text = substr($text,strlen($line) + strlen($ending));
+
+			$line = $this->_copy($line);
+			if((bool)$filter($line)){
+				$out && ($out[] = $prev_ending);
+				$out[] = $line;
+			}
+		}
+
+		if(strlen($text)>0){
+			$line = $this->_copy($text);
+			if((bool)$filter($line)){
+				$out && ($out[] = $ending);
+				$out[] = $line;
+			}
+		}
+
+		return $this->_copy(join("",$out));
+	}
 	
 	/**
 	 * Magic method

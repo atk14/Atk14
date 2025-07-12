@@ -575,4 +575,94 @@ class TcString4 extends TcBase{
 		$this->assertEquals("\r\n\r\nHello\r\n\r\n\r\nWorld! \r\n\r\n\r\n",$s->removeEmptyLines(["max_empty_lines" => 2])->toString());
 		$this->assertEquals(" \r\n \r\nHello\r\n \r\n \r\nWorld! \r\n \r\n \r\n",$s->removeEmptyLines(["max_empty_lines" => 2,"trim_empty_lines" => false])->toString());
 	}
+
+	function test_eachLineMap(){
+		$source = trim("
+# Some comment
+Title
+
+# Another comment
+Body?
+
+-- end --
+# Ending comment
+		");
+
+		$s = new String4($source);
+
+		$this->assertEquals($source,(string)$s->eachLineMap(function($line){ return $line; }));
+		$this->assertEquals($source,(string)$s->eachLineMap(function($line){ return (string)$line; }));
+
+		// Capital letters on all lines
+		$this->assertEquals(trim("
+# SOME COMMENT
+TITLE
+
+# ANOTHER COMMENT
+BODY?
+
+-- END --
+# ENDING COMMENT
+		"),(string)$s->eachLineMap(function($line){ return $line->upper(); }));
+
+		// Capital letters on all lines except comments
+		$this->assertEquals(trim("
+# Some comment
+TITLE
+
+# Another comment
+BODY?
+
+-- END --
+# Ending comment
+		"),(string)$s->eachLineMap(function($line){ return $line->match('/^\s*#/') ? $line : $line->upper(); }));
+	}
+
+	function test_eachLineFilter(){
+		$source = "A\nB";
+
+		$s = new String4($source);
+		$this->assertEquals("A\nB",(string)$s->eachLineFilter(function($line){ return true; }));
+		$this->assertEquals("A\nB",(string)$s->eachLineFilter());
+
+		$this->assertEquals("B",(string)$s->eachLineFilter(function($line){ return (string)$line!=="A"; }));
+		$this->assertEquals("A",(string)$s->eachLineFilter(function($line){ return (string)$line!=="B"; }));
+		$this->assertEquals("A\nB",(string)$s->eachLineFilter(function($line){ return (string)$line!=="C"; }));
+		// --
+
+		$source = trim("
+# Some comment
+Title
+
+# Another comment
+Body?
+
+-- end --
+# Ending comment
+		");
+
+		$s = new String4($source);
+
+		$this->assertEquals($source,(string)$s->eachLineFilter(function($line){ return true; }));
+		$this->assertEquals("",(string)$s->eachLineFilter(function($line){ return false; }));
+
+		// Remove all empty lines (without triming)
+		$this->assertEquals(trim("
+# Some comment
+Title
+# Another comment
+Body?
+-- end --
+# Ending comment
+		"),(string)$s->eachLineFilter());
+
+		// Filter out all comments
+		$this->assertEquals(trim("
+Title
+
+Body?
+
+-- end --
+		"),(string)$s->eachLineFilter(function($line){ return !preg_match('/^\s*#/',$line->toString()); }));
+	}
 }
