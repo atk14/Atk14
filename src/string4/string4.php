@@ -1115,8 +1115,11 @@ END;
 
 		$text = $this->_String4;
 		$out = [];
+		$ending = "";
 		$empty_lines_counter = 0;
 		while(preg_match('/^(.*?)(\r\n|\n\r|\n|\r)/s',$text,$matches)){
+			$prev_ending = $ending;
+
 			$line = $matches[1];
 			$ending = $matches[2];
 
@@ -1136,13 +1139,14 @@ END;
 				}
 			}
 
+			$out && ($out[] = $prev_ending);
 			$out[] = $line;
-			$out[] = $ending;
 		}
 
 		$line = $text;
 
 		if($this->_trim($line,true)!==""){
+			$out && ($out[] = $ending);
 			$out[] = $line;
 		}else{
 			$empty_lines_counter++;
@@ -1152,6 +1156,7 @@ END;
 					$line = $this->_trim($line);
 				}
 
+				$out && ($out[] = $ending);
 				$out[] = $line;
 			}
 		}

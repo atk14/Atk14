@@ -566,14 +566,14 @@ class TcString4 extends TcBase{
 		$this->assertEquals(" AHOY! ",$s->removeEmptyLines()->toString());
 
 		$s = new String4("\n\n \nHello\n \n \n \nWorld! \n \n ");
-		$this->assertEquals("Hello\nWorld! \n",$s->removeEmptyLines()->toString());
+		$this->assertEquals("Hello\nWorld! ",$s->removeEmptyLines()->toString());
 
 		$s = new String4(" \r\n \r\nHello\r\n \r\n \r\n \r\nWorld! \r\n \r\n \r\n ");
-		$this->assertEquals("Hello\r\nWorld! \r\n",$s->removeEmptyLines()->toString());
-		$this->assertEquals("\r\nHello\r\n\r\nWorld! \r\n\r\n",$s->removeEmptyLines(["max_empty_lines" => 1])->toString());
-		$this->assertEquals(" \r\nHello\r\n \r\nWorld! \r\n \r\n",$s->removeEmptyLines(["max_empty_lines" => 1,"trim_empty_lines" => false])->toString());
-		$this->assertEquals("\r\n\r\nHello\r\n\r\n\r\nWorld! \r\n\r\n\r\n",$s->removeEmptyLines(["max_empty_lines" => 2])->toString());
-		$this->assertEquals(" \r\n \r\nHello\r\n \r\n \r\nWorld! \r\n \r\n \r\n",$s->removeEmptyLines(["max_empty_lines" => 2,"trim_empty_lines" => false])->toString());
+		$this->assertEquals("Hello\r\nWorld! ",$s->removeEmptyLines()->toString());
+		$this->assertEquals("\r\nHello\r\n\r\nWorld! \r\n",$s->removeEmptyLines(["max_empty_lines" => 1])->toString());
+		$this->assertEquals(" \r\nHello\r\n \r\nWorld! \r\n ",$s->removeEmptyLines(["max_empty_lines" => 1,"trim_empty_lines" => false])->toString());
+		$this->assertEquals("\r\n\r\nHello\r\n\r\n\r\nWorld! \r\n\r\n",$s->removeEmptyLines(["max_empty_lines" => 2])->toString());
+		$this->assertEquals(" \r\n \r\nHello\r\n \r\n \r\nWorld! \r\n \r\n ",$s->removeEmptyLines(["max_empty_lines" => 2,"trim_empty_lines" => false])->toString());
 	}
 
 	function test_eachLineMap(){
@@ -619,6 +619,15 @@ BODY?
 	}
 
 	function test_eachLineFilter(){
+		$source = "A";
+
+		$s = new String4($source);
+		$this->assertEquals("A",(string)$s->eachLineFilter(function($line){ return true; }));
+		$this->assertEquals("A",(string)$s->eachLineFilter());
+		$this->assertEquals("",(string)$s->eachLineFilter(function($line){ return false; }));
+
+		// --
+
 		$source = "A\nB";
 
 		$s = new String4($source);
@@ -628,6 +637,7 @@ BODY?
 		$this->assertEquals("B",(string)$s->eachLineFilter(function($line){ return (string)$line!=="A"; }));
 		$this->assertEquals("A",(string)$s->eachLineFilter(function($line){ return (string)$line!=="B"; }));
 		$this->assertEquals("A\nB",(string)$s->eachLineFilter(function($line){ return (string)$line!=="C"; }));
+
 		// --
 
 		$source = trim("
