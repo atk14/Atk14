@@ -180,6 +180,8 @@ class TcString4 extends TcBase{
 
 	function test_trim_and_squish(){
 		$null_byte = chr(0x00);
+		$nbsp = chr(0xC2).chr(0xA0);
+		$en_quad = chr(0xE2).chr(0x80).chr(0x80);
 
 		$string = new String4(" \t$null_byte Hello\n World \n\r ");
 		$this->assertEquals("$null_byte Hello\n World",(string)$string->trim()); // trim() by default doesn't remove hidden characters
@@ -188,15 +190,22 @@ class TcString4 extends TcBase{
 
 		// trimming an UTF-8 string
 
-		$nbsp = chr(0xC2).chr(0xA0);
-		$en_quad = chr(0xE2).chr(0x80).chr(0x80);
-
 		$string = new String4("$en_quad $nbsp $null_byte x\n$nbsp\n $en_quad\r\t");
 		$this->assertEquals("$null_byte x",(string)$string->trim());
 		$this->assertEquals("x",(string)$string->trim(true));
 
 		$string = new String4(" $nbsp x $nbsp\n \t \r \x00 ","iso-8859-2");
 		$this->assertEquals("$nbsp x $nbsp",(string)$string->trim());
+
+		//
+
+		$long_text = str_repeat("Lorem ipsum dolor sit amet, consectetur adipiscing elit\nAenean molestie placerat nulla, at pulvinar neque sagittis nec.\n",1000);
+		$long_text = substr($long_text,0,strlen($long_text)-1); // ending \n
+		$this->assertEquals(119999,strlen($long_text));
+
+		$this->assertEquals(119999,String4::ToObject("$nbsp\n$long_text\n$nbsp")->trim()->length());
+		$this->assertEquals(120001,String4::ToObject("$nbsp\n$null_byte$long_text$null_byte\n$nbsp")->trim()->length());
+		$this->assertEquals(119999,String4::ToObject("$nbsp\n$null_byte$long_text$null_byte\n$nbsp")->trim(true)->length());
 	}
 
 	function test_match(){

@@ -478,10 +478,17 @@ class String4{
 
 			$white_characters = "(".join("|",$white_characters).")";
 		}
+
 		if($remove_hidden_characters){
-			return preg_replace("/^$white_and_invisible_characters{0,}(.*?)$white_and_invisible_characters{0,}$/s",'\2',$string);
+			//return preg_replace("/^$white_and_invisible_characters{0,}(.*?)$white_and_invisible_characters{0,}$/s",'\2',$string);
+			$string = preg_replace("/^$white_and_invisible_characters*/s","",$string);
+			$string = preg_replace("/$white_and_invisible_characters*$/s","",$string);
+			return $string;
 		}
-		return preg_replace("/^$white_characters{0,}(.*?)$white_characters{0,}$/s",'\2',$string);
+		//return preg_replace("/^$white_characters{0,}(.*?)$white_characters{0,}$/s",'\2',$string);
+		$string = preg_replace("/^$white_characters*/s","",$string);
+		$string = preg_replace("/$white_characters*$/s","",$string);
+		return $string;
 	}
 
 	/**
