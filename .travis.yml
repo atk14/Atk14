@@ -76,6 +76,7 @@ jobs:
 install:
   - sudo locale-gen en_US.UTF-8
   - sudo locale-gen cs_CZ.UTF-8
+  - sudo locale-gen it_IT.UTF-8
   - sudo update-locale
   - locale -a
   - composer global require "phpunit/phpunit=^7.5" --ignore-platform-reqs
