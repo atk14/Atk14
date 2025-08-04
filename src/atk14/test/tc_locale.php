@@ -146,12 +146,12 @@ class TcLocale extends TcBase{
 		$global = Atk14Global::GetInstance();
 
 		$locale = $global->getConfig("locale");
-		$locale["hu"] = array(
-			"LANG" => "hu_HU.UTF-8",
+		$locale["it"] = array(
+			"LANG" => "it_IT.UTF-8",
 		);
 		$global->setConfig("locale",$locale);
 
-		$this->_setLocale("hu");
+		$this->_setLocale("it");
 
 		$this->assertEquals('j.n.Y',Atk14Locale::_GetDatePattern());
 		$this->assertEquals('j.n.Y H:i',Atk14Locale::_GetDateTimePattern());
