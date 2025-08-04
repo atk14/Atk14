@@ -141,6 +141,37 @@ class TcLocale extends TcBase{
 		$this->assertEquals("-1,222.00",Atk14Locale::FormatNumber("-1222.0000",2));
 	}
 
+
+	function test_default_patterns(){
+		$global = Atk14Global::GetInstance();
+
+		$locale = $global->getConfig("locale");
+		$locale["hu"] = array(
+			"LANG" => "hu_HU.UTF-8",
+		);
+		$global->setConfig("locale",$locale);
+
+		$this->_setLocale("hu");
+
+		$this->assertEquals('j.n.Y',Atk14Locale::_GetDatePattern());
+		$this->assertEquals('j.n.Y H:i',Atk14Locale::_GetDateTimePattern());
+		$this->assertEquals('j.n.Y H:i:s',Atk14Locale::_GetDateTimeWithSecondsPattern());
+
+		$this->assertEquals('/^\s*(?<day>[0-9]{1,2})\s*\.\s*(?<month>[0-9]{1,2})\s*\.\s*(?<year>[0-9]{4})\s*$/',Atk14Locale::_GetParseDatePattern());
+		$this->assertEquals('/^\s*(?<day>[0-9]{1,2})\s*\.\s*(?<month>[0-9]{1,2})\s*\.\s*(?<year>[0-9]{4})\s*\s+\s*(?<hours>[0-9]{1,2})\s*\:\s*(?<minutes>[0-9]{1,2})\s*$/',Atk14Locale::_GetParseDateTimePattern());
+		$this->assertEquals('/^\s*(?<day>[0-9]{1,2})\s*\.\s*(?<month>[0-9]{1,2})\s*\.\s*(?<year>[0-9]{4})\s*\s+\s*(?<hours>[0-9]{1,2})\s*\:\s*(?<minutes>[0-9]{1,2})\s*\:\s*(?<seconds>[0-9]{1,2})\s*$/',Atk14Locale::_GetParseDateTimeWithSecondsPattern());
+
+		$date = "2025-08-04 16:15:55";
+
+		$this->assertEquals("4.8.2025",Atk14Locale::FormatDate($date));
+		$this->assertEquals("4.8.2025 16:15",Atk14Locale::FormatDateTime($date));
+		$this->assertEquals("4.8.2025 16:15:55",Atk14Locale::FormatDateTimeWithSeconds($date));
+
+		$this->assertEquals("2025-08-04",Atk14Locale::ParseDate(" 4 . 08. 2025 "));
+		$this->assertEquals("2025-08-04 04:15:00",Atk14Locale::ParseDateTime(" 4 . 08. 2025  4 : 15 "));
+		$this->assertEquals("2025-08-04 04:15:02",Atk14Locale::ParseDateTimeWithSeconds(" 4 . 08. 2025  4 :15 : 2 "));
+	}
+
 	function _setLocale($lang){
 		$set_lang = $lang;
 		Atk14Locale::Initialize($set_lang);

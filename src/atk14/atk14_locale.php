@@ -68,8 +68,7 @@ class Atk14Locale{
 		if(strlen($iso_date)==0){ return ""; }
 
 		if(!strlen($pattern)){
-			$pattern = _("atk14.date_format");
-			if($pattern == "atk14.date_format"){ $pattern = "j.n.Y"; }
+			$pattern = self::_GetDatePattern();
 		}
 
 		return date($pattern,strtotime($iso_date));
@@ -89,8 +88,7 @@ class Atk14Locale{
 	 */
 	static function ParseDate($localized_date){
 		$localized_date = (string)$localized_date;
-		$pattern = _("atk14.parse_date_pattern");
-		if($pattern == "atk14.parse_date_pattern"){ $pattern = "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4})$/"; }
+		$pattern = self::_GetParseDatePattern();
 
 		if(
 			preg_match($pattern,$localized_date,$matches) &&
@@ -124,8 +122,7 @@ class Atk14Locale{
 		$iso_datetime = (string)$iso_datetime;
 		if(strlen($iso_datetime)==0){ return ""; }
 
-		$pattern = _("atk14.datetime_format");
-		if($pattern == "atk14.datetime_format"){ $pattern = "j.n.Y H:i"; }
+		$pattern = self::_GetDateTimePattern();
 
 		return date($pattern,strtotime($iso_datetime));	
 	}
@@ -138,8 +135,7 @@ class Atk14Locale{
 	*/
 	static function ParseDateTime($localized_datetime){
 		$localized_datetime = (string)$localized_datetime;
-		$pattern = _("atk14.parse_datetime_pattern");
-		if($pattern == "atk14.parse_datetime_pattern"){ $pattern = "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?<hours>[0-9]{2}):(?<minutes>[0-9]{2})$/"; }
+		$pattern = self::_GetParseDateTimePattern();
 
 		if(!$out = Atk14Locale::_ParseDateTime($localized_datetime,$pattern)){
 			$out = Atk14Locale::ParseDate($localized_datetime);
@@ -152,8 +148,7 @@ class Atk14Locale{
 		$iso_datetime = (string)$iso_datetime;
 		if(strlen($iso_datetime)==0){ return ""; }
 
-		$pattern = _("atk14.datetime_with_seconds_format");
-		if($pattern == "atk14.datetime_with_seconds_format"){ $pattern = "j.n.Y H:i:s"; }
+		$pattern = self::_GetDateTimeWithSecondsPattern();
 
 		return date($pattern,strtotime($iso_datetime));
 	}
@@ -165,8 +160,7 @@ class Atk14Locale{
 	*/
 	static function ParseDateTimeWithSeconds($localized_datetime){
 		$localized_datetime = (string)$localized_datetime;
-		$pattern = _("atk14.parse_datetime_with_seconds_pattern");
-		if($pattern == "atk14.parse_datetime_with_seconds_pattern"){ $pattern = "/^(?<day>[0-9]{1,2})\\.(?<month>[0-9]{1,2})\\.(?<year>[0-9]{4}) (?<hours>[0-9]{2}):(?<minutes>[0-9]{2}):(?<seconds>[0-9]{2})$/"; }
+		$pattern = self::_GetParseDateTimeWithSecondsPattern();
 
 		if(!$out = Atk14Locale::_ParseDateTime($localized_datetime,$pattern)){
 			$out = Atk14Locale::ParseDateTime($localized_datetime);
@@ -230,6 +224,81 @@ class Atk14Locale{
 		$out = number_format($number,$decimal_places,self::DecimalPoint(),self::ThousandsSeparator());
 
 		return $out;
+	}
+
+	static function _GetDatePattern(){
+		$pattern = _("atk14.date_format");
+		if(!$pattern || $pattern=="atk14.date_format"){ $pattern = "j.n.Y"; }
+		return $pattern;
+	}
+
+	static function _GetDateTimePattern(){
+		$pattern = _("atk14.datetime_format");
+		if(!$pattern || $pattern=="atk14.datetime_format"){
+			$pattern = self::_GetDatePattern();
+			$pattern .= " H:i";
+		}
+		return $pattern;
+	}
+
+	static function _GetDateTimeWithSecondsPattern(){
+		$pattern = _("atk14.datetime_with_seconds_format");
+		if(!$pattern || $pattern=="atk14.datetime_with_seconds_format"){
+			$pattern = self::_GetDatePattern();
+			$pattern .= " H:i:s";
+		}
+		return $pattern;
+	}
+
+	static function _GetParseDatePattern(){
+		$pattern = _("atk14.parse_date_pattern");
+		if(!$pattern || $pattern=="atk14.parse_date_pattern"){
+			$format_pattern = self::_GetDatePattern(); // "j.n.Y"
+			$pattern = self::_ConvertFormatPatternToParsePattern($format_pattern);
+		}
+
+		return $pattern;
+	}
+
+	static function _GetParseDateTimePattern(){
+		$pattern = _("atk14.parse_datetime_pattern");
+		if(!$pattern || $pattern=="atk14.parse_datetime_pattern"){
+			$format_pattern = self::_GetDateTimePattern(); // "j.n.Y H:i"
+			$pattern = self::_ConvertFormatPatternToParsePattern($format_pattern);
+		}
+
+		return $pattern;
+	}
+
+	static function _GetParseDateTimeWithSecondsPattern(){
+		$pattern = _("atk14.parse_datetime_with_seconds_pattern");
+		if(!$pattern || $pattern=="atk14.parse_datetime_with_seconds_pattern"){
+			$format_pattern = self::_GetDateTimeWithSecondsPattern(); // "j.n.Y H:i:s"
+			$pattern = self::_ConvertFormatPatternToParsePattern($format_pattern);
+		}
+
+		return $pattern;
+	}
+
+	static function _ConvertFormatPatternToParsePattern($format_pattern){
+		static $cache = [];
+		if(!isset($cache[$format_pattern])){
+			$pattern = preg_quote($format_pattern);
+			$pattern = strtr($pattern,[
+				" " => '\s+',
+				"j" => '\s*(?<day>[0-9]{1,2})\s*',
+				"d" => '\s*(?<day>[0-9]{1,2})\s*',
+				"n" => '\s*(?<month>[0-9]{1,2})\s*',
+				"m" => '\s*(?<month>[0-9]{1,2})\s*',
+				"Y" => '\s*(?<year>[0-9]{4})\s*',
+				"H" => '\s*(?<hours>[0-9]{1,2})\s*',
+				"i" => '\s*(?<minutes>[0-9]{1,2})\s*',
+				"s" => '\s*(?<seconds>[0-9]{1,2})\s*',
+			]);
+			$pattern = "/^$pattern$/";
+			$cache[$format_pattern] = $pattern;
+		}
+		return $cache[$format_pattern];
 	}
 
 	static function _ParseDateTime($localized_datetime,$pattern){
