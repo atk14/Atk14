@@ -57,6 +57,12 @@ class HTTPUploadedFile{
 	 */
 	var $_FileMoved = false;
 
+	var $_ImageWidth;
+
+	var $_ImageHeight;
+
+	var $_ImageGeomeryDetermined;
+
 	function __construct(){
 
 	}
