@@ -25,7 +25,7 @@ ATK14 consists of
 
 * Mighty ATK14 core with some Ruby on Rails-inspired concepts
 * Form framework rewritten from Django by Mr. Valousek
-* Rowerful built-in routing mechanism
+* Powerful built-in routing mechanism
 * A smart template engine - [Smarty](http://www.smarty.net/)
 * Excellent jQuery integration library by Mr. Ganicky (https://github.com/atk14/Atk14Js)
 * A few PHP libraries developed by Mr. Tomek over last years, mainly:
