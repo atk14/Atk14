@@ -511,11 +511,17 @@ class Atk14Url{
 		if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
 		if(is_array($_value)){
 			$out = array();
+			$preserve_keys = false;
+			$index = 0;
 			foreach($_value as $_a_key => $_a_value){
-				if(is_numeric($_a_key)) {
+				if($preserve_keys || !is_numeric($_a_key) || "$_a_key"!=="$index") {
+					$preserve_keys = true;
+				}
+				if(!$preserve_keys){
 					$_a_key = '';
 				}
 				$out[] = Atk14Url::_EncodeUrlParam($_key."[$_a_key]",$_a_value,$options);
+				$index++;
 			}
 			return join($options["connector"],$out);
 		}

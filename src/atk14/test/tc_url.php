@@ -360,6 +360,13 @@ class TcUrl extends TcBase{
 		$this->assertEquals("http://www.testing.cz:443/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 443)));
 
 		$this->assertEquals("http://preview:secret@www.testing.cz/en/",$this->_build_link(array(),array("basic_auth_username" => "preview", "basic_auth_password" => "secret")));
+
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=111&products%5B%5D=222&products%5B%5D=333",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array(111,222,333))));
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=111&products%5B%5D=222&products%5B%5D=333",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array(0 => 111,1 => 222,2 => 333))));
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=111&products%5B%5D=222&products%5B%5D=333",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array("0" => 111,"1" => 222,"2" => 333))));
+
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B111%5D=1&products%5B222%5D=1&products%5B333%5D=2",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array(111 => 1,222 => 1,333 => 2))));
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=1&products%5B%5D=2&products%5B3%5D=3",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array(1,1 => 2,3 => 3))));
 	}
 
 	function _check_route($request_uri,$expected_ar,$expected_params = array()){
