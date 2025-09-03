@@ -6,7 +6,7 @@ class TcUrl extends TcBase{
 
 		$_GET = array();
 
-		$this->_test_route("/articles/feed.rss",array(
+		$this->_check_route("/articles/feed.rss",array(
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "articles",
@@ -15,7 +15,7 @@ class TcUrl extends TcBase{
 			"get_params" => array("format" => "rss"),
 		));
 
-		$this->_test_route("/cs/articles/overview/",array(
+		$this->_check_route("/cs/articles/overview/",array(
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
@@ -25,7 +25,7 @@ class TcUrl extends TcBase{
 
 		// format=rss mame v routes.php
 		$_GET = array("format" => "rss");
-		$this->_test_route("/en/articles/overview/?format=rss",array(
+		$this->_check_route("/en/articles/overview/?format=rss",array(
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "articles",
@@ -35,7 +35,7 @@ class TcUrl extends TcBase{
 
 		// format=xml nemame v routes.php
 		$_GET = array("format" => "xml");
-		$this->_test_route("/en/articles/overview/?format=xml",array(
+		$this->_check_route("/en/articles/overview/?format=xml",array(
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "articles",
@@ -54,33 +54,33 @@ class TcUrl extends TcBase{
 	}
 
 	function test_recognize_route_omit_trailing_slash(){
-		$this->_test_route("/invoice/12345.pdf",array(
+		$this->_check_route("/invoice/12345.pdf",array(
 			"controller" => "invoices",
 			"action" => "detail",
 			"lang" => "en",
 			"get_params" => array("id" => "12345", "format" => "pdf"),
 			"force_redirect" => null
 		));
-		$this->_test_route("/faktura/12345.pdf",array(
+		$this->_check_route("/faktura/12345.pdf",array(
 			"controller" => "invoices",
 			"action" => "detail",
 			"lang" => "cs",
 			"get_params" => array("id" => "12345", "format" => "pdf"),
 			"force_redirect" => null
 		));
-		$this->_test_route("/invoice/12345.xml",array(
+		$this->_check_route("/invoice/12345.xml",array(
 			"controller" => "invoices",
 			"action" => "detail",
 			"get_params" => array("id" => "12345", "format" => "xml"),
 			"force_redirect" => null
 		));
-		$this->_test_route("/invoice/12345.pdf/",array(
+		$this->_check_route("/invoice/12345.pdf/",array(
 			"controller" => "invoices",
 			"action" => "detail",
 			"get_params" => array("id" => "12345", "format" => "pdf"),
 			"force_redirect" => "/invoice/12345.pdf"
 		));
-		$this->_test_404_route(array(
+		$this->_check_404_route(array(
 			"/invoice/12345.gif", // invalid format
 			"/invoice/nonsence.pdf", // invalid id
 		));
@@ -90,7 +90,7 @@ class TcUrl extends TcBase{
 		global $_GET;
 		$_GET = array();
 
-		$this->_test_route("/cs/articles/overview/",array(
+		$this->_check_route("/cs/articles/overview/",array(
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
@@ -99,7 +99,7 @@ class TcUrl extends TcBase{
 		));
 
 		// missing slash at the end of URI
-		$this->_test_route("/cs/articles/overview",array(
+		$this->_check_route("/cs/articles/overview",array(
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
@@ -108,7 +108,7 @@ class TcUrl extends TcBase{
 		));
 
 		$_GET["from"] = "20";
-		$r = $this->_test_route("/cs/articles/overview/?from=20",array(
+		$r = $this->_check_route("/cs/articles/overview/?from=20",array(
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
@@ -117,7 +117,7 @@ class TcUrl extends TcBase{
 		));
 
 		// missing slash
-		$r = $this->_test_route("/cs/articles/overview?from=20",array(
+		$r = $this->_check_route("/cs/articles/overview?from=20",array(
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
@@ -131,7 +131,7 @@ class TcUrl extends TcBase{
 	function test_recognize_route_nice_url(){
 		global $_GET;
 
-		$this->_test_route("/article/123-some-article-title/",array(
+		$this->_check_route("/article/123-some-article-title/",array(
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "articles",
@@ -140,7 +140,7 @@ class TcUrl extends TcBase{
 			"get_params" => array("id" => "123", "slug" => "some-article-title"),
 		));
 
-		$this->_test_route("/clanek/123-some-article-title/",array(
+		$this->_check_route("/clanek/123-some-article-title/",array(
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
@@ -149,16 +149,16 @@ class TcUrl extends TcBase{
 			"get_params" => array("id" => "123", "slug" => "some-article-title"),
 		));
 
-		$this->_test_route("/article/123-some-article-title",array("force_redirect" => "/article/123-some-article-title/"));	
-		$this->_test_route("/clanek/123-some-article-title",array("force_redirect" => "/clanek/123-some-article-title/"));	
+		$this->_check_route("/article/123-some-article-title",array("force_redirect" => "/article/123-some-article-title/"));	
+		$this->_check_route("/clanek/123-some-article-title",array("force_redirect" => "/clanek/123-some-article-title/"));	
 
 		$_GET = array("id" => "124","slug" => "another-article");
-		$this->_test_route("/en/articles/detail/?id=124&slug=another-article",array(
+		$this->_check_route("/en/articles/detail/?id=124&slug=another-article",array(
 			"force_redirect" => "/article/124-another-article/",
 		));
 		$_GET = array();
 
-		$this->_test_404_route(array(
+		$this->_check_404_route(array(
 			"/article/0123-zero-at-the-begining/",
 			"/article/12?3-bad-url/",
 			"/article/123-bad-slug_!/",
@@ -171,7 +171,7 @@ class TcUrl extends TcBase{
 		global $_GET;
 		$_GET = array();
 
-		$this->_test_route("/fable/green-eggs-and-ham-1",array(
+		$this->_check_route("/fable/green-eggs-and-ham-1",array(
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "fables",
@@ -179,7 +179,7 @@ class TcUrl extends TcBase{
 			"force_redirect" => null
 		));
 
-		$this->_test_route("/fable/green-eggs-and-ham-1",array(
+		$this->_check_route("/fable/green-eggs-and-ham-1",array(
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "fables",
@@ -187,7 +187,7 @@ class TcUrl extends TcBase{
 			"force_redirect" => null
 		),array("id" => "1"));
 
-		$this->_test_route("/universe/fable/green-eggs-and-ham-1",array(
+		$this->_check_route("/universe/fable/green-eggs-and-ham-1",array(
 			"namespace" => "universe",
 			"lang" => "en",
 			"controller" => "fables",
@@ -195,7 +195,7 @@ class TcUrl extends TcBase{
 			"force_redirect" => null
 		),array("id" => "1"));
 
-		$this->_test_route("/fable/the-dog-in-the-hat-3",array( // ! dog
+		$this->_check_route("/fable/the-dog-in-the-hat-3",array( // ! dog
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "fables",
@@ -204,7 +204,7 @@ class TcUrl extends TcBase{
 		),array("id" => "3"));
 
 		$_GET["id"] = "5";
-		$this->_test_route("/admin/en/fables/detail/?id=5",array(
+		$this->_check_route("/admin/en/fables/detail/?id=5",array(
 			"namespace" => "admin",
 			"lang" => "en",
 			"controller" => "fables",
@@ -213,7 +213,7 @@ class TcUrl extends TcBase{
 		),array("id" => "5"));
 
 		$_GET = array("format" => "xml");
-		$this->_test_route("/fable/a-very-good-fable-2?format=xml",array(
+		$this->_check_route("/fable/a-very-good-fable-2?format=xml",array(
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "fables",
@@ -237,13 +237,13 @@ class TcUrl extends TcBase{
 		$this->assertEquals("/sk/fables/detail/?id=22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22, "lang" => "sk"))); // in the router there is no support for sk
 
 		//
-		$this->_test_route("/en/",array(
+		$this->_check_route("/en/",array(
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "main",
 			"action" => "index",
 		));
-		$this->_test_route("/universe/en/",array(
+		$this->_check_route("/universe/en/",array(
 			"namespace" => "universe",
 			"lang" => "en",
 			"controller" => "main",
@@ -251,8 +251,8 @@ class TcUrl extends TcBase{
 		));
 
 		// In the config/locale.yml there is no Hungarian language
-		$this->_test_404_route("/hu/");
-		$this->_test_404_route("/universe/hu/");
+		$this->_check_404_route("/hu/");
+		$this->_check_404_route("/universe/hu/");
 	
 		// Routes only for the default language (cs)
 		$this->assertEquals("/post-123/",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "lang" => "cs")));
@@ -263,7 +263,7 @@ class TcUrl extends TcBase{
 		$this->assertEquals("/post-123/?format=pdf",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "pdf", "lang" => "cs"))); // format is not raw
 		$this->assertEquals("/en/posts/detail/?id=123&format=raw",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "raw", "lang" => "en"))); // not default language
 		//
-		$this->_test_route("/post-123/",array(
+		$this->_check_route("/post-123/",array(
 			"lang" => "cs",
 			"controller" => "posts",
 			"action" => "detail",
@@ -271,7 +271,7 @@ class TcUrl extends TcBase{
 		),array(
 			"id" => "123"
 		));
-		$this->_test_route("/post-123.raw",array(
+		$this->_check_route("/post-123.raw",array(
 			"lang" => "cs",
 			"controller" => "posts",
 			"action" => "detail",
@@ -280,7 +280,7 @@ class TcUrl extends TcBase{
 			"id" => "123",
 			"format" => "raw"
 		));
-		$this->_test_404_route("/post-123.pdf");
+		$this->_check_404_route("/post-123.pdf");
 
 		// id as an array
 		$this->assertEquals("/cs/posts/detail/?id%5B%5D=123&id%5B%5D=124",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => array("123", "124"), "lang" => "cs")));
@@ -362,7 +362,7 @@ class TcUrl extends TcBase{
 		$this->assertEquals("http://preview:secret@www.testing.cz/en/",$this->_build_link(array(),array("basic_auth_username" => "preview", "basic_auth_password" => "secret")));
 	}
 
-	function _test_route($request_uri,$expected_ar,$expected_params = array()){
+	function _check_route($request_uri,$expected_ar,$expected_params = array()){
 		$route = Atk14Url::RecognizeRoute($request_uri);
 		foreach($expected_ar as $k => $v){
 			$this->assertequals($v,$route[$k],"testing $k in $request_uri");
@@ -373,15 +373,15 @@ class TcUrl extends TcBase{
 		return $route;
 	}
 
-	function _test_404_route($request_uri){
+	function _check_404_route($request_uri){
 		if(is_array($request_uri)){
 			$out = array();
 			foreach($request_uri as $r_uri){
-				$out[] = $this->_test_404_route($r_uri);
+				$out[] = $this->_check_404_route($r_uri);
 			}
 			return $out;
 		}
-		return $this->_test_route($request_uri,array(
+		return $this->_check_route($request_uri,array(
 			"controller" => "application",
 			"action" => "error404",
 			"force_redirect" => null
