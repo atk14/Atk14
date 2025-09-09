@@ -339,4 +339,20 @@ class TcController extends TcBase{
 		$this->assertEquals("action_three executed",$client->getContent());
 		$this->assertEquals("ApplicationForm",get_class($controller->form));
 	}
+
+	function test_redirections(){
+		$client = $this->client;
+
+		// non-XHR redirection
+		$client->setXhr(false);
+		$controller = $client->get("redirections/index");
+		$this->assertEquals("http://www.atk14.net/",$controller->response->getLocation());
+		$this->assertEquals("",(string)$controller->response->buffer);
+
+		// XHR redirection
+		$client->setXhr();
+		$controller = $client->get("redirections/index");
+		$this->assertEquals(null,$controller->response->getLocation());
+		$this->assertEquals('window.location.href = "http://www.atk14.net/";',(string)$controller->response->buffer);
+	}
 }

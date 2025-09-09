@@ -90,6 +90,13 @@ class Atk14Client{
 	var $_BasicAuthUsername = null;
 
 	/**
+	 *
+	 * @var boolean
+	 * @ignore
+	 */
+	var $_Xhr = false;
+
+	/**
 	 * Basic authentication password.
 	 *
 	 * @var string
@@ -221,6 +228,10 @@ class Atk14Client{
 	 */
 	function clearCookies(){
 		$this->_Cookies = array();
+	}
+
+	function setXhr($set = true){
+		$this->_Xhr = (bool)$set;
 	}
 
 	/**
@@ -452,6 +463,7 @@ class Atk14Client{
 		$request->setRemoteAddr($this->_RemoteAddr);
 		$request->setHttpHost($ATK14_GLOBAL->getHttpHost());
 		$request->setServerPort(80);
+		$request->setXhr($this->_Xhr);
 
 		$cookies = $this->getCookies($request);
 		$request->setCookieVars($this->getCookies($request));
