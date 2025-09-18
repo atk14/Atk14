@@ -98,6 +98,12 @@ class TcUtils extends TcBase{
 			"alt" => "Nice image, isn't it?",
 		),Atk14Utils::StringToOptions("height=123,width=456,alt=Nice image\\, isn't it?"));
 
+		$params = Atk14Utils::StringToOptions("with_hostname");
+		$this->assertEquals(array(
+			"with_hostname" => true,
+		),$params);
+		$this->assertTrue($params["with_hostname"]===true);
+
 		$this->assertEquals(array(
 			"equals" => "=",
 			"comma" => ",",

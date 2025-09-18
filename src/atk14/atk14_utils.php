@@ -357,7 +357,9 @@ class Atk14Utils{
 		foreach($ar as $item){
 			list($key,$value) = strpos($item,'=') ? explode('=',$item) : array($item,true);
 			$value_lower = strtolower($value);
-			if($value_lower==="true"){
+			if(is_bool($value)){
+				// do notning
+			}elseif($value_lower==="true"){
 				$value = true;
 			}elseif($value_lower==="false"){
 				$value = false;
