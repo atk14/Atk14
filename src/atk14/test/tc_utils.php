@@ -92,6 +92,18 @@ class TcUtils extends TcBase{
 			"max_amount" => null,
 		),Atk14Utils::StringToOptions('color=red,with_border,with_decoration=false,drop_shadow=true,class=,max_amount=null'));
 
+		$this->assertEquals(array(
+			"height" => "123",
+			"width" => "456",
+			"alt" => "Nice image, isn't it?",
+		),Atk14Utils::StringToOptions("height=123,width=456,alt=Nice image\\, isn't it?"));
+
+		$this->assertEquals(array(
+			"equals" => "=",
+			"comma" => ",",
+			"both" => "=,",
+		),Atk14Utils::StringToOptions("equals=\\=,comma=\\,,both=\\=\\,"));
+
 		$this->assertEquals(array(),Atk14Utils::StringToOptions(""));
 		$this->assertEquals(array(),Atk14Utils::StringToOptions(array()));
 		$this->assertEquals(array("a" => "b"),Atk14Utils::StringToOptions(array("a" => "b")));
