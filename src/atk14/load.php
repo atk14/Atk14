@@ -1,5 +1,5 @@
 <?php
-$__PATH__ = dirname(__FILE__);
+$__PATH__ = __DIR__;
 require_once("$__PATH__/atk14_exception.php");
 require_once("$__PATH__/atk14_timer.php");
 require_once("$__PATH__/atk14_controller.php");
@@ -14,6 +14,7 @@ require_once("$__PATH__/atk14_flash_message.php");
 require_once("$__PATH__/atk14_form.php");
 require_once("$__PATH__/atk14_utils.php");
 require_once("$__PATH__/atk14_require.php");
+require_once("$__PATH__/atk14_sent_email.php");
 require_once("$__PATH__/atk14_mailer.php");
 require_once("$__PATH__/atk14_mailer_proxy.php");
 require_once("$__PATH__/atk14_sorting.php");

@@ -252,6 +252,8 @@ class Atk14Mailer{
 
 	private $defaults = array();
 
+	static protected $SENT_EMAILS = array();
+
 	/**
 	 * Creates instance of Atk14Mailer depending on a controller.
 	 *
@@ -682,6 +684,12 @@ class Atk14Mailer{
 				sprintf('cat %s | sendmail -f "%s" "%s"',"$dir/latest",$this->from,ATK14_ADMIN_EMAIL)
 			);
 		}
+
+		static::$SENT_EMAILS[] = new Atk14SentEmail($params);
+		if(sizeof(static::$SENT_EMAILS)>10){
+			array_shift(static::$SENT_EMAILS);
+		}
+
 		return $email_ar;
 	}
 
@@ -715,5 +723,9 @@ class Atk14Mailer{
 		foreach($this->defaults as $key => $value){
 			$this->$key = $value;
 		}
+	}
+
+	function getSentEmails(){
+		return static::$SENT_EMAILS;
 	}
 }
