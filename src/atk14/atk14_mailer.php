@@ -685,9 +685,8 @@ class Atk14Mailer{
 			);
 		}
 
-		static::$SENT_EMAILS[] = new Atk14SentEmail($params);
-		if(sizeof(static::$SENT_EMAILS)>10){
-			array_shift(static::$SENT_EMAILS);
+		if(ATK14_COLLECT_SENT_EMAILS){
+			static::$SENT_EMAILS[] = new Atk14SentEmail($params);
 		}
 
 		return $email_ar;
@@ -725,7 +724,7 @@ class Atk14Mailer{
 		}
 	}
 
-	function getSentEmails(){
+	function _getSentEmails(){
 		return static::$SENT_EMAILS;
 	}
 }

@@ -59,4 +59,8 @@ class Atk14MailerProxy{
 	function __set($name,$value){
 		$this->_mailer->$name = $value;
 	}
+
+	function getSentEmails(){
+		return $this->_mailer->_getSentEmails();
+	}
 }
