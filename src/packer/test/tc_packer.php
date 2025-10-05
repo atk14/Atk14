@@ -9,16 +9,16 @@ class TcPacker extends TcBase{
 	function test(){
 		$ary = array("No", "Way", "Way", "Long", "Way", "Far");
 
-		$simple = Packer::Pack($ary,$opts = array("use_compress" => false, "enable_encryption" => false));
+		$simple = Packer::Pack($ary,$opts = array("use_compress" => false, "enable_encryption" => false, "use_json_serialization" => false));
 		$this->_test_unpacking($simple,$ary,$opts,"packed_simple");
 
-		$encrypt = Packer::Pack($ary,$opts = array("use_compress" => false, "enable_encryption" => true));
+		$encrypt = Packer::Pack($ary,$opts = array("use_compress" => false, "enable_encryption" => true, "use_json_serialization" => false));
 		$this->_test_unpacking($encrypt,$ary,$opts,"packed_encrypt");
 
-		$compress = Packer::Pack($ary,$opts = array("use_compress" => true, "enable_encryption" => false));
+		$compress = Packer::Pack($ary,$opts = array("use_compress" => true, "enable_encryption" => false, "use_json_serialization" => false));
 		$this->_test_unpacking($compress,$ary,$opts,"packed_compress");
 
-		$complex = Packer::Pack($ary,$opts = array("use_compress" => true, "enable_encryption" => true));
+		$complex = Packer::Pack($ary,$opts = array("use_compress" => true, "enable_encryption" => true, "use_json_serialization" => false));
 		$this->_test_unpacking($complex,$ary,$opts,"packed_complex");
 
 		$this->assertTrue(strlen($simple)>strlen($compress));

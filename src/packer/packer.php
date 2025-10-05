@@ -21,7 +21,7 @@ if(!defined("PACKER_ENABLE_ENCRYPTION")){
 }
 
 if(!defined("PACKER_USE_JSON_SERIALIZATION")){
-	define("PACKER_USE_JSON_SERIALIZATION",false);
+	define("PACKER_USE_JSON_SERIALIZATION",true);
 }
 
 /**

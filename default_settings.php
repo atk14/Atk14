@@ -181,6 +181,7 @@ __defaults__(array(
 	"PACKER_CONSTANT_SECRET_SALT" => SECRET_TOKEN,
 	"PACKER_USE_COMPRESS" => function_exists('gzcompress'),
 	"PACKER_ENABLE_ENCRYPTION" => true, // function openssl_encrypt() must exists('openssl_encrypt')!
+	"PACKER_USE_JSON_SERIALIZATION" => true, // whether to use json_encode and json_decode instead of serialize and unserialize 
 ));
 
 __defaults__(array(
