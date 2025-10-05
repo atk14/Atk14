@@ -1,5 +1,6 @@
 <?php
 class TcPacker extends TcBase{
+
 	function test_php(){
 		$this->assertTrue(function_exists("openssl_encrypt"));
 		$this->assertTrue(function_exists("gzcompress"));
@@ -39,6 +40,28 @@ class TcPacker extends TcBase{
 
 		$this->assertTrue(Packer::Unpack($packed_and_encrypted,$out,array("enable_encryption" => true)));
 		$this->assertEquals("an_important_looking_message",$out);
+	}
+
+	function test_use_json_serialization(){
+		foreach(array(
+			array("a" => "Hello", "b" => "World!"),
+			true,
+			false,
+			123,
+			1.234,
+			null,
+		) as $value){
+			$packed_json = Packer::Pack($value,array("use_json_serialization" => true, "use_compress" => false, "enable_encryption" => false));
+			$packed_serialize = Packer::Pack($value,array("use_json_serialization" => false, "use_compress" => false, "enable_encryption" => false));
+
+			$this->assertNotEquals($packed_json,$packed_serialize);
+
+			$this->assertEquals(true,Packer::Unpack($packed_json,$value_json,array("use_json_serialization" => true, "enable_encryption" => false)));
+			$this->assertEquals(true,Packer::Unpack($packed_serialize,$value_selialize,array("use_json_serialization" => false, "enable_encryption" => false)));
+
+			$this->assertEquals($value,$value_json);
+			$this->assertEquals($value,$value_selialize);
+		}
 	}
 
 	function _test_unpacking($packed,$var,$optioons,$message = ""){

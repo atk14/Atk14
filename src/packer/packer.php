@@ -20,6 +20,10 @@ if(!defined("PACKER_ENABLE_ENCRYPTION")){
 	define("PACKER_ENABLE_ENCRYPTION",false);
 }
 
+if(!defined("PACKER_USE_JSON_SERIALIZATION")){
+	define("PACKER_USE_JSON_SERIALIZATION",false);
+}
+
 /**
 * Komprimace libovolne promenne (napr. pole).
 * Trida packer nabizi staticke metody pro kompresi a dekompresi promennych do ascii podoby,
@@ -77,9 +81,11 @@ class Packer{
 	static function Pack($variable,$options = array()){
 		$options = array_merge(array(
 			"use_compress" => PACKER_USE_COMPRESS,
-			"enable_encryption" => PACKER_ENABLE_ENCRYPTION
+			"enable_encryption" => PACKER_ENABLE_ENCRYPTION,
+			"use_json_serialization" => PACKER_USE_JSON_SERIALIZATION,
 		),$options);
-		$out = serialize($variable);
+
+		$out = $options["use_json_serialization"] ? json_encode($variable) : serialize($variable);
 
 		if($options["use_compress"]){
 			$out = gzcompress($out,5);
@@ -115,6 +121,7 @@ class Packer{
 	static function Unpack($packed,&$out,$options = array()){
 		$options += array(
 			"enable_encryption" => PACKER_ENABLE_ENCRYPTION,
+			"use_json_serialization" => PACKER_USE_JSON_SERIALIZATION,
 		);
 		settype($packed,"string");
 		$out = null;
@@ -149,7 +156,7 @@ class Packer{
 				return false;
 			}
 		}
-		$out = unserialize($serialized);
+		$out = $options["use_json_serialization"] ? json_decode($serialized,true) : unserialize($serialized);
 		return true;
 	}
 
