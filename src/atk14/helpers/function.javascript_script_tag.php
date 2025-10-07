@@ -45,7 +45,7 @@ function smarty_function_javascript_script_tag($params,$template){
 	global $ATK14_GLOBAL;
 
 	$params += array(
-		"file" => "script.css",
+		"file" => "script.js",
 		"hide_when_file_not_found" => false,
 		"with_hostname" => false,
 		"version_indicated_by" => ATK14_STATIC_FILE_VERSIONS_INDICATED_BY, // "parameter", "filename", "none"
@@ -60,6 +60,12 @@ function smarty_function_javascript_script_tag($params,$template){
 		"_snippet_" => '<script src="%uri%"%attribs%></script>'
 	);
 
+	if($nonce = $ATK14_GLOBAL->getCspNonce()){
+		$params += array(
+			"nonce" => $nonce,
+		);
+	}
+
 	$file = $params["file"]; unset($params["file"]);
 	$hide_when_file_not_found = $params["hide_when_file_not_found"]; unset($params["hide_when_file_not_found"]);
 	$with_hostname = $params["with_hostname"]; unset($params["with_hostname"]);
@@ -68,7 +74,7 @@ function smarty_function_javascript_script_tag($params,$template){
 	$places = $params["_places_"]; unset($params["_places_"]);
 	$snippet = $params["_snippet_"]; unset($params["_snippet_"]);
 
-	$file = preg_replace('/\/{2,}/','/',$file); // "/public//dist/styles/vendor.min.css" -> "/public/dist/styles/vendor.min.css"
+	$file = preg_replace('/\/{2,}/','/',$file); // "/public//dist/scripts/vendor.min.js" -> "/public/dist/scripts/vendor.min.js"
 
 	if(preg_match('/^\//',$file)){
 		// $file starts with "/", so we will search only in the very last place.

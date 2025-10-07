@@ -10,6 +10,7 @@ require(__DIR__."/../modifier.count.php");
 require(__DIR__."/../modifier.slugify.php");
 require(__DIR__."/../modifier.format_number.php");
 require(__DIR__."/../block.javascript_tag.php");
+require(__DIR__."/../block.style_tag.php");
 require_once(__DIR__."/../block.no_spam.php");
 require_once(__DIR__."/../modifier.no_spam.php");
 require_once(__DIR__."/../modifier.strip_html.php");
@@ -24,6 +25,7 @@ require(__DIR__."/../block.replace_html.php");
 require(__DIR__."/../../atk14_utils.php");
 require(__DIR__."/../../atk14_locale.php");
 require(__DIR__."/../../atk14_require.php");
+require(__DIR__."/../../atk14_global.php");
 
 require(__DIR__."/../modifier.date.php");
 require(__DIR__."/../modifier.json_encode.php");
@@ -39,3 +41,5 @@ require(__DIR__."/../modifier.strtoupper.php");
 
 require(__DIR__."/../block.trim.php");
 require(__DIR__."/../modifier.trim.php");
+
+$ATK14_GLOBAL = Atk14Global::GetInstance();
