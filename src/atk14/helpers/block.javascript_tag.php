@@ -2,6 +2,8 @@
 /**
  * Smarty plugin for inserting javascript code.
  *
+ * This is an alias for the block helper script_tag.
+ *
  * {javascript_tag} plugin inserts javascript code enclosed by appropriate tag
  *
  * Basic usage:
@@ -18,20 +20,12 @@
 
 /**
  *
- * @param array $params there are no options for this plugin.
+ * @param array $params
  * @param string $content
  */
 function smarty_block_javascript_tag($params, $content, $template, &$repeat){
-	if($repeat){ return; }
-
-	if(strlen(trim($content))==0){ return; }
-
-	$out = array();
-	$out[] = '<script>';
-	$out[] = '//<![CDATA[';
-	$out[] = $content;
-	$out[] = '//]]>';
-	$out[] = '</script>';
-
-	return join("\n",$out);
+	return smarty_block_script_tag ($params, $content, $template, $repeat);
 }
+
+require_once(__DIR__ . "/block.script_tag.php");
+// Atk14Require::Helper("block.script_tag");

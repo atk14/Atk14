@@ -24,6 +24,7 @@ require(__DIR__."/../block.replace_html.php");
 require(__DIR__."/../../atk14_utils.php");
 require(__DIR__."/../../atk14_locale.php");
 require(__DIR__."/../../atk14_require.php");
+require(__DIR__."/../../atk14_global.php");
 
 require(__DIR__."/../modifier.date.php");
 require(__DIR__."/../modifier.json_encode.php");
@@ -39,3 +40,5 @@ require(__DIR__."/../modifier.strtoupper.php");
 
 require(__DIR__."/../block.trim.php");
 require(__DIR__."/../modifier.trim.php");
+
+$ATK14_GLOBAL = Atk14Global::GetInstance();
