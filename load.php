@@ -14,6 +14,7 @@ require_once(__DIR__."/src/files/load.php");
 require_once(__DIR__."/src/http/load.php");
 require_once(__DIR__."/src/atk14/atk14_utils.php");
 require_once(__DIR__."/src/functions.php");
+require_once(__DIR__."/src/string4/load.php");
 Atk14Utils::DetermineEnvironment();
 
 // Loading the main configuration file (local_config/settings.php or config/settings.php)
@@ -50,7 +51,6 @@ Files::SetDefaultDirPerms(FILES_DEFAULT_DIR_PERMS);
 
 // Loading framework libraries.
 require_once(__DIR__."/src/class_autoload/load.php");
-require_once(__DIR__."/src/string4/load.php");
 require_once(__DIR__."/src/translate/load.php");
 require_once(__DIR__."/src/dictionary/load.php");
 require_once(__DIR__."/src/miniyaml/load.php");
