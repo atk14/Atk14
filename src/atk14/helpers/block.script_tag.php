@@ -27,9 +27,9 @@ function smarty_block_script_tag($params, $content, $template, &$repeat){
 
 	if(strlen(trim($content))==0){ return; }
 
-	if($nonce = $ATK14_GLOBAL->getCspNonce()){
+	if(CSP_NONCE){
 		$params += array(
-			"nonce" => $nonce,
+			"nonce" => CSP_NONCE,
 		);
 	}
 

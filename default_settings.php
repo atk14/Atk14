@@ -214,6 +214,10 @@ __defaults__(array(
 	"FORMS_AUTOMATICALLY_MOVE_HINTS_TO_PLACEHOLDERS" => false, // In some cases on some kinds of fields specific hints can be automatically moved into placeholders. This was standard behavior in older versions of the ATK14 Framework.
 ));
 
+__defaults__(array(
+	"CSP_NONCE" => "", // e.g. (string)String4::RandomString(10)
+));
+
 function __defaults__($defaults){
 	global $__CONFIG_CONSTANTS__;
 	foreach($defaults as $key => $value){

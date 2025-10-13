@@ -13,9 +13,9 @@ function smarty_block_style_tag($params, $content, $template, &$repeat){
 
 	if($repeat){ return; }
 
-	if($nonce = $ATK14_GLOBAL->getCspNonce()){
+	if(CSP_NONCE){
 		$params += array(
-			"nonce" => $nonce,
+			"nonce" => CSP_NONCE,
 		);
 	}
 

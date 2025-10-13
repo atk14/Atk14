@@ -60,9 +60,9 @@ function smarty_function_javascript_script_tag($params,$template){
 		"_snippet_" => '<script src="%uri%"%attribs%></script>'
 	);
 
-	if($nonce = $ATK14_GLOBAL->getCspNonce()){
+	if(CSP_NONCE){
 		$params += array(
-			"nonce" => $nonce,
+			"nonce" => CSP_NONCE,
 		);
 	}
 

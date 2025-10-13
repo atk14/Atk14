@@ -1,6 +1,13 @@
 <?php
 define("TEST",true);
 setlocale(LC_NUMERIC,"C");
+
+if(preg_match('/_nonced.php/',$_TEST["FILENAME"])){
+	define("CSP_NONCE","abcdefgh");
+}else{
+	define("CSP_NONCE","");
+}
+
 require(__DIR__."/../../../string4/load.php");
 require(__DIR__."/../../../translate/load.php");
 require(__DIR__."/../function.to_json.php");

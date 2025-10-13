@@ -655,22 +655,4 @@ class Atk14Global{
 	function getSession(){
 		return Atk14Session::GetInstance();
 	}
-
-	/**
-	 * Set nonce for Content-Security-Policy
-	 *
-	 * @param string $nonce
-	 */
-	function setCspNonce($nonce){
-		$this->setValue("csp_nonce",(string)$nonce);
-	}
-
-	/**
-	 * Returns nonce for Content-Security-Policy
-	 *
-	 * @return string
-	 */
-	function getCspNonce(){
-		return $this->getValue("csp_nonce");
-	}
 }
