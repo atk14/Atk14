@@ -123,7 +123,7 @@ class String4{
 			$out[] = $chars[$rand[$c]];
 			$c++;
 		}
-		return join('',$out);
+		return new self(join('',$out));
 	}
 
 	/**
