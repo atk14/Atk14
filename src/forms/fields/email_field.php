@@ -22,6 +22,14 @@ class EmailField extends RegexField
 		));
 	}
 
+	function format_initial_data($data)
+	{
+		if(is_null($data) || strlen("$data")==0){
+			return "@";
+		}
+		return $data;
+	}
+
 	function clean($value)
 	{
 		$value = (string)$value;
