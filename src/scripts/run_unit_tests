@@ -92,7 +92,8 @@ $_phpunit_path_ar["../../../../../vendor/phpunit"] = "../autoload.php"; // ... u
 $_phpunit_path_ar["../../../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
 if(
 	exec("which composer") &&
-	($_global_path = exec("composer -n config --global home 2>/dev/null")) // produces error error message: "No composer.json in current directory..."
+	//($_global_path = exec("composer -n config --global home 2>/dev/null")) // produces error error message: "No composer.json in current directory..."
+	($_global_path = exec("composer global -q config home"))
 ){
 	$_phpunit_path_ar["$_global_path/vendor/phpunit"] = "../autoload.php";
 }
