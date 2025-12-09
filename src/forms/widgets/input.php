@@ -11,8 +11,6 @@ class Input extends Widget
 {
 	var $input_type = null; // toto musi definovat konkretni odvozene tridy
 
-	var $choices = [];
-
 	/**
 	 * Constructor
 	 *
