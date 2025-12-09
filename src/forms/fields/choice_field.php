@@ -93,7 +93,9 @@ class ChoiceField extends Field
 	 */
 	function set_choices($value) {
 		$this->choices = $value;
-		$this->widget->choices = $value;
+		if(property_exists($this->widget,"choices")){ // sometimes the widget can be something else than Select or SelectMultiple
+			$this->widget->choices = $value;
+		}
 	}
 
 	function set_disabled_choices($disabled_choices) {
