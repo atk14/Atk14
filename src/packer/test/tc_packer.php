@@ -33,13 +33,46 @@ class TcPacker extends TcBase{
 		$packed_and_encrypted = Packer::Pack($text,array("enable_encryption" => true));
 
 		$this->assertTrue(Packer::Unpack($packed,$out,array("enable_encryption" => false)));
-		$this->assertEquals("an_important_looking_message",$out);
+		$this->assertEquals($text,$out);
 
 		$this->assertFalse(Packer::Unpack($packed,$out,array("enable_encryption" => true)));
 		$this->assertNull($out);
 
 		$this->assertTrue(Packer::Unpack($packed_and_encrypted,$out,array("enable_encryption" => true)));
-		$this->assertEquals("an_important_looking_message",$out);
+		$this->assertEquals($text,$out);
+	}
+
+	function test_encryption_with_extra_salt(){
+		$text = "another_important_message";
+
+		$packed = Packer::Pack($text,["enable_encryption" => true]);
+		$packed2 = Packer::Pack($text,["enable_encryption" => true, "extra_salt" => ""]);
+		$packed3 = Packer::Pack($text,["enable_encryption" => true, "extra_salt" => "pass1"]);
+		$packed4 = Packer::Pack($text,["enable_encryption" => true, "extra_salt" => "pass1"]);
+		$packed5 = Packer::Pack($text,["enable_encryption" => true, "extra_salt" => "pass2"]);
+
+		$this->assertEquals($packed,$packed2);
+		$this->assertNotEquals($packed2,$packed3);
+		$this->assertEquals($packed3,$packed4);
+		$this->assertNotEquals($packed4,$packed5);
+	
+		$this->assertTrue(Packer::Unpack($packed,$val,["enable_encryption" => true]));
+		$this->assertEquals($text,$val);
+		$this->assertTrue(Packer::Unpack($packed2,$val2,["enable_encryption" => true, "extra_salt" => ""]));
+		$this->assertEquals($text,$val2);
+		$this->assertFalse(Packer::Unpack($packed3,$val3,["enable_encryption" => true]));
+		$this->assertEquals(null,$val3);
+		$this->assertFalse(Packer::Unpack($packed4,$val4,["enable_encryption" => true, "extra_salt" => ""]));
+		$this->assertEquals(null,$val4);
+		$this->assertFalse(Packer::Unpack($packed5,$val5,["enable_encryption" => true, "extra_salt" => ""]));
+		$this->assertEquals(null,$val5);
+
+		$this->assertTrue(Packer::Unpack($packed3,$val3,["enable_encryption" => true, "extra_salt" => "pass1"]));
+		$this->assertEquals($text,$val3);
+		$this->assertTrue(Packer::Unpack($packed4,$val4,["enable_encryption" => true, "extra_salt" => "pass1"]));
+		$this->assertEquals($text,$val4);
+		$this->assertTrue(Packer::Unpack($packed5,$val5,["enable_encryption" => true, "extra_salt" => "pass2"]));
+		$this->assertEquals($text,$val5);
 	}
 
 	function test_use_json_serialization(){

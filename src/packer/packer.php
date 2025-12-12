@@ -82,6 +82,7 @@ class Packer{
 		$options = array_merge(array(
 			"use_compress" => PACKER_USE_COMPRESS,
 			"enable_encryption" => PACKER_ENABLE_ENCRYPTION,
+			"extra_salt" => "", // for signing and encryption
 			"use_json_serialization" => PACKER_USE_JSON_SERIALIZATION,
 		),$options);
 
@@ -94,14 +95,14 @@ class Packer{
 			$prefix = "p";
 		}
 		if($options["enable_encryption"]){
-			$out = Packer::_EncryptData($out);
+			$out = Packer::_EncryptData($out,$options["extra_salt"]);
 			$prefix = strtoupper($prefix);
 		}
 
 		$out = $prefix.$out;
 
 		$out = Packer::_EncodeDataString($out);
-		$sign = Packer::_CalculateSignature($out);
+		$sign = Packer::_CalculateSignature($out,$options["extra_salt"]);
 		$out = $sign.$out;
 
 		return $out;
@@ -121,6 +122,7 @@ class Packer{
 	static function Unpack($packed,&$out,$options = array()){
 		$options += array(
 			"enable_encryption" => PACKER_ENABLE_ENCRYPTION,
+			"extra_salt" => "", // for signing and encryption
 			"use_json_serialization" => PACKER_USE_JSON_SERIALIZATION,
 		);
 		settype($packed,"string");
@@ -130,7 +132,7 @@ class Packer{
 		}
 		$sign = substr($packed,0,16);
 		$data = substr($packed,16);
-		$expected_sign = Packer::_CalculateSignature($data);
+		$expected_sign = Packer::_CalculateSignature($data,$options["extra_salt"]);
 		if($expected_sign!=$sign){
 			return false;
 		}
@@ -144,7 +146,7 @@ class Packer{
 			return false;
 		}
 		if($prefix==strtoupper($prefix)){
-			$serialized = Packer::_DecryptData($serialized);
+			$serialized = Packer::_DecryptData($serialized,$options["extra_salt"]);
 			$prefix = strtolower($prefix);
 		}elseif($options["enable_encryption"]){
 			// encryption is enabled, but there isn't encrypted data
@@ -184,14 +186,14 @@ class Packer{
 	* @param string  &$str 			zabalena promenna
 	* @return string podpis
 	*/
-	static function _CalculateSignature(&$str){
+	static function _CalculateSignature(&$str,$extra_salt = ""){
 		$_constant_secret_salt = "";
 		if(defined(PACKER_CONSTANT_SECRET_SALT)){
 			$_constant_secret_salt = PACKER_CONSTANT_SECRET_SALT;
 			settype($_constant_secret_salt,"string");
 		}
 		$_user_secret_salt = Packer::_GetSetSalt();
-		return substr(md5($str.$_constant_secret_salt.$_user_secret_salt),0,16);
+		return substr(md5($str.$_constant_secret_salt.$_user_secret_salt.$extra_salt),0,16);
 	}
 
 	/**
@@ -305,15 +307,15 @@ class Packer{
 		return base64_decode($out);
 	}
 
-	static function _EncryptData($data){
-		$secret = PACKER_CONSTANT_SECRET_SALT;
+	static function _EncryptData($data,$extra_salt = ""){
+		$secret = PACKER_CONSTANT_SECRET_SALT . $extra_salt;
 		$key = hash('sha256', $secret);
 		$iv = substr(hash('sha256', $secret . "Iv_addon"),0,16);
 		return openssl_encrypt($data,"AES-256-CBC",$key,true,$iv);
 	}
 
-	static function _DecryptData($data){
-		$secret = PACKER_CONSTANT_SECRET_SALT;
+	static function _DecryptData($data,$extra_salt = ""){
+		$secret = PACKER_CONSTANT_SECRET_SALT . $extra_salt;
 		$key = hash('sha256', $secret);
 		$iv = substr(hash('sha256', $secret . "Iv_addon"),0,16);
 		return openssl_decrypt($data,"AES-256-CBC",$key,true,$iv);
