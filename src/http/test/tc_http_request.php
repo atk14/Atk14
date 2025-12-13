@@ -238,10 +238,16 @@ class tc_http_request extends tc_base{
 		$req = new HTTPRequest();
 
 		$this->assertEquals("www.test.cz",$req->getHttpHost());
+		$this->assertEquals("http://www.test.cz",$req->getServerUrl());
 		
 		$req->setHttpHost("www.fake.cz");
 
 		$this->assertEquals("www.fake.cz",$req->getHttpHost());
+		$this->assertEquals("http://www.fake.cz",$req->getServerUrl());
+
+		$req->setServerPort(81);
+
+		$this->assertEquals("http://www.fake.cz:81",$req->getServerUrl());
 	}
 
 	function test_getScheme(){
