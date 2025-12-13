@@ -290,6 +290,15 @@ class tc_http_request extends tc_base{
 		$req->setUri("/force-uri/");
 		$this->assertEquals("/force-uri/",$req->getRequestUri());
 		$this->assertEquals("/force-uri/",$req->getUri());
+
+		$req->setUri(null);
+		$this->assertEquals("/test-uri/",$req->getRequestUri());
+
+		$req->setRequestAddress("https://www.example.com:444/public/document.pdf?v=2");
+		$this->assertEquals("/public/document.pdf?v=2",$req->getRequestUri());
+
+		$req->setRequestAddress(null);
+		$this->assertEquals("/test-uri/",$req->getRequestUri());
 	}
 
 	function test_set_xhr(){

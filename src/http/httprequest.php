@@ -236,6 +236,9 @@ class HTTPRequest{
 	function getRequestUri(){
 		global $_SERVER;
 		if($uri = $this->_getForceValue("RequestUri")){ return $uri; }
+		if(($url = $this->_getForceValue("RequestAddress")) && preg_match('/^https?:\/\/[^\/]+(\/.*)/',$url,$matches)){
+			return $matches[1];
+		}
 		return isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
 	}
 
