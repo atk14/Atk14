@@ -119,7 +119,7 @@ class Atk14Global{
 		global $HTTP_REQUEST;
 		$out = "";
 		if(isset($HTTP_REQUEST)){ $out = $HTTP_REQUEST->getHttpHost(); }
-		if(!$out && defined("ATK14_HTTP_HOST") && ATK14_HTTP_HOST){ $out = ATK14_HTTP_HOST; }
+		if(!$out && defined("ATK14_HTTP_HOST") && constant("ATK14_HTTP_HOST")){ $out = constant("ATK14_HTTP_HOST"); }
 		return $out;
 	}
 

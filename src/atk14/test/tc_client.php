@@ -6,6 +6,7 @@ class TcClient extends TcBase{
 
 		$controller = $client->get("testing/test",array("id" => "123", "format" => "xml"));
 		$this->assertEquals("/cs/testing/test/?id=123&format=xml",$controller->request->getRequestUri());
+		$this->assertEquals("http://www.testing.cz/cs/testing/test/?id=123&format=xml",$controller->request->getUrl());
 		$this->assertEquals(200,$client->getStatusCode());
 		$this->assertEquals("123",$controller->params->g("id"));
 		$this->assertEquals("xml",$controller->params->g("format"));

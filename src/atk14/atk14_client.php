@@ -502,7 +502,7 @@ class Atk14Client{
 
 		if(preg_match('/^((?<scheme>https?):\/\/(?<hostname>[^\/]+)|)(?<uri>\/.*)/',$path,$matches)){
 
-			if(isset($matches["hostname"])){
+			if(isset($matches["hostname"]) && strlen((string)$matches["hostname"])){
 				$hostname = $matches["hostname"];
 				$server_port = $matches["scheme"]=="https" ? 443 : 80;
 				if(preg_match('/^(.+):(\d+)$/',$hostname,$_m)){
