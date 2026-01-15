@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: ATK14 Framework\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-12 17:22+0100\n"
-"PO-Revision-Date: 2017-03-31 17:37+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2026-01-15 17:03+0100\n"
+"Last-Translator: Jaromir Tomek <jaromir.tomek@gmail.com>\n"
 "Language-Team: ATK14 Development Team\n"
 "Language: hu_HU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 3.4.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: ../load.php:37
@@ -64,11 +64,11 @@ msgstr ""
 
 #: ../src/atk14/atk14_locale.php:185
 msgid "atk14.number_format.decimal_point"
-msgstr ""
+msgstr ","
 
 #: ../src/atk14/atk14_locale.php:200
 msgid "atk14.number_format.thousands_separator"
-msgstr ""
+msgstr " "
 
 #: ../src/atk14/atk14_sorting.php:167
 msgid "Sort table by this column"
