@@ -395,7 +395,13 @@ class HTTPRequest{
 
 	function getRemoteHostname(){
 		if($addr = $this->getRemoteAddr()){
-			return gethostbyaddr($addr);
+			$out = @gethostbyaddr($addr);
+			if($out===false){
+				// $out = $addr;
+				$out = null;
+				trigger_error("HTTPRequest::getRemoteAddr(): Address is not a valid IPv4 or IPv6 address: $addr");
+			}
+			return $out;
 		}
 	}
 
