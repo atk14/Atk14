@@ -79,7 +79,7 @@ class Atk14Client{
 	/**
 	 * @ignore
 	 */
-	var $_RemoteAddr = "0.0.0.0";
+	var $_RemoteAddr = "127.0.0.1";
 
 	/**
 	 * Basic authentication username.
@@ -136,7 +136,7 @@ class Atk14Client{
 		$this->session = $ATK14_GLOBAL->getSession();
 		$this->flash = Atk14Flash::GetInstance();
 
-		$GLOBALS["_SERVER"]["REMOTE_ADDR"] = "0.0.0.0";
+		$GLOBALS["_SERVER"]["REMOTE_ADDR"] = $this->_RemoteAddr;
 		$this->addCookie(new HTTPCookie(SESSION_STORER_COOKIE_NAME_CHECK,"1"));
 	}
 
@@ -737,6 +737,7 @@ class Atk14Client{
 	 */
 	function setRemoteAddr($addr){
 		$this->_RemoteAddr = $addr;
+		$GLOBALS["_SERVER"]["REMOTE_ADDR"] = $this->_RemoteAddr;
 	}
 
 	/**
