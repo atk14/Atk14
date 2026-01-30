@@ -36,23 +36,16 @@ class TcStopWatch extends TcBase{
 		$sw = new StopWatch();
 
 		$data = array(
-			"0.0ms", 0,
-			"1000.0ms", 1,
-			"3522.5ms", 3.5225,
-			"1:00.000", 60,
-			"0:10.000", 10,
-			"1:23.523", 83.5226
+			"0.0ms" => 0,
+			"1000.0ms" => 1,
+			"3522.5ms" => 3.5225,
+			"1:00.000" => 60,
+			"0:10.000" => 10,
+			"1:23.523" => 83.5226
 		);
 
-		$i = 0;
-		while(isset($data[$i])){
-			$exp = $data[$i];
-			$epoch = $data[$i+1];
-			$i++;
-			$i++;
+		foreach($data as $exp => $epoch){
 			$this->assertEquals($exp,$sw->_humanize($epoch));
 		}
-
-		$this->assertEquals(sizeof($data),$i);
 	}
 }

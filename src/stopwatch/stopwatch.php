@@ -207,6 +207,7 @@ class StopWatch{
 		}
 		$minutes = floor($seconds/60);
 		$seconds = $seconds - (60 * $minutes);
+		$seconds = round($seconds,3,PHP_ROUND_HALF_UP);
 		$seconds = number_format($seconds,3,".","");
 		if($seconds<10){
 			$seconds = "0$seconds";
