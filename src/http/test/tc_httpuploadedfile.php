@@ -88,7 +88,7 @@ class tc_httpuploadedfile extends tc_base{
 		$tmp_orig = $hlava->getTmpFilename();
 
 		$this->assertTrue(file_exists($tmp_orig));
-		
+
 		$hlava->moveToTemp();
 		$tmp_new = $hlava->getTmpFilename();
 
@@ -119,6 +119,36 @@ class tc_httpuploadedfile extends tc_base{
 
 		$hlava->cleanUp();
 		$this->assertTrue(file_exists($tmp_name));
+	}
+
+	function test_moveTo(){
+		$this->_init_FILES();
+
+		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
+		$hlava = $files[0];
+
+		$tmp_orig = $hlava->getTmpFilename();
+
+		$this->assertTrue(file_exists($tmp_orig));
+		
+		$error_str = "some initial content";
+		$stat = $hlava->moveTo(__DIR__ . "/temp/hlava_copy.jpg",$error_str);
+		$this->assertTrue($stat);
+		$this->assertTrue($error_str === "");
+		$tmp_new = $hlava->getTmpFilename();
+
+		$this->assertNotEquals($tmp_orig,$tmp_new);
+
+		$this->assertFalse(file_exists($tmp_orig));
+		$this->assertTrue(file_exists($tmp_new));
+
+		//
+
+		$stat = @$hlava->moveTo("/non-existing-dir/hlava_copy_2.jpg",$error_str);
+		$this->assertFalse($stat);
+		$this->assertStringContains("can't rename",$error_str);
+
+		$this->assertEquals($tmp_new,$hlava->getTmpFilename());
 	}
 
 	function test__sanitizeFileName(){

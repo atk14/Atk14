@@ -222,7 +222,7 @@ class HTTPUploadedFile{
 	 * @param string $new_filename
 	 * @return bool true, false when an error occurs
 	 */
-	function moveTo($new_filename){
+	function moveTo($new_filename,&$error_str = null){
 		if(is_dir($new_filename)){
 			$new_filename = "$new_filename/".$this->getFileName();
 		}
@@ -249,7 +249,7 @@ class HTTPUploadedFile{
 	 * @uses moveTo()
 	 * @return mixed filename as string or false when error occurred
 	 */
-	function moveToTemp($filename = ""){
+	function moveToTemp($filename = "",&$error_str = null){
 		if(!$filename){
 			$filename = TEMP."/moved_uploaded_file_".uniqid().rand(1,9999);
 		}elseif(is_dir($filename)){
@@ -257,7 +257,7 @@ class HTTPUploadedFile{
 		}else{
 			$filename = TEMP."/".$filename;
 		}
-		$stat = $this->moveTo($filename);
+		$stat = $this->moveTo($filename,$error_str);
 		if($stat){
 			return $filename;
 		}
