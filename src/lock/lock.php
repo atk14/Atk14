@@ -54,6 +54,7 @@ class Lock{
 				$stat_pid = $pieces[2];
 				settype($stat_pid,"integer");
 			}
+			$stat = (int)$stat;
 			if(is_int($stat_pid) && Lock::_IsProcDirMounted()){
 				//KONTROLA /proc/PID mozna nekdy nestaci - pokud se sposuti import apachem, proces muze existovat, ale spi.. :(
 				$stat_process_chcek_file = "/proc/$stat_pid";
