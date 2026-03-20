@@ -37,7 +37,7 @@ class Select extends Widget
 		}
 		$final_attrs = $this->build_attrs(array(
 			'name' => $name,
-			'class' => 'form-control' // form-control is there for Bootstrap
+			'class' => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP5 ? 'form-select' : 'form-control' // form-control is there for Bootstrap
 		),$options['attrs']);
 		$output = array('<select'.flatatt($final_attrs).'>');
 		// NOTE: puvodne jsem tu mel array_merge, ale ten nejde pouzit
