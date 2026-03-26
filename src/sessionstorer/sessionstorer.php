@@ -727,7 +727,11 @@ class SessionStorer{
 			$this->_SessionSecurity = $row["security"];
 
 			if($this->_isTimeToUpdateLastAccess($row["last_access"])){
-				$this->_dbmole->doQuery("UPDATE sessions SET last_access=:now WHERE id=:id AND last_access=:last_access",array(
+				$this->_dbmole->doQuery("
+					UPDATE sessions SET last_access=:now WHERE
+						id=:id
+						-- AND last_access=:last_access
+				",array(
 					":id" => $this->_SessionId,
 					":last_access" => $row["last_access"],
 					":now" => $this->_getNow(),
