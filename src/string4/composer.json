@@ -1,0 +1,24 @@
+{
+        "name": "atk14/string4",
+        "type": "library",
+        "description": "String4 is a PHP class that provides methods for string manipulation.",
+        "keywords": ["string"],
+        "homepage": "https://github.com/atk14/Http",
+        "license": ["MIT"],
+        "authors": [
+                {
+                        "name": "Jaromir Tomek",
+                        "homepage": "https://github.com/yarri"
+                }
+        ],
+        "require": {
+                "php": ">=5.3.0",
+                "atk14/translate": "1.* >=1.2.1"
+        },
+        "require-dev": {
+                "atk14/tester": "*"
+        },
+        "autoload": {
+                "classmap": ["src"]
+        }
+}

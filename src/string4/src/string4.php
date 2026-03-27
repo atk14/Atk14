@@ -45,7 +45,7 @@ class String4{
 			$encoding = $string->getEncoding();
 		}
 		if(!isset($encoding)){
-			$encoding = defined("DEFAULT_CHARSET") ? DEFAULT_CHARSET : "UTF-8";
+			$encoding = defined("DEFAULT_CHARSET") ? constant("DEFAULT_CHARSET") : "UTF-8";
 		}
 
 		$this->_String4 = "$string";
@@ -67,8 +67,8 @@ class String4{
 	 * @return String4
 	 */
 	static function ToObject($string,$encoding = null){
-		if(is_object($string) && strtolower(get_class($string))=="string"){
-			return $string;
+		if(is_object($string) && is_a($string,"String4")){
+			return new self($string);
 		}
 		return new self($string,$encoding);
 	}
@@ -104,25 +104,16 @@ class String4{
 			'length' => $length,
 		);
 
-		srand(floor((double) microtime() * 1000000));
 		$chars = array('a','i','o','s','t','u','v','3','4','5','8','B','C','D','E','F','7','G','H','I','J','K','L','M','N','O','j','k','l','6','P','Q','W','b','c','d','e','f','g','h','p','q','r','x','y','z','0','1','S','T','U','w','2','9','A','R','V','m','n');
 		foreach(preg_split('//',$options['extra_chars']) as $ch){
 			strlen($ch) && ($chars[] = $ch);
 		}
 
-		$s = sizeof($chars);
-
-		$out = array();
-		$c = 0;
+		$out = [];
 		for($i=0;$i<$options['length'];$i++){
-			if($i%$s==0){
-				shuffle($chars);
-				$rand = array_rand($chars,$s);
-				$c = 0;
-			}
-			$out[] = $chars[$rand[$c]];
-			$c++;
+			$out[] = self::_RandomArrayValue($chars);
 		}
+
 		return new self(join('',$out));
 	}
 
@@ -144,40 +135,40 @@ class String4{
 		$s1 = "aeuyr";
 		$s2 = "bcdfghjkmnpqrstuvwxz";
 		$password = "";
-		$last_s1 = rand(0,1);
+		$last_s1 = self::_Rand(0,1);
 		while(strlen($password)<=$length){
-			$numeric = rand(0,$numeric_versus_alpha_total);
+			$numeric = self::_Rand(0,$numeric_versus_alpha_total);
 			if($numeric<=$numeric_versus_alpha_numeric){
 				$numeric = 1;
 			}else{
 				$numeric = 0;
 			}
 			if($numeric==1){
-				$piece_lenght = rand($numeric_piece_min_length,$numeric_piece_max_length);
-				while($piece_lenght>0){
-					$password .= rand(2,9);
-					$piece_lenght--;
+				$piece_length = self::_Rand($numeric_piece_min_length,$numeric_piece_max_length);
+				while($piece_length>0){
+					$password .= self::_Rand(2,9);
+					$piece_length--;
 				}   
 			}else{  
-				$uppercase = rand(0,1);
-				$piece_lenght = rand($piece_min_length,$piece_max_length);
-				while($piece_lenght>0){
+				$uppercase = self::_Rand(0,1);
+				$piece_length = self::_Rand($piece_min_length,$piece_max_length);
+				while($piece_length>0){
 					if($last_s1==0){
 						if($uppercase==1){
-							$password .= strtoupper($s1[rand(0,strlen($s1)-1)]);
+							$password .= strtoupper($s1[self::_Rand(0,strlen($s1)-1)]);
 						}else{
-							$password .= $s1[rand(0,strlen($s1)-1)];
+							$password .= $s1[self::_Rand(0,strlen($s1)-1)];
 						}
 						$last_s1 = 1;
 					}else{
 						if($uppercase==1){
-							$password .= strtoupper($s2[rand(0,strlen($s2)-1)]);
+							$password .= strtoupper($s2[self::_Rand(0,strlen($s2)-1)]);
 						}else{
-							$password .= $s2[rand(0,strlen($s2)-1)];
+							$password .= $s2[self::_Rand(0,strlen($s2)-1)];
 						}
 						$last_s1 = 0;
 					}
-					$piece_lenght--;
+					$piece_length--;
 				}
 			}
 		}
@@ -185,6 +176,32 @@ class String4{
 			$password = substr($password,0,$length);
 		}
 		return new self($password);
+	}
+
+	/**
+	 * @ignore
+	 */
+	static protected function _Rand($min,$max){
+		static $seeded = false;
+
+		if(function_exists("random_int")){
+			return random_int($min,$max);
+		}
+
+		if(!$seeded){
+			srand(floor((double) microtime() * 1000000));
+			$seeded = true;
+		}
+
+		return rand($min,$max);
+	}
+
+	/**
+	 * @ignore
+	 */
+	static protected function _RandomArrayValue(&$ary){
+		$key = self::_Rand(0,sizeof($ary)-1);
+		return $ary[$key];
 	}
 
 	/**
@@ -299,17 +316,15 @@ class String4{
 	 * Replaces string(s) with another string(s).
 	 *
 	 *
-	 * Replaces a portion of string in the stored string.
-	 *
 	 * ```
 	 * $str = new String4("Hello World");
-	 * $str->replace("World","Guys");
+	 * $str = $str->replace("World","Guys");
 	 * ```
 	 *
 	 * or
 	 *
 	 * ```
-	 * $str->replace(array(
+	 * $str = $str->replace(array(
 	 * 	"Hello" => "Hi",
 	 * 	"World" => "Guys",
 	 * ));
@@ -323,20 +338,10 @@ class String4{
 	 */
 	function replace($search,$replace = null){
 		if(is_array($search)){
-			$_replaces_keys = array();
-			$_replaces_values = array();
-			foreach(array_keys($search) as $key){
-				$_replaces_keys[] = $key;
-				$_replaces_values[] = $search[$key];
-			}   
-			if(sizeof($_replaces_keys)==0){
-				return $this;
-			}   
-			$this->_String4 = str_replace($_replaces_keys,$_replaces_values,$this->_String4);
-			return $this;
+			if(sizeof($search)==0){ return $this->_copy($this); }
+			return $this->_copy(str_replace(array_keys($search),array_values($search),$this->_String4));
 		}
-		$this->_String4 = str_replace($search,$replace,$this->_String4);
-		return $this;
+		return $this->_copy(str_replace($search,$replace,$this->_String4));
 	}
 
 	/**
@@ -671,12 +676,13 @@ class String4{
 	 */
 	function contains($needle){
 		if(is_array($needle)){
+			if(sizeof($needle)==0){ return false; }
 			foreach($needle as $n){
 				if(!$this->contains($n)){ return false; }
 			}
 			return true;
 		}
-		return !is_bool(strpos($this->_String4,(string)$needle));
+		return strpos($this->_String4, (string)$needle) !== false;
 	}
 
 	/**
@@ -1020,10 +1026,18 @@ class String4{
 	}
 
 	/**
+	 * Replaces all invalid UTF-8 byte sequences with the given replacement
 	 *
+	 * When no replacement is given, the black diamond with a white question mark (U+FFFD) is used.
+	 *
+	 * ```
+	 * $s = $s->fixEncoding();
+	 * $s = $s->fixEncoding(["replacement" => "?"]);
+	 * $s = $s->fixEncoding("_");
+	 * ```
 	 */
 	function fixEncoding($options = array()){
-		if(is_string($options)){
+		if(is_string($options) || is_object($options)){
 			$options = array("replacement" => $options);
 		}
 
@@ -1031,7 +1045,7 @@ class String4{
 			"replacement" => "�", // U+FFFD REPLACEMENT CHARACTER used to replace an unknown, unrecognized or unrepresentable character
 		);
 
-		$replacement = $options["replacement"];
+		$replacement = (string)$options["replacement"];
 
 		$text = $this->_String4;
 
@@ -1090,6 +1104,10 @@ END;
 	 * @ignore
 	 */
 	function _copy($string = null,$encoding = null){
+		if(is_a($string,"String4")){
+			$encoding = $string->getEncoding();
+			$string = $string->toString();
+		}
 		if(!isset($string)){ $string = $this->_String4; }
 		if(!isset($encoding)){ $encoding = $this->getEncoding(); }
 		return new self($string,$encoding);

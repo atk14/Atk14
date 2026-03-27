@@ -71,7 +71,7 @@ class TcString4 extends TcBase{
 		$this->assertEquals("",$chunks[3]->toString());
 	}
 
-	function test_random_string(){
+	function test_RandomString(){
 		$s1 = String4::RandomString();
 		$s2 = String4::RandomString();
 		$s3 = String4::RandomString(22);
@@ -93,6 +93,22 @@ class TcString4 extends TcBase{
 		$this->assertEquals(1000,strlen($long));
 	}
 
+	function test_RandomPassword(){
+		$p1 = String4::RandomPassword();
+		$p2 = String4::RandomPassword();
+		$p3 = String4::RandomPassword(20);
+
+		$this->assertTrue(is_a($p1,"String4"));
+		$this->assertTrue(is_a($p2,"String4"));
+		$this->assertTrue(is_a($p3,"String4"));
+
+		$this->assertEquals(10,strlen($p1));
+		$this->assertEquals(10,strlen($p2));
+		$this->assertEquals(20,strlen($p3));
+
+		$this->assertTrue("$p1"!="$p2");
+	}
+
 	function test_instance(){
 		$string = "Hello World";
 		$stringer = new String4($string);
@@ -107,25 +123,13 @@ class TcString4 extends TcBase{
 		// String4::ToObject()
 		$string = String4::ToObject("Hello World");
 		$this->assertTrue(is_object($string));
+		$this->assertEquals("UTF-8",$string->getEncoding());
 		$string2 = String4::ToObject($string); 
 		$this->assertTrue(is_object($string2));
-	}
 
-	function test_clone_and_copy(){
-		$orig = new String4("Hello World","latin1");
-		$clone = clone $orig;
-		$copy = $orig->copy();
-
-		$orig->replace("Hello","Hi");
-
-		$this->assertEquals("Hi World",(string)$orig);
-		$this->assertEquals("Hello World",(string)$clone);
-		$this->assertEquals("Hello World",(string)$copy);
-
-		$this->assertEquals("latin1",$orig->getEncoding());
-		$this->assertEquals("latin1",$clone->getEncoding());
-		$this->assertEquals("latin1",$copy->getEncoding());
-
+		$in = new String4("Test","ISO-8859-2");
+		$str = String4::ToObject($in);
+		$this->assertEquals("ISO-8859-2",$str->getEncoding());
 	}
 
 	function test_length(){
@@ -140,15 +144,14 @@ class TcString4 extends TcBase{
 
 	function test_replace(){
 		$str = new String4("Hello World");
+
 		$this->assertEquals("Hello Guys",(string)$str->replace("World","Guys"));
 
-		$str = new String4("Hello World");
 		$this->assertEquals("Hi Guys",(string)$str->replace(array(
 			"Hello" => "Hi",
 			"World" => "Guys",
 		)));
 
-		$str = new String4("Hello World");
 		$this->assertEquals("Hello World",(string)$str->replace(array()));
 	}
 
@@ -254,6 +257,7 @@ class TcString4 extends TcBase{
 		// all the elements must be contained when expecting a positive result
 		$this->assertTrue($str->contains(array("Hel","llo")));
 		$this->assertFalse($str->contains(array("ello","Belle")));
+		$this->assertFalse($str->contains(array()));
 
 		// containsOneOf
 		$this->assertTrue($str->containsOneOf(array("ello","Belle")));
@@ -571,6 +575,10 @@ class TcString4 extends TcBase{
 
 		$out = (string)$s->fixEncoding("▒");
 		$this->assertEquals("▒Příliš▒ žl▒uťoučký kůň úpěl ďábelské ódy▒",$out);
+		$this->assertTrue(Translate::CheckEncoding($out,"UTF-8"));
+
+		$out = (string)$s->fixEncoding(String4::ToObject("___"));
+		$this->assertEquals("___Příliš___ žl___uťoučký kůň úpěl ďábelské ódy___",$out);
 		$this->assertTrue(Translate::CheckEncoding($out,"UTF-8"));
 	}
 
