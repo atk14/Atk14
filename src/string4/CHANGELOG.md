@@ -3,10 +3,10 @@ Change Log
 
 All notable changes to this project will be documented in this file.
 
-[0.5.8] - 2026-03-27
---------------------
+[0.6] - 2026-03-28
+------------------
 
-* 2a90cf2 - The String4::replace() method no longer performs the in-place replacement! BC BREAK
+* 2a90cf2 - !!! BC BREAK !!! The String4::replace() method no longer performs the in-place replacement
 * 82e3919 - Stronger randomnes in String4::RandomString() and String4::RandomPassword()
 * 06a465c - String4::contains() fixed for an empty array
 * 537a499 - String4::RandomString() returns a String4 object
