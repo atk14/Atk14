@@ -1,11 +1,9 @@
 <?php
 define("TEST",true);
 define("SENDMAIL_DO_NOT_SEND_MAILS",true);
+define("DBMOLE_COLLECT_STATISTICS",!!preg_match("/tc_collecting_statistics/",$_TEST["FILENAME"]));
 
-require(__DIR__."/../dbmole.php");
-require(__DIR__."/../pgmole.php");
-require(__DIR__."/../oraclemole.php");
-require(__DIR__."/../mysqlmole.php");
+require(__DIR__."/../load.php");
 require(__DIR__."/../../stopwatch/stopwatch.php");
 require(__DIR__."/../../files/load.php");
 require(__DIR__."/../../sendmail/load.php");
@@ -26,6 +24,9 @@ $my->doQuery($matches[1]);
 // creating table
 preg_match('/\n(CREATE TABLE.*?);/s',$script,$matches);
 $my->doQuery($matches[1]);
+
+class TestingDbMole extends DbMole {
+}
 
 
 class ProxyDbMole extends DbMole {

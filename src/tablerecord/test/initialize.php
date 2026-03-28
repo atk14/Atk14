@@ -3,9 +3,7 @@
 
 setlocale(LC_NUMERIC,"C"); // we need to display float like 123.456
 
-require("../../dbmole/dbmole.php");
-require("../../dbmole/pgmole.php");
-require("../../dbmole/mysqlmole.php");
+require("../../dbmole/load.php");
 require("../../string4/load.php");
 require("../../files/load.php");
 require("../../functions.php");

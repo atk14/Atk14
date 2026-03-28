@@ -50,7 +50,7 @@
  * Display statistics
  *
  * ```
- * define("DBMOLE_COLLECT_STATICTICS",true);
+ * define("DBMOLE_COLLECT_STATISTICS",true);
  * $dbmole = &OracleMole::GetInstance();
  * echo $dbmole->getStatistics();
  * ```
@@ -61,6 +61,7 @@
  * @filesource
  */
 class DbMole{
+
 	/**
 	 * Name of database configuration
 	 *
@@ -148,6 +149,8 @@ class DbMole{
 	 */
 	protected $_start_utime;
 
+	static private $__DMOLE_STATISTICS__;
+
 	/**
 	 * Constructor
 	 *
@@ -209,20 +212,18 @@ class DbMole{
 
 		$class_name = $options["class_name"];
 
-		settype($configuration_name,"string");
-		settype($class_name,"string");
-
-		$out = new $class_name($configuration_name);
-		$db_type = $out->getDatabaseType();
+		$configuration_name = (string)$configuration_name;
+		$class_name = (string)$class_name;
 
 		if(!isset($instance_store_ar)){ $instance_store_ar = array(); }
-		if(!isset($instance_store_ar[$db_type])){ $instance_store_ar[$db_type] = array(); }
+		if(!isset($instance_store_ar[$class_name])){ $instance_store_ar[$class_name] = array(); }
 		
-		if(!isset($instance_store_ar[$db_type][$configuration_name])){
-			$instance_store_ar[$db_type][$configuration_name] = &$out;
+		if(!isset($instance_store_ar[$class_name][$configuration_name])){
+			$out = new $class_name($configuration_name);
+			$instance_store_ar[$class_name][$configuration_name] = &$out;
 		}
 		
-		return $instance_store_ar[$db_type][$configuration_name];
+		return $instance_store_ar[$class_name][$configuration_name];
 	}
 
 	/**
@@ -350,7 +351,9 @@ class DbMole{
 	 * @return string
 	 */
 	function getStatistics($options = array()){
-		global $__DMOLE_STATISTICS__;
+		if(!defined("DBMOLE_COLLECT_STATISTICS") || !constant("DBMOLE_COLLECT_STATISTICS")){
+			return "Statistical data is not collected";
+		}
 
 		if(!is_array($options)){
 			$options = ["format" => $options];
@@ -364,7 +367,7 @@ class DbMole{
 			$options["format"] = php_sapi_name()=="cli" ? "plain" : "html";
 		}
 
-		if(!isset($__DMOLE_STATISTICS__)){ $__DMOLE_STATISTICS__ = array(); }
+		if(!isset(self::$__DMOLE_STATISTICS__)){ self::$__DMOLE_STATISTICS__ = array(); }
 
 		$ar = array();
 
@@ -372,7 +375,7 @@ class DbMole{
 		$total_time = 0.0;
 
 		$counter = 1;
-		foreach($__DMOLE_STATISTICS__ as $q => $itms){	
+		foreach(self::$__DMOLE_STATISTICS__ as $q => $itms){	
 			$total_queries += sizeof($itms);
 			$current_query_time = 0.0;
 			foreach($itms as $itm){	
@@ -398,7 +401,7 @@ class DbMole{
 			$time_per_single_query = $this->_formatSeconds($item["time"]/$item["count"])."s";
 			$out[] = "<h3>$item[count]&times; ($percent%, $item[count]&times;$time_per_single_query=".$this->_formatSeconds($item["time"])."s)</h3>";
 			$out[] = "<pre>";
-			$out[] = h(str_replace("\t","  ",$item["query"]));
+			$out[] = $this->_htmlspecialchars(str_replace("\t","  ",$item["query"]));
 			$out[] = "</pre>";
 		}
 		$out[] = "</div>";
@@ -469,8 +472,7 @@ class DbMole{
 	static function _GetSetErrorHandlerFunction($error_handler = null,$set = false){
 		static $_ERROR_HANDLER_;
 
-		settype($set,"bool");
-		//settype($error_handler,"string"); // could be an anonymous function
+		$set = (bool)$set;
 
 		$prev_error_handler = null;
 		if(isset($_ERROR_HANDLER_)){
@@ -543,7 +545,7 @@ class DbMole{
 			"cache" => 0, // 0, 600, true, false
 			"recache" => false,
 		),$options);
-		$options["avoid_recursion"] = true; // protoze primo metoda selectRows() vola _selectRows() a naopak, mame tady tento ochranny parametr
+		$options["avoid_recursion"] = true; // Because the selectRows() method directly calls _selectRows() and vice versa, we have this safeguard parameter here
 
 
 		if(isset($options["offset"]) || isset($options["limit"])){
@@ -685,7 +687,7 @@ class DbMole{
 			$out[] = "----";
 			$out[] = print_r($GLOBALS["argv"],true);
 		}else{
-			if(isset($GLOBALS["_SERVER"]));{
+			if(isset($GLOBALS["_SERVER"])){
 				$out[] = "";
 				$out[] = "server vars";
 				$out[] = "-----------";
@@ -697,13 +699,13 @@ class DbMole{
 				}
 				$out[] = print_r($server_vars,true);
 			}
-			if(isset($GLOBALS["_GET"]));{
+			if(isset($GLOBALS["_GET"])){
 				$out[] = "";
 				$out[] = "get vars";
 				$out[] = "--------";
 				$out[] = print_r($GLOBALS["_GET"],true);
 			}
-			if(isset($GLOBALS["_POST"]));{
+			if(isset($GLOBALS["_POST"])){
 				$out[] = "";
 				$out[] = "post vars";
 				$out[] = "--------";
@@ -840,6 +842,14 @@ class DbMole{
 	 */
 	function _getAffectedRows(){ return null; }
 
+	function selectRows($query,$bind_ar = array(), $options = array()){
+		$class_name = get_class($this);
+		if($class_name=="DbMole"){
+			throw new LogicException("Method selectRows() must be called through a subclass");
+		}
+		throw new LogicException("Method $class_name::selectRows() must be implemented");
+	}
+
 	/**
 	 * Returns first record as associative array.
 	 *
@@ -935,7 +945,7 @@ class DbMole{
 			break;
 		}
 		if(isset($out) && isset($options["type"])){
-			settype($out,"$options[type]");
+			$this->_settype($out,"$options[type]");
 		}
 
 		return $out;
@@ -1053,7 +1063,7 @@ class DbMole{
 		foreach($rows as $row){	
 			foreach($row as $value){	
 				if(isset($value) && isset($options["type"])){
-					settype($value,$options["type"]);
+					$this->_settype($value,$options["type"]);
 				}
 				$out[] = $value;
 			}
@@ -1222,8 +1232,8 @@ class DbMole{
 	 * @return bool
 	 */
 	function insertIntoTable($table_name,$values,$options = array()){
-		settype($table_name,"string");
-		settype($values,"array");
+		$table_name = (string)$table_name;
+		$values = (array)$values;
 
 		if(!isset($options["do_not_escape"])){ $options["do_not_escape"] = array(); } 
 		if(!is_array($options["do_not_escape"])){ $options["do_not_escape"] = array($options["do_not_escape"]); }
@@ -1269,8 +1279,8 @@ class DbMole{
 	 * @return bool
 	 */
 	function insertOrUpdateRecord($table_name,$values,$options = array()){
-		settype($table_name,"string");
-		settype($values,"array");
+		$table_name = (string)$table_name;
+		$values = (array)$values;
 
 		// nazev policka, ktere je rozhodujici, zda zaznam existuje nebo nikoli
 		$options["id_field"] = isset($options["id_field"]) ? (string)$options["id_field"] : "id";
@@ -1376,9 +1386,9 @@ class DbMole{
 	 * @return statement or null on error
 	 */
 	function executeQuery($query,$bind_ar = array(),$options = array()){
-		settype($query,"string");
-		settype($bind_ar,"array");
-		settype($options,"array");
+		$query = (string)$query;
+		$bind_ar = (array)$bind_ar;
+		$options = (array)$options;
 
 		// prevod prip. poli v $bind_ar
 		$b_ar = array();
@@ -1467,7 +1477,7 @@ class DbMole{
 	 * @return string
 	 */
 	function escapeBool4Sql($value){
-		return $value? 'TRUE' : 'FALSE';
+		return $value ? 'TRUE' : 'FALSE';
 	}
 
 	/**
@@ -1476,16 +1486,16 @@ class DbMole{
 	 * @param mixed $value php value
 	 * @return string SQL reprezentation of given value
 	 */
-	function escapeValue4sql($value){
+	function escapeValue4Sql($value){
 			if(is_object($value)){ $value = $value->getId(); }
 			if($value===null)
 					return 'NULL';
 			if(is_float($value))
-					return $this->escapeFloat4sql($value);
+					return $this->escapeFloat4Sql($value);
 			if(is_integer($value))
 					return $value;
 			if(is_bool($value))
-					return $this->escapeBool4sql($value);
+					return $this->escapeBool4Sql($value);
 			return $this->escapeString4Sql($value);
 	}
 
@@ -1504,7 +1514,7 @@ class DbMole{
 		$this->_normalizeBindAr($bind_ar);
 
 		foreach($bind_ar as &$value){
-			$value = $this->escapeValue4sql($value);
+			$value = $this->escapeValue4Sql($value);
 		}
 
 		$query_to_execute = strtr($query,$bind_ar);
@@ -1543,7 +1553,7 @@ class DbMole{
 	 * @access private
 	 */
 	function _hookBeforeQueryExecution(){
-		if(defined("DBMOLE_COLLECT_STATICTICS") && DBMOLE_COLLECT_STATICTICS){
+		if(defined("DBMOLE_COLLECT_STATISTICS") && constant("DBMOLE_COLLECT_STATISTICS")){
 			list($usec, $sec) = explode(" ", microtime());
 			$this->_start_utime = ((float)$usec + (float)$sec);
 		}
@@ -1554,19 +1564,17 @@ class DbMole{
 	 * @access private
 	 */
 	function _hookAfterQueryExecution(){
-		global $__DMOLE_STATISTICS__;
-
-		if(defined("DBMOLE_COLLECT_STATICTICS") && DBMOLE_COLLECT_STATICTICS){
-			if(!isset($__DMOLE_STATISTICS__)){ $__DMOLE_STATISTICS__ = array(); }
-			if(!isset($__DMOLE_STATISTICS__[$this->getQuery()])){
-				$__DMOLE_STATISTICS__[$this->getQuery()] = array();
+		if(defined("DBMOLE_COLLECT_STATISTICS") && constant("DBMOLE_COLLECT_STATISTICS")){
+			if(!isset(self::$__DMOLE_STATISTICS__)){ self::$__DMOLE_STATISTICS__ = array(); }
+			if(!isset(self::$__DMOLE_STATISTICS__[$this->getQuery()])){
+				self::$__DMOLE_STATISTICS__[$this->getQuery()] = array();
 			}
 
 			$start_utime = $this->_start_utime;
 			list($usec, $sec) = explode(" ", microtime());
 			$stop_utime = ((float)$usec + (float)$sec);
 
-			$__DMOLE_STATISTICS__[$this->getQuery()][] = array(
+			self::$__DMOLE_STATISTICS__[$this->getQuery()][] = array(
 				"time" => $stop_utime - $start_utime,
 				"bind_ar" => $this->getBindAr()
 			);
@@ -1742,6 +1750,38 @@ class DbMole{
 				unset($GLOBALS[$connection_swap_variable]);
 			}
 			unset($this->_connection_swap_variable);
+		}
+	}
+
+	protected function _htmlspecialchars($string){
+		if(!is_string($string)){
+			$string = (string)$string;
+		}
+		if(!isset($flags)){
+			$flags =  ENT_COMPAT | ENT_QUOTES;
+			if(defined("ENT_HTML401")){ $flags = $flags | ENT_HTML401; }
+		}
+		if(!isset($encoding)){
+			// as of PHP5.4 the default encoding is UTF-8, it causes troubles in non UTF-8 applications,
+			// I think that the encoding ISO-8859-1 works well in UTF-8 applications
+			$encoding = "ISO-8859-1";
+		}
+		return htmlspecialchars((string)$string,$flags,$encoding);
+	}
+
+	protected function _settype(&$var,$type){
+		if(is_null($var)){ return; }
+		$type = (string)$type;
+		switch((string)$type){
+			case "integer":
+				$var = (integer)$var;
+				return;
+			case "float":
+				$var = (float)$var;
+				return;
+			case "string":
+				$var = (string)$var;
+				return;
 		}
 	}
 }

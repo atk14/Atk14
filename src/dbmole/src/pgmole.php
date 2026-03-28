@@ -109,6 +109,25 @@ class PgMole Extends DbMole{
 		return "'".pg_escape_string($this->_getDbConnect(), $s)."'";
 	}
 
+	function escapeColumnName4Sql($column_name){
+		static $cache = array();
+		$c_key = (string)$column_name;
+		if(!isset($cache[$c_key])){
+			$cache[$c_key] = pg_escape_identifier($this->_getDbConnect(), $column_name);
+		}
+		return $cache[$c_key];
+	}
+
+	function escapeTableName4Sql($table_name){
+		// Handling the schema.table entry
+		if(strpos($table_name,'.') !== false){
+			list($schema, $table) = explode('.', $table_name);
+			return $this->escapeColumnName4Sql($schema).".".$this->escapeColumnName4Sql($table);
+		}
+		return $this->escapeColumnName4Sql($table_name);
+	}
+
+
 	function _runQuery($query){
 		$connection = $this->_getDbConnect();
 		$result = pg_query($connection,$query);

@@ -1,5 +1,5 @@
 <?php
-class tc_benchmark extends tc_base{
+class TcBenchmark extends TcBase{
 
 	function test(){
 		$this->assertTrue(true);

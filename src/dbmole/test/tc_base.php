@@ -1,5 +1,5 @@
 <?php
-class tc_base extends tc_super_base{
+class TcBase extends TcSuperBase{
 
 	function _setUp(){
 		$m = &$this->_get_moles();

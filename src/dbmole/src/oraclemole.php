@@ -282,9 +282,9 @@ class OracleMole extends DbMole{
 	* Uvnitr fce jsou nazvy poli prevedeny na bind klice.
 	*/
 	function insertIntoTable($table_name,$values,$options = array()){
-		settype($table_name,"string");
-		settype($values,"array");
-		settype($options,"array");
+		$table_name = (string)$table_name;
+		$values = (array)$values;
+		$options = (array)$options;
 
 		$options["clobs"] = isset($options["clobs"]) ? (array)$options["clobs"] : array();			// $options["clobs"] = array("body","perex");
 		$options["blobs"] = isset($options["blobs"]) ? (array)$options["blobs"] : array();			// $options["blobs"] = array("binary_body")
@@ -372,7 +372,7 @@ class OracleMole extends DbMole{
 	*															false -> doslo k chybe
 	*/
 	function _doCommitOrRollback($action){
-		settype($action,"string");
+		$action = (string)$action;
 		$function_name = "Oci$action";
 		$this->_reset();
 		$connection = $this->_getDbConnect();

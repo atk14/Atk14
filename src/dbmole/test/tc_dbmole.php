@@ -1,5 +1,5 @@
 <?php
-class tc_dbmole extends tc_base{
+class TcDbmole extends TcBase{
 
 	function test_uses_sequencies(){
 		$this->assertFalse($this->my->usesSequencies());
@@ -425,8 +425,46 @@ class tc_dbmole extends tc_base{
 	}
 
 	function test_escapeColumnName4Sql(){
-		$this->assertEquals("id",$this->pg->escapeColumnName4Sql("id"));
+		$this->assertEquals('"id"',$this->pg->escapeColumnName4Sql("id"));
+
 		$this->assertEquals("`id`",$this->my->escapeColumnName4Sql("id"));
+		$this->assertEquals("`bad_``boy`",$this->my->escapeColumnName4Sql("bad".chr(0)."_`boy"));
+	}
+
+	function test_escapeTableName4Sql(){
+		$this->assertEquals('"articles"',$this->pg->escapeTableName4Sql("articles"));
+		$this->assertEquals('"public"."articles"',$this->pg->escapeTableName4Sql("public.articles"));
+
+		$this->assertEquals("`articles`",$this->my->escapeTableName4Sql("articles"));
+		$this->assertEquals("`public`.`articles`",$this->my->escapeTableName4Sql("public.articles"));
+	}
+
+	function test_exceptions_on_selectRows(){
+		$dbmole = DbMole::GetInstance();
+
+		$exception_thrown = false;
+		try {
+			$dbmole->selectRows("SELECT * FROM articles");
+		} catch( Exception $e) {
+			$exception_thrown = true;
+		}
+
+		$this->assertEquals(true,$exception_thrown);
+		$this->assertEquals("Method selectRows() must be called through a subclass",$e->getMessage());
+
+		// --
+
+		$dbmole = TestingDbMole::GetInstance();
+
+		$exception_thrown = false;
+		try {
+			$dbmole->selectRows("SELECT * FROM articles");
+		} catch( Exception $e) {
+			$exception_thrown = true;
+		}
+
+		$this->assertEquals(true,$exception_thrown);
+		$this->assertEquals("Method TestingDbMole::selectRows() must be implemented",$e->getMessage());
 	}
 
 	function _test_common_behaviour(&$dbmole){

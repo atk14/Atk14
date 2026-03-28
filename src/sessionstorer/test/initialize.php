@@ -12,8 +12,7 @@ require("../../string4/load.php");
 require("../sessionstorer.php");
 
 // UF! we need dbmole
-require(dirname(__FILE__)."/../../dbmole/dbmole.php");
-require(dirname(__FILE__)."/../../dbmole/pgmole.php");
+require(dirname(__FILE__)."/../../dbmole/load.php");
 require(dirname(__FILE__)."/../../dbmole/test/connections_and_handler.php");
 
 // rectreating database structures
