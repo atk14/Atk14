@@ -914,7 +914,7 @@ class TcTableRecord extends TcBase{
 			"title" => "My Title",
 		));
 		$dbmole = $rec->getDbmole();
-		$this->assertStringContains("SELECT id,title,znak,an_integer",$dbmole->getQuery());
+		$this->assertStringContains('SELECT "id","title","znak","an_integer"',$dbmole->getQuery());
 
 		// MySQL
 		$rec = MyTestTable::CreateNewRecord(array(
