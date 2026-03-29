@@ -13,6 +13,7 @@
 !defined("DBMOLE_CHECK_BIND_AR_FORMAT") && define("DBMOLE_CHECK_BIND_AR_FORMAT",true);
 !defined("DBMOLE_AUTOMATIC_DELAY_TRANSACTION_BEGINNING_AFTER_CONNECTION") && define("DBMOLE_AUTOMATIC_DELAY_TRANSACTION_BEGINNING_AFTER_CONNECTION",true);
 !defined("DBMOLE_DEFAULT_CACHE_EXPIRATION") && define("DBMOLE_DEFAULT_CACHE_EXPIRATION",600);
+!defined("DBMOLE_USE_PREPARED_STATEMENTS") && define("DBMOLE_USE_PREPARED_STATEMENTS",false);
 
 /**
  * Provides basic functionality with databases.
@@ -1507,9 +1508,9 @@ class DbMole{
 	 * @return statement or null on error
 	 */
 	function _executeQuery(){
-		$query = &$this->_Query;
-		$bind_ar = &$this->_BindAr;
-		$options = &$this->_Options;
+		$query = $this->_Query;
+		$bind_ar = $this->_BindAr;
+		$options = $this->_Options;
 
 		$this->_normalizeBindAr($bind_ar);
 

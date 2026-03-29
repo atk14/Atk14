@@ -54,9 +54,9 @@ class TcDbmole extends TcBase{
 		$dbmole->selectRow("SELECT title FROM test_table WHERE title IN :title OR title=:title_t",array(":title" => array("test","test2"), ":title_t" => "test3"));
 		$this->assertEquals("SELECT title FROM test_table WHERE title IN (:title_0, :title_1) OR title=:title_t",$dbmole->getQuery());
 		$this->assertEquals(array(
-			":title_0" => "'test'",
-			":title_1" => "'test2'",
-			":title_t" => "'test3'",
+			":title_0" => "test",
+			":title_1" => "test2",
+			":title_t" => "test3",
 		),$dbmole->getBindAr());
 	}
 
@@ -154,6 +154,18 @@ class TcDbmole extends TcBase{
 		$connection = $dbmole->getConnection();
 		$this->assertTrue(!!$connection);
 		$this->assertEquals(true,$dbmole->isConnected());
+	}
+
+	function test_reconecting(){
+		$dbmole = $this->pg;
+
+		$count = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE id=:id",[":id" => "10"]);
+
+		$dbmole->closeConnection();
+
+		$count2 = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE id=:id",[":id" => "10"]);
+
+		$this->assertEquals($count,$count2);
 	}
 
 	function _test_begin_transaction($dbmole){
@@ -657,6 +669,20 @@ class TcDbmole extends TcBase{
 		));
 
 		$this->assertEquals(array("10","33"),$ints);
+
+		// binding an object
+
+		$article = new Article(11);
+		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE an_integer=:article", array(
+			":article" => $article,
+		));
+		$this->assertEquals(2,$cnt);
+
+		$article = new Article(1000);
+		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE an_integer=:article", array(
+			":article" => $article,
+		));
+		$this->assertEquals(0,$cnt);
 	}
 
 	function _test_select_sequence(&$dbmole){
