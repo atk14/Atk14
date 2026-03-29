@@ -479,6 +479,17 @@ class TcDbmole extends TcBase{
 		$this->assertEquals("Method TestingDbMole::selectRows() must be implemented",$e->getMessage());
 	}
 
+	function test_parameter_not_used_in_query(){
+		$dbmole = $this->pg;
+
+		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE title=:title",array(
+			":title" => "test",
+			":title2" => "test2"
+		));
+
+		$this->assertEquals(0,$cnt);
+	}
+
 	function _test_common_behaviour(&$dbmole){
 		$this->assertTrue($dbmole->doQuery("DELETE FROM test_table"));
 

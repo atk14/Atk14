@@ -134,16 +134,23 @@ class PgMole Extends DbMole{
 	function _executeQuery(){
 		$query = $this->_Query;
 
+		// Filtering out parameters that are not used in the query
+		$bind_ar = [];
+		foreach($this->_BindAr as $key => $value){
+			if(strpos($query,$key)===false){ continue; }
+			$bind_ar[$key] = $value;
+		}
+
 		if(
 			!DBMOLE_USE_PREPARED_STATEMENTS ||
-			!$this->_BindAr ||
+			!$bind_ar ||
 			strpos(trim($query),';')!==false // multiple commands must be processed using pg_query
 		){
 			return parent::_executeQuery();
 		}
 
-		$bind_keys = array_keys($this->_BindAr);
-		$positional_values = array_values($this->_BindAr);
+		$bind_keys = array_keys($bind_ar);
+		$positional_values = array_values($bind_ar);
 		$positional_values = array_map(function($value){
 			if(is_object($value)){ $value = $value->getId(); }
 			if(is_null($value)){ return $value; }
