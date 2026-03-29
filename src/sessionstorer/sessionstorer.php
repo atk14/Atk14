@@ -733,7 +733,7 @@ class SessionStorer{
 						-- AND last_access=:last_access
 				",array(
 					":id" => $this->_SessionId,
-					":last_access" => $row["last_access"],
+					// ":last_access" => $row["last_access"],
 					":now" => $this->_getNow(),
 				));
 				if($this->getCookieExpiration()>0){
