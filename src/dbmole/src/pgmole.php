@@ -194,6 +194,7 @@ class PgMole Extends DbMole{
 
 	function _runQuery($query){
 		$connection = $this->_getDbConnect();
+		$this->_AffectedRows = null;
 		$result = pg_query($connection,$query);
 		$this->_AffectedRows = $result!==false ? pg_affected_rows($result) : null;
 		return $result;

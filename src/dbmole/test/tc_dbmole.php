@@ -501,6 +501,24 @@ class TcDbmole extends TcBase{
 		$this->assertEquals(0,$cnt);
 	}
 
+	function test_bad_query(){
+		$dbmole = $this->pg;
+
+		DbMole::RegisterErrorHandler(function($dbmole){
+			throw new Exception($dbmole->getErrorMessage());
+		});
+
+		$exception_thrown = false;
+		try {
+			$dbmole->doQuery("UPDATE test_table SET not_existing_field=:value",array(":value" => "Nice try!"));
+		}catch(Exception $e){
+			$exception_thrown = true;
+		}
+
+		$this->assertEquals(true,$exception_thrown);
+		$this->assertEquals(null,$dbmole->getAffectedRows());
+	}
+
 	function _test_common_behaviour(&$dbmole){
 		$this->assertTrue($dbmole->doQuery("DELETE FROM test_table"));
 
