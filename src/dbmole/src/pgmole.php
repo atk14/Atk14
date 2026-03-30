@@ -172,6 +172,7 @@ class PgMole Extends DbMole{
 		}
 
 		$stmt_name = "dbmole_".sha1($positional_query);
+		$this->_AffectedRows = null;
 		if(!isset($this->_PreparedStatements[$conn_key][$stmt_name])){
 			$result = pg_prepare($connection, $stmt_name, $positional_query);
 			if(!$result){
