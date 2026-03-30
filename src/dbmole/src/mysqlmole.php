@@ -104,7 +104,11 @@ class MysqlMole extends DbMole{
 
 	function getAffectedRows(){
 		$connection = $this->_getDbConnect();
-		return mysqli_affected_rows($connection);
+		$out = mysqli_affected_rows($connection);
+		if($out===-1){
+			return null;
+		}
+		return $out;
 	}
 
 	/**
