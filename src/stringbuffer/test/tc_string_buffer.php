@@ -91,7 +91,10 @@ class TcStringBuffer extends TcBase{
 		$buffer2->addString("!");
 		$buffer2->addString("");
 
-		foreach(array($buffer1,$buffer2) as $buffer){
+		foreach(array($buffer1,$buffer2) as $i => $buffer){
+
+			$n = $i+1;
+			$buffer_name = "buffer{$n}";
 
 			$this->assertEquals("",$buffer->substr(0,0));
 			$this->assertEquals("Hello",$buffer->substr(0,5));
@@ -102,8 +105,9 @@ class TcStringBuffer extends TcBase{
 			$this->assertEquals("Hello World!",$buffer->substr(0,13));
 			$this->assertEquals("Hello World!",$buffer->substr(0));
 			$this->assertEquals("Hello World!",$buffer->substr(-12));
-			$this->assertEquals("Hello World!",$buffer->substr(-12,12));
-			$this->assertEquals("Hello World!",$buffer->substr(-1000,12));
+			$this->assertEquals("Hello",$buffer->substr(-12,17),"$buffer_name");
+			$this->assertEquals("",$buffer->substr(-12,12));
+			$this->assertEquals("",$buffer->substr(-1000,12));
 			$this->assertEquals("World!",$buffer->substr(6));
 			$this->assertEquals("!",$buffer->substr(-1));
 			$this->assertEquals("ld!",$buffer->substr(-3));
@@ -171,5 +175,11 @@ class TcStringBuffer extends TcBase{
 		clearstatcache();
 
 		$this->assertEquals(0,filesize($filename));
+	}
+
+	function test_add(){
+		$buffer = new StringBuffer();
+		$buffer->add("Hello World!");
+		$this->assertEquals("Hello World!",$buffer->toString());
 	}
 }

@@ -30,7 +30,7 @@ class StringBuffer{
 	 * @param string $string_to_add
 	 */
 	function __construct($string_to_add = ""){
-		settype($string_to_add,"string");
+		$string_to_add = (string)$string_to_add;
 		if(strlen($string_to_add)>0){
 			$this->addString($string_to_add);
 		}
@@ -58,10 +58,20 @@ class StringBuffer{
 		return $this->toString();
 	}
 
+	/**
+	 * Returns all items stored in the buffer.
+	 *
+	 * @return StringBufferItem[]
+	 */
 	function getItems(){
 		return $this->_Items;
 	}
 
+	/**
+	 * Returns the last item in the buffer, or null if the buffer is empty.
+	 *
+	 * @return StringBufferItem|null
+	 */
 	function getLastItem(){
 		return $this->_Items ? $this->_Items[sizeof($this->_Items)-1] : null;
 	}
@@ -72,10 +82,17 @@ class StringBuffer{
 	 * @param string $string_to_add
 	 */
 	function addString($string_to_add){
-		settype($string_to_add,"string");
+		$string_to_add = (string)$string_to_add;
 		if(strlen($string_to_add)>0){
 			$this->_Items[] = new StringBufferItem($string_to_add);
 		}
+	}
+
+	/**
+	 * Alias for addString()
+	 */
+	function add($string_to_add){
+		return $this->addString($string_to_add);
 	}
 
 	/**
@@ -95,9 +112,9 @@ class StringBuffer{
 	 * @param StringBuffer $stringbuffer_to_add
 	 */
 	function addStringBuffer($stringbuffer_to_add){
-		if(!isset($stringbuffer_to_add)){ return;}
-		for($i=0;$i<sizeof($stringbuffer_to_add->_Items);$i++){
-			$this->_Items[] = $stringbuffer_to_add->_Items[$i];
+		if(is_null($stringbuffer_to_add)){ return;}
+		foreach($stringbuffer_to_add->getItems() as $item){
+			$this->_Items[] = $item;
 		}
 	}
 
@@ -108,8 +125,8 @@ class StringBuffer{
 	 */
 	function getLength(){
 		$out = 0;
-		for($i=0;$i<sizeof($this->_Items);$i++){
-			$out = $out + $this->_Items[$i]->getLength();
+		foreach($this->getItems() as $item){
+			$out += $item->getLength();
 		}
 		return $out;
 	}
@@ -118,8 +135,8 @@ class StringBuffer{
 	 * Echoes content of buffer.
 	 */
 	function printOut(){
-		for($i=0;$i<sizeof($this->_Items);$i++){
-			$this->_Items[$i]->flush();
+		foreach($this->getItems() as $item){
+			$item->flush();
 		}
 	}
 
@@ -139,28 +156,29 @@ class StringBuffer{
 	 * @param string|StringBuffer $replace	replacement string. or another StringBuffer object
 	 */
 	function replace($search,$replace){
-		settype($search,"string");
+		$search = (string)$search;
+		$replace = (string)$replace;
 
-		// prevod StringBuffer na string
-		if(is_object($replace)){
-			$replace = $replace->toString();
-		}
-
-		for($i=0;$i<sizeof($this->_Items);$i++){
-			$this->_Items[$i]->replace($search,$replace);
+		foreach($this->_Items as &$item){	
+			$item->replace($search,$replace);
 		}
 	}
 
 	/**
 	 * Returns the portion of buffered string specified by the offset and length parameters
 	 *
+	 *	$same = $buffer->substr(0);
+	 *	$one_less_byte = $buffer->substr(1);
+	 *	$last_5_bytes = $buffer->substr(-5);
 	 *	$part = $buffer->substr(10,20);
 	 */
 	function substr($offset,$length = null){
 		if($offset<0){
-			$offset = $this->getLength() - abs($offset);
+			if(is_null($length)){
+				$offset = $this->getLength() - abs($offset);
+			}
 			if($offset<0){
-				// $length = is_null($length) ? $length : $length - abs($offset);
+				$length = is_null($length) ? $length : $length - abs($offset);
 				$offset = 0;
 			}
 		}
@@ -199,7 +217,7 @@ class StringBuffer{
 			// File is created with class Files in order to maintain file permissions
 			Files::TouchFile($filename,$err,$err_str);
 			if($err){
-				throw new Exception(get_class($this).": cannot do touch on $filename ($err_msg)");
+				throw new Exception(get_class($this).": cannot do touch on $filename ($err_str)");
 			}
 		}
 
@@ -210,7 +228,7 @@ class StringBuffer{
 		if($total_length===0){
 			Files::EmptyFile($filename,$err,$err_str);
 			if($err){
-				throw new Exception(get_class($this).": cannot empty file $filename ($err_msg)");
+				throw new Exception(get_class($this).": cannot empty file $filename ($err_str)");
 			}
 			return;
 		}

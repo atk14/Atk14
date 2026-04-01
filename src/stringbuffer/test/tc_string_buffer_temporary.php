@@ -3,6 +3,8 @@ class TcStringBufferTemporary extends TcBase {
 
 	function test(){
 		$buffer = new StringBufferTemporary("Hello World!");
+		$buffer->addString("");
+		$buffer->addString(null);
 		$buffer->addString(" Hello again!");
 		$this->assertEquals("Hello World! Hello again!",$buffer);
 
@@ -43,7 +45,7 @@ class TcStringBufferTemporary extends TcBase {
 		$this->assertEquals("Hi there!","$buffer");
 
 		// The last item is being written to a temporary file automatically.
-		// In testing, after 5 bytes.
+		// In testing, after 5 bytes (see test/initialize.php)
 		$buffer = new StringBufferTemporary();
 
 		$items = $buffer->getItems();

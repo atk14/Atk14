@@ -38,7 +38,7 @@ class StringBufferFileItem extends StringBufferItem{
 	 * @return integer
 	 */
 	function getLength(){
-		if(isset($this->_String)){ return parent::getLength(); }
+		if(!is_null($this->_String)){ return parent::getLength(); }
 		$size = filesize($this->_Filename);
 		if($size === false){
 			throw new Exception(get_class($this).": cannot get the size of file $this->_Filename");
@@ -47,7 +47,7 @@ class StringBufferFileItem extends StringBufferItem{
 	}
 
 	function flush(){
-		if(isset($this->_String)){ return parent::flush(); }
+		if(!is_null($this->_String)){ return parent::flush(); }
 		if((!defined("TEST") || !constant("TEST")) && ob_get_level()>0){ ob_end_clean(); } // The output buffering may be active. Skip this check in testing.
 		readfile($this->_Filename);
 	}
