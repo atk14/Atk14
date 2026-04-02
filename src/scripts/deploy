@@ -197,11 +197,20 @@ function _exec($cmd,$options = array()){
 		"quiet" => false,
 		"exit_on_error" => true,
 	);
+
+	// HACK for composer update!
+	// If the composer command does not include the --no-dev, or --dev parameters, or the COMPOSER_NO_DEV environment variable,
+	// the COMPOSER_NO_DEV environment variable is set to 1.
+	if(preg_match('/\bcomposer/',$cmd) && !preg_match('/(--no-dev|--dev|COMPOSER_NO_DEV)\b/',$cmd)){
+		$cmd = "COMPOSER_NO_DEV=1 $cmd";
+	}
+
 	if(!$options["quiet"]){
 		echo "################\n";
 		if($options["description"]){ echo "# $options[description]\n"; }
 		echo "$ $cmd\n";
 	}
+
 	exec("($cmd) 2>&1",$output,$err); // we need to redirect std error to std output
 	if($err){
 		echo join("\n",$output),"\n";
@@ -230,7 +239,7 @@ function _run_commands($commands,$name = "before_deploy"){
 		$location = "remote";
 		if(preg_match($_pattern = '/^@(local|remote)\s/',$cmd,$matches)){
 			$location = $matches[1];
-			$cmd = preg_replace($_pattern,'',$cmd); // "@local ./composer.phar update" -> "./composer.phar update"
+			$cmd = preg_replace($_pattern,'',$cmd); // "@local composer update" -> "composer update"
 		}
 		if($location=="remote"){
 			_create_maintenance_file_if_required(); // we are trying to create the maintenance file as late as possible - just before first remote command execution
