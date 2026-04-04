@@ -44,19 +44,11 @@ if(preg_match("/^4/",phpversion())){
 	echo "Sorry! PHP4 is no more supported\n";
 	exit(1);
 }
-if(preg_match('/^5\./',phpversion())){
-	define("PHP5",true);
-	define("PHP7",false);
-	define("PHP8",false);
-}elseif(preg_match('/^7\./',phpversion())){
-	define("PHP5",false);
-	define("PHP7",true);
-	define("PHP8",false);
-}elseif(preg_match('/^8\./',phpversion())){
-	define("PHP5",false);
-	define("PHP7",false);
-	define("PHP8",true);
-}else{
+define("PHP5",PHP_VERSION_ID>=50000 && PHP_VERSION_ID<60000);
+define("PHP7",PHP_VERSION_ID>=70000 && PHP_VERSION_ID<80000);
+define("PHP8",PHP_VERSION_ID>=80000 && PHP_VERSION_ID<90000);
+
+if(!PHP5 && !PHP7 && !PHP8){
 	echo "Sorry! Your version of PHP is not supported\n";
 	exit(1);
 }
@@ -84,6 +76,7 @@ if($DIR){
 
 $exists = false;
 $_phpunit_path_ar = array();
+$_phpunit_path_ar["vendor/phpunit"] = "../autoload.php";
 $_phpunit_path_ar["../vendor/phpunit"] = "../autoload.php";
 $_phpunit_path_ar["../../vendor/phpunit"] = "../autoload.php";
 $_phpunit_path_ar["../../../vendor/phpunit"] = "../autoload.php";
@@ -109,17 +102,17 @@ foreach($_phpunit_path_ar as $dir => $autoload){
 }
 
 $error_message = ltrim('
-********************************************************************************
-*  Missing dependency: PHPUnit or PHPUnit2                                     *
-*  The following command may help you:                                         *
-*                                                                              *
-*  $ composer global require "phpunit/phpunit=~4.8|~5.7|~6.0|~7.5|~8.5|~9.6"   *
-*                                                                              *
-*  or for the installation of the very old PHPUnit2 execute:                   *
-*                                                                              *
-*  $ sudo pear install --alldeps PHPUnit2                                      *
-*                                                                              *
-********************************************************************************
+********************************************************************************************
+*  Missing dependency: PHPUnit or PHPUnit2                                                 *
+*  The following command may help you:                                                     *
+*                                                                                          *
+*  $ composer global require "phpunit/phpunit=~4.8|~5.7|~6.0|~7.5|~8.5|~9.6|~10.0|~11.0"   *
+*                                                                                          *
+*  or for the installation of the very old PHPUnit2 execute:                               *
+*                                                                                          *
+*  $ sudo pear install --alldeps PHPUnit2                                                  *
+*                                                                                          *
+********************************************************************************************
 ');
 
 if($exists) {
@@ -145,6 +138,8 @@ if($exists) {
 		exit(1);
 	}
 }
+
+define('PHPUNIT10PLUS', class_exists('PHPUnit\Runner\Version') && version_compare(\PHPUnit\Runner\Version::id(), '10.0.0', '>='));
 
 if(isset($arguments["c"]) || isset($arguments["check-dependencies"])){
 	exit(0);
@@ -322,45 +317,83 @@ function _test_runner($filename,$DIR){
 		$timer->stop();
 		$printer->printResult($result, $timer->timeElapsed());
 
-	}else{
+		return $result;
 
-		/*
-		// TODO: PHPUnit 10, 11
-		if(class_exists('PHPUnit\TextUI\Output\DefaultPrinter')){
-			$printer = PHPUnit\TextUI\Output\DefaultPrinter::standardOutput();
-		}
-		*/
-		if(class_exists('PHPUnit\TextUI\DefaultResultPrinter')){
-			$printer = new PHPUnit\TextUI\DefaultResultPrinter();
-		}elseif(class_exists('PHPUnit\TextUI\ResultPrinter')){
-			$printer = new PHPUnit\TextUI\ResultPrinter();
-		}else{
-			// phpunit/phpunit 4.*|5.*
-			$printer = new PHPUnit_TextUI_ResultPrinter();
-		}
+	}
+	
+	if(PHPUNIT10PLUS){
 
-		if(class_exists('PHPUnit\Framework\TestSuite')){
-			/*
-			// TODO: PHPUnit 10, 11
-			$suite = PHPUnit\Framework\TestSuite::fromClassReflector(
-				new ReflectionClass($classname)
-			);
-			*/
-			$suite  = new PHPUnit\Framework\TestSuite(
-				new ReflectionClass($classname)
-			);
-		}else{
-			// phpunit/phpunit 4.*|5.*
-			$suite  = new PHPUnit_Framework_TestSuite(
-				new ReflectionClass($classname)
-			);
+		\PHPUnit\Event\Facade::emitter()->applicationStarted();
+
+		$configuration = (new \PHPUnit\TextUI\Configuration\Builder)->build(['phpunit', $filename]);
+
+		$printer = \PHPUnit\TextUI\Output\Facade::init($configuration, false, false);
+
+		\PHPUnit\TestRunner\TestResult\Facade::init();
+
+		// DeprecationCollector is not in PHPUnit 10
+		if(class_exists("\PHPUnit\Runner\DeprecationCollector\Facade")){
+			\PHPUnit\Runner\DeprecationCollector\Facade::init();
 		}
 
-		$result = $suite->run();
+		\PHPUnit\Event\Facade::instance()->seal();
 
-		$printer->printResult($result);
+		$testSuite = \PHPUnit\Framework\TestSuite::fromClassReflector(new \ReflectionClass($classname));
+
+		\PHPUnit\Runner\CodeCoverage::instance()->init($configuration, \PHPUnit\TextUI\Configuration\CodeCoverageFilterRegistry::instance(), false);
+
+		$timer = new \SebastianBergmann\Timer\Timer;
+		$timer->start();
+
+		(new \PHPUnit\TextUI\TestRunner)->run($configuration, new \PHPUnit\Runner\ResultCache\NullResultCache, $testSuite);
+
+		$duration = $timer->stop();
+
+		$result = \PHPUnit\TestRunner\TestResult\Facade::result();
+
+		\PHPUnit\TextUI\Output\Facade::printResult($result, null, $duration, false);
+
+		$exitCode = (new \PHPUnit\TextUI\ShellExitCodeCalculator)->calculate($configuration, $result);
+
+		\PHPUnit\Event\Facade::emitter()->applicationFinished($exitCode);
+
+		$wasSuccessful = ($exitCode === 0);
+		$result = new _RunUnitTest_Result($wasSuccessful);
+
+		return $result;
 
 	}
 
+	if(class_exists('PHPUnit\TextUI\DefaultResultPrinter')){
+		$printer = new PHPUnit\TextUI\DefaultResultPrinter();
+	}elseif(class_exists('PHPUnit\TextUI\ResultPrinter')){
+		$printer = new PHPUnit\TextUI\ResultPrinter();
+	}else{
+		// phpunit/phpunit 4.*|5.*
+		$printer = new PHPUnit_TextUI_ResultPrinter();
+	}
+
+	if(class_exists('PHPUnit\Framework\TestSuite')){
+		$suite  = new PHPUnit\Framework\TestSuite(
+			new ReflectionClass($classname)
+		);
+	}else{
+		// phpunit/phpunit 4.*|5.*
+		$suite  = new PHPUnit_Framework_TestSuite(
+			new ReflectionClass($classname)
+		);
+	}
+
+	$result = $suite->run();
+
+	$printer->printResult($result);
+
 	return $result;
+
+}
+
+class _RunUnitTest_Result {
+	private $ok;
+	public function __construct($ok){ $this->ok = $ok; }
+	public function wasSuccessful(){ return $this->ok; }
 }
