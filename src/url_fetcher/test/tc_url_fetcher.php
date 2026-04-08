@@ -198,6 +198,13 @@ class tc_url_fetcher extends tc_base{
 		$this->assertEquals(302,$f->getStatusCode());
 		$this->assertEquals("",(string)$f->getContent());
 		$this->assertEquals("POST",$f->getRequestMethod());
+
+		// -- full address without closing slash
+		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing/redirection.php?type=full_address_without_closing_slash");
+		$this->assertEquals(200,$f->getStatusCode());
+		$this->assertEquals("https://example.com",$f->getUrl());
+		$this->assertStringContains("Example Domain",(string)$f->getContent());
+
 	}
 
 	function test_upload_file(){
@@ -279,5 +286,19 @@ class tc_url_fetcher extends tc_base{
 
 		$prev_timeout = $f->setSocketTimeout(8.0);
 		$this->assertEquals(10.0,$prev_timeout);
+	}
+
+	function test_verify_peer_name(){
+		$f = new UrlFetcher("https://alt.skelet.atk14.net/");
+		$this->assertFalse(@$f->found());
+		$this->assertStringContains("failed to open socket",$f->getErrorMessage());
+
+		$f = new UrlFetcher("https://alt.skelet.atk14.net/",array("verify_peer_name" => false));
+		$this->assertTrue($f->found());
+	}
+
+	function test_url_without_ending_slash(){
+		$f = new UrlFetcher("https://www.atk14.net");
+		$this->assertTrue($f->found());
 	}
 }

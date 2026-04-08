@@ -26,8 +26,8 @@ defined("URL_FETCHER_VERIFY_PEER") || define("URL_FETCHER_VERIFY_PEER",true);
  * ## Make a GET request
  * ```
  * $fetcher = new UrlFetcher("http://username:password@www.root.cz/");
- * if($f->found()){
- * 	echo $f->getContent();
+ * if($fetcher->found()){
+ * 	echo $fetcher->getContent();
  * }
  * ```
  *
@@ -55,7 +55,12 @@ defined("URL_FETCHER_VERIFY_PEER") || define("URL_FETCHER_VERIFY_PEER",true);
  */
 class UrlFetcher {
 
-	const VERSION = "1.8.5";
+	const VERSION = "1.8.7";
+
+	const READ_POLL_INTERVAL_US = 20000;   // 20ms between read attempts
+	const WRITE_RETRY_INTERVAL_US = 10000; // 10ms between write attempts
+	const WRITE_RETRY_SCALE_US = 1000;     // scaling factor for backoff
+	const SOCKET_CHUNK_SIZE = 262144;      // 256kB
 
 	protected $_Fetched;
 
@@ -107,9 +112,17 @@ class UrlFetcher {
 	/**
 	 * Connection timeout in seconds
 	 *
-	 * @var integer
+	 * @var float
 	 */
 	protected $_SocketTimeout = 5.0;
+
+	/**
+	 * Read timeout
+	 *
+	 * @var float
+	 *
+	 */
+	protected $_ReadTimeout = 30.0;
 
 	/**
 	 * Redirections counter
@@ -154,6 +167,12 @@ class UrlFetcher {
 	 */
 	protected $_VerifyPeer;
 
+	/**
+	 *
+	 * @var boolean
+	 */
+	protected $_VerifyPeerName;
+
 	protected $_Proxy = "";
 
 	protected $_ForceContentLength = null;
@@ -195,7 +214,7 @@ class UrlFetcher {
 	 * @param array $options
 	 * - **additional_headers** -
 	 * - **max_redirections** [default: 5]
-	 * - **user_agent** - content of User-Agent http header [default: 'UrlFetcher 1.0']
+	 * - **user_agent** - content of User-Agent http header [default: "UrlFetcher/".self::VERSION]
 	 */
 	function __construct($url = "", $options = array()){
 		$this->_reset();
@@ -210,7 +229,10 @@ class UrlFetcher {
 			"max_redirections" => $this->_MaxRedirections,
 			"user_agent" => "UrlFetcher/".self::VERSION,
 			"verify_peer" => URL_FETCHER_VERIFY_PEER,
+			"verify_peer_name" => true,
 			"proxy" => "", // e.g. "tcp://127.0.0.1:8118"
+			"socket_timeout" => $this->_SocketTimeout,
+			"read_timeout" => $this->_ReadTimeout,
 		);
 
 		if(strlen($url)>0){
@@ -221,7 +243,10 @@ class UrlFetcher {
 		$this->_MaxRedirections = $options["max_redirections"];
 		$this->_UserAgent = $options["user_agent"];
 		$this->_VerifyPeer = $options["verify_peer"];
+		$this->_VerifyPeerName = $options["verify_peer_name"];
 		$this->_Proxy = $options["proxy"];
+		$this->_SocketTimeout = (float)$options["socket_timeout"];
+		$this->_ReadTimeout = (float)$options["read_timeout"];
 	}
 	
 	/**
@@ -302,8 +327,20 @@ class UrlFetcher {
 	 */
 	function setSocketTimeout($timeout){
 		$current_socket_timeout = $this->_SocketTimeout;
-		$this->_SocketTimeout = $timeout;
+		$this->_SocketTimeout = (float)$timeout;
 		return $current_socket_timeout;
+	}
+
+	/**
+	 * Set read timeout
+	 *
+	 * @param float $timeout timeout in seconds
+	 * @return float previous timeout
+	 */
+	function setReadTimeout($timeout){
+		$current_timeout = $this->_ReadTimeout;
+		$this->_ReadTimeout = (float)$timeout;
+		return $current_timeout;
 	}
 
 	/**
@@ -358,7 +395,7 @@ class UrlFetcher {
 			$this->_RequestMethod = $options["request_method"];
 		}
 
-		$content = $options["content"]	;
+		$content = $options["content"];
 		if(!is_a($content,"StringBuffer")){
 			$content = new StringBuffer($content);
 		}
@@ -390,24 +427,23 @@ class UrlFetcher {
 
 		$this->_Fetched = true;
 
-		// this is a nusty hack
+		// this is a nasty hack
 		// sometimes it occurs that the content is longer than Content-Length
 		//
-		// je to hack pro stahovani souboru: http://do-mobilu.respekt.cz/kestazeni-download.php?f_ID=815
-		// tam koumaci prilepili za data velikost souboru - pocitaji natvrdo z HTTP/1.1
-		if(($length = $this->getContentLength()) && strlen($this->_Content->getLength())>$length){
-			$this->_Content = substr($this->_Content,0,$length);
+		// workaround for file downloads where some servers append extra data after the actual content
+		if(($length = $this->getContentLength()) && ($this->_Content->getLength() > (int)$length)){
+			$this->_Content = $this->_Content->substr(0,$length);
 		}
 
 		// !! redirection
 		if(in_array($this->getStatusCode(),array(301,302,303)) && ($location = $this->getHeaderValue("Location"))){
 			$this->_CountOfRedirection++;
-			if($this->_CountOfRedirection>=$this->_MaxRedirections){
+			if($this->_CountOfRedirection>$this->_MaxRedirections){
 				return $this->_setError("maximum redirections reached: $this->_CountOfRedirection");
 			}
 			if(preg_match('/^\//',$location)){
 				// absolute redirection
-				$location = preg_replace('/^(https?:\/\/[^\/]+)\/.*/i',"\\1$location",$this->_Url);
+				$location = preg_replace('/^(https?:\/\/[^\/]+)(\/.*)?$/i',"\\1$location",$this->_Url); // the closing slash is not mandatory - e.g. "https://example.com"
 			}elseif(!preg_match('/^https?:\/\//',$location)){
 				// relative redirection
 				if(preg_match('/\?/',$this->_Url)){
@@ -535,7 +571,7 @@ class UrlFetcher {
 	 * @param array $options {@see getResponseHeaders()}
 	 * @return string|array
 	 */
-	function getHeaders(){ return $this->getResponseHeaders($options = array()); }
+	function getHeaders($options = array()){ return $this->getResponseHeaders($options); }
 
 	/**
 	 * Return content of called URL.
@@ -557,7 +593,7 @@ class UrlFetcher {
 	function getHeaderValue($header){
 		$header = strtolower($header);
 		$headers = $this->getResponseHeaders(array("as_hash" => true, "lowerize_keys" => true));
-		if(isset($headers["$header"])){ return $headers["$header"]; }
+		if(isset($headers[$header])){ return $headers[$header]; }
 	}
 
 	/**
@@ -641,7 +677,7 @@ class UrlFetcher {
 	 * @return string
 	 */
 	function getStatusMessage(){
-		if(preg_match("/^HTTP\\/.\\.. [0-9]{3} ([A-Za-z ]{1,})/",$this->getResponseHeaders(),$matches)){
+		if(preg_match("/^HTTP\\/.\\.. [0-9]{3} ([A-Za-z ]{1,})\\b/",$this->getResponseHeaders(),$matches)){
 			return $matches[1];
 		}
 	}
@@ -704,7 +740,7 @@ class UrlFetcher {
 	
 		$this->_reset();
 
-		if(!preg_match("/^http(s{0,1}):\\/\\/([^\\/]+)(\\/.*)$/",$url,$matches)){
+		if(!preg_match("/^http(s{0,1}):\\/\\/([^\\/]+)(\\/.*|)$/",$url,$matches)){
 			return $this->_setError("invalid url format");
 		}
 
@@ -717,7 +753,7 @@ class UrlFetcher {
 		$this->_Uri = $this->_cleanUpUri($matches[3]);
 		unset($matches);
 
-		//rozpoznani cisla TCP portu, defaultne je to 80 resp. 443 na ssl
+		// detect TCP port number, defaults to 80 or 443 for SSL
 		if(preg_match("/^(.+):([0-9]{1,})$/",$_server,$matches)){
 			$_server = $matches[1];
 			$this->_Port = (integer)$matches[2];
@@ -737,6 +773,7 @@ class UrlFetcher {
 	}
 
 	protected function _cleanUpUri($uri){
+		if($uri===""){ $uri = "/"; }
 		if(preg_match('/^(.*?)(\?.*|)$/',$uri,$matches)){
 			$file = $matches[1];
 			$query_string = $matches[2];
@@ -789,7 +826,10 @@ class UrlFetcher {
 		$context_options = array();
 		if($this->_Ssl){
 			$_proto = "ssl";
-			$context_options["ssl"] = array("verify_peer" => $this->_VerifyPeer);
+			$context_options["ssl"] = array(
+				"verify_peer" => $this->_VerifyPeer,
+				"verify_peer_name" => $this->_VerifyPeerName,
+			);
 		}
 
 		$content_buffer = new StringBuffer();
@@ -801,14 +841,20 @@ class UrlFetcher {
 
 			$context = stream_context_create($context_options);
 			$f = stream_socket_client("$_proto://$this->_Server:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);
-
 			if(!$f){
 				if(strpos($errstr,"getaddrinfo failed")){
 					$errstr = "could not resolve host: $this->_Server ($errstr)";
 				}
 				return $this->_setError("failed to open socket: $errstr [$errno]");
 			}
-			stream_set_blocking($f,0);
+
+			// Read timeout
+			$sec = floor($this->_ReadTimeout);
+			$usec = round(($this->_ReadTimeout - $sec) * 1000000);
+			stream_set_blocking($f,true);
+			stream_set_timeout($f,$sec,$usec);
+			// stream_set_blocking($f,false); // stream_set_timeout does not work in non-blocking mode
+
 			$content_buffer->addString($this->_RequestHeaders);
 
 			if($this->_BodyData->getLength()){
@@ -837,7 +883,7 @@ class UrlFetcher {
 				return $this->_setError("failed to open socket: $errstr ($err_ar[message])");
 			}
 			if(!is_null($http_response_header)){
-				$response_headers = join("\n\r",$http_response_header);
+				$response_headers = join("\r\n",$http_response_header);
 			}
 
 		}
@@ -851,10 +897,23 @@ class UrlFetcher {
 			}
 		}
 
-		while(!feof($f) && $f){
-			$_b = fread($f,1024 * 256); // 256kB
+		$start = microtime(true);
+		while(!feof($f)){
+			$_b = fread($f,self::SOCKET_CHUNK_SIZE); // 256kB
+
+			$info = stream_get_meta_data($f);
+			if($info["timed_out"]){
+				$this->_setError("read timeout");
+				break;
+			}
+
+			if(microtime(true)-$start > $this->_ReadTimeout){
+				$this->_setError("read timeout");
+				break;
+			}
+
 			if(strlen($_b)==0){
-				usleep(20000);
+				usleep(self::READ_POLL_INTERVAL_US);
 				continue;
 			}
 			$response_buffer->addString($_b);
@@ -867,6 +926,11 @@ class UrlFetcher {
 			}
 		}
 		fclose($f);
+
+		if($this->errorOccurred()){
+			return false;
+		}
+
 
 		if(!$response_buffer->getLength() && !strlen($response_headers)){ // content ($response_buffer) may be empty
 			return $this->_setError("failed to read from socket");
@@ -891,7 +955,7 @@ class UrlFetcher {
 		$total_length = $buffer->getLength();
 		$fwrite = 0;
 		$retries = 0;
-		$chunk_size = 1024 * 256; // 256kB
+		$chunk_size = self::SOCKET_CHUNK_SIZE; // 256kB
 		$chunk = null;
 		for($bytes_written = 0; $bytes_written < $total_length; $bytes_written += $fwrite){
 			$length = min($chunk_size,$total_length - $bytes_written);
@@ -905,7 +969,7 @@ class UrlFetcher {
 				$fwrite = @fwrite($fp, $chunk, $length);
 				if($fwrite !== false){ break; }
 				$max_retries--;
-				usleep(10000); // 0.01s
+				usleep(self::WRITE_RETRY_INTERVAL_US); // 0.01s
 			}
 
 			if($fwrite === false){
@@ -914,7 +978,7 @@ class UrlFetcher {
 
 			if(!$fwrite){ // 0 bytes bytes_written; error code  11:  Resource temporarily unavailable
 				if($retries>=100){ return $bytes_written; }
-				usleep(10000 + $retries * 1000); // 0.01s + 0s .. 0.01s + 0.1s
+				usleep(self::WRITE_RETRY_INTERVAL_US + $retries * self::WRITE_RETRY_SCALE_US); // 0.01s + 0s .. 0.01s + 0.1s
 				$retries++;
 				continue;
 			}else{

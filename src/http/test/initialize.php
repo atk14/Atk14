@@ -11,7 +11,7 @@ define("DEFAULT_CHARSET","UTF-8");
 include("../httpuploadedfile.php");
 include("../../stringbuffer/load.php");
 include("../../string4/load.php");
-include("../../url_fetcher/url_fetcher.php");
+include("../../url_fetcher/load.php");
 include("../../files/load.php");
 include("../../miniyaml/miniyaml.php");
 include("../../translate/translate.php");
