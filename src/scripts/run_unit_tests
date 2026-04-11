@@ -186,10 +186,10 @@ if(PHPUNIT2){
 	if(!method_exists($_tc_check,"assertStringContains")){
 		$_methods_def .= '
 			function assertStringContains($needle, $haystack, $message = ""){
-				return $this->assertTrue(is_int(strpos($haystack, $needle)), $message);
+				return $this->assertTrue(strpos($haystack, $needle) !== false, $message);
 			}
 			function assertStringNotContains($needle, $haystack, $message = ""){
-				return $this->assertTrue(is_bool(strpos($haystack, $needle)), $message);
+				return $this->assertTrue(strpos($haystack, $needle) === false, $message);
 			}
 		';
 	}
@@ -260,7 +260,27 @@ if(sizeof($tests_to_execute)==1){
 		eval("class TcBase extends TcSuperBase{ }");
 	}
 
+	function __result_holder($result = null){
+		static $res ;
+		if(!is_null($result)){
+			$res = $result;
+		}
+		return $res;
+	};
+
+	function __shutdown_function(){
+		$result = __result_holder();
+		if(!$result || !$result->wasSuccessful()){
+			exit(1);
+		}
+
+		exit(0);
+	}
+
+	register_shutdown_function("__shutdown_function");
+
 	$result = _test_runner($tests_to_execute[0],$DIR);
+	__result_holder($result);
 
 	if(!$result || !$result->wasSuccessful()){
 		exit(1);
@@ -325,7 +345,13 @@ function _test_runner($filename,$DIR){
 
 		\PHPUnit\Event\Facade::emitter()->applicationStarted();
 
-		$configuration = (new \PHPUnit\TextUI\Configuration\Builder)->build(['phpunit', $filename]);
+		$_args = ['phpunit'];
+		// --display-warnings was introduced in PHPUnit 10.3
+		if(version_compare(\PHPUnit\Runner\Version::id(), '10.3.0', '>=')){
+			$_args[] = '--display-warnings';
+		}
+		$_args[] = $filename;
+		$configuration = (new \PHPUnit\TextUI\Configuration\Builder)->build($_args);
 
 		$printer = \PHPUnit\TextUI\Output\Facade::init($configuration, false, false);
 
