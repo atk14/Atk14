@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to this project will be documented in this file.
 
+[1.8.9] - 2026-04-15
+--------------------
+
+* 37ffea9 - Default read timeout is 60.0s
+
 [1.8.8] - 2026-04-15
 --------------------
 

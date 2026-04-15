@@ -148,7 +148,7 @@ Timeouts
 Two separate timeouts can be configured:
 
 - **socket_timeout** — connection timeout in seconds (default: 5.0)
-- **read_timeout** — time to wait for data after connecting (default: 30.0)
+- **read_timeout** — time to wait for data after connecting (default: 60.0)
 
     $fetcher = new UrlFetcher("http://www.example.com/", [
       "socket_timeout" => 3.0,
