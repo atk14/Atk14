@@ -345,9 +345,10 @@ function _test_runner($filename,$DIR){
 		\PHPUnit\Event\Facade::emitter()->applicationStarted();
 
 		$_args = ['phpunit'];
-		// --display-warnings was introduced in PHPUnit 10.3
+		// --display-warnings and --display-deprecations were introduced in PHPUnit 10.3
 		if(version_compare(\PHPUnit\Runner\Version::id(), '10.3.0', '>=')){
 			$_args[] = '--display-warnings';
+			$_args[] = '--display-deprecations';
 		}
 		$_args[] = $filename;
 		$configuration = (new \PHPUnit\TextUI\Configuration\Builder)->build($_args);
