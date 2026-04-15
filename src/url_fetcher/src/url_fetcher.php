@@ -55,7 +55,7 @@ defined("URL_FETCHER_VERIFY_PEER") || define("URL_FETCHER_VERIFY_PEER",true);
  */
 class UrlFetcher {
 
-	const VERSION = "1.8.7";
+	const VERSION = "1.8.8";
 
 	const READ_POLL_INTERVAL_US = 20000;   // 20ms between read attempts
 	const WRITE_RETRY_INTERVAL_US = 10000; // 10ms between write attempts
@@ -901,14 +901,16 @@ class UrlFetcher {
 		while(!feof($f)){
 			$_b = fread($f,self::SOCKET_CHUNK_SIZE); // 256kB
 
+			$current_utime = microtime(true);
+
 			$info = stream_get_meta_data($f);
 			if($info["timed_out"]){
-				$this->_setError("read timeout");
+				$this->_setError(sprintf("read timeout after %.2fs (1)",$current_utime-$start));
 				break;
 			}
 
 			if(microtime(true)-$start > $this->_ReadTimeout){
-				$this->_setError("read timeout");
+				$this->_setError(sprintf("read timeout after %.2fs (2)",$current_utime-$start));
 				break;
 			}
 

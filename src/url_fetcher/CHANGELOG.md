@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to this project will be documented in this file.
 
+[1.8.8] - 2026-04-15
+--------------------
+
+* 3affe1b - Better read_timeout error message
+
 [1.8.7] - 2026-04-08
 --------------------
 
