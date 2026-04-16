@@ -86,6 +86,14 @@ define the `TEMP` constant before using the class:
 
     define("TEMP", "/path/to/temp/");
 
+Append buffer contents to the file
+----------------------------------
+
+The file opening mode can be passed as the second parameter of the `writeToFile()` method.
+
+    // Write at the end of the file
+    $buffer->writeToFile("/path/to/output.dat","a"); 
+
 Licence
 -------
 

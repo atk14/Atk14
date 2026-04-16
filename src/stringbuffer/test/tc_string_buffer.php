@@ -167,8 +167,16 @@ class TcStringBuffer extends TcBase{
 		$this->assertTrue(file_exists($filename));
 		$this->assertEquals("START lorem ipsum dolor sit amet END",file_get_contents($filename));
 
-		// Empty string buffer
+		// Write to the end of the file
+		$buffer = new StringBuffer();
+		$buffer->addString(" ");
+		$buffer->addString("BONUS");
 
+		$buffer->writeToFile($filename,"a");
+		$this->assertEquals("START lorem ipsum dolor sit amet END BONUS",file_get_contents($filename));
+
+
+		// Empty string buffer
 		$buffer = new StringBuffer();
 
 		$buffer->writeToFile($filename);

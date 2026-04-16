@@ -95,4 +95,20 @@ class TcStringBufferTemporary extends TcBase {
 		$this->assertEquals("NOPQRST",(string)$items[2]);
 		$this->assertEquals(true,$items[2]->isFileized());
 	}
+
+	function test_substr(){
+		$buffer = new StringBufferTemporary("Hello World!");
+		$buffer->addString(" ");
+		$buffer->addString("Hello again!");
+
+		$this->assertEquals("Hello",$buffer->substr(0,5));
+		$this->assertEquals("Hello World! Hello",$buffer->substr(0,18));
+		$this->assertEquals("again!",$buffer->substr(-6));
+
+		$buffer2 = $buffer->substr(0,18);
+		$items = $buffer->getItems();
+		$this->assertEquals(2,sizeof($items));
+		$this->assertEquals(true,$items[0]->isFileized());
+		$this->assertEquals(true,$items[1]->isFileized());
+	}
 }

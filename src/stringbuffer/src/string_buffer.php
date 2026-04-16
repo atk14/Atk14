@@ -211,8 +211,9 @@ class StringBuffer{
 	 * 	$buffer->writeToFile("path/to/file.dat");
 	 *
 	 * @param string $filename
+	 * @param string $mode (optional) Default "w"
 	 */
-	function writeToFile($filename){
+	function writeToFile($filename,$mode = "w"){
 		if(!file_exists($filename)){
 			// File is created with class Files in order to maintain file permissions
 			Files::TouchFile($filename,$err,$err_str);
@@ -233,9 +234,9 @@ class StringBuffer{
 			return;
 		}
 
-		$f = fopen($filename,"w");
+		$f = fopen($filename,$mode);
 		if($f === false){
-			throw new Exception(get_class($this).": cannot open $filename for writing");
+			throw new Exception(get_class($this).": cannot open $filename for writing in mode $mode");
 		}
 		while($bytes_written < $total_length){
 			$length = min($chunk_size,$total_length - $bytes_written);
