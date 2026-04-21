@@ -51,9 +51,9 @@ class TcPacker extends TcBase{
 		$packed4 = Packer::Pack($text,["enable_encryption" => true, "extra_salt" => "pass1"]);
 		$packed5 = Packer::Pack($text,["enable_encryption" => true, "extra_salt" => "pass2"]);
 
-		$this->assertEquals($packed,$packed2);
+		$this->assertNotEquals($packed,$packed2);
 		$this->assertNotEquals($packed2,$packed3);
-		$this->assertEquals($packed3,$packed4);
+		$this->assertNotEquals($packed3,$packed4);
 		$this->assertNotEquals($packed4,$packed5);
 	
 		$this->assertTrue(Packer::Unpack($packed,$val,["enable_encryption" => true]));
@@ -97,12 +97,41 @@ class TcPacker extends TcBase{
 		}
 	}
 
-	function _test_unpacking($packed,$var,$optioons,$message = ""){
+	function test_Decode(){
+		$ary = ["a" => "b", "c" => "d"];
+		$packed = Packer::Pack($ary);
+
+		$out = Packer::Decode($packed,$decoded);
+		$this->assertTrue($decoded);
+		$this->assertEquals($ary,$out);
+		//
+		$this->assertEquals($ary,Packer::Decode($packed));
+
+		$out = Packer::Decode("nonsence",$decoded);
+		$this->assertFalse($decoded);
+		$this->assertNull($out);
+		//
+		$this->assertNull(Packer::Decode("nonsence"));
+	}
+
+	function test__CalculateSignature(){
+		$sig1 = Packer::_CalculateSignature("test1");
+		$sig2 = Packer::_CalculateSignature("test1");
+		$sig3 = Packer::_CalculateSignature("test2");
+
+		$this->assertEquals($sig1,$sig2);
+		$this->assertNotEquals($sig1,$sig3);
+
+		$this->assertEquals(16,strlen($sig1));
+		$this->assertEquals(16,strlen($sig3));
+	}
+
+	function _test_unpacking($packed,$var,$options,$message = ""){
 		//echo $packed."\n";
-		$this->assertEquals(true,Packer::Unpack($packed,$out,$optioons),$message);
+		$this->assertEquals(true,Packer::Unpack($packed,$out,$options),$message);
 		$this->assertEquals($var,$out,$message);
 
-		$this->assertEquals(false,Packer::Unpack($packed."x",$out,$optioons),$message);
+		$this->assertEquals(false,Packer::Unpack($packed."x",$out,$options),$message);
 		$this->assertEquals(null,$out,$message);
 	}
 }

@@ -1,2 +1,2 @@
 <?php
-require_once(dirname(__FILE__)."/packer.php");
+require_once(__DIR__."/src/packer.php");
