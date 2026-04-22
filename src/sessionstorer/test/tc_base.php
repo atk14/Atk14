@@ -1,6 +1,8 @@
 <?php
 class TcBase extends TcSuperbase{
 
+	var $dbmole;
+
 	function _setUp(){
 		global $_COOKIE, $dbmole;
 
