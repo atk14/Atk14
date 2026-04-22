@@ -1,8 +1,7 @@
 <?php
 if(!defined("PACKER_CONSTANT_SECRET_SALT")){
 	/**
-	* salt pro podpis prenasenych dat
-	* tajny konstatni salt pro podepisovani a overovani pakovanych dat
+	* Secret salt for signing and encrypting packed data.
 	*/
 	define("PACKER_CONSTANT_SECRET_SALT",defined("SECRET_TOKEN") ? constant("SECRET_TOKEN") : "Put_Some_Secret_Text_Here");
 }
@@ -10,8 +9,7 @@ if(!defined("PACKER_CONSTANT_SECRET_SALT")){
 
 if(!defined("PACKER_USE_COMPRESS")){
 	/**
-	* flag pouzivani komprese
-	* pouzivat gzcompress nebo nikoli pro zmenseni pakovaneho retezce...
+	* Whether to compress packed data with gzip.
 	*/
 	define("PACKER_USE_COMPRESS",false);
 }
@@ -25,18 +23,17 @@ if(!defined("PACKER_USE_JSON_SERIALIZATION")){
 }
 
 /**
-* Komprimace libovolne promenne (napr. pole).
-* Trida packer nabizi staticke metody pro kompresi a dekompresi promennych do ascii podoby,
-* ktera je rovnou vhodna do hidden formularoveho poli nebo jako parametr do URL.
+* Packs any PHP variable into a URL-safe ASCII string and unpacks it back.
+* Suitable for use in hidden form fields or as a URL parameter.
 *
-* schema komprese
-* promenna -> serialize -> base64_encoding -> podpis pro zpetne overeni platnosti
+* Packing schema:
+* variable -> serialize -> base64_encoding -> HMAC signature
 *
 *	$var = array(
-*		"klic1" => "hodnota1",
-*		"klic2" => "hodnota2",
-*		"klic3" => array(
-*			"klic4" => "hodnota4"
+*		"key1" => "value1",
+*		"key2" => "value2",
+*		"key3" => array(
+*			"key4" => "value4"
 *		)
 *	);
 *
@@ -56,27 +53,27 @@ if(!defined("PACKER_USE_JSON_SERIALIZATION")){
 class Packer{
 
 	/**
-	* Nastavuje salt pro podpis prenasenych dat 
-	* Defaltni salt je bran z konstanty PACKER_CONSTANT_SECRET_SALT.
-	* Vracen je predchozi salt.
+	* Sets the runtime salt used for signing and encryption.
+	* The default salt is taken from the constant PACKER_CONSTANT_SECRET_SALT.
+	* Returns the previous salt.
 	*
 	* @access public
 	* @static
-	* @param string  	$salt novy salt
-	* @return string  predchozi salt
+	* @param string  	$salt new salt
+	* @return string  previous salt
 	*/
 	static function SetSalt($salt){
 		settype($salt,"string");
 		$current_salt = Packer::_GetSetSalt(true,$salt);
-		
+
 		return $current_salt;
 	}
 
 	/**
-	* Zabali promennou do ascii retezce mimo jine bezpecne pouzitelneho jako parametr v URL.
+	* Packs a variable into a URL-safe ASCII string.
 	*
 	* $p = Packer::Pack("hello!");
-	* $p = Packer::Packer(array("a","b","c"));
+	* $p = Packer::Pack(array("a","b","c"));
 	*/
 	static function Pack($variable,$options = array()){
 		$options = array_merge(array(
@@ -86,7 +83,14 @@ class Packer{
 			"use_json_serialization" => PACKER_USE_JSON_SERIALIZATION,
 		),$options);
 
-		$out = $options["use_json_serialization"] ? json_encode($variable) : serialize($variable);
+		if($options["use_json_serialization"]){
+			$out = json_encode($variable);
+			if($out===false){
+				throw new InvalidArgumentException("Packer::Pack(): variable cannot be JSON-encoded: ".json_last_error_msg());
+			}
+		}else{
+			$out = serialize($variable);
+		}
 
 		if($options["use_compress"]){
 			$out = gzcompress($out,5);
@@ -133,7 +137,7 @@ class Packer{
 		$sign = substr($packed,0,16);
 		$data = substr($packed,16);
 		$expected_sign = Packer::_CalculateSignature($data,$options["extra_salt"]);
-		if($expected_sign!=$sign){
+		if($expected_sign!==$sign){
 			return false;
 		}
 		$serialized = Packer::_DecodeDataString($data);
@@ -163,12 +167,11 @@ class Packer{
 	}
 
 	/**
-	* Rozbali promennou a vrati rovnou jeji hodnotu.
-	* Tedy oproti Unpack() nevraci bool/true.
+	* Unpacks a variable and returns its value directly.
+	* Unlike Unpack(), does not return a boolean.
 	*
-	*
-	* Vrati null v pripade, ze $packed byla je porusena.
-	* Vrati ovsem null i v pripade, ze do $packed byl zabalen null.
+	* Returns null if $packed is tampered or invalid.
+	* Also returns null if the packed value was originally null.
 	*/
 	static function Decode($packed,&$decoded = false){
 		$decoded = false;
@@ -176,33 +179,34 @@ class Packer{
 			$decoded = true;
 			return $out;
 		}
+		return null;
 	}
 
 
 	/**
-	* Pro dany ascii retezec urci podpis.
-	* Vraci polovinu md5 retezec _+
+	* Calculates the HMAC signature for the given string.
 	*
 	* @access private
 	* @static
-	* @param string  &$str 			zabalena promenna
-	* @return string podpis
+	* @param string  $str packed data string
+	* @return string signature
 	*/
 	static function _CalculateSignature($str,$extra_salt = ""){
 		$_constant_secret_salt = PACKER_CONSTANT_SECRET_SALT;
 		$_user_secret_salt = Packer::_GetSetSalt();
-		$signature = hash_hmac("sha256",$str,$_constant_secret_salt.$_user_secret_salt.$extra_salt);
+		$signature = hash_hmac("sha256",$str,$_constant_secret_salt.$_user_secret_salt.$extra_salt,true); // raw binary
+		$signature = Packer::_EncodeDataString($signature);
 		return substr($signature,0,16);
 	}
 
 	/**
-	* Vrati nebo nastavi novy salt pro vypocet podpisu.
+	* Gets or sets the runtime salt used for signing and encryption.
 	*
 	* @access private
 	* @static
-	* @param bool $set 	  false => nenastavuje se; true => nastavuje se novy salt
-	* @param string $salt novy salt, $set musi byt nastaven na true, pokud je nutne nastavit novy salt
-	* @return string  aktualni nebo predchozi (pri nastavovani) salt
+	* @param bool   $set   false = get only; true = set new salt
+	* @param string $salt  new salt value (only used when $set is true)
+	* @return string current or previous salt
 	*/
 	static function _GetSetSalt($set = false,$salt = ""){
 		static $_SALT_;
@@ -219,11 +223,10 @@ class Packer{
 	}
 
 	/**
-	* Pole escapovanych znaku.
-	* Nektere znaky v base64 encodovanem textu jsou nevhodna pro umisteni do url,
-	* proto je nutne je escapovat.
-	* Escapovaci znak je E.
-	* 
+	* Returns the escape map for URL-unsafe base64 characters.
+	* Some characters produced by base64 encoding are not safe for use in URLs
+	* and must be escaped. The escape character is "E".
+	*
 	* @static
 	* @access private
 	* @return array
@@ -240,8 +243,7 @@ class Packer{
 	}
 
 	/**
-	* Zakoduje vstupni retezec do base64 a zde pak zaescapuje urcite znaky.
-	* Vstupni retezec byva serializovana promenna, ale to je podruzne.
+	* Base64-encodes the input string and escapes URL-unsafe characters.
 	*
 	* @static
 	* @access private
@@ -255,12 +257,11 @@ class Packer{
 	}
 
 	/**
-	* Odescapuje vstupni retezec a pak jej base64 decoduje.
-	* Vystupni retezec byva serializovana promenna, ale to je podruzne.
-	* 
+	* Unescapes the input string and base64-decodes it.
+	*
 	* @static
 	* @access private
-	* @param string $decoded_data_string
+	* @param string $encoded_data_string
 	* @return string
 	*/
 	static function _DecodeDataString($encoded_data_string){
@@ -273,15 +274,15 @@ class Packer{
 	}
 
 	static function _EncryptData($data,$extra_salt = ""){
-		$secret = PACKER_CONSTANT_SECRET_SALT . $extra_salt;
-		$key = hash('sha256', $secret);
+		$secret = PACKER_CONSTANT_SECRET_SALT . Packer::_GetSetSalt() . $extra_salt;
+		$key = hash('sha256', $secret, true); // raw binary key
 		$iv = function_exists('random_bytes') ? random_bytes(16) : openssl_random_pseudo_bytes(16);
 		return $iv.openssl_encrypt($data,"AES-256-CBC",$key,true,$iv);
 	}
 
 	static function _DecryptData($data,$extra_salt = ""){
-		$secret = PACKER_CONSTANT_SECRET_SALT . $extra_salt;
-		$key = hash('sha256', $secret);
+		$secret = PACKER_CONSTANT_SECRET_SALT . Packer::_GetSetSalt() . $extra_salt;
+		$key = hash('sha256', $secret, true); // raw binary key
 		$iv = substr($data, 0, 16);
 		return openssl_decrypt(substr($data,16),"AES-256-CBC",$key,true,$iv);
 	}

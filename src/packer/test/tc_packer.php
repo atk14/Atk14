@@ -95,6 +95,16 @@ class TcPacker extends TcBase{
 			$this->assertEquals($value,$value_json);
 			$this->assertEquals($value,$value_selialize);
 		}
+
+		$invalid_utf8_char = "\xFF";
+		$exception_thrown = false;
+		try {
+			Packer::Pack($invalid_utf8_char,["use_json_serialization" => true]);
+		}catch(Exception $e){
+			$exception_thrown = true;
+		}
+		$this->assertTrue($exception_thrown);
+		$this->assertStringContains("variable cannot be JSON-encoded",$e->getMessage());
 	}
 
 	function test_Decode(){
@@ -112,6 +122,30 @@ class TcPacker extends TcBase{
 		$this->assertNull($out);
 		//
 		$this->assertNull(Packer::Decode("nonsence"));
+	}
+
+	function test_SetSalt(){
+		$value = [true];
+
+		Packer::SetSalt("");
+		$packed_no_salt = Packer::Pack($value);
+
+		Packer::SetSalt("daisy");
+		$packed_salted = Packer::Pack($value);
+
+		// Unpacking
+
+		Packer::SetSalt("");
+		$this->assertTrue(Packer::Unpack($packed_no_salt,$out));
+		$this->assertFalse(Packer::Unpack($packed_salted,$out));
+
+		Packer::SetSalt("daisy");
+		$this->assertFalse(Packer::Unpack($packed_no_salt,$out));
+		$this->assertTrue(Packer::Unpack($packed_salted,$out));
+
+		Packer::SetSalt("bad_try");
+		$this->assertFalse(Packer::Unpack($packed_no_salt,$out));
+		$this->assertFalse(Packer::Unpack($packed_salted,$out));
 	}
 
 	function test__CalculateSignature(){

@@ -4,6 +4,14 @@
 
 Converts any PHP variable into a URL-safe string — and back. Supports HMAC signing, AES-256-CBC encryption, and gzip compression.
 
+The Packer is particularly useful for:
+
+* inserting a value into a URL,
+* inserting a value into a hidden form field,
+* inserting a value into a cookie.
+
+In all cases, the value itself is securely hidden from the user and protected against unauthorized tampering.
+
 ## Installation
 
 ```bash
