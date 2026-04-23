@@ -55,6 +55,7 @@ Global defaults can also be set via constants:
 | `PACKER_ENABLE_ENCRYPTION` | `false` | Enable AES-256-CBC encryption |
 | `PACKER_USE_COMPRESS` | `false` | Enable gzip compression |
 | `PACKER_USE_JSON_SERIALIZATION` | `true` | Use JSON (`true`) or PHP `serialize()` (`false`) |
+| `PACKER_SIGNATURE_LENGTH` | `16` | Number of Base64URL characters used as the HMAC-SHA256 signature (8–43) |
 
 ## Encryption
 
@@ -141,7 +142,7 @@ Sets the runtime secret salt. Returns the previous salt.
 ## Security notes
 
 - **Signing:** Every packed string is signed with HMAC-SHA256. Any modification to the string is detected on unpack.
-- **Encryption:** AES-256-CBC with a random IV. The encryption key is derived from `PACKER_CONSTANT_SECRET_SALT` + `extra_salt` using SHA-256.
+- **Encryption:** AES-256-CBC with a random IV. The encryption key is derived from `PACKER_CONSTANT_SECRET_SALT` + runtime salt (set via `SetSalt()`) + `extra_salt` using SHA-256.
 - **Deserialization:** When using PHP `serialize()` mode, objects are never instantiated on unpack (`allowed_classes => false`).
 
 ## Requirements

@@ -156,8 +156,21 @@ class TcPacker extends TcBase{
 		$this->assertEquals($sig1,$sig2);
 		$this->assertNotEquals($sig1,$sig3);
 
-		$this->assertEquals(16,strlen($sig1));
-		$this->assertEquals(16,strlen($sig3));
+		$this->assertEquals(PACKER_SIGNATURE_LENGTH,strlen($sig1));
+		$this->assertEquals(PACKER_SIGNATURE_LENGTH,strlen($sig3));
+	}
+
+	function test__Base64UrlEncode(){
+		$this->assertEquals("VGVzdCBTdHJpbmchIQ==",base64_encode("Test String!!"));
+		$this->assertEquals("VGVzdCBTdHJpbmchIQ",Packer::_Base64UrlEncode("Test String!!"));
+
+		$this->assertEquals("AAH+/w==",base64_encode("\x00\x01\xFE\xFF"));
+		$this->assertEquals("AAH-_w",Packer::_Base64UrlEncode("\x00\x01\xFE\xFF"));
+	}
+
+	function test__Base64UrlDecode(){
+		$this->assertEquals("Test String!!",Packer::_Base64UrlDecode("VGVzdCBTdHJpbmchIQ"));
+		$this->assertEquals("\x00\x01\xFE\xFF",Packer::_Base64UrlDecode("AAH-_w"));
 	}
 
 	function _test_unpacking($packed,$var,$options,$message = ""){
