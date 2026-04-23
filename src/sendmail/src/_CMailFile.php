@@ -26,25 +26,25 @@
  * $mailfile = new _CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
  * $mailfile->sendfile();
  *
- * @todo: zbavit se zavislosti na teto tride
+ * @todo: remove dependency on this class
  *
  * @ignore
  */
 class _CMailFile {
 
-	var $subject;
-	var $addr_to;
-	var $text_body;
-	var $text_body_mimetype;
-	var $text_body_charset;
-	var $text_encoded;
-	var $mime_headers;
-	var $mime_boundary;
-	var $smtp_headers;
-	var $_first_attachment;
+	private $subject;
+	private $addr_to;
+	private $text_body;
+	private $text_body_mimetype;
+	private $text_body_charset;
+	private $text_encoded;
+	private $mime_headers;
+	private $mime_boundary;
+	private $smtp_headers;
+	private $first_attachment;
 	
-	//2009-01-06: konstruktor byl predelan
-	//$subject,$to,$from,$cc,$bcc,$msg,$msg_mimetype,$msg_charset,$filename,&$file_content,$mimetype = "application/octet-stream", $mime_filename = false) 
+	//2009-01-06: constructor was refactored
+	//$subject,$to,$from,$cc,$bcc,$msg,$msg_mimetype,$msg_charset,$filename,&$file_content,$mimetype = "application/octet-stream", $mime_filename = false)
 	function __construct(&$file_content,$options = array()){
 		$this->mime_boundary = _sendmail_get_boundary();
 		$options = array_merge(array(
@@ -71,49 +71,49 @@ class _CMailFile {
 		$this->addr_to = $options["to"];
 		$this->smtp_headers = $this->write_smtpheaders($options["from"],$options["from_name"],$options["cc"],$options["bcc"]);
 		$this->text_body = $this->write_body($options["body"]);
-		$this->_first_attachment = true;
+		$this->first_attachment = true;
 		$this->text_encoded = $this->_attach_file($options["filename"],$file_content,$options["mime_type"]);
 		$this->mime_headers = $this->write_mimeheaders($options["filename"]);
 	}
 
-	function set_text_body_mimetype($mimetype){
+	public function set_text_body_mimetype($mimetype){
 		settype($mimetype,"string");
 		if(strlen($mimetype)>0){
 			$this->text_body_mimetype = $mimetype;
 		}
 	}
 
-	function set_text_body_charset($charset){
+	public function set_text_body_charset($charset){
 		settype($charset,"string");
 		if(strlen($charset)>0){
 			$this->text_body_charset = $charset;
 		}
 	}
 
-	function attach_file($filename,&$file_content,$mimetype = "application/octet-strlen"){
+	public function attach_file($filename,&$file_content,$mimetype = "application/octet-strlen"){
 		$this->text_encoded .= $this->_attach_file($filename,$file_content,$mimetype);
 	}
 
-	function _attach_file($filename,&$file_content,$mimetype) {
+	private function _attach_file($filename,&$file_content,$mimetype) {
 		$encoded = $this->encode_file($filename,$file_content);
 
-		$out = $this->_first_attachment ? "--$this->mime_boundary\n" : "\n";
+		$out = $this->first_attachment ? "--$this->mime_boundary\n" : "\n";
 		$out = $out . "Content-Type: " . $mimetype . "; name=\"$filename\";\n";
 		$out = $out . "Content-Transfer-Encoding: base64\n";
 		$out = $out . "Content-Disposition: attachment; filename=\"$filename\"\n\n";
 		$out = $out . $encoded . "\n";
 		$out = $out . "--" . $this->mime_boundary;
-		$this->_first_attachment = false;
+		$this->first_attachment = false;
 		return $out; 
 // added -- to notify email client attachment is done
 	}
 
-	function encode_file($sourcefile,&$contents) {
+	private function encode_file($sourcefile,&$contents) {
 		$encoded = $this->my_chunk_split(base64_encode($contents));
 		return $encoded;
 	}
 
-	function getfile(){
+	public function getfile(){
 		$headers = $this->smtp_headers . $this->mime_headers;		
 		$message = $this->text_body . $this->text_encoded. "--";
 		return array(
@@ -125,13 +125,13 @@ class _CMailFile {
 	}
 
 	// Notice: method _CMailFile::sendfile() is not being used
-	function sendfile() {
+	public function sendfile() {
 		$headers = $this->smtp_headers . $this->mime_headers;		
 		$message = $this->text_body . $this->text_encoded;
 		_sendmail_mail($this->addr_to,$this->subject,$message,$headers);
 	}
 	
-	function write_body($msgtext) {
+	private function write_body($msgtext) {
 		$out = "--" . $this->mime_boundary . "\n";
 		$out = $out . "Content-Type: $this->text_body_mimetype; charset=\"$this->text_body_charset\"\n";
 		$out = $out . "Content-Transfer-Encoding: 8bit\n\n";
@@ -139,16 +139,16 @@ class _CMailFile {
 		return $out;
 	}
 
-	function write_mimeheaders($filename) {
+	private function write_mimeheaders($filename) {
 		$out = "MIME-version: 1.0\n";
 		$out = $out . "Content-Type: multipart/mixed; ";
 		$out = $out . "boundary=\"$this->mime_boundary\"\n";
 		$out = $out . "Content-Transfer-Encoding: 8bit\n";
-		//$out = $out . "X-attachments: $filename;\n\n"; // TODO: tady muze byt vice priloh....
+		//$out = $out . "X-attachments: $filename;\n\n"; // TODO: there can be multiple attachments here...
 		return $out;
 	}
 
-	function write_smtpheaders($from,$from_name,$cc,$bcc) {
+	private function write_smtpheaders($from,$from_name,$cc,$bcc) {
 		$_from = $from_name ? _sendmail_escape_email_name($from_name,$this->text_body_charset)." <$from>" : $from;
 		$out = "From: $_from\n";
 		$out = $out . "Reply-To: $from\n";
@@ -165,7 +165,7 @@ class _CMailFile {
 
 	// Splits a string by RFC2045 semantics (76 chars per line, end with \r\n).
 	// This is not in all PHP versions so I define one here manuall.
-	function my_chunk_split($str)
+	private function my_chunk_split($str)
 	{
 		if(function_exists("chunk_split")){
 			return chunk_split($str,76,"\n");

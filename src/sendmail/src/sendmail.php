@@ -36,8 +36,8 @@
 *
 * There are a couple of parameters and constants which affect formatting and sending.
 *
-*	Parametry jsou predany v poli $params.
-* Mozne klice:
+*	Parameters are passed in the $params array.
+* Possible keys:
 *		array(
 *			"from" => "",
 *			"from_name" => "",
@@ -58,13 +58,13 @@
 *				)
 *		)
 *
-*	Takto odeslany e-mail je vzdycky odeslan i na adresu BCC_EMAIL,
-*	pokud tato konstanta nastavena.
+*	Every e-mail sent this way is also delivered to the BCC_EMAIL address,
+*	if that constant is set.
 *
-* Pokud je nstavena konstanta SENDMAIL_USE_TESTING_ADDRESS_TO na nejaky e-mail,
-*	zprava je odeslana pouze na adresu uvedenou v teto konstante.
+* If the constant SENDMAIL_USE_TESTING_ADDRESS_TO is set to an e-mail address,
+*	the message is sent only to that address.
 *
-*	@param array			$params				pole parametru
+*	@param array			$params				array of parameters
 *
 *	@return	void
 */
@@ -90,21 +90,21 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		"date" => gmdate('D, d M Y H:i:s \G\M\T', time()),
 		"subject" => $subject,
 		"body" => $message,
-		"transfer_encoding" => SENDMAIL_DEFAULT_TRANSFER_ENCODING, // zpusob kodovani body (nikoli prilohy): "8bit" nebo "quoted-printable"
+		"transfer_encoding" => SENDMAIL_DEFAULT_TRANSFER_ENCODING, // body transfer encoding (not attachments): "8bit" or "quoted-printable"
 		"charset" => SENDMAIL_DEFAULT_BODY_CHARSET,
 		"mime_type" => SENDMAIL_DEFAULT_BODY_MIME_TYPE,
 		"attachments" => array(),
 		"attachment" => null,
 		"build_message_only" => false,
 
-		"headers" => $additional_headers, // pozor! pokud bude toto nastaveno, probiha odesilani jinak, viz nize
+		"headers" => $additional_headers, // warning! if this is set, sending takes a different path, see below
 
 		"additional_parameters" => $additional_parameters, // additional parameters for PHP function mail()
 	),$params);
 
 	$additional_parameters = is_null($params["additional_parameters"]) ? SENDMAIL_MAIL_ADDITIONAL_PARAMETERS : $params["additional_parameters"];
 
-	// toto jsou zastarale parametry...
+	// these are deprecated parameters...
 	if(isset($params["body_charset"])){ $params["charset"] = $params["body_charset"]; }
 	if(isset($params["body_mime_type"])){ $params["mime_type"] = $params["body_mime_type"]; }
 
@@ -156,8 +156,8 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		}
 	}
 
-	// pokud mame v parametrech headers, jedna se o predem pripraveny e-mail....
-	// TODO: dodelat - je to zatim neciste reseni...
+	// if headers are present in params, it's a pre-built e-mail...
+	// TODO: finish this - it is a dirty solution for now...
 	if($params["headers"]){
 		$BODY = $params["body"];
 		$HEADERS = $params["headers"];
@@ -190,11 +190,11 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 
 	$ATTACHMENTS = array();
 	if($params['attachments']){
-		for($i = 0; $i<sizeof($params['attachments']);$i++){
+		foreach($params['attachments'] as $att){
 			$ATTACHMENTS[] = array(
-				"body" => $params["attachments"][$i]["body"],
-				"filename" => $params["attachments"][$i]["filename"],
-				"mime_type" => $params["attachments"][$i]["mime_type"]
+				"body" => $att["body"],
+				"filename" => $att["filename"],
+				"mime_type" => $att["mime_type"],
 			);
 		}
 	}
@@ -254,9 +254,9 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 			"filename" => $ATTACHMENTS[0]['filename'],
 		));
 
-		// pokud jsou, vlozime do e-mailu dalsi prilohy
-		for($i=1;$i<sizeof($ATTACHMENTS);$i++){
-			$mailfile->attach_file($ATTACHMENTS[$i]['filename'],$ATTACHMENTS[$i]['body'],$ATTACHMENTS[$i]['mime_type']);
+		// if there are more attachments, add them to the e-mail
+		foreach(array_slice($ATTACHMENTS, 1) as $att){
+			$mailfile->attach_file($att['filename'], $att['body'], $att['mime_type']);
 		}
 
 		$mail_ar = $mailfile->getfile();
@@ -264,10 +264,14 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		$HEADERS = $mail_ar["headers"];
 	}
 
-	$HEADERS = trim($HEADERS); // na konci hlavicky byl prazdny radek, ve zprave tak byly hlavicky a telo oddeleny 2 radky
+	$HEADERS = trim($HEADERS); // trailing empty line in headers caused headers and body to be separated by 2 lines
+
+	// strip \r from $BODY — bare \r\n sequences cause issues,
+	// problems occurred particularly with quoted-printable encoding
+	$BODY = str_replace("\r","",$BODY);
 
 	$out = array(
-		"to" => $TO, 
+		"to" => $TO,
 		"from" => $FROM,
 		"bcc" => $BCC,
 		"cc" => $CC,
@@ -279,10 +283,6 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 
 		"additional_parameters" => $additional_parameters,
 	);
-
-	// v $BODY nechceme sekvence \r\n, funguje to spatne
-	// problemy nastavaly v pripade pouziti quoted-printable kodovani
-	$BODY = str_replace("\r","",$BODY);
 
 	if($params["build_message_only"]){
 		return $out;
@@ -336,9 +336,9 @@ function sendhtmlmail($options){
 	$rel_boundary = _sendmail_get_boundary();
 	$alt_boundary = _sendmail_get_boundary();
 
+	$mime_type = "multipart/related; boundary=\"$rel_boundary\"";
+
 	$body = array();
-	$body[] = "Content-Type: multipart/related; boundary=\"$rel_boundary\"";
-	$body[] = "";
 	$body[] = "--$rel_boundary";
 	$body[] = "Content-Type: multipart/alternative; boundary=\"$alt_boundary\"";
 	$body[] = "";
@@ -371,12 +371,7 @@ function sendhtmlmail($options){
 	}
 	$body[] = "--$rel_boundary--";
 
-	//$boundary = _sendmail_get_boundary();
-	//$body = "--$boundary\n$body\n--$boundary--";
-
-	$options["mime_type"] = array_shift($body); // v prvnim radku je mime_type - momentalne to bude vzdy multipart/related; v budoucnu to muze byt multipart/mixed, pokud budou nejake prilohy
-	$options["mime_type"] = preg_replace("/^Content-Type: /","",$options["mime_type"]);
-	array_shift($body); // prazdny radek
+	$options["mime_type"] = $mime_type;
 	$options["body"] = join("\n",$body);
 	$options["subject"] = _sendmail_escape_subject($options["subject"],$options["charset"]);
 	$options["charset"] = "";
@@ -396,14 +391,7 @@ function _sendmail_get_boundary(){
 
 function _sendmail_correct_address($addr){
 	if(is_array($addr)){
-		$addr = array_unique($addr);
-		$_addr = array();
-		foreach($addr as $a){
-			if($a == ""){ continue; }
-			$_addr[] = $a;
-		}
-		$addr = $_addr;
-		$addr = join(", ",$addr);
+		$addr = implode(", ", array_filter(array_unique($addr)));
 	}
 	return (string)$addr;
 }
@@ -467,7 +455,7 @@ function _sendmail_escape_subject($subject,$charset = null){
 			$out[] = "=".strtoupper(dechex(ord($c)));
 			$escape_in_use = true;
 		}else{
-			// RFC 2047 dovoluje mezeru nahradit podtrzitkem
+			// RFC 2047 allows replacing space with underscore
 			$out[] = ($c==" ")?"_":$c;
 			if ($c==" ") $escape_in_use = true;
 		}
@@ -491,34 +479,33 @@ function _sendmail_quoted_printable_encode($string,$options = array()){
 		"%20" => " ",
 	);
 	foreach(preg_split("//",$valid_non_alphanumeric_chars) as $ch){
-		if(strlen($ch)==0){ continue; } // to nechapu...  :( jak se to stane?
+		if(strlen($ch)==0){ continue; } // preg_split() can return empty strings at boundaries
 		$back_replaces["%".strtoupper(dechex(ord($ch)))] = $ch;
 	}
 	$string = rawurlencode($string);
 	$string = strtr($string,$back_replaces);
 	$string = str_replace("%","=",$string);
 
-	// zakodovani tabulatory nebo mezery na konci radku
+	// encode tab or space at the end of a line
 	$string = str_replace("\t\r\n","=09\r\n",$string);
 	$string = str_replace(" \r\n","=20\r\n",$string);
 
-	// zakodovani tabulatory nebo mezery na konci textu
+	// encode tab or space at the end of the text
 	$string = preg_replace("/\\t$/","=09",$string);
 	$string = preg_replace("/ $/","=20",$string);
 	
 	if($options["split_up_long_lines_in_spaces"]){
 		$ar = preg_split('/\r\n/',$string);
 		$out = array();
-		$max_length = 72; // takto nizka hodnota byla zjistena zkusmo - souvisi to se rozmezim {71,73}, ktere je pouzito nize
-		for($i=0;$i<sizeof($ar);$i++){
-			$line = $ar[$i];
+		$max_length = 72; // this low value was determined empirically — it relates to the {71,73} range used in the regex below
+		foreach($ar as $line){
 			if(strlen($line)<=$max_length){ $out[] = $line; continue; }
 			$_line = "";
 			$_first = true;
 			$words = preg_split("/ /",$line);
-			for($j=0;$j<sizeof($words);$j++){
-				$word = $words[$j];
-				$last_word = ($j+1)==sizeof($words);
+			$last_index = count($words) - 1;
+			foreach($words as $j => $word){
+				$last_word = ($j == $last_index);
 				if((strlen($_line) + strlen($word) + ($_first ? 0 : 1)) >= $max_length){
 					if(!$_first){ $out[] = $_line." ="; }
 					$_line = "";

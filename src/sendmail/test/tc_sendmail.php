@@ -324,7 +324,7 @@ class tc_sendmail extends tc_base{
 			"body" => "Pěkný pozdrav!\n\nZasílá Rosťa! ",
 			"transfer_encoding" => "quoted-printable",
 		));
-		$this->assertEquals("P=C4=9Bkn=C3=BD pozdrav!\r\n\r\nZas=C3=ADl=C3=A1 Ros=C5=A5a!=20",$ar_qp["body"]);
+		$this->assertEquals("P=C4=9Bkn=C3=BD pozdrav!\n\nZas=C3=ADl=C3=A1 Ros=C5=A5a!=20",$ar_qp["body"]);
 		$this->assertStringContains("Content-Transfer-Encoding: quoted-printable",$ar_qp["headers"]);
 	}
 
