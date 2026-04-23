@@ -9,7 +9,7 @@ define("CURRENT_TIME",time());
 require("../../stringbuffer/load.php");
 require("../../http/load.php");
 require("../../string4/load.php");
-require("../sessionstorer.php");
+require("../load.php");
 
 // UF! we need dbmole
 require(dirname(__FILE__)."/../../dbmole/load.php");
@@ -18,6 +18,6 @@ require(dirname(__FILE__)."/../../dbmole/test/connections_and_handler.php");
 // rectreating database structures
 $dbmole = PgMole::GetInstance();
 $dbmole->doQuery(file_get_contents(__DIR__."/drop_structures.postgresql.sql"));
-$dbmole->doQuery(file_get_contents(__DIR__."/../structures.postgresql.sql"));
+$dbmole->doQuery(file_get_contents(__DIR__."/../src/structures.postgresql.sql"));
 
 $HTTP_REQUEST->setRemoteAddr("127.0.0.1");

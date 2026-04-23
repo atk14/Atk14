@@ -99,7 +99,10 @@ class SessionStorer{
 	/**
 	 * Section name
 	 *
-	 * @todo explain
+	 * One physical session (identified by session_id) can contain multiple logical sections.
+	 * This allows different parts of an application (e.g. user area, admin area) to share
+	 * the same session record while keeping their key-value stores isolated.
+	 *
 	 * @var string
 	 */
 	protected $_Section = "default";
@@ -125,7 +128,7 @@ class SessionStorer{
 	protected $_ValuesStore = array();
 
 	/**
-	 * A flag that thit object has been already initialized
+	 * A flag that this object has been already initialized
 	 *
 	 * @var boolean
 	 */
@@ -159,7 +162,7 @@ class SessionStorer{
 	 *
 	 * @var HttpRequest
 	 */
-	protected $_ExtraRequest = null;
+	protected $_Request = null;
 
 	/**
 	 * Instance of HttpResponse currently used.
@@ -243,7 +246,7 @@ class SessionStorer{
 
 		$options = array_merge(array(
 			"request" => null,
-			"response" => $GLOBALS["HTTP_RESPONSE"],
+			"response" => null,
 
 			"dbmole" => null,
 
@@ -258,6 +261,14 @@ class SessionStorer{
 			"current_time" => null,
 		),$options);
 
+		if(is_null($options["request"])){
+			$options["request"] = isset($GLOBALS["HTTP_REQUEST"]) ? $GLOBALS["HTTP_REQUEST"] : new HTTPRequest();
+		}
+
+		if(is_null($options["response"])){
+			$options["response"] = isset($GLOBALS["HTTP_RESPONSE"]) ? $GLOBALS["HTTP_RESPONSE"] : new HTTPResponse();
+		}
+
 		$options["cookie_name"] = str_replace("%session_name%",$options["session_name"],$options["cookie_name"]); // "_%session_name%_" -> "_ses_"
 		if($options["cookie_expiration"]==0 && !isset($options["max_lifetime"])){
 			$options["max_lifetime"] = SESSION_STORER_SESSION_MAX_LIFETIME;
@@ -268,7 +279,7 @@ class SessionStorer{
 
 		$this->_SessionName = (string)$options["session_name"];
 		$this->_Section = (string)$options["section"];
-		$this->_ExtraRequest = $options["request"];
+		$this->_Request = $options["request"];
 		$this->_response = $options["response"];
 
 		$this->_MaxLifetime = $options["max_lifetime"];
@@ -349,7 +360,7 @@ class SessionStorer{
 	 * @return mixed
 	 */
 	function readValue($key){
-		settype($key,"string");
+		$key = (string)$key;
 
 		$this->_initialize();
 
@@ -368,9 +379,9 @@ class SessionStorer{
 	 * @param int $expiration number of seconds after which the value expires
 	 */
 	function writeValue($key,$value,$expiration = null){
-		settype($key,"string");
+		$key = (string)$key;
 		if(isset($expiration)){
-			settype($expiration,"integer");
+			$expiration = (integer)$expiration;
 		}
 
 		$this->_initialize();
@@ -462,7 +473,7 @@ class SessionStorer{
 		}
 
 		if(isset($this->_SessionId)){
-			$this->_SessionSecurity = SessionStorer::_RandomString();
+			$this->_SessionSecurity = $this->_randomString();
 			$this->_dbmole->doQuery("UPDATE sessions SET security=:security WHERE id=:id",array(
 				":id" => $this->_SessionId,
 				":security" => $this->_SessionSecurity
@@ -493,9 +504,8 @@ class SessionStorer{
 	 *
 	 * @return HttpRequest
 	 */
-	function _getRequest(){
-		if($this->_ExtraRequest){ return $this->_ExtraRequest; }
-		return $GLOBALS["HTTP_REQUEST"];
+	protected function _getRequest(){
+		return $this->_Request;
 	}
 
 	/**
@@ -504,7 +514,7 @@ class SessionStorer{
 	 * @param integer $length
 	 * @access protected
 	 */
-	static function _RandomString($length = 32){
+	protected function _randomString($length = 32){
 		return (string)String4::RandomString($length);
 	}
 
@@ -647,14 +657,14 @@ class SessionStorer{
 
 		$c_name = $this->getCookieName();
 
-		$this->__addCookieValueToPairs($request->getCookieVar($c_name),$pairs);
+		$this->_addCookieValueToPairs($request->getCookieVar($c_name),$pairs);
 
 		// Cookie: check=1490347093; session=4881.a13fhJVULIxDlrnp97ogE8K4bmc0twQF; session=14227.J7vPy5fhDVcRd3KEnHeQrsqCSbFO6xal; session=650142.AobSw960vtlPzrq8eFH7ODRsVfhUpWMg; session=681433.ExdUe0wl12pTKysc26ShP27IKR93j0vW
 		$cookies = $request->getHeader("Cookie");
 		foreach(explode(";",(string)$cookies) as $c){
-			$ar = explode("=",trim($c));
+			$ar = explode("=",trim($c),2);
 			if(urlencode($ar[0])==$c_name){
-				$this->__addCookieValueToPairs(urlencode($ar[1]),$pairs);
+				$this->_addCookieValueToPairs(urlencode($ar[1]),$pairs);
 			}
 		}
 
@@ -669,7 +679,7 @@ class SessionStorer{
 	 * @param string $cookie_val
 	 * @param array &$pairs
 	 */
-	protected function __addCookieValueToPairs($cookie_val,&$pairs){
+	protected function _addCookieValueToPairs($cookie_val,&$pairs){
 		$cookie_val = (string)$cookie_val;
 		if(strlen($cookie_val) && preg_match('/^([1-9][0-9]{0,20})\.([a-z0-9]{32})$/i',$cookie_val,$matches)){
 			if(sizeof($pairs)>20){
@@ -730,10 +740,8 @@ class SessionStorer{
 				$this->_dbmole->doQuery("
 					UPDATE sessions SET last_access=:now WHERE
 						id=:id
-						-- AND last_access=:last_access
 				",array(
 					":id" => $this->_SessionId,
-					// ":last_access" => $row["last_access"],
 					":now" => $this->_getNow(),
 				));
 				if($this->getCookieExpiration()>0){
@@ -745,16 +753,13 @@ class SessionStorer{
 			return true;
 		}
 
-		//error_log("non existing session cookie found: $id.$security (".$request->getRemoteAddr().", ".$request->getUserAgent().")");
-		//$this->_clearSessionCookie();
-
 		return false;
 	}
 
 	/**
 	 * Checks if access time should be updated.
 	 *
-	 * Access time is updated every five minutes. This method decides if it is time to update it.
+	 * Access time is updated randomly between 4 and 12 minutes to spread database load.
 	 *
 	 * @param string $current_last_access
 	 * @return bool
@@ -781,11 +786,6 @@ class SessionStorer{
 		}
 
 		return false;
-
-		// sessions.last_access is being updated once a 5 minutes
-		if($this->_getCurrentTime()-strtotime($current_last_access)>=60*5){
-			return true;
-		}
 	}
 
 	/**
@@ -797,7 +797,7 @@ class SessionStorer{
 	 */
 	function _createNewDatabaseSession(){
 		$id = $this->_dbmole->selectSequenceNextval("seq_sessions");
-		$security = SessionStorer::_RandomString();
+		$security = $this->_randomString();
 		$request = $this->_getRequest();
 
 		$stat = $this->_dbmole->doQuery("
@@ -846,9 +846,9 @@ class SessionStorer{
 		$request = $this->_getRequest();
 
 		$_expire_time = $this->getCookieExpiration()==0 ? 0 : $this->_getCurrentTime() + $this->getCookieExpiration();
-		$_cokie_value = $this->getSecretToken();
+		$_cookie_value = $this->getSecretToken();
 		$cookie = $request->getCookie($this->getCookieName());
-		if(is_string($cookie) && $cookie==$_cokie_value && $this->getCookieExpiration()==0){
+		if(is_string($cookie) && $cookie==$_cookie_value && $this->getCookieExpiration()==0){
 			return true;
 		}
 
@@ -856,7 +856,7 @@ class SessionStorer{
 			return false;
 		}
 
-		return $this->_setCookie($this->getCookieName(),$_cokie_value,$_expire_time);
+		return $this->_setCookie($this->getCookieName(),$_cookie_value,$_expire_time);
 	}
 
 	/**
@@ -941,12 +941,6 @@ class SessionStorer{
 		if(!is_null($httponly)){ $options["httponly"] = $httponly; }
 
 		$this->_response->addCookie(new HTTPCookie($name,$value,$options));
-
-		/*
-		if(defined("TEST") && TEST){
-			return @setcookie($name , $value, $expire, $path , $domain, $secure, $httponly);
-		}
-		return setcookie($name , $value, $expire, $path , $domain, $secure, $httponly); */
 	}
 
 	/**
@@ -1057,38 +1051,21 @@ class SessionStorer{
 
 		if(rand(1,20)!=2 && (!defined("TEST") || !constant("TEST"))){ return; } // HACK to improve speed
 
-		$bind_ar = array(
-			":min_last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $this->_MaxLifetime),
-			":session_name" => $this->getSessionName(),
-		);
-		//
-		$something_to_delete = $this->_dbmole->selectRow("
-			SELECT * FROM sessions WHERE
-				last_access<:min_last_access AND
-				session_name=:session_name
-			LIMIT 1	
-		",$bind_ar);
-		//
-		$something_to_delete && $this->_dbmole->doQuery("
+		$this->_dbmole->doQuery("
 			DELETE FROM sessions WHERE
 				last_access<:min_last_access AND
 				session_name=:session_name
-		",$bind_ar);
+		",array(
+			":min_last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $this->_MaxLifetime),
+			":session_name" => $this->getSessionName(),
+		));
 
-		$bind_ar = array(
-			":now" => $this->_getNow()
-		);
-		//
-		$something_to_delete = $this->_dbmole->selectRow("
-			SELECT * FROM session_values WHERE
-				expiration<:now
-			LIMIT 1	
-		",$bind_ar);
-		//
-		$something_to_delete && $this->_dbmole->doQuery("
+		$this->_dbmole->doQuery("
 			DELETE FROM session_values WHERE
 				expiration<:now
-		",$bind_ar);
+		",array(
+			":now" => $this->_getNow()
+		));
 	}
 
 	/**
@@ -1231,7 +1208,7 @@ class SessionStorer{
 	 * @return mixed
 	 */
 	protected function _unpackValue($packed_value){
-		settype($packed_value,"string");
+		$packed_value = (string)$packed_value;
 		if(strlen($packed_value)==0){
 			return null;
 		}
