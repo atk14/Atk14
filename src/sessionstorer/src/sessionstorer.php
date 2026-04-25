@@ -291,12 +291,8 @@ class SessionStorer{
 
 		if($options["dbmole"]){
 			$this->_dbmole = $options["dbmole"];
-		}elseif(isset($GLOBALS["dbmole"])){
-			$this->_dbmole = &$GLOBALS["dbmole"];
-		}elseif(class_exists("PgMole")){
-			$this->_dbmole = &PgMole::GetInstance();
-		}elseif(class_exists("OracleMole")){
-			$this->_dbmole = &OracleMole::GetInstance();
+		}else{
+			$this->_dbmole = self::_GetDbmole();
 		}
 
 		$this->_setCheckCookieWhenNeeded();
@@ -1051,21 +1047,114 @@ class SessionStorer{
 
 		if(rand(1,20)!=2 && (!defined("TEST") || !constant("TEST"))){ return; } // HACK to improve speed
 
-		$this->_dbmole->doQuery("
-			DELETE FROM sessions WHERE
-				last_access<:min_last_access AND
-				session_name=:session_name
-		",array(
-			":min_last_access" => $this->_getIsoDateTime($this->_getCurrentTime() - $this->_MaxLifetime),
-			":session_name" => $this->getSessionName(),
-		));
+		self::DeleteOldSessions([
+			"dbmole" => $this->_dbmole,
+			"current_time" => $this->_getCurrentTime(),
 
-		$this->_dbmole->doQuery("
+			"session_name" => $this->getSessionName(),
+			"max_lifetime" => $this->_MaxLifetime,
+
+			"deep_clean" => false,
+		]);
+
+	}
+
+	/**
+	 * Returns a dbmole instance from globals or via singleton, or null if none is available.
+	 */
+	static protected function _GetDbmole(){
+		if(isset($GLOBALS["dbmole"])){
+			return $GLOBALS["dbmole"];
+		}
+		if(class_exists("PgMole")){
+			return PgMole::GetInstance();
+		}
+		if(class_exists("OracleMole")){
+			return OracleMole::GetInstance();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns current time as a Unix timestamp.
+	 * Uses the CURRENT_TIME constant if defined (useful in tests).
+	 */
+	static protected function _CurrentTime(){
+		return defined("CURRENT_TIME") ? constant("CURRENT_TIME") : time();
+	}
+
+	/**
+	 * Deletes old session values and old sessions.
+	 * Can be called from a cron job.
+	 *
+	 * Options:
+	 *   dbmole        - dbmole instance to use; auto-detected if null
+	 *   current_time  - Unix timestamp to use as "now"; defaults to time()
+	 *   session_name  - if set together with max_lifetime, deletes expired sessions by name
+	 *   max_lifetime  - session lifetime in seconds
+	 *   deep_clean    - if true, also deletes sessions older than 2 years regardless of session_name (default: true)
+	 *
+	 * Returns count of deleted records.
+	 */
+	static function DeleteOldSessions($options = []){
+		$options += [
+			"dbmole" => null,
+			"current_time" => null,
+
+			"session_name" => null,
+			"max_lifetime" => null,
+
+			"deep_clean" => true,
+		];
+
+		$dbmole = $options["dbmole"];
+		if(is_null($dbmole)){
+			$dbmole = self::_GetDbmole();
+		}
+
+		$current_time = $options["current_time"];
+		if(is_null($current_time)){
+			$current_time = self::_CurrentTime();
+		}
+
+		$session_name = $options["session_name"];
+		$max_lifetime = $options["max_lifetime"];
+
+		$out = 0;
+
+		if(!is_null($session_name) && !is_null($max_lifetime)){
+			$dbmole->doQuery("
+				DELETE FROM sessions WHERE
+					last_access<:min_last_access AND
+					session_name=:session_name
+			",array(
+				":min_last_access" => date("Y-m-d H:i:s",$current_time - $max_lifetime),
+				":session_name" => $session_name,
+			));
+			$out += $dbmole->getAffectedRows();
+		}
+
+		$dbmole->doQuery("
 			DELETE FROM session_values WHERE
 				expiration<:now
 		",array(
-			":now" => $this->_getNow()
+			":now" => date("Y-m-d H:i:s",$current_time),
 		));
+		$out += $dbmole->getAffectedRows();
+
+		if($options["deep_clean"]){
+			$total_max_lifetime = 60 * 60 * 24 * 365 * 2; // 2 years
+			$dbmole->doQuery("
+				DELETE FROM sessions WHERE
+					last_access<:total_min_last_access
+			",array(
+				":total_min_last_access" => date("Y-m-d H:i:s",$current_time - $total_max_lifetime),
+			));
+			$out += $dbmole->getAffectedRows();
+		}
+
+
+		return $out;
 	}
 
 	/**
@@ -1224,7 +1313,7 @@ class SessionStorer{
 	 */
 	protected function _getCurrentTime(){
 		if($this->_ForceCurrentTime){ return $this->_ForceCurrentTime; }
-		return defined("CURRENT_TIME") ? CURRENT_TIME : time();
+		return self::_CurrentTime();
 	}
 
 	/**
