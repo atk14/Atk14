@@ -1151,6 +1151,16 @@ class SessionStorer{
 				":total_min_last_access" => date("Y-m-d H:i:s",$current_time - $total_max_lifetime),
 			));
 			$out += $dbmole->getAffectedRows();
+
+			// delete sessions that were last accessed a week ago and currently contain no values
+			$dbmole->doQuery("
+				DELETE FROM sessions WHERE
+					last_access<:week_ago AND
+					id NOT IN (SELECT session_id FROM session_values)
+			",array(
+				":week_ago" => date("Y-m-d H:i:s",$current_time - 60 * 60 * 24 * 7),
+			));
+			$out += $dbmole->getAffectedRows();
 		}
 
 
