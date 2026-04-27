@@ -1156,7 +1156,9 @@ class SessionStorer{
 			$dbmole->doQuery("
 				DELETE FROM sessions WHERE
 					last_access<:week_ago AND
-					id NOT IN (SELECT session_id FROM session_values)
+					NOT EXISTS (
+						SELECT 1 FROM session_values WHERE session_values.session_id = sessions.id
+					)
 			",array(
 				":week_ago" => date("Y-m-d H:i:s",$current_time - 60 * 60 * 24 * 7),
 			));
