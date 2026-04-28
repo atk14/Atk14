@@ -323,6 +323,10 @@ class TableRecord extends inobj {
 	static function ObjToId($object){
 		if(is_array($object)){
 			foreach($object as &$item){
+				if(is_array($item)){
+					$item = self::ObjToId($item);
+					continue;
+				}
 				$item = is_object($item) ? $item->getId() : $item;
 			}
 			return $object;

@@ -782,6 +782,8 @@ class TcTableRecord extends TcBase{
 
 		$this->assertEquals(array($obj->getId(),$obj2->getId()),TableRecord::ObjToId(array($obj,$obj2)));
 		$this->assertEquals(array($obj->getId(),$obj2->getId()),TableRecord::ObjToId(array($obj->getId(),$obj2)));
+
+		$this->assertEquals(array(array($obj->getId(),$obj2->getId())),array(TableRecord::ObjToId(array($obj,$obj2))));
 	}
 
 	function test_setValuesVirtually(){
