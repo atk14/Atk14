@@ -914,14 +914,14 @@ class TcTableRecord extends TcBase{
 			"title" => "My Title",
 		));
 		$dbmole = $rec->getDbmole();
-		$this->assertStringContains('SELECT "id","title","znak","an_integer"',$dbmole->getQuery());
+		$this->assertStringContains('SELECT "id","title","znak","an_integer"',$dbmole->getQuery(),"PgMole: {$dbmole->getQuery()}");
 
 		// MySQL
 		$rec = MyTestTable::CreateNewRecord(array(
 			"title" => "My Title",
 		));
 		$dbmole = $rec->getDbmole();
-		$this->assertStringContains("SELECT `id`,`title`,`znak`,`an_integer`",$dbmole->getQuery());
+		$this->assertStringContains("SELECT `id`,`title`,`znak`,`an_integer`",$dbmole->getQuery(),"MysqlMole {$dbmole->getQuery()}");
 	}
 
 	function _test_fall($recs){

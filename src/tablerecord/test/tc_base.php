@@ -1,6 +1,8 @@
 <?php
 class TcBase extends tc_super_base{
 
+	protected $dbmole;
+
 	function _setUp(){
 		Cache::Clear();
 		$this->dbmole = $GLOBALS["dbmole"];

@@ -5,6 +5,10 @@ function dbehandler($msg){
 }
 
 class TcLister extends TcBase{
+
+	protected $article;
+	protected $article2;
+
 	function exceptException($exc, $fce) {
 		$raised = false;
 		try {

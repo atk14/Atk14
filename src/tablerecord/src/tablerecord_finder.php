@@ -27,7 +27,7 @@
  *
  * Get records. Number of records is limited by option limit
  * ```
- * $finder->getRecords(); // pole objektu, max velikost je omezena nastavenim "limit"
+ * $finder->getRecords(); // array of objects, maximum size is limited by the "limit" option
  * ```
  *
  * @package Atk14\TableRecord
@@ -176,10 +176,13 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	function getRecordsCount(){
 		if(!isset($this->_RecordsCount)){
 			$options = $this->_QueryOptions;
+			$offset = isset($options["offset"]) ? $options["offset"] : 0;
+			$limit = isset($options["limit"]) ? $options["limit"] : null;
+
 			if(
 				isset($this->_Records) &&
-				$options["offset"] == 0 &&
-				(count($this->_Records) < $options["limit"] || !$options["limit"])
+				$offset == 0 &&
+				(count($this->_Records) < $limit || !$limit)
 			){
 				return $this->_RecordsCount = count($this->_Records);
 			}
@@ -279,25 +282,25 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 
 	/*** functions implementing array like access ***/
 	#[\ReturnTypeWillChange]
-	function offsetGet($value){
-		$x=$this->getRecords();
-		return(isset($x[$value])) ? $x[$value] : null;
+	function offsetGet($offset){
+		$records = $this->getRecords();
+		return(isset($records[$offset])) ? $records[$offset] : null;
 	}
 
-	function offsetSet($value, $name):void {
+	function offsetSet($offset, $value):void {
 		$this->getRecords();
-		$this->_Records[$name]=$value;
+		$this->_Records[$offset] = $value;
 	}
 
-	function offsetUnset($value):void {
+	function offsetUnset($offset):void {
 		$this->getRecords();
-		unset($this->_Records[$name]);
+		unset($this->_Records[$offset]);
 	}
 
 	#[\ReturnTypeWillChange]
-	function offsetExists($value):bool {
+	function offsetExists($offset):bool {
 		$this->getRecords();
-		return array_key_exists($name, $this->_Records);
+		return array_key_exists($offset, $this->_Records);
 	}
 
 	/*** functions implementing iterator like access (foreach cycle)***/
@@ -313,9 +316,9 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	public function next():void {
 		next($this->_Records);
 	}
-  public function rewind():void {
-   $this->getRecords();
-	 reset($this->_Records);
+	public function rewind():void {
+		$this->getRecords();
+		reset($this->_Records);
 	}
 	public function valid():bool {
 		return isset($this->_Records) && current($this->_Records);

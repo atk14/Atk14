@@ -66,7 +66,7 @@ class TableRecord extends inobj {
 	 * @access private
 	 * @var string
 	 */
-	var $_SequenceName = "";
+	protected $_SequenceName = "";
 
 	/**
 	 * Id of the record
@@ -166,7 +166,7 @@ class TableRecord extends inobj {
 			$options["sequence_name"] = $this->_determineSequenceName();
 		}
 		$this->_SequenceName = $options["sequence_name"];
-		self::$_DoNotReadValues = $options["do_not_read_values"];
+		static::$_DoNotReadValues = $options["do_not_read_values"];
 
 		$this->_IdFieldName = $options["id_field_name"];
 		$this->_IdFieldTypeForce = $options["id_field_type"];
@@ -217,9 +217,9 @@ class TableRecord extends inobj {
 	 * @access protected
 	 * @ignore
 	 * @param string $class_name	ie. "Article"
-	 * @param mixed $id						identifikator zaznamu v tabulce; integer, string nebo pole
+	 * @param mixed $id						record identifier in the table; integer, string or array
 	 * @param array $options
-	 * @return TableRecord	resp. tridu, ktera je urcena v $class_name
+	 * @return TableRecord	the class specified in $class_name
 	 */
 	static function _GetInstanceById($class_name,$id,$options = array()){
 		$out = new $class_name();
@@ -257,9 +257,9 @@ class TableRecord extends inobj {
 	 * Then returns an object of given class.
 	 *
 	 *
-	 * Tuto metodu pouzijte v implementaci metody CreateNewRecord().
-	 * Pozn. od PHP5.3 toto jiz neni treba (zde uz je k dispozici fce get_called_class()).
-	 * Pouzijte ji nasledujicim zpusobem:
+	 * Use this method in the implementation of CreateNewRecord().
+	 * Note: since PHP 5.3 this is no longer necessary (get_called_class() is available).
+	 * Use it in the following way:
 	 * ```
 	 *		class Article extends TableRecord{
 	 *			//...
@@ -293,9 +293,12 @@ class TableRecord extends inobj {
 		 @return DbMole
 	 */
 	static function &GetDbmole(){
+		static $instances = [];
 		$class = get_called_class();
-		$o = new $class();
-		return $o->dbmole;
+		if(!isset($instances[$class])){
+			$instances[$class] = new $class();
+		}
+		return $instances[$class]->dbmole;
 	}
 
 	/**
@@ -488,8 +491,6 @@ class TableRecord extends inobj {
 	/**
 	 * Automatically guess sequence name by the name of a table.
 	 *
-	 * Toto je vychozi nastaveni, ktere funguje v GR.
-	 *
 	 * @access private
 	 */
 	function _determineSequenceName(){
@@ -559,7 +560,7 @@ class TableRecord extends inobj {
 	 *		"query" => "SELECT books.id FROM books,book_authors WHERE ...",
 	 *		"query_count" => "SELECT COUNT(*) FROM ...",
 	 *		"bind_ar" => $bind_ar,
-	 *		"order" => null, // nekdy je dobre nenechat metodu Finder pripojit ORDER BY automaticky
+	 *		"order" => null, // sometimes it is better not to let the Finder method append ORDER BY automatically
 	 *	));
 	 * ```
 	 *
@@ -613,7 +614,7 @@ class TableRecord extends inobj {
 	 * @ignore
 	 */
 	function _finder($options){
-		// order_by se prevede na order
+		// order_by is converted to order
 		if(in_array("order_by",array_keys($options))){
 			$options["order"] = $options["order_by"];
 			unset($options["order_by"]);
@@ -680,7 +681,7 @@ class TableRecord extends inobj {
 			"use_cache" => $use_cache
 		),$this->dbmole);
 
-		// TODO: toto by melo byt v TableRecord_Finder
+		// TODO: this should be in TableRecord_Finder
 		if($use_cache){
 			Cache::Prepare(get_class($this),$finder->getRecordIds());
 		}
@@ -729,7 +730,7 @@ class TableRecord extends inobj {
 	 *	));
 	 * ```
 	 *
-	 * @todo obsah metody predelat jako implementaci volani TableRecord::Finder()
+	 * @todo refactor method body as an implementation calling TableRecord::Finder()
 	 * @param array $options
 	 * @return array
 	 */
@@ -754,7 +755,7 @@ class TableRecord extends inobj {
 	 * @return array
 	 */
 	function _findAll($options = array()){
-		// order_by se prevede na order
+		// order_by is converted to order
 		if(in_array("order_by",array_keys($options))){
 			$options["order"] = $options["order_by"];
 			unset($options["order_by"]);
@@ -951,8 +952,8 @@ class TableRecord extends inobj {
 			}
 		}
 
-		// tady kontrolujeme, ze bind_ar obsahuje vsechny klice zacinajici dvojteckou (:key1, :key2...)
-		// TODO: presunout to nekam do dbmole?
+		// check that bind_ar contains all keys starting with a colon (:key1, :key2...)
+		// TODO: move this somewhere into dbmole?
 		if(isset($options["bind_ar"])){
 			foreach($options["bind_ar"] as $key => $value){
 				if(!is_string($key) || strlen($key)<1 || $key[0]!=":"){
@@ -1031,7 +1032,7 @@ class TableRecord extends inobj {
 		$i = 0;
 		foreach($ids as $_key => $id){
 			if(is_object($id)){ $id = $id->getId(); }
-			if(!isset($id)){ continue; } // v poli se muze klidne nachazet nejaky null
+			if(!isset($id)){ continue; } // the array may well contain a null
 			settype($id,$this->_getIdFieldType());
 			$bind_ar[":id$i"] = $id;
 			$i++;
@@ -1248,7 +1249,7 @@ class TableRecord extends inobj {
 			}
 		}
 
-		if(sizeof($data)==0){ // nic neni treba menit
+		if(sizeof($data)==0){ // nothing to update
 			return true;
 		}
 
@@ -1437,7 +1438,7 @@ class TableRecord extends inobj {
 	function _fieldsToRead(){
 		$out = array();
 		foreach($this->_getTableStructure() as $field => $vals){
-			if(in_array($field,self::$_DoNotReadValues)){ continue; }
+			if(in_array($field,static::$_DoNotReadValues)){ continue; }
 			$out[] = $field;
 		}
 		return $out;

@@ -4,6 +4,8 @@
  */
 class TestTable extends TableRecord{
 
+	public $cached;
+
 	function __construct(){
 		//parent::__construct("test_table",array("sequence_name" => "test_table_id_seq"));
 		// or
