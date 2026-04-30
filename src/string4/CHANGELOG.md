@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to this project will be documented in this file.
 
+[0.6.1] - 2026-04-30
+--------------------
+
+* ac88cca - Deprecations solved
+
 [0.6] - 2026-03-28
 ------------------
 

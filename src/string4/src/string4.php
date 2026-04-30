@@ -189,7 +189,7 @@ class String4{
 		}
 
 		if(!$seeded){
-			srand(floor((double) microtime() * 1000000));
+			srand(floor((float) microtime() * 1000000));
 			$seeded = true;
 		}
 
@@ -1225,7 +1225,7 @@ END;
 	 * $string = $string->eachLineFilter(function($line){ return $line->trim()->length()>0; });
 	 * ```
 	 */
-	function eachLineFilter(callable $filter = null){
+	function eachLineFilter($filter = null){
 		if(!$filter){
 			$filter = function($line){ return $line->length()>0; };
 		}
