@@ -3,6 +3,12 @@ Change Log
 
 All notable changes to TableRecord will be documented in this file.
 
+## [1.3] - 2026-04-30
+
+* b6c9b18 - [Refactoring] Some methods become static in order to improve performance
+* df3566f - Function TableRecord::getId() is marked as final
+* Source code modernized, cleaned, fixed & optimized even more
+
 ## [1.2.1] - 2026-04-30
 
 * Source code modernized, cleaned, fixed & optimized

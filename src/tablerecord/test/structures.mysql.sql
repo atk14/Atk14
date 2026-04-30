@@ -17,5 +17,3 @@ CREATE TABLE test_table (
     create_date date,
     create_time timestamp DEFAULT now()
 );
-
--- TODO: there are more tables in testing_structures.postgresql.sql

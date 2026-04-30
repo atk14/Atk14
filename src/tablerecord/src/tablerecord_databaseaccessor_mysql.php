@@ -6,12 +6,12 @@ class TableRecord_DatabaseAccessor_Mysql implements iTableRecord_DatabaseAccesso
 	 *
 	 * @ignore
 	 */
-	static function ReadTableStructure($record,$options = array()){
+	static function ReadTableStructure($record,$options = []){
 		$dbmole = $record->dbmole;
 
 		$rows = $dbmole->selectRows(sprintf("DESCRIBE %s",$dbmole->escapeTableName4Sql($record->getTableName())));
 
-		$out = array();
+		$out = [];
 		foreach($rows as $row){
 			$out[$row["Field"]] = $row["Type"];
 		}

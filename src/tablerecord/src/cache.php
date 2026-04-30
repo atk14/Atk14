@@ -23,11 +23,11 @@
  * For more information see Cache.
  */
 class ObjectCacher {
-	protected static $InitilizedCachers = array();
+	protected static $InitilizedCachers = [];
 
 	protected $class;
-	protected $cache = array();
-	protected $prepare = array();
+	protected $cache = [];
+	protected $prepare = [];
 
 	/**
 	 * Constructor
@@ -43,7 +43,7 @@ class ObjectCacher {
 			throw new Exception("Cache: class $class doesn't exist");
 		}
 		$class_lo = strtolower($class);
-		if(!key_exists($class_lo, self::$InitilizedCachers)) {
+		if(!array_key_exists($class_lo, self::$InitilizedCachers)) {
 			if(!$create) { $null = null; return $null; }
 			self::$InitilizedCachers[$class_lo] = method_exists($class,"CreateObjectCacher") ? $class::CreateObjectCacher() : new ObjectCacher($class);
 		}
@@ -59,23 +59,23 @@ class ObjectCacher {
 	 *
 	 * @access protected
 	 */
-	protected function _readToCache($mandatory_ids = array()) {
+	protected function _readToCache($mandatory_ids = []) {
 		if(!$this->prepare) { return; }
 
 		# filter out nulls from mandatory_ids because array_combine translates null to empty string
 		# and so returns array containing item with empty string as key which is something different from null.
 		$mandatory_ids = array_filter($mandatory_ids, function($v) {return !is_null($v);});
-		$ids_to_be_read = $mandatory_ids ? array_combine($mandatory_ids,$mandatory_ids) : array();
+		$ids_to_be_read = $mandatory_ids ? array_combine($mandatory_ids,$mandatory_ids) : [];
 
 		// It's ok to read more records than $mandatory_ids
 		// But it's unwise to read more than TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE records.
 		foreach(array_diff($this->prepare,$ids_to_be_read) as $id){
-			if(sizeof($ids_to_be_read)>=TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE){ break; }
+			if(count($ids_to_be_read)>=TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE){ break; }
 			$ids_to_be_read[$id] = $id;
 		}
 
 		$cname = $this->class;
-		$this->cache += $cname::GetInstanceById($ids_to_be_read,array("use_cache" => false));
+		$this->cache += $cname::GetInstanceById($ids_to_be_read,["use_cache" => false]);
 		$this->prepare = array_diff($this->prepare,$ids_to_be_read);
 	}
 
@@ -136,9 +136,9 @@ class ObjectCacher {
 			return $this->cache;
 		}
 
-		$out = array();
+		$out = [];
 		foreach($ids as $k => $id){
-			$out[$k] = $id === null || !key_exists($id, $this->cache) ? null : $this->cache[$id];
+			$out[$k] = $id === null || !array_key_exists($id, $this->cache) ? null : $this->cache[$id];
 		}
 		return $out;
 	}
@@ -159,7 +159,7 @@ class ObjectCacher {
 	 */
 	function clear($ids = null) {
 		if($ids === null) {
-			$this->cache = array();
+			$this->cache = [];
 		} else {
 			$ids = self::_ToIds($ids);
 			$this->cache = array_diff_key($this->cache, array_flip($ids));
@@ -171,7 +171,7 @@ class ObjectCacher {
 	 */
 	function inCache($id) {
 		if(is_object($id)) {$id = $id->getId();};
-		return key_exists($id, $this->cache);
+		return array_key_exists($id, $this->cache);
 	}
 
 	/**
@@ -181,7 +181,7 @@ class ObjectCacher {
 	 */
 	static protected function _ToIds($ids, &$array_given = true){
 		if(!is_array($ids)){
-			$ids = array($ids);
+			$ids = [$ids];
 			$array_given = false;
 		} else {
 			$array_given = true;

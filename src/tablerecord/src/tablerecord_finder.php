@@ -63,16 +63,16 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	 *
 	 */
 	function __construct($options,&$dbmole){
-		$options += array(
+		$options += [
 			"query" => null,
 			"query_count" => null,
 
-			"bind_ar" => array(),
-			"options" => array(),
+			"bind_ar" => [],
+			"options" => [],
 			"class_name" => "",
 
 			"use_cache" => TABLERECORD_USE_CACHE_BY_DEFAULT,
-		);
+		];
 		$this->_Query = $options["query"];
 		$this->_QueryCount = $options["query_count"];
 		$this->_BindAr = $options["bind_ar"];
@@ -95,7 +95,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 			if($this->_UseCache){
 				$this->_Records = Cache::Get($this->_ClassName,$this->getRecordIds());
 			}else{
-				$this->_Records = call_user_func_array(array($this->_ClassName,"GetInstanceById"),array($this->getRecordIds()));
+				$this->_Records = $this->_ClassName::GetInstanceById($this->getRecordIds());
 			}
 		}
 		return $this->_Records;
@@ -113,7 +113,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 				$this->_RecordKey = key(current($this->_RecordData));
 				$this->_RecordIds = array_column($this->_RecordData, $this->_RecordKey);
 			} else {
-				$this->_RecordIds = array();
+				$this->_RecordIds = [];
 			}
 		}
 		return $this->_RecordIds;
@@ -142,6 +142,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	function getQueryData($id = null, $field = null) {
 		$this->getRecordIds();
 		if(!$this->associative) {
+			$this->associative = [];
 			foreach($this->_RecordData as $row) {
 				$aid = $row[$this->_RecordKey];
 				$this->associative[$aid] = $row;
@@ -165,7 +166,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	 * 
 	 */
 	function getRecordsDisplayed(){
-		return sizeof($this->getRecords());
+		return count($this->getRecords());
 	}
 
 	/**
