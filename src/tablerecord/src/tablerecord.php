@@ -68,11 +68,6 @@ class TableRecord extends inobj {
 	protected $_RecordValues = [];
 
 	/**
-	 * @ignore
-	 */
-	protected $_dbmole_wakeup_data_;
-
-	/**
 	 * Constructor
 	 *
 	 * @param mixed $table_name_or_options
@@ -1489,10 +1484,6 @@ class TableRecord extends inobj {
 	 * @ignore
 	 */
 	function __sleep(){
-		$this->_dbmole_wakeup_data_ = [
-			"class_name" => get_class($this->dbmole),
-			"configuration" => $this->dbmole->getConfigurationName(),
-		];
 		$vars = get_object_vars($this);
 		unset($vars["dbmole"]);
 		return array_keys($vars);
