@@ -189,7 +189,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 			unset($options["limit"]);
 			unset($options["offset"]);
 			$options["type"] = "integer";
-			$this->_RecordsCount = $this->_dbmole->selectSingleValue($this->_QueryCount,$this->_BindAr,$options);
+			$this->_RecordsCount = (int)$this->_dbmole->selectSingleValue($this->_QueryCount,$this->_BindAr,$options);
 		}
 		return $this->_RecordsCount;
 	}
@@ -321,7 +321,7 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 		reset($this->_Records);
 	}
 	public function valid():bool {
-		return isset($this->_Records) && current($this->_Records);
+		return isset($this->_Records) && current($this->_Records) !== false;
 	}
 
 	#[\ReturnTypeWillChange]
