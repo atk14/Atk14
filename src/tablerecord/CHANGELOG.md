@@ -3,6 +3,10 @@ Change Log
 
 All notable changes to TableRecord will be documented in this file.
 
+## [1.3.1] - 2026-04-30
+
+* 242115e - Unserialization fixed
+
 ## [1.3] - 2026-04-30
 
 * b6c9b18 - [Refactoring] Some methods become static in order to improve performance

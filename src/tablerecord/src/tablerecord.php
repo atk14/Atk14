@@ -1351,10 +1351,9 @@ class TableRecord extends inobj {
 	 *
 	 * @return null
 	 */
-	function destroy(){
+	function destroy():void {
 		$this->_Hook_BeforeDestroy();
 		$this->dbmole->doQuery("DELETE FROM ".$this->dbmole->escapeTableName4Sql($this->getTableName())." WHERE ".$this->_escapeColumnName4Sql($this->getIdFieldName())."=:id",[":id" => $this->_Id]);
-		return null;
 	}
 
 	/**
@@ -1505,9 +1504,11 @@ class TableRecord extends inobj {
 	 * @ignore
 	 */
 	function __wakeup(){
-		$dbmole_class_name = $this->_dbmole_wakeup_data_["class_name"];
-		$dbmole_configuration = $this->_dbmole_wakeup_data_["configuration"];
-		$this->dbmole = $dbmole_class_name::GetInstance($dbmole_configuration);
+		if(!isset(self::$_Recipes[$this->_className])){
+			new $this->_className();
+		}
+
+		$this->dbmole = self::$_DbmoleInstances[$this->_className];
 	}
 
 	/**
