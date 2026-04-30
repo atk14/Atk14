@@ -8,7 +8,7 @@ class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAc
 	 *
 	 * @ignore
 	 */
-	static function ReadTableStructure($record,$options = array()){
+	static function ReadTableStructure($record,$options = []){
 		$schema = self::GetDefaultDatabaseSchema(); // e.g. "public"
 		$tblNameAr = explode(".", "$schema.".$record->getTableName());
 
@@ -29,7 +29,7 @@ class TableRecord_DatabaseAccessor_Postgresql implements iTableRecord_DatabaseAc
 				a.attisdropped = false AND
 				a.attnum > 0
 		";
-		return $record->dbmole->selectIntoAssociativeArray($query,array(":table_name" => $_table, ":schema_name" => $_schema),$options);
+		return $record->dbmole->selectIntoAssociativeArray($query,[":table_name" => $_table, ":schema_name" => $_schema],$options);
 	}
 
 	/**

@@ -6,7 +6,7 @@ class TableRecord_DatabaseAccessor_Sqlsrv implements iTableRecord_DatabaseAccess
 	 *
 	 * @ignore
 	 */
-	static function ReadTableStructure($record,$options = array()){
+	static function ReadTableStructure($record,$options = []){
 		$dbmole = $record->dbmole;
 
 		$q = "
@@ -18,7 +18,7 @@ class TableRecord_DatabaseAccessor_Sqlsrv implements iTableRecord_DatabaseAccess
 				TABLE_NAME = '%s'";
 		$rows = $dbmole->selectRows(sprintf($q, $dbmole->escapeTableName4Sql($record->getTableName())));
 
-		$out = array();
+		$out = [];
 		foreach($rows as $row){
 			$out[$row["COLUMN_NAME"]] = $row["DATA_TYPE"];
 		}

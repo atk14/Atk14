@@ -2,9 +2,9 @@
 if(!class_exists("inobj")){
 	require_once(__DIR__."/src/inobj.php");
 }
-require_once(__DIR__."/src/itablerecord_databaseccessor.php");
-require_once(__DIR__."/src/tablerecord_databaseccessor_postgresql.php");
-require_once(__DIR__."/src/tablerecord_databaseccessor_mysql.php");
+require_once(__DIR__."/src/itablerecord_databaseaccessor.php");
+require_once(__DIR__."/src/tablerecord_databaseaccessor_postgresql.php");
+require_once(__DIR__."/src/tablerecord_databaseaccessor_mysql.php");
 require_once(__DIR__."/src/tablerecord_databaseaccessor_sqlsrv.php");
 require_once(__DIR__."/src/tablerecord.php");
 require_once(__DIR__."/src/tablerecord.php");

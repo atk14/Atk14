@@ -27,5 +27,3 @@ BEGIN
     END IF;
 END;
 /
-
--- TODO: there are more tables in testing_structures.postgresql.sql

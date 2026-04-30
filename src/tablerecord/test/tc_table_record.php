@@ -4,7 +4,7 @@ class TcTableRecord extends TcBase{
 	function test_record_creation(){
 		$this->_empty_test_table();
 
-		$record = TestTable::CreateNewRecord(array());
+		$record = TestTable::CreateNewRecord([]);
 
 		$this->assertEquals("test_table_id_seq",$record->getSequenceName());
 		$this->assertEquals($this->dbmole->SelectSingleValue("SELECT CURRVAL('test_table_id_seq')","integer"),$record->getId());
@@ -12,11 +12,11 @@ class TcTableRecord extends TcBase{
 		$this->assertNull($record->getValue("price"));
 		$this->assertNull($record->getValue("an_integer"));
 
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "test",
 			"price" => null,
 			"an_integer" => 10
-		));
+		]);
 		$this->assertEquals($this->dbmole->SelectSingleValue("SELECT CURRVAL('test_table_id_seq')","integer"),$record->getId());
 		$this->assertEquals("test",$record->getValue("title"));
 		$this->assertNull($record->getValue("price"));
@@ -41,14 +41,14 @@ class TcTableRecord extends TcBase{
 
 		$this->assertEquals($values,$array);
 
-		$values = $rec->getValues(array("return_id" => false));
+		$values = $rec->getValues(["return_id" => false]);
 
 		$this->assertEquals(false,isset($values["id"]));
 		$this->assertEquals(true,isset($array["id"]));
 
 		// Article has do_not_read_values to ["body"]
 
-		$article = Article::CreateNewRecord(array("title" => "La Title", "body" => "La Body"));
+		$article = Article::CreateNewRecord(["title" => "La Title", "body" => "La Body"]);
 		$article = Article::GetInstanceById($article->getId());
 
 		$this->assertStringNotContains("body",$dbmole->getQuery());
@@ -85,21 +85,21 @@ class TcTableRecord extends TcBase{
 
 		// using cache
 		$qe = $dbmole->getQueriesExecuted();
-		$rec = TestTable::GetInstanceById(2,array("use_cache" => true));
+		$rec = TestTable::GetInstanceById(2,["use_cache" => true]);
 		$this->assertTrue(isset($rec->cached));
 		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe,$qe_2);
 
 		// get instances by array; not using cache
 		$qe = $dbmole->getQueriesExecuted();
-		$recs = TestTable::GetInstanceById(array(2));
+		$recs = TestTable::GetInstanceById([2]);
 		$this->assertFalse(isset($recs[0]->cached));
 		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+1,$qe_2);
 
 		// get instances by array; using cache
 		$qe = $dbmole->getQueriesExecuted();
-		$recs = TestTable::GetInstanceById(array(2),array("use_cache" => true));
+		$recs = TestTable::GetInstanceById([2],["use_cache" => true]);
 		$this->assertTrue(isset($recs[0]->cached));
 		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe,$qe_2);
@@ -113,7 +113,7 @@ class TcTableRecord extends TcBase{
 
 		// FindAll, using cache
 		$qe = $dbmole->getQueriesExecuted();
-		$recs = TestTable::FindAll("title","titulek",array("use_cache" => true));
+		$recs = TestTable::FindAll("title","titulek",["use_cache" => true]);
 		$this->assertTrue(isset($recs[0]->cached));
 		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+1,$qe_2); // one query for searching ids
@@ -127,21 +127,21 @@ class TcTableRecord extends TcBase{
 
 		// FindFirst, using cache
 		$qe = $dbmole->getQueriesExecuted();
-		$rec = TestTable::FindFirst("title","titulek",array("use_cache" => true));
+		$rec = TestTable::FindFirst("title","titulek",["use_cache" => true]);
 		$this->assertTrue(isset($rec->cached));
 		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+1,$qe_2); // one query for searching ids
 
 		// Finder, not using cache
 		$qe = $dbmole->getQueriesExecuted();
-		$finder = TestTable::Finder(array("conditions" => "title='titulek'"));
+		$finder = TestTable::Finder(["conditions" => "title='titulek'"]);
 		$recs = $finder->getRecords();
 		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+2,$qe_2); // one query for searching ids, second query for getting objects data
 
 		// Finder, using cache
 		$qe = $dbmole->getQueriesExecuted();
-		$finder = TestTable::Finder(array("conditions" => "title='titulek'", "use_cache" => true));
+		$finder = TestTable::Finder(["conditions" => "title='titulek'", "use_cache" => true]);
 		$recs = $finder->getRecords();
 		$this->assertTrue(isset($recs[0]->cached));
 		$qe_2 = $dbmole->getQueriesExecuted();
@@ -149,14 +149,14 @@ class TcTableRecord extends TcBase{
 
 		// eceateNewRecord; not using cached while creating record
 		$qe = $dbmole->getQueriesExecuted();
-		$rec = TestTable::CreateNewRecord(array(
+		$rec = TestTable::CreateNewRecord([
 			"id" => 221,
 			"title" => "La test"
-		));
+		]);
 		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+2,$qe_2);
 		// --
-		$rec = TestTable::GetInstanceById($rec->getId(),array("use_cache" => true));
+		$rec = TestTable::GetInstanceById($rec->getId(),["use_cache" => true]);
 		$qe_3 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe_2+1,$qe_3);
 
@@ -169,14 +169,14 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals(null,Cache::Get("TestTable",223));
 		$this->assertEquals($qe+1,$dbmole->getQueriesExecuted());
 
-		$rec = TestTable::CreateNewRecord(array(
+		$rec = TestTable::CreateNewRecord([
 			"id" => 223,
 			"title" => "La cache"
-		),array("use_cache" => true));
+		],["use_cache" => true]);
 		$qe_2 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe+3,$qe_2);
 		// --
-		$rec = TestTable::GetInstanceById($rec->getId(),array("use_cache" => true));
+		$rec = TestTable::GetInstanceById($rec->getId(),["use_cache" => true]);
 		$qe_3 = $dbmole->getQueriesExecuted();
 		$this->assertEquals($qe_2,$qe_3);
 	}
@@ -248,12 +248,12 @@ class TcTableRecord extends TcBase{
 		$this->assertNull($record->getValue("price"));
 
 		// volani setValues()
-		$this->assertTrue($record->setValues(array("price" => 13.4,"an_integer" => 20)));
+		$this->assertTrue($record->setValues(["price" => 13.4,"an_integer" => 20]));
 		$record = TestTable::GetInstanceById(2);
 		$this->assertEquals(13.4,$record->getValue("price"));
 		$this->assertEquals(20,$record->getValue("an_integer"));
 
-		$this->assertTrue($record->setValues(array("price" => -12,"an_integer" => null)));
+		$this->assertTrue($record->setValues(["price" => -12,"an_integer" => null]));
 		$record = TestTable::GetInstanceById(2);
 		$this->assertEquals(-12.0,$record->getValue("price"));
 		$this->assertNull($record->getValue("an_integer"));
@@ -281,156 +281,156 @@ class TcTableRecord extends TcBase{
 	}
 
 	function test_getting_multiple_values(){
-		$rec = TestTable::CreateNewRecord(array(
+		$rec = TestTable::CreateNewRecord([
 			"title" => "La Fabrique",
 			"price" => 200
-		));
+		]);
 
-		$this->assertEquals(array("La Fabrique", 200.0),$rec->getValue(array("title","price")));
-		$this->assertEquals(array("title" => "La Fabrique", "price" => 200.0),$rec->getValue(array("title" => "title", "price" => "price")));
-		$this->assertEquals(array("a" => "La Fabrique", "b" => 200.0),$rec->getValue(array("a" => "title", "b" => "price")));
+		$this->assertEquals(["La Fabrique", 200.0],$rec->getValue(["title","price"]));
+		$this->assertEquals(["title" => "La Fabrique", "price" => 200.0],$rec->getValue(["title" => "title", "price" => "price"]));
+		$this->assertEquals(["a" => "La Fabrique", "b" => 200.0],$rec->getValue(["a" => "title", "b" => "price"]));
 	}
 
 	function test_converting_objects_into_scalars(){
 		// __toString
 		$title = new StringLike("Hello World!");
-		$rec = TestTable::CreateNewRecord(array(
+		$rec = TestTable::CreateNewRecord([
 			"title" => $title
-		));
+		]);
 		$this->assertEquals("Hello World!",$rec->getTitle());
 
 		// toString
 		$title = new StringMuchLike("Hello World from Prague!");
-		$rec = TestTable::CreateNewRecord(array(
+		$rec = TestTable::CreateNewRecord([
 			"title" => $title
-		));
+		]);
 		$this->assertEquals("Hello World from Prague!",$rec->getTitle());
 		$this->assertEquals("Hello World from Prague! (__toString)","$title"); // __toString
 
 		// toId
 		$integer = new IntLike(133);
-		$rec = TestTable::CreateNewRecord(array(
+		$rec = TestTable::CreateNewRecord([
 			"an_integer" => $integer
-		));
+		]);
 		$this->assertEquals(133,$rec->getAnInteger());
 	}
 
 	function test_validates_updating_of_fields(){
 		// vsechno, co menime, bude meneno
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "nazev",
 			"price" => 100,
 			"an_integer" => 200
-		));
-		$record->setValues(array(
+		]);
+		$record->setValues([
 			"title" => "novy nazev",
 			"price" => 101,
 			"an_integer" => 201
-		),array(
-			"validates_updating_of_fields" => array("title","price","an_integer")
-		));
+		],[
+			"validates_updating_of_fields" => ["title","price","an_integer"]
+		]);
 		$this->assertEquals("novy nazev",$record->getValue("title"));
 		$this->assertEquals(101.0,$record->getValue("price"));
 		$this->assertEquals(201,$record->getValue("an_integer"));
 
 		// zde se zmeni pouze 2 pole
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "nazev",
 			"price" => 100,
 			"an_integer" => 200
-		));
-		$record->setValues(array(
+		]);
+		$record->setValues([
 			"title" => "novy nazev",
 			"price" => 101,
 			"an_integer" => 201
-		),array(
-			"validates_updating_of_fields" => array("title","price")
-		));
+		],[
+			"validates_updating_of_fields" => ["title","price"]
+		]);
 		$this->assertEquals("novy nazev",$record->getValue("title"));
 		$this->assertEquals((float)101,$record->getValue("price"));
 		$this->assertEquals(200,$record->getValue("an_integer"));
 
 		// zde se nic nesmi zmenit
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "nazev",
 			"price" => 100,
 			"an_integer" => 200
-		));
-		$record->setValues(array(
+		]);
+		$record->setValues([
 			"title" => "novy nazev",
 			"price" => 101,
 			"an_integer" => 201
-		),array(
-			"validates_updating_of_fields" => array("text","create_date")
-		));
+		],[
+			"validates_updating_of_fields" => ["text","create_date"]
+		]);
 		$this->assertEquals("nazev",$record->getValue("title"));
 		$this->assertEquals(100.0,$record->getValue("price"));
 		$this->assertEquals(200,$record->getValue("an_integer"));
 
 		// nastaveni null hodnot
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "nazev",
 			"price" => 100,
 			"an_integer" => 200
-		));
-		$record->setValues(array(
+		]);
+		$record->setValues([
 			"title" => null,
 			"price" => null,
 			"an_integer" => null
-		),array(
-			"validates_updating_of_fields" => array("title","an_integer")
-		));
+		],[
+			"validates_updating_of_fields" => ["title","an_integer"]
+		]);
 		$this->assertEquals(null,$record->getValue("title"));
 		$this->assertEquals(100.0,$record->getValue("price"));
 		$this->assertEquals(null,$record->getValue("an_integer"));
 	}
 
 	function test_validates_inserting_of_fields(){
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "nazev",
 			"price" => 100,
 			"an_integer" => 200
-		),array(
-			"validates_inserting_of_fields" => array("title","price","an_integer"),
-		));
+		],[
+			"validates_inserting_of_fields" => ["title","price","an_integer"],
+		]);
 		$this->assertEquals("nazev",$record->getValue("title"));
 		$this->assertEquals(100.0,$record->getValue("price"));
 		$this->assertEquals(200,$record->getValue("an_integer"));
 
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "nazev",
 			"price" => 100,
 			"an_integer" => 200
-		),array(
-			"validates_inserting_of_fields" => array("title"),
-		));
+		],[
+			"validates_inserting_of_fields" => ["title"],
+		]);
 		$this->assertEquals("nazev",$record->getValue("title"));
 		$this->assertEquals(null,$record->getValue("price"));
 		$this->assertEquals(null,$record->getValue("an_integer"));
 
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "nazev",
 			"price" => 100,
 			"an_integer" => 200
-		),array(
-			"validates_inserting_of_fields" => array("create_date","text"),
-		));
+		],[
+			"validates_inserting_of_fields" => ["create_date","text"],
+		]);
 		$this->assertEquals(null,$record->getValue("title"));
 		$this->assertEquals(null,$record->getValue("price"));
 		$this->assertEquals(null,$record->getValue("an_integer"));
 
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"text" => "texticek",
-		),array(
-			"validates_inserting_of_fields" => array("text"),
-		));
+		],[
+			"validates_inserting_of_fields" => ["text"],
+		]);
 		$this->assertEquals("texticek",$record->getValue("text"));
 
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"text" => "texticek",
-		),array(
-			"validates_inserting_of_fields" => array("an_integer"),
-		));
+		],[
+			"validates_inserting_of_fields" => ["an_integer"],
+		]);
 		$this->assertEquals(null,$record->getValue("text"));
 	}
 
@@ -438,35 +438,35 @@ class TcTableRecord extends TcBase{
 		$now = $this->dbmole->SelectSingleValue("SELECT CAST(NOW() AS DATE)");
 		$before_2_days = $this->dbmole->SelectSingleValue("SELECT CAST((NOW() - INTERVAL '2 days') AS DATE)");
 
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"create_date" => $now
-		));
+		]);
 
 		$record->setValue("create_date",null);
 		$this->assertNull($record->getValue("create_date"));
 
-		$record->setValue("create_date","NOW()",array("do_not_escape" => true));
+		$record->setValue("create_date","NOW()",["do_not_escape" => true]);
 		$this->assertEquals($now,$record->getValue("create_date"));
 
 		$record->setValue("create_date",null);
 
-		$record->setValues(array("create_date" => "NOW()"),array("do_not_escape" => array("create_date")));
+		$record->setValues(["create_date" => "NOW()"],["do_not_escape" => ["create_date"]]);
 		$this->assertEquals($now,$record->getValue("create_date"));
 
-		$record->setValues(array("create_date" => "NULL"),array("do_not_escape" => "create_date"));
+		$record->setValues(["create_date" => "NULL"],["do_not_escape" => "create_date"]);
 		$this->assertNull($record->getValue("create_date"));
 
-		$record->setValues(array("create_date" => "NOW()"),array("do_not_escape" => "create_date"));
+		$record->setValues(["create_date" => "NOW()"],["do_not_escape" => "create_date"]);
 		$this->assertEquals($now,$record->getValue("create_date"));
 
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"create_date" => "(NOW() - INTERVAL '2 days')"
-		),array("do_not_escape" => array("create_date")));
+		],["do_not_escape" => ["create_date"]]);
 		$this->assertEquals($before_2_days,$record->getValue("create_date"));
 
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"create_date" => "(NOW() - INTERVAL '2 days')"
-		),array("do_not_escape" => "create_date"));
+		],["do_not_escape" => "create_date"]);
 		$this->assertEquals($before_2_days,$record->getValue("create_date"));
 	}
 
@@ -476,10 +476,10 @@ class TcTableRecord extends TcBase{
 
 		$dbmole = Article::GetDbmole();
 
-		$article = Article::CreateNewRecord(array(
+		$article = Article::CreateNewRecord([
 			"title" => "La Title",
 			"body" => "La Body",
-		));
+		]);
 
 		$article = Article::GetInstanceById($article->getId());
 
@@ -514,30 +514,30 @@ class TcTableRecord extends TcBase{
 		$id2 = $record2->getId();
 
 		// int[]
-		$records = TestTable::GetInstanceById(array($id2,$id1));
+		$records = TestTable::GetInstanceById([$id2,$id1]);
 		$this->assertTrue(is_array($records));
-		$this->assertEquals(2,sizeof($records));
+		$this->assertEquals(2,count($records));
 		$this->assertEquals($id2,$records[0]->getId());
 		$this->assertEquals($id1,$records[1]->getId());
 
 		// obj[]
-		$records = TestTable::GetInstanceById(array($record2->getId(),$record1->getId()));
+		$records = TestTable::GetInstanceById([$record2->getId(),$record1->getId()]);
 		$this->assertTrue(is_array($records));
-		$this->assertEquals(2,sizeof($records));
+		$this->assertEquals(2,count($records));
 		$this->assertEquals($id2,$records[0]->getId());
 		$this->assertEquals($id1,$records[1]->getId());
 	
 		// obj[] by objects
-		$records_by_objs = TestTable::GetInstanceById(array($record2,$record1));
+		$records_by_objs = TestTable::GetInstanceById([$record2,$record1]);
 		$this->assertEquals($records,$records_by_objs);
 
 		// obj[] by objects and integers
-		$records_by_mixed = TestTable::GetInstanceById(array($id2,$record1));
+		$records_by_mixed = TestTable::GetInstanceById([$id2,$record1]);
 		$this->assertEquals($records,$records_by_mixed);
 
-		$records = TestTable::GetInstanceById(array($id1,-1000,$id2));
+		$records = TestTable::GetInstanceById([$id1,-1000,$id2]);
 		$this->assertTrue(is_array($records));
-		$this->assertEquals(3,sizeof($records));
+		$this->assertEquals(3,count($records));
 		$this->assertEquals($id1,$records[0]->getId());
 		$this->assertNull($records[1]);
 		$this->assertEquals($id2,$records[2]->getId());
@@ -557,7 +557,7 @@ class TcTableRecord extends TcBase{
 
 		//var_dump($keys); exit;
 	
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"a_big_integer",
 			"an_integer",
 			"binary_data",
@@ -573,113 +573,113 @@ class TcTableRecord extends TcBase{
 			"text",
 			"title",
 			"znak",
-		),$keys);
+		],$keys);
 
-		$article = Article::CreateNewRecord(array());
-		$this->assertEquals(array(
+		$article = Article::CreateNewRecord([]);
+		$this->assertEquals([
 			"id",
 			"title",
 			"body",
 			"image_id",
 			"created_at",
 			"updated_at"
-		),$article->getKeys());
+		],$article->getKeys());
 	}
 
 	function test_find_all(){
 		$this->_empty_test_table();
 
-		$spring = $this->_vytvor_testovaci_zaznam(array("title" => "Spring"));
-		$summer = $this->_vytvor_testovaci_zaznam(array("title" => "Summer"));
-		$fall = $this->_vytvor_testovaci_zaznam(array("title" => "Fall"));
-		$winter = $this->_vytvor_testovaci_zaznam(array("title" => "Winter"));
+		$spring = $this->_vytvor_testovaci_zaznam(["title" => "Spring"]);
+		$summer = $this->_vytvor_testovaci_zaznam(["title" => "Summer"]);
+		$fall = $this->_vytvor_testovaci_zaznam(["title" => "Fall"]);
+		$winter = $this->_vytvor_testovaci_zaznam(["title" => "Winter"]);
 
 		// nekolik zpusobu zapisu conditions...
 		// ... napred nenajdeme nic
-		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => "title='Monday'")));
-		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => "title=:title", "bind_ar" => array(":title" => "Monday"))));
-		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title='Monday'"))));
-		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title='Monday'"), "bind_ar" => array(":title" => "Monday"))));
-		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title" => "Monday"))));
-		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title" => array("Monday","Tuesday")))));
+		$this->assertEquals([],TableRecord::FindAll(["class_name" => "TestTable", "conditions" => "title='Monday'"]));
+		$this->assertEquals([],TableRecord::FindAll(["class_name" => "TestTable", "conditions" => "title=:title", "bind_ar" => [":title" => "Monday"]]));
+		$this->assertEquals([],TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title='Monday'"]]));
+		$this->assertEquals([],TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title='Monday'"], "bind_ar" => [":title" => "Monday"]]));
+		$this->assertEquals([],TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title" => "Monday"]]));
+		$this->assertEquals([],TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title" => ["Monday","Tuesday"]]]));
 
 		// .. pak budeme nalezat Fall
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => "title='Fall'"));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => "title='Fall'"]);
 		$this->_test_fall($recs);
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => "title=:title", "bind_ar" => array(":title" => "Fall")));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => "title=:title", "bind_ar" => [":title" => "Fall"]]);
 		$this->_test_fall($recs);
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title='Fall'")));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title='Fall'"]]);
 		$this->_test_fall($recs);
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title=:title"), "bind_ar" => array(":title" => "Fall")));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title=:title"], "bind_ar" => [":title" => "Fall"]]);
 		$this->_test_fall($recs);
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title" => "Fall")));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title" => "Fall"]]);
 		$this->_test_fall($recs);
 
 		// testovani order_by
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => "title!='Fall'", "order_by" => "title"));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => "title!='Fall'", "order_by" => "title"]);
 		$this->assertEquals("SpringSummerWinter",$recs[0]->getTitle().$recs[1]->getTitle().$recs[2]->getTitle());
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => "title!='Fall'", "order_by" => "title DESC"));
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => "title='Spring' OR title='Summer' OR title='Winter'", "order_by" => "title DESC"));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => "title!='Fall'", "order_by" => "title DESC"]);
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => "title='Spring' OR title='Summer' OR title='Winter'", "order_by" => "title DESC"]);
 		$this->assertEquals("WinterSummerSpring",$recs[0]->getTitle().$recs[1]->getTitle().$recs[2]->getTitle());
 
 		// vyhledavani null hodnoty...
 		// ... napred title s null hodnotou nemame
-		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => "title IS NULL")));
-		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title IS NULL"))));
-		$this->assertEquals(array(),TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title" => null))));
+		$this->assertEquals([],TableRecord::FindAll(["class_name" => "TestTable", "conditions" => "title IS NULL"]));
+		$this->assertEquals([],TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title IS NULL"]]));
+		$this->assertEquals([],TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title" => null]]));
 		
 		// ... ted jej vytvorime
-		$null = $this->_vytvor_testovaci_zaznam(array("title" => null));
+		$null = $this->_vytvor_testovaci_zaznam(["title" => null]);
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => "title IS NULL"));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => "title IS NULL"]);
 		$this->_test_null($recs);
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title IS NULL")));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title IS NULL"]]);
 		$this->_test_null($recs);
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title" => null)));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title" => null]]);
 		$this->_test_null($recs);
 
 		// 
-		$century = $this->_vytvor_testovaci_zaznam(array("title" => "Century", "text" => null));
-		$century2 = $this->_vytvor_testovaci_zaznam(array("title" => "Century", "text" => "No code"));
+		$century = $this->_vytvor_testovaci_zaznam(["title" => "Century", "text" => null]);
+		$century2 = $this->_vytvor_testovaci_zaznam(["title" => "Century", "text" => "No code"]);
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title" => "Century")));
-		$this->assertEquals(2,sizeof($recs));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title" => "Century"]]);
+		$this->assertEquals(2,count($recs));
 		// defaultni trideni je podle id
 		$this->assertEquals($century->getId(),$recs[0]->getId());
 		$this->assertEquals($century2->getId(),$recs[1]->getId());
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title" => "Century", "text" => null)));
-		$this->assertEquals(1,sizeof($recs));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title" => "Century", "text" => null]]);
+		$this->assertEquals(1,count($recs));
 		$this->assertEquals($century->getId(),$recs[0]->getId());
 
-		$century3 = $this->_vytvor_testovaci_zaznam(array("title" => "Another Century","text" => "Uknown"));
+		$century3 = $this->_vytvor_testovaci_zaznam(["title" => "Another Century","text" => "Uknown"]);
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title='Century' OR title='Another Century'")));
-		$this->assertEquals(3,sizeof($recs));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title='Century' OR title='Another Century'"]]);
+		$this->assertEquals(3,count($recs));
 
 		// vyhledavani pomoci `field_name` IN (values)
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title" => array("Century","Another Century"))));
-		$this->assertEquals(3,sizeof($recs));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title" => ["Century","Another Century"]]]);
+		$this->assertEquals(3,count($recs));
 
 		// ted testujeme to, ze poskladane query musi mit na prisl. mistech zavorky:
 		// ... WHERE (title='Century' OR title='Another Century') AND (text IS NULL)
 		// napred spatny dotaz
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title='Century' OR title='Another Century' AND text IS NULL")));
-		$this->assertTrue(sizeof($recs)!=1);
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title='Century' OR title='Another Century' AND text IS NULL"]]);
+		$this->assertTrue(count($recs)!=1);
 		// ted spravny dotaz
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NULL")));
-		$this->assertEquals(1,sizeof($recs));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title='Century' OR title='Another Century'","text IS NULL"]]);
+		$this->assertEquals(1,count($recs));
 		$this->assertEquals($century->getId(),$recs[0]->getId());
 
-		$recs = TableRecord::FindAll(array("class_name" => "TestTable", "conditions" => array("title='Century' OR title='Another Century'","text IS NOT NULL"),"order_by" => "title"));
-		$this->assertEquals(2,sizeof($recs));
+		$recs = TableRecord::FindAll(["class_name" => "TestTable", "conditions" => ["title='Century' OR title='Another Century'","text IS NOT NULL"],"order_by" => "title"]);
+		$this->assertEquals(2,count($recs));
 		$this->assertEquals($century3->getId(),$recs[0]->getId());
 		$this->assertEquals($century2->getId(),$recs[1]->getId());
 
@@ -688,31 +688,31 @@ class TcTableRecord extends TcBase{
 		//	 conditions -> condition
 		//	 bind_ar -> bind
 		//	 order_by -> order
-		$recs = TableRecord::FindAll(array(
+		$recs = TableRecord::FindAll([
 			"class" => "TestTable",
-			"condition" => array("title=:title1 OR title=:title2","text IS NOT NULL"),
-			"bind" => array(":title1" => 'Century', ":title2" => "Another Century"),
+			"condition" => ["title=:title1 OR title=:title2","text IS NOT NULL"],
+			"bind" => [":title1" => 'Century', ":title2" => "Another Century"],
 			"order" => "title",
-		));
-		$this->assertEquals(2,sizeof($recs));
+		]);
+		$this->assertEquals(2,count($recs));
 		$this->assertEquals($century3->getId(),$recs[0]->getId());
 		$this->assertEquals($century2->getId(),$recs[1]->getId());
 
-		$rec = TableRecord::FindFirst(array(
+		$rec = TableRecord::FindFirst([
 			"class" => "TestTable",
-			"condition" => array("title=:title1 OR title=:title2","text IS NOT NULL"),
-			"bind" => array(":title1" => 'Century', ":title2" => "Another Century"),
+			"condition" => ["title=:title1 OR title=:title2","text IS NOT NULL"],
+			"bind" => [":title1" => 'Century', ":title2" => "Another Century"],
 			"order" => "title",
-		));
+		]);
 		$this->assertEquals($century3->getId(),$rec->getId());
 	}
 
 	function test_serialize(){
-		$rec = TestTable::CreateNewRecord(array(
+		$rec = TestTable::CreateNewRecord([
 			"title" => "Title",
 			"price" => 123,
 			"an_integer" => 2
-		));
+		]);
 
 		$ser = serialize($rec);
 		$this->assertTrue(!preg_match('/[^_]dbmole/',$ser)); // see inobj::__sleep()
@@ -725,11 +725,11 @@ class TcTableRecord extends TcBase{
 
 		// --
 
-		$my_rec = MyTestTable::CreateNewRecord(array(
+		$my_rec = MyTestTable::CreateNewRecord([
 			"title" => "My Title",
 			"price" => 456,
 			"an_integer" => 3,
-		));
+		]);
 
 		$ser = serialize($my_rec);
 		$this->assertTrue(!preg_match('/[^_]dbmole/',$ser)); // see inobj::__sleep()
@@ -762,7 +762,7 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals($next_id,($seq_nextval+1) * 1000);
 
 		$seq_nextval = Article::GetSequenceNextval();
-		$article = Article::CreateNewRecord(array());
+		$article = Article::CreateNewRecord([]);
 		$id = $article->getId();
 		$this->assertEquals($id,($seq_nextval+1) * 1000);
 	}
@@ -771,32 +771,32 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals(1,TableRecord::ObjToId(1));
 		$this->assertEquals("ID",TableRecord::ObjToId("ID"));
 		$this->assertEquals(null,TableRecord::ObjToId(null));
-		$this->assertEquals(array(),TableRecord::ObjToId(array()));
+		$this->assertEquals([],TableRecord::ObjToId([]));
 
 		// 
-		$obj = TestTable::CreateNewRecord(array());
-		$obj2 = TestTable::CreateNewRecord(array());
+		$obj = TestTable::CreateNewRecord([]);
+		$obj2 = TestTable::CreateNewRecord([]);
 
 		$this->assertEquals($obj->getId(),TableRecord::ObjToId($obj->getId()));
 		$this->assertEquals($obj->getId(),TableRecord::ObjToId($obj));
 
-		$this->assertEquals(array($obj->getId(),$obj2->getId()),TableRecord::ObjToId(array($obj,$obj2)));
-		$this->assertEquals(array($obj->getId(),$obj2->getId()),TableRecord::ObjToId(array($obj->getId(),$obj2)));
+		$this->assertEquals([$obj->getId(),$obj2->getId()],TableRecord::ObjToId([$obj,$obj2]));
+		$this->assertEquals([$obj->getId(),$obj2->getId()],TableRecord::ObjToId([$obj->getId(),$obj2]));
 
-		$this->assertEquals(array(array($obj->getId(),$obj2->getId())),array(TableRecord::ObjToId(array($obj,$obj2))));
+		$this->assertEquals([[$obj->getId(),$obj2->getId()]],[TableRecord::ObjToId([$obj,$obj2])]);
 	}
 
 	function test_setValuesVirtually(){
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "Blue Savannah",
 			"price" => 99.99,
 			"an_integer" => -20
-		));
+		]);
 
-		$record->setValuesVirtually(array(
+		$record->setValuesVirtually([
 			"title" => "Even Flow",
 			"price" => 2.0
-		));
+		]);
 
 		$this->assertEquals(-20,$record->g("an_integer"));
 		$this->assertEquals("Even Flow",$record->g("title"));
@@ -813,30 +813,30 @@ class TcTableRecord extends TcBase{
 	}
 
 	function test__readValues(){
-		$record = TestTable::CreateNewRecord(array(
+		$record = TestTable::CreateNewRecord([
 			"title" => "Summer Breeze",
 			"price" => 12.34,
 			"an_integer" => 1
-		));
+		]);
 
 		$this->dbmole->doQuery("UPDATE test_table SET
 				title=:title,
 				price=:price,
 				an_integer=:an_integer
 			WHERE id=:id	
-		",array(
+		",[
 			":title" => "Explore, be curious",
 			":price" => 56.78,
 			":an_integer" => 2,
 			":id" => $record
-		));
+		]);
 
 		$record->_readValues("title");
 		$this->assertEquals("Explore, be curious",$record->getTitle());
 		$this->assertEquals(12.34,$record->getPrice());
 		$this->assertEquals(1,$record->getAnInteger());
 
-		$record->_readValues(array("price","an_integer"));
+		$record->_readValues(["price","an_integer"]);
 		$this->assertEquals("Explore, be curious",$record->getTitle());
 		$this->assertEquals(56.78,$record->getPrice());
 		$this->assertEquals(2,$record->getAnInteger());
@@ -854,9 +854,9 @@ class TcTableRecord extends TcBase{
 		$this->assertEquals(null,$a->getTitle());
 		$this->assertEquals(null,$a->getBody());
 
-		$a->setValuesVirtually(array(
+		$a->setValuesVirtually([
 			"title" => "Summer Breeze",
-		));
+		]);
 		$this->assertEquals("Summer Breeze",$a->getTitle());
 
 		$array = $a->toArray();
@@ -875,17 +875,17 @@ class TcTableRecord extends TcBase{
 
 		// values set virtually are not saved into the database
 
-		$a = Article::CreateNewRecord(array(
+		$a = Article::CreateNewRecord([
 			"title" => "Blood & Fire",
 			"created_at" => "2016-07-19 15:17:00",
-		));
+		]);
 		
 		$q_cnt = $dbmole->getQueriesExecuted();
 
-		$a->setValuesVirtually(array(
+		$a->setValuesVirtually([
 			"body" => "No more nights...",
 			"title" => "Blood & Fire (Reprise)",
-		));
+		]);
 
 		$this->assertEquals("No more nights...",$a->getBody());
 		$this->assertEquals("Blood & Fire (Reprise)",$a->getTitle());
@@ -912,36 +912,36 @@ class TcTableRecord extends TcBase{
 
 	function test_proper_column_names_escaping(){
 		// PostgreSQL
-		$rec = TestTable::CreateNewRecord(array(
+		$rec = TestTable::CreateNewRecord([
 			"title" => "My Title",
-		));
+		]);
 		$dbmole = $rec->getDbmole();
 		$this->assertStringContains('SELECT "id","title","znak","an_integer"',$dbmole->getQuery(),"PgMole: {$dbmole->getQuery()}");
 
 		// MySQL
-		$rec = MyTestTable::CreateNewRecord(array(
+		$rec = MyTestTable::CreateNewRecord([
 			"title" => "My Title",
-		));
+		]);
 		$dbmole = $rec->getDbmole();
 		$this->assertStringContains("SELECT `id`,`title`,`znak`,`an_integer`",$dbmole->getQuery(),"MysqlMole {$dbmole->getQuery()}");
 	}
 
 	function _test_fall($recs){
-		$this->assertEquals(1,sizeof($recs));
+		$this->assertEquals(1,count($recs));
 		$this->assertEquals("Fall",$recs[0]->getTitle());
 	}
 
 	function _test_null($recs){
-		$this->assertEquals(1,sizeof($recs));
+		$this->assertEquals(1,count($recs));
 		$this->assertNull($recs[0]->getTitle());
 	}
 
-	function _vytvor_testovaci_zaznam($values = array()){
-		$values = array_merge(array(
+	function _vytvor_testovaci_zaznam($values = []){
+		$values = array_merge([
 			"title" => "testovaci zaznam",
 			"price" => 13.60,
 			"an_integer" => 11
-		),$values);
+		],$values);
 		return TestTable::CreateNewRecord($values);
 	}
 }
