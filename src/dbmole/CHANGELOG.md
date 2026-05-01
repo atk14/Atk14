@@ -3,6 +3,10 @@ Change Log
 
 All notable changes to the DbMole Project will be documented in this file.
 
+## [1.2.1] - 2026-05-01
+
+* 6287266 - Small refactoring
+
 ## [1.2] - 2026-04-26
 
 * Preparing statements in PostgreSQL

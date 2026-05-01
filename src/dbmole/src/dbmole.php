@@ -1423,8 +1423,9 @@ class DbMole{
 		$this->_Options = $options;
 
 		if(DBMOLE_CHECK_BIND_AR_FORMAT){
-			foreach($bind_ar as $k => &$v){
-				if(!preg_match('/^:.*/',$k)){
+			foreach(array_keys($bind_ar) as $k){
+				$k = (string)$k;
+				if(strlen($k)<=1 || $k[0]!==":"){
 					$this->_raiseDBError("there is a suspicious key in bind_ar: \"$k\"");
 					return;
 				}
