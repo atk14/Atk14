@@ -926,6 +926,28 @@ class TcTableRecord extends TcBase{
 		$this->assertStringContains("SELECT `id`,`title`,`znak`,`an_integer`",$dbmole->getQuery(),"MysqlMole {$dbmole->getQuery()}");
 	}
 
+	function test_invalid_bind_ar(){
+		TestTable::CreateNewRecord([
+			"title" => "Example",
+		]);
+
+		DbMole::RegisterErrorHandler(function($dbmole){
+			throw new Exception($dbmole->getErrorMessage());
+		});
+
+		$rec = TestTable::FindFirst("title=:some_title",[":some_title" => "Example"]);
+		$this->assertEquals("Example",$rec->getTitle());
+
+		$exception_thrown = false;
+		try {
+			$rec = TestTable::FindFirst("title=some_title",["some_title" => "Example"]); // bind key must start with a colon
+		}catch(Exception $e){
+			$exception_thrown = true;
+		}
+		$this->assertEquals(true,$exception_thrown);
+		$this->assertStringContains('there is a suspicious key in bind_ar: "some_title"',$e->getMessage());
+	}
+
 	function _test_fall($recs){
 		$this->assertEquals(1,count($recs));
 		$this->assertEquals("Fall",$recs[0]->getTitle());

@@ -482,7 +482,7 @@ class TableRecord extends inobj {
 			return Cache::Get($this->_className,$id);
 		}
 
-		settype($id,$this->_getIdFieldType());
+		$this->_settype($id,$this->_getIdFieldType());
 		$this->_Id = $id;
 		if(!$this->_readValues()){
 			return null;
@@ -912,16 +912,6 @@ class TableRecord extends inobj {
 			if(array_key_exists($alt_key,$options)){
 				$options[$right_key] = $options[$alt_key];
 				unset($options[$alt_key]);
-			}
-		}
-
-		// check that bind_ar contains all keys starting with a colon (:key1, :key2...)
-		// TODO: move this somewhere into dbmole?
-		if(isset($options["bind_ar"])){
-			foreach($options["bind_ar"] as $key => $value){
-				if(!is_string($key) || strlen($key)<1 || $key[0]!=":"){
-					throw new Exception("Insecure bind value: $key");
-				}
 			}
 		}
 	}
@@ -1553,7 +1543,7 @@ class TableRecord extends inobj {
 	 * @ignore
 	 */
 	static function __callStatic($name,$arguments){
-		$class_name = function_exists("get_called_class") ? get_called_class() : "unknown";
+		$class_name = get_called_class();
 
 		if(preg_match('/^Find(|First|All)By(.+)/',$name,$matches)){
 			$method = $matches[1]=="All" ? "FindAll" : "FindFirst";
@@ -1731,5 +1721,21 @@ class TableRecord extends inobj {
 	 */
 	static function CreateObjectCacher(){
 		return new ObjectCacher(get_called_class());
+	}
+
+	protected function _settype(&$var,$type){
+		if(is_null($var)){ return; }
+		$type = (string)$type;
+		switch((string)$type){
+			case "integer":
+				$var = (integer)$var;
+				return;
+			case "float":
+				$var = (float)$var;
+				return;
+			case "string":
+				$var = (string)$var;
+				return;
+		}
 	}
 }

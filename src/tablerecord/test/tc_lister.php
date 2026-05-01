@@ -75,11 +75,8 @@ class TcLister extends TcBase{
 		$this->_setRecords($rlister,[$rjohn]);
 		$this->_setRecords($rlister,[$rjohn, $rpeter]);
 		$this->_setRecords($rlister,[$rpeter]);
-		if(!preg_match('/^8\./',phpversion())){ // TODO: This fails in PHP 8. Not a critical test. Needs to be fixed.
 		//a tady to pro kontrolu musi
 		$this->exceptDbError(function() use($rlister, $rpeter) { $rlister->setRecords([$rpeter, $rpeter]); });
-		}
-
 
 		$lister2 = $this->article2->getAuthorsLister();
 		$lister2->append($john);

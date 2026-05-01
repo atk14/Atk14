@@ -13,7 +13,7 @@ require("../load.php");
 class_autoload(__DIR__ . "/models/");
 
 function &dbmole_connection($dbmole){
-	static $connections = array();
+	static $connections = [];
 
 	if($dbmole->getDatabaseType()=="postgresql"){
 		if(!isset($connections["postgresql"])){

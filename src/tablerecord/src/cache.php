@@ -23,7 +23,7 @@
  * For more information see Cache.
  */
 class ObjectCacher {
-	protected static $InitilizedCachers = [];
+	protected static $InitializedCachers = [];
 
 	protected $class;
 	protected $cache = [];
@@ -43,15 +43,15 @@ class ObjectCacher {
 			throw new Exception("Cache: class $class doesn't exist");
 		}
 		$class_lo = strtolower($class);
-		if(!array_key_exists($class_lo, self::$InitilizedCachers)) {
+		if(!array_key_exists($class_lo, self::$InitializedCachers)) {
 			if(!$create) { $null = null; return $null; }
-			self::$InitilizedCachers[$class_lo] = method_exists($class,"CreateObjectCacher") ? $class::CreateObjectCacher() : new ObjectCacher($class);
+			self::$InitializedCachers[$class_lo] = method_exists($class,"CreateObjectCacher") ? $class::CreateObjectCacher() : new ObjectCacher($class);
 		}
-		return self::$InitilizedCachers[$class_lo];
+		return self::$InitializedCachers[$class_lo];
 	}
 
 	static function &GetAllInitializedCachers(){
-		return self::$InitilizedCachers;
+		return self::$InitializedCachers;
 	}
 
 	/**
