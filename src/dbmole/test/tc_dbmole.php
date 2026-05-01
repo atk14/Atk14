@@ -724,6 +724,26 @@ class TcDbmole extends TcBase{
 		$this->assertEquals(true,$exception_thrown);
 		$this->assertEquals(null,$dbmole->getAffectedRows());
 	}
+ 
+	function test_bad_character_in_postgresql(){
+		$dbmole = $this->pg;
+
+		DbMole::RegisterErrorHandler(function($dbmole){
+			throw new Exception($dbmole->getErrorMessage());
+		});
+
+		$exception_thrown = false;
+		try {
+			$dbmole->doQuery("UPDATE test_table SET title=:bad_value",array(":bad_value" => "admin\xbf\x27 OR 1=1--"));
+		}catch(Exception $e){
+			$exception_thrown = true;
+		}catch(Throwable $e){
+			$exception_thrown = true;
+		}
+
+		$this->assertEquals(true,$exception_thrown);
+		$this->assertEquals(null,$dbmole->getAffectedRows());
+	}
 
 	function _test_select_sequence(&$dbmole){
 		$s1 = (int)$dbmole->selectSequenceNextval("test_table_id_seq");

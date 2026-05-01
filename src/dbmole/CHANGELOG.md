@@ -3,6 +3,12 @@ Change Log
 
 All notable changes to the DbMole Project will be documented in this file.
 
+## [1.2] - 2026-04-26
+
+* Preparing statements in PostgreSQL
+* 9f927b4 - Proper escaping of column and table names in PostgreSQL and MySQL
+* 76ba786 - Constant DBMOLE_COLLECT_STATICTICS renamed to DBMOLE_COLLECT_STATISTICS
+
 ## [1.1.6] - 2023-04-10
 
 * e6f7599 - `DbMole::_parseVersion()` fixed for PHP 5.6
