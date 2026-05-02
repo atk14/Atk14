@@ -86,6 +86,47 @@ class PgMole Extends DbMole{
 		return $out;
 	}
 
+	function _iterateRows($query,$bind_ar = [], $options = []){
+		$options = array_merge([
+			"limit" => null,
+			"offset" => null,
+		],$options);
+
+
+		if(isset($options["offset"]) || isset($options["limit"])){
+			if(!isset($options["offset"])){ $options["offset"] = 0; }
+			$_cond = [];
+			if(isset($options["offset"])){
+				$_cond[] = "OFFSET :offset____";
+				$bind_ar[":offset____"] = $options["offset"];
+			}
+			if(isset($options["limit"])){
+				$_cond[] = "LIMIT :limit____";
+				$bind_ar[":limit____"] = $options["limit"];
+			}
+			$query = "
+				SELECT * FROM (
+					$query
+				)q____ ".join(" ",$_cond)."
+			";
+		}
+
+		$result = $this->executeQuery($query,$bind_ar,$options);
+
+		if(!$result){ return null; }
+
+		$gen = (function() use($result) {
+			while(1){
+				$row = pg_fetch_assoc($result);
+				if($row === false){ break; }
+				yield $row;
+			}
+			pg_free_result($result);
+		})();
+
+		return $gen;
+	}
+
 	function selectSequenceNextval($sequence_name){
 		return $this->selectSingleValue("SELECT NEXTVAL(".$this->escapeString4Sql($sequence_name).")");
 	}

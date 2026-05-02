@@ -180,6 +180,21 @@ class TcDbmole extends TcBase{
 			],
 		],$rows);
 
+		// iterateRows
+
+		$query = "SELECT title,an_integer,price,text,create_date,flag FROM test_table ORDER BY an_integer";
+
+		$rows1 = $dbmole->selectRows($query);
+
+		$rows2 = [];
+		foreach($dbmole->iterateRows($query) as $row){
+			$rows2[] = $row;
+		}
+
+		$this->assertEquals($rows1,$rows2);
+
+		//
+
 		$row = $dbmole->selectFirstRow("SELECT title,an_integer,price,text,create_date FROM test_table ORDER BY an_integer DESC");
 		$row["create_date"] = preg_replace("/ .*$/","",$row["create_date"]);
 		$row["create_date"] = preg_replace("/ .*$/","",$row["create_date"]);
@@ -743,6 +758,24 @@ class TcDbmole extends TcBase{
 
 		$this->assertEquals(true,$exception_thrown);
 		$this->assertEquals(null,$dbmole->getAffectedRows());
+	}
+
+	function test_using_cache_on_iterateRows(){
+		$dbmole = $this->pg;
+
+		DbMole::RegisterErrorHandler(function($dbmole){
+			throw new Exception($dbmole->getErrorMessage());
+		});
+
+		$exception_thrown = false;
+		try {
+			$dbmole->iterateRows("SELECT * FROM test_table",[],["cache" => 60]);
+		}catch(Exception $e){
+			$exception_thrown = true;
+		}
+
+		$this->assertEquals(true,$exception_thrown);
+		$this->assertStringContains("the cache option cannot be set",$e->getMessage());
 	}
 
 	function _test_select_sequence(&$dbmole){

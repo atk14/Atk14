@@ -852,6 +852,22 @@ class DbMole{
 		throw new LogicException("Method $class_name::selectRows() must be implemented");
 	}
 
+	final function iterateRows($query,$bind_ar = [], $options = []){
+		if(!empty($options["cache"])){
+			$class_name = get_class($this);
+			throw new InvalidArgumentException("$class_name::iterateRows(): the cache option cannot be set");
+		}
+		return $this->_iterateRows($query,$bind_ar,$options);
+	}
+
+	function _iterateRows($query,$bind_ar = [], $options = []){
+		$class_name = get_class($this);
+		if($class_name=="DbMole"){
+			throw new LogicException("Method _iterateRows() must be called through a subclass");
+		}
+		throw new LogicException("Method $class_name::_iterateRows() must be implemented");
+	}
+
 	/**
 	 * Returns first record as associative array.
 	 *

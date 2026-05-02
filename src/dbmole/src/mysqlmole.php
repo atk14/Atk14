@@ -54,6 +54,40 @@ class MysqlMole extends DbMole{
 		return $out;
 	}
 
+	function _iterateRows($query,$bind_ar = [], $options = []){
+		$options = array_merge([
+			"limit" => null,
+			"offset" => null,
+		],$options);
+
+		if(isset($options["offset"]) || isset($options["limit"])){
+			if(!isset($options["offset"])){ $options["offset"] = 0; }
+			$_cond = [];
+			if(isset($options["limit"])){
+				$_cond[] = "LIMIT :limit____";
+				$bind_ar[":limit____"] = $options["limit"];
+			}
+			if(isset($options["offset"])){
+				$_cond[] = "OFFSET :offset____";
+				$bind_ar[":offset____"] = $options["offset"];
+			}
+			$query = "$query ".join(" ",$_cond);
+		}
+
+		$result = $this->executeQuery($query,$bind_ar,$options);
+
+		if(!$result){ return null; }
+
+		$gen = (function() use($result) {
+			while($row = mysqli_fetch_assoc($result)){
+				yield $row;
+			}
+			mysqli_free_result($result);
+		})();
+
+		return $gen;
+	}
+
 	function escapeColumnName4Sql($column_name){
 		static $cache = [];
 		$c_key = (string)$column_name;
