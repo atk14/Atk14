@@ -20,10 +20,10 @@ class TcDbmole extends TcBase{
 	}
 
 	function test_update_returning(){
-		$this->pg->insertIntoTable("test_table",array(
+		$this->pg->insertIntoTable("test_table",[
 			"id" => 99,
 			"title" => "Nice",
-		));
+		]);
 		$this->assertEquals(99,$this->pg->selectInt("UPDATE test_table SET title='Very nice' WHERE id=99 RETURNING id"));
 		$this->assertEquals(null,$this->pg->selectInt("UPDATE test_table SET title='Very nice' WHERE id=99 AND title='Nice' RETURNING id"));
 	}
@@ -51,30 +51,30 @@ class TcDbmole extends TcBase{
 	function test_binding(){
 		$dbmole = $this->pg;
 
-		$dbmole->selectRow("SELECT title FROM test_table WHERE title IN :title OR title=:title_t",array(":title" => array("test","test2"), ":title_t" => "test3"));
+		$dbmole->selectRow("SELECT title FROM test_table WHERE title IN :title OR title=:title_t",[":title" => ["test","test2"], ":title_t" => "test3"]);
 		$this->assertEquals("SELECT title FROM test_table WHERE title IN (:title_0, :title_1) OR title=:title_t",$dbmole->getQuery());
-		$this->assertEquals(array(
+		$this->assertEquals([
 			":title_0" => "test",
 			":title_1" => "test2",
 			":title_t" => "test3",
-		),$dbmole->getBindAr());
+		],$dbmole->getBindAr());
 	}
 
 	function test_similar_binding_values(){
 		$dbmole = $this->pg;
 
-		$dbmole->doQuery("INSERT INTO test_table (id,title) VALUES(:a1,:a11)",array(
+		$dbmole->doQuery("INSERT INTO test_table (id,title) VALUES(:a1,:a11)",[
 			":a1" => 111,
 			":a11" => "Confusing title :a1 :a11 :a111",
-		));
+		]);
 		$title = $dbmole->selectSingleValue("SELECT title FROM test_table WHERE id=111");
 		$this->assertEquals("Confusing title :a1 :a11 :a111",$title);
 
 		// same test with reversed values in in bind_ar
-		$dbmole->doQuery("INSERT INTO test_table (id,title) VALUES(:b1,:b11)",array(
+		$dbmole->doQuery("INSERT INTO test_table (id,title) VALUES(:b1,:b11)",[
 			":b11" => "Confusing title :b1 :b11 :b111",
 			":b1" => 222,
-		));
+		]);
 		$title = $dbmole->selectSingleValue("SELECT title FROM test_table WHERE id=222");
 		$this->assertEquals("Confusing title :b1 :b11 :b111",$title);
 	}
@@ -84,17 +84,17 @@ class TcDbmole extends TcBase{
 
 		foreach($this->_get_real_moles() as $dbmole){
 			// pro kontrolu, ze nasl. query dopadne dobre..
-			$this->assertEquals(true,$dbmole->doQuery("SELECT * FROM test_table WHERE title=:title",array(":title" => "Nice title")));
+			$this->assertEquals(true,$dbmole->doQuery("SELECT * FROM test_table WHERE title=:title",[":title" => "Nice title"]));
 
-			$msg = $this->_execute_with_error($dbmole,"doQuery","SELECT * FROM test_table WHERE title=:title",array("123" => "Nice title"));
+			$msg = $this->_execute_with_error($dbmole,"doQuery","SELECT * FROM test_table WHERE title=:title",["123" => "Nice title"]);
 			$this->assertStringContains("there is a suspicious key in bind_ar",$msg);
 
-			$this->assertEquals(true,$dbmole->doQuery("SELECT * FROM test_table WHERE title=:title",array(":title" => "Nice title")));
+			$this->assertEquals(true,$dbmole->doQuery("SELECT * FROM test_table WHERE title=:title",[":title" => "Nice title"]));
 
-			$msg = $this->_execute_with_error($dbmole,"selectFirstRow","SELECT * FROM test_table WHERE title=:title",array("123" => "Nice title"));
+			$msg = $this->_execute_with_error($dbmole,"selectFirstRow","SELECT * FROM test_table WHERE title=:title",["123" => "Nice title"]);
 			$this->assertStringContains("there is a suspicious key in bind_ar",$msg);
 			
-			$this->assertEquals(null,$dbmole->selectFirstRow("SELECT * FROM test_table WHERE title=:title",array(":title" => "Nice title")));
+			$this->assertEquals(null,$dbmole->selectFirstRow("SELECT * FROM test_table WHERE title=:title",[":title" => "Nice title"]));
 		}
 	}
 
@@ -108,36 +108,36 @@ class TcDbmole extends TcBase{
 
 		$this->_test_table_count($dbmole,0);
 
-		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
+		$this->assertTrue($dbmole->insertIntoTable("test_table",[
 			"title" => "O'neil & daughter",
 			"an_integer" => 11,
 			"price" => 15.8,
 			"text" => "\"O'neil has just 1 daughter\"",
 			"create_date" => "2009-12-01",
 			"flag" => false
-		)));
+		]));
 
 		$this->_test_table_count($dbmole,1);
 
-		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
+		$this->assertTrue($dbmole->insertIntoTable("test_table",[
 			"title" => "O'neil & sons",
 			"an_integer" => 22,
 			"price" => 33.3,
 			"text" => "\"O'neil has 2 sons\"",
 			"create_date" => "2009-12-31",
 			"flag" => true
-		)));
+		]));
 
 		$this->_test_table_count($dbmole,2);
 
-		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
+		$this->assertTrue($dbmole->insertIntoTable("test_table",[
 			"title" => "O'neil & daughter",
 			"an_integer" => 33,
 			"price" => 15.8,
 			"text" => "\"O'neil has just 1 daughter\"",
 			"create_date" => "2009-12-31",
 			"flag" => NULL,
-		)));
+		]));
 
 		$this->_test_table_count($dbmole,3);
 		
@@ -153,32 +153,32 @@ class TcDbmole extends TcBase{
 		$rows[1]['flag']=$dbmole->parseBoolFromSql($rows[1]['flag']);
 		$rows[2]['flag']=$dbmole->parseBoolFromSql($rows[2]['flag']);
 
-		$this->assertEquals(array(
-			array (
+		$this->assertEquals([
+			[
 				'title' => "O'neil & daughter",
 				'an_integer' => '11',
 				'price' => 15.8,
 				'text' => '"O\'neil has just 1 daughter"',
 				'create_date' => '2009-12-01',
 				'flag' => false
-			),
-			array (
+			],
+			[
 				'title' => "O'neil & sons",
 				'an_integer' => '22',
 				'price' => 33.3,
 				'text' => '"O\'neil has 2 sons"',
 				'create_date' => '2009-12-31',
 				'flag' => true,
-			),
-			array (
+			],
+			[
 				'title' => "O'neil & daughter",
 				'an_integer' => '33',
 				'price' => 15.8,
 				'text' => '"O\'neil has just 1 daughter"',
 				'create_date' => '2009-12-31',
 				'flag' => null,
-			),
-		),$rows);
+			],
+		],$rows);
 
 		$row = $dbmole->selectFirstRow("SELECT title,an_integer,price,text,create_date FROM test_table ORDER BY an_integer DESC");
 		$row["create_date"] = preg_replace("/ .*$/","",$row["create_date"]);
@@ -186,126 +186,126 @@ class TcDbmole extends TcBase{
 		settype($row["price"],"float");
 		settype($row["price"],"float");
 		$this->assertEquals(
-			array (
+			[
 				'title' => "O'neil & daughter",
 				'an_integer' => '33',
 				'price' => 15.8,
 				'text' => '"O\'neil has just 1 daughter"',
 				'create_date' => '2009-12-31',
-			),
+			],
 		$row);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array());
-		$this->assertEquals(array("11","22","33"),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[]);
+		$this->assertEquals(["11","22","33"],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1));
-		$this->assertEquals(array("11"),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 1]);
+		$this->assertEquals(["11"],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1, "offset" => 0));
-		$this->assertEquals(array("11"),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 1, "offset" => 0]);
+		$this->assertEquals(["11"],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1, "offset" => 1));
-		$this->assertEquals(array("22"),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 1, "offset" => 1]);
+		$this->assertEquals(["22"],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1, "offset" => 2));
-		$this->assertEquals(array("33"),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 1, "offset" => 2]);
+		$this->assertEquals(["33"],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 1, "offset" => 3));
-		$this->assertEquals(array(),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 1, "offset" => 3]);
+		$this->assertEquals([],$ar);
 
 		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table WHERE an_integer=-an_integer");
-		$this->assertEquals(array(),$ar);
+		$this->assertEquals([],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 3, "offset" => 0));
-		$this->assertEquals(array("11","22","33"),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 3, "offset" => 0]);
+		$this->assertEquals(["11","22","33"],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 0, "offset" => 0));
-		$this->assertEquals(array(),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 0, "offset" => 0]);
+		$this->assertEquals([],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 3, "offset" => -1));
-		$this->assertEquals(array("11","22"),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 3, "offset" => -1]);
+		$this->assertEquals(["11","22"],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 3, "offset" => -2));
-		$this->assertEquals(array("11"),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 3, "offset" => -2]);
+		$this->assertEquals(["11"],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => 3, "offset" => -3));
-		$this->assertEquals(array(),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => 3, "offset" => -3]);
+		$this->assertEquals([],$ar);
 
-		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",array(),array("limit" => -10, "offset" => -10));
-		$this->assertEquals(array(),$ar);
+		$ar = $dbmole->selectIntoArray("SELECT an_integer FROM test_table ORDER BY an_integer",[],["limit" => -10, "offset" => -10]);
+		$this->assertEquals([],$ar);
 
-		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 FROM test_table ORDER BY an_integer",array());
-		$this->assertEquals(array("11" => "12","22" => "23","33" => "34"),$ar);
+		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 FROM test_table ORDER BY an_integer",[]);
+		$this->assertEquals(["11" => "12","22" => "23","33" => "34"],$ar);
 
-		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 as f1, an_integer+2 as f2 FROM test_table ORDER BY an_integer",array());
-		$this->assertEquals(array(
-			"11" => array("f1" => "12", "f2" => "13"),
-			"22" => array("f1" => "23", "f2" => "24"),
-			"33" => array("f1" => "34", "f2" => "35")
-		),$ar);
+		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 as f1, an_integer+2 as f2 FROM test_table ORDER BY an_integer",[]);
+		$this->assertEquals([
+			"11" => ["f1" => "12", "f2" => "13"],
+			"22" => ["f1" => "23", "f2" => "24"],
+			"33" => ["f1" => "34", "f2" => "35"]
+		],$ar);
 
-		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 as f1, an_integer+2 as f2, null as f3 FROM test_table ORDER BY an_integer",array());
-		$this->assertEquals(array(
-			"11" => array("f1" => "12", "f2" => "13", "f3" => null),
-			"22" => array("f1" => "23", "f2" => "24", "f3" => null),
-			"33" => array("f1" => "34", "f2" => "35", "f3" => null)
-		),$ar);
+		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer,an_integer+1 as f1, an_integer+2 as f2, null as f3 FROM test_table ORDER BY an_integer",[]);
+		$this->assertEquals([
+			"11" => ["f1" => "12", "f2" => "13", "f3" => null],
+			"22" => ["f1" => "23", "f2" => "24", "f3" => null],
+			"33" => ["f1" => "34", "f2" => "35", "f3" => null]
+		],$ar);
 
-		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer FROM test_table ORDER BY an_integer",array());
-		$this->assertEquals(array(
+		$ar = $dbmole->selectIntoAssociativeArray("SELECT an_integer FROM test_table ORDER BY an_integer",[]);
+		$this->assertEquals([
 			"11" => "11",
 			"22" => "22",
 			"33" => "33",
-		),$ar);
+		],$ar);
 
-		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=:int1 WHERE an_integer=:int2",array(":int1" => 44, ":int2" => 22)));
+		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=:int1 WHERE an_integer=:int2",[":int1" => 44, ":int2" => 22]));
 		$this->assertEquals(1,$dbmole->getAffectedRows(),"calling getAffectedRows() on ".$dbmole->getDatabaseType());
 
-		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=:int1 WHERE an_integer=:int2",array(":int1" => 44, ":int2" => -1234)));
+		$this->assertTrue($dbmole->doQuery("UPDATE test_table SET an_integer=:int1 WHERE an_integer=:int2",[":int1" => 44, ":int2" => -1234]));
 		$this->assertEquals(0,$dbmole->getAffectedRows(),"calling getAffectedRows() on ".$dbmole->getDatabaseType());
 
 		$this->assertEquals("44",$dbmole->selectSingleValue("SELECT MAX(an_integer) FROM test_table"));
 
 		// do_not_escape
-		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
+		$this->assertTrue($dbmole->insertIntoTable("test_table",[
 			"id" => -333,
 			"an_integer" => "22-12",
 			"text" => "testing"
-		),array(
+		],[
 			"do_not_escape" => "an_integer"
-		)));
+		]));
 		$row = $dbmole->selectFirstRow("SELECT an_integer,text FROM test_table WHERE id=-333");
-		$this->assertEquals(array("an_integer" => "10","text" => "testing"),$row);
+		$this->assertEquals(["an_integer" => "10","text" => "testing"],$row);
 
-		$this->assertTrue($dbmole->insertIntoTable("test_table",array(
+		$this->assertTrue($dbmole->insertIntoTable("test_table",[
 			"id" => -444,
 			"an_integer" => "23-12",
 			"text" => "testing 2"
-		),array(
-			"do_not_escape" => array("an_integer")
-		)));
+		],[
+			"do_not_escape" => ["an_integer"]
+		]));
 		$row = $dbmole->selectFirstRow("SELECT an_integer,text FROM test_table WHERE id=-444");
-		$this->assertEquals(array("an_integer" => "11","text" => "testing 2"),$row);
+		$this->assertEquals(["an_integer" => "11","text" => "testing 2"],$row);
 
 
-		$ints = $dbmole->selectIntoArray("SELECT an_integer FROM test_table WHERE an_integer IN :ints ORDER BY an_integer",array(
-			":ints" => array(10,33),
-		));
+		$ints = $dbmole->selectIntoArray("SELECT an_integer FROM test_table WHERE an_integer IN :ints ORDER BY an_integer",[
+			":ints" => [10,33],
+		]);
 
-		$this->assertEquals(array("10","33"),$ints);
+		$this->assertEquals(["10","33"],$ints);
 
 		// binding an object
 
 		$article = new Article(11);
-		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE an_integer=:article", array(
+		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE an_integer=:article", [
 			":article" => $article,
-		));
+		]);
 		$this->assertEquals(2,$cnt);
 
 		$article = new Article(1000);
-		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE an_integer=:article", array(
+		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE an_integer=:article", [
 			":article" => $article,
-		));
+		]);
 		$this->assertEquals(0,$cnt);
 	}
 
@@ -379,7 +379,7 @@ class TcDbmole extends TcBase{
 		$this->assertEquals(false,$dbmole->isConnected());
 
 		$count = $dbmole->getQueriesExecuted();
-		$dbmole->begin(array("execute_after_connecting" => false));
+		$dbmole->begin(["execute_after_connecting" => false]);
 		$this->assertEquals(true,$dbmole->isConnected());
 		$this->assertEquals($count + 1,$dbmole->getQueriesExecuted());
 		$dbmole->selectFirstRow("SELECT * FROM test_table");
@@ -388,12 +388,12 @@ class TcDbmole extends TcBase{
 		// rollback
 		$dbmole->closeConnection();
 		$count = $dbmole->getQueriesExecuted();
-		$dbmole->begin(array("execute_after_connecting" => true));
+		$dbmole->begin(["execute_after_connecting" => true]);
 		$dbmole->rollback();
 		$this->assertEquals($count,$dbmole->getQueriesExecuted());
 		$this->assertEquals(false,$dbmole->isConnected());
 		//
-		$dbmole->begin(array("execute_after_connecting" => false));
+		$dbmole->begin(["execute_after_connecting" => false]);
 		$dbmole->rollback();
 		$this->assertEquals($count+2,$dbmole->getQueriesExecuted());
 		$this->assertEquals(true,$dbmole->isConnected());
@@ -401,12 +401,12 @@ class TcDbmole extends TcBase{
 		// commit
 		$dbmole->closeConnection();
 		$count = $dbmole->getQueriesExecuted();
-		$dbmole->begin(array("execute_after_connecting" => true));
+		$dbmole->begin(["execute_after_connecting" => true]);
 		$dbmole->commit();
 		$this->assertEquals($count,$dbmole->getQueriesExecuted());
 		$this->assertEquals(false,$dbmole->isConnected());
 		//
-		$dbmole->begin(array("execute_after_connecting" => false));
+		$dbmole->begin(["execute_after_connecting" => false]);
 		$dbmole->commit();
 		$this->assertEquals($count+2,$dbmole->getQueriesExecuted());
 		$this->assertEquals(true,$dbmole->isConnected());
@@ -414,7 +414,7 @@ class TcDbmole extends TcBase{
 		$dbmole->closeConnection();
 
 		$count = $dbmole->getQueriesExecuted();
-		$dbmole->begin(array("execute_after_connecting" => true));
+		$dbmole->begin(["execute_after_connecting" => true]);
 		$this->assertEquals($count,$dbmole->getQueriesExecuted());
 		$this->assertEquals(false,$dbmole->isConnected());
 		$dbmole->selectFirstRow("SELECT * FROM test_table");
@@ -429,9 +429,9 @@ class TcDbmole extends TcBase{
 	function _test_caching($dbmole){
 		$title = "Test Caching on ".get_class($dbmole);
 		$dbmole->doQuery("DELETE FROM test_table");
-		$dbmole->insertIntoTable("test_table",array(
+		$dbmole->insertIntoTable("test_table",[
 			"title" => $title,
-		));
+		]);
 
 		$q1 = "SELECT title FROM test_table -- ".uniqid();
 		$q2 = "SELECT title FROM test_table -- ".uniqid();
@@ -440,34 +440,34 @@ class TcDbmole extends TcBase{
 		$this->assertTrue($q1!=$q3);
 		$this->assertTrue($q2!=$q3);
 
-		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
-		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => true)));
-		$this->assertEquals($title,$dbmole->selectString($q3,array(),array("cache" => 60)));
+		$this->assertEquals($title,$dbmole->selectString($q1,[],["cache" => 60]));
+		$this->assertEquals($title,$dbmole->selectString($q1,[],["cache" => true]));
+		$this->assertEquals($title,$dbmole->selectString($q3,[],["cache" => 60]));
 
-		$dbmole->doQuery("UPDATE test_table SET title=:title",array(":title" => "REWRITTEN"));
+		$dbmole->doQuery("UPDATE test_table SET title=:title",[":title" => "REWRITTEN"]);
 
-		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
-		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => true)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => 60)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => true)));
+		$this->assertEquals($title,$dbmole->selectString($q1,[],["cache" => 60]));
+		$this->assertEquals($title,$dbmole->selectString($q1,[],["cache" => true]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,[],["cache" => 60]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,[],["cache" => true]));
 
-		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("recache" => true)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("cache" => 60)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("cache" => true)));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,[],["recache" => true]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,[],["cache" => 60]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,[],["cache" => true]));
 
 		$dbmole->doQuery("DELETE FROM test_table");
 
-		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => 60)));
-		$this->assertEquals($title,$dbmole->selectString($q1,array(),array("cache" => true)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => 60)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,array(),array("cache" => true)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,array(),array("cache" => 60)));
+		$this->assertEquals($title,$dbmole->selectString($q1,[],["cache" => 60]));
+		$this->assertEquals($title,$dbmole->selectString($q1,[],["cache" => true]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,[],["cache" => 60]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q2,[],["cache" => true]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectString($q3,[],["cache" => 60]));
 
-		$this->assertEquals($title,$dbmole->selectSingleValue($q1,array(),array("cache" => 60)));
-		$this->assertEquals($title,$dbmole->selectSingleValue($q1,array(),array("cache" => true)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q2,array(),array("cache" => 60)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q2,array(),array("cache" => true)));
-		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q3,array(),array("cache" => 60)));
+		$this->assertEquals($title,$dbmole->selectSingleValue($q1,[],["cache" => 60]));
+		$this->assertEquals($title,$dbmole->selectSingleValue($q1,[],["cache" => true]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q2,[],["cache" => 60]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q2,[],["cache" => true]));
+		$this->assertEquals('REWRITTEN',$dbmole->selectSingleValue($q3,[],["cache" => 60]));
 
 		$this->assertEquals(null,$dbmole->selectString($q1));
 		$this->assertEquals(null,$dbmole->selectString($q2));
@@ -484,27 +484,27 @@ class TcDbmole extends TcBase{
 
 		$this->_test_select_sequence($dbmole);
 
-		$dbmole->insertIntoTable("test_table",array(
+		$dbmole->insertIntoTable("test_table",[
 			"id" => "-123",
 			"binary_data" => $this->_binary_data(),
-		),array(
-			"blobs" => array("binary_data")
-		));
+		],[
+			"blobs" => ["binary_data"]
+		]);
 
-		$row = $dbmole->selectFirstRow("SELECT * FROM test_table WHERE id=:id",array(":id" => -123));
+		$row = $dbmole->selectFirstRow("SELECT * FROM test_table WHERE id=:id",[":id" => -123]);
 		$this->assertEquals(256,strlen($row["binary_data"]));
 		$this->assertEquals($this->_binary_data(),$row["binary_data"]);
 
-		$dbmole->insertIntoTable("test_table",array(
+		$dbmole->insertIntoTable("test_table",[
 			"id" => "-124",
 			"binary_data" => $this->_binary_data(),
 			"binary_data2" => $this->_binary_data(1000),
 			"text" => $this->_lorem_ipsum(),
-		),array(
-			"blobs" => array("binary_data","binary_data2"),
-			"clobs" => array("text")
-		));
-		$row = $dbmole->selectFirstRow("SELECT * FROM test_table WHERE id=:id",array(":id" => -124));
+		],[
+			"blobs" => ["binary_data","binary_data2"],
+			"clobs" => ["text"]
+		]);
+		$row = $dbmole->selectFirstRow("SELECT * FROM test_table WHERE id=:id",[":id" => -124]);
 		$this->assertEquals(256,strlen($row["binary_data"]));
 		$this->assertEquals($this->_binary_data(),$row["binary_data"]);
 		$this->assertEquals(1000*256,strlen($row["binary_data2"]));
@@ -551,35 +551,35 @@ class TcDbmole extends TcBase{
 
 		$this->assertEquals(false,file_exists($sending_lock_file));
 
-		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",array(
+		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",[
 			"sending_lock_file" => $sending_lock_file
-		));
+		]);
 		$this->assertTrue(is_array($ret));
 		$this->assertEquals(true,file_exists($sending_lock_file));
 
-		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",array(
+		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",[
 			"sending_lock_file" => $sending_lock_file
-		));
+		]);
 		$this->assertEquals(null,$ret);
 
-		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",array(
+		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",[
 			"sending_lock_file" => $sending_lock_file,
 			"limit_sending_rate" => 0,
-		));
+		]);
 		$this->assertTrue(is_array($ret));
 
 		unlink($sending_lock_file);
 
-		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",array(
+		$ret = $dbmole->sendErrorReportToEmail("john@doe.com",[
 			"sending_lock_file" => $sending_lock_file
-		));
+		]);
 		$this->assertTrue(is_array($ret));
 
 		unlink($sending_lock_file);
 	}
 
 	function test_getDatabaseVersion(){
-		foreach(array($this->pg,$this->my) as $dbmole){
+		foreach([$this->pg,$this->my] as $dbmole){
 
 			// Server version
 
@@ -588,7 +588,7 @@ class TcDbmole extends TcBase{
 			$this->assertTrue(strlen($server_version_str)>0);
 			$this->assertTrue(!!preg_match('/^\d+\.\d+/',$server_version_str));
 
-			$server_version_ary = $dbmole->getDatabaseServerVersion(array("as_array" => true));
+			$server_version_ary = $dbmole->getDatabaseServerVersion(["as_array" => true]);
 			$this->assertTrue(is_array($server_version_ary));
 			$this->assertTrue(is_int($server_version_ary["major"]));
 			$this->assertTrue($server_version_ary["major"]>0);
@@ -596,7 +596,7 @@ class TcDbmole extends TcBase{
 			$this->assertTrue(is_int($server_version_ary["patch"]));
 			$this->assertEquals($server_version_str,"$server_version_ary[major].$server_version_ary[minor].$server_version_ary[patch]");
 
-			$server_version_float = $dbmole->getDatabaseServerVersion(array("as_float" => true));
+			$server_version_float = $dbmole->getDatabaseServerVersion(["as_float" => true]);
 			$this->assertTrue(is_float($server_version_float));
 			$this->assertEquals((float)(sprintf("%s.%02d%03d",$server_version_ary["major"],$server_version_ary["minor"],$server_version_ary["patch"])),$server_version_float);
 
@@ -610,7 +610,7 @@ class TcDbmole extends TcBase{
 			$this->assertTrue(strlen($client_version_str)>0);
 			$this->assertTrue(!!preg_match('/^\d+\.\d+/',$client_version_str));
 
-			$client_version_ary = $dbmole->getDatabaseClientVersion(array("as_array" => true));
+			$client_version_ary = $dbmole->getDatabaseClientVersion(["as_array" => true]);
 			$this->assertTrue(is_array($client_version_ary));
 			$this->assertTrue(is_int($client_version_ary["major"]));
 			$this->assertTrue($client_version_ary["major"]>0);
@@ -619,7 +619,7 @@ class TcDbmole extends TcBase{
 			// it fails on "11.2 (Ubuntu 11.2-1.pgdg16.04+1)"
 			// $this->assertEquals($client_version_str,"$client_version_ary[major].$client_version_ary[minor].$client_version_ary[patch]");
 
-			$client_version_float = $dbmole->getDatabaseClientVersion(array("as_float" => true));
+			$client_version_float = $dbmole->getDatabaseClientVersion(["as_float" => true]);
 			$this->assertTrue(is_float($client_version_float),print_r($client_version_float,true));
 			$this->assertEquals((float)(sprintf("%s.%02d%03d",$client_version_ary["major"],$client_version_ary["minor"],$client_version_ary["patch"])),$client_version_float);
 
@@ -630,13 +630,13 @@ class TcDbmole extends TcBase{
 
 	function test__parseVersion(){
 		$dbmole = new ProxyDbMole();
-		$this->assertEquals(array("major" => 9, "minor" => 6, "patch" => 16),$dbmole->parseVersion("9.6.16",array("as_array" => true)));
-		$this->assertEquals(array("major" => 9, "minor" => 6, "patch" => 0),$dbmole->parseVersion("9.6",array("as_array" => true)));
+		$this->assertEquals(["major" => 9, "minor" => 6, "patch" => 16],$dbmole->parseVersion("9.6.16",["as_array" => true]));
+		$this->assertEquals(["major" => 9, "minor" => 6, "patch" => 0],$dbmole->parseVersion("9.6",["as_array" => true]));
 
-		$this->assertEquals(9.06016,$dbmole->parseVersion("9.6.16",array("as_float" => true)));
+		$this->assertEquals(9.06016,$dbmole->parseVersion("9.6.16",["as_float" => true]));
 		$this->assertEquals(
 			"9.616",
-			sprintf("%.3f",$dbmole->parseVersion("9.6.16",array("as_float" => true,"minor_number_divider" => 10, "patch_number_divider" => 1000)))
+			sprintf("%.3f",$dbmole->parseVersion("9.6.16",["as_float" => true,"minor_number_divider" => 10, "patch_number_divider" => 1000]))
 		);
 	}
 
@@ -688,19 +688,19 @@ class TcDbmole extends TcBase{
 
 		// --
 
-		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE title=:title",array(
+		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE title=:title",[
 			":title" => "test",
 			":title2" => "test2"
-		));
+		]);
 
 		$this->assertEquals(0,$cnt);
 
 		// --
 
-		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE title=:title2",array(
+		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE title=:title2",[
 			":title" => "test",
 			":title2" => "test2"
-		));
+		]);
 
 		$this->assertEquals(0,$cnt);
 	}
@@ -716,7 +716,7 @@ class TcDbmole extends TcBase{
 
 		$exception_thrown = false;
 		try {
-			$dbmole->doQuery("UPDATE test_table SET not_existing_field=:value",array(":value" => "Nice try!"));
+			$dbmole->doQuery("UPDATE test_table SET not_existing_field=:value",[":value" => "Nice try!"]);
 		}catch(Exception $e){
 			$exception_thrown = true;
 		}
@@ -734,7 +734,7 @@ class TcDbmole extends TcBase{
 
 		$exception_thrown = false;
 		try {
-			$dbmole->doQuery("UPDATE test_table SET title=:bad_value",array(":bad_value" => "admin\xbf\x27 OR 1=1--"));
+			$dbmole->doQuery("UPDATE test_table SET title=:bad_value",[":bad_value" => "admin\xbf\x27 OR 1=1--"]);
 		}catch(Exception $e){
 			$exception_thrown = true;
 		}catch(Throwable $e){
@@ -760,13 +760,13 @@ class TcDbmole extends TcBase{
 		$this->_test_string($dbmole->selectSingleValue($q),"$expected_count");
 
 		$this->_test_integer($dbmole->selectSingleValue($q,"integer"),(int)$expected_count);
-		$this->_test_integer($dbmole->selectSingleValue($q,array(),"integer"),(int)$expected_count);
-		$this->_test_integer($dbmole->selectSingleValue($q,array(),array("type" => "integer")),(int)$expected_count);
+		$this->_test_integer($dbmole->selectSingleValue($q,[],"integer"),(int)$expected_count);
+		$this->_test_integer($dbmole->selectSingleValue($q,[],["type" => "integer"]),(int)$expected_count);
 		$this->_test_integer($dbmole->selectInt($q),(int)$expected_count);
 
 		$this->_test_float($dbmole->selectSingleValue($q,"float"),(float)$expected_count);
-		$this->_test_float($dbmole->selectSingleValue($q,array(),"float"),(float)$expected_count);
-		$this->_test_float($dbmole->selectSingleValue($q,array(),array("type" => "float")),(float)$expected_count);
+		$this->_test_float($dbmole->selectSingleValue($q,[],"float"),(float)$expected_count);
+		$this->_test_float($dbmole->selectSingleValue($q,[],["type" => "float"]),(float)$expected_count);
 		$this->_test_float($dbmole->selectFloat($q),(float)$expected_count);
 	}
 
@@ -786,7 +786,7 @@ class TcDbmole extends TcBase{
 	}
 
 	function _binary_data($repeated = 1){
-		$out = array();
+		$out = [];
 
 		for($i=0;$i<=255;$i++){
 			$out[] = chr($i);

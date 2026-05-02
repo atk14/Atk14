@@ -5,12 +5,12 @@ class SqlsrvMole extends DbMole {
 
 	function usesSequencies(){ return true; }
 
-	function selectRows($query,$bind_ar = array(), $options = array()){
-		$options = array_merge(array(
+	function selectRows($query,$bind_ar = [], $options = []){
+		$options = array_merge([
 			"limit" => null,
 			"offset" => null,
 			"avoid_recursion" => false,
-		),$options);
+		],$options);
 
 		if(!$options["avoid_recursion"]){
 			return $this->_selectRows($query,$bind_ar,$options);
@@ -19,7 +19,7 @@ class SqlsrvMole extends DbMole {
 
 		if(isset($options["offset"]) || isset($options["limit"])){
 			if(!isset($options["offset"])){ $options["offset"] = 0; }
-			$_cond = array();
+			$_cond = [];
 			if(isset($options["offset"])){
 				$_cond[] = "OFFSET :offset____ ROWS";
 				$bind_ar[":offset____"] = $options["offset"];
@@ -35,13 +35,13 @@ class SqlsrvMole extends DbMole {
 
 		if(!$result){ return null; }
 
-		$out = array();
+		$out = [];
 
 		while($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)){
 			$out[] = $row;
 		}
 		sqlsrv_free_stmt($result);
-		reset($out);
+
 		return $out;
 	}
 
@@ -54,9 +54,9 @@ class SqlsrvMole extends DbMole {
 	}
 	
 	function escapeString4Sql($s){
-		return "'".strtr($s,array(
+		return "'".strtr($s,[
 			"'" => "''",
-		))."'";
+		])."'";
 	}
 
 	function _begin(){
@@ -97,7 +97,7 @@ class SqlsrvMole extends DbMole {
 	function _getDbLastErrorMessage(){
 		//$connection = $this->_getDbConnect();
 		if($errs = sqlsrv_errors()){
-			$messages = array();
+			$messages = [];
 			foreach($errs as $err){
 				$messages[] = "$err[message] (SQLSTATE=$err[SQLSTATE], code=$err[code])";
 			}

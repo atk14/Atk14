@@ -3,7 +3,7 @@ class PgMole Extends DbMole{
 
 	protected $_AffectedRows = null;
 
-	protected $_PreparedStatements = array();
+	protected $_PreparedStatements = [];
 
 	/**
 	* Vrati instanci objektu pro danou konfiguraci.
@@ -14,7 +14,7 @@ class PgMole Extends DbMole{
 	* @param string $configuration_name		"default"
 	* @return PgMole									nebo null
 	*/
-	static function &GetInstance($configuration_name = "default",$options = array()){
+	static function &GetInstance($configuration_name = "default",$options = []){
 		$options["class_name"] = "PgMole";
 		return parent::GetInstance($configuration_name,$options);
 	}
@@ -39,12 +39,12 @@ class PgMole Extends DbMole{
 	* @param array $options
 	* @return array						pole asociativnich poli; null v pripade chyby
 	*/
-	function selectRows($query,$bind_ar = array(), $options = array()){
-		$options = array_merge(array(
+	function selectRows($query,$bind_ar = [], $options = []){
+		$options = array_merge([
 			"limit" => null,
 			"offset" => null,
 			"avoid_recursion" => false,
-		),$options);
+		],$options);
 
 		if(!$options["avoid_recursion"]){
 			return $this->_selectRows($query,$bind_ar,$options);
@@ -53,7 +53,7 @@ class PgMole Extends DbMole{
 
 		if(isset($options["offset"]) || isset($options["limit"])){
 			if(!isset($options["offset"])){ $options["offset"] = 0; }
-			$_cond = array();
+			$_cond = [];
 			if(isset($options["offset"])){
 				$_cond[] = "OFFSET :offset____";
 				$bind_ar[":offset____"] = $options["offset"];
@@ -73,16 +73,16 @@ class PgMole Extends DbMole{
 
 		if(!$result){ return null; }
 
-		$out = array();
+		$out = [];
 
-		$num_rows = pg_num_rows($result);
-
-		for($i=0;$i<$num_rows;$i++){
-			$row = pg_fetch_row($result,$i,PGSQL_ASSOC);
+		while(1){
+			$row = pg_fetch_assoc($result);
+			if($row === false){ break; }
 			$out[] = $row;
 		}
+
 		pg_free_result($result);
-		reset($out);
+
 		return $out;
 	}
 
@@ -114,7 +114,7 @@ class PgMole Extends DbMole{
 	}
 
 	function escapeColumnName4Sql($column_name){
-		static $cache = array();
+		static $cache = [];
 		$c_key = (string)$column_name;
 		if(!isset($cache[$c_key])){
 			$cache[$c_key] = pg_escape_identifier($this->_getDbConnect(), $column_name);
@@ -134,19 +134,19 @@ class PgMole Extends DbMole{
 	function _executeQuery(){
 		$query = $this->_Query;
 
-		// Filtering out parameters that are not used in the query
-		$bind_ar = [];
-		foreach($this->_BindAr as $key => $value){
-			if(!preg_match(sprintf('/%s\b/',preg_quote($key)),$query)){ continue; }
-			$bind_ar[$key] = $value;
-		}
-
 		if(
 			!DBMOLE_USE_PREPARED_STATEMENTS ||
-			!$bind_ar ||
+			!$this->_BindAr ||
 			strpos(trim($query),';')!==false // multiple commands must be processed using pg_query
 		){
 			return parent::_executeQuery();
+		}
+
+		// Filtering out parameters that are not used in the query
+		$bind_ar = [];
+		foreach($this->_BindAr as $key => $value){
+			if(!preg_match('/'.preg_quote($key,'/').'\b/',$query)){ continue; }
+			$bind_ar[$key] = $value;
 		}
 
 		$bind_keys = array_keys($bind_ar);
@@ -168,7 +168,7 @@ class PgMole Extends DbMole{
 		$conn_key = $this->_getConnectionKey($connection);
 
 		if(!isset($this->_PreparedStatements[$conn_key])){
-			$this->_PreparedStatements[$conn_key] = array();
+			$this->_PreparedStatements[$conn_key] = [];
 		}
 
 		$stmt_name = "dbmole_".sha1($positional_query);

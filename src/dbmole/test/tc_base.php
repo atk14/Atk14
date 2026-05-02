@@ -13,7 +13,7 @@ class TcBase extends TcSuperBase{
 	}
 
 	/**
-	 * $this->_execute_with_error($dbmole,"doQuery","SELECT * FROM test_table WHERE title=:title",array(":title" => "Nice title"));
+	 * $this->_execute_with_error($dbmole,"doQuery","SELECT * FROM test_table WHERE title=:title",[":title" => "Nice title"]);
 	 */
 	function _execute_with_error(){
 		$params = func_get_args();
@@ -23,7 +23,7 @@ class TcBase extends TcSuperBase{
 		$exception_thrown = false;
 		$error_message = "";
 		try{
-			call_user_func_array(array($dbmole,$method),$params);
+			call_user_func_array([$dbmole,$method],$params);
 		}catch(Exception $e){
 			$exception_thrown = true;
 			$error_message = $e->getMessage();
@@ -34,9 +34,9 @@ class TcBase extends TcSuperBase{
 	}
 
 	function &_get_moles(){
-		$out = array(
+		$out = [
 			"base" => DbMole::GetInstance(),
-		);	
+		];	
 		$out["my"] = &MysqlMole::GetInstance();
 		$out["pg"] = &PgMole::GetInstance();
 		//$out["ora"] = &OracleMole::GetInstance();
