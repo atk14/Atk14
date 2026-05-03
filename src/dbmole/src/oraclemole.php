@@ -2,9 +2,9 @@
 /**
  *
  *
- * Pouziti:
+ * Usage:
  *
- *		DbMole::RegisterErrorHandler("_oracle_mole_error_handler"); //registrace error handleru pro tridu OracleMole
+ *		DbMole::RegisterErrorHandler("_oracle_mole_error_handler"); // register error handler for OracleMole
  *
  * 	$mole = &OracleMole::GetInstance();
  *		$mole_ov = &OracleMole::GetInstance("ov");
@@ -12,32 +12,32 @@
  * 	$mole->doQuery("BEGIN active_users(); END;");
  *		$mole->commit();
  *
- *		// nacteni jedine hodnoty
- *		echo "celk. pocet clanku: ";
+ *		// fetch a single value
+ *		echo "total articles: ";
  *		echo $mole->selectSingleValue("SELECT COUNT(*) FROM articles","integer");
  *
- *		// nacteni jednoho radku
+ *		// fetch a single row
  * 	$row = $mole->selectFirstRow("SELECT * FROM articles WHERE id=:id",[":id" => 2223445]);
  *		echo $row["name"];
  *
- *		// nacteni vice radku
+ *		// fetch multiple rows
  * 	$rows = $mole->selectRows("SELECT * FROM articles WHERE source_id=:source_id",[":source_id" => 112233"],["limit" => 20,"offset" => 40]);
  *		foreach($rows as $row){
  *			echo "$row[id]: $row[name]\n";
  *			echo "body:\n";
- *			echo $row["body"];	// obsah CLOBu a BLOBu bude automaticky fetchnut
+ *			echo $row["body"];	// CLOB and BLOB contents are fetched automatically
  *			echo "\n-------------------\n";
  *		}
  *
- * 	// TODO: dodelat moznost bindovat descriptoru pro large objecty
- * 	// Nyni lze pouzit nesledujici:
+ * 	// TODO: add support for binding descriptors for large objects
+ * 	// Currently the following can be used:
  *		$stmt = $mole->executeQuery(
  *			"UPDATE articles SET bode=EMPTY_CLOB() WHERE id=:id RETURNING body INTO :body",
  *			[":id" => 3443],
  *			["execute_statement" => false]
  *		);
- *		// A zde uz si nabindovani :body udelat pekne rucne!
- *		OCIFreeStatement($stmt);
+ *		// From here, bind :body manually!
+ *		oci_free_statement($stmt);
  *
  * @package Atk14
  * @subpackage Database
@@ -54,13 +54,11 @@ class OracleMole extends DbMole{
 	var $_LastOracleStatement = null;
 
 	/**
-	* Vrati instanci objektu pro danou konfiguraci.
-	* Vraci vzdy stejny objekt pro stejnou konfiguraci.
+	* Returns an instance for the given configuration.
+	* Always returns the same object for the same configuration.
 	*
-	* @static
-	* @access public
-	* @param string $configuration_name		"default" nebo "ov"
-	* @return DbMole									nebo null
+	* @param string $configuration_name
+	* @return DbMole
 	*/
 	static function &GetInstance($configuration_name = "default",$options = []){
 		$options["class_name"] = "OracleMole";
@@ -73,18 +71,14 @@ class OracleMole extends DbMole{
 	}
 	
 	/**
-	* Realizuje spusteni query.
-	* Vrati statement.
-	* 
-	* V poli $options lze nastavit mod spusteni prikazu:
+	* Executes the query and returns the statement.
+	*
+	* The execution mode can be set via $options:
 	*		$options["mode"] = OCI_DEFAULT
 	*		$options["mode"] = OCI_COMMIT_ON_SUCCESS
-	* Defaultni je OCI_DEFAULT.
+	* Default mode is OCI_DEFAULT.
 	*
-	* @access public
-	* @param string $query
-	* @param string $options
-	* @return statement						nebo null v pripade
+	* @return statement|null null on error
 	*/
 	function _executeQuery(){
 		$query = &$this->_Query;
@@ -206,14 +200,12 @@ class OracleMole extends DbMole{
 	}
 
 	/**
-	* Provede spusteni SQL query a pole nalezenych zaznamu.
-	* Vrati pole asociativnich poli.
+	* Executes a SQL query and returns the found records as an array of associative arrays.
 	*
-	* @access public
 	* @param string $query
 	* @param array $bind_ar
 	* @param array $options
-	* @return array						pole asociativnich poli; null v pripade chyby
+	* @return array associative arrays; null on error
 	*/
 	function selectRows($query,$bind_ar = [], $options = []){
 		$options = array_merge([
@@ -264,7 +256,7 @@ class OracleMole extends DbMole{
 
 		if(!$stmt){ return null; }
 
-		$gen = (function() use($stmt, $options) {
+		$gen = function() use($stmt, $options) {
 			while(OCIFetchInto($stmt,$row,OCI_ASSOC + OCI_RETURN_NULLS)){
 				unset($row["RNUM____"]);
 				$_row = [];
@@ -280,9 +272,10 @@ class OracleMole extends DbMole{
 				}
 				yield $_row;
 			}
-		})();
+			oci_free_statement($stmt);
+		};
 
-		return $gen;
+		return $gen();
 	}
 
 	function SelectSequenceNextval($sequence_name){
@@ -294,14 +287,14 @@ class OracleMole extends DbMole{
 	}
 
 	/**
-	* Prekryta metoda.
-	* Zde se mohou v $options definovat $options["clobs"] a $options["blobs"].
+	* Overrides the parent method with Oracle CLOB/BLOB support.
+	* Use $options["clobs"] and $options["blobs"] to specify large object fields.
 	*
 	*		$dbmole->insertIntoTable("articles",[
 	*			"id" => $dbmole->selectSequenceNextval('se$articles_id'),
-	*			"name" => "nazev clanku",
-	*			"perex" => "perex clanku",
-	*			"body" => "telicko clanku",
+	*			"name" => "article name",
+	*			"perex" => "article perex",
+	*			"body" => "article body",
 	*			"create_date" => "2008-01-02 12:33:23",
 	*			"update_date" => "SYSDATE"
 	*		],[
@@ -309,9 +302,8 @@ class OracleMole extends DbMole{
 	*			"do_not_escape" => ["update_date"]
 	*		]);
 	*
-	* Pozor!!!
-	* V polich $options["clobs"] $options["blobs"] se zde uvadeji nazvy poli (nikoli bind klic s prefixem :).
-	* Uvnitr fce jsou nazvy poli prevedeny na bind klice.
+	* Note: $options["clobs"] and $options["blobs"] take column names (not bind keys with : prefix).
+	* Column names are converted to bind keys internally.
 	*/
 	function insertIntoTable($table_name,$values,$options = []){
 		$table_name = (string)$table_name;
@@ -374,34 +366,28 @@ class OracleMole extends DbMole{
 	}
 
 	/**
-	* Provede Commit.
+	* Performs a commit.
 	*
-	* @access public
-	* @return bool				true -> uspesne provedeno
-	*											false -> doslo k chybe
+	* @return bool true on success, false on error
 	*/
 	function _commit(){
 		return $this->_doCommitOrRollback("COMMIT");
 	}
 
 	/**
-	* Provede Rollback.
+	* Performs a rollback.
 	*
-	* @access public
-	* @return bool				true -> uspesne provedeno
-	*											false -> doslo k chybe
+	* @return bool true on success, false on error
 	*/
 	function _rollback(){
 		return $this->_doCommitOrRollback("ROLLBACK");
 	}
 
 	/**
-	* Provede Commit nebo Rollback.
+	* Performs commit or rollback.
 	*
-	* @access private
-	* @param string $action				"COMMIT" nebo "ROLLBACK"
-	* @return bool								true -> uspesne provedeno
-	*															false -> doslo k chybe
+	* @param string $action "COMMIT" or "ROLLBACK"
+	* @return bool true on success, false on error
 	*/
 	function _doCommitOrRollback($action){
 		$action = (string)$action;
@@ -433,8 +419,8 @@ class OracleMole extends DbMole{
 	}
 
 	function _freeLastOracleStatement(){
-		if($this->_LastOracleStatement && !($out = OCIFreeStatement($this->_LastOracleStatement))){
-			$this->_raiseDBError("Can't do OCIFreeStatement: ".$this->_getDbLastErrorMessage());
+		if($this->_LastOracleStatement && !($out = oci_free_statement($this->_LastOracleStatement))){
+			$this->_raiseDBError("Can't do oci_free_statement: ".$this->_getDbLastErrorMessage());
 		}
 
 		$this->_LastOracleStatement = null;

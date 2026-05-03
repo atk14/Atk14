@@ -27,6 +27,22 @@ Only one Postgresql database is considered in this example.
       echo $row["id"].": ".$row["title"]." (".$row["author"].")<br>";
     }
 
+#### Iterating over rows
+
+For large result sets, use `iterateRows()` instead of `selectRows()`. It returns a generator and fetches rows one by one, keeping memory usage low.
+
+    foreach($dbmole->iterateRows("SELECT id,title,author FROM books") as $row){
+      echo $row["id"].": ".$row["title"]." (".$row["author"].")<br>";
+    }
+
+Limit and offset are supported:
+
+    foreach($dbmole->iterateRows("SELECT * FROM employees",[],["limit" => 100, "offset" => 0]) as $row){
+      // process $row
+    }
+
+The `cache` option is not available for `iterateRows()`.
+
 #### Selecting single row
 
     $row = $dbmole->selectRow("SELECT id,title,author FROM books WHERE id=123");

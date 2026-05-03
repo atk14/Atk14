@@ -464,12 +464,10 @@ class DbMole{
 	}
 
 	/**
-	 *
 	 * @ignore
-	 * @param mixed $function_name
-	 * @param bool $set									true -> ulezeni nazvu fce
-	 * @return string										aktualni jmeno (nebo predchozi pri nastavavovani) error handler funkce 
-	 *																		pokud je vracen prazdny string "", nema se nic volat
+	 * @param mixed $error_handler
+	 * @param bool $set true -> sets the error handler
+	 * @return string current (or previous when setting) error handler; empty string "" means no handler is set
 	 */
 	static function _GetSetErrorHandlerFunction($error_handler = null,$set = false){
 		static $_ERROR_HANDLER_;
@@ -612,7 +610,7 @@ class DbMole{
 	function errorOccurred(){ return isset($this->_ErrorMessage); }
 
 	/**
-	 * Gettery vhodne pro error_handler funkci.
+	 * Getters useful in error handler functions.
 	 */
 
 	/**
@@ -852,6 +850,29 @@ class DbMole{
 		throw new LogicException("Method $class_name::selectRows() must be implemented");
 	}
 
+	/**
+	 * Iterates over rows returned by a SQL query.
+	 *
+	 * Unlike selectRows(), iterateRows() returns a generator and fetches rows one by one,
+	 * which keeps memory usage low for large result sets.
+	 *
+	 * ```
+	 * foreach($dbmole->iterateRows("SELECT id,title FROM books") as $row){
+	 *   echo $row["id"].": ".$row["title"]."\n";
+	 * }
+	 *
+	 * foreach($dbmole->iterateRows("SELECT * FROM books",[],["limit" => 100, "offset" => 0]) as $row){
+	 *   // process $row
+	 * }
+	 * ```
+	 *
+	 * The cache option is not supported and will throw an InvalidArgumentException.
+	 *
+	 * @param string $query
+	 * @param array $bind_ar
+	 * @param array $options
+	 * @return \Generator|null generator yielding associative arrays; null on error
+	 */
 	final function iterateRows($query,$bind_ar = [], $options = []){
 		if(!empty($options["cache"])){
 			$class_name = get_class($this);

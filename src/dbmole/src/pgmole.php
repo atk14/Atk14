@@ -6,13 +6,11 @@ class PgMole Extends DbMole{
 	protected $_PreparedStatements = [];
 
 	/**
-	* Vrati instanci objektu pro danou konfiguraci.
-	* Vraci vzdy stejny objekt pro stejnou konfiguraci.
+	* Returns an instance for the given configuration.
+	* Always returns the same object for the same configuration.
 	*
-	* @static
-	* @access public
-	* @param string $configuration_name		"default"
-	* @return PgMole									nebo null
+	* @param string $configuration_name
+	* @return PgMole
 	*/
 	static function &GetInstance($configuration_name = "default",$options = []){
 		$options["class_name"] = "PgMole";
@@ -30,14 +28,12 @@ class PgMole Extends DbMole{
 	
 
 	/**
-	* Provede spusteni SQL query a pole nalezenych zaznamu.
-	* Vrati pole asociativnich poli.
+	* Executes a SQL query and returns the found records as an array of associative arrays.
 	*
-	* @access public
 	* @param string $query
 	* @param array $bind_ar
 	* @param array $options
-	* @return array						pole asociativnich poli; null v pripade chyby
+	* @return array associative arrays; null on error
 	*/
 	function selectRows($query,$bind_ar = [], $options = []){
 		$options = array_merge([
@@ -115,16 +111,16 @@ class PgMole Extends DbMole{
 
 		if(!$result){ return null; }
 
-		$gen = (function() use($result) {
+		$gen = function() use($result) {
 			while(1){
 				$row = pg_fetch_assoc($result);
 				if($row === false){ break; }
 				yield $row;
 			}
 			pg_free_result($result);
-		})();
+		};
 
-		return $gen;
+		return $gen();
 	}
 
 	function selectSequenceNextval($sequence_name){

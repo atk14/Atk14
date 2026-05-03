@@ -69,14 +69,14 @@ class SqlsrvMole extends DbMole {
 
 		if(!$result){ return null; }
 
-		$gen = (function() use($result) {
+		$gen = function() use($result) {
 			while($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)){
 				yield $row;
 			}
 			sqlsrv_free_stmt($result);
-		})();
+		};
 
-		return $gen;
+		return $gen();
 	}
 
 	function selectSequenceNextval($sequence_name){

@@ -78,14 +78,14 @@ class MysqlMole extends DbMole{
 
 		if(!$result){ return null; }
 
-		$gen = (function() use($result) {
+		$gen = function() use($result) {
 			while($row = mysqli_fetch_assoc($result)){
 				yield $row;
 			}
 			mysqli_free_result($result);
-		})();
+		};
 
-		return $gen;
+		return $gen();
 	}
 
 	function escapeColumnName4Sql($column_name){
