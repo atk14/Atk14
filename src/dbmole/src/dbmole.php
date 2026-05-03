@@ -1347,9 +1347,6 @@ class DbMole{
 			$update_ar = [];
 			$bind_ar = [];
 			foreach($values as $_key => $_value){	
-				/*if(!isset($options["do_not_escape"]["$_key"])){
-					$bind_ar[":$_key"] = is_object($_value) ? $_value->getId() : $_value;
-				}*/
 				$bind_ar[":$_key"] = $_value;
 				if($_key == $id_field){ continue; }
 				if(!isset($options["do_not_escape"]["$_key"])){
@@ -1529,7 +1526,7 @@ class DbMole{
 	 * @return string SQL reprezentation of given value
 	 */
 	function escapeValue4Sql($value){
-			if(is_object($value)){ $value = $value->getId(); }
+			$this->_scalarizeValue($value);
 			if($value===null)
 					return 'NULL';
 			if(is_float($value))
@@ -1577,9 +1574,7 @@ class DbMole{
 	 * @ignore
 	 */
 	function _normalizeBindAr(&$bind_ar){
-		foreach($bind_ar as $k => &$value){
-			if(is_object($value)){ $value = $value->getId(); }
-		}
+		$this->_scalarizeValue($bind_ar);
 	}
 	
 	/**
@@ -1823,6 +1818,21 @@ class DbMole{
 			case "string":
 				$var = (string)$var;
 				return;
+		}
+	}
+
+	protected function _scalarizeValue(&$var){
+		if(is_null($var)){
+			return;
+		}
+		if(is_array($var)){
+			foreach($var as &$item){
+				$this->_scalarizeValue($item);
+			}
+			return;
+		}
+		if(is_object($var)){
+			$var = method_exists($var,"getId") ? $var->getId() : "$var";
 		}
 	}
 }

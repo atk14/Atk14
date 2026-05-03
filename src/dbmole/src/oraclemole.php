@@ -85,10 +85,8 @@ class OracleMole extends DbMole{
 		$bind_ar = &$this->_BindAr;
 		$options = &$this->_Options;
 
+		$this->_scalarizeValue($bind_ar);
 		foreach($bind_ar as &$value){
-			if(is_object($value)){
-				$value = $value->getId();
-			}
 			if(is_bool($value)){
 				$value = $this->escapeBool4Sql($value);
 			}	
@@ -152,7 +150,6 @@ class OracleMole extends DbMole{
 		$lobs = [];
 		if($options["bind_values"]){
 			foreach(array_keys($bind_ar) as $key){
-				//if(is_object($bind_ar[$key])){ $bind_ar[$key] = $bind_ar[$key]->getId(); }
 				// bindovani large objektu
 				// v podmince je zamerne $_typ=, aby doslo k priprazeni spravneho typu
 				if((in_array($key,$options["blobs"]) && $_type=OCI_B_BLOB) || (in_array($key,$options["clobs"]) && $_type=OCI_B_CLOB)){

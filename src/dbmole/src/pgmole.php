@@ -189,7 +189,7 @@ class PgMole Extends DbMole{
 		$bind_keys = array_keys($bind_ar);
 		$positional_values = array_values($bind_ar);
 		$positional_values = array_map(function($value){
-			if(is_object($value)){ $value = $value->getId(); }
+			$this->_scalarizeValue($value);
 			if(is_null($value)){ return $value; }
 			if(is_bool($value)){ return $value ? "t" : "f"; }
 			return (string)$value;
