@@ -68,6 +68,11 @@ For selecting single values, there are also methods:
     $row = $dbmole->selectRow("SELECT id,title,author FROM books WHERE id=:id",[":id" => 123]);
     $dbmole->doQuery("UPDATE books SET title=:title, author=:author WHERE id=:id",[":id" => 123,":title" => "Good Reading", ":author" => "Samantha Doe"]);
 
+Objects can be used as bind values. If the object has a `getId()` method, its return value is used; otherwise the object is cast to string.
+
+    $dbmole->selectRow("SELECT * FROM books WHERE id=:id",[":id" => $book]);
+    $dbmole->doQuery("UPDATE books SET author_id=:author WHERE id=:id",[":author" => $author, ":id" => $book]);
+
 #### Limiting rows:
 
     $rows = $dbmole->selectRows("SELECT * FROM employees",[],["limit" => "10", "offset" => 0]);

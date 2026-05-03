@@ -322,6 +322,19 @@ class TcDbmole extends TcBase{
 			":article" => $article,
 		]);
 		$this->assertEquals(0,$cnt);
+
+		// binding an object without getId() method
+
+		$this->assertTrue($dbmole->insertIntoTable("test_table",[
+			"text" => "Search here",
+		]));
+
+		$str = new StringyObject("Search here");
+		$cnt = $dbmole->selectInt("SELECT COUNT(*) FROM test_table WHERE text=:str", [
+			":str" => $str,
+		]);
+		$this->assertEquals(1,$cnt);
+
 	}
 
 
