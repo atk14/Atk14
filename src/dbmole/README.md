@@ -117,6 +117,36 @@ When an error occurs on SQL level, DbMole call the specified callback.
       exit(1);
     }
 
+#### Connecting to more databases
+
+Specify all connections in the dbmole_connection function:
+
+    function dbmole_connection($dbmole){
+      $database_type = $dbmole->getDatabaseType();
+      $config = $dbmole->getConfigurationName();
+
+      switch($database_type){
+        case "postgresql":
+          if($config=="default"){
+            return pg_connect("dbname=testing_database host=localhost user=test password=test123");
+          }
+          if($config=="import"){
+            return pg_connect("dbname=import_database host=localhost user=import password=import11122");
+          }
+          break;
+
+        case "mysql":
+          return mysqli_connect("127.0.0.1", "username", "password", "database", 3306);
+          break;
+      }
+    }
+
+Instantiating:
+
+    $dbmole = PgMole::GetInstance(); // same as PgMole::GetInstance("default")
+    $dbmole_import = PgMole::GetInstance("import");
+    $dbmole_mysql = MysqlMole::GetInstance();
+
 Installation
 ------------
 
