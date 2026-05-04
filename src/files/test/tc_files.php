@@ -361,7 +361,11 @@ class TcFiles extends TcBase{
 				"mime_types" => array("video/mp4"),
 			),
 			array(
-				"urls" => array("https://filesamples.com/samples/video/mkv/sample_960x540.mkv"),
+				"urls" => array(
+					//"https://filesamples.com/samples/video/mkv/sample_960x540.mkv",
+					//"https://getsamplefiles.com/download/mkv/sample-2.mkv",
+					"https://test-videos.co.uk/vids/jellyfish/mkv/1080/Jellyfish_1080_10s_1MB.mkv",
+				),
 				"mime_types" => array("video/x-matroska"),
 			),
 			array(
@@ -383,9 +387,9 @@ class TcFiles extends TcBase{
 				$filename = $url;
 				$filename = preg_replace('/\?.*$/','',$filename);
 				$filename = preg_replace('/^.*\//','',$filename);
-				$uf = new UrlFetcher($url);
-				$this->assertTrue($uf->found(),"$url");
-				$file = Files::WriteToTemp($uf->getContent());
+				$content = file_get_contents($url);
+				$this->assertTrue($content !== false, "NOT FOUND: $url");
+				$file = Files::WriteToTemp($content);
 				$mime_type = Files::DetermineFileType($file,array("original_filename" => $filename));
 				$this->assertTrue(in_array($mime_type,$mime_types),"$url - $mime_type not in [".join(", ",$mime_types)."]");
 				unlink($file);

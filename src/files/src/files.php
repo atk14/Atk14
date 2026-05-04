@@ -26,7 +26,7 @@ if(defined("FILES_DEFAULT_DIR_PERMS")){
  */
 class Files{
 
-	const VERSION = "1.6.6";
+	const VERSION = "1.6.7";
 
 	static protected $_DefaultFilePerms = 0666;
 
@@ -869,12 +869,12 @@ class Files{
 			$mime_type = finfo_file($finfo, $filename);
 		}else{
 			$command = "file -i ".escapeshellarg($filename);
-			$out = `$command`;
+			$out = shell_exec($command);
 			// /tmp/xxsEEws: text/plain charset=us-ascii
 			// -> text/plain
 			// ya.gif: image/gif; charset=binary
 			// -> image/gif
-			if(preg_match("/^.*?:\\s*([^\\s]+\\/[^\\s;]+)/",$out,$matches)){
+			if(preg_match("/^.*?:\\s*([^\\s]+\\/[^\\s;]+)/",(string)$out,$matches)){
 				$mime_type = $matches[1];
 			}
 		}
