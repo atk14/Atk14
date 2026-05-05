@@ -1,7 +1,7 @@
 <?php
 class TcFiles extends TcBase{
 
-	function test_get_file_content(){
+	function test_GetFileContent(){
 		$content = Files::GetFileContent("test.txt",$err,$err_str);
 		$this->assertFalse($err);
 		$this->assertEquals("Hello from the Earth!\n",$content); // nechapu ten \n
@@ -14,10 +14,33 @@ class TcFiles extends TcBase{
 		$this->assertTrue($err);
 		$this->assertEquals("non_existing_file.txt is not a file",$err_str);
 		$this->assertTrue($content === null);
-
 	}
 
-	function test_get_image_size(){
+	function test_CopyFile(){
+		$to_file = TEMP . "/outfile";
+		if(file_exists($to_file)){ unlink($to_file); }
+
+		$this->assertFalse(file_exists($to_file));
+
+		$bytes = Files::CopyFile("hlava.jpg",$to_file,$err,$err_str);
+		$this->assertFalse($err);
+		$this->assertEquals("",$err_str);
+		$this->assertEquals(26130,$bytes);
+		clearstatcache();
+		$this->assertEquals("666",substr(decoct(fileperms($to_file)),-3));
+
+		$bytes = Files::CopyFile("non_existing_file.txt",$to_file,$err,$err_str);
+		$this->assertTrue($err);
+		$this->assertEquals("input file non_existing_file.txt doesn't exist",$err_str);
+		$this->assertEquals(0,$bytes);
+
+		$bytes = @Files::CopyFile("hlava.jpg","/non_existing_dir/outfile",$err,$err_str);
+		$this->assertTrue($err);
+		$this->assertEquals("can't copy file",$err_str);
+		$this->assertEquals(0,$bytes);
+	}
+
+	function test_GetImageSize(){
 		$gd_info = gd_info();
 
 		list($width,$height) = Files::GetImageSize("hlava.jpg",$err,$err_str);
@@ -63,7 +86,7 @@ class TcFiles extends TcBase{
 		$this->assertEquals(448,$height);
 	}
 
-	function test_deterine_file_type(){
+	function test_DetermineFileType(){
 		$this->assertEquals("image/jpeg",Files::DetermineFileType("hlava.jpg"));
 		$this->assertEquals("text/plain",Files::DetermineFileType("test.txt"));
 
@@ -77,9 +100,99 @@ class TcFiles extends TcBase{
 		$this->assertEquals("jpg",$preferred_suffix);
 		$this->assertEquals("image/jpeg",Files::DetermineFileType($tmp_file,array("original_filename" => "image.bmp")));
 		$this->assertEquals("jpg",$preferred_suffix);
+
+		// http://en.wikipedia.org/wiki/Internet_media_type
+
+		$this->assertEquals(null,Files::DetermineFileType("non_existing_file.dat"));
+		
+		foreach(array(
+			"jpg" => "image/jpeg",
+			"png" => "image/png",
+			"gif" => "image/gif",
+			"tiff" => "image/tiff",
+			"bmp" => "image/bmp",
+			"webp" => "image/webp",
+			"avif" => "image/avif",
+
+			"eps" => "application/postscript",
+			"ai" => "application/postscript",
+			"svg" => "image/svg+xml",
+
+			"odt" => "application/vnd.oasis.opendocument.text",
+			"ods" => "application/vnd.oasis.opendocument.spreadsheet",
+
+			"xls" => "application/vnd.ms-excel",
+			"doc" => "application/msword",
+			"ppt" => "application/vnd.ms-powerpoint",
+			"xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+			"csv" => "text/csv",
+
+			"zip" => "application/zip",
+
+			"docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+
+			"mp3" => "audio/mpeg",
+ 		) as $file => $mime_type){
+			$file = __DIR__."/sample_files/sample.$file";
+			$this->assertEquals($mime_type,Files::DetermineFileType($file),$file);
+		}
+
+		foreach(array(
+			array(
+				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.mov"),
+				"mime_types" => array("video/quicktime"),
+			),
+			array(
+				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.wmv"),
+				"mime_types" => array("video/x-ms-asf"),
+			),
+			array(
+				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.avi"),
+				"mime_types" => array("video/x-msvideo"),
+			),
+			array(
+				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.mp4"),
+				"mime_types" => array("video/mp4"),
+			),
+			array(
+				"urls" => array(
+					//"https://filesamples.com/samples/video/mkv/sample_960x540.mkv",
+					//"https://getsamplefiles.com/download/mkv/sample-2.mkv",
+					"https://test-videos.co.uk/vids/jellyfish/mkv/1080/Jellyfish_1080_10s_1MB.mkv",
+				),
+				"mime_types" => array("video/x-matroska"),
+			),
+			array(
+				"urls" => array(
+					"https://github.com/appium-boneyard/sample-code/blob/master/sample-code/apps/ContactManager/ContactManager.apk?raw=true",
+					"https://github.com/katalon-studio-samples/android-mobile-tests/blob/master/androidapp/APIDemos.apk?raw=true",
+					"https://github.com/appium/sample-apps/blob/master/pre-built/selendroid-test-app.apk?raw=true"
+				),
+				"mime_types" => array("application/vnd.android.package-archive"),
+			),
+			array(
+				"urls" => array("https://github.com/MeetMe/AppRate/blob/master/AppRateDownloads/AppRate_0.8.jar?raw=true"),
+				"mime_types" => array("application/java-archive"),
+			)
+		) as $item){
+			$urls = $item["urls"];
+			$mime_types = $item["mime_types"];
+			foreach($urls as $url){
+				$filename = $url;
+				$filename = preg_replace('/\?.*$/','',$filename);
+				$filename = preg_replace('/^.*\//','',$filename);
+				$content = file_get_contents($url);
+				$this->assertTrue($content !== false, "NOT FOUND: $url");
+				$file = Files::WriteToTemp($content);
+				$mime_type = Files::DetermineFileType($file,array("original_filename" => $filename));
+				$this->assertTrue(in_array($mime_type,$mime_types),"$url - $mime_type not in [".join(", ",$mime_types)."]");
+				unlink($file);
+			}
+		}
 	}
 
-	function test_write_to_temp(){
+	function test_WriteToCacheFile(){
 		$content = Files::GetFileContent("hlava.jpg");
 		$tmp_filename = Files::WriteToTemp($content);
 		$this->assertTrue(file_exists($tmp_filename));
@@ -93,15 +206,38 @@ class TcFiles extends TcBase{
 
 		Files::Unlink($tmp_filename);
 		Files::Unlink($tmp_filename2);
+
+		// --
+
+		$ret = Files::WriteToCacheFile("temp/cache_file","Cache_Content",$err,$err_str);
+		$this->assertFalse($err);
+		$this->assertEquals(null,$err_str);
+		$this->assertEquals(13,$ret);
+		
+		$this->assertTrue(file_exists("temp/cache_file"));
+		$this->assertEquals("Cache_Content",Files::GetFileContent("temp/cache_file"));
+
+		//
+
+		$ret = @Files::WriteToCacheFile("non_existing_dir/cache_file","Cache_Content",$err,$err_str);
+		$this->assertTrue($err);
+		$this->assertStringContains("failed to open file for writing",$err_str);
+		$this->assertEquals(0,$ret);
+
+		$this->assertFalse(file_exists("non_existing_dir/cache_file"));
+
+		// Cleaning
+
+		unlink("temp/cache_file");
 	}
 
-	function test_get_temp_dir(){
+	function test_GetTempDir(){
 		$tmp = Files::GetTempDir();
 
 		$this->assertEquals(TEMP,$tmp);
 	}
 
-	function test_get_temp_filename(){
+	function test_GetTempFilename(){
 		$t1 = Files::GetTempFilename();
 		$t2 = Files::GetTempFilename();
 		$t3 = Files::GetTempFilename("pdf_creator_");
@@ -124,7 +260,7 @@ class TcFiles extends TcBase{
 		$this->assertStringContains("bad_joke",$t);
 	}
 
-	function test_move_file(){
+	function test_MoveFile(){
 		$dir1 = TEMP."/dir_1/";
 		$dir2 = TEMP."/dir_2";
 		$dir3 = TEMP."/dir_3";
@@ -265,7 +401,7 @@ class TcFiles extends TcBase{
 			"/path/to//../tmp/images/..//attachments/" => "/path/tmp/attachments/",
 			"/path/to//..///../tmp/images/..//attachments/" => "/tmp/attachments/",
 		) as $filename => $normalized){
-			$this->assertEquals($normalized,Files::_NormalizeFilename($filename));
+			$this->assertEquals($normalized,FilesProxy::NormalizeFilename($filename));
 		}
 	}
 
@@ -300,99 +436,6 @@ class TcFiles extends TcBase{
 		$out = Files::MkdirForFile($filename,$error);
 		$this->assertEquals(0,$out);
 		$this->assertEquals(false,$error);
-	}
-
-	function test_DetermineFileType(){
-
-		// http://en.wikipedia.org/wiki/Internet_media_type
-
-		$this->assertEquals(null,Files::DetermineFileType("non_existing_file.dat"));
-		
-		foreach(array(
-			"jpg" => "image/jpeg",
-			"png" => "image/png",
-			"gif" => "image/gif",
-			"tiff" => "image/tiff",
-			"bmp" => "image/bmp",
-			"webp" => "image/webp",
-			"avif" => "image/avif",
-
-			"eps" => "application/postscript",
-			"ai" => "application/postscript",
-			"svg" => "image/svg+xml",
-
-			"odt" => "application/vnd.oasis.opendocument.text",
-			"ods" => "application/vnd.oasis.opendocument.spreadsheet",
-
-			"xls" => "application/vnd.ms-excel",
-			"doc" => "application/msword",
-			"ppt" => "application/vnd.ms-powerpoint",
-			"xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-
-			"csv" => "text/csv",
-
-			"zip" => "application/zip",
-
-			"docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-
-			"mp3" => "audio/mpeg",
- 		) as $file => $mime_type){
-			$file = __DIR__."/sample_files/sample.$file";
-			$this->assertEquals($mime_type,Files::DetermineFileType($file),$file);
-		}
-
-		foreach(array(
-			array(
-				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.mov"),
-				"mime_types" => array("video/quicktime"),
-			),
-			array(
-				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.wmv"),
-				"mime_types" => array("video/x-ms-asf"),
-			),
-			array(
-				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.avi"),
-				"mime_types" => array("video/x-msvideo"),
-			),
-			array(
-				"urls" => array("https://github.com/projectivetech/media-samples/raw/master/sample.mp4"),
-				"mime_types" => array("video/mp4"),
-			),
-			array(
-				"urls" => array(
-					//"https://filesamples.com/samples/video/mkv/sample_960x540.mkv",
-					//"https://getsamplefiles.com/download/mkv/sample-2.mkv",
-					"https://test-videos.co.uk/vids/jellyfish/mkv/1080/Jellyfish_1080_10s_1MB.mkv",
-				),
-				"mime_types" => array("video/x-matroska"),
-			),
-			array(
-				"urls" => array(
-					"https://github.com/appium-boneyard/sample-code/blob/master/sample-code/apps/ContactManager/ContactManager.apk?raw=true",
-					"https://github.com/katalon-studio-samples/android-mobile-tests/blob/master/androidapp/APIDemos.apk?raw=true",
-					"https://github.com/appium/sample-apps/blob/master/pre-built/selendroid-test-app.apk?raw=true"
-				),
-				"mime_types" => array("application/vnd.android.package-archive"),
-			),
-			array(
-				"urls" => array("https://github.com/MeetMe/AppRate/blob/master/AppRateDownloads/AppRate_0.8.jar?raw=true"),
-				"mime_types" => array("application/java-archive"),
-			)
-		) as $item){
-			$urls = $item["urls"];
-			$mime_types = $item["mime_types"];
-			foreach($urls as $url){
-				$filename = $url;
-				$filename = preg_replace('/\?.*$/','',$filename);
-				$filename = preg_replace('/^.*\//','',$filename);
-				$content = file_get_contents($url);
-				$this->assertTrue($content !== false, "NOT FOUND: $url");
-				$file = Files::WriteToTemp($content);
-				$mime_type = Files::DetermineFileType($file,array("original_filename" => $filename));
-				$this->assertTrue(in_array($mime_type,$mime_types),"$url - $mime_type not in [".join(", ",$mime_types)."]");
-				unlink($file);
-			}
-		}
 	}
 
 	function test_RecursiveUnlinkDir(){
@@ -639,26 +682,25 @@ class TcFiles extends TcBase{
 		unlink($file);
 	}
 
-	function test_WriteToCacheFile(){
-		$ret = Files::WriteToCacheFile("temp/cache_file","Cache_Content",$err,$err_str);
-		$this->assertFalse($err);
-		$this->assertEquals(null,$err_str);
-		$this->assertEquals(13,$ret);
-		
-		$this->assertTrue(file_exists("temp/cache_file"));
-		$this->assertEquals("Cache_Content",Files::GetFileContent("temp/cache_file"));
+	function test_IsReadableAndWritable(){
+		$non_readable_file = TEMP."/non_readable_file";
+		if(file_exists($non_readable_file)){
+			$_old_umask = umask(0);
+			$_stat = chmod($non_readable_file,644);
+			umask($_old_umask);
+			unlink($non_readable_file);
+		}
 
-		//
+		$this->assertFalse(file_exists($non_readable_file));
 
-		$ret = @Files::WriteToCacheFile("non_existing_dir/cache_file","Cache_Content",$err,$err_str);
-		$this->assertTrue($err);
-		$this->assertStringContains("failed to open file for writing",$err_str);
-		$this->assertEquals(0,$ret);
+		copy("hlava.jpg",$non_readable_file);
+		$this->assertTrue(file_exists(TEMP."/non_readable_file"));
+		$_old_umask = umask(0);
+		$_stat = chmod($non_readable_file,0);
+		umask($_old_umask);
 
-		$this->assertFalse(file_exists("non_existing_dir/cache_file"));
-
-		// Cleaning
-
-		unlink("temp/cache_file");
+		$this->assertEquals(1,Files::IsReadableAndWritable("hlava.jpg"));
+		$this->assertEquals(0,Files::IsReadableAndWritable($non_readable_file));
+		$this->assertEquals(0,Files::IsReadableAndWritable("non_existing_file.txt"));
 	}
 }

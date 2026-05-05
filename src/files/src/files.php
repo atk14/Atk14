@@ -26,7 +26,7 @@ if(defined("FILES_DEFAULT_DIR_PERMS")){
  */
 class Files{
 
-	const VERSION = "1.6.7";
+	const VERSION = "1.6.10";
 
 	static protected $_DefaultFilePerms = 0666;
 
@@ -151,9 +151,6 @@ class Files{
 		if(mkdir($dirname,self::GetDefaultDirPerms(),true)){
 			$out = 1;
 		}else{
-			if(preg_match('/^5\.3\./',phpversion())){
-				return 1; // HACK for PHP5.3 - to be removed
-			}
 			$error = true;
 			$error_str = "can't create directory $dirname";
 		}
@@ -199,36 +196,26 @@ class Files{
 
 		settype($from_file,"string");
 		settype($to_file,"string");
-		
-		$in = fopen($from_file,"r");
-		if(!$in){
+
+		if(!file_exists($from_file)){
 			$error = true;
-			$error_str = "can't open input file for reading";
-			return $bytes;
-		}
-		$__target_file_exists = false;
-		if(file_exists($to_file)){
-			$__target_file_exists = true;
-		}
-		$out = fopen($to_file,"w");
-		if(!$out){
-			$error = true;
-			$error_str = "can't open output file for writing";
+			$error_str = "input file $from_file doesn't exist";
 			return $bytes;
 		}
 
-		$buffer = "";
-		while(!feof($in) && $in){
-			$buffer = fread($in,4096);
-			fwrite($out,$buffer,strlen($buffer));
-			$bytes += strlen($buffer);
+		$__target_file_exists = file_exists($to_file);
+
+		$stat = copy($from_file, $to_file);
+
+		if(!$stat){
+			$error = true;
+			$error_str = "can't copy file";
+			return $bytes;
 		}
 
+		$bytes = filesize($to_file);
 		
-		fclose($in);
-		fclose($out);
-		
-		//menit mod souboru, jenom, kdyz soubor drive neexistoval
+		// change file permissions only when the file didn't exist before
 		if(!$__target_file_exists){
 			$_old_umask = umask(0);
 			$_stat = chmod($to_file,self::GetDefaultFilePerms());
@@ -302,7 +289,7 @@ class Files{
 		}
 		fclose($f);
 
-		//menit mod souboru, jenom, kdyz soubor drive neexistoval
+		// change file permissions only when the file didn't exist before
 		if(!$_file_exists){
 			$_old_umask = umask(0);
 			$_stat = chmod($file,self::GetDefaultFilePerms());
@@ -339,6 +326,7 @@ class Files{
 		}
 		self::MoveFile($cache_file,$file,$error,$error_str);
 		if($error){
+			Files::Unlink($cache_file);
 			return 0;
 		}
 		return $ret;
@@ -408,7 +396,7 @@ class Files{
 		if(fileowner($filename)!=posix_getuid() && !fileowner($filename)){
 			return false;
 		}
-		// nasl. podminka byla vyhozena - uzivatel prece muze uploadnout prazdny soubor...
+		// the following condition was removed — the user can upload an empty file...
 		//if(filesize($filename)==0){
 		//	return false;
 		//}
@@ -519,7 +507,7 @@ class Files{
 	 * @internal We should consider making this method private
 	 *
 	 */
-	static function _RecursiveUnlinkDir($dir,&$error,&$error_str){
+	static protected function _RecursiveUnlinkDir($dir,&$error,&$error_str){
 		settype($dir,"string");
 		
 		$out = 0;
@@ -551,7 +539,7 @@ class Files{
 			}
 			if(is_dir($dir.$item)){
 				$out += Files::_RecursiveUnlinkDir($dir.$item,$error,$error_str);
-				//2005-10-21: nasledujici continue tady chybel, skript se proto chybne pokousel volat fci unlink na adresar
+				//2005-10-21: the continue below was missing here; without it the code incorrectly tried to call unlink() on a directory
 				continue;
 			}
 			if($error){ break; }
@@ -599,7 +587,7 @@ class Files{
 		}
 
 		if(!is_readable($filename)){
-			$error = false;
+			$error = true;
 			$error_str = "file $filename is not readable";
 			return null;
 		}
@@ -607,24 +595,11 @@ class Files{
 		$filesize = filesize($filename);
 		if($filesize==0){ return ""; }
 
-		$f = fopen($filename,"r");
-		if(!$f){
-			$error = false;
-			$error_str = "can't open file $filename for reading";
-			return null;
-		}
-		$out = fread($f,$filesize);
-		fclose($f);
+		$out = file_get_contents($filename);
 
-		if(strlen($out)==0){
+		if($out===false){
 			$error = true;
 			$error_str = "can't read from file $filename";
-			return null;
-		}
-
-		if(strlen($out)!=$filesize){
-			$error = true;
-			$error_str = "can't read $filesize bytes from $filename (it was read ".strlen($out).")";
 			return null;
 		}
 
@@ -654,13 +629,24 @@ class Files{
 		$_UID_ = posix_getuid();
 		$_FILE_OWNER = fileowner($filename);
 		$_FILE_PERMS = fileperms($filename);
-		if(!(
-			(($_FILE_OWNER!=$_UID_) && (((int)$_FILE_PERMS&(int)bindec("110")))==(int)bindec("110")) ||
-			(($_FILE_OWNER==$_UID_) && (((int)$_FILE_PERMS&(int)bindec("110000000"))==(int)bindec("110000000")))
-		)){
-			return 0;
+
+		if($_FILE_OWNER === $_UID_){
+			// current user is the file owner — check owner r/w bits
+			return (($_FILE_PERMS & 0600) === 0600) ? 1 : 0;
 		}
-		return 1;
+
+		$_user_groups = posix_getgroups();
+		$_egid = posix_getegid();
+		if(!in_array($_egid,$_user_groups)){
+			$_user_groups[] = $_egid;
+		}
+		if(in_array(filegroup($filename),$_user_groups)){
+			// current user is a member of the file's group — check group r/w bits
+			return (($_FILE_PERMS & 0060) === 0060) ? 1 : 0;
+		}
+
+		// fall back to "other" r/w bits
+		return (($_FILE_PERMS & 0006) === 0006) ? 1 : 0;
 	}
 
 	/**
@@ -678,13 +664,9 @@ class Files{
 	 *
 	 */
 	static function GetImageSize($filename,&$error = null,&$error_str = null){
-		// preserve obsolete usage - first part
-		// TODO: to be removed
-		if(!class_exists("TypeError")){
-			// for PHP5
-			eval("class TypeError extends Exception { }");
-		}
 		$tmp_file_created = false;
+
+		// preserve obsolete usage - first part
 		try {
 			$file_exists = @file_exists($filename);
 		} catch ( TypeError $e ) {
@@ -748,7 +730,7 @@ class Files{
 			return null;
 		}
 		$out = Files::GetImageSize($filename,$error,$error_str);
-		Files::Unlink($filename,$error,$error_str);
+		Files::Unlink($filename);
 		return $out;
 	}
 
@@ -813,7 +795,7 @@ class Files{
 	 * @return string
 	 */
 	static function GetTempDir(){
-		$temp_dir = (defined("TEMP") && strlen("TEMP")) ? (string)TEMP : sys_get_temp_dir();
+		$temp_dir = (defined("TEMP") && strlen((string)constant("TEMP"))) ? (string)constant("TEMP") : sys_get_temp_dir();
 		if(!strlen($temp_dir)){
 			$temp_dir = "/tmp";
 		}
@@ -867,6 +849,7 @@ class Files{
 		}elseif(function_exists("finfo_open")){
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$mime_type = finfo_file($finfo, $filename);
+			finfo_close($finfo);
 		}else{
 			$command = "file -i ".escapeshellarg($filename);
 			$out = shell_exec($command);
@@ -965,8 +948,6 @@ class Files{
 	/**
 	 * Find files in the given directory according to a regular pattern and other criteria
 	 *
-	 * TODO: Currently only regular files are being found just in the given directory
-	 *
 	 *	$files = Files::FindFiles('./log/',array(
 	 * 		'pattern' => '/^.*\.(log|err)$/'
 	 *	));
@@ -1051,7 +1032,7 @@ class Files{
 	/**
 	 * $filename = Files::_NormalizeFilename("/path/to//project//../tmp//attachments//"); // "/path/to/tmp/attachments/"
 	 */
-	static function _NormalizeFilename($filename){
+	static protected function _NormalizeFilename($filename){
 		$_filename = "";
 		while(1){
 			$_filename = preg_replace('/[^\/]+\/+\.\.\//','/',$filename); // "/path/to/dir/../tmp/images/" -> "/path/to/tmp/images/"
@@ -1064,4 +1045,9 @@ class Files{
 
 		return $filename;
 	}
+}
+
+// For PHP 5.6
+if(!class_exists("TypeError",false)){
+	class TypeError extends Exception {}
 }

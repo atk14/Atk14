@@ -1,6 +1,21 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.6.10] - 2026-05-05
+
+* Fix for PHP5.6
+
+## [1.6.9] - 2026-05-05
+
+* Broken version 1.6.8 fixed
+
+## [1.6.8] - 2026-05-05
+
+* 1a61513 - Package is compatible with PHP>=5.6
+* 3544c93 - Method Files::WriteToCacheFile() fixed
+* c0200a8 - Method Files::IsReadableAndWritable() fixed
+* Some more fixes and refactoring
+
 ## [1.6.7] - 2026-05-04
 
 * 21f0e71 - The backtick operator replaced with shell_exec
