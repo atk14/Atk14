@@ -464,11 +464,7 @@ class XMole{
 			return null;
 		}
 		$xmole = $this->_new_instance();
-
-		if(!$xmole->parse($element_data["xml_source"])){
-			return null;
-		}
-
+		$xmole->inherit($element_data);
 		return $xmole;
 	}
 
@@ -539,7 +535,6 @@ class XMole{
 		for($i=0;$i<count($branches);$i++){
 			$xmole = $this->_new_instance();
 			if(!$xmole->inherit($branches[$i])){
-			//if(!$xmole->parse($branches[$i]["xml_source"])){
 				return null;
 			}
 			$out[] = $xmole;
