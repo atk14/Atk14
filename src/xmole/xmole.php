@@ -65,7 +65,7 @@ class XMole{
 		 * @access private
 		 * @var xml_parser
 		 */
-		var $_parser = null;
+		protected $_parser = null;
 		
 		/**
 		 * Input XML data.
@@ -77,7 +77,7 @@ class XMole{
 		 * @see XMole::parse()
 		 *
 		 */
-		var $_data = null;
+		protected $_data = null;
 
 		/**
 		 * Error flag.
@@ -87,7 +87,7 @@ class XMole{
 		 * @access private
 		 * @var boolean
 		 */
-		var $_error = false;
+		protected $_error = false;
 		
 		/**
 		 * Error description.
@@ -102,12 +102,12 @@ class XMole{
 		/**
 		 * @ignore Internal storage of xml data
 		 */
-		var $_data_store = array();
+		protected $_data_store = array();
 
 		/**
 		 * @ignore Internal storage of xml structure
 		 */
-		var $_xml_source_store = array();
+		protected $_xml_source_store = array();
 
 		/**
 		 * Input encoding
@@ -149,6 +149,8 @@ class XMole{
 		protected $_tree_references = array();
 
 		protected $_trim_data;
+
+		protected $_next_child_index;
 
 	/**
 	 * Creates new instance.
@@ -224,13 +226,23 @@ class XMole{
 		//die();
 
 		$this->_data_store = array();
+		$this->_xml_source_store = array();
 		$this->_tree = array();
 		
 		unset($this->_parser);
 		$this->_parser = xml_parser_create();
-		xml_set_object($this->_parser,$this);
-		xml_set_element_handler($this->_parser, "_startElement", "_endElement");
-		xml_set_character_data_handler($this->_parser, "_characterData");
+		if(PHP_VERSION_ID >= 80400){
+			xml_set_element_handler(
+				$this->_parser,
+				[$this, "_startElement"],
+				[$this, "_endElement"]
+			);
+			xml_set_character_data_handler($this->_parser, [$this, "_characterData"]);
+		}else{
+			xml_set_object($this->_parser,$this);
+			xml_set_element_handler($this->_parser, "_startElement", "_endElement");
+			xml_set_character_data_handler($this->_parser, "_characterData");
+		}
     xml_parser_set_option($this->_parser, XML_OPTION_CASE_FOLDING, false);
 
 		//automaticke zjisteni vstupniho kodovani
@@ -264,11 +276,15 @@ class XMole{
 			$this->_error = true;
 			$err_code = xml_get_error_code($this->_parser);
 			$this->_error_msg = $err_message = "XML parser error ($err_code): ".xml_error_string($err_code)." on line ".xml_get_current_line_number($this->_parser);
-			xml_parser_free($this->_parser);
+			if(PHP_VERSION_ID<80500){
+				xml_parser_free($this->_parser);
+			}
 			return false;
 		}
 
-		xml_parser_free($this->_parser);
+		if(PHP_VERSION_ID<80500){
+			xml_parser_free($this->_parser);
+		}
 
 		if(sizeof($this->_tree_references)>1){
 			// neco chybi do konce dokumentu...
@@ -327,7 +343,7 @@ class XMole{
 	 *
 	 * @ignore
 	 */
-	private function _set_translate(){
+	protected function _set_translate(){
 		$this->_translate=
 			isset($this->_input_encoding) && $this->_input_encoding!="" && 
 			isset($this->_output_encoding) && $this->_output_encoding!="" && 
@@ -425,7 +441,7 @@ class XMole{
 	/**
 	 * @ignore
 	 */
-	private function _get_first_matching_branch($path, $top, $tree) {
+	protected function _get_first_matching_branch($path, $top, $tree) {
 		$desired=$path[$top];
 		foreach($tree as $element){
 			if($element['element']==$desired){
@@ -475,7 +491,7 @@ class XMole{
 
 		//odseknuti posledniho lomitka,
 		//pokud se v ceste nachazi
-		if($path[strlen($path)-1]=="/"){
+		if(strlen($path)>0 && $path[strlen($path)-1]=="/"){
 		  $path = substr($path,0,strlen($path)-1);
 		}
 
@@ -495,7 +511,7 @@ class XMole{
 	/**
 	 * @ignore
 	 */
-	private function _get_all_matching_branches(&$out, $path, $top, $tree) {
+	protected function _get_all_matching_branches(&$out, $path, $top, $tree) {
 		$desired=$path[$top];
 		foreach($tree as $element){
 			if($element['element']==$desired){
@@ -551,6 +567,21 @@ class XMole{
 	function get_xmoles($path){ return $this->get_xmoles_by_all_matching_branches($path); }
 
 	/**
+	 * Get all direct children
+	 *
+	 * @return XMole[]
+	 */
+	function get_children(){
+		$out = array();
+		foreach($this->_tree[0]["children"] as $item){
+			$xmole = $this->_new_instance();
+			$xmole->parse($item["xml_source"]);
+			$out[] = $xmole;
+		}
+		return $out;
+	}
+
+	/**
 	 * Get XMole instance of first child element.
 	 *
 	 * Child elements are indexed starting from 0.
@@ -588,12 +619,18 @@ class XMole{
 	}
 
 	/**
-	 * Get name of the element
+	 * Get name of the root element
 	 *
 	 * @return string
 	 */
 	function get_root_name(){ return $this->_tree[0]["element"];		}
 
+	/**
+	 * Get attributes of the root element
+	 *
+	 * @return array
+	 */
+	function get_root_attributes(){ return $this->get_attributes("/"); }
 
 	/**
 	 * Returns data stored in element.
@@ -611,7 +648,7 @@ class XMole{
 	 */
 	function get_element_data($path = "/"){
 		if($_tree = $this->get_first_matching_branch($path)){
-			return isset($_tree[0]["data"]) ? $_tree[0]["data"] : $_tree["data"];
+			return $_tree["data"];
 		}
 	}
 
@@ -666,7 +703,7 @@ class XMole{
 		settype($element_path,"string");
 
 		if($_tree = $this->get_first_matching_branch($element_path)){
-			return isset($_tree[0]["attribs"]) ? $_tree[0]["attribs"] : $_tree["attribs"];
+			return $_tree["attribs"];
 		}
 	}
 
@@ -727,7 +764,7 @@ class XMole{
 	/**
 	 * @ignore
 	 */
-	private function _compare_xml_branch($that_branch,$this_branch){
+	protected function _compare_xml_branch($that_branch,$this_branch){
 		if(!(
 			$that_branch["element"]==$this_branch["element"] &&
 			$that_branch["attribs"]==$this_branch["attribs"] &&
@@ -770,7 +807,7 @@ class XMole{
 	 * @param string $current_path				aktualni cesta
 	 * @param array $xml_tree						vetev xml stromu
 	 */
-	private function _search_branch_by_path($wished_path,$current_path,&$xml_tree){
+	protected function _search_branch_by_path($wished_path,$current_path,&$xml_tree){
 		settype($wished_path,"string");
 		settype($current_path,"string");
 
@@ -820,7 +857,7 @@ class XMole{
 	 * @param array $xml_tree
 	 * @return array					pole $xml_tree
 	 */
-	private function _search_branches_by_path($wished_path,$current_path,&$xml_tree){
+	protected function _search_branches_by_path($wished_path,$current_path,&$xml_tree){
 		settype($wished_path,"string");
 		settype($current_path,"string");
 

@@ -1,6 +1,7 @@
 <?php
 // vim: set et:
 class tc_xmole extends tc_base{
+
 	var $_test_xml = '
 		<data>
 			<user type="admin">honza lenivy</user>
@@ -11,6 +12,7 @@ class tc_xmole extends tc_base{
 			</block>
 		</data>
 	';
+
   function test_basic_usage(){
     $xm = new XMole('
     <planets system="Solar">
@@ -145,7 +147,7 @@ class tc_xmole extends tc_base{
     $this->assertFalse(XMole::AreSame($people,$different_people));
   }
 
-  function test_get_root(){
+  function test_root_children(){
     $xmole = new XMole('
       <computers from="the begining" till="present">
         <computer
@@ -169,6 +171,10 @@ class tc_xmole extends tc_base{
       "from" => "the begining",
       "till" => "present"
     ),$xmole->get_attributes());
+    $this->assertEquals(array(
+      "from" => "the begining",
+      "till" => "present"
+    ),$xmole->get_root_attributes());
 
     $c1 = $xmole->get_child(0);
     $this->assertEquals("computer",$c1->get_root_name());
@@ -177,6 +183,12 @@ class tc_xmole extends tc_base{
       "model" => "Mato"
     ),$c1->get_attributes());
     $this->assertEquals("Nice compo",$c1->get_data());
+
+    $children = $xmole->get_children();
+    $this->assertEquals(3,sizeof($children));
+    $this->assertEquals("Mato",$children[0]->get_attribute("model"));
+    $this->assertEquals("520 STM",$children[1]->get_attribute("model"));
+    $this->assertEquals("Amiga 1200",$children[2]->get_attribute("model"));
   }
 
   function test_trim_data(){
