@@ -1,7 +1,7 @@
 <?php
 // otestuje funkcnost zkracenych nazvu metod...
 $src = Files::GetFileContent("tc_xmole.php");
-$src = strtr($src,array(
+$src = strtr($src,[
 	"tc_xmole" => "tc_shortcuts",
 	"get_element_data" => "get_data",
 	"get_attribute_value" => "get_attribute",
@@ -11,5 +11,5 @@ $src = strtr($src,array(
 	"?>" => "",
 	"<?" => "",
 	"?>" => ""
-));
+]);
 eval($src);

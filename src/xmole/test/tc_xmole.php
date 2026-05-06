@@ -33,12 +33,12 @@ class tc_xmole extends tc_base{
     $this->assertEquals("3rd",$xm->get_attribute("planets/earth","order"));
     $this->assertEquals("3rd",$xm->get_attribute("earth","order"));
 
-    $this->assertEquals(array("order" => "3rd"),$xm->get_attributes("/planets/earth"));
-    $this->assertEquals(array("order" => "3rd"),$xm->get_attributes("planets/earth"));
-    $this->assertEquals(array("order" => "3rd"),$xm->get_attributes("earth"));
+    $this->assertEquals(["order" => "3rd"],$xm->get_attributes("/planets/earth"));
+    $this->assertEquals(["order" => "3rd"],$xm->get_attributes("planets/earth"));
+    $this->assertEquals(["order" => "3rd"],$xm->get_attributes("earth"));
 
-    $this->assertEquals(array("system" => "Solar"),($xm->get_attributes()));
-    $this->assertEquals(array("system" => "Solar"),($xm->get_attributes("/")));
+    $this->assertEquals(["system" => "Solar"],($xm->get_attributes()));
+    $this->assertEquals(["system" => "Solar"],($xm->get_attributes("/")));
 
     $this->assertEquals("planets",$xm->get_root_name());
     $this->assertEquals("",$xm->get_data()); // korenovy elemnt <planets> neobsahuje zadna data
@@ -98,11 +98,11 @@ class tc_xmole extends tc_base{
     
     $xmoles = $xmole->get_xmoles_by_all_matching_branches("/nonexisting/branf");
     $this->assertTrue(is_array($xmoles));
-    $this->assertEquals(0,sizeof($xmoles));
+    $this->assertEquals(0,count($xmoles));
 
     $xmoles = $xmole->get_xmoles_by_all_matching_branches("/data/user");
     $this->assertTrue(is_array($xmoles));
-    $this->assertEquals(2,sizeof($xmoles));
+    $this->assertEquals(2,count($xmoles));
 
     $this->assertEquals("honza lenivy",$xmoles[0]->get_element_data("/user"));
     $this->assertEquals("pan vorel",$xmoles[1]->get_element_data("/user"));
@@ -167,25 +167,25 @@ class tc_xmole extends tc_base{
     $this->assertFalse($xmole->error());
 
     $this->assertEquals("computers",$xmole->get_root_name());
-    $this->assertEquals(array(
+    $this->assertEquals([
       "from" => "the begining",
       "till" => "present"
-    ),$xmole->get_attributes());
-    $this->assertEquals(array(
+    ],$xmole->get_attributes());
+    $this->assertEquals([
       "from" => "the begining",
       "till" => "present"
-    ),$xmole->get_root_attributes());
+    ],$xmole->get_root_attributes());
 
     $c1 = $xmole->get_child(0);
     $this->assertEquals("computer",$c1->get_root_name());
-    $this->assertEquals(array(
+    $this->assertEquals([
       "manufacturer" => "Statny majetok Zavadka",
       "model" => "Mato"
-    ),$c1->get_attributes());
+    ],$c1->get_attributes());
     $this->assertEquals("Nice compo",$c1->get_data());
 
     $children = $xmole->get_children();
-    $this->assertEquals(3,sizeof($children));
+    $this->assertEquals(3,count($children));
     $this->assertEquals("Mato",$children[0]->get_attribute("model"));
     $this->assertEquals("520 STM",$children[1]->get_attribute("model"));
     $this->assertEquals("Amiga 1200",$children[2]->get_attribute("model"));
@@ -198,7 +198,7 @@ class tc_xmole extends tc_base{
     $x = new XMole($xml);
     $this->assertEquals("ABC",$x->get_element_data("element"));
 
-    $x = new XMole($xml,array("trim_data" => false));
+    $x = new XMole($xml,["trim_data" => false]);
     $this->assertEquals(" ABC ",$x->get_element_data("element"));
 
     $x = new XMole();
@@ -212,12 +212,12 @@ class tc_xmole extends tc_base{
   }
 
   function test_new_instance(){
-    $xmole = new XMole();
+    $xmole = new XMoleProxy();
     $xmole->set_trim_data(false);
     $xmole->set_input_encoding("WINDOWS-1250");
     $xmole->set_output_encoding("UTF-8");
 
-    $x2 = $xmole->_new_instance();
+    $x2 = $xmole->new_instance();
     $this->assertFalse($x2->trim_data());
     $this->assertEquals("WINDOWS-1250",$x2->get_input_encoding());
     $this->assertEquals("UTF-8",$x2->get_output_encoding());

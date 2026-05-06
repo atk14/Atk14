@@ -10,7 +10,7 @@ require_once("../../files/load.php");
 require_once("../../http/load.php");
 require_once("../../functions.php");
 require_once("../load.php");
-require_once("../../xmole/xmole.php");
+require_once("../../xmole/load.php");
 require_once("./custom_fields/url_field.php");
 require_once("../../translate/load.php");
 require_once("../../string4/load.php");

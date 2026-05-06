@@ -1,2 +1,2 @@
 <?php
-require_once(dirname(__FILE__)."/xmole.php");
+require_once(__DIR__ . "/src/xmole.php");
