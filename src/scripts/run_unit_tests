@@ -40,6 +40,9 @@
  */
 error_reporting(255);
 
+$SCRIPT = array_shift($argv);
+$SCRIPT_ABSOLUTE = __FILE__;
+
 if(preg_match("/^4/",phpversion())){
 	echo "Sorry! PHP4 is no more supported\n";
 	exit(1);
@@ -61,16 +64,22 @@ isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 isset($argv) || ($argv = array());
 $arguments = getopt("c",array("check-dependencies"));
 
-$SCRIPT = array_shift($argv);
-$SCRIPT_ABSOLUTE = __FILE__;
 $DIR = "";
 $RUN_TESTS_ONLY = array();
 while($_a = array_shift($argv)){
 	if(is_dir($_a)){ $DIR = $_a; continue; }
+	if(preg_match('#(.*/)([^/]+$)#',$_a,$_m)){
+		$DIR = $_m[1];
+		$_a = $_m[2];
+	}
 	$RUN_TESTS_ONLY[] = $_a;
 }
 if($DIR){
 	$DIR = preg_replace('/([^\/])$/','\1/',$DIR);
+	if(!is_dir($DIR)){
+		echo "Directory $DIR does not exist\n";
+		exit(1);
+	}
 	chdir($DIR);
 }
 
