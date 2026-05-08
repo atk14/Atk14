@@ -340,11 +340,19 @@ class Atk14Utils{
 	 * @return string joined attributes
 	 */
 	static function StringToOptions($options){
-		static $placeholder;
+		static $placeholder,$cache = [];
+
 		if(!$placeholder){ $placeholder = "~X".uniqid()."X~"; }
 
 		if(is_array($options)){ return $options; }
-		if(trim($options)==""){ return array(); }
+		$options = trim((string)$options);
+		if($options===""){ return array(); }
+
+		$c_key = $options;
+
+		if(isset($cache[$c_key])){
+			return $cache[$c_key];
+		}
 
 		$options = strtr($options,array(
 			"\\," => "$placeholder-cm",
@@ -373,6 +381,8 @@ class Atk14Utils{
 			}
 			$options[$key] = $value;
 		}
+
+		$cache[$c_key] = $options;
 
 		return $options;
 	}
