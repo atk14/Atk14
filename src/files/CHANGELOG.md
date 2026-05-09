@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.6.11] - 2026-05-09
+
+* 563695a - Added public method Files::NormalizeFilename()
+
 ## [1.6.10] - 2026-05-05
 
 * Fix for PHP5.6

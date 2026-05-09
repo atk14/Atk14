@@ -401,7 +401,7 @@ class TcFiles extends TcBase{
 			"/path/to//../tmp/images/..//attachments/" => "/path/tmp/attachments/",
 			"/path/to//..///../tmp/images/..//attachments/" => "/tmp/attachments/",
 		) as $filename => $normalized){
-			$this->assertEquals($normalized,FilesProxy::NormalizeFilename($filename));
+			$this->assertEquals($normalized,Files::NormalizeFilename($filename));
 		}
 	}
 

@@ -26,7 +26,7 @@ if(defined("FILES_DEFAULT_DIR_PERMS")){
  */
 class Files{
 
-	const VERSION = "1.6.10";
+	const VERSION = "1.6.11";
 
 	static protected $_DefaultFilePerms = 0666;
 
@@ -118,7 +118,7 @@ class Files{
 		$error = false;
 		$error_str = "";
 
-		$dirname = self::_NormalizeFilename($dirname);
+		$dirname = self::NormalizeFilename($dirname);
 
 		if(is_dir($dirname)){ return $out; }
 
@@ -1030,9 +1030,9 @@ class Files{
 	}
 
 	/**
-	 * $filename = Files::_NormalizeFilename("/path/to//project//../tmp//attachments//"); // "/path/to/tmp/attachments/"
+	 * $filename = Files::NormalizeFilename("/path/to//project//../tmp//attachments//"); // "/path/to/tmp/attachments/"
 	 */
-	static protected function _NormalizeFilename($filename){
+	static function NormalizeFilename($filename){
 		$_filename = "";
 		while(1){
 			$_filename = preg_replace('/[^\/]+\/+\.\.\//','/',$filename); // "/path/to/dir/../tmp/images/" -> "/path/to/tmp/images/"
