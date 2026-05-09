@@ -6,13 +6,13 @@ class TcBase extends TcSuperBase{
 	}
 
 	function _remove_log_files(){
-		foreach(array(
+		foreach([
 			"default.log",
 			"cache_remover.log",
 			"import.log",
 			"another.log",
 			"special.log"
-		) as $f){
+		] as $f){
 			$filename = __DIR__."/log/$f";
 			if(file_exists($filename)){
 				unlink($filename);

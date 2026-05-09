@@ -11,19 +11,19 @@ class TcLogger extends TcBase{
 		$this->_test_log_file_creation(new Logger("cache_remover"),"cache_remover.log");
 
 		//
-		 
+
 		$this->_test_log_file_creation(new Logger("import_data"),"import.log");
 
 		//
 		$this->_test_log_file_creation(new Logger("special_robot"),"default.log");
-		$this->_test_log_file_creation(new Logger("special_robot",array("default_log_file" => __DIR__."/log/another.log")),"another.log");
+		$this->_test_log_file_creation(new Logger("special_robot",["default_log_file" => __DIR__."/log/another.log"]),"another.log");
 
-		$LOGGER_CONFIGURATION["special_robot"] = array(
+		$LOGGER_CONFIGURATION["special_robot"] = [
 			"log_file" => __DIR__."/log/special.log",
-		);
+		];
 
 		$this->_test_log_file_creation(new Logger("special_robot"),"special.log");
-		$this->_test_log_file_creation(new Logger("special_robot",array("default_log_file" => __DIR__."/log/another.log")),"special.log");
+		$this->_test_log_file_creation(new Logger("special_robot",["default_log_file" => __DIR__."/log/another.log"]),"special.log");
 
 		//
 
@@ -31,9 +31,9 @@ class TcLogger extends TcBase{
 
 		$this->assertFalse(file_exists($log_file));
 
-		$logger = new Logger("robot",array(
+		$logger = new Logger("robot",[
 			"log_to_stdout" => true,
-		));
+		]);
 		$logger->info("TEST");
 		ob_start();
 		$logger->flushAll();
@@ -41,10 +41,10 @@ class TcLogger extends TcBase{
 		$this->assertFalse(file_exists($log_file));
 		$this->assertStringContains("TEST",$content);
 
-		$logger = new Logger("robot",array(
+		$logger = new Logger("robot",[
 			"log_to_stdout" => true,
 			"log_to_file" => true,
-		));
+		]);
 		$logger->info("TST2");
 		ob_start();
 		$logger->flushAll();
@@ -54,10 +54,10 @@ class TcLogger extends TcBase{
 
 		unlink($log_file);
 
-		$logger = new Logger("robot",array(
+		$logger = new Logger("robot",[
 			"log_to_stdout" => false,
 			"log_to_file" => true,
-		));
+		]);
 		$logger->info("TST3");
 		ob_start();
 		$logger->flushAll();
@@ -78,9 +78,9 @@ class TcLogger extends TcBase{
 		$logger = new Logger("import");
 		$this->assertEquals("import",$logger->get_prefix());
 
-		$logger = new Logger(array(
+		$logger = new Logger([
 			"prefix" => "robot"
-		));
+		]);
 		$this->assertEquals("robot",$logger->get_prefix());
 	}
 
@@ -101,43 +101,43 @@ class TcLogger extends TcBase{
 	}
 
 	function test__send_email_notification(){
-		$logger = new Logger(array("default_notify_email" => "samantha@doe.com"));
+		$logger = new LoggerProxy(["default_notify_email" => "samantha@doe.com"]);
 
 		$logger->flush();
-		$this->assertEquals(null,$logger->_send_email_notification());
+		$this->assertEquals(null,$logger->send_email_notification());
 
 		$logger->error("Something went wrong");
 		$logger->flush();
 
-		$mail_ar = $logger->_send_email_notification();
+		$mail_ar = $logger->send_email_notification();
 		$this->assertTrue(is_array($mail_ar));
 		$this->assertEquals("samantha@doe.com",$mail_ar["to"]);
 
 		// Logger without notification email address
-		$logger = new Logger(array("default_notify_email" => ""));
+		$logger = new LoggerProxy(["default_notify_email" => ""]);
 
 		$logger->error("Something went wrong");
 		$logger->flush();
 
-		$this->assertEquals(null,$logger->_send_email_notification());
+		$this->assertEquals(null,$logger->send_email_notification());
 	}
 
 	function test_get_notify_email(){
-		$logger = new Logger("test",array("default_notify_email" => "john@doe.com"));
+		$logger = new Logger("test",["default_notify_email" => "john@doe.com"]);
 		$this->assertEquals("john@doe.com",$logger->get_notify_email());
 
-		$logger = new Logger("import_articles",array("default_notify_email" => "john@doe.com"));
+		$logger = new Logger("import_articles",["default_notify_email" => "john@doe.com"]);
 		$this->assertEquals("import.notification@doe.com",$logger->get_notify_email()); // see $LOGGER_CONFIGURATION in initialize.php
 	}
 
 	function test_log_to_buffer(){
-		$logger = new Logger("test",array("log_to_file" => false));
+		$logger = new Logger("test",["log_to_file" => false]);
 		$this->assertNull($logger->buffer);
 
-		$logger = new Logger("test",array("log_to_file" => false, "log_to_buffer" => false));
+		$logger = new Logger("test",["log_to_file" => false, "log_to_buffer" => false]);
 		$this->assertNull($logger->buffer);
 
-		$logger = new Logger("test",array("log_to_file" => false, "log_to_buffer" => true));
+		$logger = new Logger("test",["log_to_file" => false, "log_to_buffer" => true]);
 		$this->assertNotNull($logger->buffer);
 		$this->assertTrue(is_a($logger->buffer,"StringBuffer"));
 
@@ -182,14 +182,15 @@ class TcLogger extends TcBase{
 
 		$this->assertStringContains("Hello",$logger->toString());
 		$this->assertStringNotContains("World",$logger->toString());
-		
+
 		$this->assertStringContains("Hello",(string)$logger);
 		$this->assertStringNotContains("World",(string)$logger);
 
 		$logger->info("World");
 
-		$this->assertStringContains("Hello",$logger->toString());
+		$this->assertStringContains("Hello\n",$logger->toString());
 		$this->assertStringContains("World",$logger->toString());
+		$this->assertStringNotContains("Hello\n\n",$logger->toString());
 
 		$logger->flush();
 

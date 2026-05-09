@@ -3,11 +3,13 @@ define("TEST",true);
 define("LOGGER_DEFAULT_LOG_FILE",__DIR__."/log/default.log");
 define("SENDMAIL_DO_NOT_SEND_MAILS",true);
 
-require("../logger.php");
+require("../load.php");
 require("../../files/load.php");
 require("../../stringbuffer/load.php");
 require("../../sendmail/load.php");
 require("../../translate/load.php");
+
+require("./logger_proxy.php");
 
 $LOGGER_CONFIGURATION = array(
 	"cache_remover" => array(

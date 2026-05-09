@@ -9,16 +9,18 @@ defined("LOGGER_DEFAULT_LOG_FILE") || define("LOGGER_DEFAULT_LOG_FILE","/tmp/log
 defined("LOGGER_DEFAULT_NOTIFY_EMAIL") || define("LOGGER_DEFAULT_NOTIFY_EMAIL",""); // "john@doe.com"
 
 /**
+ * The reasonable value can be 2 (warn), 3 (warn++) or 4 (error).
  *
- * 3 .. warn+
- * 4 .. error
+ * 99 means that no email notification will be sent.
  */
-defined("LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION") || define("LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION",30);
+defined("LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION") || define("LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION",99);
 
 /**
- * -1 .. debug 
+ * The reasonable value can be -1 (debug).
+ *
+ * -99 means that everything will be logged into a log file.
  */
-defined("LOGGER_NO_LOG_LEVEL") || define("LOGGER_NO_LOG_LEVEL",-30);
+defined("LOGGER_NO_LOG_LEVEL") || define("LOGGER_NO_LOG_LEVEL",-99);
 
 /**
  * Class for events logging.
@@ -55,11 +57,11 @@ defined("LOGGER_NO_LOG_LEVEL") || define("LOGGER_NO_LOG_LEVEL",-30);
  * ```
  * $logger->put_log("unknown exception occured", 150);
  * ```
- * Set constant LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION to specify from which priority messages are sent te email.
+ * Set constant LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION to specify from which priority messages are sent to email.
  *
  * In case we don't need START and STOP marks to show in the STDOUT, we create the logger instance this way:
  * ```
- * $logger = new Logger("application_mark",array("disable_start_and_stop_marks" => true));
+ * $logger = new Logger("application_mark",["disable_start_and_stop_marks" => true]);
  * ```
  *
  *
@@ -98,49 +100,46 @@ class Logger{
 	/**
 	 * Application mark
 	 *
-	 * @access private
+	 * @access protected
 	 * @var string
 	 */
-	var $_prefix = "";
+	protected $_prefix = "";
 
 	/**
 	 * Name of output file
 	 *
-	 * @access private
+	 * @access protected
 	 * @var string
 	 */
-	var $_log_file;
+	protected $_log_file;
 
 	/**
 	 * Default filename where to output log messages
-	 *
-	 * @todo should be private.
-	 * @todo correct tests in atk14/test/tc_robot.php. they use this property
 	 */
-	var $_default_log_file;
+	protected $_default_log_file;
 
 	/**
 	 * Internal events storage.
 	 *
-	 * @access private
+	 * @access protected
 	 * @var array
 	 */
-	var $_log_store = array();
+	protected $_log_store = [];
 
 	/**
-	 * @access private
+	 * @access protected
 	 */
-	var $_log_store_whole = array();
+	protected $_log_store_whole = [];
 
 	/**
-	 * @access private
+	 * @access protected
 	 */
-	var $_flushed_log_store = array();
+	protected $_flushed_log_store = [];
 	
 	/**
-	 * @access private
+	 * @access protected
 	 */
-	var $_silent_mode = true;
+	protected $_silent_mode = true;
 
 	/**
 	 * Flag to control logging of start and stop messages.
@@ -152,15 +151,15 @@ class Logger{
 	/**
 	 * Events with $_no_log_level priority and lower are not sent to output.
 	 *
-	 * @access private
+	 * @access protected
 	 */
-	var $_no_log_level;
+	protected $_no_log_level;
 
 	/**
 	 * Threshold to trigger sending notification
 	 *
 	 * When a log message has priority same or higher than $_notify_level, notification is sent to email
-	 * Defailt value is 30 or can be overridden with constant {@link LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION}
+	 * Default value is 99 (disabled) or can be overridden with constant {@link LOGGER_MIN_LEVEL_FOR_EMAIL_NOTIFICATION}
 	 *
 	 * @var integer
 	 */
@@ -180,33 +179,33 @@ class Logger{
 	protected $_default_notify_email;
 
 	/**
-	 * @access private
+	 * @access protected
 	 */
-	var $_notify_level_reached = false;
+	protected $_notify_level_reached = false;
 
 	/**
-	 * @access private
+	 * @access protected
 	 */
-	var $_my_pid;
+	protected $_my_pid;
 
 	/**
 	 * Timestamp of logging start
 	 *
 	 * Value is set during {@link prepared_log("start") prepared_log()} call
 	 *
-	 * @var internal
+	 * @var float|null
 	 */
 	protected $_started_at_time = null;
 
 	/**
-	 * @access private
+	 * @access protected
 	 */
-	var $_log_to_file = true;
+	protected $_log_to_file = true;
 
 	/**
-	 * @access private
+	 * @access protected
 	 */
-	var $_log_to_stdout = false;
+	protected $_log_to_stdout = false;
 
 
 	public $buffer = null;
@@ -228,7 +227,7 @@ class Logger{
 	 *
 	 * @var array
 	 */
-	protected $_levels = array(
+	protected $_levels = [
 		"-2" => "debug++",
 		"-1" => "debug",
 		"0" => "info",
@@ -238,20 +237,20 @@ class Logger{
 		"4" => "error",
 		"5" => "security",
 		"6" => "security++",
-	);
+	];
 
 	/**
 	 * Color hex code assigned to recognized error levels
 	 *
 	 * @var array
 	 */
-	protected $_colors = array(
+	protected $_colors = [
 		"debug" => "#555555",
 		"info" => "#000000",
 		"warn" => "#c66905",
 		"error" => "#d00b00",
 		"security" => "#d00b00",
-	);
+	];
 
 	/**
 	 * Constructor
@@ -265,14 +264,14 @@ class Logger{
 	 * - automatically_log_to_stdout_on_terminal (false) - log messages to a log file and also to STDOUT when we are on TERMINAL
 	 * - default_notify_email
 	 */
-	function __construct($prefix_or_options = "",$options = array()){
+	function __construct($prefix_or_options = "",$options = []){
 		if(is_array($prefix_or_options)){
 			$options = $prefix_or_options;
 		}else{
 			$options["prefix"] = $prefix_or_options;
 		}
 		
-		$options = array_merge(array(
+		$options += [
 			"prefix" => "",
 			"disable_start_and_stop_marks" => false,
 			"default_log_file" => LOGGER_DEFAULT_LOG_FILE,
@@ -281,13 +280,14 @@ class Logger{
 			"log_to_buffer" => false,
 			"automatically_log_to_stdout_on_terminal" => false,
 			"default_notify_email" => LOGGER_DEFAULT_NOTIFY_EMAIL,
-		),$options);
+		];
 
 		if(is_null($options["log_to_file"])){
 			$options["log_to_file"] = !$options["log_to_stdout"];
 		}
 
 		$this->_default_log_file = $options["default_log_file"];
+		$this->_default_notify_email = $options["default_notify_email"];
 
 		$this->_reset_configuration();
 		$this->_my_pid = posix_getpid();
@@ -298,7 +298,6 @@ class Logger{
 		$this->_log_to_buffer = $options["log_to_buffer"];
 		$this->_automatically_log_to_stdout_on_terminal = $options["automatically_log_to_stdout_on_terminal"];
 		$this->_disable_start_and_stop_marks = $options["disable_start_and_stop_marks"];
-		$this->_default_notify_email = $options["default_notify_email"];
 
 		if($this->_log_to_buffer){
 			$this->buffer = new StringBuffer();
@@ -310,29 +309,36 @@ class Logger{
 	 *
 	 * @return string
 	 */
-	function get_log_file(){ return $this->_log_file; }
+	public function get_log_file(){ return $this->_log_file; }
+
+	/**
+	 * Returns the default log file
+	 *
+	 * @return string
+	 */
+	public function get_default_log_file(){ return $this->_default_log_file; }
 
 	/**
 	 * Return log level priority
 	 *
 	 * @return integer
 	 */
-	function get_no_log_level(){ return $this->_no_log_level; }
+	public function get_no_log_level(){ return $this->_no_log_level; }
 
 	/**
 	 * Get level for sending email notifications
 	 *
 	 * @return integer
 	 */
-	function get_notify_level(){ return $this->_notify_level; }
+	public function get_notify_level(){ return $this->_notify_level; }
 
 	/**
 	 * Get email address for email notifications.
 	 *
 	 * @return string
 	 */
-	function get_notify_email(){
-		return strlen($this->_notify_email) ? $this->_notify_email : $this->_default_notify_email; 
+	public function get_notify_email(){
+		return strlen((string)$this->_notify_email) ? (string)$this->_notify_email : (string)$this->_default_notify_email;
 	}
 
 	/**
@@ -341,24 +347,24 @@ class Logger{
 	 * @internal This method also initializes $_notify_level, $_notify_email, $_no_log_level and $_log_file
 	 * @param string $prefix application_mark
 	 */
-	function set_prefix($prefix){
-		global $LOGGER_CONFIGURATION;
-		settype($prefix,"string");
+	public function set_prefix($prefix){
+		$prefix = (string)$prefix;
 		$this->_prefix = $prefix;
 
-		$this->_determin_configuration();
+		$this->_determine_configuration();
 	}
 
-	function get_prefix(){
+	public function get_prefix(){
 		return $this->_prefix;
 	}
 
 	/**
 	 * @ignore
 	 */
-	protected function _determin_configuration(){
+	protected function _determine_configuration(){
 		$this->_reset_configuration();
-		for($i=0;$i<=strlen($this->_prefix);$i++){
+		$prefix_len = strlen($this->_prefix);
+		for($i=0;$i<=$prefix_len;$i++){
 			$this->_find_configuration(substr($this->_prefix,0,$i)."*");
 		}
 		$this->_find_configuration($this->_prefix);
@@ -370,7 +376,7 @@ class Logger{
 	protected function _find_configuration($prefix){
 		global $LOGGER_CONFIGURATION;
 
-		if(!isset($LOGGER_CONFIGURATION)){ $LOGGER_CONFIGURATION = array();}
+		if(!isset($LOGGER_CONFIGURATION)){ $LOGGER_CONFIGURATION = [];}
 
 		if(isset($LOGGER_CONFIGURATION[$prefix])){
 
@@ -468,7 +474,7 @@ class Logger{
 	 * @return int 0
 	 */
 	function set_silent_mode($mode = true){
-		settype($mode,"boolean");
+		$mode = (bool)$mode;
 		$this->_silent_mode = $mode;
 		return 0;
 	}
@@ -482,12 +488,9 @@ class Logger{
 	 * @return int 0
 	 */
 	function flush(){
-		if(sizeof($this->_log_store)==0){ return 0; }
+		if(count($this->_log_store)==0){ return 0; }
 
 		$_log_file_existed = file_exists($this->_log_file);
-
-		if($this->_log_to_file){
-		}
 
 		if(!$this->_notify_level_reached){
 			foreach($this->_log_store as $rec){
@@ -519,7 +522,7 @@ class Logger{
 				if(!$fp){
 					$fp = fopen($this->_log_file,"a");
 				}
-				fwrite($fp,$str,strlen($str));
+				fwrite($fp,$str);
 			}
 
 			if($this->_automatically_log_to_stdout_on_terminal && !$this->_log_to_stdout && posix_isatty(STDOUT)){
@@ -538,7 +541,7 @@ class Logger{
 			chmod($this->_log_file,0666); 
 		}
 		
-		$this->_log_store = array();
+		$this->_log_store = [];
 
 		return 0;
 	}
@@ -549,11 +552,11 @@ class Logger{
 	protected function _build_message($rec,&$html_output = ""){
 		$html_output = "";
 
-		if(!is_bool(strpos($rec['log'],"\n"))){
+		if(strpos($rec['log'],"\n") !== false){
 			$_ar = explode("\n",$rec['log']);
 			$rec['log'] = "";
-			for($i=0;$i<sizeof($_ar);$i++){
-				$rec['log']	.= "\n\t".$_ar[$i];
+			foreach($_ar as $line){
+				$rec['log'] .= "\n\t".$line;
 			}
 		}
 
@@ -575,15 +578,14 @@ class Logger{
 	 * Flushes events to output and also to notify email.
 	 *
 	 * @return int 0
-	 * @todo some more info about notify emails
 	 */
 	function flush_all(){
 		$this->flush();
-		if($this->_notify_level_reached && $this->_notify_email!=""){
+		if($this->_notify_level_reached && $this->get_notify_email()!=""){
 			$this->_send_email_notification();
 		}
 		$this->_flushed_log_store = $this->_log_store_whole;
-		$this->_log_store_whole = array();
+		$this->_log_store_whole = [];
 		return 0;
 	}
 
@@ -653,17 +655,19 @@ class Logger{
 	 * @ignore
 	 */
 	protected function _put_log($log,$log_level = 0){
-		settype($log,"string");
+		$log = (string)$log;
 		$log_level = $this->level_to_int($log_level);
 
-		$rec = array(
+		$rec = [
 			"date" => date("Y-m-d H:i:s"),
 			"prefix" => $this->_prefix,
 			"log_level" => $log_level,
 			"log" => $log
-		);
+		];
 
 		$this->_log_store[] = $rec;
+
+		return $rec;
 	}
 
 	/**
@@ -674,7 +678,7 @@ class Logger{
 	 * @param string $prefix application_mark
 	 */
 	function start($prefix = "",$message = ""){
-		settype($prefix,"string");
+		$prefix = (string)$prefix;
 		if(strlen($prefix)>0){ $this->set_prefix($prefix); }
 		if(!$this->_disable_start_and_stop_marks){
 			$this->prepared_log("start",$message);
@@ -698,37 +702,38 @@ class Logger{
 	 *
 	 * Preferred methods to call are {@link start()} and {@link stop()}
 	 *
-	 * @todo explain @param $style
+	 * @param string $type "start" or "stop"
+	 * @param string $message default value is ""
 	 * @return int 0
 	 */
-	function prepared_log($style,$message = ""){
-		settype($style,"string");
-		switch(strtolower($style)){
+	function prepared_log($type,$message = ""){
+		$type = (string)$type;
+		$rec = null;
+		switch(strtolower($type)){
 			case "start":
 				$rec = $this->_put_log("START".($message ? ", $message" : ""));
 				$this->_started_at_time = $this->_get_microtime();
-				if(!$this->_silent_mode){
-					echo $this->_build_message($rec);
-				}
 				$this->flush();
 				break;
 			case "stop":
 				$_log = "STOP";
 				if(isset($this->_started_at_time)){
 					$_stopped = $this->_get_microtime();
-					$_runing_time = $_stopped - $this->_started_at_time;
-					$_minutes = (floor($_runing_time/60.0));
-					$_log .= sprintf(", running time: %d min %0.2f sec",$_minutes,($_runing_time-($_minutes*60)));
+					$_running_time = $_stopped - $this->_started_at_time;
+					$_minutes = (floor($_running_time/60.0));
+					$_log .= sprintf(", running time: %d min %0.2f sec",$_minutes,($_running_time-($_minutes*60)));
 				}
 				if($message){
 					$_log .= ", $message";
 				}
 				$rec = $this->_put_log($_log);
-				if(!$this->_silent_mode){
-					echo $this->_build_message($rec);
-				}
 				break;
 		}
+		
+		if($rec && !$this->_silent_mode && !$this->_log_to_stdout){
+			echo $this->_build_message($rec);
+		}
+
 		return 0;
 	}
 
@@ -752,21 +757,21 @@ class Logger{
 			}
 		}
 
-		return join("\n",$buff);
+		return implode("",$buff);
 	}
 
-	function __toString(){
+	public function __toString(){
 		return $this->toString();
 	}
 
 	/**
 	 * @ignore
 	 */
-	function _send_email_notification(){
+	protected function _send_email_notification(){
 		$notify_email = $this->get_notify_email();
 
 		if(!strlen($notify_email)){ return;}
-		if(!sizeof($this->_log_store_whole)){ return; }
+		if(!count($this->_log_store_whole)){ return; }
 
 		$max_level = null;
 		foreach($this->_log_store_whole as $rec){
@@ -782,20 +787,19 @@ class Logger{
 		$html = '<html><body><pre>'.$output;
 		
 		foreach($this->_log_store_whole as $rec){	
-			// TODO: vymyslet tady nejaky uspornejsi format (bez prefixu a pidu)
 			$output .= $this->_build_message($rec,$html_snippet);
 			$html .= $html_snippet;
 		}
 
 		$html .= '</pre></body></html>';
 
-		$ar = sendhtmlmail(array(
+		$ar = sendhtmlmail([
 			"plain" => $output,
 			"html" => $html,
 			"subject" => "log report: $this->_prefix, ".date("Y-m-d H:i:s"),
 			"to" => $notify_email,
 			"charset" => "UTF-8",
-		));
+		]);
 
 		return $ar;
 	}
@@ -804,7 +808,6 @@ class Logger{
 	 * @ignore
 	 */
 	protected function _get_microtime(){
-		list($usec, $sec) = explode(" ", microtime());
-		return ((float)$usec + (float)$sec);
+		return microtime(true);
 	}
 }
