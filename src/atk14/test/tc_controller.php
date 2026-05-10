@@ -372,4 +372,16 @@ class TcController extends TcBase{
 		$this->assertFalse($controller->_is_safe_return_uri("//evil.com/"));
 		$this->assertFalse($controller->_is_safe_return_uri("https://evil.com/"));
 	}
+
+	function test__get_return_uri(){
+		$client = $this->client;
+
+		$client->setHttpReferer("/cs/articles/?offset=10");
+		$controller = $client->get("main/index");
+		$this->assertEquals("/cs/articles/?offset=10",$controller->_get_return_uri());
+
+		$client->setHttpReferer("https://www.google.com/");
+		$controller = $client->get("main/index");
+		$this->assertEquals("/",$controller->_get_return_uri());
+	}
 }

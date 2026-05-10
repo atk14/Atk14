@@ -81,6 +81,8 @@ class Atk14Client{
 	 */
 	var $_RemoteAddr = "127.0.0.1";
 
+	var $_HttpReferer = "";
+
 	/**
 	 * Basic authentication username.
 	 *
@@ -462,6 +464,7 @@ class Atk14Client{
 		$request->setUserAgent($this->_UserAgent);
 		$request->setRemoteAddr($this->_RemoteAddr);
 		$request->setHttpHost($ATK14_GLOBAL->getHttpHost());
+		$request->setHttpReferer($this->_HttpReferer);
 		$request->setServerPort(80);
 		$request->setXhr($this->_Xhr);
 
@@ -738,6 +741,11 @@ class Atk14Client{
 	function setRemoteAddr($addr){
 		$this->_RemoteAddr = $addr;
 		$GLOBALS["_SERVER"]["REMOTE_ADDR"] = $this->_RemoteAddr;
+	}
+
+	function setHttpReferer($referer){
+		$this->_HttpReferer = $referer;
+		$GLOBALS["_SERVER"]["HTTP_REFERER"] = $referer;
 	}
 
 	/**
