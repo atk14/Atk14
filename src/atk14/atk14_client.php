@@ -745,7 +745,6 @@ class Atk14Client{
 
 	function setHttpReferer($referer){
 		$this->_HttpReferer = $referer;
-		$GLOBALS["_SERVER"]["HTTP_REFERER"] = $referer;
 	}
 
 	/**

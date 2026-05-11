@@ -376,11 +376,11 @@ class TcController extends TcBase{
 	function test__get_return_uri(){
 		$client = $this->client;
 
-		$client->setHttpReferer("/cs/articles/?offset=10");
+		$client->setHttpReferer("http://www.testing.cz/cs/articles/?offset=10"); // see initialize.php
 		$controller = $client->get("main/index");
 		$this->assertEquals("/cs/articles/?offset=10",$controller->_get_return_uri());
 
-		$client->setHttpReferer("https://www.google.com/");
+		$client->setHttpReferer("https://www.google.com/search?q=atk14");
 		$controller = $client->get("main/index");
 		$this->assertEquals("/",$controller->_get_return_uri());
 	}
