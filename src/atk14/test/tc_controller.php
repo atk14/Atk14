@@ -400,4 +400,18 @@ class TcController extends TcBase{
 			$this->assertEquals("/cs/main/hello_from_venus/",$controller->_get_return_uri("main/hello_from_venus"));
 		}
 	}
+
+	function test__save_return_uri(){
+		$client = $this->client;
+
+		$client->setHttpReferer("http://www.testing.cz/cs/articles/?offset=10");
+
+		$controller = $client->get("articles/edit",["id" => 123]);
+		$controller->_save_return_uri(); // saves return_uri into the session
+
+		$client->setHttpReferer("http://www.testing.cz/cs/articles/edit/?id=123");
+		$controller = $client->get("articles/edit",["id" => 123]);
+
+		$this->assertEquals("/cs/articles/?offset=10",$controller->_get_return_uri()); // reads return_uri from the session
+	}
 }
