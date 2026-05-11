@@ -383,5 +383,21 @@ class TcController extends TcBase{
 		$client->setHttpReferer("https://www.google.com/search?q=atk14");
 		$controller = $client->get("main/index");
 		$this->assertEquals("/",$controller->_get_return_uri());
+
+		//
+
+		$controller = $client->get("users/edit",["return_uri" => "/en/users/detail/"]);
+		$this->assertEquals("/en/users/detail/",$controller->_get_return_uri());
+		$this->assertEquals("/en/users/detail/",$controller->_get_return_uri("main/index"));
+
+		foreach([
+			"http://evil.com/beefproject/entry",
+			"https://evil.com/beefproject/entry",
+			"//evil.com/beefproject/entry",
+		] as $return_uri){
+			$controller = $client->get("main/hello_world",["return_uri" => $return_uri]);
+			$this->assertEquals("/",$controller->_get_return_uri());
+			$this->assertEquals("/cs/main/hello_from_venus/",$controller->_get_return_uri("main/hello_from_venus"));
+		}
 	}
 }
