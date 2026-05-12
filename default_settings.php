@@ -169,7 +169,7 @@ __defaults__(array(
 
 __defaults__(array(
 	"TABLERECORD_CACHES_STRUCTURES" => PRODUCTION ? 60*60 : 0, // caches table structures for the given amount of seconds
-
+	"TABLERECORD_USE_CACHE_BY_DEFAULT" => !TEST,
 ));
 
 __defaults__(array(
