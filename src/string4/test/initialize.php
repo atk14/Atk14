@@ -10,4 +10,4 @@ if(PHP_VERSION_ID < 50600){
 }
 
 require("../load.php");
-require("../../translate/translate.php");
+require("../../translate/load.php");

@@ -6,6 +6,6 @@ define("SENDMAIL_EMPTY_TO_REPLACE","dummy@localhost");
 define("DEFAULT_CHARSET","UTF-8");
 
 require("../../files/load.php");
-require("../../translate/translate.php");
+require("../../translate/load.php");
 require("../../class_autoload/load.php");
 require("../load.php");
