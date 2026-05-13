@@ -355,4 +355,63 @@ class TcController extends TcBase{
 		$this->assertEquals(null,$controller->response->getLocation());
 		$this->assertEquals('window.location.href = "http://www.atk14.net/";',(string)$controller->response->buffer);
 	}
+
+	function test_dynamic_properties(){
+		$controller = new Atk14Controller();
+
+		// no warning notice should appear
+		$controller->just_testing_value = "test";
+		$this->assertEquals("test",$controller->just_testing_value);
+	}
+
+	function test__is_safe_return_uri(){
+		$controller = new Atk14Controller();
+
+		$this->assertTrue($controller->_is_safe_return_uri("/"));
+		$this->assertTrue($controller->_is_safe_return_uri("/cs/articles/"));
+		$this->assertFalse($controller->_is_safe_return_uri("//evil.com/"));
+		$this->assertFalse($controller->_is_safe_return_uri("https://evil.com/"));
+	}
+
+	function test__get_return_uri(){
+		$client = $this->client;
+
+		$client->setHttpReferer("http://www.testing.cz/cs/articles/?offset=10"); // see initialize.php
+		$controller = $client->get("main/index");
+		$this->assertEquals("/cs/articles/?offset=10",$controller->_get_return_uri());
+
+		$client->setHttpReferer("https://www.google.com/search?q=atk14");
+		$controller = $client->get("main/index");
+		$this->assertEquals("/",$controller->_get_return_uri());
+
+		//
+
+		$controller = $client->get("users/edit",["return_uri" => "/en/users/detail/"]);
+		$this->assertEquals("/en/users/detail/",$controller->_get_return_uri());
+		$this->assertEquals("/en/users/detail/",$controller->_get_return_uri("main/index"));
+
+		foreach([
+			"http://evil.com/beefproject/entry",
+			"https://evil.com/beefproject/entry",
+			"//evil.com/beefproject/entry",
+		] as $return_uri){
+			$controller = $client->get("main/hello_world",["return_uri" => $return_uri]);
+			$this->assertEquals("/",$controller->_get_return_uri());
+			$this->assertEquals("/cs/main/hello_from_venus/",$controller->_get_return_uri("main/hello_from_venus"));
+		}
+	}
+
+	function test__save_return_uri(){
+		$client = $this->client;
+
+		$client->setHttpReferer("http://www.testing.cz/cs/articles/?offset=10");
+
+		$controller = $client->get("articles/edit",["id" => 123]);
+		$controller->_save_return_uri(); // saves return_uri into the session
+
+		$client->setHttpReferer("http://www.testing.cz/cs/articles/edit/?id=123");
+		$controller = $client->get("articles/edit",["id" => 123]);
+
+		$this->assertEquals("/cs/articles/?offset=10",$controller->_get_return_uri()); // reads return_uri from the session
+	}
 }

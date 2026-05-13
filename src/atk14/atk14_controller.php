@@ -12,17 +12,18 @@
  * @author Jaromir Tomek
  *
  */
+#[\AllowDynamicProperties]
 class Atk14Controller{
 
 	/**
 	 * @var string
 	 */
-	var $page_title;
+	public $page_title;
 
 	/**
 	 * @var string
 	 */
-	var $page_description;
+	public $page_description;
 
 	/**
 	 * HTTP request object
@@ -32,7 +33,7 @@ class Atk14Controller{
 	 * @var HTTPRequest
 	 *
 	 */
-	var $request = null;
+	public $request = null;
 
 	/**
 	 * HTTP response object
@@ -41,14 +42,14 @@ class Atk14Controller{
 	 *
 	 * @var HTTPResponse
 	 */
-	var $response = null;
+	public $response = null;
 
 	/**
 	 * Link to logging engine.
 	 *
 	 * @var Logger
 	 */
-	var $logger = null;
+	public $logger = null;
 
 	/**
 	 * Instance of Atk14Mailer class.
@@ -60,38 +61,38 @@ class Atk14Controller{
 	 * @todo: to be explained
 	 * @var Atk14Mailer
 	 */
-	var $mailer = null;
+	public $mailer = null;
 
 	/**
 	 * Name of the namespace.
 	 *
 	 * @var string
 	 */
-	var $namespace = "";
+	public $namespace = "";
 
 	/**
 	 * Name of the controller
 	 *
 	 * @var string
 	 */
-	var $controller = "";
+	public $controller = "";
 
 	/**
 	 * Name of the action being currently executed
 	 *
 	 * @var string
 	 */
-	var $action = "";
+	public $action = "";
 
 	/**
 	 * @var string
 	 */
-	var $requested_controller;
+	public $requested_controller;
 
 	/**
 	 * @var string
 	 */
-	var $requested_action;
+	public $requested_action;
 
 	/**
 	 * Flag that controls whether layout will be rendered.
@@ -100,14 +101,14 @@ class Atk14Controller{
 	 * {@link $render_template}
 	 * @var boolean
 	 */
-	var $render_layout = true;
+	public $render_layout = true;
 
 	/**
 	 * Name of layout template used to generate output.
 	 *
 	 * @var string
 	 */
-	var $layout_name = "";
+	public $layout_name = "";
 
 	/**
 	 * Flag that controls whether template will be rendered.
@@ -116,7 +117,7 @@ class Atk14Controller{
 	 *
 	 * @var boolean
 	 */
-	var $render_template = true;
+	public $render_template = true;
 
 	/**
 	 * Name of template to render.
@@ -125,42 +126,42 @@ class Atk14Controller{
 	 *
 	 * @var string
 	 */
-	var $template_name = null;
+	public $template_name = null;
 
 	/**
 	 * Current language used
 	 *
 	 * @var string
 	 */
-	var $lang = "";
+	public $lang = "";
 
 	/**
 	 * Flag whether this controller is in rendering component mode
 	 *
 	 * @var boolean
 	 */
-	var $rendering_component = false;
+	public $rendering_component = false;
 
 	/**
 	 * In rendering component mode this is the previous (caller) namespace
 	 *
 	 * @var string
 	 */
-	var $prev_namespace = null;
+	public $prev_namespace = null;
 
 	/**
 	 * In rendering component mode this is the previous (caller) controller
 	 *
 	 * @var string
 	 */
-	var $prev_controller = null;
+	public $prev_controller = null;
 
 	/**
 	 * In rendering component mode this is the previous (caller) action
 	 *
 	 * @var string
 	 */
-	var $prev_action = null;
+	public $prev_action = null;
 
 	/**
 	 * A flag that an action has been already executed.
@@ -170,7 +171,7 @@ class Atk14Controller{
 	 *
 	 * @var signature
 	 */
-	var $action_executed = false;
+	public $action_executed = false;
 
 
 	/**
@@ -178,7 +179,7 @@ class Atk14Controller{
 	 *
 	 * @var Dictionary
 	 */
-	var $params = null;
+	public $params = null;
 
 	/**
 	 * Session instance.
@@ -186,45 +187,45 @@ class Atk14Controller{
 	 * @see Atk14Session
 	 * @var Atk14Session
 	 */
-	var $session = null;
+	public $session = null;
 
 	/**
 	 * Flash messages
 	 *
 	 * @var Atk14Flash
 	 */
-	var $flash = null;
+	public $flash = null;
 
 	/**
 	 * @var boolean
 	 */
-	var $cookies_enabled;
+	public $cookies_enabled;
 
 	/**
 	 * Instance of {@link Atk14Form} used in current controllers action.
 	 *
 	 * @var Atk14Form
 	 */
-	var $form = null;
+	public $form = null;
 
 	/**
 	 * Instance of {@link Atk14Sorting} class.
 	 *
 	 * @var Atk14Sorting
 	 */
-	var $sorting = null;
+	public $sorting = null;
 
 	/**
 	 * Will be constructed before _before_render() calling.
 	 * 
 	 * @var Smarty
 	 */
-	var $smarty = null;
+	public $smarty = null;
 
 	/**
 	 * @access private
 	 */
-	var $_atk14_caches_action = array();
+	public $_atk14_caches_action = array();
 
 	/**
 	 * List of before_filters added by {@link _prepend_before_filter()}
@@ -266,9 +267,9 @@ class Atk14Controller{
 	 * Data for Smarty templates
 	 * @var array
 	 */
-	var $tpl_data = array();
+	public $tpl_data = array();
 
-	var $walking_state;
+	public $walking_state;
 
 	/**
 	 * Data returned by multistep form actions.
@@ -314,7 +315,7 @@ class Atk14Controller{
 	 * @var array
 	 *
 	 */
-	var $returned_by = array();
+	public $returned_by = array();
 
 	/**
 	 * Data filled in multistep forms.
@@ -327,14 +328,14 @@ class Atk14Controller{
 	 *
 	 * @var array
 	 */
-	var $form_data = array();
+	public $form_data = array();
 
 	/**
 	 * Database engine.
 	 *
 	 * @var DbMole
 	 */
-	var $dbmole = null;
+	public $dbmole = null;
 
 	/**
 	 * Controller initialization
@@ -1077,7 +1078,7 @@ class Atk14Controller{
 		);
 	}
 
-
+	// ################### Building links #################################################################################################################################### //
 
 	/**
 	 * Generates a URL.
@@ -1145,6 +1146,8 @@ class Atk14Controller{
 		$other_params["action"] = $action;
 		return $this->_link_to($other_params,$options);
 	}
+
+	// ################### Redirecting to somewhere ########################################################################################################################## //
 
 	/**
 	 * Realize HTTP redirection.
@@ -1269,6 +1272,208 @@ class Atk14Controller{
 		$this->_redirect_to($url = "http://".$this->request->getHTTPHost().$this->request->getRequestURI());
 		return $url;
 	}
+
+	// ################### Finding an object for action ###################################################################################################################### //
+
+	/**
+	 * Attempt to instantiate object by object_name and parameter
+	 *
+	 * <code>
+	 *	 $this->_find("user");
+	 *	 $this->_find("page","page_id");
+	 *	 $this->_find("page",array(
+	 *			"key" => "page_id",
+	 *			"execute_error404_if_not_found" => false,
+	 *	 ));
+	 * </code>
+	 *
+	 * When an object is instantiated it can by found as
+	 *	$this->logged_user
+	 *	$this->tpl_data["logged_user"]
+	 *
+	 * A very common usage is:
+	 * <code>
+	 *	function _before_filter(){
+	 *		if(in_array($this->action,array("detail","edit","destroy"))){
+	 *			$this->_find("article");
+	 *		}
+	 *	}
+	 * </code>
+	 */
+	function _find($object_name,$options = array()){
+		if(is_string($options)){
+			$options = array("key" => $options);
+		}
+
+		$options += array(
+			"key" => "id",
+			"id" => null, // 123
+			"execute_error404_if_not_found" => true,
+			"class_name" => null, // e.g. "User"
+
+			"set_object_as_controller_property" => true,
+			"add_object_to_template" => true,
+		);
+
+		if(!$options["class_name"]){
+			$options["class_name"] = String4::ToObject($object_name)->camelize()->toString(); // page -> Page
+		}
+
+		$key = $options["key"];
+
+		$id = isset($options["id"]) ? $options["id"] : $this->params->getInt($key);
+
+		$object = Cache::Get($options["class_name"],$id);
+
+		$options["set_object_as_controller_property"] && ($this->$object_name = $object);
+		$options["add_object_to_template"] && ($this->tpl_data["$object_name"] = $object);
+
+		if(!$object){
+			$options["execute_error404_if_not_found"] && $this->_execute_action("error404");
+		}
+
+		return $object;
+	}
+
+	/**
+	 * Just finds an object with no magic on the background
+	 *
+	 * ... or returns null when the object was not found.
+	 *
+	 *	$article = $this->_just_find("article");
+	 *	$article = $this->_just_find("article","article_id");
+	 *	$article = $this->_just_find("article",123);
+	 *	$article = $this->_just_find("article",array("id" => 123));
+	 */
+	function _just_find($object_name,$options = array()){
+		if(is_numeric($options)){
+			$options = array("id" => $options);
+		}elseif(is_string($options)){
+			$options = array("key" => $options);
+		}
+		$options["execute_error404_if_not_found"] = false;
+		$options["set_object_as_controller_property"] = false;
+		$options["add_object_to_template"] = false;
+		return $this->_find($object_name,$options);
+	}
+
+
+	// ################### Saving return URI & Redirecting back ############################################################################################################## //
+
+	/**
+	 * Adds return_uri to the given form to it's hidden parameters.
+	 *
+	 * $this->_save_return_uri();
+	 * $this->_save_return_uri($this->form);
+	 *
+	 *	controller SomeController extends ApplicationController{
+	 *		function edit(){
+	 *			// may be also in _before_filter()
+	 *			$this->_save_return_uri();
+	 *			if($this->params->defined("storno")){ return $this->_redirect_back(); }
+	 *
+	 *			if($this->request->post() && ($d = $this->form->validate($this->params))){
+	 *				// ...
+	 *			}
+	 *		}
+	 *	}
+	 */
+	function _save_return_uri(&$form = null){
+
+		// An experiment: let's utilize the session for better "redirect back" ability
+		if($this->request->get()){
+			($return_uris = $this->session->g("return_uris")) || ($return_uris = array());
+			$key = md5($this->request->getRequestUri());
+			if(!isset($return_uris[$key])){
+				if(sizeof($return_uris)>50){ array_shift($return_uris); } // for safety reasons there is a max limit
+				$return_uris[$key] = $this->_get_return_uri(null);
+				$this->session->s("return_uris",$return_uris);
+			}
+		}
+
+		if(!isset($form)){ $form = $this->form; }
+		$return_uri = $this->_get_return_uri(null);
+		$form->set_hidden_field("_return_uri_",$return_uri);
+	}
+
+	/**
+	 * Returns true when the given URI is safe to redirect to.
+	 * Accepts only relative paths (starting with /) to prevent open redirect attacks.
+	 * Rejects absolute URLs (http://...) and protocol-relative URLs (//...).
+	 *
+	 *	$this->_is_safe_return_uri("/"); // true
+	 *	$this->_is_safe_return_uri("/admin/"); // true
+	 *	$this->_is_safe_return_uri("//evil.com"); // false
+	 */
+	function _is_safe_return_uri($uri){
+		$uri = (string)$uri;
+		if(!strlen($uri)){ return false; }
+		return $uri[0] === '/' && (strlen($uri) === 1 || $uri[1] !== '/');
+	}
+
+	/**
+	 * Returns current return uri
+	 *
+	 * In fact this returns a previously saved uri (by calling $this->_save_return_uri()), value of parameter _return_uri_ (eventually return_uri) or the http referer
+	 */
+	function _get_return_uri($default = "index",$options = []){
+		$options += [
+			"consider_referer" => true,
+		];
+
+		$key = md5($this->request->getRequestUri());
+		($return_uris = $this->session->g("return_uris")) || ($return_uris = array());
+
+		foreach(array(
+			$this->params->getString("_return_uri_"),
+			$this->params->getString("return_uri"),
+			isset($return_uris[$key]) ? $return_uris[$key] : null,
+		) as $candidate){
+			if($this->_is_safe_return_uri($candidate)){ return $candidate; }
+		}
+
+		if($options["consider_referer"] && ($referer = $this->request->getHttpReferer())){
+			$server_url = $this->request->getServerUrl();
+			if($server_url && strpos($referer,$server_url)===0){
+				$referer = substr($referer,strlen($server_url));
+			}
+			if($this->_is_safe_return_uri($referer)){ return $referer; }
+		}
+
+		return $default ? $this->_link_to($default) : null;
+	}
+
+	/**
+	 * Redirects user back to return_uri, when it is know.
+	 * Otherwise redirects to the $default.
+	 *
+	 * $this->_redirect_back(); // same as "index" :)
+	 * $this->_redirect_back("index");
+	 * $this->_redirect_back("books/index");
+	 * $this->_redirect_back(array(...));
+	 * $this->_redirect_back($this->_link_to(array(...)));
+	 * $this->_redirect_back("http://www.atk14.net");
+	 */
+	function _redirect_back($default = "index"){
+		$key = md5($this->request->getRequestUri());
+		($return_uris = $this->session->g("return_uris")) || ($return_uris = array());
+
+		$return_uri = "";
+
+		if(isset($return_uris[$key])){
+			$return_uri = $return_uris[$key]; // can be an empty string
+			unset($return_uris[$key]);
+			$this->session->s("return_uris",$return_uris);
+		}
+
+		if(!$return_uri){
+			$return_uri = $this->_get_return_uri($default);
+		}
+
+		return $this->_redirect_to($return_uri);
+	}
+
+	// ################### Methods for walking ############################################################################################################################### //
 
 	/**
 	 * This method is used for creating actions with multiple steps.
