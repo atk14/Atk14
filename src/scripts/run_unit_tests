@@ -61,11 +61,11 @@ $HOME = getenv("HOME"); // "/home/yarri"
 // in PHP5.3 there is no $_ENV["PWD"] ??
 isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 
-isset($argv) || ($argv = array());
-$arguments = getopt("c",array("check-dependencies"));
+isset($argv) || ($argv = []);
+$arguments = getopt("c",["check-dependencies"]);
 
 $DIR = "";
-$RUN_TESTS_ONLY = array();
+$RUN_TESTS_ONLY = [];
 while($_a = array_shift($argv)){
 	if(is_dir($_a)){ $DIR = $_a; continue; }
 	if(preg_match('#(.*/)([^/]+$)#',$_a,$_m)){
@@ -84,14 +84,15 @@ if($DIR){
 }
 
 $exists = false;
-$_phpunit_path_ar = array();
-$_phpunit_path_ar["vendor/phpunit"] = "../autoload.php";
-$_phpunit_path_ar["../vendor/phpunit"] = "../autoload.php";
-$_phpunit_path_ar["../../vendor/phpunit"] = "../autoload.php";
-$_phpunit_path_ar["../../../vendor/phpunit"] = "../autoload.php";
-$_phpunit_path_ar["../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
-$_phpunit_path_ar["../../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
-$_phpunit_path_ar["../../../../../../vendor/phpunit"] = "../autoload.php"; // ... uf :)
+$_phpunit_path_ar = [];
+$_scan_dir = getcwd();
+do {
+	$_phpunit_path_ar["$_scan_dir/vendor/phpunit"] = "../autoload.php";
+	$_parent = dirname($_scan_dir);
+	if($_parent === $_scan_dir){ break; } // reached filesystem root
+	$_scan_dir = $_parent;
+} while(true);
+unset($_scan_dir, $_parent);
 if(
 	exec("which composer") &&
 	($_global_path = exec("composer global -q config home 2>/dev/null"))
@@ -215,13 +216,13 @@ if(PHPUNIT2){
 	eval("class TcSuperBase extends $_base_class{ $_methods_def }");
 }
 
-$ALLOWED_TESTS = array();
-$ALLOWED_DANGEROUS_TESTS = array();
-$tests_to_execute = array();
+$ALLOWED_TESTS = [];
+$ALLOWED_DANGEROUS_TESTS = [];
+$tests_to_execute = [];
 
 $dir = opendir("./");
 while($file = readdir($dir)){
-	if(in_array($file,array(".","..","initialize.inc","initialize.php","state.inc","state.php","tc_base.inc","tc_base.php"))){ continue; } // These files are ignored
+	if(in_array($file,[".","..","initialize.inc","initialize.php","state.inc","state.php","tc_base.inc","tc_base.php"])){ continue; } // These files are ignored
 
 	if(preg_match("/^(tc_.*)\\.(inc|php)$/",$file,$matches)){
 		$ALLOWED_TESTS[$file] = $matches[1];
@@ -234,7 +235,7 @@ closedir($dir);
 ksort($ALLOWED_TESTS);
 
 foreach($ALLOWED_TESTS as $filename => $classname){	
-	if(sizeof($RUN_TESTS_ONLY)>0 && (!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
+	if(count($RUN_TESTS_ONLY)>0 && (!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
 		continue;
 	}
 	$tests_to_execute[] = $filename;
@@ -255,9 +256,9 @@ if(sizeof($tests_to_execute)==0){
 // Only one test case should be processed in the current thread
 if(sizeof($tests_to_execute)==1){
 	// global variable $_TEST may be useful in some special cases
-	$GLOBALS["_TEST"] = array(
+	$GLOBALS["_TEST"] = [
 		"FILENAME" => getcwd()."/".$tests_to_execute[0]
-	);
+	];
 
 	if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
 
