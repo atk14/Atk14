@@ -5,9 +5,10 @@
  * Controller tests are usually located in ./test/controllers/
  */
 class TcAtk14Controller extends TcAtk14Base{
-	var $namespace = "";
-	var $session = null;
-	var $client = null;
+
+	public $namespace = "";
+	public $session = null;
+	public $client = null;
 
 	function __construct($name = NULL, array $data = array(), $dataName = ''){
 		parent::__construct($name, $data, $dataName);

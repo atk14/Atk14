@@ -18,7 +18,8 @@
  * </code>
  */
 class TcAtk14Field extends TcAtk14Base{
-	var $field = null;
+
+	public $field = null;
 
 	/*
 	function __construct($name = NULL, array $data = array(), $dataName = ''){

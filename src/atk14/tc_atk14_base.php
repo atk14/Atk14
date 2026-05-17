@@ -10,7 +10,7 @@ if(!class_exists("TcSuperBase")){
 #[\AllowDynamicProperties]
 class TcAtk14Base extends TcSuperBase {
 
-	var $dbmole = null;
+	public $dbmole = null;
 
 	function _setUp(){
 		$this->dbmole->begin(array(

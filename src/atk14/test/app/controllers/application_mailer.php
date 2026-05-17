@@ -1,6 +1,7 @@
 <?php
 class ApplicationMailer extends Atk14Mailer {
-	var $from = "Unit Testing <unit@testing.com>";
+
+	public $from = "Unit Testing <unit@testing.com>";
 
 	function ordinary_notification($way = ""){
 		$this->subject = "Ordinary notification";

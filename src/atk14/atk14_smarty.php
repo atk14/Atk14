@@ -6,12 +6,12 @@ class Atk14Smarty extends Atk14SmartyBase{
 	/**
 	 * Permissions for smarty directory structure
 	 */
-	var $_dir_perms  = ATK14_SMARTY_DIR_PERMS;
+	public $_dir_perms  = ATK14_SMARTY_DIR_PERMS;
 
 	/**
 	 * Permissions used for files created by smarty
 	 */
-	var $_file_perms = ATK14_SMARTY_FILE_PERMS;
+	public $_file_perms = ATK14_SMARTY_FILE_PERMS;
 
 	/**
 	 * $smarty->addAtk14Content("main","<p>Well...</p>");

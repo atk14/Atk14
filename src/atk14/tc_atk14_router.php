@@ -19,7 +19,7 @@
  */
 class TcAtk14Router extends TcAtk14Base {
 
-	var $router = null;
+	public $router = null;
 
 	/**
 	 *
