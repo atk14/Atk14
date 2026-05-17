@@ -1258,7 +1258,11 @@ class Atk14Form extends Form
 		$t = floor(time()/(60 * 5));
 		for($i=0;$i<=1;$i++){
 			$_t = $t - $i;
-			$out[] = sha1($_t.SECRET_TOKEN.get_class($this).$HTTP_REQUEST->getRemoteAddr().$session->getSecretToken());
+			$out[] = hash_hmac("sha256", join("|",[
+				$_t,
+				get_class($this),
+				$session->getSecretToken(),
+			]), SECRET_TOKEN);
 		}
 
 		return $out;
