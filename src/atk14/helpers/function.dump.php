@@ -134,7 +134,7 @@ class Dumper{
 		// TODO: uf, to be rewritten somehow
 		$out[0] = '<span id="'.$id_to_be_hidden.'"><a href="#" onclick="JavaScript: document.getElementById(\''.$id.'\').style.display=\'inline\'; document.getElementById(\''.$id_to_be_hidden.'\').style.display=\'none\'; return false;" title="expand">'.$label.'(+)</a></span><span style="display:none;" id="'.$id.'"><a href="#" onclick="JavaScript: document.getElementById(\''.$id_to_be_hidden.'\').style.display=\'inline\'; document.getElementById(\''.$id.'\').style.display=\'none\'; return false;" title="collapse">'.$label.'(</a>';
 
-		$out[sizeof($out)-1] .= "</span>";
+		$out[count($out)-1] .= "</span>";
 	}
 
 	function _DumpArray($ar,$offset,$options = []){

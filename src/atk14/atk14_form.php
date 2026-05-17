@@ -973,7 +973,7 @@ class Atk14Form extends Form
 	function end()
 	{
 		$out = [];
-		if(sizeof($this->atk14_hidden_fields)){
+		if(count($this->atk14_hidden_fields)){
 			$out[] = "<div>";
 			foreach($this->atk14_hidden_fields as $_key => $_value)
 			{
@@ -1051,10 +1051,10 @@ class Atk14Form extends Form
 	 */
 	function get_errors($on_field = null){
 		 $out = parent::get_errors();
-		 if(!isset($out[""]) && sizeof($this->atk14_errors)>0){
+		 if(!isset($out[""]) && count($this->atk14_errors)>0){
 			 $out[""] = [];
 		 }
-		 if(sizeof($this->atk14_errors)>0){
+		 if(count($this->atk14_errors)>0){
 			 $out[""] = array_merge($out[""],$this->atk14_errors);
 		 }
 		 if(isset($on_field)){
@@ -1098,7 +1098,7 @@ class Atk14Form extends Form
 	 */
 	function has_errors()
 	{
-		return (sizeof($this->get_errors())>0);
+		return (count($this->get_errors())>0);
 	}
 
 	/**
@@ -1115,7 +1115,7 @@ class Atk14Form extends Form
 		$out[] = "<ul>";
 		$errors = $this->get_errors();
 		foreach($errors as $_key => $_messages){
-			if(sizeof($_messages)==0){ continue; }
+			if(count($_messages)==0){ continue; }
 			$_prefix = "";
 			if(isset($this->fields[$_key])){
 			  $_prefix = $this->fields[$_key]->label.": ";

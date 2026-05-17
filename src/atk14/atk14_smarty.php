@@ -35,7 +35,7 @@ class Atk14Smarty extends Atk14SmartyBase{
 		}
 
 		foreach($this->atk14_contents[$key] as $item){
-			if(sizeof($item)!=2){ // see function _smarty_addAtk14Content()
+			if(count($item)!=2){ // see function _smarty_addAtk14Content()
 				throw new Exception("Atk14Smarty: \$item doesn't contain two elements");
 			}
 			list($content,$options) = $item;

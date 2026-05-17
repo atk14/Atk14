@@ -544,7 +544,7 @@ class Atk14Global{
 				$_last_description = $value["__page_description__"];
 
 				if(preg_match_all("/([a-z]{2}):([^\\s]+)/",$key,$matches)){
-					for($i=0;$i<sizeof($matches[0]);$i++){
+					for($i=0;$i<count($matches[0]);$i++){
 						$lang = $matches[1][$i];
 						$url = $matches[2][$i];
 						$value["lang"] = $lang;
@@ -560,7 +560,7 @@ class Atk14Global{
 			// $routes["domain-registration/<domain_name>"] = [); -> $routes["domain-registration/<domain_name>"] = ["domain_name" => "/.*/");
 			foreach($routes as $key => $value){
 				if(preg_match_all("/<([^>]+)>/",$key,$matches)){
-					for($i=0;$i<sizeof($matches[0]);$i++){
+					for($i=0;$i<count($matches[0]);$i++){
 						$_name = $matches[1][$i];
 						if(!isset($value[$_name])){
 							if($_name=="controller"){

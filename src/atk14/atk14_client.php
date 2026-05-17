@@ -16,7 +16,7 @@
  * $controller = $this->client->get("customers/index");
  * $this->assertEquals(200, $this->client->getStatusCode());
  * $this->assertNotNull($finder = $controller->tpl_data["finder"]);
- * $this->assertTrue(sizeof($finder->getRecords())>0);
+ * $this->assertTrue(count($finder->getRecords())>0);
  * ```
  *
  * Example of testing a POST request
@@ -147,12 +147,12 @@ class Atk14Client{
 	 *
 	 * ```
 	 * $client->setCookie("cookie_1","val");
-	 * echo sizeof($client->getCookies()); // 1
+	 * echo count($client->getCookies()); // 1
 	 *
 	 * $client->disableCookies();
-	 * echo sizeof($client->getCookies()); // 0
+	 * echo count($client->getCookies()); // 0
 	 * $client->setCookie("cookie_2","val");
-	 * echo sizeof($client->getCookies()); // 0
+	 * echo count($client->getCookies()); // 0
 	 * ```
 	 */
 	function disableCookies(){
@@ -250,7 +250,7 @@ class Atk14Client{
 	function setBasicAuth($username,$password = ""){
 		if($password === ""){
 			$ary = explode(":",$username);
-			if(sizeof($ary)>=2){
+			if(count($ary)>=2){
 				$username = array_shift($ary);
 				$password = join(":",$ary);
 			}
@@ -528,7 +528,7 @@ class Atk14Client{
 
 			$path_ar = explode("/",$path);
 
-			switch(sizeof($path_ar)){
+			switch(count($path_ar)){
 				case 1:
 					// "create_new"
 					$action = $path_ar[0];

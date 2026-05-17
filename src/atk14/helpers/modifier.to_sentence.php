@@ -16,7 +16,7 @@ function smarty_modifier_to_sentence($ar,$connector = null){
 	}
 	$out = '';
 	$index = 0;
-	$sizeof = sizeof($ar);
+	$sizeof = count($ar);
 	foreach($ar as $item){
 		if(($index>0) && ($index==$sizeof-1)){
 			$out .= "$connector$item";

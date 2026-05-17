@@ -4,7 +4,7 @@ class TcDeploymentStage extends TcBase{
 	function test(){
 		$stages = Atk14DeploymentStage::GetStages();
 
-		$this->assertEquals(5,sizeof($stages));
+		$this->assertEquals(5,count($stages));
 		$this->assertEquals(["devel","acceptation","acceptation2","acceptation3","production"],array_keys($stages));
 
 		$first_stage = Atk14DeploymentStage::GetFirstStage();

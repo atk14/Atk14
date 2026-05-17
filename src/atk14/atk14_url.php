@@ -534,7 +534,7 @@ class Atk14Url{
 		],$options);
 
 		if(is_object($params)){ $params = $params->toArray(); }
-		if(!sizeof($params)){ return ""; }
+		if(!count($params)){ return ""; }
 
 		$out = [];
 		foreach($params as $k => $v){

@@ -18,7 +18,7 @@ function smarty_function_to_sentence($params,$template = null){
 
 	$var = $params["var"];
 
-	switch(sizeof($var)){
+	switch(count($var)){
 		case 0:
 			return "";
 		case 1:	

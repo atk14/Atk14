@@ -1385,7 +1385,7 @@ class Atk14Controller{
 			($return_uris = $this->session->g("return_uris")) || ($return_uris = []);
 			$key = md5($this->request->getRequestUri());
 			if(!isset($return_uris[$key])){
-				if(sizeof($return_uris)>50){ array_shift($return_uris); } // for safety reasons there is a max limit
+				if(count($return_uris)>50){ array_shift($return_uris); } // for safety reasons there is a max limit
 				$return_uris[$key] = $this->_get_return_uri(null);
 				$this->session->s("return_uris",$return_uris);
 			}

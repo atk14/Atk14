@@ -166,7 +166,7 @@ class TcClient extends TcBase{
 		// Cookies
 		$controller = $client->get("testing/cookies_dumper");
 		$cookies = $this->_parse_cookies($controller);
-		$this->assertEquals(1,sizeof($cookies));
+		$this->assertEquals(1,count($cookies));
 		$this->assertTrue(isset($cookies["check"]));
 
 		$client->disableCookies();
@@ -178,20 +178,20 @@ class TcClient extends TcBase{
 		$client->addCookie(new HTTPCookie("login_id","123"));
 		$controller = $client->get("testing/cookies_dumper");
 		$cookies = $this->_parse_cookies($controller);
-		$this->assertEquals(2,sizeof($cookies));
+		$this->assertEquals(2,count($cookies));
 		$this->assertTrue(isset($cookies["check"]));
 		$this->assertEquals("123",$cookies["login_id"]);
 
 		// testing clearing cookies in cookies disabled mode
 		$client->disableCookies();
-		$this->assertEquals(0,sizeof($client->getCookies()));
+		$this->assertEquals(0,count($client->getCookies()));
 		$client->enableCookies();
-		$this->assertEquals(2,sizeof($client->getCookies()));
+		$this->assertEquals(2,count($client->getCookies()));
 		$client->disableCookies();
 		$client->clearCookies();
-		$this->assertEquals(0,sizeof($client->getCookies()));
+		$this->assertEquals(0,count($client->getCookies()));
 		$client->enableCookies();
-		$this->assertEquals(0,sizeof($client->getCookies()));
+		$this->assertEquals(0,count($client->getCookies()));
 
 		// set cookie
 		$client->addCookie(new HTTPCookie("language","cs"));
@@ -209,7 +209,7 @@ class TcClient extends TcBase{
 		// setting new cookie
 		$client->get("testing/set_cookie");
 		$cookies = $client->getCookies();
-		$this->assertEquals(true,sizeof($cookies)>0);
+		$this->assertEquals(true,count($cookies)>0);
 		$this->assertEquals("John Doe",$cookies["user_name"]);
 	}
 

@@ -72,7 +72,7 @@ function smarty_block_cache($params,$content,$template,&$repeat){
 	$key = preg_replace('/[^a-zA-Z0-9._]/','_',$key);
 	$key = preg_replace('/^\./','_.',$key); // ".en.main.index" -> "_.en.main.index" ; "." -> "_."
 
-	$salt = sizeof($params) ? "_".md5(serialize($params)) : ""; // other parameters make a salt
+	$salt = count($params) ? "_".md5(serialize($params)) : ""; // other parameters make a salt
 
 	$cache_dir = TEMP.'/content_caches';
 	!file_exists($cache_dir) && Files::Mkdir($cache_dir);

@@ -175,7 +175,7 @@ class TcForm extends TcBase{
 		$tokens = $form->get_valid_csrf_tokens();
 
 		$this->assertEquals($current_token,$tokens[0]);
-		$this->assertTrue(sizeof($tokens)>1);
+		$this->assertTrue(count($tokens)>1);
 		$this->assertTrue($tokens[0]!=$tokens[1]);
 	}
 

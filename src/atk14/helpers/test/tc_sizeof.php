@@ -2,8 +2,8 @@
 class TcSizeof extends TcBase {
 
 	function test(){
-		$this->assertEquals(1,smarty_modifier_sizeof(["item"]));
-		$this->assertEquals(0,smarty_modifier_sizeof([]));
-		$this->assertEquals(0,smarty_modifier_sizeof(null));
+		$this->assertEquals(1,smarty_modifier_count(["item"]));
+		$this->assertEquals(0,smarty_modifier_count([]));
+		$this->assertEquals(0,smarty_modifier_count(null));
 	}
 }

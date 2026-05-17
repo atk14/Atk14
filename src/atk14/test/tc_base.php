@@ -20,7 +20,7 @@ class TcBase extends TcSuperBase{
 
 	function _run_action($path,$options = [],&$response = null){
 		$ar = explode("/",$path);
-		if(sizeof($ar)==3){
+		if(count($ar)==3){
 			//$response = Atk14Dispatcher::ExecuteAction($ar[0],$ar[1]);
 			$response = Atk14Dispatcher::ExecuteAction($ar[1],$ar[2],["namespace" => $ar[0]]);
 		}else{

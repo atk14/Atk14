@@ -44,10 +44,10 @@ class TcFixtures extends TcAtk14Model {
 		$articles3 = Atk14Fixture::Load("articles", ["reload_fixture" => false]);
 		$articles_re = Atk14Fixture::Load("articles", ["reload_fixture" => true]);
 
-		$this->assertEquals(2,sizeof($articles));
-		$this->assertEquals(2,sizeof($articles2));
-		$this->assertEquals(2,sizeof($articles3));
-		$this->assertEquals(2,sizeof($articles_re));
+		$this->assertEquals(2,count($articles));
+		$this->assertEquals(2,count($articles2));
+		$this->assertEquals(2,count($articles3));
+		$this->assertEquals(2,count($articles_re));
 
 		$this->assertEquals($articles["article1"]->getId(),$articles2["article1"]->getId());
 		$this->assertEquals($articles["article1"]->getId(),$articles3["article1"]->getId());
@@ -57,7 +57,7 @@ class TcFixtures extends TcAtk14Model {
 	function test_different_class_name(){
 		$articles = Atk14Fixture::Load("enjoyable_articles");
 
-		$this->assertEquals(2,sizeof($articles));
+		$this->assertEquals(2,count($articles));
 		$this->assertEquals("Article",get_class($articles["article1"]));
 		$this->assertEquals("Enjoyable Title #1",$articles["article1"]->getTitle());
 	}
@@ -65,7 +65,7 @@ class TcFixtures extends TcAtk14Model {
 	function test_table_name_specified(){
 		$records = Atk14Fixture::Load("another_test_table_records");
 
-		$this->assertEquals(2,sizeof($records));
+		$this->assertEquals(2,count($records));
 		$this->assertTrue(is_array($records["rec_1"]));
 		$this->assertEquals(["an_integer" => "-2", "title" => "Another record #1"],$records["rec_1"]);
 		$this->assertEquals(["title" => "Another record #2"],$records["rec_2"]);

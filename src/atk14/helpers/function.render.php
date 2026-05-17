@@ -72,7 +72,7 @@ function smarty_function_render($params,$template){
 	$template_name = preg_replace("/([^\\/]+)$/","_\\1",$template_name);
 	$template_name .= ".tpl";
 
-	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
+	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || count($params["from"])==0)){ return ""; }
 
 	$smarty = atk14_get_smarty_from_template($template);
 	$original_smarty_vars = $smarty->getTemplateVars();
@@ -120,7 +120,7 @@ function smarty_function_render($params,$template){
 		unset($params["item"]);
 		unset($params["from"]);
 
-		$collection_size = sizeof($collection);
+		$collection_size = count($collection);
 		$counter = 0;
 		foreach($params as $k => $value){
 			$smarty->assign($k,$value);
@@ -173,7 +173,7 @@ function smarty_function_render($params,$template){
 	$template_name = preg_replace("/([^\\/]+)$/","_\\1",$template_name);
 	$template_name .= ".tpl";
 
-	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
+	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || count($params["from"])==0)){ return ""; }
 
 	$data = $template->createData($template);
 	$out = [];
@@ -217,7 +217,7 @@ function smarty_function_render($params,$template){
 		unset($params["item"]);
 		unset($params["from"]);
 
-		$collection_size = sizeof($collection);
+		$collection_size = count($collection);
 		$counter = 0;
 		foreach($params as $k => $value){
 			$data->assign($k,$value);
@@ -271,7 +271,7 @@ function smarty_function_render($params,$template){
 	$template_name = preg_replace("/([^\\/]+)$/","_\\1",$template_name);
 	$template_name .= ".tpl";
 
-	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || (!is_numeric($params["from"]) && sizeof($params["from"])==0))){ return ""; }
+	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || (!is_numeric($params["from"]) && count($params["from"])==0))){ return ""; }
 
 	$original_smarty_vars = $smarty->getTemplateVars();
 	if($solve_smarty_vs_template_problem){
@@ -332,7 +332,7 @@ function smarty_function_render($params,$template){
 		unset($params["item"]);
 		unset($params["from"]);
 
-		$collection_size = sizeof($collection);
+		$collection_size = count($collection);
 		$counter = 0;
 		foreach($collection as $_key => $_item){
 			if(isset($key)){ $smarty->assign($key,$_key); }
