@@ -8,27 +8,27 @@ class TcController extends TcBase{
 
 	function test_multiple_before_filters(){
 		$c = new MultipleBeforeFiltersController();
-		$c->atk14__initialize(array());
+		$c->atk14__initialize([]);
 
 		$c->user = 1; // simulace prihlaseneho uzivatele
-		$this->assertEquals(array(),$c->before_filters);
+		$this->assertEquals([],$c->before_filters);
 		$c->atk14__runBeforeFilters();
-		$this->assertEquals(array("filter1","filter2","check_user_is_logged","before_filter","filter3","filter4"),$c->before_filters);
+		$this->assertEquals(["filter1","filter2","check_user_is_logged","before_filter","filter3","filter4"],$c->before_filters);
 
 		$c->user = null; // simulace odhlaseneho uzivatele
-		$c->before_filters = array();
-		$this->assertEquals(array(),$c->before_filters);
+		$c->before_filters = [];
+		$this->assertEquals([],$c->before_filters);
 		$c->atk14__runBeforeFilters();
-		$this->assertEquals(array("filter1","filter2","check_user_is_logged"),$c->before_filters);
+		$this->assertEquals(["filter1","filter2","check_user_is_logged"],$c->before_filters);
 	}
 
 	function test_multiple_after_filters(){
 		$c = new MultipleAfterFiltersController();
 		$c->atk14__initialize();
 
-		$this->assertEquals(array(),$c->after_filters);
+		$this->assertEquals([],$c->after_filters);
 		$c->atk14__runAfterFilters();
-		$this->assertEquals(array("afilter1","afilter2","after_filter","afilter3","afilter4"),$c->after_filters);
+		$this->assertEquals(["afilter1","afilter2","after_filter","afilter3","afilter4"],$c->after_filters);
 	}
 
 	function test_redirect_to_and_link_to(){
@@ -38,20 +38,20 @@ class TcController extends TcBase{
 		$c->controller = "books";
 		$c->namespace = "";
 
-		foreach(array(
-			array("overview","/en/books/overview/"),
-			array("users/create_new" , "/en/users/create_new/"),
-			array("/public/pricelist.html" , "/public/pricelist.html"),
-			array("http://www.domenka.cz/" , "http://www.domenka.cz/"),
-			array(array("controller" => "books", "action" => "detail") , "/en/books/detail/"),
-			array(array("controller" => "books", "action" => "detail", "id" => "123") , "/en/books/detail/?id=123"),
-		) as $i){
+		foreach([
+			["overview","/en/books/overview/"],
+			["users/create_new" , "/en/users/create_new/"],
+			["/public/pricelist.html" , "/public/pricelist.html"],
+			["http://www.domenka.cz/" , "http://www.domenka.cz/"],
+			[["controller" => "books", "action" => "detail"] , "/en/books/detail/"],
+			[["controller" => "books", "action" => "detail", "id" => "123"] , "/en/books/detail/?id=123"],
+		] as $i){
 			list($params,$result) = $i;
 			$c->_redirect_to($params);
 			$this->assertEquals($result,$c->response->getLocation());
 			$this->assertEquals(302,$c->response->getStatusCode()); // 302 Moved temporarily
 
-			$c->_redirect_to($params,array("moved_permanently" => true));
+			$c->_redirect_to($params,["moved_permanently" => true]);
 			$this->assertEquals($result,$c->response->getLocation());
 			$this->assertEquals(301,$c->response->getStatusCode()); // 301 Moved permanently
 
@@ -59,18 +59,18 @@ class TcController extends TcBase{
 			$this->assertEquals($result,$url);
 		}
 
-		$params =	array("controller" => "books", "action" => "detail", "id" => "123", "format" => "xml");
+		$params =	["controller" => "books", "action" => "detail", "id" => "123", "format" => "xml"];
 
 		$c->_redirect_to($params);
 		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->response->getLocation());
 
 		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->_link_to($params));
 
-		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("with_hostname" => true)));
-		$this->assertEquals("https://secure.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("with_hostname" => true, "ssl" => true)));
+		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,["with_hostname" => true]));
+		$this->assertEquals("https://secure.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,["with_hostname" => true, "ssl" => true]));
 
-		$this->assertEquals("https://secure.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("ssl" => true)));
-		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,array("ssl" => false)));
+		$this->assertEquals("https://secure.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,["ssl" => true]));
+		$this->assertEquals("http://www.testing.cz/en/books/detail/?id=123&format=xml",$c->_link_to($params,["ssl" => false]));
 	}
 
 	function test_link_to(){
@@ -82,16 +82,16 @@ class TcController extends TcBase{
 		$c->action = "overview";
 		$c->namespace = "";
 
-		$this->assertEquals("/en/books/export/",$c->_link_to(array("action" => "export")));
+		$this->assertEquals("/en/books/export/",$c->_link_to(["action" => "export"]));
 		$this->assertEquals("/en/books/export/",$c->_link_to("export"));
 
-		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml")));
-		$this->assertEquals("/en/books/detail/?id=123&amp;format=xml",$c->_link_to(array("action" => "detail", "id" => 123, "format" => "xml"),array("connector" => "&amp;")));
+		$this->assertEquals("/en/books/detail/?id=123&format=xml",$c->_link_to(["action" => "detail", "id" => 123, "format" => "xml"]));
+		$this->assertEquals("/en/books/detail/?id=123&amp;format=xml",$c->_link_to(["action" => "detail", "id" => 123, "format" => "xml"],["connector" => "&amp;"]));
 
-		$this->assertEquals("/en/articles/",$c->_link_to(array("controller" => "articles")));
+		$this->assertEquals("/en/articles/",$c->_link_to(["controller" => "articles"]));
 		$this->assertEquals("/en/articles/",$c->_link_to("articles/index"));
 
-		$this->assertEquals("/admin/cs/articles/",$c->_link_to(array("controller" => "articles", "namespace" => "admin", "lang" => "cs")));
+		$this->assertEquals("/admin/cs/articles/",$c->_link_to(["controller" => "articles", "namespace" => "admin", "lang" => "cs"]));
 
 		$this->assertEquals("/en/books/overview/",$c->_link_to());
 
@@ -99,10 +99,10 @@ class TcController extends TcBase{
 
 		$this->assertEquals("/admin/en/books/overview/",$c->_link_to());
 
-		$this->assertEquals("/admin/en/articles/",$c->_link_to(array("controller" => "articles")));
+		$this->assertEquals("/admin/en/articles/",$c->_link_to(["controller" => "articles"]));
 		$this->assertEquals("/admin/en/articles/",$c->_link_to("articles/index"));
 
-		$this->assertEquals("/en/articles/",$c->_link_to(array("controller" => "articles", "namespace" => "")));
+		$this->assertEquals("/en/articles/",$c->_link_to(["controller" => "articles", "namespace" => ""]));
 	}
 
 	function test_redirect_to_ssl(){
@@ -212,25 +212,25 @@ class TcController extends TcBase{
 		$this->assertEquals(200,$client->getStatusCode());
 		$content_2 = $client->getContent();
 
-		$client->get("testing/test_caching",array("alt" => "alt_cache"));
+		$client->get("testing/test_caching",["alt" => "alt_cache"]);
 		$this->assertEquals("text/html",$client->getContentType());
 		$this->assertEquals("utf-8",$client->getContentCharset());
 		$this->assertEquals(200,$client->getStatusCode());
 		$content_3 = $client->getContent();
 
-		$client->get("testing/test_caching",array("alt" => "alt_cache"));
+		$client->get("testing/test_caching",["alt" => "alt_cache"]);
 		$this->assertEquals("text/html",$client->getContentType());
 		$this->assertEquals("utf-8",$client->getContentCharset());
 		$this->assertEquals(200,$client->getStatusCode());
 		$content_4 = $client->getContent();
 
-		$client->get("testing/test_caching",array("alt" => "////\\////"));
+		$client->get("testing/test_caching",["alt" => "////\\////"]);
 		$this->assertEquals("text/html",$client->getContentType());
 		$this->assertEquals("utf-8",$client->getContentCharset());
 		$this->assertEquals(200,$client->getStatusCode());
 		$content_5 = $client->getContent();
 
-		$client->get("testing/test_caching",array("alt" => "////\\////"));
+		$client->get("testing/test_caching",["alt" => "////\\////"]);
 		$this->assertEquals("text/html",$client->getContentType());
 		$this->assertEquals("utf-8",$client->getContentCharset());
 		$this->assertEquals(200,$client->getStatusCode());
@@ -247,7 +247,7 @@ class TcController extends TcBase{
 		$this->assertNotEquals($content_1,$content_5);
 		$this->assertNotEquals($content_3,$content_5);
 
-		$client->get("testing/test_caching",array("disable_cache" => "1"));
+		$client->get("testing/test_caching",["disable_cache" => "1"]);
 		$this->assertEquals("text/html",$client->getContentType());
 		$this->assertEquals("utf-8",$client->getContentCharset());
 		$this->assertEquals(200,$client->getStatusCode());
@@ -273,7 +273,7 @@ class TcController extends TcBase{
 
 		$this->assertEquals($content_1,$content_2);
 
-		$client->get("testing/test_caching_without_template",array("disable_cache" => "1"));
+		$client->get("testing/test_caching_without_template",["disable_cache" => "1"]);
 		$this->assertEquals("text/plain",$client->getContentType());
 		$this->assertEquals("us-ascii",$client->getContentCharset());
 		$this->assertEquals(222,$client->getStatusCode());
@@ -296,7 +296,7 @@ class TcController extends TcBase{
 
 		$this->assertEquals($content_1,$content_2);
 
-		$client->get("testing/test_caching_with_layout_set_in_action",array("disable_cache" => "1"));
+		$client->get("testing/test_caching_with_layout_set_in_action",["disable_cache" => "1"]);
 		$content_3 = $client->getContent();
 		$this->assertTrue(!!preg_match('/random_value: /',$content_3));
 		$this->assertStringContains("<!-- custom layout -->",$content_3);
@@ -331,11 +331,11 @@ class TcController extends TcBase{
 		$this->assertEquals("action_two executed",$client->getContent());
 		$this->assertEquals("ActionTwoForm",get_class($controller->form));
 
-		$controller = $client->get("execute_actions/action_one",array("execute_action_two" => "1"));
+		$controller = $client->get("execute_actions/action_one",["execute_action_two" => "1"]);
 		$this->assertEquals("action_two executed",$client->getContent());
 		$this->assertEquals("ActionTwoForm",get_class($controller->form));
 
-		$controller = $client->get("execute_actions/action_one",array("execute_action_three" => "1"));
+		$controller = $client->get("execute_actions/action_one",["execute_action_three" => "1"]);
 		$this->assertEquals("action_three executed",$client->getContent());
 		$this->assertEquals("ApplicationForm",get_class($controller->form));
 	}

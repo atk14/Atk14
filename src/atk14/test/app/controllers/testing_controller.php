@@ -9,44 +9,44 @@ class TestingController extends ApplicationController{
 
 	function test_render(){
 		$this->tpl_data["firstname"] = "John";
-		$this->snippet = $this->tpl_data["snippet"] = $this->_render("shared/user_detail",array(
+		$this->snippet = $this->tpl_data["snippet"] = $this->_render("shared/user_detail",[
 			"lastname" => "Doe"
-		));
+		]);
 	}
 
 	function test_render_collection(){
-		$this->tpl_data["articles_set_1"] = array(
-			array(
+		$this->tpl_data["articles_set_1"] = [
+			[
 				"title" => "First article",
 				"teaser" => "Teaser of the first article",
-			),
-			array(
+			],
+			[
 				"title" => "Second article",
 				"teaser" => "Teaser of the second article",
-			),
-		);
+			],
+		];
 
-		$this->tpl_data["articles_set_2"] = array(
-			array(
+		$this->tpl_data["articles_set_2"] = [
+			[
 				"title" => "Third article",
 				"teaser" => "Teaser of the third article",
-			),
-			array(
+			],
+			[
 				"title" => "Fourth article",
 				"teaser" => "Teaser of the fourth article",
-			),
-		);
+			],
+		];
 
-		$this->tpl_data["articles_set_3"] = array(
-			array(
+		$this->tpl_data["articles_set_3"] = [
+			[
 				"title" => "Fifth article",
 				"teaser" => "Teaser of the fifth article",
-			),
-			array(
+			],
+			[
 				"title" => "Sixth article",
 				"teaser" => "Teaser of the sixth article",
-			),
-		);
+			],
+		];
 	}
 
 	function default_layout(){
@@ -150,10 +150,10 @@ class TestingController extends ApplicationController{
 
 	function _before_filter(){
 		if(!$this->params->defined("disable_cache")){
-			$this->_caches_action(array(
-				"action" => array("test_caching","test_caching_without_template","test_caching_with_layout_set_in_action"),
+			$this->_caches_action([
+				"action" => ["test_caching","test_caching_without_template","test_caching_with_layout_set_in_action"],
 				"salt" => $this->params["alt"],
-			));
+			]);
 		}
 	}
 

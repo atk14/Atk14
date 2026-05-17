@@ -22,7 +22,7 @@ class TcAtk14Field extends TcAtk14Base{
 	public $field = null;
 
 	/*
-	function __construct($name = NULL, array $data = array(), $dataName = ''){
+	function __construct($name = NULL, array $data = [), $dataName = ''){
 		parent::__construct($name, $data, $dataName);
 
 		$ref = new ReflectionClass("TcAtk14Base");
@@ -40,7 +40,7 @@ class TcAtk14Field extends TcAtk14Base{
 	 *
 	 * ```
 	 * function test(){
-	 *  $this->field = new IntegerField(array("required" => false));
+	 *  $this->field = new IntegerField(["required" => false));
 	 *  $cleaned_value = $this->assertValid(" 123 ");
 	 *  $this->assertEquals(123,$cleaned_value);
 	 * }
@@ -58,7 +58,7 @@ class TcAtk14Field extends TcAtk14Base{
 	 *
 	 * ```
 	 * function test(){
-	 *  $this->field = new IntegerField(array("required" => false));
+	 *  $this->field = new IntegerField(["required" => false));
 	 *  $err = $this->assertInvalid("abc");
 	 *  $this->assertEquals("Enter a number",$err);
 	 * }

@@ -6,9 +6,9 @@ function smarty_function_use($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 	$rendering_component = $smarty->getTemplateVars("rendering_component");
 
-	$params += array(
+	$params += [
 		"layout" => "", // 
-	);
+	];
 
 	if(!$rendering_component){
 		// layout name cannot be set during rendering component

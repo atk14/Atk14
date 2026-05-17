@@ -2,7 +2,7 @@
 class MultipleAfterFiltersController extends ApplicationController{
 
 	function _initialize(){
-		$this->after_filters = array();
+		$this->after_filters = [];
 
 		$this->_prepend_after_filter("afilter2");
 		$this->_prepend_after_filter("afilter1");

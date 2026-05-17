@@ -5,9 +5,9 @@ class ApplicationModel extends Dictionary {
 	static function CreateNewRecord($values){
 		static $id = 1;
 		
-		$values += array(
+		$values += [
 			"id" => null,
-		);
+		];
 
 		if(is_null($values["id"])){
 			$values["id"] = $id;

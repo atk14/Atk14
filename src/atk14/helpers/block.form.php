@@ -29,15 +29,15 @@ function smarty_block_form($params, $content, $template, &$repeat){
 	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$params = array_merge(array(
+	$params = array_merge([
 		"form" => $smarty->getTemplateVars("form"),
-	),$params);
+	],$params);
 
 	$form = $params["form"];
 
 	$form->set_attr(Atk14Utils::ExtractAttributes($params));
 
-	$out = array();
+	$out = [];
 	$out[] = $form->begin();
 	$out[] = $content;
 	$out[] = $form->end();

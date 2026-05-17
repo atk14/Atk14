@@ -28,11 +28,11 @@
 function smarty_block_replace_html($params, $content, $template, &$repeat){
 	if($repeat){ return false; }
 
-	$params += array(
+	$params += [
 		"id" => "",
 		"class" => "",
 		"selector" => ""
-	);
+	];
 
 	if($params["id"]){
 		$selector = "#$params[id]";

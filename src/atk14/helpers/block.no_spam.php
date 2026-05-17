@@ -36,19 +36,19 @@ function smarty_block_no_spam($params, $content, $template, &$repeat){
  * @ignore
  */
 function __no_spam_filter__($content,$options){
-	$options += array(
+	$options += [
 		"text" => "",
 
 		// attrs; see $attrs_keys below
-	);
+	];
 
 	$text = $options["text"];
 
-	$attrs_keys = array(
+	$attrs_keys = [
 		"class",
 		"title",
-	);
-	$attrs = array();
+	];
+	$attrs = [];
 	foreach($attrs_keys as $k){
 		if(isset($options[$k]) && strlen($options[$k])>0){
 			$attrs[$k] = $options[$k];

@@ -5,7 +5,7 @@
  * {!$object|dump}
  */
 function smarty_modifier_dump($var){
-	return smarty_function_dump(array("var" => $var),null);
+	return smarty_function_dump(["var" => $var],null);
 }
 
 if(!function_exists("smarty_function_dump")){

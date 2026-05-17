@@ -85,10 +85,10 @@ class Atk14Timer {
 	 * @return string
 	 * @todo some explanation regarding counters could be helpful
 	 */
-	static function GetResult($options = array()){
-		$options = array_merge(array(
+	static function GetResult($options = []){
+		$options = array_merge([
 			"total_results_only" => true
-		),$options);
+		],$options);
 
 		$timer = &Atk14Timer::_GetTimer();
 		return $timer->getPrintableOutput($options);

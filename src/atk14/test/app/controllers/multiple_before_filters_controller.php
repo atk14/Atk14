@@ -5,7 +5,7 @@ class MultipleBeforeFiltersController extends ApplicationController{
 	}
 
 	function _initialize(){
-		$this->before_filters = array();
+		$this->before_filters = [];
 
 		$this->_prepend_before_filter("check_user_is_logged");
 		$this->_prepend_before_filter("filter2");

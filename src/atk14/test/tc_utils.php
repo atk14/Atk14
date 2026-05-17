@@ -26,19 +26,19 @@ class TcUtils extends TcBase{
 	}
 
 	function test_join_arrays(){
-		$this->assertEquals(array(),Atk14Utils::JoinArrays(array()));
-		$this->assertEquals(array(),Atk14Utils::JoinArrays());
-		$this->assertEquals(array(),Atk14Utils::JoinArrays(array(),array(),array()));
+		$this->assertEquals([],Atk14Utils::JoinArrays([]));
+		$this->assertEquals([],Atk14Utils::JoinArrays());
+		$this->assertEquals([],Atk14Utils::JoinArrays([],[],[]));
 
-		$this->assertEquals(array("a","b","c","d"),Atk14Utils::JoinArrays(array("a","b"),array("c","d")));
-		$this->assertEquals(array("a","b","c","d"),Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d")));
-		$this->assertEquals(array("a","b","c","d"),Atk14Utils::JoinArrays(array("a","b","c","d")));
+		$this->assertEquals(["a","b","c","d"],Atk14Utils::JoinArrays(["a","b"],["c","d"]));
+		$this->assertEquals(["a","b","c","d"],Atk14Utils::JoinArrays(["a","b"],["c"],["d"]));
+		$this->assertEquals(["a","b","c","d"],Atk14Utils::JoinArrays(["a","b","c","d"]));
 
 		// prevod skalaru na pole
-		$this->assertEquals(array("a","b","c","d"),Atk14Utils::JoinArrays("a","b",array("c","d")));
+		$this->assertEquals(["a","b","c","d"],Atk14Utils::JoinArrays("a","b",["c","d"]));
 
 		// ignorovani null hodnot
-		$this->assertEquals(array("a","b","c","d"),Atk14Utils::JoinArrays("a","b",null,null,array("c","d"))); 
+		$this->assertEquals(["a","b","c","d"],Atk14Utils::JoinArrays("a","b",null,null,["c","d"])); 
 	}
 
 	function test_get_smarty(){
@@ -52,11 +52,11 @@ class TcUtils extends TcBase{
 		}
 		$this->assertEquals("atk14_smarty{$version}___",$smarty->compile_id);
 
-		$smarty = Atk14Utils::GetSmarty("template_path",array(
+		$smarty = Atk14Utils::GetSmarty("template_path",[
 			"controller_name" => "books",
 			"namespace" => "admin",
 			"compile_id_salt" => "salt"
-		));
+		]);
 		$this->assertEquals("atk14salt_smarty{$version}_admin_books_",$smarty->compile_id);
 	}
 
@@ -75,7 +75,7 @@ class TcUtils extends TcBase{
 
 		$this->assertEquals(null,Atk14Utils::ToScalar(null));
 
-		$article = Article::CreateNewRecord(array("id" => 345));
+		$article = Article::CreateNewRecord(["id" => 345]);
 		$this->assertEquals(345,Atk14Utils::ToScalar($article));
 
 		$str = new String4("Object with toString() method");
@@ -83,36 +83,36 @@ class TcUtils extends TcBase{
 	}
 
 	function test_StringToOptions(){
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"color" => "red",
 			"with_border" => true,
 			"with_decoration" => false,
 			"drop_shadow" => true,
 			"class" => "",
 			"max_amount" => null,
-		),Atk14Utils::StringToOptions('color=red,with_border,with_decoration=false,drop_shadow=true,class=,max_amount=null'));
+		],Atk14Utils::StringToOptions('color=red,with_border,with_decoration=false,drop_shadow=true,class=,max_amount=null'));
 
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"height" => "123",
 			"width" => "456",
 			"alt" => "Nice image, isn't it?",
-		),Atk14Utils::StringToOptions("height=123,width=456,alt=Nice image\\, isn't it?"));
+		],Atk14Utils::StringToOptions("height=123,width=456,alt=Nice image\\, isn't it?"));
 
 		$params = Atk14Utils::StringToOptions("with_hostname");
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"with_hostname" => true,
-		),$params);
+		],$params);
 		$this->assertTrue($params["with_hostname"]===true);
 
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"equals" => "=",
 			"comma" => ",",
 			"both" => "=,",
-		),Atk14Utils::StringToOptions("equals=\\=,comma=\\,,both=\\=\\,"));
+		],Atk14Utils::StringToOptions("equals=\\=,comma=\\,,both=\\=\\,"));
 
-		$this->assertEquals(array(),Atk14Utils::StringToOptions(""));
-		$this->assertEquals(array(),Atk14Utils::StringToOptions(array()));
-		$this->assertEquals(array("a" => "b"),Atk14Utils::StringToOptions(array("a" => "b")));
+		$this->assertEquals([],Atk14Utils::StringToOptions(""));
+		$this->assertEquals([],Atk14Utils::StringToOptions([]));
+		$this->assertEquals(["a" => "b"],Atk14Utils::StringToOptions(["a" => "b"]));
 	}
 
 	function test__DetermineEnvironmentByRemoteAddr(){
@@ -144,6 +144,6 @@ class TcUtils extends TcBase{
 		$this->assertEquals('hnědá lištička',Atk14Utils::EscapeForJavascript("hnědá lištička"));
 
 		// special ascii chars \x00-\x1F
-		$this->assertEquals('\u0001 \u0005 \t \u001F',Atk14Utils::EscapeForJavascript(join(" ",array(chr(1),chr(5),chr(9),chr(31)))));
+		$this->assertEquals('\u0001 \u0005 \t \u001F',Atk14Utils::EscapeForJavascript(join(" ",[chr(1),chr(5),chr(9),chr(31)])));
 	}
 }

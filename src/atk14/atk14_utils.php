@@ -78,7 +78,7 @@ class Atk14Utils{
 	}
 
 	static function _DetermineEnvironmentByRemoteAddr($remote_addr){
-		if(in_array($remote_addr,array("127.0.0.1","::1"))){
+		if(in_array($remote_addr,["127.0.0.1","::1"])){
 			return "DEVELOPMENT";
 		}
 		return "PRODUCTION";
@@ -95,13 +95,13 @@ class Atk14Utils{
 		global $ATK14_GLOBAL;
 
 		// paths in which the configuration files are being searched
-		$paths = array(
+		$paths = [
 			$ATK14_GLOBAL->getDocumentRoot()."/local_config/",
 			$ATK14_GLOBAL->getDocumentRoot()."/config/",
 			$ATK14_GLOBAL->getApplicationPath()."/conf/", // legacy path, TODO: to be removed
-		);
+		];
 
-		$configs_loaded = array();
+		$configs_loaded = [];
 
 		foreach($paths as $path){
 			if(!file_exists($path)){ continue; }
@@ -114,7 +114,7 @@ class Atk14Utils{
 			while($file = readdir($dir)){
 				if(!preg_match('/\.(inc|php)$/',$file) || !is_file($path.$file)){ continue; }
 				$config_name = preg_replace('/\.(inc|php)$/','',$file); // e.g. "colors.php" -> "colors"
-				if(in_array($config_name,array("settings","after_initialize","local_settings","local_after_initialize"))){ continue; } // this is ugly hack :( i need to delay loading of ./config/settings.php na ./config/after_initialize.php
+				if(in_array($config_name,["settings","after_initialize","local_settings","local_after_initialize"])){ continue; } // this is ugly hack :( i need to delay loading of ./config/settings.php na ./config/after_initialize.php
 
 				if(in_array($config_name,$configs_loaded)){ continue; }
 
@@ -144,7 +144,7 @@ class Atk14Utils{
 
 		$namespace = $ATK14_GLOBAL->getValue("namespace");
 
-		$_requires = array("$namespace/application.php");
+		$_requires = ["$namespace/application.php"];
 		if($namespace!=""){
 			$_requires[] = "$namespace/$namespace.php";
 		}
@@ -158,10 +158,10 @@ class Atk14Utils{
 		Atk14Require::Controller($controller_name);
 
 		// loading base form class
-		foreach(array(
+		foreach([
 			"$namespace/application_form.php",
 			"application_form.php",
-		) as $_f_){
+		] as $_f_){
 			if($_f_ = atk14_find_file(ATK14_DOCUMENT_ROOT."/app/forms/".$_f_)){
 				require_once($_f_);
 				break;
@@ -169,10 +169,10 @@ class Atk14Utils{
 		}
 
 		// Form:legacy name for base form class
-		foreach(array(
+		foreach([
 			ATK14_DOCUMENT_ROOT."/app/forms/$namespace/form.php",
 			ATK14_DOCUMENT_ROOT."/app/forms/form.php",
-		) as $_f_){
+		] as $_f_){
 			if($_f_ = atk14_find_file($_f_)){
 				require_once($_f_);
 				break;
@@ -187,7 +187,7 @@ class Atk14Utils{
 	 * @return string escaped string
 	 */
 	static function EscapeForJavascript($content){
-		$content = EasyReplace($content,array("\\" => "\\\\", "\n" => "\\n","\r" => "\\r","\t" => "\\t","\"" => "\\\"", "<script" => '<scr" + "ipt', "</script>" => '</scr" + "ipt>'));
+		$content = EasyReplace($content,["\\" => "\\\\", "\n" => "\\n","\r" => "\\r","\t" => "\\t","\"" => "\\\"", "<script" => '<scr" + "ipt', "</script>" => '</scr" + "ipt>']);
 		
 		// \x02 -> '\u0002'; \x09 === "\t"
 		$content = preg_replace_callback('/([\x00-\x08\x0A-\x1F])/',function($char){
@@ -227,13 +227,13 @@ class Atk14Utils{
 	 * - with_hostname - boolean - build url even with hostname
 	 * - ssl
 	 */
-	static function BuildLink(&$params,&$smarty,$options = array()){
-		$options = array_merge(array(
+	static function BuildLink(&$params,&$smarty,$options = []){
+		$options = array_merge([
 			"connector" => "&",
 			"anchor" => null,
 			"with_hostname" => false,
 			"ssl" => null,
-		),$options);
+		],$options);
 		foreach($options as $_key => $_value){
 			if(isset($params["_$_key"])){
 				$options[$_key] = $params["_$_key"];
@@ -264,15 +264,15 @@ class Atk14Utils{
 	 *
 	 * Recognizes only parameters which names begin with '_'.
 	 *
-	 * In this example $params will contain array("id" => "20"), $attrs will contain array("class" => "red","id" => "red_link").
+	 * In this example $params will contain ["id" => "20"), $attrs will contain ["class" => "red","id" => "red_link").
 	 * ```
-	 * $params = array("id" => "20", "_class" => "red", "_id" => "red_link");
+	 * $params = ["id" => "20", "_class" => "red", "_id" => "red_link");
 	 * $attrs = Atk14Utils::ExtractAttributes($params);
 	 * ```
 	 *
 	 * or
 	 * ```
-	 * $attrs = array("data-message" => "Hello guys!");
+	 * $attrs = ["data-message" => "Hello guys!");
 	 * Atk14Utils::ExtractAttributes($params,$attrs);
 	 * ```
 	 * the attribute data-message will be preserved
@@ -282,7 +282,7 @@ class Atk14Utils{
 	 * @param array $attributes
 	 * @return array
 	 */
-	static function ExtractAttributes(&$params,&$attributes = array()){
+	static function ExtractAttributes(&$params,&$attributes = []){
 		foreach($params as $_key => $_value){
 			if(preg_match("/^_(.+)/",$_key,$matches)){
 				$_attr = $matches[1];
@@ -299,7 +299,7 @@ class Atk14Utils{
 	 *
 	 * Example
 	 * ```
-	 *	$attrs -> array("href" => "http://www.link.cz/", "class" => "red");
+	 *	$attrs -> ["href" => "http://www.link.cz/", "class" => "red");
 	 *	$attrs = Atk14Utils::JoinAttributes($attrs);
 	 *	echo "<a$attrs>text linku</a>"
 	 * ```
@@ -308,7 +308,7 @@ class Atk14Utils{
 	 * @return string joined attributes
 	 */
 	static function JoinAttributes($attributes){
-		$out = array();
+		$out = [];
 		foreach(array_filter($attributes) as $key => $value){	
 			$out[] = " ".h($key)."=\"".h($value)."\"";
 		}
@@ -318,7 +318,7 @@ class Atk14Utils{
 	/**
 	 * Converts options written in a string into an array
 	 *
-	 * It may be useful in Smarty modifiers since their options can't be written as array (as in Smarty blocks)
+	 * It may be useful in Smarty modifiers since their options can't be written as [as in Smarty blocks)
 	 *
 	 * Usage:
 	 * ```
@@ -346,7 +346,7 @@ class Atk14Utils{
 
 		if(is_array($options)){ return $options; }
 		$options = trim((string)$options);
-		if($options===""){ return array(); }
+		if($options===""){ return []; }
 
 		$c_key = $options;
 
@@ -354,16 +354,16 @@ class Atk14Utils{
 			return $cache[$c_key];
 		}
 
-		$options = strtr($options,array(
+		$options = strtr($options,[
 			"\\," => "$placeholder-cm",
 			"\\=" => "$placeholder-eq",
-		));
+		]);
 
 		$ar = explode(",",$options);
-		$options = array();
+		$options = [];
 
 		foreach($ar as $item){
-			list($key,$value) = strpos($item,'=') ? explode('=',$item) : array($item,true);
+			list($key,$value) = strpos($item,'=') ? explode('=',$item) : [$item,true];
 			$value_lower = strtolower($value);
 			if(is_bool($value)){
 				// do notning
@@ -374,10 +374,10 @@ class Atk14Utils{
 			}elseif($value_lower==="null"){
 				$value = null;
 			}else{
-				$value = strtr($value,array(
+				$value = strtr($value,[
 					"$placeholder-cm" => ",",
 					"$placeholder-eq" => "=",
-				));
+				]);
 			}
 			$options[$key] = $value;
 		}
@@ -399,14 +399,14 @@ class Atk14Utils{
 	 *
 	 * @return Smarty instance of Smarty
 	 */
-	static function GetSmarty($template_dir = null, $options = array()){
+	static function GetSmarty($template_dir = null, $options = []){
 		global $ATK14_GLOBAL;
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"controller_name" => "",
 			"namespace" => "",
 			"compile_id_salt" => "",
-		),$options);
+		],$options);
 
 		$PATH_SMARTY = "/tmp/smarty/";
 		if(defined("TEMP")){ $PATH_SMARTY = TEMP."/smarty/"; }
@@ -427,7 +427,7 @@ class Atk14Utils{
 				$template_dir = "./templates/$template_dir";
 			}
 
-			$_template_dir = array();
+			$_template_dir = [];
 			if(is_array($template_dir)){
 				$_template_dir = $template_dir;
 			}else{
@@ -538,21 +538,21 @@ class Atk14Utils{
 	 *
 	 * Result of this call
 	 * ```
-	 * Atk14Utils::JoinArrays(array("a","b"),array("c"),array("d"));
+	 * Atk14Utils::JoinArrays(["a","b"),["c"),["d"));
 	 * ```
 	 * will be
 	 * ```
-	 * array("a","b","c","d")
+	 * ["a","b","c","d")
 	 * ```
 	 *
 	 * @return array joined arrays
 	 */
 	static function JoinArrays(){
-		$out = array();
+		$out = [];
 		$arguments = func_get_args();
 		foreach($arguments as $arg){
 			if(!isset($arg)){ continue; }
-			if(!is_array($arg)){ $arg = array($arg); }
+			if(!is_array($arg)){ $arg = [$arg]; }
 			foreach($arg as $item){
 				$out[] = $item;
 			}
@@ -744,7 +744,7 @@ function atk14_require_once($file){
  */
 function atk14_find_file($file){
 	preg_match('/^(.*\.)(inc|php)$/',$file,$matches);
-	$fs = array();
+	$fs = [];
 	$fs[] = $file;
 	$fs[] = $matches[1]."inc";
 	$fs[] = $matches[1]."php";

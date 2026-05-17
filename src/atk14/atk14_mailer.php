@@ -190,7 +190,7 @@ class Atk14Mailer{
 	 * @var array
 	 * @see Atk14Mailer::add_attachment()
 	 */
-	public $_attachments = array();
+	public $_attachments = [];
 
 	/**
 	 *
@@ -198,7 +198,7 @@ class Atk14Mailer{
 	 * @var protected
 	 * @see Atk14Mailer::add_html_image()
 	 */
-	public $_html_images = array();
+	public $_html_images = [];
 
 	/**
 	 * Template name
@@ -226,7 +226,7 @@ class Atk14Mailer{
 	 *
 	 * @var array
 	 */
-	public $tpl_data = array();
+	public $tpl_data = [];
 
 	/**
 	 * Application namespace. Is copied from controller when new instance of Atk14Mailer is created.
@@ -250,9 +250,9 @@ class Atk14Mailer{
 	public $logger = null;
 
 
-	private $defaults = array();
+	private $defaults = [];
 
-	static protected $SENT_EMAILS = array();
+	static protected $SENT_EMAILS = [];
 
 	/**
 	 * Creates instance of Atk14Mailer depending on a controller.
@@ -265,10 +265,10 @@ class Atk14Mailer{
 	 * @return ApplicationMailer
 	 */
 	static function GetInstanceByController($controller){
-		return Atk14Mailer::GetInstance(array(
+		return Atk14Mailer::GetInstance([
 			"namespace" => $controller->namespace,
 			"logger" => $controller->logger
-		));
+		]);
 	}
 
 	/**
@@ -280,17 +280,17 @@ class Atk14Mailer{
 	 *
 	 * @param array $options
 	 */
-	static function GetInstance($options = array()){
+	static function GetInstance($options = []){
 		global $ATK14_GLOBAL;
-		$options = array_merge(array(
+		$options = array_merge([
 			"namespace" => "",
 			"logger" => null
-		),$options);
+		],$options);
 
 		$namespace = $options["namespace"];
 		$logger = isset($options["logger"]) ? $options["logger"] : $ATK14_GLOBAL->getLogger();
 
-		$mailer_names = array();
+		$mailer_names = [];
 		if($namespace){ $mailer_names[] = "{$namespace}_mailer"; } // e.g. "admin_mailer"
 		$mailer_names[] = "application_mailer";
 
@@ -320,7 +320,7 @@ class Atk14Mailer{
 	 * Method is called in a controller.
 	 *
 	 * ```
-	 *	$this->mailer->execute("notify_user_registration",array(
+	 *	$this->mailer->execute("notify_user_registration",[
 	 *		"user" => $user
 	 *	));
 	 * ```
@@ -328,7 +328,7 @@ class Atk14Mailer{
 	 *
 	 * New form of sending can be used
 	 * ```
-	 *	$this->mailer->notify_user_registration(array(
+	 *	$this->mailer->notify_user_registration([
 	 *		"user" => $user
 	 *	));
 	 * ```
@@ -342,7 +342,7 @@ class Atk14Mailer{
 		$this->_save_or_restore_default_state();
 
 		$args = func_get_args();
-		call_user_func_array(array($this,"_render_message"),$args);
+		call_user_func_array([$this,"_render_message"],$args);
 		$this->_before_send();
 		return $this->_send();
 	}
@@ -364,9 +364,9 @@ class Atk14Mailer{
 	 */
 	function build(){
 		$args = func_get_args();
-		call_user_func_array(array($this,"_render_message"),$args);
+		call_user_func_array([$this,"_render_message"],$args);
 		$this->_before_send();
-		return $this->_send(array("build_message_only" => true));
+		return $this->_send(["build_message_only" => true]);
 	}
 
 	/**
@@ -384,12 +384,12 @@ class Atk14Mailer{
 		$this->template_name = $action;
 
 		$this->_before_filter();
-		call_user_func_array(array($this,$action),$args); // $this->$action($arg1, $arg2...);
+		call_user_func_array([$this,$action],$args); // $this->$action($arg1, $arg2...);
 
 		if(strlen($this->body)==0){
 			$namespace = $this->namespace;
 
-			$smarty = $this->_get_smarty(array("assign_data" => false));
+			$smarty = $this->_get_smarty(["assign_data" => false]);
 
 			$this->_before_render();
 			
@@ -410,7 +410,7 @@ class Atk14Mailer{
 				$a_template_found = true;
 				$smarty->clearAtk14Contents(); // there may be atk14 contents from the plain part
 				$this->body_html = $smarty->fetch($html_template_name);
-				$this->body_html = $this->_find_and_render_layout($smarty,$this->body_html,array("suffix" => ".html"));
+				$this->body_html = $this->_find_and_render_layout($smarty,$this->body_html,["suffix" => ".html"]);
 			}
 
 			if(!$a_template_found){
@@ -423,23 +423,23 @@ class Atk14Mailer{
 		$this->_after_filter();
 	}
 
-	protected function _get_smarty($options = array()){
+	protected function _get_smarty($options = []){
 		global $ATK14_GLOBAL;
 
-		$options += array(
+		$options += [
 			"assign_data" => true,
-		);
+		];
 
 		$namespace = $this->namespace;
 
-		$smarty = Atk14Utils::GetSmarty(array(
+		$smarty = Atk14Utils::GetSmarty([
 			$ATK14_GLOBAL->getApplicationPath()."views/$namespace/mailer/",
 			$ATK14_GLOBAL->getApplicationPath()."views/$namespace/",
 			$ATK14_GLOBAL->getApplicationPath()."views/",
-		),array(
+		],[
 			"namespace" => $namespace,
 			"compile_id_salt" => "mailer",
-		));
+		]);
 
 		// environment constants
 		$smarty->assign("DEVELOPMENT",DEVELOPMENT);
@@ -456,12 +456,12 @@ class Atk14Mailer{
 		return $smarty;
 	}
 
-	protected function _find_and_render_layout($smarty,$body,$options = array()){
+	protected function _find_and_render_layout($smarty,$body,$options = []){
 		global $ATK14_GLOBAL;
 
-		$options += array(
+		$options += [
 			"suffix" => "", // "" or ".html"
-		);
+		];
 
 		if(!strlen($body) || $this->render_layout===false){ return $body; }
 
@@ -471,10 +471,10 @@ class Atk14Mailer{
 
 		$_layout_name = $this->layout_name ? $this->layout_name : "mailer";
 		$_layout_name .= "$suffix.tpl"; // e.g. "mailer.html.tpl"
-		foreach(array(
+		foreach([
 			"$this->namespace/$_layout_name",
 			"$_layout_name",
-		) as $_path){
+		] as $_path){
 			if(file_exists($_p = $ATK14_GLOBAL->getApplicationPath()."layouts/$_path")){
 				$layout_template = $_p;
 				break;
@@ -510,11 +510,11 @@ class Atk14Mailer{
 	 *
 	 */
 	function add_attachment($content,$filename = "data",$mime_type = "application/octet-stream"){
-		$this->_attachments[] = array(
+		$this->_attachments[] = [
 			"filename" => $filename,
 			"mime_type" => $mime_type,
 			"body" => $content
-		);
+		];
 	}
 
 	/**
@@ -522,7 +522,7 @@ class Atk14Mailer{
 	 *
 	 * Should be usefull when several messages with different attachments are sent through a single instance.
 	 */
-	function clear_attachments(){ $this->_attachments = array(); }
+	function clear_attachments(){ $this->_attachments = []; }
 
 	/**
 	 * Adds an image to be displayed in the HTML email section
@@ -551,12 +551,12 @@ class Atk14Mailer{
 		if(!$mime_type){
 			$mime_type = Files::DetermineFileType($content);
 		}
-		$this->_html_images[] = array(
+		$this->_html_images[] = [
 			"content" => $content,
 			"cid" => $cid,
 			"filename" => $filename,
 			"mime_type" => $mime_type,
-		);
+		];
 	}
 
 	/**
@@ -564,7 +564,7 @@ class Atk14Mailer{
 	 *
 	 * Should be usefull when several messages with different images in the HTML part are sent through a single instance.
 	 */
-	function clear_html_images(){ $this->_html_images = array(); }
+	function clear_html_images(){ $this->_html_images = []; }
 
 
 	/**
@@ -619,8 +619,8 @@ class Atk14Mailer{
 	 * @uses sendmail()
 	 * @ignore
 	 */
-	protected function _send($params = array()){
-		$params += array(
+	protected function _send($params = []){
+		$params += [
 			"from" => $this->from,
 			"from_name" => $this->from_name,
 			"return_path" => $this->return_path,
@@ -636,7 +636,7 @@ class Atk14Mailer{
 			"charset" => $this->content_charset,
 			"attachments" => $this->_attachments,
 			"build_message_only" => false,
-		);
+		];
 		if(strlen($this->body_html) && strlen($this->body)){
 			// !! experimental feature
 			$params["plain"] = $params["body"]; // oups! in sendhtmlmail() there is no param named body
@@ -697,11 +697,11 @@ class Atk14Mailer{
 	 *
 	 * It's nearly the same as in a controller
 	 */
-	function _link_to($params = array(), $options = array()){
-		$options += array(
+	function _link_to($params = [], $options = []){
+		$options += [
 			"connector" => "&",
 			"with_hostname" => true, // in emails the hostname is expected in URLs by default
-		);
+		];
 		return Atk14Url::BuildLink($params,$options);
 	}
 

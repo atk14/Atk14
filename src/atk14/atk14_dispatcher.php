@@ -32,7 +32,7 @@
  */
 class Atk14Dispatcher{
 
-	function __construct($options = array()){
+	function __construct($options = []){
 		
 	}
 
@@ -41,14 +41,14 @@ class Atk14Dispatcher{
 	 * @param array $options
 	 * @return HTTPReponse
 	 */
-	static function Dispatch($options = array()){
+	static function Dispatch($options = []){
 		global $HTTP_RESPONSE,$HTTP_REQUEST, $ATK14_GLOBAL, $_GET;
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"display_response" => true,
 			"request" => null,
 			"return_controller" => false
-		),$options);
+		],$options);
 
 		$request = isset($options["request"]) ? $options["request"] : $HTTP_REQUEST;
 
@@ -59,9 +59,9 @@ class Atk14Dispatcher{
 		$logger = $ATK14_GLOBAL->getLogger();
 
 		Atk14Timer::Start("Atk14Url::RecognizeRoute");
-		$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri(),array(
+		$route_ar = Atk14Url::RecognizeRoute($uri = $request->getRequestUri(),[
 			"get_params" => $request->getGetVars(),
-		));
+		]);
 		$route_ar["get_params"] = is_object($route_ar["get_params"]) ? $route_ar["get_params"]->toArray() : $route_ar["get_params"];
 
 		if(DEVELOPMENT){
@@ -95,18 +95,18 @@ class Atk14Dispatcher{
 		}
 
 		if($request->get() && strlen((string)$route_ar["force_redirect"])>0 && !$request->xhr()){
-			$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
+			$HTTP_RESPONSE->setLocation($route_ar["force_redirect"],["moved_permanently" => true]);
 			$options["display_response"] && $HTTP_RESPONSE->flushAll();
 
 			$ctrl = null;
 			if($options["return_controller"]){
-				$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
+				$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],[
 					"page_title" => $route_ar["page_title"],
 					"page_description" => $route_ar["page_description"],
 					"return_controller" => true,
 					"request" => $request
-				));
-				$ctrl->response->setLocation($route_ar["force_redirect"],array("moved_permanently" => true));
+				]);
+				$ctrl->response->setLocation($route_ar["force_redirect"],["moved_permanently" => true]);
 			}
 
 			return Atk14Dispatcher::_ReturnResponseOrController($HTTP_RESPONSE,$ctrl,$options);
@@ -118,12 +118,12 @@ class Atk14Dispatcher{
 		$ATK14_GLOBAL->setValue("namespace",$route_ar["namespace"]);
 		$ATK14_GLOBAL->setValue("lang",$route_ar["lang"]);
 
-		$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],array(
+		$ctrl = Atk14Dispatcher::ExecuteAction($route_ar["controller"],$route_ar["action"],[
 			"page_title" => $route_ar["page_title"],
 			"page_description" => $route_ar["page_description"],
 			"return_controller" => true,
 			"request" => $request
-		));
+		]);
 
 		// ajaxove presmerovani...
 		if(strlen((string)$ctrl->response->getLocation())>0 && $request->xhr() && !preg_match('/^(text|application)\/(html|json|xml)/',(string)$request->getHeader("Accept"))){
@@ -158,22 +158,22 @@ class Atk14Dispatcher{
 	 * @param array $options
 	 * @return HTTPReponse
 	 */
-	static function ExecuteAction($controller_name,$action,$options = array()){
+	static function ExecuteAction($controller_name,$action,$options = []){
 		global $ATK14_GLOBAL;
-		static $prev_rc_controllers = array(); // previous rendering component controllers
+		static $prev_rc_controllers = []; // previous rendering component controllers
 
 		$logger = $ATK14_GLOBAL->getLogger();
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"page_title" => "",
 			"page_description" => "",
 			"render_layout" => true,
 			"apply_render_component_hacks" => false,
-			"params" => array(),
+			"params" => [],
 			"return_controller" => false,
 			"request" => null,
 			"namespace" => (string)$ATK14_GLOBAL->getValue("namespace"), // may be null
-		),$options);
+		],$options);
 
 		$namespace = $options["namespace"];
 
@@ -181,7 +181,7 @@ class Atk14Dispatcher{
 		$requested_action = $action;
 
 		if(!$options["apply_render_component_hacks"]){
-			$prev_rc_controllers = array();
+			$prev_rc_controllers = [];
 		}
 
 		if($options["apply_render_component_hacks"]){
@@ -225,7 +225,7 @@ class Atk14Dispatcher{
 			$action = "error404";
 		}
 
-		$initialize_params = array(
+		$initialize_params = [
 			"namespace" => $namespace,
 			"controller" => $controller_name,
 			"action" => $action,
@@ -237,7 +237,7 @@ class Atk14Dispatcher{
 			"params" => $options["params"],
 			"rendering_component" => $options["apply_render_component_hacks"],
 			"request" => $options["request"]
-		);
+		];
 		if($options["apply_render_component_hacks"]){
 			$initialize_params["prev_namespace"] = $prev_namespace;
 			$initialize_params["prev_controller"] = $prev_controller_name;

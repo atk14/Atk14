@@ -5,7 +5,7 @@ class TcRouter extends TcBase {
 		$router = new DefaultRouter();
 		$this->assertEquals("",$router->namespace);
 
-		$router = new DefaultRouter(array("namespace" => "admin"));
+		$router = new DefaultRouter(["namespace" => "admin"]);
 		$this->assertEquals("admin",$router->namespace);
 	}
 }

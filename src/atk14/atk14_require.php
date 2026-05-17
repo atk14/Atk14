@@ -97,7 +97,7 @@ class Atk14Require{
 
 		$function = String4::ToObject($filename)->gsub('/\.php$/','')->replace('.','_')->prepend('smarty_')->toString(); // "block.message.php" -> "smarty_block_message"
 		if(function_exists($function)){
-			return array();
+			return [];
 		}
 
 		if(!$smarty){ $smarty = Atk14Utils::GetSmarty(); }
@@ -105,10 +105,10 @@ class Atk14Require{
 		foreach($plugins_dir as $dir){
 			if(file_exists("$dir/$filename")){
 				require_once("$dir/$filename");
-				return array("$dir/$filename");
+				return ["$dir/$filename"];
 			}
 		}
-		return array();
+		return [];
 	}
 
 	/**
@@ -137,7 +137,7 @@ class Atk14Require{
 	static function _Files($pattern){
 		global $ATK14_GLOBAL;
 
-		$out = array();
+		$out = [];
 
 		if(!$ar = glob($ATK14_GLOBAL->getApplicationPath()."$pattern")){ return $out; }
 

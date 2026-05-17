@@ -23,13 +23,13 @@ function smarty_function_dump($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
 	if(!in_array("var",array_keys($params))){
-		$out = array();
+		$out = [];
 		$out[] = "<ul>";
 		$keys = array_keys($smarty->getTemplateVars());
 		sort($keys);
 		foreach($keys as $key){
 			$out[] = '<li>';
-			$out[] = '<pre><code>'.h('$'.$key).': '.Dumper::Dump($smarty->getTemplateVars($key),0,array('collapse_structure' => true)).'</code></pre>';
+			$out[] = '<pre><code>'.h('$'.$key).': '.Dumper::Dump($smarty->getTemplateVars($key),0,['collapse_structure' => true]).'</code></pre>';
 			$out[] = '</li>';
 		}
 		$out[] = "</ul>";
@@ -49,13 +49,13 @@ class Dumper{
 	 * echo Dumper::Dump(true); // [true]
 	 * echo Dumper::Dump(null); // NULL
 	 */
-	static function Dump($var,$offset = 0,$options = array()){
+	static function Dump($var,$offset = 0,$options = []){
 		$dumper = new Dumper();
 
 		return $dumper->_dump($var,$offset,$options);
 	}
 
-	function _dump($var,$offset,$options = array()){
+	function _dump($var,$offset,$options = []){
 		if(!isset($var)){
 			return $this->_Pad("NULL",$offset);
 		}
@@ -71,10 +71,10 @@ class Dumper{
 		return h($this->_Pad(print_r($var,true),$offset));	
 	}
 
-	function _DumpObject($obj,$offset,$options = array()){
-		$options += array(
+	function _DumpObject($obj,$offset,$options = []){
+		$options += [
 			"collapse_structure" => false,
-		);
+		];
 
 		if(is_a($obj,"Closure")){
 			return $this->_Pad("Closure",$offset);
@@ -93,7 +93,7 @@ class Dumper{
 
 		if(isset($obj->_beeing_dumped_by_dumper)){ return $this->_Pad("[recursion]",$offset); }
 		$obj->_beeing_dumped_by_dumper = true;
-		$attrs = array();
+		$attrs = [];
 		foreach(array_keys(get_object_vars($obj)) as $attr){
 			if(preg_match('/^_/',$attr)){ continue; }
 			$attrs[] = $attr;
@@ -137,13 +137,13 @@ class Dumper{
 		$out[sizeof($out)-1] .= "</span>";
 	}
 
-	function _DumpArray($ar,$offset,$options = array()){
-		$options = array_merge(array(
+	function _DumpArray($ar,$offset,$options = []){
+		$options = array_merge([
 			"label" => "Array",
 			"collapse_structure" => false,
-		),$options);
+		],$options);
 
-		$out = array();
+		$out = [];
 		$out[] = $options["label"].'(';
 		foreach($ar as $k => $v){
 			$out[] = " [$k] => ".trim($this->_Pad($this->Dump($v),1));

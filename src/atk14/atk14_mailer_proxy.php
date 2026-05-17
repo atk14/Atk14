@@ -25,14 +25,14 @@ class Atk14MailerProxy{
 		}
 	}
 
-	static function GetInstance($options = array()){
+	static function GetInstance($options = []){
 		if($mailer = Atk14Mailer::GetInstance($options)){
 			return new Atk14MailerProxy($mailer);
 		}
 	}
 
 	function __call($method,$arguments){
-		$methods_to_proxy = array(
+		$methods_to_proxy = [
 			"execute",
 			"build",
 			"add_attachment",
@@ -40,13 +40,13 @@ class Atk14MailerProxy{
 			"add_html_image",
 			"clear_html_images",
 			"getSentEmails",
-		);
+		];
 		if(in_array($method,$methods_to_proxy) || preg_match('/^_/',$method)){
-			$callable = array($this->_mailer,$method);
+			$callable = [$this->_mailer,$method];
 		}else{
 			// $proxy->notify_user_registration($user) is treated as $this->_mailer->execute("notify_user_registration",$user);
 			array_unshift($arguments,$method);
-			$callable = array($this->_mailer,"execute");
+			$callable = [$this->_mailer,"execute"];
 		}
 
 		return call_user_func_array($callable,$arguments);

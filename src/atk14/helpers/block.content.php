@@ -39,13 +39,13 @@ function smarty_block_content($params, $content, $template, &$repeat){
 	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$params += array(
+	$params += [
 		"for" => "main",
 		"strategy" => null, // default strategy is "append" but it won't be defined here; see Atk14Smarty::getAtk14Content()
-	);
+	];
 
-	$smarty->addAtk14Content($params["for"],$content,array(
+	$smarty->addAtk14Content($params["for"],$content,[
 		"strategy" => $params["strategy"],
-	));
+	]);
 	return "";
 }

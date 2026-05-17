@@ -35,12 +35,12 @@
 function smarty_function_link_to($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$options = array(
+	$options = [
 		"connector" => "&amp;",
 		"anchor" => null,
 		"with_hostname" => false,
 		"ssl" => null,
-	);
+	];
 	Atk14Utils::ExtractAttributes($params,$options);
 
 	/*

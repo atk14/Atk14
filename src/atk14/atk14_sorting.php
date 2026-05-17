@@ -16,12 +16,12 @@
  * ```
  * $sorting = new Atk14Sorting($this->params);
  * $sorting->add("name");
- * $sorting->add("created",array("reverse" => true));
- * $sorting->add("rank",array(
+ * $sorting->add("created",["reverse" => true));
+ * $sorting->add("rank",[
  * 	"ascending_ordering" => "rank DESC, id ASC",
  * 	"descending_ordering" => "rank ASC, id DESC",
  * ));
- * $finder = TableRecord::Finder(array(
+ * $finder = TableRecord::Finder([
  * 	"class_name" => "Book",
  * 	"order" => $sorting->getOrder(),
  * ));
@@ -47,7 +47,7 @@
  * $sorting = new Atk14Sorting($params);
  * $sorting["name"] = "name";
  * $sorting["title"] = "UPPER(name)";
- * $sorting["year"] = array("year ASC, id ASC", "year DESC, id DESC");
+ * $sorting["year"] = ["year ASC, id ASC", "year DESC, id DESC");
  * ```
  * @package Atk14\Core
  */
@@ -63,12 +63,12 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	/**
 	 * @ignore
 	 */
-	protected $_Ordering = array();
+	protected $_Ordering = [];
 
 	/**
 	 * @ignore
 	 */
-	protected $_OrderingStrings = array();
+	protected $_OrderingStrings = [];
 
 	/**
 	 * @ignore
@@ -82,7 +82,7 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	 * - **order** - key to be used for `order` option in DbMole classes
 	 * @param array $options
 	 */
-	function __construct($params = null,$options = array()){
+	function __construct($params = null,$options = []){
 		if(is_null($params)){
 			$params = new Dictionary($GLOBALS["HTTP_REQUEST"]->getVars("PG"));
 		}
@@ -97,13 +97,13 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	 * Basic usage
 	 * ```
 	 * $sorting->add("create_date");
-	 * $sorting->add("create_date",array("reverse" => true));
-	 * $sorting->add("title",array("order_by" => "UPPER(title)"));
-	 * $sorting->add("title",array(
+	 * $sorting->add("create_date",["reverse" => true));
+	 * $sorting->add("title",["order_by" => "UPPER(title)"));
+	 * $sorting->add("title",[
 	 * 	"asc" => "UPPER(title), id",
 	 * 	"desc" => "UPPER(title) DESC, id DESC"
 	 * ));
-	 * $sorting->add("title",array(
+	 * $sorting->add("title",[
 	 * 	"ascending_ordering" => "UPPER(title), id",
 	 * 	"descending_ordering" => "UPPER(title) DESC, id DESC"
 	 * ));
@@ -120,7 +120,7 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	 * - **reverse** - used only in conjunction with `order_by` option. Reverts order for both descending and ascending ordering
 	 * - **title** - string for the title attribute of the generated &lt;a /&gt; tag.
 	 */
-	function add($key,$options_or_asc_ordering = array(), $desc_ordering = null, $options = array()){
+	function add($key,$options_or_asc_ordering = [], $desc_ordering = null, $options = []){
 		$asc_ordering = null;
 
 		if(is_array($desc_ordering)){
@@ -140,10 +140,10 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 				$uniqid = uniqid();
 				$desc_ordering = preg_replace('/\bASC\b/i',"DESC$uniqid",$desc_ordering);
 				$desc_ordering = preg_replace('/\bDESC\b/i',"ASC$uniqid",$desc_ordering);
-				$desc_ordering = strtr($desc_ordering,array(
+				$desc_ordering = strtr($desc_ordering,[
 					"DESC$uniqid" => "DESC",
 					"ASC$uniqid" => "ASC",
-				));
+				]);
 				if(!preg_match('/\b(ASC|DESC)$/i',$desc_ordering)){
 					$desc_ordering .= " DESC"; // "name" -> "name DESC"
 				}
@@ -153,20 +153,20 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 		// shortcuts:
 		//	 asc -> asc_ordering
 		//	 desc -> desc_ordering
-		foreach(array("asc","desc") as $_k){
+		foreach(["asc","desc"] as $_k){
 			if(isset($options[$_k])){
 				$options["{$_k}ending_ordering"] = $options[$_k];
 				unset($options[$_k]);
 			}
 		}
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"order_by" => "$key",
 			"ascending_ordering" => $asc_ordering,
 			"descending_ordering" => $desc_ordering,
 			"title" => _("Sort table by this column"),
 			"reverse" => false,
-		),$options);
+		],$options);
 
 		if(!isset($options["ascending_ordering"])){
 			$options["ascending_ordering"] = "$options[order_by] ".($options["reverse"] ? "DESC" : "ASC");
@@ -276,17 +276,17 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 
 	/**
 	 * $sorting["rank"] = "rank";
-	 * $sorting["rank"] = array("rank ASC","rank DESC");
+	 * $sorting["rank"] = ["rank ASC","rank DESC");
 	 *
 	 * @ignore
 	 */
 	#[\ReturnTypeWillChange]
 	function offsetSet($key,$value){
 		if(is_array($value) && isset($value[0]) && isset($value[1])){
-			$value = array(
+			$value = [
 				"ascending_ordering" => $value[0],
 				"descending_ordering" => $value[1],
-			);
+			];
 		}
 		return $this->add($key,$value);
 	}
@@ -297,10 +297,10 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	#[\ReturnTypeWillChange]
 	function offsetGet($key){
 		if(isset($this->_Ordering[$key])){
-			return array(
+			return [
 				$this->_Ordering[$key]["ascending_ordering"],
 				$this->_Ordering[$key]["descending_ordering"],
-			);
+			];
 		}
 	}
 

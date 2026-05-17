@@ -15,10 +15,10 @@
  *
  * Then in your controller:
  * <code>
- * $this->sorting->add("title",array("order_by" => "UPPER(title)"));
+ * $this->sorting->add("title",["order_by" => "UPPER(title)"));
  * $this->sorting->add("code");
  *
- * $finder = Book::Finder(array(
+ * $finder = Book::Finder([
  * 	"conditions" => $conditions,
  *  "bind_ar" => $bind_ar,
  *  "order" => $this->sorting->getOrder(),
@@ -72,10 +72,10 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 	$sorting = $smarty->getTemplateVars("sorting");
 	$key = $params["key"];
 
-	$params += array(
+	$params += [
 		"title" => $sorting->getTitle($key)
 		// ??? TODO: neco jako wrap_with_th_tag => true
-	);
+	];
 
 	$_params = $smarty->getTemplateVars("params")->copy();
 	$_params->delete(ATK14_PAGINATOR_OFFSET_PARAM_NAME); // smazani parametru pro strankovani
@@ -84,10 +84,10 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 		$_key = "$key-desc";
 	}
 	$_params->s("order",$_key);
-	$href = Atk14Url::BuildLink($_params->toArray(),array("connector" => "&amp;"));
+	$href = Atk14Url::BuildLink($_params->toArray(),["connector" => "&amp;"]);
 	$_active = "";
 	$_arrow = "";
-	if(in_array($sorting->getActiveKey(),array("$key","$key-asc"))){
+	if(in_array($sorting->getActiveKey(),["$key","$key-asc"])){
 		$_active = " active";
 		$_arrow = USING_FONTAWESOME ? ' <span class="fas fa-arrow-up"></span>' : ' <span class="arrow-up">&uArr;</span>';
 	}elseif($sorting->getActiveKey()=="$key-desc"){

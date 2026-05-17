@@ -31,15 +31,15 @@
  *
  */
 function smarty_function_placeholder($params,$template){
-	$params += array(
+	$params += [
 		"for" => "main"
-	);
+	];
 	$id = $params["for"];
 
 	$smarty = atk14_get_smarty_from_template($template);
-	$smarty->addAtk14Content($id,"",array(
+	$smarty->addAtk14Content($id,"",[
 		"strategy" => "_place_initial_content_"
-	));
+	]);
 
 	return "<%atk14_content[$id]%>"; // returns an internal sign, which will be replaced later within controller
 }

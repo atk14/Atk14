@@ -4,14 +4,14 @@ class TcModel extends TcBase {
 	// There are no TableRecord models.
 	// Here are few tests to check that our mock models are working properly.
 	function test(){
-		$john = User::CreateNewRecord(array(
+		$john = User::CreateNewRecord([
 			"login" => "john.doe",
 			"name" => "John Doe"
-		));
-		$samantha = User::CreateNewRecord(array(
+		]);
+		$samantha = User::CreateNewRecord([
 			"login" => "samantha.doe",
 			"name" => "Samantha Doe",
-		));
+		]);
 
 		$this->assertEquals(1,$john->getId());
 		$this->assertEquals(2,$samantha->getId());

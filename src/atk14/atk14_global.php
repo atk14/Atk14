@@ -18,16 +18,16 @@ class Atk14Global{
 	 *
 	 * @var array
 	 */
-	protected $_Store = array();
+	protected $_Store = [];
 
 	/**
 	 * Array to store config values.
 	 *
 	 * @var array
 	 */
-	protected $_ConfigStore = array();
+	protected $_ConfigStore = [];
 
-	protected static $_ConfigFromPhpFileStore = array();
+	protected static $_ConfigFromPhpFileStore = [];
 
 	protected function __construct(){
 
@@ -75,7 +75,7 @@ class Atk14Global{
 	 * Get reference to variable routes
 	 * ```
 	 * $routes = &$ATK14_GLOBAL->getValue("routes");
-	 * $routes = &$ATK14_GLOBAL->getValue("routes",array());
+	 * $routes = &$ATK14_GLOBAL->getValue("routes",[));
 	 * ```
 	 *
 	 * @param string $name name of global variable
@@ -146,7 +146,7 @@ class Atk14Global{
 	 * ```
 	 * should return
 	 * ```
-	 * array("en","cs","de");
+	 * ["en","cs","de");
 	 * ```
 	 *
 	 * @return array set of language codes
@@ -155,7 +155,7 @@ class Atk14Global{
 		if($locales = $this->getConfig("locale")){
 			return array_keys($locales);
 		}
-		return array("cs");
+		return ["cs"];
 	}
 
 	/**
@@ -207,7 +207,7 @@ class Atk14Global{
 	 *
 	 * Returns someting like
 	 * ```
-	 * array(
+	 * [
 	 * 	"database" => "dbname",
 	 * 	"host" => "127.0.0.1",
 	 * 	"username" => "user",
@@ -258,14 +258,14 @@ class Atk14Global{
 			return null;
 		}
 
-		$d += array(
+		$d += [
 			"adapter" => "postgresql",
 			"host" => "",
 			"port" => "",
 			"database" => "",
 			"username" => "",
 			"password" => "",
-		);
+		];
 
 		if($d["port"] && !$d["host"]){
 			$d["host"] = "localhost";
@@ -284,7 +284,7 @@ class Atk14Global{
 	
 		// replacing string values back into the configuration
 		//  {{username}}, {{database}}...
-		$replaces = array();
+		$replaces = [];
 		foreach($d as $k => $v){
 			if(is_string($v)){
 				$replaces['{{'.$k.'}}'] = $v;
@@ -341,13 +341,13 @@ class Atk14Global{
 		$STORE[$config_name] = null;
 
 		// paths in which the configuration file is being searched
-		$paths = array(
+		$paths = [
 			$this->getDocumentRoot()."/local_config/",
 			$this->getDocumentRoot()."/config/",
 			$this->getApplicationPath()."/conf/", // legacy path, TODO: to be removed
-		);
+		];
 
-		$suffixes = array("",".yml",".json");
+		$suffixes = ["",".yml",".json"];
 
 		$filename = "";
 		foreach($paths as $path){
@@ -361,7 +361,7 @@ class Atk14Global{
 
 		if($filename){
 			if(preg_match('/\.yml$/i',$filename)){
-				$_config = miniYAML::Load(Files::GetFileContent($filename),array("interpret_php" => true));
+				$_config = miniYAML::Load(Files::GetFileContent($filename),["interpret_php" => true]);
 			}elseif(preg_match('/\.json$/i',$filename)){
 				$_config = json_decode(Files::GetFileContent($filename),true);
 			}
@@ -467,7 +467,7 @@ class Atk14Global{
 	 * It is possible to filter information for specific lang/controller/action
 	 *
 	 * ```
-	 * $routes = $ATK14_GLOBAL->getPreparedRoutes("",array("path" => "en/product/detail"));
+	 * $routes = $ATK14_GLOBAL->getPreparedRoutes("",["path" => "en/product/detail"));
 	 * ```
 	 *
 	 * @param string $namespace
@@ -478,18 +478,18 @@ class Atk14Global{
 	 * - path
 	 * @return array
 	 */
-	function getPreparedRoutes($namespace = "",$options = array()){
+	function getPreparedRoutes($namespace = "",$options = []){
 		static $ROUTES_STORE, $ROUTES_BY_PATH, $ROUTES_WITH_NO_PATH;
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"path" => null
-		),$options);
+		],$options);
 
 
 		if(!isset($ROUTES_STORE)){
-			$ROUTES_STORE = array();
-			$ROUTES_BY_PATH = array();
-			$ROUTES_WITH_NO_PATH = array();
+			$ROUTES_STORE = [];
+			$ROUTES_BY_PATH = [];
+			$ROUTES_WITH_NO_PATH = [];
 		}
 
 		if(!isset($ROUTES_STORE[$namespace])){
@@ -502,29 +502,29 @@ class Atk14Global{
 			// nasleduji 4 pravidla, ktere by mely byt na konci seznamu
 			// tyto pravidla zachyti vsechno
 			if(!isset($routes[""])){
-					$routes[""] = array(
+					$routes[""] = [
 						"lang" => $this->getDefaultLang(),
 						"__path__" => "main/index",
 						"__page_title__" => "My Application",
 						"__page_description__" => "my beautiful application"
-					);
+					];
 			}
 			if(!isset($routes["<lang>"])){
-					$routes["<lang>"] = array(
+					$routes["<lang>"] = [
 						"__path__" => "main/index",
-					);
+					];
 			}			
 			if(!isset($routes["<lang>/<controller>"])){
 					// pokud action chybi, uvazuje se automaticky "index"
-					$routes["<lang>/<controller>"] =  array(
+					$routes["<lang>/<controller>"] =  [
 						"action" => "index",
-					);
+					];
 			}	
 			if(!isset($routes["<lang>/<controller>/<action>"])){
-					$routes["<lang>/<controller>/<action>"] = array();
+					$routes["<lang>/<controller>/<action>"] = [];
 			}			
 
-			$out = array();
+			$out = [];
 
 			reset($routes);
 			$_last_title = "";
@@ -557,7 +557,7 @@ class Atk14Global{
 			$routes = $out;
 
 			// doplneni chybejicich vzoru
-			// $routes["domain-registration/<domain_name>"] = array(); -> $routes["domain-registration/<domain_name>"] = array("domain_name" => "/.*/");
+			// $routes["domain-registration/<domain_name>"] = [); -> $routes["domain-registration/<domain_name>"] = ["domain_name" => "/.*/");
 			foreach($routes as $key => $value){
 				if(preg_match_all("/<([^>]+)>/",$key,$matches)){
 					for($i=0;$i<sizeof($matches[0]);$i++){
@@ -585,10 +585,10 @@ class Atk14Global{
 			foreach($routes as $uri => $params){
 				foreach($params as $name => $val){
 					if(preg_match("/^__/",$name)){ continue; }
-					$params[$name] = array(
+					$params[$name] = [
 						"regexp" => (bool)preg_match("/^\\/.*\\/$/",(string)$val),
 						"value" => $val,
-					);
+					];
 					$routes[$uri] = $params;
 				}
 			}
@@ -607,7 +607,7 @@ class Atk14Global{
 		// pokud se zajimeme o konkretni path,
 		// prihodime nakonec i vychozi (nepojmenovane) routy
 		if(strlen($path = (string)$options["path"])){
-			$out = array();
+			$out = [];
 			if(isset($ROUTES_BY_PATH[$namespace][$path])){ $out = $ROUTES_BY_PATH[$namespace][$path]; }
 			foreach($ROUTES_WITH_NO_PATH[$namespace] as $k => $v){
 				$out[$k] = $v;
@@ -631,7 +631,7 @@ class Atk14Global{
 		global $ATK14_LOGGER;
 
 		if(!isset($ATK14_LOGGER)){
-			$ATK14_LOGGER = new Logger("atk14",array("disable_start_and_stop_marks" => true));
+			$ATK14_LOGGER = new Logger("atk14",["disable_start_and_stop_marks" => true]);
 			$ATK14_LOGGER->start();
 		}
 		return $ATK14_LOGGER;

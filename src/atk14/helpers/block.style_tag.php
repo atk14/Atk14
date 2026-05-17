@@ -14,9 +14,9 @@ function smarty_block_style_tag($params, $content, $template, &$repeat){
 	if($repeat){ return; }
 
 	if(CSP_NONCE){
-		$params += array(
+		$params += [
 			"nonce" => CSP_NONCE,
-		);
+		];
 	}
 
 	$attrs = Atk14Utils::JoinAttributes($params);

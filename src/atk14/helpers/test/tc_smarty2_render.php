@@ -14,17 +14,17 @@ require_once(__DIR__ . "/app/helpers/function.increment_counter.php");
 class TcSmarty2Render extends TcBase{
 
 	function test() {
-		$smarty = Atk14Utils::GetSmarty(array(__DIR__."/templates/"));
-		$this->array = array('keyboard' => 8, 3 => 'chicken');
-		$smarty->assign(array(
+		$smarty = Atk14Utils::GetSmarty([__DIR__."/templates/"]);
+		$this->array = ['keyboard' => 8, 3 => 'chicken'];
+		$smarty->assign([
 			'a' => 1,
 			'e' => 1,
 			'f' => 1,
-			'one' => array(1),
+			'one' => [1],
 			'test' => $this,
 			#copy array
 			'array' => array_slice($this->array,0,2, true)
-		));
+		]);
 
 		$this->counter=0;
 		end($this->array);
@@ -38,7 +38,7 @@ class TcSmarty2Render extends TcBase{
 		@$smarty->fetch('tc_smarty_render.tpl'); // this produces enormous error log in PHP 8.1
 		$this->assertEquals($this->counter, 6);
 
-		$smarty = Atk14Utils::GetSmarty(array(__DIR__."/templates/"));
+		$smarty = Atk14Utils::GetSmarty([__DIR__."/templates/"]);
 		$smarty->assign("token","EXTERNAL");
 		$tokens = @$smarty->fetch("tokens.tpl");
 		$this->assertEquals('tokens: EXTERNAL | INTERNAL | ASSIGNED | INTERNAL_AGAIN',trim($tokens));

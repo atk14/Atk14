@@ -37,11 +37,11 @@
 function smarty_block_cache($params,$content,$template,&$repeat){
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$params += array(
+	$params += [
 		"if" => true,
 		"key" => null,
 		"expire" => 60, // 60 sec
-	);
+	];
 
 	$expire = $params["expire"]; unset($params["expire"]);
 	$key = (string)$params["key"]; unset($params["key"]);

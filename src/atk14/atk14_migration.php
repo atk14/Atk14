@@ -15,12 +15,12 @@
  * ```
  * class ContentForCreatures extends Atk14Migration{
  * 	function up(){
- * 		$data_ar = array(
- * 			array(
+ * 		$data_ar = [
+ * 			[
  * 				"name" => "Second creature",
  * 				"description" => "Normal creature. No picture is needed."
  * 			),
- * 			array(
+ * 			[
  * 				"name" => "Third creature",
  * 				"description" => "Yet another creature."
  * 			)
@@ -83,11 +83,11 @@ class Atk14Migration{
 		static $logger;
 
 		if(!isset($logger)){
-			$logger = new Logger("migration",array(
+			$logger = new Logger("migration",[
 				"log_to_stdout" => true,
 				"log_to_file" => true,
 				"default_log_file" => $ATK14_GLOBAL->getDocumentRoot()."/log/".(TEST ? "test_migration.log" : "migration.log")
-			));
+			]);
 		}
 		return $logger;
 	}
@@ -103,8 +103,8 @@ class Atk14Migration{
 
 		$this->dbmole->begin();
 		// when we are forcing some migration, the given record in schema_migrations already exists
-		if(0==$this->dbmole->selectInt("SELECT COUNT(*) FROM schema_migrations WHERE version=:version",array(":version" => $this->version))){
-			$this->dbmole->insertIntoTable("schema_migrations",array("version" => $this->version));
+		if(0==$this->dbmole->selectInt("SELECT COUNT(*) FROM schema_migrations WHERE version=:version",[":version" => $this->version])){
+			$this->dbmole->insertIntoTable("schema_migrations",["version" => $this->version]);
 		}
 		$this->dbmole->commit();
 
@@ -140,7 +140,7 @@ class Atk14Migration{
 	 * @return boolean
 	 */
 	static function SchemaMigrationsTableExists($dbmole){
-		$bind_ar = array();
+		$bind_ar = [];
 		switch($dbmole->getDatabaseType()){
 			case "postgresql":
 				$query = "SELECT COUNT(*) FROM pg_tables WHERE LOWER(tablename)='schema_migrations' AND schemaname=:schema";
@@ -178,7 +178,7 @@ class Atk14Migration{
 				$search_path = $dbmole->selectSingleValue("SHOW search_path"); // '"$user",public'
 				$search_path = preg_replace('/\s+/','',$search_path); // '"$user", public' -> '"$user",public'
 				$schemas = explode(",",$search_path);
-				$schemas = array_diff($schemas,array('"$user"'));
+				$schemas = array_diff($schemas,['"$user"']);
 				$schemas = array_values($schemas);
 				if($schemas){ return $schemas[0]; }
 				break;

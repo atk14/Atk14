@@ -194,7 +194,7 @@ class Atk14Flash{
 		settype($key,"string");
 		settype($message,"string");
 
-		if(!($flash_ar = $session->getValue("__flash__"))){ $flash_ar = array(); }
+		if(!($flash_ar = $session->getValue("__flash__"))){ $flash_ar = []; }
 
 		if(!strlen($message)){
 			unset($flash_ar["$key"]);
@@ -223,10 +223,10 @@ class Atk14Flash{
 	 * @param string $key
 	 * @return Atk14FlashMessage
 	 */
-	function getMessage($key = null,$options = array()){
-		$options += array(
+	function getMessage($key = null,$options = []){
+		$options += [
 			"set_read_state" => true,
-		);
+		];
 
 		$session = $GLOBALS["ATK14_GLOBAL"]->getSession();
 

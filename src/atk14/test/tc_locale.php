@@ -10,7 +10,7 @@ class TcLocale extends TcBase{
 	}
 
 	function test_extract_time(){
-		$this->assertEquals("12:30:45",Atk14Locale::_ExtractTime(array("hours" => "12", "minutes" => "30", "seconds" => "45")));
+		$this->assertEquals("12:30:45",Atk14Locale::_ExtractTime(["hours" => "12", "minutes" => "30", "seconds" => "45"]));
 	}
 
 	function test_date_time_formatting(){
@@ -146,9 +146,9 @@ class TcLocale extends TcBase{
 		$global = Atk14Global::GetInstance();
 
 		$locale = $global->getConfig("locale");
-		$locale["it"] = array(
+		$locale["it"] = [
 			"LANG" => "it_IT.UTF-8",
-		);
+		];
 		$global->setConfig("locale",$locale);
 
 		$this->_setLocale("it");

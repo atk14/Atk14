@@ -40,13 +40,13 @@ class TcFlash extends TcBase{
 		$flash2->setMessage("success","Another_Success");
 		$this->assertEquals(false,$flash2->wasRead());
 
-		$this->assertEquals("Another_Success",$flash2->getMessage("success",array("set_read_state" => false)));
+		$this->assertEquals("Another_Success",$flash2->getMessage("success",["set_read_state" => false]));
 		$this->assertEquals(false,$flash2->wasRead());
 
-		$this->assertEquals("Another_Success",$flash2->getMessage("success",array("set_read_state" => true)));
+		$this->assertEquals("Another_Success",$flash2->getMessage("success",["set_read_state" => true]));
 		$this->assertEquals(true,$flash2->wasRead());
 
-		$this->assertEquals("Another_Success",$flash2->getMessage("success",array("set_read_state" => false)));
+		$this->assertEquals("Another_Success",$flash2->getMessage("success",["set_read_state" => false]));
 		$this->assertEquals(true,$flash2->wasRead()); // set from the previous call
 	}
 }

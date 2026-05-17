@@ -17,15 +17,15 @@ class Atk14DeploymentStage{
 
 	protected function __construct($name,$params){
 		// converting strings into arrays
-		foreach(array("before_deploy", "after_deploy", "rsync") as $k){
+		foreach(["before_deploy", "after_deploy", "rsync"] as $k){
 			if(!is_array($params[$k])){
-				if(!$params[$k]){ $params[$k] = array(); continue; } // empty string
-				$params[$k] = array($params[$k]);
+				if(!$params[$k]){ $params[$k] = []; continue; } // empty string
+				$params[$k] = [$params[$k]];
 			}
 		}
 
 		// converting strings into booleans
-		foreach(array("create_maintenance_file") as $k){
+		foreach(["create_maintenance_file"] as $k){
 			$params[$k] = String4::ToObject($params[$k])->toBoolean();
 		}
 
@@ -48,17 +48,17 @@ class Atk14DeploymentStage{
 	 * ```
 	 * @return Atk14DeploymentStage[]
 	 */
-	static function GetStages($options = array()){
+	static function GetStages($options = []){
 		global $ATK14_GLOBAL;
 
-		$options += array(
+		$options += [
 			"include_templates" => false,
-		);
+		];
 
-		$out = array();
+		$out = [];
 		$defaults =
 	
-		$very_very_defauls = array(
+		$very_very_defauls = [
 			"extends" => null, // e.g. "production"
 			"url" => "", // e.g. http://www.example.com; just for information
 			"user" => null,
@@ -70,14 +70,14 @@ class Atk14DeploymentStage{
 			"deploy_via" => "git_push", // there is only one way
 			"deploy_repository" => null,
 			"deploy_branch" => "master",
-			"before_deploy" => array(),
-			"rsync" => array(), // array of directories which have to be synchronized to the server
-			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
-		);
+			"before_deploy" => [],
+			"rsync" => [], // array of directories which have to be synchronized to the server
+			"after_deploy" => ["./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"],
+		];
 		$required_key_order = array_keys($very_very_defauls);
 
 		$defaults = null;
-		$all_defaults = array();
+		$all_defaults = [];
 		foreach($ATK14_GLOBAL->getConfig("deploy") as $name => $ar){
 			if(!isset($defaults)){
 				// the default recipe is the one for the first stage
@@ -106,7 +106,7 @@ class Atk14DeploymentStage{
 			// TODO: add some checks
 			$raw_def_keys = array_keys($raw_def);
 			foreach($config as $k => $v){
-				if(!in_array($k,$raw_def_keys)){
+				if(!in_[$k,$raw_def_keys)){
 					echo "in section $stage there is an unknown key \"$k\" (in config/deploy.yml)\n";
 					_exit_with_errors();
 				}
@@ -115,7 +115,7 @@ class Atk14DeploymentStage{
 			} */
 
 			// gaining the requested key order in $ar
-			$_ar = array();
+			$_ar = [];
 			foreach($required_key_order as $k){
 				$_ar[$k] = $ar[$k];
 				unset($ar[$k]);
@@ -127,7 +127,7 @@ class Atk14DeploymentStage{
 		}
 
 		if(!$options["include_templates"]){
-			$_out = array();
+			$_out = [];
 			foreach($out as $name => $s){
 				if(preg_match('/^_/',$name)){ continue; }
 				$_out[$name] = $s;
@@ -204,9 +204,9 @@ class Atk14DeploymentStage{
 	 */
 	function getRsync(){
 		$out = $this->rsync;
-		if(!$out){ return array(); }
+		if(!$out){ return []; }
 		if(!is_array($out)){
-			$out = array($out);
+			$out = [$out];
 		}
 		return $out;
 	}
@@ -224,7 +224,7 @@ class Atk14DeploymentStage{
 		$user = $config["user"] ? "$config[user]@" : "";
 		$env = "ATK14_ENV=production";
 		$env .= $config["env"] ? " $config[env]" : "";
-		$cmd = "ssh $user$config[server]$port_spec \"{$cd_cmd}export $env && (".strtr($cmd,array('"' => '\"', "\\" => "\\\\")).")\"";
+		$cmd = "ssh $user$config[server]$port_spec \"{$cd_cmd}export $env && (".strtr($cmd,['"' => '\"', "\\" => "\\\\"]).")\"";
 		return $cmd;
 	}
 
@@ -233,14 +233,14 @@ class Atk14DeploymentStage{
 	 *
 	 *	$cmd = $stage->compileRsyncCommand("public/dist/");
 	 */
-	function compileRsyncCommand($file,$options = array()){
-		$options += array(
+	function compileRsyncCommand($file,$options = []){
+		$options += [
 			"delete" => true,
 
 			// do not set underscore options
 			"_local_file_path" => "",
 			"_reverse" => false,
-		);
+		];
 
 		$config = $this->toArray();
 		if(is_dir(ATK14_DOCUMENT_ROOT."/".$file)){
@@ -271,10 +271,10 @@ class Atk14DeploymentStage{
 	 *
 	 *	$cmd = $stage->compileReverseRsyncCommand("local_config/","/backup/local_config/");
 	 */
-	function compileReverseRsyncCommand($file,$local_file_path,$options = array()){
-		$options += array(
+	function compileReverseRsyncCommand($file,$local_file_path,$options = []){
+		$options += [
 			"delete" => false
-		);
+		];
 		$options["_reverse"] = true;
 		$options["_local_file_path"] = $local_file_path;
 		return $this->compileRsyncCommand($file,$options);
@@ -283,7 +283,7 @@ class Atk14DeploymentStage{
 	function toArray(){
 		// it's fine to have the name on the first position :)
 		$data = $this->data->toArray();
-		$out = array("name" => $data["name"]);
+		$out = ["name" => $data["name"]];
 		unset($data["name"]);
 		return $out + $data;
 	}
@@ -310,7 +310,7 @@ class Atk14DeploymentStage{
 	}
 
 	protected static function _ReplaceVariables($ar,$name){
-		$replaces = array();
+		$replaces = [];
 		foreach($ar as $key => $value){
 			if(is_array($value)){ continue; }
 			$replaces['{{'.$key.'}}'] = $value;

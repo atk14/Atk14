@@ -12,43 +12,43 @@ class ApplicationMailer extends Atk14Mailer {
 
 	function user_data_summary_notification($login,$email,$password){
 		$this->to = $email;
-		$this->tpl_data += array(
+		$this->tpl_data += [
 			"login" => $login,
 			"email" => $email,
 			"password" => $password,
-		);
+		];
 	}
 
-	function html_notification($params = array()){
+	function html_notification($params = []){
 		$this->subject = "Rich formatted notification";
 		$this->to = "john.doe@hotmail.com";
 	}
 
-	function html_only_notification($params = array()){
+	function html_only_notification($params = []){
 		$this->subject = "HTML only notification";
 		$this->to = "john.doe@hotmail.com";
 	}
 
-	function html_notification_without_layout($params = array()){
+	function html_notification_without_layout($params = []){
 		$this->subject = "Rich formatted notification";
 		$this->to = "john.doe@hotmail.com";
 		$this->template_name = "html_notification";
 		$this->render_layout = false;
 	}
 
-	function html_notification_christmas_theme($params = array()){
+	function html_notification_christmas_theme($params = []){
 		$this->subject = "Rich formatted notification";
 		$this->to = "john.doe@hotmail.com";
 		$this->template_name = "html_notification";
 		$this->layout_name = "mailer_christmas_theme";
 	}
 
-	function notification_without_templates($params = array()){
+	function notification_without_templates($params = []){
 		// There is no template for this action.
 		// An exception should be thrown.
 	}
 
-	function testing_hooks($params = array()){
+	function testing_hooks($params = []){
 		
 	}
 

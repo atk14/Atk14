@@ -59,13 +59,13 @@ function smarty_block_a($params, $content, $template, &$repeat){
 	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$params += array(
+	$params += [
 		"_method" => null, // "post", "delete", even "get" is fine
 		"_confirm" => null,
-	);
+	];
 
 	Atk14Timer::Start("helper block.a");
-	$attrs = array();
+	$attrs = [];
 	if($params["_method"]){
 		$attrs["data-method"] = $params["_method"];
 	}

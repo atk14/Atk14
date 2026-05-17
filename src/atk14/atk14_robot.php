@@ -111,10 +111,10 @@ class Atk14Robot{
 		$robot_name = String4::ToObject(get_class($this))->underscore()->gsub('/_robot$/','');
 		$this->robot_name = $robot_name;
 
-		$logger_options = array(
+		$logger_options = [
 			"default_log_file" => $this->default_log_file,
 			"automatically_log_to_stdout_on_terminal" => true,
-		);
+		];
 		if(TEST){
 			$logger_options["log_to_file"] = false;
 			$logger_options["log_to_buffer"] = true;
@@ -123,10 +123,10 @@ class Atk14Robot{
 
 		$ATK14_GLOBAL->setLogger($this->logger);
 
-		$this->mailer = Atk14MailerProxy::GetInstance(array(
+		$this->mailer = Atk14MailerProxy::GetInstance([
 			"namespace" => "",
 			"logger" => $this->logger,
-		));
+		]);
 	}
 
 	/**

@@ -13,9 +13,9 @@ class TcAtk14Base extends TcSuperBase {
 	public $dbmole = null;
 
 	function _setUp(){
-		$this->dbmole->begin(array(
+		$this->dbmole->begin([
 			"execute_after_connecting" => true,
-		));
+		]);
 		$this->setUpFixtures();
 		parent::_setUp();
 	}
@@ -25,7 +25,7 @@ class TcAtk14Base extends TcSuperBase {
 		parent::_tearDown();
 	}
 	
-	function __construct($name = NULL, array $data = array(), $dataName = ''){
+	function __construct($name = NULL, array $data = [], $dataName = ''){
 		parent::__construct($name, $data, $dataName);
 
 		// The '&' here is required. Without it, the delayed transaction beginning in begin() method doesn't work.
@@ -97,7 +97,7 @@ class TcAtk14Base extends TcSuperBase {
 		}
 
 		foreach($annotations["class"]["fixture"] as $_f) {
-			$this->$_f = $this->loadFixture($_f,array("reload_fixture" => false));
+			$this->$_f = $this->loadFixture($_f,["reload_fixture" => false]);
 		}
 	}
 
@@ -118,14 +118,14 @@ class TcAtk14Base extends TcSuperBase {
 			return parent::getAnnotations();
 		}
 
-		$annotations = array("class" => array());
+		$annotations = ["class" => []];
 
 		$ref = new ReflectionClass(get_class($this));
 		$docComment = $ref->getDocComment();
 		preg_match_all('/@(\w+)\s+(.*)/', $docComment, $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
 			if(!isset($annotations["class"][$match[1]])){
-				$annotations["class"][$match[1]] = array();
+				$annotations["class"][$match[1]] = [];
 			}
 			$annotations["class"][$match[1]][] = trim($match[2]);
 		}

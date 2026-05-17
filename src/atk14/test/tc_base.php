@@ -18,13 +18,13 @@ class TcBase extends TcSuperBase{
 		$this->dbmole->rollback();
 	}
 
-	function _run_action($path,$options = array(),&$response = null){
+	function _run_action($path,$options = [],&$response = null){
 		$ar = explode("/",$path);
 		if(sizeof($ar)==3){
 			//$response = Atk14Dispatcher::ExecuteAction($ar[0],$ar[1]);
-			$response = Atk14Dispatcher::ExecuteAction($ar[1],$ar[2],array("namespace" => $ar[0]));
+			$response = Atk14Dispatcher::ExecuteAction($ar[1],$ar[2],["namespace" => $ar[0]]);
 		}else{
-			$response = Atk14Dispatcher::ExecuteAction($ar[0],$ar[1],array("namespace" => ""));
+			$response = Atk14Dispatcher::ExecuteAction($ar[0],$ar[1],["namespace" => ""]);
 		}
 		return $response->buffer->toString();
 	}
@@ -36,9 +36,9 @@ class TcBase extends TcSuperBase{
 		$xm = new XMole();
 		$xml = '<'.'?xml version="1.0" encoding="UTF-8"?'.'><html>'.$html_output.'</html>';
 
-		$xml = strtr($xml,array(
+		$xml = strtr($xml,[
 			"&" => "&amp;",
-		));
+		]);
 
 		$stat = $xm->parse($xml);
 		$this->assertEquals("",(string)$xm->get_error_message());

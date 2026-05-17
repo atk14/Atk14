@@ -14,7 +14,7 @@ define("ATK14_DEFAULT_LANG","cs");
 
 $GLOBALS["_SERVER"]["HTTP_HOST"] = "www.testing.cz";
 $GLOBALS["_SERVER"]["SERVER_PORT"] = "80";
-$_GET = array();
+$_GET = [];
 
 require("../../../load.php");
 

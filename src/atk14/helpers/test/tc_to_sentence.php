@@ -1,7 +1,7 @@
 <?php
 class TcToSentence extends TcBase {
 	function test() {
-		$singers = array("George Michael");
+		$singers = ["George Michael"];
 		$this->assertEquals("George Michael", smarty_modifier_to_sentence($singers));
 		$singers[] = "Boy George";
 		$this->assertEquals("George Michael and Boy George", smarty_modifier_to_sentence($singers));

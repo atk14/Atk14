@@ -11,10 +11,10 @@ class HelpersController extends ApplicationController{
 	}
 
 	function render(){
-		$this->tpl_data["books"] = array(
-			array("title" => "The Adventures of Tom Sawyer", "author" => "Mark Twain"),
-			array("title" => "Swallows and Amazons", "author" => "Arthur Ransome"),
-		);
+		$this->tpl_data["books"] = [
+			["title" => "The Adventures of Tom Sawyer", "author" => "Mark Twain"],
+			["title" => "Swallows and Amazons", "author" => "Arthur Ransome"],
+		];
 	}
 
 	function render_with_forms(){

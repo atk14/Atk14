@@ -61,10 +61,10 @@
 function smarty_function_paginator($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$params += array(
+	$params += [
 		"items_total_label" => _("items total"), // "articles total", "products total"...; if set to "", no information about the total amount will be displayed
 		"anchor" => "", // e.g "list_table", "#list_table"
-	);
+	];
 
 	$anchor = $params["anchor"];
 	if($anchor && !preg_match("/^#/",$anchor)){
@@ -96,7 +96,7 @@ function smarty_function_paginator($params,$template){
 	$par = $smarty->getTemplateVars("params")->toArray();
 	// There is a possibility to change action, controller, lang and namespace variables.
 	// It is usefull when you display first page of some list on the frontpage and links from the paginator must point to an another controller/action.
-	foreach(array("action","controller","lang","namespace") as $_k){
+	foreach(["action","controller","lang","namespace"] as $_k){
 		if(isset($params[$_k])){ $par[$_k] = $params["action"]; }
 	}
 
@@ -122,7 +122,7 @@ function smarty_function_paginator($params,$template){
 		$symbol_right = '<i class="glyphicon glyphicon-chevron-right"></i>';
 	}
 
-	$out = array();
+	$out = [];
 
 	if($total_amount<=$max_amount){
 		if($total_amount>=5 && $items_total_label){
@@ -152,7 +152,7 @@ function smarty_function_paginator($params,$template){
 	while($cur_from < $total_amount){
 		$par["$from_name"] = $cur_from;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$_class = array( "page-item" );
+		$_class = [ "page-item" ];
 
 		// more items can be active
 		if(
@@ -228,5 +228,5 @@ function _smarty_function_paginator_build_url($params,&$smarty,$from_name){
 	if(isset($params[$from_name]) && $params[$from_name]==0){
 		unset($params[$from_name]);
 	}
-	return Atk14Utils::BuildLink($params,$smarty,array("connector" => "&amp;"));
+	return Atk14Utils::BuildLink($params,$smarty,["connector" => "&amp;"]);
 }

@@ -31,7 +31,7 @@ class TcStripHtml extends TcBase {
 	}
 
 	function test_block(){
-		$params = array();
+		$params = [];
 		$template = null;
 		$repeat = false;
 

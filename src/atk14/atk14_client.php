@@ -22,7 +22,7 @@
  * Example of testing a POST request
  *
  * ```
- * $controller = $this->client->post("logins/sign_in", array(
+ * $controller = $this->client->post("logins/sign_in", [
  * 	"username" => "admin",
  * 	"password" => "SeCrEt.P4ssw0rD",
  * ));
@@ -112,7 +112,7 @@ class Atk14Client{
 	 * @var HTTPCookie[]
 	 * @ignore
 	 */
-	protected $_Cookies = array();
+	protected $_Cookies = [];
 
 	/**
 	 * Flag whether cookies are enabled
@@ -198,19 +198,19 @@ class Atk14Client{
 	 * ```
 	 * var_dump($client->getCookies());
 	 * ```
-	 * returns array("cookie1" => "value")
+	 * returns ["cookie1" => "value")
 	 *
 	 * @param HTTPRequest $request
 	 * @return array
 	 */
 	function getCookies($request = null){
-		if(!$this->cookiesEnabled()){ return array(); }
+		if(!$this->cookiesEnabled()){ return []; }
 
 		if(!$request){
 			$request = $this->getRecentRequest() ? $this->getRecentRequest() : $GLOBALS["HTTP_REQUEST"];
 		}
 
-		$out = array();
+		$out = [];
 		foreach($this->_Cookies as $cookie){
 			if(!$cookie->isDesignatedFor($request)){ continue; }
 			if($cookie->isExpired()){
@@ -229,7 +229,7 @@ class Atk14Client{
 	 * It's not dependent on the cookies-enabled flag.
 	 */
 	function clearCookies(){
-		$this->_Cookies = array();
+		$this->_Cookies = [];
 	}
 
 	function setXhr($set = true){
@@ -324,9 +324,9 @@ class Atk14Client{
 	 * Example
 	 * ```
 	 * $controller = $client->get("books/index");
-	 * $controller = $client->get("books/index",array("q" => "Mark Twain"));
-	 * $controller = $client->get("en/books/index",array("q" => "Mark Twain"));
-	 * $controller = $client->get("amin/en/books/detail",array("id" => 123));
+	 * $controller = $client->get("books/index",["q" => "Mark Twain"));
+	 * $controller = $client->get("en/books/index",["q" => "Mark Twain"));
+	 * $controller = $client->get("amin/en/books/detail",["id" => 123));
 	 *
 	 * // Real world URIs
 	 * $controller = $client->get("/en/books/?q=Mark+Twain");
@@ -335,7 +335,7 @@ class Atk14Client{
 	 *
 	 * If you are calling this from tc_books.php file, you can use:
 	 * ```
-	 * $controller = $client->get("index",array("q" => "We Are All Legends"));
+	 * $controller = $client->get("index",["q" => "We Are All Legends"));
 	 * ```
 	 *
 	 * With language specification
@@ -353,27 +353,27 @@ class Atk14Client{
 	 * @return Atk14Controller
 	 * @see makeRequest() $options description
 	 */
-	function get($path,$params = array()){
-		return $this->_doRequest("GET",$path,array("params" => $params));
+	function get($path,$params = []){
+		return $this->_doRequest("GET",$path,["params" => $params]);
 	}
 
 	/**
 	 * Sends a POST request.
 	 *
 	 * ```
-	 * $client->post("books/edit",array(
+	 * $client->post("books/edit",[
 	 * 	"id" => 123,
 	 * 	"title" => "A New Title"
 	 * ));
 	 * // or
-	 * $client->post("/en/books/edit/?id=123",array(
+	 * $client->post("/en/books/edit/?id=123",[
 	 * 	"title" => "A New Title"
 	 * ));
 	 * ```
 	 *
 	 * Sending raw data
 	 * ```
-	 * $code->post("images/create_new",$binary_image_content,array(
+	 * $code->post("images/create_new",$binary_image_content,[
 	 * 	"content_type" => "image/jpg"
 	 * ));
 	 * ```
@@ -385,10 +385,10 @@ class Atk14Client{
 	 * @return Atk14Controller
 	 * @see makeRequest() $options description
 	 */
-	function post($path,$params = array(),$options = array()){
+	function post($path,$params = [],$options = []){
 		if(!is_array($params)){
 			$options["raw_post_data"] = $params;
-			$params = array();
+			$params = [];
 		}else{
 			$options["params"] = $params;
 		}
@@ -400,17 +400,17 @@ class Atk14Client{
 	 *
 	 * Example
 	 * ```
-	 * $client->makeRequest("GET","articles/detail",array("id" => 123));
+	 * $client->makeRequest("GET","articles/detail",["id" => 123));
 	 * ```
 	 * is same as
 	 * ```
-	 * $client->get("articles/detail",array("id" => 123));
+	 * $client->get("articles/detail",["id" => 123));
 	 * // or
 	 * $client->get("/en/articles/detail/?id=123");
 	 * ```
 	 * Another - DELETE request
 	 * ```
-	 * $client->makeRequest("DELETE","articles/destroy",array("id" => 123));
+	 * $client->makeRequest("DELETE","articles/destroy",["id" => 123));
 	 * ```
 	 *
 	 * @param string $method HTTP method (GET, POST ...)
@@ -421,7 +421,7 @@ class Atk14Client{
 	 * - content_type
 	 * @return Atk14Controller
 	 */
-	function makeRequest($method,$path,$params = array(),$options = array()){
+	function makeRequest($method,$path,$params = [],$options = []){
 		$method = strtoupper($method);
 		if($method=="POST"){
 			return $this->post($path,$params,$options);
@@ -434,16 +434,16 @@ class Atk14Client{
 	 *
 	 * @ignore
 	 */
-	private function _doRequest($method,$path,$options = array()){
+	private function _doRequest($method,$path,$options = []){
 		global $ATK14_GLOBAL;
 
-		$options += array(
-			"params" => array(),
+		$options += [
+			"params" => [],
 			"raw_post_data" => null,
 			"content_type" => null,
-			"headers" => array(), // e.g. ['Content-Disposition: attachment; filename="sample.jpg"'],
+			"headers" => [], // e.g. ['Content-Disposition: attachment; filename="sample.jpg"'],
 			"uploaded_files" => null, // HTTPUploadedFile[]
-		);
+		];
 
 		// converting objects to scalars
 		foreach($options["params"] as &$v){
@@ -451,11 +451,11 @@ class Atk14Client{
 		}
 
 		if($method=="POST"){
-			$get_params = array();
+			$get_params = [];
 			$post_params = $options["params"];
 		}else{
 			$get_params = $options["params"];
-			$post_params = array();
+			$post_params = [];
 		}
 
 		$GLOBALS["HTTP_RESPONSE"]->clearCookies(); // !! danger !! global variable manipulation
@@ -557,12 +557,12 @@ class Atk14Client{
 					throw new Exception("Invalid path to action: $path");
 			}
 
-			$uri = Atk14Url::BuildLink($get_params + array(
+			$uri = Atk14Url::BuildLink($get_params + [
 				"namespace" => $namespace,
 				"action" => $action,
 				"controller" => $controller,
 				"lang" => $lang
-			),array("connector" => "&"));
+			],["connector" => "&"]);
 		}
 
 		$request->setRequestUri($uri);
@@ -570,11 +570,11 @@ class Atk14Client{
 		$request->setPostVars($post_params);
 		$request->setGetVars($get_params);
 
-		$ctrl = Atk14Dispatcher::Dispatch(array(
+		$ctrl = Atk14Dispatcher::Dispatch([
 			"display_response" => false,
 			"request" => $request,
 			"return_controller" => true
-		));
+		]);
 
 		$this->controller = $ctrl;
 
@@ -640,10 +640,10 @@ class Atk14Client{
 	 *
 	 * @return array
 	 */
-	function getResponseHeaders($options = array()){
-		$options += array(
+	function getResponseHeaders($options = []){
+		$options += [
 			"lowerize_keys" => false,
-		);
+		];
 
 		$response = $this->controller->response;
 		$content_type = $response->getContentType();
@@ -651,7 +651,7 @@ class Atk14Client{
 		if($charset){
 			$content_type .= "; charset=$charset";
 		}
-		$headers = array("Content-Type" => $content_type);
+		$headers = ["Content-Type" => $content_type];
 		if($response->redirected()){
 			$headers["Location"] = $response->getLocation();
 		}
@@ -660,7 +660,7 @@ class Atk14Client{
 		}
 
 		if($options["lowerize_keys"]){
-			$_headers = array();
+			$_headers = [];
 			foreach($headers as $key => $value){
 				$_headers[strtolower($key)] = $value;
 			}
@@ -683,7 +683,7 @@ class Atk14Client{
 	 */
 	function getResponseHeader($header){
 		$header = strtolower($header);
-		$ary = $this->getResponseHeaders(array("lowerize_keys" => true));
+		$ary = $this->getResponseHeaders(["lowerize_keys" => true]);
 		return isset($ary[$header]) ? $ary[$header] : null;
 	}
 

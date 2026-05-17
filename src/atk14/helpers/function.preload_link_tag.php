@@ -30,7 +30,7 @@
 function smarty_function_preload_link_tag($params,$template){
 	global $ATK14_GLOBAL;
 
-	$params += array(
+	$params += [
 		"file" => "style.css",
 
 		// see smarty_function_javascript_script_tag() for more default options
@@ -40,13 +40,13 @@ function smarty_function_preload_link_tag($params,$template){
 
 		// internal stuff
 		// the real file is searched in the following places
-		"_places_" => array(
-			array($ATK14_GLOBAL->getPublicRoot()."/stylesheets/",	$ATK14_GLOBAL->getPublicBaseHref()."/stylesheets/"),	// "/public/stylesheets/"
-			array($ATK14_GLOBAL->getPublicRoot(),									$ATK14_GLOBAL->getPublicBaseHref()),									// "/public/"
-			array($ATK14_GLOBAL->getApplicationPath()."/../",			$ATK14_GLOBAL->getBaseHref())													// "/"
-		),
+		"_places_" => [
+			[$ATK14_GLOBAL->getPublicRoot()."/stylesheets/",	$ATK14_GLOBAL->getPublicBaseHref()."/stylesheets/"],	// "/public/stylesheets/"
+			[$ATK14_GLOBAL->getPublicRoot(),									$ATK14_GLOBAL->getPublicBaseHref()],									// "/public/"
+			[$ATK14_GLOBAL->getApplicationPath()."/../",			$ATK14_GLOBAL->getBaseHref()]													// "/"
+		],
 		"_snippet_" => '<link rel="preload" href="%uri%"%attribs% />'
-	);
+	];
 
 	Atk14Require::Helper("function.javascript_script_tag");
 	return smarty_function_javascript_script_tag($params,$template);

@@ -11,7 +11,7 @@ class TcRequire extends TcBase {
 		$this->assertEquals(true,function_exists("smarty_modifier_sample_filter"));
 
 		$ret = Atk14Require::Helper("modifier.sample_filter");
-		$this->assertEquals(array(),$ret);
+		$this->assertEquals([],$ret);
 
 		// 
 
@@ -23,6 +23,6 @@ class TcRequire extends TcBase {
 		$this->assertEquals(true,function_exists("smarty_block_sample_block"));
 
 		$ret = Atk14Require::Helper("block.sample_block.php");
-		$this->assertEquals(array(),$ret);
+		$this->assertEquals([],$ret);
 	}
 }

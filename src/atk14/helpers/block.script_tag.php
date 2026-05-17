@@ -28,14 +28,14 @@ function smarty_block_script_tag($params, $content, $template, &$repeat){
 	if(strlen(trim($content))==0){ return; }
 
 	if(CSP_NONCE){
-		$params += array(
+		$params += [
 			"nonce" => CSP_NONCE,
-		);
+		];
 	}
 
 	$attrs = Atk14Utils::JoinAttributes($params);
 
-	$out = array();
+	$out = [];
 	$out[] = "<script$attrs>";
 	$out[] = '//<![CDATA[';
 	$out[] = $content;

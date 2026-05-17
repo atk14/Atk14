@@ -32,11 +32,11 @@ class Atk14Router{
 
 	public $redirected_to = null;
 
-	function __construct($options = array()){
+	function __construct($options = []){
 		global $ATK14_GLOBAL;
-		$options += array(
+		$options += [
 			"namespace" => null,
-		);
+		];
 
 		if(isset($options["namespace"])){
 			$this->namespace = $options["namespace"];
@@ -65,7 +65,7 @@ class Atk14Router{
 
 	function buildLink($params){
 		if(is_array($params)){ $params = new Dictionary($params); }
-		foreach(array("namespace","controller","action","lang") as $k){
+		foreach(["namespace","controller","action","lang"] as $k){
 			$this->$k = $params->g($k);
 			$params->delete($k);
 		}
@@ -118,36 +118,36 @@ class Atk14Router{
 	}
 
 	/**
-	 *	$this->addRoute("/",array("path" => "main/index"));
+	 *	$this->addRoute("/",["path" => "main/index"));
 	 *	$this->addRoute("/","main/index");
 	 *
-	 *	$this->addRoute("/book/<slug>-<id>","book/detail",array(
+	 *	$this->addRoute("/book/<slug>-<id>","book/detail",[
 	 *		"slug" => '/[a-z0-9-]+/',
 	 *		"id" => '/[0-9]+/'
 	 *	));
-	 *	$this->addRoute("/book/<slug>-<id>",array(
+	 *	$this->addRoute("/book/<slug>-<id>",[
 	 *		"path" => "book/detail",
-	 *		"params" => array(
+	 *		"params" => [
 	 *			"slug" => '/[a-z0-9-]+/',
 	 *			"id" => '/[0-9]+/'
 	 *		)
 	 *	);
 	 */ 
-	function addRoute($uri,$options = array(),$params = array()){
+	function addRoute($uri,$options = [],$params = []){
 		global $ATK14_GLOBAL;
 
 		if(is_string($options)){
-			$options = array("path" => $options);
+			$options = ["path" => $options];
 		}
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"lang" => $this->default_lang,
 			"namespace" => $this->namespace,
 			"path" => null,
 			"params" => $params,
 			"title" => null,
 			"description" => null,
-		),$options);
+		],$options);
 
 		// tady rozsekame path podle nektereho ze vzoru:
 		//
@@ -171,18 +171,18 @@ class Atk14Router{
 		}
 
 		$routes_key = "routes". ($options["namespace"] ? "[$options[namespace]]" : ""); // "routes", "routes[admin]"...
-		$routes = &$ATK14_GLOBAL->getValueRef($routes_key,array());
+		$routes = &$ATK14_GLOBAL->getValueRef($routes_key,[]);
 
 		$recipe = $options["params"];
 
-		foreach(array(
+		foreach([
 			"path" => "__path__",
 			"title" => "__page_title__",
 			"description" => "__page_description__",
 			"controller" => "controller",
 			"action" => "action",
 			"lang" => "lang",
-		) as $nice_key => $orig_key){
+		] as $nice_key => $orig_key){
 			if(isset($options[$nice_key])){
 				$recipe[$orig_key] = $options[$nice_key];
 			}
@@ -214,7 +214,7 @@ class Atk14Router{
 		$base_href = $ATK14_GLOBAL->getBaseHref();
 		$namespace = $this->namespace ? $this->namespace."/" : "";
 
-		$this->redirected_to = $base_href.$namespace.$new_uri.Atk14Url::EncodeParams($this->params,array("connector" => "&"));
+		$this->redirected_to = $base_href.$namespace.$new_uri.Atk14Url::EncodeParams($this->params,["connector" => "&"]);
 	}
 
 	/**

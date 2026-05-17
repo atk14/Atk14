@@ -4,7 +4,7 @@
  */
 class Atk14SmartyBase extends Smarty{
 
-	static $ATK14_RENDERED_TEMPLATES = array();
+	static $ATK14_RENDERED_TEMPLATES = [];
 
 	static protected $LAST_TPL_REF;
 
@@ -29,11 +29,11 @@ class Atk14SmartyBase extends Smarty{
 			}
 		}
 
-		$children = array();
-		self::$LAST_TPL_REF[] = array(
+		$children = [];
+		self::$LAST_TPL_REF[] = [
 			"template" => $template_fullpath,
 			"children" => &$children,
-		);
+		];
 
 		self::$LAST_TPL_REF = &$children;
 		$ret = parent::fetch($template, $cache_id, $compile_id, $parent);
@@ -69,13 +69,13 @@ class Atk14SmartyBase extends Smarty{
 	}
 
 	/**
-	 *	$smarty->setPluginsDir(array(
+	 *	$smarty->setPluginsDir([
 	 *		"most_preferred_directory",
 	 *		"alternative_directory"
 	 *	));
 	 */
 	function setPluginsDir($dir){
-		if(!is_array($dir)){ $dir = array($dir); }
+		if(!is_array($dir)){ $dir = [$dir]; }
 		$this->plugins_dir = $dir;
 	}
 

@@ -30,33 +30,33 @@ class TcSession extends TcBase{
 		$session = Atk14Session::GetInstance("test_toArray");
 		$session->clear();
 
-		$this->assertEquals(array(),$session->toArray());
+		$this->assertEquals([],$session->toArray());
 
 		$session->setValue("name","John Doe");
-		$session->setValue("vegetables",array("Cauliflower","Cucumber"));
+		$session->setValue("vegetables",["Cauliflower","Cucumber"]);
 
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"name" => "John Doe",
-			"vegetables" => array("Cauliflower","Cucumber")
-		),$session->toArray());
+			"vegetables" => ["Cauliflower","Cucumber"]
+		],$session->toArray());
 	}
 
 	function test_initialization(){
 		global $HTTP_REQUEST;
 
-		$HTTP_REQUEST->setCookieVars(array());
+		$HTTP_REQUEST->setCookieVars([]);
 
 		$this->client->get("main/index");
 		$req = $this->client->getRecentRequest();
 		$cookies = $this->client->getCookies();
 		$this->assertEquals(1,sizeof($cookies));
-		$this->assertEquals(array("check"),array_keys($cookies));
+		$this->assertEquals(["check"],array_keys($cookies));
 
 		$ctrl = $this->client->get("main/writing_to_session");
 		$req = $this->client->getRecentRequest();
 		$cookies = $this->client->getCookies();
 		$this->assertEquals(2,sizeof($cookies));
-		$this->assertEquals(array("check","session"),array_keys($cookies));
+		$this->assertEquals(["check","session"],array_keys($cookies));
 		$this->assertTrue(strlen($ctrl->session->getSecretToken())>0); // only session initialized in database has a secret token
 		$this->assertEquals("pineapple",$ctrl->session->g("fruit"));
 	}

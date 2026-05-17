@@ -75,11 +75,11 @@ prev_action: "render_component"',$content_rp);
 	}
 
 	function test_render_component_with_redirection(){
-		$out = $this->_run_action("helpers/render_component_with_redirection",array(),$response);
+		$out = $this->_run_action("helpers/render_component_with_redirection",[],$response);
 		$this->assertEquals("http://www.atk14.net/",$response->getLocation());
 		$this->assertEquals("",$out);
 
-		$out = $this->_run_action("helpers/render_component_with_multiple_redirection",array(),$response);
+		$out = $this->_run_action("helpers/render_component_with_multiple_redirection",[],$response);
 		$this->assertEquals("https://forum.atk14.net/",$response->getLocation());
 		$this->assertEquals("",$out);
 	}

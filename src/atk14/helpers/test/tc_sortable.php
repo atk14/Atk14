@@ -17,7 +17,7 @@ class TcSortable extends TcBase {
 
 		$repeat = false;
 
-		$this->assertEquals('<td class="sortable active"><a href="/?order=id-desc" title="Sort table by this column" rel="nofollow">ID <span class="arrow-up">&uArr;</span></a></td>',smarty_block_sortable(array("key" => "id"),$content,$template,$repeat));
-		$this->assertEquals('<td class="sortable active"><a href="/?order=id-desc" title="Sort by ID" rel="nofollow">ID <span class="arrow-up">&uArr;</span></a></td>',smarty_block_sortable(array("key" => "id", "title" => "Sort by ID"),$content,$template,$repeat));
+		$this->assertEquals('<td class="sortable active"><a href="/?order=id-desc" title="Sort table by this column" rel="nofollow">ID <span class="arrow-up">&uArr;</span></a></td>',smarty_block_sortable(["key" => "id"],$content,$template,$repeat));
+		$this->assertEquals('<td class="sortable active"><a href="/?order=id-desc" title="Sort by ID" rel="nofollow">ID <span class="arrow-up">&uArr;</span></a></td>',smarty_block_sortable(["key" => "id", "title" => "Sort by ID"],$content,$template,$repeat));
 	}
 }

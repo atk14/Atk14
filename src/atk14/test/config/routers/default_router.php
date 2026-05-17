@@ -4,41 +4,41 @@ class DefaultRouter extends Atk14Router{
 	function setUp(){
 
 		// Two routes only for the default language (cs)
-		$this->addRoute("/post-<id>.raw",array(
+		$this->addRoute("/post-<id>.raw",[
 			"lang" => $this->default_lang,
 			"path" => "posts/detail",
-			"params" => array(
+			"params" => [
 				"id" => '/\d+/',
 				"format" => 'raw'
-			)
-		));
-		$this->addRoute("/post-<id>/",array(
+			]
+		]);
+		$this->addRoute("/post-<id>/",[
 			"lang" => $this->default_lang,
 			"controller" => "posts",
 			"action" => "detail",
-			"params" => array(
+			"params" => [
 				"id" => "/\d+/"
-			)
-		));
+			]
+		]);
 
 		$this->addRoute("/sitemap.xml","sitemaps/index");
 		$this->addRoute("/robots.txt","main/robots_txt");
 
 		// Generic routes
-		$this->addRoute("/",array(
+		$this->addRoute("/",[
 			"lang" => $this->default_lang,
 			"path" => "main/index",
 			"title" => ATK14_APPLICATION_NAME,
 			"description" => ATK14_APPLICATION_DESCRIPTION,
-		));
+		]);
 
-		$this->addRoute("/<lang>/",array(
+		$this->addRoute("/<lang>/",[
 			"path" => "main/index"
-		));
+		]);
 
-		$this->addRoute("/<lang>/<controller>/",array(
+		$this->addRoute("/<lang>/<controller>/",[
 			"action" => "index"
-		));
+		]);
 
 		$this->addRoute("/<lang>/<controller>/<action>/");
 	}

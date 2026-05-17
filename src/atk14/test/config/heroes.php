@@ -1,5 +1,5 @@
 <?php
-return array(
+return [
 	"Sandokan",
 	"Falcon_guardian_of_the_night"
-);
+];

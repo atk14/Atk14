@@ -44,7 +44,7 @@
 function smarty_function_javascript_script_tag($params,$template){
 	global $ATK14_GLOBAL;
 
-	$params += array(
+	$params += [
 		"file" => "script.js",
 		"hide_when_file_not_found" => false,
 		"with_hostname" => false,
@@ -52,18 +52,18 @@ function smarty_function_javascript_script_tag($params,$template){
 
 		// internal stuff
 		// the real file is searched in the following places
-		"_places_" => array(
-			array($ATK14_GLOBAL->getPublicRoot()."/javascripts/",	$ATK14_GLOBAL->getPublicBaseHref()."/javascripts/"),	// "/public/javascripts/"
-			array($ATK14_GLOBAL->getPublicRoot(),									$ATK14_GLOBAL->getPublicBaseHref()),									// "/public/"
-			array($ATK14_GLOBAL->getApplicationPath()."/../",			$ATK14_GLOBAL->getBaseHref())													// "/"
-		),
+		"_places_" => [
+			[$ATK14_GLOBAL->getPublicRoot()."/javascripts/",	$ATK14_GLOBAL->getPublicBaseHref()."/javascripts/"],	// "/public/javascripts/"
+			[$ATK14_GLOBAL->getPublicRoot(),									$ATK14_GLOBAL->getPublicBaseHref()],									// "/public/"
+			[$ATK14_GLOBAL->getApplicationPath()."/../",			$ATK14_GLOBAL->getBaseHref()]													// "/"
+		],
 		"_snippet_" => '<script src="%uri%"%attribs%></script>'
-	);
+	];
 
 	if(CSP_NONCE){
-		$params += array(
+		$params += [
 			"nonce" => CSP_NONCE,
-		);
+		];
 	}
 
 	$file = $params["file"]; unset($params["file"]);
@@ -83,9 +83,9 @@ function smarty_function_javascript_script_tag($params,$template){
 		if($base_href!=="/" && substr($file,0,strlen($base_href))===$base_href){
 			$file = "/".substr($file,strlen($base_href));
 		}
-		$places = array(
+		$places = [
 			array_pop($places)
-		);
+		];
 	}
 
 	$filename = $uri = $filename_default = $uri_default = "";
@@ -128,8 +128,8 @@ function smarty_function_javascript_script_tag($params,$template){
 
 	$attribs = Atk14Utils::JoinAttributes($params);
 
-	return strtr($snippet,array(
+	return strtr($snippet,[
 		"%uri%" => $uri,
 		"%attribs%" => $attribs,
-	));
+	]);
 }

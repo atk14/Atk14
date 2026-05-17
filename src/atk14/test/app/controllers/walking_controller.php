@@ -2,11 +2,11 @@
 class WalkingController extends ApplicationController {
 
 	function walk(){
-		$this->_walk(array(
+		$this->_walk([
 			"step1",
 			"step2",
 			"step3",
-		));
+		]);
 	}
 
 	function walk__step1(){

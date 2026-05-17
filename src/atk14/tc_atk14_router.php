@@ -30,33 +30,33 @@ class TcAtk14Router extends TcAtk14Base {
 	 *	]);
 	 *	$this->assertEquals("/article/very-nice-article/",$uri);
 	 */
-	function assertBuildable($params = array(),&$ret_params = null){
+	function assertBuildable($params = [],&$ret_params = null){
 		$uri = $this->_build($params,$ret_params);
 		$this->assertNotNull($uri,"URI cannot be built from ".print_r($params,true));
 
 		return $uri;
 	}
 
-	function assertNotBuildable($params = array()){
+	function assertNotBuildable($params = []){
 		$uri = $this->_build($params);
 		$this->assertNull($uri,"URI $uri was built from ".print_r($params,true));
 	}
 
-	function assertRecognizable($uri,&$params = array()){
-		$params = array();
+	function assertRecognizable($uri,&$params = []){
+		$params = [];
 		$this->_recognize($uri,$params);
 
 		$this->assertTrue(!is_null($this->router->controller) && !is_null($this->router->action),$uri);
 		
-		return array(
+		return [
 			"namespace" => $this->router->namespace,
 			"controller" => $this->router->controller,
 			"action" => $this->router->action,
 			"lang" => $this->router->lang,
-		);
+		];
 	}
 
-	function assertNotRecognizable($uri,$params = array()){
+	function assertNotRecognizable($uri,$params = []){
 		$this->_recognize($uri,$params);
 
 		$this->assertTrue(is_null($this->router->controller) && is_null($this->router->action),$uri);
@@ -67,7 +67,7 @@ class TcAtk14Router extends TcAtk14Base {
 
 		$ret_params = null;
 
-		foreach(array("namespace","controller","action","lang") as $key){
+		foreach(["namespace","controller","action","lang"] as $key){
 			$val = array_key_exists($key,$params) ? (string)$params[$key] : $ATK14_GLOBAL->getValue($key);
 			$this->router->$key = $val;
 			unset($params[$key]);
@@ -89,7 +89,7 @@ class TcAtk14Router extends TcAtk14Base {
 			$params = new Dictionary($params);
 		}
 
-		foreach(array("namespace","controller","action","lang") as $key){
+		foreach(["namespace","controller","action","lang"] as $key){
 			$this->router->$key = null;
 		}
 		$this->router->params = $params;

@@ -5,6 +5,6 @@ class TcStyleTag extends TcBase {
 		$template = null;
 		$repeat = false;
 
-		$this->assertEquals('<style>h1 { color: red; }</style>',smarty_block_style_tag(array(),'h1 { color: red; }',$template,$repeat));
+		$this->assertEquals('<style>h1 { color: red; }</style>',smarty_block_style_tag([],'h1 { color: red; }',$template,$repeat));
 	}
 }

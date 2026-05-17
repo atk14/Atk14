@@ -10,9 +10,9 @@
  */
 function smarty_modifier_field($form, $field_name, $options = ""){
 	$options = Atk14Utils::StringToOptions($options);
-	$options += array(
+	$options += [
 		"label_to_placeholder" => false,
-	);
+	];
 
 	$field = $form->get_field($field_name);
 

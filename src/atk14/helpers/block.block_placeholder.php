@@ -19,16 +19,16 @@
 function smarty_block_block_placeholder($params,$content,$smarty,&$repeat){
 	if($repeat){ return; }
 
-	$params += array(
+	$params += [
 		"for" => "main",
 		"default_strategy" => "append",
-	);
+	];
 	$id = $params["for"];
 
-	$smarty->addAtk14Content($id,$content,array(
+	$smarty->addAtk14Content($id,$content,[
 		"strategy" => "_place_initial_content_",
 		"default_strategy" => $params["default_strategy"],
-	));
+	]);
 
 	return "<%atk14_content[$id]%>"; // returns an internal sign, which will be replaced later within controller
 }

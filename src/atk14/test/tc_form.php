@@ -23,7 +23,7 @@ class TcForm extends TcBase{
 
 		$this->assertStringContains('id="form_main_hello_world"',$form->begin());
 
-		$form = Atk14Form::GetInstanceByControllerAndAction("main","hello_world",null,array("attrs" => array("id" => "a_tiny_form")));
+		$form = Atk14Form::GetInstanceByControllerAndAction("main","hello_world",null,["attrs" => ["id" => "a_tiny_form"]]);
 		$this->assertEquals(true,!!is_object($form));
 		$this->assertStringContains('id="a_tiny_form"',$form->begin());
 
@@ -31,11 +31,11 @@ class TcForm extends TcBase{
 		$this->assertEquals(true,!!is_object($form));
 		$this->assertStringContains('id="form_main_hello_world"',$form->begin());
 
-		$form = Atk14Form::GetForm("HelloWorldForm",null,array("attrs" => array("id" => "a_small_form")));
+		$form = Atk14Form::GetForm("HelloWorldForm",null,["attrs" => ["id" => "a_small_form"]]);
 		$this->assertEquals(true,!!is_object($form));
 		$this->assertStringContains('id="a_small_form"',$form->begin());
 
-		$form = Atk14Form::GetForm("HelloWorldForm",null,array("attrs" => array("id" => "")));
+		$form = Atk14Form::GetForm("HelloWorldForm",null,["attrs" => ["id" => ""]]);
 		$this->assertEquals(true,!!is_object($form));
 		$this->assertStringNotContains('id=""',$form->begin());
 	}
@@ -44,34 +44,34 @@ class TcForm extends TcBase{
 		$form = new TestForm();
 
 		$fields = $form->get_fields();
-		$this->assertEquals(array("firstname","lastname","nickname"),array_keys($fields));
+		$this->assertEquals(["firstname","lastname","nickname"],array_keys($fields));
 
 		$keys = $form->get_field_keys();
-		$this->assertEquals(array("firstname","lastname","nickname"),$keys);
+		$this->assertEquals(["firstname","lastname","nickname"],$keys);
 	}
 
 	function test_get_enabled_field(){
 		$form = new TestForm();
 
 		$fields = $form->get_enabled_fields();
-		$this->assertEquals(array("firstname"),array_keys($fields));
+		$this->assertEquals(["firstname"],array_keys($fields));
 
 		$keys = $form->get_enabled_field_keys();
-		$this->assertEquals(array("firstname"),$keys);
+		$this->assertEquals(["firstname"],$keys);
 	}
 
 	function test_constructor(){
 		$form = new TestForm();
 		$this->assertEquals(null,$form->prefix);
-		$form->validate(array());
+		$form->validate([]);
 		$this->assertEquals(null,$form->prefix);
 
-		$form = new TestForm(array(
+		$form = new TestForm([
 			"prefix" => "test",
-		));
+		]);
 		$this->assertEquals("test",$form->prefix);
 		$form->prefix = "xxx";
-		$form->validate(array()); // __do_small_initialization() must not be called
+		$form->validate([]); // __do_small_initialization() must not be called
 		$this->assertEquals("xxx",$form->prefix);
 	}
 
@@ -79,34 +79,34 @@ class TcForm extends TcBase{
 		$form = new PreAndPostSetUpForm();
 		$form2 = new PreAndPostSetUpForm();
 
-		$form->add_field("extern_field", new CharField(array("initial" => "ok")));
-		$form2->add_field("extern_field", new CharField(array("initial" => "ok")));
+		$form->add_field("extern_field", new CharField(["initial" => "ok"]));
+		$form2->add_field("extern_field", new CharField(["initial" => "ok"]));
 
-		$this->assertEquals($exp = array(
+		$this->assertEquals($exp = [
 			"pre_set_up" => "ok",
 			"set_up" => "ok",
 			"extern_field" => "ok"
-		),$form->get_initial());
+		],$form->get_initial());
 		$this->assertEquals($exp,$form2->get_initial());
 
 		// post_set_up() must be called just before data validation or displaying of the given form
-		$cleaned_data = $form->validate(array("pre_set_up" => "set", "set_up" => "set", "post_set_up" => "set", "extern_field" => "set"));
+		$cleaned_data = $form->validate(["pre_set_up" => "set", "set_up" => "set", "post_set_up" => "set", "extern_field" => "set"]);
 		$form2->begin();
 
-		$this->assertEquals($exp = array(
+		$this->assertEquals($exp = [
 			"pre_set_up" => "ok",
 			"set_up" => "ok",
 			"extern_field" => "ok",
 			"post_set_up" => "ok",
-		),$form->get_initial());
+		],$form->get_initial());
 		$this->assertEquals($exp,$form2->get_initial());
 
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"pre_set_up" => "set",
 			"set_up" => "set",
 			"extern_field" => "set",
 			"post_set_up" => "set",
-		),$cleaned_data);
+		],$cleaned_data);
 
 		// --
 
@@ -123,20 +123,20 @@ class TcForm extends TcBase{
 		// --
 
 		$form = new PreAndPostSetUpForm();
-		$this->assertEquals(array("pre_set_up","set_up","post_set_up"),$form->get_field_keys(),"post_set_up() must be called before get_field_keys()");
+		$this->assertEquals(["pre_set_up","set_up","post_set_up"],$form->get_field_keys(),"post_set_up() must be called before get_field_keys()");
 	}
 
 	function test_validation_with_disabled_fields(){
 		$form = new TestForm();
-		$form->set_initial(array(
+		$form->set_initial([
 			"nickname" => "jumper",
-		));
+		]);
 
-		$d = $form->validate(array(
+		$d = $form->validate([
 			"firstname" => "John",
 			"lastname" => "Doe",
 			"nickname" => "mx23",
-		));
+		]);
 
 		$this->assertEquals("John",$d["firstname"]);
 		$this->assertEquals("Smith",$d["lastname"]);
@@ -145,24 +145,24 @@ class TcForm extends TcBase{
 
 	function test_get_initial(){
 		$form = new Atk14Form();
-		$this->assertEquals(array(),$form->get_initial());
+		$this->assertEquals([],$form->get_initial());
 
 		$form->add_field("firstname",new CharField());
-		$form->add_field("lastname",new CharField(array("initial" => "Smith")));
+		$form->add_field("lastname",new CharField(["initial" => "Smith"]));
 
 		$this->assertEquals("",$form->fields["firstname"]->initial);
 		$this->assertEquals("Smith",$form->fields["lastname"]->initial);
 
-		$this->assertEquals(array("firstname" => null, "lastname" => "Smith"),$form->get_initial());
+		$this->assertEquals(["firstname" => null, "lastname" => "Smith"],$form->get_initial());
 
 		$form->set_initial("firstname","John");
 
-		$this->assertEquals(array("firstname" => "John", "lastname" => "Smith"),$form->get_initial());
+		$this->assertEquals(["firstname" => "John", "lastname" => "Smith"],$form->get_initial());
 
 		$this->assertEquals("John",$form->fields["firstname"]->initial);
 		$this->assertEquals("Smith",$form->fields["lastname"]->initial);
 
-		$form->validate(array());
+		$form->validate([]);
 
 		$this->assertEquals("John",$form->fields["firstname"]->initial);
 		$this->assertEquals("Smith",$form->fields["lastname"]->initial);
@@ -248,14 +248,14 @@ class TcForm extends TcBase{
 		$form->set_action('/new-uri/');
 		$this->assertEquals('/new-uri/',$form->get_action());
 
-		$form->set_action(array(
+		$form->set_action([
 			"lang" => "en",
 			"namespace" => "",
 			"controller" => "books",
 			"action" => "detail",
 			"id" => 123,
 			"format" => "raw",
-		));
+		]);
 		$this->assertEquals('/en/books/detail/?id=123&format=raw',$form->get_action());
 
 		$ATK14_GLOBAL->setValue("namespace","");
@@ -275,38 +275,38 @@ class TcForm extends TcBase{
 		$this->assertTrue($form->changed() === null);
 
 		$form = new TestForm();
-		$form->validate(array(
+		$form->validate([
 			"firstname" => "Paul",
 			"lastname" => "Smith",
 			"nickname" => "smither",
-		));
+		]);
 		$this->assertTrue($form->changed() === true);
 
 		$form = new TestForm();
 		$form->set_initial("firstname","Paul");
-		$form->validate(array(
+		$form->validate([
 			"firstname" => "Paul",
 			"lastname" => "Smith",
 			"nickname" => "smither",
-		));
+		]);
 		$this->assertTrue($form->changed() === false);
 
 		$form = new TestForm();
 		$form->set_initial("firstname",new String4("Paul"));
-		$form->validate(array(
+		$form->validate([
 			"firstname" => "Paul",
 			"lastname" => "Smith",
 			"nickname" => "smither",
-		));
+		]);
 		$this->assertTrue($form->changed() === false);
 
 		$form = new TestForm();
 		$form->set_initial("firstname",new String4("George"));
-		$form->validate(array(
+		$form->validate([
 			"firstname" => "Paul",
 			"lastname" => "Smith",
 			"nickname" => "smither",
-		));
+		]);
 		$this->assertTrue($form->changed() === true);
 	}
 }

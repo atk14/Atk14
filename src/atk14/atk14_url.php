@@ -49,13 +49,13 @@ class Atk14Url{
 	 * - get_params - associative array of params sent in request
 	 * - router - route object that catches the url
 	 */
-	static function RecognizeRoute($requested_uri,$options = array()){
+	static function RecognizeRoute($requested_uri,$options = []){
 		global $ATK14_GLOBAL;
 
 		$requested_uri = (string)$requested_uri;
-		$options += array(
+		$options += [
 			"get_params" => null,
-		);
+		];
 
 		if(is_null($options["get_params"])){
 			$options["get_params"] = self::ParseParamsFromUri($requested_uri);
@@ -93,7 +93,7 @@ class Atk14Url{
 			$router->params = $_params;
 			$router->recognizeUri($_uri,$_params,$namespace);
 			if($router->controller && $router->action){
-				return Atk14Url::_FindForceRedirect(array(
+				return Atk14Url::_FindForceRedirect([
 					"namespace" => $namespace,
 					"controller" => $router->controller,
 					"action" => $router->action,
@@ -103,7 +103,7 @@ class Atk14Url{
 					"get_params" => $router->params->toArray(),
 					"force_redirect" => $router->redirected_to,
 					"router" => $router
-				),$requested_uri);
+				],$requested_uri);
 			}
 		}
 
@@ -112,8 +112,8 @@ class Atk14Url{
 		$out = null;
 
 		foreach($routes as $pattern => $rules){
-			$_replaces = array();
-			$_rules = array();
+			$_replaces = [];
+			$_rules = [];
 			foreach($rules as $_p_key => $_p_value){	
 				if(preg_match("/^__/",$_p_key)){ $_rules[$_p_key] = $_p_value; continue; }
 				if($_p_value["regexp"]){
@@ -139,14 +139,14 @@ class Atk14Url{
 
 		// kontrollery "application" a "atk14" neni mozne zvenku linkovat primo,
 		// stejne tak akce "error404", "error403" a "error500" neni mozne linkovat primo.
-		if(!isset($out) || in_array($out["controller"],array("application","atk14")) || in_array($out["action"],array("error404","error403","error500"))){
+		if(!isset($out) || in_array($out["controller"],["application","atk14"]) || in_array($out["action"],["error404","error403","error500"])){
 			Atk14Locale::Initialize($out["lang"]);
 			return Atk14Url::_NotFound($namespace);
 		}
 
-		$get_params = array();
+		$get_params = [];
 		foreach($out as $key => $_value){	
-			if(in_array($key,array("controller","action","lang","__page_title__","__page_description__","__omit_trailing_slash__"))){ continue; }
+			if(in_array($key,["controller","action","lang","__page_title__","__page_description__","__omit_trailing_slash__"])){ continue; }
 			if(array_key_exists($key,$options["get_params"]) && $_value!=$options["get_params"][$key]){
 				// The same parameter with a different value is already in the URL.
 				// That shouldn't happen.
@@ -165,7 +165,7 @@ class Atk14Url{
 		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
 		$get_params = array_merge($options["get_params"],$get_params);
 
-		return Atk14Url::_FindForceRedirect(array(
+		return Atk14Url::_FindForceRedirect([
 			"namespace" => $namespace,
 			"controller" => $out["controller"],
 			"action" => $out["action"],
@@ -177,7 +177,7 @@ class Atk14Url{
 
 			"get_params" => $get_params,
 			"force_redirect" => null
-		),$requested_uri);
+		],$requested_uri);
 	}
 
 	/**
@@ -206,13 +206,13 @@ class Atk14Url{
 
 		$expected_link = Atk14Url::BuildLink(array_merge(
 			$out["get_params"],
-			array(
+			[
 				"controller" => $out["controller"],
 				"action" => $out["action"],
 				"lang" => $out["lang"],
 				"namespace" => $out["namespace"],
-			)
-		),array("connector" => "&"));
+			]
+		),["connector" => "&"]);
 		if($expected_link!=$requested_uri){
 			$out["force_redirect"] = $expected_link;
 		}
@@ -222,16 +222,16 @@ class Atk14Url{
 
 	static protected function _NotFound($namespace){
 		global $ATK14_GLOBAL;
-		return array(
+		return [
 			"namespace" => $namespace,
 			"controller" => "application",
 			"action" => "error404",
 			"lang" => $ATK14_GLOBAL->getDefaultLang(),
 			"page_title" => "",
 			"page_description" => "",
-			"get_params" => array(),
+			"get_params" => [],
 			"force_redirect" => null
-		);
+		];
 	}
 
 	/**
@@ -286,20 +286,20 @@ class Atk14Url{
 	 * @return string generated URL
 	 *
 	 */
-	static function BuildLink($params,$options = array(),$__current_ary__ = array()){
+	static function BuildLink($params,$options = [],$__current_ary__ = []){
 		global $ATK14_GLOBAL,$HTTP_REQUEST;
 
 		if(is_string($params)){
 			if(preg_match("/^[a-z0-9_]+$/",$params)){
-				return Atk14Url::BuildLink(array(
+				return Atk14Url::BuildLink([
 						"action" => $params, 
-				),$options,$__current_ary__);
+				],$options,$__current_ary__);
 			}
 			if(preg_match("/^([a-z0-9_]+)\\/([a-z0-9_]+)$/",$params,$matches)){
-				return Atk14Url::BuildLink(array(
+				return Atk14Url::BuildLink([
 						"controller" => $matches[1],
 						"action" => $matches[2], 
-				),$options,$__current_ary__);
+				],$options,$__current_ary__);
 			}
 
 			$url = $params;
@@ -308,12 +308,12 @@ class Atk14Url{
 
 		Atk14Timer::Start("Atk14Url::BuildLink");
 
-		$__current_ary__ = array_merge(array(
+		$__current_ary__ = array_merge([
 			"namespace" => (string)$ATK14_GLOBAL->getValue("namespace"), // null -> ""
 			"controller" => $ATK14_GLOBAL->getValue("controller"),
 			"action" => $ATK14_GLOBAL->getValue("action"),
 			"lang" => $ATK14_GLOBAL->getLang(),
-		),$__current_ary__);
+		],$__current_ary__);
 
 		if(!isset($params["namespace"])){ $params["namespace"] = $__current_ary__["namespace"]; }
 		if(!isset($params["action"]) && !isset($params["controller"])){ $params["action"] = $__current_ary__["action"]; }
@@ -323,7 +323,7 @@ class Atk14Url{
 
 		Atk14Utils::_CorrectActionForUrl($params);
 
-		$options = array_merge(array(
+		$options = array_merge([
 			"connector" => "&",
 			"anchor" => null,
 			"with_hostname" => false,
@@ -331,7 +331,7 @@ class Atk14Url{
 			"port" => null,
 			"basic_auth_username" => "",
 			"basic_auth_password" => "",
-		),$options);
+		],$options);
 
 		if(!$options["with_hostname"] && (strlen($options["basic_auth_username"]) || strlen($options["basic_auth_password"]))){
 			$options["with_hostname"] = true;
@@ -371,7 +371,7 @@ class Atk14Url{
 		}
 
 		$out = null;
-		$get_params = array();
+		$get_params = [];
 
 		foreach(Atk14Url::GetRouters($params["namespace"]) as $router){
 			if($out = $router->buildLink($params)){
@@ -384,8 +384,8 @@ class Atk14Url{
 			$out = preg_replace('/^\//','',$out);
 		}else{
 
-			$routes = $ATK14_GLOBAL->getPreparedRoutes($params["namespace"],array("path" => "$params[lang]/$params[controller]/$params[action]"));
-			$get_params = array();
+			$routes = $ATK14_GLOBAL->getPreparedRoutes($params["namespace"],["path" => "$params[lang]/$params[controller]/$params[action]"]);
+			$get_params = [];
 
 			$_params = $params;
 			unset($_params["namespace"]);
@@ -454,13 +454,13 @@ class Atk14Url{
 
 		$_namespace = "";
 		if(strlen($params["namespace"])>0){ $_namespace = "$params[namespace]/"; }
-		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out.Atk14Url::EncodeParams($get_params,array("connector" => $options["connector"]));
+		$out = $ATK14_GLOBAL->getBaseHref().$_namespace.$out.Atk14Url::EncodeParams($get_params,["connector" => $options["connector"]]);
 		if(strlen((string)$options["anchor"])>0){ $out .= "#$options[anchor]"; }
 
 		// Internally, the port 80 is treated as standard ssl port.
 		// It's quite common that Apache is running on non-ssl port 80 and ssl is provided by Nginx in reverse proxy mode. 
-		$_std_ssl_ports = array(443,80);
-		$_std_non_ssl_ports = array(80);
+		$_std_ssl_ports = [443,80];
+		$_std_non_ssl_ports = [80];
 
 		if($options["with_hostname"]){
 			$_server_port = isset($options["port"]) ? $options["port"] : $HTTP_REQUEST->getServerPort();
@@ -507,10 +507,10 @@ class Atk14Url{
 		return $out;
 	}
 
-	static protected function _EncodeUrlParam($_key,$_value,$options = array()){
+	static protected function _EncodeUrlParam($_key,$_value,$options = []){
 		if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
 		if(is_array($_value)){
-			$out = array();
+			$out = [];
 			$preserve_keys = false;
 			$index = 0;
 			foreach($_value as $_a_key => $_a_value){
@@ -528,15 +528,15 @@ class Atk14Url{
 		return urlencode($_key)."=".urlencode((string)$_value);
 	}
 
-	static function EncodeParams($params, $options = array()){
-		$options = array_merge(array(
+	static function EncodeParams($params, $options = []){
+		$options = array_merge([
 			"connector" => "&",
-		),$options);
+		],$options);
 
 		if(is_object($params)){ $params = $params->toArray(); }
 		if(!sizeof($params)){ return ""; }
 
-		$out = array();
+		$out = [];
 		foreach($params as $k => $v){
 			$out[] = Atk14Url::_EncodeUrlParam($k,$v,$options);
 		}
@@ -572,7 +572,7 @@ class Atk14Url{
 		}
 
 		if(is_string($router)){
-			$_options = array();
+			$_options = [];
 			if($namespace_defined){
 				$_options["namespace"] = $namespace;
 			}
@@ -596,8 +596,8 @@ class Atk14Url{
 
 	static protected function _SetRouter_GetRouters($namespace,$router = null){
 		static $ROUTERS;
-		if(!isset($ROUTERS)){ $ROUTERS = array(); }
-		if(!isset($ROUTERS["*"])){ $ROUTERS["*"] = array(); }	
+		if(!isset($ROUTERS)){ $ROUTERS = []; }
+		if(!isset($ROUTERS["*"])){ $ROUTERS["*"] = []; }	
 		if(!isset($ROUTERS[$namespace])){ $ROUTERS[$namespace] = $ROUTERS["*"]; }
 
 		if(isset($router)){
@@ -627,7 +627,7 @@ class Atk14Url{
 	/**
 	 * Returns parameters from request uri.
 	 * ```
-	 * $params = Atk14Url::ParseParamsFromUri("/?id=123&format=xml"); // array("id" => "123", "format" => "xml");
+	 * $params = Atk14Url::ParseParamsFromUri("/?id=123&format=xml"); // ["id" => "123", "format" => "xml");
 	 * ```
 	 * @param string $uri
 	 * @return array array with parsed parameters.

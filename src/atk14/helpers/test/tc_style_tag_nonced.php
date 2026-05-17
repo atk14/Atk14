@@ -8,6 +8,6 @@ class TcStyleTagNonced extends TcBase {
 
 		// Content-Security-Policy nonce
 
-		$this->assertEquals('<style nonce="abcdefgh">h1 { color: red; }</style>',smarty_block_style_tag(array(),'h1 { color: red; }',$template,$repeat));
+		$this->assertEquals('<style nonce="abcdefgh">h1 { color: red; }</style>',smarty_block_style_tag([],'h1 { color: red; }',$template,$repeat));
 	}
 }

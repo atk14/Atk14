@@ -93,14 +93,14 @@ class TcSorting extends TcBase{
 		$this->assertEquals(null,$sorting["rank"]);
 
 		$sorting["rank"] = "rank";
-		$this->assertEquals(array("rank","rank DESC"),$sorting["rank"]);
+		$this->assertEquals(["rank","rank DESC"],$sorting["rank"]);
 		//
 		$this->assertEquals("rank",$sorting->getOrder("rank"));
 		$this->assertEquals("rank",$sorting->getOrder("rank-asc"));
 		$this->assertEquals("rank DESC",$sorting->getOrder("rank-desc"));
 
-		$sorting["rank"] = array("rank ASC, id ASC", "rank DESC, id DESC");
-		$this->assertEquals(array("rank ASC, id ASC","rank DESC, id DESC"),$sorting["rank"]);
+		$sorting["rank"] = ["rank ASC, id ASC", "rank DESC, id DESC"];
+		$this->assertEquals(["rank ASC, id ASC","rank DESC, id DESC"],$sorting["rank"]);
 		//
 		$this->assertEquals("rank ASC, id ASC",$sorting->getOrder("rank"));
 		$this->assertEquals("rank ASC, id ASC",$sorting->getOrder("rank-asc"));
@@ -112,12 +112,12 @@ class TcSorting extends TcBase{
 	function test_ArrayIterator(){
 		$sorting = $this->_get_sorting();
 
-		$ary = array();
+		$ary = [];
 		foreach($sorting as $item){
 			$ary[] = $item;
 		}
 
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"id",
 			"created_at",
 			"title",
@@ -126,7 +126,7 @@ class TcSorting extends TcBase{
 			"url",
 			"subtitle",
 			"borrowed",
-		),$ary);
+		],$ary);
 	}
 
 	function test_SpecialOrderingObject(){
@@ -163,16 +163,16 @@ class TcSorting extends TcBase{
 
 		$sorting = new Atk14Sorting($params);
 		$sorting->add("id");
-		$sorting->add("created_at",array("reverse" => true));
-		$sorting->add("title",array(
+		$sorting->add("created_at",["reverse" => true]);
+		$sorting->add("title",[
 			"ascending_ordering" => "title ASC, id ASC",
 			"descending_ordering" => "title DESC, id DESC",
-		));
+		]);
 
-		$sorting->add("author",array(
+		$sorting->add("author",[
 			"asc" => "author ASC, id ASC",
 			"desc" => "author DESC, id DESC",
-		));
+		]);
 
 		$sorting->add("shelf_mark","UPPER(shelf_mark) ASC, title ASC","UPPER(shelf_mark) DESC, title DESC");
 

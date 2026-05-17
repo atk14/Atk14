@@ -19,10 +19,10 @@
 */
 function atk14_smarty_prefilter($tpl_source, $smarty = null){
 	// \{HELLO\} -> {literal}{{/literal}HELLO{literal}}{/literal}
-	$tpl_source = strtr($tpl_source,array(
+	$tpl_source = strtr($tpl_source,[
 		"\\{" => "{literal}{{/literal}",
 		"\\}" => "{literal}}{/literal}",
-	));
+	]);
 	
 	// {a _data-focus=1}xx{/a} -> {a _data__focus=1}xx{/a}
 	$tpl_source = preg_replace("/({(a|a_remote|a_destroy|form|form_remote)\\s+[^}]*\\b_data)-/","\\1___",$tpl_source);
@@ -87,11 +87,11 @@ function atk14_get_smarty_from_template($template){
 }
 
 function _smarty_addAtk14Content(&$smarty,&$atk14_contents,$key,$content,$options){
-	$options += array(
+	$options += [
 		"strategy" => null, // "append", "prepend", "replace", "_place_initial_content_", "default",
 		"default_strategy" => null,
 			// "_place_initial_content_" // special private purpose
-	);
-	if(!isset($atk14_contents[$key])){ $atk14_contents[$key] = array(); }
-	$atk14_contents[$key][] = array($content, $options);
+	];
+	if(!isset($atk14_contents[$key])){ $atk14_contents[$key] = []; }
+	$atk14_contents[$key][] = [$content, $options];
 }

@@ -4,372 +4,372 @@ class TcUrl extends TcBase{
 	function test(){
 		global $_GET;
 
-		$_GET = array();
+		$_GET = [];
 
-		$this->_check_route("/articles/feed.rss",array(
+		$this->_check_route("/articles/feed.rss",[
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "articles",
 			"action" => "overview",
 			"force_redirect" => null,
-			"get_params" => array("format" => "rss"),
-		));
+			"get_params" => ["format" => "rss"],
+		]);
 
-		$this->_check_route("/cs/articles/overview/",array(
+		$this->_check_route("/cs/articles/overview/",[
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
 			"action" => "overview",
 			"force_redirect" => null
-		));
+		]);
 
 		// format=rss mame v routes.php
-		$_GET = array("format" => "rss");
-		$this->_check_route("/en/articles/overview/?format=rss",array(
+		$_GET = ["format" => "rss"];
+		$this->_check_route("/en/articles/overview/?format=rss",[
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "articles",
 			"action" => "overview",
 			"force_redirect" => "/articles/feed.rss"
-		));
+		]);
 
 		// format=xml nemame v routes.php
-		$_GET = array("format" => "xml");
-		$this->_check_route("/en/articles/overview/?format=xml",array(
+		$_GET = ["format" => "xml"];
+		$this->_check_route("/en/articles/overview/?format=xml",[
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "articles",
 			"action" => "overview",
 			"force_redirect" => null,
-		),array("format" => "xml"));
+		],["format" => "xml"]);
 
-		$_GET = array();
+		$_GET = [];
 	}
 
 	function test_EncodeParams(){
-		$this->assertEquals('?format=xml',Atk14Url::EncodeParams(array("format" => "xml")));
-		$this->assertEquals('?limit=10&offset=0',Atk14Url::EncodeParams(array("limit" => "10", "offset" => "0")));
-		$this->assertEquals('?colors%5B%5D=red&colors%5B%5D=blue',Atk14Url::EncodeParams(array("colors" => array("red","blue"))));
-		$this->assertEquals('?colors%5Bc1%5D=red&colors%5Bc2%5D=blue',Atk14Url::EncodeParams(array("colors" => array("c1" => "red", "c2" => "blue"))));
+		$this->assertEquals('?format=xml',Atk14Url::EncodeParams(["format" => "xml"]));
+		$this->assertEquals('?limit=10&offset=0',Atk14Url::EncodeParams(["limit" => "10", "offset" => "0"]));
+		$this->assertEquals('?colors%5B%5D=red&colors%5B%5D=blue',Atk14Url::EncodeParams(["colors" => ["red","blue"]]));
+		$this->assertEquals('?colors%5Bc1%5D=red&colors%5Bc2%5D=blue',Atk14Url::EncodeParams(["colors" => ["c1" => "red", "c2" => "blue"]]));
 	}
 
 	function test_recognize_route_omit_trailing_slash(){
-		$this->_check_route("/invoice/12345.pdf",array(
+		$this->_check_route("/invoice/12345.pdf",[
 			"controller" => "invoices",
 			"action" => "detail",
 			"lang" => "en",
-			"get_params" => array("id" => "12345", "format" => "pdf"),
+			"get_params" => ["id" => "12345", "format" => "pdf"],
 			"force_redirect" => null
-		));
-		$this->_check_route("/faktura/12345.pdf",array(
+		]);
+		$this->_check_route("/faktura/12345.pdf",[
 			"controller" => "invoices",
 			"action" => "detail",
 			"lang" => "cs",
-			"get_params" => array("id" => "12345", "format" => "pdf"),
+			"get_params" => ["id" => "12345", "format" => "pdf"],
 			"force_redirect" => null
-		));
-		$this->_check_route("/invoice/12345.xml",array(
+		]);
+		$this->_check_route("/invoice/12345.xml",[
 			"controller" => "invoices",
 			"action" => "detail",
-			"get_params" => array("id" => "12345", "format" => "xml"),
+			"get_params" => ["id" => "12345", "format" => "xml"],
 			"force_redirect" => null
-		));
-		$this->_check_route("/invoice/12345.pdf/",array(
+		]);
+		$this->_check_route("/invoice/12345.pdf/",[
 			"controller" => "invoices",
 			"action" => "detail",
-			"get_params" => array("id" => "12345", "format" => "pdf"),
+			"get_params" => ["id" => "12345", "format" => "pdf"],
 			"force_redirect" => "/invoice/12345.pdf"
-		));
-		$this->_check_404_route(array(
+		]);
+		$this->_check_404_route([
 			"/invoice/12345.gif", // invalid format
 			"/invoice/nonsence.pdf", // invalid id
-		));
+		]);
 	}
 
 	function test_recognize_route(){
 		global $_GET;
-		$_GET = array();
+		$_GET = [];
 
-		$this->_check_route("/cs/articles/overview/",array(
+		$this->_check_route("/cs/articles/overview/",[
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
 			"action" => "overview",
 			"force_redirect" => null
-		));
+		]);
 
 		// missing slash at the end of URI
-		$this->_check_route("/cs/articles/overview",array(
+		$this->_check_route("/cs/articles/overview",[
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
 			"action" => "overview",
 			"force_redirect" => "/cs/articles/overview/"
-		));
+		]);
 
 		$_GET["from"] = "20";
-		$r = $this->_check_route("/cs/articles/overview/?from=20",array(
+		$r = $this->_check_route("/cs/articles/overview/?from=20",[
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
 			"action" => "overview",
 			"force_redirect" => null
-		));
+		]);
 
 		// missing slash
-		$r = $this->_check_route("/cs/articles/overview?from=20",array(
+		$r = $this->_check_route("/cs/articles/overview?from=20",[
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
 			"action" => "overview",
 			"force_redirect" => "/cs/articles/overview/?from=20"
-		));
+		]);
 
-		$_GET = array();
+		$_GET = [];
 	}
 
 	function test_recognize_route_nice_url(){
 		global $_GET;
 
-		$this->_check_route("/article/123-some-article-title/",array(
+		$this->_check_route("/article/123-some-article-title/",[
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "articles",
 			"action" => "detail",
 			"force_redirect" => null,
-			"get_params" => array("id" => "123", "slug" => "some-article-title"),
-		));
+			"get_params" => ["id" => "123", "slug" => "some-article-title"],
+		]);
 
-		$this->_check_route("/clanek/123-some-article-title/",array(
+		$this->_check_route("/clanek/123-some-article-title/",[
 			"namespace" => "",
 			"lang" => "cs",
 			"controller" => "articles",
 			"action" => "detail",
 			"force_redirect" => null,
-			"get_params" => array("id" => "123", "slug" => "some-article-title"),
-		));
+			"get_params" => ["id" => "123", "slug" => "some-article-title"],
+		]);
 
-		$this->_check_route("/article/123-some-article-title",array("force_redirect" => "/article/123-some-article-title/"));	
-		$this->_check_route("/clanek/123-some-article-title",array("force_redirect" => "/clanek/123-some-article-title/"));	
+		$this->_check_route("/article/123-some-article-title",["force_redirect" => "/article/123-some-article-title/"]);	
+		$this->_check_route("/clanek/123-some-article-title",["force_redirect" => "/clanek/123-some-article-title/"]);	
 
-		$_GET = array("id" => "124","slug" => "another-article");
-		$this->_check_route("/en/articles/detail/?id=124&slug=another-article",array(
+		$_GET = ["id" => "124","slug" => "another-article"];
+		$this->_check_route("/en/articles/detail/?id=124&slug=another-article",[
 			"force_redirect" => "/article/124-another-article/",
-		));
-		$_GET = array();
+		]);
+		$_GET = [];
 
-		$this->_check_404_route(array(
+		$this->_check_404_route([
 			"/article/0123-zero-at-the-begining/",
 			"/article/12?3-bad-url/",
 			"/article/123-bad-slug_!/",
 			"/article/123-/",
 			"/article/-missing-id/",
-		));
+		]);
 	}
 
 	function test_routers(){
 		global $_GET;
-		$_GET = array();
+		$_GET = [];
 
-		$this->_check_route("/fable/green-eggs-and-ham-1",array(
+		$this->_check_route("/fable/green-eggs-and-ham-1",[
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "fables",
 			"action" => "detail",
 			"force_redirect" => null
-		));
+		]);
 
-		$this->_check_route("/fable/green-eggs-and-ham-1",array(
+		$this->_check_route("/fable/green-eggs-and-ham-1",[
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "fables",
 			"action" => "detail",
 			"force_redirect" => null
-		),array("id" => "1"));
+		],["id" => "1"]);
 
-		$this->_check_route("/universe/fable/green-eggs-and-ham-1",array(
+		$this->_check_route("/universe/fable/green-eggs-and-ham-1",[
 			"namespace" => "universe",
 			"lang" => "en",
 			"controller" => "fables",
 			"action" => "detail",
 			"force_redirect" => null
-		),array("id" => "1"));
+		],["id" => "1"]);
 
-		$this->_check_route("/fable/the-dog-in-the-hat-3",array( // ! dog
+		$this->_check_route("/fable/the-dog-in-the-hat-3",[ // ! dog
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "fables",
 			"action" => "detail",
 			"force_redirect" => "/fable/the-cat-in-the-hat-3" // ! cat
-		),array("id" => "3"));
+		],["id" => "3"]);
 
 		$_GET["id"] = "5";
-		$this->_check_route("/admin/en/fables/detail/?id=5",array(
+		$this->_check_route("/admin/en/fables/detail/?id=5",[
 			"namespace" => "admin",
 			"lang" => "en",
 			"controller" => "fables",
 			"action" => "detail",
 			"force_redirect" => null
-		),array("id" => "5"));
+		],["id" => "5"]);
 
-		$_GET = array("format" => "xml");
-		$this->_check_route("/fable/a-very-good-fable-2?format=xml",array(
+		$_GET = ["format" => "xml"];
+		$this->_check_route("/fable/a-very-good-fable-2?format=xml",[
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "fables",
 			"action" => "detail",
 			"force_redirect" => null
-		),array("id" => "2", "format" => "xml"));
+		],["id" => "2", "format" => "xml"]);
 
-		$_GET = array();
+		$_GET = [];
 
-		$this->assertEquals("/fable/where-the-wild-things-are-5",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 5)));
-		$this->assertEquals("/fable/where-the-wild-things-are-5?format=xml&print=1",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 5, "format" => "xml", "print" => 1)));
+		$this->assertEquals("/fable/where-the-wild-things-are-5",$this->_build_link(["controller" => "fables", "action" => "detail", "id" => 5]));
+		$this->assertEquals("/fable/where-the-wild-things-are-5?format=xml&print=1",$this->_build_link(["controller" => "fables", "action" => "detail", "id" => 5, "format" => "xml", "print" => 1]));
 
 		// The router is for namespace "" and "universe", but not for namespace "admin",
 		// see config/routers/load.php
-		$this->assertEquals("/admin/en/fables/detail/?id=5",$this->_build_link(array("namespace" => "admin", "controller" => "fables", "action" => "detail", "id" => 5)));
-		$this->assertEquals("/universe/fable/where-the-wild-things-are-5",$this->_build_link(array("namespace" => "universe", "controller" => "fables", "action" => "detail", "id" => 5)));
+		$this->assertEquals("/admin/en/fables/detail/?id=5",$this->_build_link(["namespace" => "admin", "controller" => "fables", "action" => "detail", "id" => 5]));
+		$this->assertEquals("/universe/fable/where-the-wild-things-are-5",$this->_build_link(["namespace" => "universe", "controller" => "fables", "action" => "detail", "id" => 5]));
 
 
-		$this->assertEquals("/fable/a-very-good-fable-22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22)));
-		$this->assertEquals("/bajka/a-very-good-fable-22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22, "lang" => "cs")));
-		$this->assertEquals("/sk/fables/detail/?id=22",$this->_build_link(array("controller" => "fables", "action" => "detail", "id" => 22, "lang" => "sk"))); // in the router there is no support for sk
+		$this->assertEquals("/fable/a-very-good-fable-22",$this->_build_link(["controller" => "fables", "action" => "detail", "id" => 22]));
+		$this->assertEquals("/bajka/a-very-good-fable-22",$this->_build_link(["controller" => "fables", "action" => "detail", "id" => 22, "lang" => "cs"]));
+		$this->assertEquals("/sk/fables/detail/?id=22",$this->_build_link(["controller" => "fables", "action" => "detail", "id" => 22, "lang" => "sk"])); // in the router there is no support for sk
 
 		//
-		$this->_check_route("/en/",array(
+		$this->_check_route("/en/",[
 			"namespace" => "",
 			"lang" => "en",
 			"controller" => "main",
 			"action" => "index",
-		));
-		$this->_check_route("/universe/en/",array(
+		]);
+		$this->_check_route("/universe/en/",[
 			"namespace" => "universe",
 			"lang" => "en",
 			"controller" => "main",
 			"action" => "index",
-		));
+		]);
 
 		// In the config/locale.yml there is no Hungarian language
 		$this->_check_404_route("/hu/");
 		$this->_check_404_route("/universe/hu/");
 	
 		// Routes only for the default language (cs)
-		$this->assertEquals("/post-123/",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "lang" => "cs")));
-		$this->assertEquals("/cs/posts/detail/?id=xyz",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "xyz", "lang" => "cs"))); // id is not number
-		$this->assertEquals("/en/posts/detail/?id=123",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "lang" => "en"))); // not default language
+		$this->assertEquals("/post-123/",$this->_build_link(["namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "lang" => "cs"]));
+		$this->assertEquals("/cs/posts/detail/?id=xyz",$this->_build_link(["namespace" => "", "controller" => "posts", "action" => "detail", "id" => "xyz", "lang" => "cs"])); // id is not number
+		$this->assertEquals("/en/posts/detail/?id=123",$this->_build_link(["namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "lang" => "en"])); // not default language
 		//
-		$this->assertEquals("/post-123.raw",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "raw", "lang" => "cs")));
-		$this->assertEquals("/post-123/?format=pdf",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "pdf", "lang" => "cs"))); // format is not raw
-		$this->assertEquals("/en/posts/detail/?id=123&format=raw",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "raw", "lang" => "en"))); // not default language
+		$this->assertEquals("/post-123.raw",$this->_build_link(["namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "raw", "lang" => "cs"]));
+		$this->assertEquals("/post-123/?format=pdf",$this->_build_link(["namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "pdf", "lang" => "cs"])); // format is not raw
+		$this->assertEquals("/en/posts/detail/?id=123&format=raw",$this->_build_link(["namespace" => "", "controller" => "posts", "action" => "detail", "id" => "123", "format" => "raw", "lang" => "en"])); // not default language
 		//
-		$this->_check_route("/post-123/",array(
+		$this->_check_route("/post-123/",[
 			"lang" => "cs",
 			"controller" => "posts",
 			"action" => "detail",
 			"force_redirect" => null
-		),array(
+		],[
 			"id" => "123"
-		));
-		$this->_check_route("/post-123.raw",array(
+		]);
+		$this->_check_route("/post-123.raw",[
 			"lang" => "cs",
 			"controller" => "posts",
 			"action" => "detail",
 			"force_redirect" => null
-		),array(
+		],[
 			"id" => "123",
 			"format" => "raw"
-		));
+		]);
 		$this->_check_404_route("/post-123.pdf");
 
 		// id as an array
-		$this->assertEquals("/cs/posts/detail/?id%5B%5D=123&id%5B%5D=124",$this->_build_link(array("namespace" => "", "controller" => "posts", "action" => "detail", "id" => array("123", "124"), "lang" => "cs")));
+		$this->assertEquals("/cs/posts/detail/?id%5B%5D=123&id%5B%5D=124",$this->_build_link(["namespace" => "", "controller" => "posts", "action" => "detail", "id" => ["123", "124"], "lang" => "cs"]));
 		$data = Atk14Url::RecognizeRoute("/cs/posts/detail/?id%5B%5D=123&id%5B%5D=124");
-		$this->assertEquals(array("id" => array("123","124")),$data["get_params"]);
+		$this->assertEquals(["id" => ["123","124"]],$data["get_params"]);
 		$this->assertNull($data["force_redirect"]);
 	}
 
 	function test_ParseParamsFromUri(){
-		$this->assertEquals(array(),Atk14Url::ParseParamsFromUri('/'));
-		$this->assertEquals(array(),Atk14Url::ParseParamsFromUri('/cs/main/'));
+		$this->assertEquals([],Atk14Url::ParseParamsFromUri('/'));
+		$this->assertEquals([],Atk14Url::ParseParamsFromUri('/cs/main/'));
 
-		$this->assertEquals(array("id" => "123", "format" => "xml"),Atk14Url::ParseParamsFromUri('/cs/articles/detail/?id=123&format=xml'));
-		$this->assertEquals(array("q" => "klobouček", "offset" => "20"),Atk14Url::ParseParamsFromUri('/cs/articles/?q=klobou%C4%8Dek&offset=20'));
+		$this->assertEquals(["id" => "123", "format" => "xml"],Atk14Url::ParseParamsFromUri('/cs/articles/detail/?id=123&format=xml'));
+		$this->assertEquals(["q" => "klobouček", "offset" => "20"],Atk14Url::ParseParamsFromUri('/cs/articles/?q=klobou%C4%8Dek&offset=20'));
 
 		//recognize both escaped and unescaped arrays
-		$this->assertEquals(array("a" => "1", "b" => array( "3", 4=>"6")),Atk14Url::ParseParamsFromUri('/cs/main/?a=1&b%5B%5D=3&b%5B4%5D=6'));
-		$this->assertEquals(array("a" => "1", "b" => array( "3", 4=>"6")),Atk14Url::ParseParamsFromUri('/cs/main/?a=1&b[]=3&b[4]=6'));
+		$this->assertEquals(["a" => "1", "b" => [ "3", 4=>"6"]],Atk14Url::ParseParamsFromUri('/cs/main/?a=1&b%5B%5D=3&b%5B4%5D=6'));
+		$this->assertEquals(["a" => "1", "b" => [ "3", 4=>"6"]],Atk14Url::ParseParamsFromUri('/cs/main/?a=1&b[]=3&b[4]=6'));
 	}
 
 	function test_RecognizeRoute(){
 		$data = Atk14Url::RecognizeRoute('/cs/articles/');
 		$this->assertEquals("articles",$data["controller"]);
 		$this->assertEquals("index",$data["action"]);
-		$this->assertEquals(array(),$data["get_params"]);
+		$this->assertEquals([],$data["get_params"]);
 
-		$data = Atk14Url::RecognizeRoute('/cs/articles/',array("get_params" => array("q" => "cat", "offset" => "20")));
+		$data = Atk14Url::RecognizeRoute('/cs/articles/',["get_params" => ["q" => "cat", "offset" => "20"]]);
 		$this->assertEquals("articles",$data["controller"]);
 		$this->assertEquals("index",$data["action"]);
-		$this->assertEquals(array("q" => "cat", "offset" => "20"),$data["get_params"]);
+		$this->assertEquals(["q" => "cat", "offset" => "20"],$data["get_params"]);
 
 		$data = Atk14Url::RecognizeRoute('/cs/articles/detail/?id=123&format=xml');
 		$this->assertEquals("articles",$data["controller"]);
 		$this->assertEquals("detail",$data["action"]);
-		$this->assertEquals(array("id" => "123", "format" => "xml"),$data["get_params"]);
+		$this->assertEquals(["id" => "123", "format" => "xml"],$data["get_params"]);
 
-		$data = Atk14Url::RecognizeRoute('/cs/articles/detail/?id=123&format=xml',array("get_params" => array("id" => "222")));
+		$data = Atk14Url::RecognizeRoute('/cs/articles/detail/?id=123&format=xml',["get_params" => ["id" => "222"]]);
 		$this->assertEquals("articles",$data["controller"]);
 		$this->assertEquals("detail",$data["action"]);
-		$this->assertEquals(array("id" => "222"),$data["get_params"]);
+		$this->assertEquals(["id" => "222"],$data["get_params"]);
 
 		$data = Atk14Url::RecognizeRoute('/nonsence/?x1=x2');
 		$this->assertEquals("application",$data["controller"]);
 		$this->assertEquals("error404",$data["action"]);
-		$this->assertEquals(array(),$data["get_params"]);
+		$this->assertEquals([],$data["get_params"]);
 
 		$data = Atk14Url::RecognizeRoute('/invoice/12345.pdf');
 		$this->assertEquals("invoices",$data["controller"]);
 		$this->assertEquals("detail",$data["action"]);
-		$this->assertEquals(array("id" => "12345", "format" => "pdf"),$data["get_params"]);
+		$this->assertEquals(["id" => "12345", "format" => "pdf"],$data["get_params"]);
 
 		$data = Atk14Url::RecognizeRoute('/invoice/12345.pdf?bgcolor=black');
 		$this->assertEquals("invoices",$data["controller"]);
 		$this->assertEquals("detail",$data["action"]);
-		$this->assertEquals(array("id" => "12345", "format" => "pdf", "bgcolor" => "black"),$data["get_params"]);
+		$this->assertEquals(["id" => "12345", "format" => "pdf", "bgcolor" => "black"],$data["get_params"]);
 
 		// There are two parameters id in the URI
 		$data = Atk14Url::RecognizeRoute('/invoice/12345.pdf?bgcolor=black&id=67890');
 		$this->assertEquals("application",$data["controller"]);
 		$this->assertEquals("error404",$data["action"]);
-		$this->assertEquals(array(),$data["get_params"]);
+		$this->assertEquals([],$data["get_params"]);
 	}
 
 	function test_BuildLink(){
-		$this->assertEquals("/en/",$this->_build_link(array()));
+		$this->assertEquals("/en/",$this->_build_link([]));
 
-		$this->assertEquals("https://secure.testing.cz/en/",$this->_build_link(array(),array("ssl" => true)));
-		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz")));
+		$this->assertEquals("https://secure.testing.cz/en/",$this->_build_link([],["ssl" => true]));
+		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link([],["ssl" => true, "with_hostname" => "ssl.testing.cz"]));
 
-		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz", "port" => 443)));
-		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz", "port" => 80)));
-		$this->assertEquals("https://ssl.testing.cz:444/en/",$this->_build_link(array(),array("ssl" => true, "with_hostname" => "ssl.testing.cz", "port" => 444)));
+		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link([],["ssl" => true, "with_hostname" => "ssl.testing.cz", "port" => 443]));
+		$this->assertEquals("https://ssl.testing.cz/en/",$this->_build_link([],["ssl" => true, "with_hostname" => "ssl.testing.cz", "port" => 80]));
+		$this->assertEquals("https://ssl.testing.cz:444/en/",$this->_build_link([],["ssl" => true, "with_hostname" => "ssl.testing.cz", "port" => 444]));
 
-		$this->assertEquals("http://www.testing.cz/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz")));
-		$this->assertEquals("http://www.testing.cz/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 80)));
-		$this->assertEquals("http://www.testing.cz:81/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 81)));
-		$this->assertEquals("http://www.testing.cz:443/en/",$this->_build_link(array(),array("ssl" => false, "with_hostname" => "www.testing.cz", "port" => 443)));
+		$this->assertEquals("http://www.testing.cz/en/",$this->_build_link([],["ssl" => false, "with_hostname" => "www.testing.cz"]));
+		$this->assertEquals("http://www.testing.cz/en/",$this->_build_link([],["ssl" => false, "with_hostname" => "www.testing.cz", "port" => 80]));
+		$this->assertEquals("http://www.testing.cz:81/en/",$this->_build_link([],["ssl" => false, "with_hostname" => "www.testing.cz", "port" => 81]));
+		$this->assertEquals("http://www.testing.cz:443/en/",$this->_build_link([],["ssl" => false, "with_hostname" => "www.testing.cz", "port" => 443]));
 
-		$this->assertEquals("http://preview:secret@www.testing.cz/en/",$this->_build_link(array(),array("basic_auth_username" => "preview", "basic_auth_password" => "secret")));
+		$this->assertEquals("http://preview:secret@www.testing.cz/en/",$this->_build_link([],["basic_auth_username" => "preview", "basic_auth_password" => "secret"]));
 
-		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=111&products%5B%5D=222&products%5B%5D=333",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array(111,222,333))));
-		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=111&products%5B%5D=222&products%5B%5D=333",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array(0 => 111,1 => 222,2 => 333))));
-		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=111&products%5B%5D=222&products%5B%5D=333",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array("0" => 111,"1" => 222,"2" => 333))));
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=111&products%5B%5D=222&products%5B%5D=333",$this->_build_link(["action" => "baskets/add_to_basket", "products" => [111,222,333]]));
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=111&products%5B%5D=222&products%5B%5D=333",$this->_build_link(["action" => "baskets/add_to_basket", "products" => [0 => 111,1 => 222,2 => 333]]));
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=111&products%5B%5D=222&products%5B%5D=333",$this->_build_link(["action" => "baskets/add_to_basket", "products" => ["0" => 111,"1" => 222,"2" => 333]]));
 
-		$this->assertEquals("/en/baskets/add_to_basket/?products%5B111%5D=1&products%5B222%5D=1&products%5B333%5D=2",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array(111 => 1,222 => 1,333 => 2))));
-		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=1&products%5B%5D=2&products%5B3%5D=3",$this->_build_link(array("action" => "baskets/add_to_basket", "products" => array(1,1 => 2,3 => 3))));
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B111%5D=1&products%5B222%5D=1&products%5B333%5D=2",$this->_build_link(["action" => "baskets/add_to_basket", "products" => [111 => 1,222 => 1,333 => 2]]));
+		$this->assertEquals("/en/baskets/add_to_basket/?products%5B%5D=1&products%5B%5D=2&products%5B3%5D=3",$this->_build_link(["action" => "baskets/add_to_basket", "products" => [1,1 => 2,3 => 3]]));
 	}
 
-	function _check_route($request_uri,$expected_ar,$expected_params = array()){
+	function _check_route($request_uri,$expected_ar,$expected_params = []){
 		$route = Atk14Url::RecognizeRoute($request_uri);
 		foreach($expected_ar as $k => $v){
 			$this->assertequals($v,$route[$k],"testing $k in $request_uri");
@@ -382,30 +382,30 @@ class TcUrl extends TcBase{
 
 	function _check_404_route($request_uri){
 		if(is_array($request_uri)){
-			$out = array();
+			$out = [];
 			foreach($request_uri as $r_uri){
 				$out[] = $this->_check_404_route($r_uri);
 			}
 			return $out;
 		}
-		return $this->_check_route($request_uri,array(
+		return $this->_check_route($request_uri,[
 			"controller" => "application",
 			"action" => "error404",
 			"force_redirect" => null
-		));
+		]);
 	}
 
-	function _build_link($params = array(),$options = array()){
-		$params += array(
+	function _build_link($params = [],$options = []){
+		$params += [
 			"namespace" => "",
 			"controller" => "main",
 			"action" => "index",
 			"lang" => "en",
-		);
+		];
 
-		$options += array(
+		$options += [
 			"connector" => "&"
-		);
+		];
 
 		return Atk14Url::BuildLink($params,$options);
 	}

@@ -35,10 +35,10 @@
 function smarty_modifier_label($form, $field, $label_suffix = ":"){
 	$field = $form->get_field($field);
 	$label = h($field->label);
-	if (!in_array($label[strlen($label)-1], array(':', '?', '.', '!'))) {
+	if (!in_array($label[strlen($label)-1], [':', '?', '.', '!'])) {
 		$label .= $label_suffix;
 	}
 	
 	//return $field->label;
-	return $field->label_tag(array('contents' => $label));
+	return $field->label_tag(['contents' => $label]);
 }

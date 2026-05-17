@@ -33,7 +33,7 @@
  * @return string Modified string
  */
 function smarty_gettext_strarg($str/*, $varargs... */) {
-	$tr = array();
+	$tr = [];
 	$p = 0;
 
 	$nargs = func_num_args();
@@ -146,7 +146,7 @@ function smarty_block_t($params, $text, $template, &$repeat) {
 	case 'javascript':
 	case 'js':
 		// javascript escape
-		$text = strtr($text, array('\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', '</' => '<\/'));
+		$text = strtr($text, ['\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', '</' => '<\/']);
 		break;
 	case 'url':
 		// url escape

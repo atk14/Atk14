@@ -92,11 +92,11 @@ class Atk14Locale{
 
 		if(
 			preg_match($pattern,$localized_date,$matches) &&
-			($date = Date::ByDate(array(
+			($date = Date::ByDate([
 				"year" => $matches["year"],
 				"month" => $matches["month"],
 				"day" => $matches["day"]
-			)
+			]
 		))){
 			return $date->toString();
 		}
@@ -304,11 +304,11 @@ class Atk14Locale{
 	static function _ParseDateTime($localized_datetime,$pattern){
 		if(
 			preg_match($pattern,$localized_datetime,$matches) &&
-			($date = Date::ByDate(array(
+			($date = Date::ByDate([
 				"year" => $matches["year"],
 				"month" => $matches["month"],
 				"day" => $matches["day"]
-			))) &&
+			])) &&
 			($time = Atk14Locale::_ExtractTime($matches))
 		){
 			return $date->toString()." ".$time;

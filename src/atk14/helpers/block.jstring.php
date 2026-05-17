@@ -35,9 +35,9 @@
  */
 function smarty_block_jstring($params,$content,$template,&$repeat){
 	if($repeat){ return; }
-	$params = array_merge(array(
+	$params = array_merge([
 		"escape" => ""
-	),$params);
+	],$params);
 	$content = Atk14Utils::EscapeForJavascript($content);
 	if($params["escape"] == "html"){
 		$content = str_replace("<","&lt;",$content);

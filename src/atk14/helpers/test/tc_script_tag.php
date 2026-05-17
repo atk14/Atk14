@@ -12,7 +12,7 @@ class TcScriptTag extends TcBase {
 alert("Hello!");
 //]]>
 </script>
-		'),smarty_block_javascript_tag(array(),'alert("Hello!");',null,$repeat));
+		'),smarty_block_javascript_tag([],'alert("Hello!");',null,$repeat));
 
 		$this->assertEquals(trim('
 <script type="text/javascript">
@@ -20,8 +20,8 @@ alert("Hello!");
 alert("Hello!");
 //]]>
 </script>
-		'),smarty_block_javascript_tag(array("type" => "text/javascript"),'alert("Hello!");',null,$repeat));
+		'),smarty_block_javascript_tag(["type" => "text/javascript"],'alert("Hello!");',null,$repeat));
 
-		$this->assertEquals("",smarty_block_script_tag(array(),"\n\n",null,$repeat));
+		$this->assertEquals("",smarty_block_script_tag([],"\n\n",null,$repeat));
 	}
 }

@@ -5,7 +5,7 @@ class TcDeploymentStage extends TcBase{
 		$stages = Atk14DeploymentStage::GetStages();
 
 		$this->assertEquals(5,sizeof($stages));
-		$this->assertEquals(array("devel","acceptation","acceptation2","acceptation3","production"),array_keys($stages));
+		$this->assertEquals(["devel","acceptation","acceptation2","acceptation3","production"],array_keys($stages));
 
 		$first_stage = Atk14DeploymentStage::GetFirstStage();
 		$this->assertEquals("devel",$first_stage->name);
@@ -20,16 +20,16 @@ class TcDeploymentStage extends TcBase{
 
 		$this->assertEquals("devel",$devel->getName());
 		$this->assertEquals("/home/deploy/apps/mushoomradar_devel/",$devel->getDirectory());
-		$this->assertEquals(array("public/dist/","vendor","public/sitemap.xml"),$devel->getRsync());
+		$this->assertEquals(["public/dist/","vendor","public/sitemap.xml"],$devel->getRsync());
 
 		$acceptation = Atk14DeploymentStage::GetStage("acceptation");
 		$this->assertEquals("acceptation",$acceptation->getName());
 		$this->assertEquals("/home/deploy/apps/mushoomradar_acc/",$acceptation->getDirectory());
-		$this->assertEquals(array(),$acceptation->getRsync());
+		$this->assertEquals([],$acceptation->getRsync());
 		
 		// etc
 		// key order
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"name",
 			"extends",
 			"url",
@@ -45,8 +45,8 @@ class TcDeploymentStage extends TcBase{
 			"before_deploy",
 			"rsync",
 			"after_deploy",
-		),array_keys($devel->toArray()));
-		$this->_compareArrays(array(
+		],array_keys($devel->toArray()));
+		$this->_compareArrays([
 			"name" => "devel",
 			"user" => "deploy",
 			"server" => "devel.mushoomradar.net",
@@ -56,15 +56,15 @@ class TcDeploymentStage extends TcBase{
 			"deploy_repository" => "deploy@devel.mushoomradar.net:repos/mushoomradar.git",
 			"deploy_branch" => "master",
 			"create_maintenance_file" => false,
-			"before_deploy" => array("@local composer update", "@local grunt dist"),
-			"rsync" => array("public/dist/","vendor","public/sitemap.xml"),
-			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
-		),$devel->toArray());
+			"before_deploy" => ["@local composer update", "@local grunt dist"],
+			"rsync" => ["public/dist/","vendor","public/sitemap.xml"],
+			"after_deploy" => ["./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"],
+		],$devel->toArray());
 
 		$production = Atk14DeploymentStage::GetStage("production");
 		$this->assertEquals("production",$production->name);
 		$this->assertEquals("deployment_stage_production","$production");
-		$this->_compareArrays(array(
+		$this->_compareArrays([
 			"name" => "production",
 			"user" => "deploy",
 			"server" => "zeus.mushoomradar.net",
@@ -75,13 +75,13 @@ class TcDeploymentStage extends TcBase{
 			"deploy_repository" => "deploy@zeus.mushoomradar.net:repos/mushoomradar.git",
 			"deploy_branch" => "master",
 			"create_maintenance_file" => false,
-			"before_deploy" => array("@local composer update", "@local grunt dist"),
-			"rsync" => array("public/dist/","vendor","public/sitemap.xml"),
-			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
-		),$production->toArray());
+			"before_deploy" => ["@local composer update", "@local grunt dist"],
+			"rsync" => ["public/dist/","vendor","public/sitemap.xml"],
+			"after_deploy" => ["./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"],
+		],$production->toArray());
 
 		$acceptation = Atk14DeploymentStage::GetStage("acceptation");
-		$this->_compareArrays(array(
+		$this->_compareArrays([
 			"name" => "acceptation",
 			"user" => "deploy",
 			"server" => "zeus.mushoomradar.net",
@@ -92,13 +92,13 @@ class TcDeploymentStage extends TcBase{
 			"deploy_repository" => "deploy@zeus.mushoomradar.net:/home/deploy/repos/mushoomradar_acc.git",
 			"deploy_branch" => "master",
 			"create_maintenance_file" => true,
-			"before_deploy" => array("@local composer update", "@local grunt dist"),
-			"rsync" => array(),
-			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
-		),$acceptation->toArray());
+			"before_deploy" => ["@local composer update", "@local grunt dist"],
+			"rsync" => [],
+			"after_deploy" => ["./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"],
+		],$acceptation->toArray());
 
 		$acceptation2 = Atk14DeploymentStage::GetStage("acceptation2");
-		$this->_compareArrays(array(
+		$this->_compareArrays([
 			"name" => "acceptation2",
 			"user" => "deploy",
 			"server" => "zeus.mushoomradar.net",
@@ -109,10 +109,10 @@ class TcDeploymentStage extends TcBase{
 			"deploy_repository" => "ssh://deploy@zeus.mushoomradar.net/home/deploy/repos/mushoomradar_acc2.git",
 			"deploy_branch" => "master",
 			"create_maintenance_file" => true,
-			"before_deploy" => array("@local composer update", "@local grunt dist"),
-			"rsync" => array(),
-			"after_deploy" => array("./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"),
-		),$acceptation2->toArray());
+			"before_deploy" => ["@local composer update", "@local grunt dist"],
+			"rsync" => [],
+			"after_deploy" => ["./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"],
+		],$acceptation2->toArray());
 		$this->assertEquals("/home/deploy",$acceptation2->getHomeDir());
 		$this->assertEquals("/home/deploy/repos/mushoomradar_acc2.git",$acceptation2->getDeployRepositoryRemoteDir());
 
@@ -130,7 +130,7 @@ class TcDeploymentStage extends TcBase{
 			$exception_thrown = true;
 		}
 		$this->assertEquals(true,$exception_thrown);
-		$this->assertEquals(array("public/dist/","vendor","public/sitemap.xml"),$devel->rsync);
+		$this->assertEquals(["public/dist/","vendor","public/sitemap.xml"],$devel->rsync);
 	}
 
 	function test_getDeployRepository(){
@@ -179,11 +179,11 @@ class TcDeploymentStage extends TcBase{
 	function test_compileReverseRsyncCommand(){
 		$devel = Atk14DeploymentStage::GetStage("devel");
 		$this->assertEquals('rsync -av --checksum --no-times deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/ /tmp/dist/',$devel->compileReverseRsyncCommand("public/dist/","/tmp/dist/"));
-		$this->assertEquals('rsync -av --checksum --no-times --delete deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/ /tmp/dist/',$devel->compileReverseRsyncCommand("public/dist/","/tmp/dist/",array("delete" => true)));
+		$this->assertEquals('rsync -av --checksum --no-times --delete deploy@devel.mushoomradar.net:/home/deploy/apps/mushoomradar_devel/public/dist/ /tmp/dist/',$devel->compileReverseRsyncCommand("public/dist/","/tmp/dist/",["delete" => true]));
 
 		$production = Atk14DeploymentStage::GetStage("production");
 		$this->assertEquals("rsync -av --checksum --no-times -e 'ssh -p 2222' deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/ /tmp/dist/",$production->compileReverseRsyncCommand("public/dist/","/tmp/dist/"));
-		$this->assertEquals("rsync -av --checksum --no-times --delete -e 'ssh -p 2222' deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/ /tmp/dist/",$production->compileReverseRsyncCommand("public/dist/","/tmp/dist/",array("delete" => true)));
+		$this->assertEquals("rsync -av --checksum --no-times --delete -e 'ssh -p 2222' deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/ /tmp/dist/",$production->compileReverseRsyncCommand("public/dist/","/tmp/dist/",["delete" => true]));
 	}
 
 	function _compareArrays($exp_ar,$ar){

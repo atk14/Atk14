@@ -37,12 +37,12 @@ function smarty_block_a_destroy($params, $content, $template, &$repeat){
 	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$params = array_merge(array(
+	$params = array_merge([
 		"action" => "destroy",
 		"_confirm" => _("Are you sure?"),
 		"_method" => "post",
 		"_xhr" => true,
-	),$params);
+	],$params);
 
 	$xhr = $params["_xhr"];
 	unset($params["_xhr"]);
@@ -56,10 +56,10 @@ function smarty_block_a_destroy($params, $content, $template, &$repeat){
 	}else{
 		$object_class = String4::ToObject($smarty->getTemplateVars("controller"))->singularize()->toString();
 	}
-	$destroying_object = array(
+	$destroying_object = [
 		"class" => $object_class,
 		"id" => $object_id
-	);
+	];
 	$params["_data___destroying_object"] = json_encode($destroying_object);
 
 	if($xhr){

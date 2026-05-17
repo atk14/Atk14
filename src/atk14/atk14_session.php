@@ -37,8 +37,8 @@ class Atk14Session{
 	 * ```
 	 *	$session = Atk14Session::GetInstance();
 	 *	$session = Atk14Session::GetInstance("eshop");
-	 *	$secure_session = new Atk14Session(new SessionStorer(array("session" => "secure", "ssl_only" => true)));
-	 *	$persistent_session = new Atk14Session(new SessionStorer(array("session_name" => "persistent", "cookie_expiration" => 86400*365))); // year
+	 *	$secure_session = new Atk14Session(new SessionStorer(["session" => "secure", "ssl_only" => true)));
+	 *	$persistent_session = new Atk14Session(new SessionStorer(["session_name" => "persistent", "cookie_expiration" => 86400*365))); // year
 	 *	$session = new Atk14Session(); // !! use Atk14Session::GetInstance() instead
 	 *	$session = new Atk14Session("eshop"); // !! use Atk14Session::GetInstance("eshop") instead
 	 * ```
@@ -65,7 +65,7 @@ class Atk14Session{
 	 * @return Atk14Session
 	 */
 	static function &GetInstance($section = "atk14"){
-		static $INSTANCES = array();
+		static $INSTANCES = [];
 		if(!isset($INSTANCES[$section])){
 			$INSTANCES[$section] = new Atk14Session($section);
 		}

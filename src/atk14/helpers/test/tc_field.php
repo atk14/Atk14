@@ -5,12 +5,12 @@ require(__DIR__."/../../../../load.php");
 class TestForm extends Atk14Form {
 
 	function set_up(){
-		$this->add_field("name", new CharField(array(
+		$this->add_field("name", new CharField([
 			"label" => "Enter your name",
 			"required" => true,
 			"max_length" => 50,
 			"initial" => "John Doe",
-		)));
+		]));
 	}
 }
 

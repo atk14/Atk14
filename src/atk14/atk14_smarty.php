@@ -1,7 +1,7 @@
 <?php
 class Atk14Smarty extends Atk14SmartyBase{
 
-	protected $atk14_contents = array();
+	protected $atk14_contents = [];
 
 	/**
 	 * Permissions for smarty directory structure
@@ -15,11 +15,11 @@ class Atk14Smarty extends Atk14SmartyBase{
 
 	/**
 	 * $smarty->addAtk14Content("main","<p>Well...</p>");
-	 * $smarty->addAtk14Content("main","<p>Well...</p>",array(
+	 * $smarty->addAtk14Content("main","<p>Well...</p>",[
 	 *	"strategy" => "replace"
 	 * ));
 	 */
-	function addAtk14Content($key,$content = "",$options = array()){
+	function addAtk14Content($key,$content = "",$options = []){
 		return _smarty_addAtk14Content($this,$this->atk14_contents,$key,$content,$options);
 	}
 
@@ -60,7 +60,7 @@ class Atk14Smarty extends Atk14SmartyBase{
 	}
 
 	function clearAtk14Contents(){
-		$this->atk14_contents = array();
+		$this->atk14_contents = [];
 	}
 
 	function getAtk14ContentKeys(){ return array_keys($this->atk14_contents); }

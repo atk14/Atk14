@@ -10,11 +10,11 @@
 function smarty_function_render_component($params,$template){
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$params += array(
+	$params += [
 		"controller" => $smarty->getTemplateVars("controller"),
 		"action" => "index",
 		"namespace" => $smarty->getTemplateVars("namespace"),
-	);
+	];
 
 	$controller_params = $params;
 	unset($controller_params["controller"]);
@@ -26,12 +26,12 @@ function smarty_function_render_component($params,$template){
 		if(is_object($v)){ $controller_params[$key] = $v->getId(); }
 	}
 
-	$response = Atk14Dispatcher::ExecuteAction($params["controller"],$params["action"],array(
+	$response = Atk14Dispatcher::ExecuteAction($params["controller"],$params["action"],[
 		"render_layout" => false,
 		"apply_render_component_hacks" => true,
 		"params" => $controller_params,
 		"namespace" => $params["namespace"],
-	));
+	]);
 
 	$buf = &$response->getOutputBuffer();
 	return $buf->toString();

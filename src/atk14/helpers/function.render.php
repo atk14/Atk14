@@ -53,16 +53,16 @@ function smarty_function_render($params,$template){
 	// -*-*-*-*-*-*-*-*-*- NEW IMPLEMENTATION ONLY FOR SMARTY5 -*-*-*-*-*-*-*-*-*-
 	$orig_params = $params;
 
-	$params += array(
+	$params += [
 		"partial" => "",
 		"from" => null,
-	);
+	];
 
 	if(!is_null($params["from"])){
 		// default item value
-		$params += array(
+		$params += [
 			"item" => String4::ToObject($params["partial"])->gsub('/^.*\/(.+?)$/','\1')->gsub('/_item$/','')->toString() // "shared/article_item" -> "article" or "shared/person" -> "person"
-		);
+		];
 	}
 
 	Atk14Timer::Start("helper function.render");
@@ -79,7 +79,7 @@ function smarty_function_render($params,$template){
 	$original_tpl_vars = $template->getTemplateVars();
 	$smarty->assign($original_tpl_vars);
 
-	$out = array();
+	$out = [];
 
 	if(!isset($params["from"])){
 
@@ -97,7 +97,7 @@ function smarty_function_render($params,$template){
 			$key = isset($params["key"]) ? $params["key"] : null;
 			unset($params["key"]);
 		}else{
-			$collection = array();
+			$collection = [];
 			$to = isset($params["to"]) ? (int)$params["to"] : 0;
 			// TODO: poresit zaporny stepping
 			$step = isset($params["step"]) ? (int)$params["step"] : 1;
@@ -154,16 +154,16 @@ function smarty_function_render($params,$template){
 	// -*-*-*-*-*-*-*-*-*- NEW IMPLEMENTATION ONLY FOR SMARTY3 -*-*-*-*-*-*-*-*-*-
 	$orig_params = $params;
 
-	$params += array(
+	$params += [
 		"partial" => "",
 		"from" => null,
-	);
+	];
 
 	if(!is_null($params["from"])){
 		// default item value
-		$params += array(
+		$params += [
 			"item" => String4::ToObject($params["partial"])->gsub('/^.*\/(.+?)$/','\1')->gsub('/_item$/','')->toString() // "shared/article_item" -> "article" or "shared/person" -> "person"
-		);
+		];
 	}
 
 	Atk14Timer::Start("helper function.render");
@@ -176,7 +176,7 @@ function smarty_function_render($params,$template){
 	if(in_array("from",array_keys($orig_params)) && (!isset($params["from"]) || sizeof($params["from"])==0)){ return ""; }
 
 	$data = $template->createData($template);
-	$out = array();
+	$out = [];
 
 	if(!isset($params["from"])){
 
@@ -194,7 +194,7 @@ function smarty_function_render($params,$template){
 			$key = isset($params["key"]) ? $params["key"] : null;
 			unset($params["key"]);
 		}else{
-			$collection = array();
+			$collection = [];
 			$to = isset($params["to"]) ? (int)$params["to"] : 0;
 			// TODO: poresit zaporny stepping
 			$step = isset($params["step"]) ? (int)$params["step"] : 1;
@@ -252,16 +252,16 @@ function smarty_function_render($params,$template){
 
 	$orig_params = $params;
 
-	$params += array(
+	$params += [
 		"partial" => "",
 		"from" => null,
-	);
+	];
 
 	if(!is_null($params["from"])){
 		// default item value
-		$params += array(
+		$params += [
 			"item" => (string)String4::ToObject($params["partial"])->gsub('/^.*\/(.+?)$/','\1')->gsub('/_item$/','') // "shared/article_item" -> "article" or "shared/person" -> "person"
-		);
+		];
 	}
 
 	Atk14Timer::Start("helper function.render");
@@ -289,7 +289,7 @@ function smarty_function_render($params,$template){
 		$smarty->assign($original_tpl_vars);
 	}
 
-	$out = array();
+	$out = [];
 
 
 	if(!isset($params["from"])){
@@ -309,7 +309,7 @@ function smarty_function_render($params,$template){
 			$key = isset($params["key"]) ? $params["key"] : null;
 			unset($params["key"]);
 		}else{
-			$collection = array();
+			$collection = [];
 			$to = isset($params["to"]) ? (int)$params["to"] : 0;
 			// TODO: poresit zaporny stepping
 			$step = isset($params["step"]) ? (int)$params["step"] : 1;

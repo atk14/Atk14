@@ -1,10 +1,10 @@
 <?php
 class Atk14Fixture {
 
-	protected static $loaded_fixtures = array();
+	protected static $loaded_fixtures = [];
 
 	static function ClearLoadedFixtures(){
-		self::$loaded_fixtures = array();
+		self::$loaded_fixtures = [];
 	}
 
 	/**
@@ -19,15 +19,15 @@ class Atk14Fixture {
 	 *
 	 * @return Atk14FixtureList
 	 */
-	static function Load($name,$options = array()){
+	static function Load($name,$options = []){
 		global $ATK14_GLOBAL;
 
-		$options += array(
+		$options += [
 			"class_name" => null,
 			"dbmole" => $GLOBALS["dbmole"],
 
 			"reload_fixture" => false,
-		);
+		];
 
 		if(!$options["reload_fixture"] && isset(self::$loaded_fixtures[$name])){
 			return self::$loaded_fixtures[$name];
@@ -45,15 +45,15 @@ class Atk14Fixture {
 		$content = Files::GetFilecontent($filename);
 
 		// Getting all fixtures from the fixtures directory
-		$all_fixtures = array();
-		foreach(Files::FindFiles($dir,array("maxdepth" => 1, "pattern" => '/^[a-z0-9_]+\.yml/')) as $_f){
+		$all_fixtures = [];
+		foreach(Files::FindFiles($dir,["maxdepth" => 1, "pattern" => '/^[a-z0-9_]+\.yml/']) as $_f){
 			$all_fixtures[] = preg_replace('/^.*\/([^\/]+)\.yml/','\1',$_f);
 		}
 
 		// Getting all fixtures which are used in the requested fixture
 		// I know that the method may not be totally accurate but it's okay to load a bit more fixtures then is actually needed.
 		preg_match_all('/\$('.join('|',$all_fixtures).'\b)/',$content,$matches);
-		$required_fixtures = $matches[1] ? array_combine($matches[1],$matches[1]) : array(); // PHP5.3 Warning:  array_combine(): Both parameters should have at least 1 element
+		$required_fixtures = $matches[1] ? array_combine($matches[1],$matches[1]) : []; // PHP5.3 Warning:  array_combine(): Both parameters should have at least 1 element
 		unset($required_fixtures[$name]);
 		$required_fixtures = array_values($required_fixtures);
 
@@ -91,10 +91,10 @@ class Atk14Fixture {
 			}
 		}
 
-		$data = miniYAML::Load(Files::GetFileContent($filename),array(
+		$data = miniYAML::Load(Files::GetFileContent($filename),[
 			"interpret_php" => true,
 			"values" => &self::$loaded_fixtures, // ["products" => [...], ""]
-		));
+		]);
 		if(!$data){
 			throw new Exception("Parsing YAML failed in $filename");
 		}

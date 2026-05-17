@@ -16,7 +16,7 @@ class TcWalking extends TcBase {
 
 		// step 2
 
-		$client->post("walking/walk",array("name" => "Captain Bobek"));
+		$client->post("walking/walk",["name" => "Captain Bobek"]);
 		$this->assertEquals(303,$client->getStatusCode());
 
 		$location = $client->getLocation();
@@ -60,7 +60,7 @@ class TcWalking extends TcBase {
 
 		// go to step 2 with bad step_id
 
-		$client->post("walking/walk",array("name" => "Captain Bobek"));
+		$client->post("walking/walk",["name" => "Captain Bobek"]);
 		$this->assertEquals(303,$client->getStatusCode());
 
 		$location = $client->getLocation();

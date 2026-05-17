@@ -33,13 +33,13 @@ function smarty_block_a_remote($params, $content, $template, &$repeat){
 	if($repeat){ return; }
 	$smarty = atk14_get_smarty_from_template($template);
 
-	$attributes = array();
+	$attributes = [];
 
-	$params = array_merge(array(
+	$params = array_merge([
 		"_method" => "get",
 		"_confirm" => null, // an confirmation message ('Are you sure?')
 		"__be_pretty_ugly__" => false // internal parameter, don't use it outside
-	),$params);
+	],$params);
 
 	$be_pretty_ugly = $params["__be_pretty_ugly__"];
 	unset($params["__be_pretty_ugly__"]);
@@ -49,7 +49,7 @@ function smarty_block_a_remote($params, $content, $template, &$repeat){
 
 	$url = Atk14Utils::BuildLink($params,$smarty);
 
-	$attrs = array("data-remote" => "true");
+	$attrs = ["data-remote" => "true"];
 
 	if(isset($params["_confirm"])){
 		$attrs["data-confirm"] = $params["_confirm"];
