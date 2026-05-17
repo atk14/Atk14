@@ -44,4 +44,39 @@ class TcWalking extends TcBase {
 		$this->assertStringContains("returned_by_step2: step2 finished gracefully",$content);
 		$this->assertStringContains("step1.name: Captain Bobek",$content);
 	}
+
+	function test_bad_step_id(){
+		$client = $this->client;
+
+		// step 1
+
+		$client->get("walking/walk");
+		$this->assertEquals(200,$client->getStatusCode());
+
+		$content = $client->getContent();
+		$this->assertStringContains("<h1>Step #1</h1>",$content);
+		$this->assertStringContains("current_step_index: 0",$content);
+		$this->assertStringContains("current_step_name: step1",$content);
+
+		// go to step 2 with bad step_id
+
+		$client->post("walking/walk",array("name" => "Captain Bobek"));
+		$this->assertEquals(303,$client->getStatusCode());
+
+		$location = $client->getLocation();
+		$route_data = Atk14Url::RecognizeRoute($location);
+		$params = $route_data["get_params"];
+
+		$this->assertTrue(strlen($params["step_id"])>32);
+		$params["step_id"] = "bad_try-1";
+
+		$client->get("walking/walk",$params);
+		$this->assertEquals(200,$client->getStatusCode());
+
+		// and we are again on step 1
+		$content = $client->getContent();
+		$this->assertStringContains("<h1>Step #1</h1>",$content);
+		$this->assertStringContains("current_step_index: 0",$content);
+		$this->assertStringContains("current_step_name: step1",$content);
+	}
 }
