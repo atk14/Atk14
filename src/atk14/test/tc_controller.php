@@ -353,7 +353,7 @@ class TcController extends TcBase{
 		$client->setXhr();
 		$controller = $client->get("redirections/index");
 		$this->assertEquals(null,$controller->response->getLocation());
-		$this->assertEquals('window.location.href = "http://www.atk14.net/";',(string)$controller->response->buffer);
+		$this->assertEquals('window.location.href = "http:\/\/www.atk14.net\/";',(string)$controller->response->buffer);
 	}
 
 	function test_dynamic_properties(){
