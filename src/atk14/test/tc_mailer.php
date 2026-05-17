@@ -74,7 +74,10 @@ class TcMailer extends TcBase{
 		}
 		$this->assertEquals("For mailer ApplicationMailer there is no template notification_without_templates.tpl or notification_without_templates.html.tpl",$exception_msg);
 
-		// TODO: decode email bodies
+		// sending attachment
+		$controller = $this->client->get("testing/send_attachment");
+		$this->assertStringContains('Content-Type: text/plain; name="greeting.txt";',$controller->mail_ar["body"]);
+		$this->assertStringContains(base64_encode("Hello world!"),$controller->mail_ar["body"]);
 	}
 
 	function test_rendering(){

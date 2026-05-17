@@ -60,6 +60,13 @@ class ApplicationMailer extends Atk14Mailer {
 		$this->cc = "big@brother.com";
 	}
 
+	function send_attachment(){
+		$this->render_layout = false;
+		$this->subject = "subject";
+		$this->body = "body";
+		$this->add_attachment("Hello world!","greeting.txt","text/plain");
+	}
+
 	function _before_filter(){
 		$this->tpl_data["value_added_in_before_filter"] = "OK (bf)";
 	}
