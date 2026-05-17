@@ -344,7 +344,7 @@ function smarty_function_render($params,$template){
 			$smarty->assign("__last__",$counter==($collection_size-1));
 			$smarty->assign("__total__",$collection_size);
 
-			// zbytek parametru se naasignuje do sablonky jako v predhozim pripade
+			// remaining params are assigned to the template as in the previous case
 			foreach($params as $k => $value){
 				$smarty->assign($k,$value);
 			}

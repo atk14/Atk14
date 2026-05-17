@@ -21,7 +21,7 @@ function smarty_function_render_component($params,$template){
 	unset($controller_params["action"]);
 	unset($controller_params["namespace"]);
 
-	// pokud je parametr objekt, bude preveden volanim getId() na skalarni hodnotu
+	// if the parameter is an object, it will be converted to a scalar by calling getId()
 	foreach($controller_params as $key => $v){
 		if(is_object($v)){ $controller_params[$key] = $v->getId(); }
 	}

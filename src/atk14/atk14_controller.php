@@ -366,7 +366,7 @@ class Atk14Controller{
 		$this->response = new HTTPResponse();
 		$this->params = new Dictionary($this->request->getVars("PG")); // prefering posted vars
 		$this->params->merge($options["params"]);
-		unset($options["params"]); // aby pozdeji nedoslo k automatickemu nastaveni vlastnosti $this->params...
+		unset($options["params"]); // to prevent automatic setting of $this->params property later...
 		$this->dbmole = &$GLOBALS["dbmole"];
 		$this->logger = $ATK14_GLOBAL->getLogger();
 		$this->flash = &Atk14Flash::GetInstance();
@@ -386,10 +386,10 @@ class Atk14Controller{
 
 		$this->mailer = Atk14MailerProxy::GetInstanceByController($this);
 
-		$this->template_name = null; // !! $this->template_name bude podle potreb nastaveno az v _execute_action()
+		$this->template_name = null; // !! $this->template_name will be set as needed in _execute_action()
 		$this->render_template = true;	
 
-		//prenastaveni controlleru v pripade, ze toto je XHR request
+		// override controller settings for XHR requests
 		if($this->request->xhr()){
 			$this->response->setContentType("text/javascript");
 			// charset is intentionally not set here — apps may not use UTF-8
@@ -606,8 +606,8 @@ class Atk14Controller{
 				$this->template_name = "$this->template_name.xhr";
 		}
 
-		// pokud v aktualni action metode doslo k volani
-		// $this->_execute_action(), nemuzeme pro volajici action generovat zadny vystup!
+		// if _execute_action() was already called inside the current action method,
+		// skip rendering for the calling action
 		if($this->action_executed){ return; }
 
 		$this->action_executed = true;
@@ -704,8 +704,8 @@ class Atk14Controller{
 			$layout_content = $this->smarty->fetch($_layout_template);
 			$layout_content = str_replace("<%atk14_content[main]%>",$action_content["main"],$layout_content);
 			foreach($this->smarty->getAtk14ContentKeys() as $c_key){
-				// TODO: toto nahrazeni uz provadim rovnou v helperu placeholder...
-				// facha to? vyhodime to?
+				// TODO: this replacement is already done in the placeholder helper...
+				// does it still work? remove it?
 				$layout_content = str_replace("<%atk14_content[$c_key]%>",$this->smarty->getAtk14Content($c_key),$layout_content);
 			}
 			$this->response->write($layout_content);
@@ -857,7 +857,7 @@ class Atk14Controller{
 			"namespace" => $ATK14_GLOBAL->getValue("namespace"),
 		]);
 
-		// nabindovani hodnot do smarty, ktere by volani action metody nemelo zmenit...
+		// assign values to Smarty that the action method should not override...
 
 		// environment constants
 		$smarty->assign("DEVELOPMENT",DEVELOPMENT);
@@ -1518,7 +1518,7 @@ class Atk14Controller{
 		$this->form_data = [];
 		$this->returned_by = [];
 
-		$this->_walking_extra_params = $options["extra_params"]; // pro nastaveni action atributu ve formularich
+		$this->_walking_extra_params = $options["extra_params"]; // for setting the action attribute in forms
 
 		$logging = 0;
 		$logger = &$this->logger;
@@ -1558,8 +1558,8 @@ class Atk14Controller{
 			return $this->_redirect_to(array_merge($this->_walking_extra_params,["step_id" => "$step_unique-$session_index","step" => $steps[$session_index]]));
 		}
 		if($session_index>$request_index){
-			// uzivatel se vraci zpet v prohlizeci ->
-			// kroky, ktere udelal drive zapomeneme
+			// user is navigating back in browser ->
+			// discard steps taken after the current position
 			for($i=$request_index;$i<=$session_index;$i++){
 				$logging && $logger->debug("unsetting: $i");
 				$_step = $steps[$i];
@@ -1645,7 +1645,7 @@ class Atk14Controller{
 
 		$this->step_id = "$step_unique-$step_index";
 
-		// pokud najdeme formular pro tento step, pouzijeme ho;
+		// if a form is found for this step, use it;
 		// jinak pouzijeme defaultni formik
 		($this->form = Atk14Form::GetInstanceByFilename("$this->controller/{$this->action}/{$step}_form",$this)) || ($this->form = Atk14Form::GetDefaultForm($this));
 

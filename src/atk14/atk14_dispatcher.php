@@ -125,14 +125,14 @@ class Atk14Dispatcher{
 			"request" => $request
 		]);
 
-		// ajaxove presmerovani...
+		// AJAX redirect...
 		if(strlen((string)$ctrl->response->getLocation())>0 && $request->xhr() && !preg_match('/^(text|application)\/(html|json|xml)/',(string)$request->getHeader("Accept"))){
-			// tohle by snad melo byt vraceno pokud je v requestu
+			// this should be triggered when the request has:
 			//	Accept: */*
 			//	Accept: text/javascript
-			//	neco dalsiho?
+			//	anything else?
 			//
-			// regularni vyraz ma vyradit toto:
+			// the regular expression is meant to exclude:
 			//	Accept: text/html, ...
 			//	Accept: text/json, ...
 			//	Accept: application/json, ...
@@ -216,10 +216,10 @@ class Atk14Dispatcher{
 		$controller = new $_class_name();
 
 		$methods = get_class_methods($controller);
-		// pokud se v nazvu akce objevi dve podtrzitka, nespustime ji, toto se nesmi 
+		// action names containing double underscores are not allowed
 		if(preg_match("/__/",$action) || !in_array($action,$methods)){
 			DEVELOPMENT && $logger->error("there's no action method $_class_name::$action()");
-			// tady se meni controller na instance tridy ApplicationController
+			// switch controller to an instance of ApplicationController
 			$controller = new $_base_controller_class_name();
 			$controller_name = $_controller_name;
 			$action = "error404";
@@ -254,14 +254,14 @@ class Atk14Dispatcher{
 			$controller->response->clearOutputBuffer();
 		}
 
-		// pokud vstupni filter nastavi presmerovani apod, nepokracujeme dale...
-		// ve vstupnim filteru je dokonce mozne volat $this->_execute_action, cimz se nastavi $this->action_executed na true...
+		// if a before filter sets a redirect etc., do not continue...
+		// _execute_action() may even be called from a before filter, setting $this->action_executed to true...
 		if(!Atk14Utils::ResponseProduced($controller)){
 			$controller->atk14__ExecuteAction($action);
 		}
 
-		// sem bylo presunuto mazani flash zprav,
-		// protoze v _after_filter muze byt zavolan $this->dbmole->Commit()...
+		// flash message cleanup was moved here,
+		// because $this->dbmole->Commit() may be called in _after_filter()...
 		if(!$options["apply_render_component_hacks"]){
 			$flash = &Atk14Flash::GetInstance();
 			$flash->clearMessagesIfRead();

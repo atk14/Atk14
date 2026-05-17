@@ -515,7 +515,7 @@ class Atk14Global{
 					];
 			}			
 			if(!isset($routes["<lang>/<controller>"])){
-					// pokud action chybi, uvazuje se automaticky "index"
+					// if action is missing, "index" is assumed
 					$routes["<lang>/<controller>"] =  [
 						"action" => "index",
 					];
@@ -556,7 +556,7 @@ class Atk14Global{
 			}
 			$routes = $out;
 
-			// doplneni chybejicich vzoru
+			// fill in missing patterns
 			// $routes["domain-registration/<domain_name>"] = [); -> $routes["domain-registration/<domain_name>"] = ["domain_name" => "/.*/");
 			foreach($routes as $key => $value){
 				if(preg_match_all("/<([^>]+)>/",$key,$matches)){
@@ -604,8 +604,8 @@ class Atk14Global{
 			$ROUTES_STORE[$namespace] = $routes;
 		}
 
-		// pokud se zajimeme o konkretni path,
-		// prihodime nakonec i vychozi (nepojmenovane) routy
+		// if a specific path is requested,
+		// also append the default (unnamed) routes at the end
 		if(strlen($path = (string)$options["path"])){
 			$out = [];
 			if(isset($ROUTES_BY_PATH[$namespace][$path])){ $out = $ROUTES_BY_PATH[$namespace][$path]; }

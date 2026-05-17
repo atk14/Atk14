@@ -66,7 +66,7 @@ class Atk14Url{
 		$uri = $requested_uri;
 		$uri = preg_replace('/\?.*/','',$uri);
 		$_uri = $uri;
-		$uri = preg_replace('/\/$/','',$uri); // odstraneni lomitka na konci
+		$uri = preg_replace('/\/$/','',$uri); // remove trailing slash
 		$trailing_slash = $_uri!=$uri;
 		if(strlen($uri)>strlen($ATK14_GLOBAL->getBaseHref())){
 			$uri = substr($uri,-(strlen($uri) - strlen($ATK14_GLOBAL->getBaseHref())));
@@ -128,7 +128,7 @@ class Atk14Url{
 			if(preg_match("/^$_pattern$/",$uri,$matches)){
 				foreach($matches as $_key => $_value){
 					if(is_int($_key)){ unset($matches[$_key]); continue; }
-					$matches[$_key] = urldecode($matches[$_key]); // predpokladame, ze hodnota v REQUEST URI muze byt zakodovana
+					$matches[$_key] = urldecode($matches[$_key]); // assume the value in REQUEST URI may be URL-encoded
 				}
 
 				$out = array_merge($_rules,$matches);
@@ -136,8 +136,8 @@ class Atk14Url{
 			}
 		}
 
-		// kontrollery "application" a "atk14" neni mozne zvenku linkovat primo,
-		// stejne tak akce "error404", "error403" a "error500" neni mozne linkovat primo.
+		// controllers "application" and "atk14" cannot be linked to directly from outside,
+		// likewise actions "error404", "error403" and "error500" cannot be linked to directly.
 		if(!isset($out) || in_array($out["controller"],["application","atk14"]) || in_array($out["action"],["error404","error403","error500"])){
 			Atk14Locale::Initialize($out["lang"]);
 			return Atk14Url::_NotFound($namespace);
@@ -155,13 +155,13 @@ class Atk14Url{
 		}
 
 		$lang_orig = $out["lang"];
-		Atk14Locale::Initialize($out["lang"]); // zde muze byt dojit ke zmene $out["lang"]
+		Atk14Locale::Initialize($out["lang"]); // $out["lang"] may be changed here
 		if($out["lang"]!=$lang_orig){
 			// In the URI there is a language which is not supported by the configuration
 			return Atk14Url::_NotFound($namespace);
 		}
 
-		// sestaveni URL s temito parametry, pokud se bude lisit, dojde k presmerovani....
+		// build URL with these params; if it differs from the requested URI, a redirect will occur...
 		$get_params = array_merge($options["get_params"],$get_params);
 
 		return Atk14Url::_FindForceRedirect([
@@ -187,7 +187,7 @@ class Atk14Url{
 	 * @param string $requested_uri
 	 */
 	static protected function _FindForceRedirect($out,$requested_uri){
-		// zde muze byt dojit ke zmene $out["lang"]
+		// $out["lang"] may be changed here
 		Atk14Locale::Initialize($out["lang"]);
 
 		if($out["force_redirect"]){ return $out; }
@@ -432,8 +432,8 @@ class Atk14Url{
 
 			// nahrazeni <controller>/<action>... -> domain/examination....
 			foreach($params as $_key => $_value){	
-				if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
-				if($_key=="namespace"){ continue; } // namespace se umistuje vzdy do URL; neprenasi se v GET parametrech
+				if(is_object($_value)){ $_value = (string)$_value->getId(); } // if the value is an object, convert it to string by calling getId()
+				if($_key=="namespace"){ continue; } // namespace is always placed in the URL, not passed as a GET parameter
 				if(isset($rules[$_key]["regexp"]) && !preg_match("/^\\/.*\\//",$rules[$_key]["value"])){ continue; }
 				if(is_int(strpos($out,"<$_key>")) && !is_array($_value)){
 					$out = str_replace("<$_key>",urlencode((string)$_value),$out);
@@ -506,7 +506,7 @@ class Atk14Url{
 	}
 
 	static protected function _EncodeUrlParam($_key,$_value,$options = []){
-		if(is_object($_value)){ $_value = (string)$_value->getId(); } // pokud nalezneme objekt, prevedeme jej na string volanim getId()
+		if(is_object($_value)){ $_value = (string)$_value->getId(); } // if the value is an object, convert it to string by calling getId()
 		if(is_array($_value)){
 			$out = [];
 			$preserve_keys = false;

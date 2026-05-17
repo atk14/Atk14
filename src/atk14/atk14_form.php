@@ -327,7 +327,7 @@ class Atk14Form extends Form
 			"id" => "form_{$controller}_{$_action}",
 		];
 
-		// toto je preferovane poradi ve vyhledavani souboru s formularem
+		// this is the preferred search order for the form file
 		$files = [
 		   "$path/$namespace/$filename",
 		   "$path/$namespace/$controller/$filename",
@@ -356,19 +356,19 @@ class Atk14Form extends Form
 		if(strlen($classname)==0 || !file_exists($filename)){
 			return null;
 		}
-		// TODO: pokud je $filename napr. /path/to/a/project/app/forms/articles/create_new_form.php,
-		// melo by dojit i k automatickemu nahrani souboru (jestlize existuje) /path/to/a/project/app/forms/articles/articles.php
+		// TODO: if $filename is e.g. /path/to/a/project/app/forms/articles/create_new_form.php,
+		// the file /path/to/a/project/app/forms/articles/articles.php should also be auto-loaded (if it exists)
 		require_once($filename);
 
-		// toto je novinka - TODO: otestovat
+		// this is new - TODO: add tests
 		preg_match('/([^\/]+)\/+[^\/]+$/',$filename,$matches);
 		$_namespace = String4::ToObject($matches[1])->camelize()->toString(); // "app/forms/spam_filters/index_form.php" -> "SpamFilters"
-		// pokud existuje SpamFilters\IndexForm, je tento nazev tridy pouzit
+		// if SpamFilters\IndexForm exists, this class name is used
 		if(class_exists($_cn = "$_namespace\\$classname",false)){
 			$classname = $_cn;
 		}
-		// TODO: vice urovni namespaces - napr. Admin\SpamFilters\IndexForm
-		// TODO: vyresit (nebo neresit? :)) walking formulare
+		// TODO: support multiple namespace levels - e.g. Admin\SpamFilters\IndexForm
+		// TODO: handle (or not? :)) walking forms
 
 		$form = new $classname($options,$controller_obj);
 		return $form;
@@ -441,7 +441,7 @@ class Atk14Form extends Form
 
 		//echo $ATK14_GLOBAL->getValue("controller")."/$filename.inc"; exit;
 
-		// zde se pokusime najit formik v adresari podle kontroleru a pokud nebude nalezen, zkusime o adresar vyse
+		// look for the form in the controller's directory; if not found, try one directory up
 		if(!$form = Atk14Form::GetInstanceByFilename("$controller_name/$filename",$controller,$options)){
 			$form = Atk14Form::GetInstanceByFilename("$filename",$controller,$options);
 		}
@@ -1133,9 +1133,9 @@ class Atk14Form extends Form
 	 * @return BoundField
 	 */
 	function get_field($name){
-	// !!! je dulezite pred volanim get_field() volat konstruktor rodice.
-	// !!! jinak by nebyl formular ($this) zinicialozovan (chybela by napr vlastnost $this->auto_id)
-	// !!! a te je dulezita pri volani:
+	// !!! parent constructor must be called before get_field().
+	// !!! otherwise the form ($this) would not be initialized (e.g. $this->auto_id would be missing),
+	// !!! which is needed when calling:
 	// !!!   $field = $form->get_field("name");
 	// !!!   echo $field->label_tag();
 		$this->_call_super_constructor();

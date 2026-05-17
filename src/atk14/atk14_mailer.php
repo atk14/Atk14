@@ -378,7 +378,7 @@ class Atk14Mailer{
 		$args = func_get_args();
 		$action = array_shift($args);
 
-		$this->body = $this->body_html = ""; // reset body, opetovne volani by NEvyvolalo vygenerovani sablony
+		$this->body = $this->body_html = ""; // reset body; repeated calls would NOT trigger template rendering
 
 		$this->action = $action;
 		$this->template_name = $action;

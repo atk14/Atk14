@@ -74,7 +74,7 @@ function smarty_block_sortable($params, $content, $template, &$repeat){
 
 	$params += [
 		"title" => $sorting->getTitle($key)
-		// ??? TODO: neco jako wrap_with_th_tag => true
+		// ??? TODO: something like wrap_with_th_tag => true
 	];
 
 	$_params = $smarty->getTemplateVars("params")->copy();
