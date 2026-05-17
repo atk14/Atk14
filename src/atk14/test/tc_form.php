@@ -179,6 +179,39 @@ class TcForm extends TcBase{
 		$this->assertTrue($tokens[0]!=$tokens[1]);
 	}
 
+	function test_csfr_protection(){
+		global $HTTP_REQUEST;
+
+		$form = new Atk14Form();
+		$form->enable_csrf_protection();
+
+		$HTTP_REQUEST->setPostVar("_csrf_token_",$form->get_csrf_token());
+		$this->assertTrue($form->is_valid([]));
+
+		//
+
+		$form = new Atk14Form();
+		$form->enable_csrf_protection();
+		
+		$HTTP_REQUEST->setPostVar("_csrf_token_",null);
+
+		$this->assertFalse($form->is_valid([]));
+
+		$errors = $form->get_errors();
+		$this->assertEquals(_("Please, submit the form again"),$errors[""][0]);
+
+		//
+
+		$form = new Atk14Form();
+		$form->enable_csrf_protection();
+
+		$HTTP_REQUEST->setPostVar("_csrf_token_","bad_try");
+		$this->assertFalse($form->is_valid([]));
+
+		$errors = $form->get_errors();
+		$this->assertEquals(_("Please, submit the form again"),$errors[""][0]);
+	}
+
 	function test_get_default_form(){
 		$form = Atk14Form::GetDefaultForm();
 		$this->assertEquals("ApplicationForm",get_class($form));

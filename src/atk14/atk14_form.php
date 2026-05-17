@@ -533,11 +533,18 @@ class Atk14Form extends Form
 
 		if(
 			$out &&
-			$this->atk14_csrf_protection_enabled &&
-			!in_array((string)$HTTP_REQUEST->getVar("_csrf_token_","PG"),$this->get_valid_csrf_tokens())
+			$this->atk14_csrf_protection_enabled
 		){
-			$this->set_error(_("Please, submit the form again"));
-			$out = false;
+			$valid = false;
+			foreach($this->get_valid_csrf_tokens() as $valid_token){
+				if(hash_equals($valid_token,(string)$HTTP_REQUEST->getVar("_csrf_token_","PG"))){
+					$valid = true;
+				}
+			}
+			if(!$valid){
+				$this->set_error(_("Please, submit the form again"));
+				$out = false;
+			}
 		}
 
 		return $out;

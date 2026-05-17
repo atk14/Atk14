@@ -10,6 +10,8 @@ define("ATK14_USE_SMARTY4",true); // also try all the tests with Smarty3 and Sma
 define("ATK14_HTTP_HOST","www.testing.cz");
 define("ATK14_HTTP_HOST_SSL","secure.testing.cz");
 
+define("ATK14_DEFAULT_LANG","cs");
+
 $GLOBALS["_SERVER"]["HTTP_HOST"] = "www.testing.cz";
 $GLOBALS["_SERVER"]["SERVER_PORT"] = "80";
 $_GET = array();
