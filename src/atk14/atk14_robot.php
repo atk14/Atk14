@@ -45,14 +45,14 @@ class Atk14Robot{
 	 *
 	 * @var DbMole
 	 */
-	var $dbmole = null;
+	public $dbmole = null;
 
 	/**
 	 * Link to application logger.
 	 *
 	 * @var Logger
 	 */
-	var $logger = null;
+	public $logger = null;
 
 	/**
 	 * Link to mailer.
@@ -64,28 +64,28 @@ class Atk14Robot{
 	 * @todo explain
 	 * @var Atk14Mailer
 	 */
-	var $mailer = null;
+	public $mailer = null;
 
 	/**
 	 * path to log file
 	 *
 	 * @var string
 	 */
-	var $default_log_file = "";
+	public $default_log_file = "";
 
 	/**
 	 * Whether lock the current process to prevent another start of the same robot or not
 	 *
 	 * @var boolean
 	 */
-	var $locking_enabled = true;
+	public $locking_enabled = true;
 
 	/**
 	 * Whether this robot may be executed or not
 	 *
 	 * For instance in the beforeRun() this variable can be set to false in certain circumstances.
 	 */
-	var $execute_robot = true;
+	public $execute_robot = true;
 
 	/**
 	 * Robot name
@@ -94,7 +94,7 @@ class Atk14Robot{
 	 *
 	 * @var start
 	 */
-	var $robot_name = "";
+	public $robot_name = "";
 
 	/**
 	 * Constructor

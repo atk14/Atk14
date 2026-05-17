@@ -29,24 +29,24 @@ class TcFlash extends TcBase{
 		$flash = new Atk14Flash();
 
 		$flash->setMessage("success","La_Success");
-		$this->assertEquals(false,$flash->_FlashRead);
+		$this->assertEquals(false,$flash->wasRead());
 
 		$this->assertEquals("La_Success",$flash->getMessage("success"));
-		$this->assertEquals(true,$flash->_FlashRead);
+		$this->assertEquals(true,$flash->wasRead());
 
 		//
 		$flash2 = new Atk14Flash();
 
 		$flash2->setMessage("success","Another_Success");
-		$this->assertEquals(false,$flash2->_FlashRead);
+		$this->assertEquals(false,$flash2->wasRead());
 
 		$this->assertEquals("Another_Success",$flash2->getMessage("success",array("set_read_state" => false)));
-		$this->assertEquals(false,$flash2->_FlashRead);
+		$this->assertEquals(false,$flash2->wasRead());
 
 		$this->assertEquals("Another_Success",$flash2->getMessage("success",array("set_read_state" => true)));
-		$this->assertEquals(true,$flash2->_FlashRead);
+		$this->assertEquals(true,$flash2->wasRead());
 
 		$this->assertEquals("Another_Success",$flash2->getMessage("success",array("set_read_state" => false)));
-		$this->assertEquals(true,$flash2->_FlashRead); // set from the previous call
+		$this->assertEquals(true,$flash2->wasRead()); // set from the previous call
 	}
 }

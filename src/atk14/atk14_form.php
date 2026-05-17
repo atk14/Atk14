@@ -127,7 +127,7 @@ class Atk14Form extends Form
 	 * Instance of controller using current form
 	 * @var Atk14Controller
 	 */
-	var $controller = null;
+	public $controller = null;
 
 	/**
 	 * Target URL
@@ -137,7 +137,7 @@ class Atk14Form extends Form
 	 * @access private
 	 * @var string
 	 */
-	var $atk14_action = "";
+	public $atk14_action = "";
 
 	/**
 	 * Data sent by user.
@@ -145,7 +145,7 @@ class Atk14Form extends Form
 	 * @access private
 	 * @var array
 	 */
-	var $atk14_data = null;
+	public $atk14_data = null;
 
 	/**
 	 * Array with hidden fields.
@@ -154,7 +154,7 @@ class Atk14Form extends Form
 	 * @var array
 	 *
 	 */
-	var $atk14_hidden_fields = array();
+	public $atk14_hidden_fields = array();
 
 	/**
 	 * Array with list of form attributes
@@ -162,7 +162,7 @@ class Atk14Form extends Form
 	 * @var array
 	 * @access private
 	 */
-	var $atk14_attrs = array();
+	public $atk14_attrs = array();
 
 	/**
 	 * Initial values
@@ -198,7 +198,7 @@ class Atk14Form extends Form
 	 * @var array
 	 * @todo mark as private
 	 */
-	var $atk14_errors = array();
+	public $atk14_errors = array();
 
 	/**
 	 * request method to send the form.
@@ -212,7 +212,7 @@ class Atk14Form extends Form
 	 *
 	 * @var bool
 	 */
-	var $atk14_csrf_protection_enabled = false;
+	public $atk14_csrf_protection_enabled = false;
 
 	/**
 	 * Constructor

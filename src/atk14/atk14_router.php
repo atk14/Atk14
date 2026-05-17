@@ -17,19 +17,20 @@
  * @package Atk14\Core
  */
 class Atk14Router{
-	var $namespace = "";
-	var $controller = "";
-	var $action = "";
-	var $lang = "";
 
-	var $params = null;
+	public $namespace = "";
+	public $controller = "";
+	public $action = "";
+	public $lang = "";
 
-	var $default_lang = "";
+	public $params = null;
 
-	var $page_title = "";
-	var $page_description = "";
+	public $default_lang = "";
 
-	var $redirected_to = null;
+	public $page_title = "";
+	public $page_description = "";
+
+	public $redirected_to = null;
 
 	function __construct($options = array()){
 		global $ATK14_GLOBAL;

@@ -40,19 +40,19 @@ class Atk14Migration{
 	 *
 	 * @var string
 	 */
-	var $version;
+	public $version;
 
 	/**
 	 *
 	 * @var DbMole
 	 */
-	var $dbmole;
+	public $dbmole;
 
 	/**
 	 *
 	 * @var Logger
 	 */
-	var $logger;
+	public $logger;
 
 	/**
 	 *

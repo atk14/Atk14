@@ -39,7 +39,7 @@ class Atk14Flash{
 	 *
 	 * @var bool
 	 */
-	var $_FlashRead = false;
+	protected $_FlashRead = false;
 
 	/**
 	 * Constructor.
@@ -279,5 +279,9 @@ class Atk14Flash{
 	function reset(){
 		$this->clearMessages();
 		$this->_FlashRead = false;
+	}
+
+	function wasRead(){
+		return $this->_FlashRead;
 	}
 }
