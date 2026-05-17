@@ -1,2 +1,2 @@
 <?php
-require_once(dirname(__FILE__)."/miniyaml.php");
+require_once(__DIR__ ."/src/miniyaml.php");

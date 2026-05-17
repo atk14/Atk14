@@ -21,7 +21,7 @@ data:
 		$this->assertEquals("success",$ar["status"]);
 		$this->assertEquals("Ok",$ar["message"]);
 		$this->assertTrue(is_array($ar["data"]));
-		$this->assertEquals(2,sizeof($ar["data"]));
+		$this->assertEquals(2,count($ar["data"]));
 		$this->assertEquals("581.22",$ar["data"]["CZK"]);
 		$this->assertEquals("0",$ar["data"]["EUR"]);
 	}
@@ -37,7 +37,7 @@ params: []";
 
 		$this->assertEquals("list domains",$ar["command"]);
 		$this->assertTrue(is_array($ar["params"]));
-		$this->assertEquals(0,sizeof($ar["params"]));
+		$this->assertEquals(0,count($ar["params"]));
 
 		$data = '
 ---
@@ -76,15 +76,15 @@ data:
 		$this->assertEquals("success",$ar["status"]);
 		$this->assertEquals("Ok",$ar["message"]);
 		$this->assertTrue(is_array($ar["data"]));
-		$this->assertEquals(5,sizeof($ar["data"]));
+		$this->assertEquals(5,count($ar["data"]));
 
-		$this->assertEquals(4,sizeof($ar["data"]["2.5.0.6.9.2.3.0.6.0.2.4.e164.arpa"]));
+		$this->assertEquals(4,count($ar["data"]["2.5.0.6.9.2.3.0.6.0.2.4.e164.arpa"]));
 		$this->assertEquals("GR:TOMEK",$ar["data"]["2.5.0.6.9.2.3.0.6.0.2.4.e164.arpa"]["idacc"]);
 		$this->assertEquals("GR:TOMEK-JAROMIR",$ar["data"]["2.5.0.6.9.2.3.0.6.0.2.4.e164.arpa"]["iddealer"]);
 		$this->assertEquals("2008-12-12",$ar["data"]["2.5.0.6.9.2.3.0.6.0.2.4.e164.arpa"]["expiry_date"]);
 		$this->assertEquals("1",$ar["data"]["2.5.0.6.9.2.3.0.6.0.2.4.e164.arpa"]["auto_period"]);
 
-		$this->assertEquals(4,sizeof($ar["data"]["e-logistika.info"]));
+		$this->assertEquals(4,count($ar["data"]["e-logistika.info"]));
 		$this->assertEquals("GR:MINO",$ar["data"]["e-logistika.info"]["idacc"]);
 		$this->assertEquals("GR:TOMEK-JAROMIR",$ar["data"]["e-logistika.info"]["iddealer"]);
 		$this->assertEquals("2008-11-28",$ar["data"]["e-logistika.info"]["expiry_date"]);
@@ -106,10 +106,10 @@ params:
 		$ar = miniYAML::Load($data);
 		$this->assertEquals("check domains availability",$ar["command"]);
 		$this->assertTrue(is_array($ar["params"]));
-		$this->assertEquals(1,sizeof($ar["params"]));
+		$this->assertEquals(1,count($ar["params"]));
 		$this->assertTrue(is_array($ar["params"]["domains"]));
-		$this->assertEquals(5,sizeof($ar["params"]["domains"]));
-		$this->assertEquals(array("domainmaster.cz","generalregistry.cz","surely-free-domain.cz","wole.com","x"),$ar["params"]["domains"]);
+		$this->assertEquals(5,count($ar["params"]["domains"]));
+		$this->assertEquals(["domainmaster.cz","generalregistry.cz","surely-free-domain.cz","wole.com","x"],$ar["params"]["domains"]);
 
 		$data = '
 ---
@@ -126,13 +126,13 @@ data:
 		$ar = miniYAML::Load($data);
 		$this->assertEquals("success",$ar["status"]);
 		$this->assertEquals("Ok",$ar["message"]);
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"domainmaster.cz" => "no",
 			"generalregistry.cz" => "no",
 			"surely-free-domain.cz" => "yes",
 			"wole.com" => "?",
 			"x" => "?"
-		),$ar["data"]);
+		],$ar["data"]);
 	}
 
 	function test_info_domain(){
@@ -171,7 +171,7 @@ data:
 	 $this->assertEquals("TOMEK-JAROMIR",$ar["data"]["admin"][0]);
 	 $this->assertEquals("DS-C-02001",$ar["data"]["admin"][1]);
 	 $this->assertTrue(is_array($ar["data"]["tempcontact"]));
-	 $this->assertEquals(0,sizeof($ar["data"]["tempcontact"]));
+	 $this->assertEquals(0,count($ar["data"]["tempcontact"]));
 	 $this->assertEquals("REG-GENREG",$ar["data"]["registrar"]);
 	 $this->assertEquals("2001-01-10",$ar["data"]["create_date"]);
 	 $this->assertEquals("2014-01-11",$ar["data"]["expiry_date"]);
@@ -192,9 +192,9 @@ params:
 ';
     $ar = miniYAML::Load($data);
 
-    $this->assertEquals(array(
+    $this->assertEquals([
       "command" => "register cz domain",
-      "params" => array(
+      "params" => [
         "domain" => "minishop.cz",
         "nsset" => "NSS:SUB100000001-ZONER:1",
         "registrant" => "SB:SUB000026973-ZONER",
@@ -202,8 +202,8 @@ params:
         "idacc" => "GR:MASC",
         "iddealer" => "",
         "period" => "1"
-      )
-    ),$ar);
+      ]
+    ],$ar);
   }
 
 	function test_register_eu_contact(){
@@ -233,9 +233,9 @@ params:
 
     $ar = miniYAML::Load($data);
 
-    $this->assertEquals(array(
+    $this->assertEquals([
       "command" => "register eu contact",
-      "params" => array(
+      "params" => [
 				"name" => "Karel Prokupek",
 				"company" => "Prokop Buben, s.r.o.",
 				"e-mail" => "karel@fuzzymail.com",
@@ -254,8 +254,8 @@ params:
 				"password-plain" => "tajnyPRISTUP",
 				"password-md5" => "",
 				"password-crypt" => "",
-      )
-    ),$ar);
+      ]
+    ],$ar);
 	
 	}
 
