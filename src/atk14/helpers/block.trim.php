@@ -33,7 +33,7 @@ function smarty_block_trim($params, $content, $template, &$repeat){
 	if($params["each_line"]){
 		$content = explode("\n",$content);
 		$content = array_map(function($line){ return trim($line); },$content);
-		$content = join("\n",$content);
+		$content = implode("\n",$content);
 	}
 
 	return trim($content);

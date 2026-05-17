@@ -131,7 +131,7 @@ function smarty_function_paginator($params,$template){
 			$out[] = "</div>";
 			
 		}
-		return join("\n",$out);
+		return implode("\n",$out);
 	}
 
 	$out[] = "<div class=\"pagination-container\">";
@@ -167,7 +167,7 @@ function smarty_function_paginator($params,$template){
 			$_class[] = "last-child";
 		}
 
-		$_class = $_class ? " class=\"".join(" ",$_class)."\"" : "";
+		$_class = $_class ? " class=\"".implode(" ",$_class)."\"" : "";
 
 		if($cur_from==$from){
 			$out[] = "<li$_class><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$screen</a></li>";
@@ -220,7 +220,7 @@ function smarty_function_paginator($params,$template){
 	}
 	$out[] = "</div>";
 
-	return join("\n",$out);
+	return implode("\n",$out);
 }
 
 // removes from the $params offset when it equals to zero

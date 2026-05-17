@@ -982,7 +982,7 @@ class Atk14Form extends Form
 			$out[] = "</div>";
 		}
 		$out[] = "</form>";
-		return join("\n",$out);
+		return implode("\n",$out);
 	}
 
 	/**
@@ -1120,11 +1120,11 @@ class Atk14Form extends Form
 			if(isset($this->fields[$_key])){
 			  $_prefix = $this->fields[$_key]->label.": ";
 			}
-			$out[] = "<li>$_prefix".join("</li>\n<li>$_prefix",$_messages)."</li>";
+			$out[] = "<li>$_prefix".implode("</li>\n<li>$_prefix",$_messages)."</li>";
 		}
 		$out[] = "</ul>";
 		$out[] = "</div>";
-		return join("\n",$out);
+		return implode("\n",$out);
 	}
 
 	/**
@@ -1265,7 +1265,7 @@ class Atk14Form extends Form
 		$t = floor(time()/(60 * 5));
 		for($i=0;$i<=1;$i++){
 			$_t = $t - $i;
-			$out[] = hash_hmac("sha256", join("|",[
+			$out[] = hash_hmac("sha256", implode("|",[
 				$_t,
 				get_class($this),
 				$session->getSecretToken(),

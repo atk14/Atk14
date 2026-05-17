@@ -42,5 +42,5 @@ function smarty_block_script_tag($params, $content, $template, &$repeat){
 	$out[] = '//]]>';
 	$out[] = '</script>';
 
-	return join("\n",$out);
+	return implode("\n",$out);
 }

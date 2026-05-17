@@ -24,8 +24,8 @@ function smarty_function_to_sentence($params,$template = null){
 		case 1:	
 			return $var[0];
 		case 2:
-			return join($params["two_words_connector"],$var);
+			return implode($params["two_words_connector"],$var);
 	}
 	$last = array_pop($var);
-	return join($params["words_connector"],$var).$params["last_word_connector"].$last;
+	return implode($params["words_connector"],$var).$params["last_word_connector"].$last;
 }

@@ -146,7 +146,7 @@ function smarty_function_render($params,$template){
 
 	Atk14Timer::Stop("helper function.render");
 
-	return join("",$out);
+	return implode("",$out);
 	// -*-*-*-*-*-*-*-*-*- END OF NEW IMPLEMENTATION -*-*-*-*-*-*-*-*-*-
 
 	}elseif(ATK14_USE_SMARTY3 || ATK14_USE_SMARTY4){
@@ -239,7 +239,7 @@ function smarty_function_render($params,$template){
 
 	Atk14Timer::Stop("helper function.render");
 
-	return join("",$out);
+	return implode("",$out);
 	// -*-*-*-*-*-*-*-*-*- END OF NEW IMPLEMENTATION -*-*-*-*-*-*-*-*-*-
 
 	}else{
@@ -365,7 +365,7 @@ function smarty_function_render($params,$template){
 
 	Atk14Timer::Stop("helper function.render");
 
-	return join("",$out);
+	return implode("",$out);
 	// -*-*-*-*-*-*-*-*-*- END OR PREVIOUS IMPLEMENTATION -*-*-*-*-*-*-*-*-*-
 
 	}

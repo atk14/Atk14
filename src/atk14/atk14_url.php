@@ -523,7 +523,7 @@ class Atk14Url{
 				$out[] = Atk14Url::_EncodeUrlParam($_key."[$_a_key]",$_a_value,$options);
 				$index++;
 			}
-			return join($options["connector"],$out);
+			return implode($options["connector"],$out);
 		}
 		return urlencode($_key)."=".urlencode((string)$_value);
 	}
@@ -541,7 +541,7 @@ class Atk14Url{
 			$out[] = Atk14Url::_EncodeUrlParam($k,$v,$options);
 		}
 
-		return "?".join($options["connector"],$out);
+		return "?".implode($options["connector"],$out);
 	}
 
 	/**

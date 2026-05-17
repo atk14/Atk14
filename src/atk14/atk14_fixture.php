@@ -52,7 +52,7 @@ class Atk14Fixture {
 
 		// Getting all fixtures which are used in the requested fixture
 		// I know that the method may not be totally accurate but it's okay to load a bit more fixtures then is actually needed.
-		preg_match_all('/\$('.join('|',$all_fixtures).'\b)/',$content,$matches);
+		preg_match_all('/\$('.implode('|',$all_fixtures).'\b)/',$content,$matches);
 		$required_fixtures = $matches[1] ? array_combine($matches[1],$matches[1]) : []; // PHP5.3 Warning:  array_combine(): Both parameters should have at least 1 element
 		unset($required_fixtures[$name]);
 		$required_fixtures = array_values($required_fixtures);

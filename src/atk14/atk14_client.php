@@ -252,7 +252,7 @@ class Atk14Client{
 			$ary = explode(":",$username);
 			if(count($ary)>=2){
 				$username = array_shift($ary);
-				$password = join(":",$ary);
+				$password = implode(":",$ary);
 			}
 		}
 		$this->setBasicAuthUsername($username);
@@ -483,7 +483,7 @@ class Atk14Client{
 		foreach($options["headers"] as $header){
 			$_ar = explode(":",$header);
 			$_header_key = array_shift($_ar);
-			$_header_value = join(":",$_ar);
+			$_header_value = implode(":",$_ar);
 			$request->setHeader($_header_key,$_header_value);
 		}
 

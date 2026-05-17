@@ -15,7 +15,7 @@ function smarty_modifier_trim($content,$params = []){
 	if($params["each_line"]){
 		$content = explode("\n",$content);
 		$content = array_map(function($line){ return trim($line); },$content);
-		$content = join("\n",$content);
+		$content = implode("\n",$content);
 	}
 
 	return trim($content);

@@ -41,5 +41,5 @@ function smarty_block_form($params, $content, $template, &$repeat){
 	$out[] = $form->begin();
 	$out[] = $content;
 	$out[] = $form->end();
-	return join("\n",$out);
+	return implode("\n",$out);
 }

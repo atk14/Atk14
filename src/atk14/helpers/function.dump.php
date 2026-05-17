@@ -33,7 +33,7 @@ function smarty_function_dump($params,$template){
 			$out[] = '</li>';
 		}
 		$out[] = "</ul>";
-		return join("\n",$out);
+		return implode("\n",$out);
 	}
 	$out = isset($params["var"]) ? Dumper::Dump($params["var"]) : "NULL";
 	return "<pre><code>$out</code></pre>";
@@ -163,6 +163,6 @@ class Dumper{
 		foreach($out as &$l){
 			$l = "{$padding}$l";
 		}
-		return join("\n",$out);
+		return implode("\n",$out);
 	}
 }

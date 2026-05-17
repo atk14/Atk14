@@ -312,7 +312,7 @@ class Atk14Utils{
 		foreach(array_filter($attributes) as $key => $value){	
 			$out[] = " ".h($key)."=\"".h($value)."\"";
 		}
-		return join("",$out);
+		return implode("",$out);
 	}
 
 	/**
@@ -592,7 +592,7 @@ class Atk14Utils{
 
 
 		array_unshift($ar,$uri);
-		return join('?',$ar);
+		return implode('?',$ar);
 	}
 
 	/**
