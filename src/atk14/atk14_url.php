@@ -108,7 +108,6 @@ class Atk14Url{
 		}
 
 		$routes = $ATK14_GLOBAL->getPreparedRoutes($namespace);
-		//echo "<pre>"; var_dump($routes); echo "<pre>"; 
 		$out = null;
 
 		foreach($routes as $pattern => $rules){
@@ -394,8 +393,7 @@ class Atk14Url{
 			unset($_params["lang"]);
 
 			$out = "";
-			foreach($routes as $pattern => $rules){	
-				//var_dump($pattern);
+			foreach($routes as $pattern => $rules){
 				if(!(
 					Atk14Url::_ParamMatches($rules["controller"],$params["controller"]) &&
 					Atk14Url::_ParamMatches($rules["action"],$params["action"]) &&

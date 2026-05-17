@@ -392,8 +392,7 @@ class Atk14Controller{
 		//prenastaveni controlleru v pripade, ze toto je XHR request
 		if($this->request->xhr()){
 			$this->response->setContentType("text/javascript");
-			//pozor!! nasteveni charsetu zakomentovavam... neni mozne uvazovat, ze vsechny aplikace pojdenou v UTF-8
-			//$this->response->setContentCharset("UTF-8");
+			// charset is intentionally not set here — apps may not use UTF-8
 			$this->render_layout = false;
 		}
 
@@ -641,7 +640,6 @@ class Atk14Controller{
 
 		$this->smarty->assign($this->tpl_data);
 
-		//if($this->render_template && strlen($this->response->getLocation())==0){
 		$controller_name = $this->controller;
 		$layout_template = $this->layout_name;
 		$explicit_layout_name = "";
@@ -723,7 +721,6 @@ class Atk14Controller{
 		}
 
 		$this->_after_render();
-		//}
 	}
 
 	/**
@@ -1572,10 +1569,8 @@ class Atk14Controller{
 			$session_index = $request_index;
 			$state["current_step_index"] = $request_index;
 			
-			// Volanim $this->__save_walking_state() lze upraveny $state ulozit, nicmene neni to nutne.
-			// Totiz ve chvili, kdy uzivatel odesle formular na nektere z minulych obrazovek, je $state ulozen.
-			// Nam se vlastne docela libi, ze uzivatel muze putovat v historii prohlizece sem a tam.
-			// $this->__save_walking_state($state);
+			// __save_walking_state() is intentionally not called here.
+			// State is saved when user submits a form, allowing free back/forward browser navigation.
 		}
 
 		$this->_execute_current_step();
