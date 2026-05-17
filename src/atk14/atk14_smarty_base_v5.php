@@ -86,7 +86,7 @@ class Atk14SmartyBase extends Smarty\Smarty{
 
 class Atk14SmartyDebug extends Smarty\Debug {
 
-	var $smarty;
+	public $smarty;
 
 	function start_render(Smarty\Template $template, $mode = null) {
 		parent::start_render($template, $mode);
@@ -105,9 +105,9 @@ class Atk14SmartyDebug extends Smarty\Debug {
 
 class Atk14TemplateIndexItem implements ArrayAccess {
 
-	var $parent;
-	var $template;
-	var $children;
+	public $parent;
+	public $template;
+	public $children;
 
 	function __construct($template, $parent) {
 		$this->parent = $parent;
@@ -144,8 +144,8 @@ class Atk14TemplateIndexItem implements ArrayAccess {
 
 class Atk14TemplateIndex implements IteratorAggregate {
 
-	var $root;
-	var $actual;
+	public $root;
+	public $actual;
 
 	function __construct() {
 		$this->root = $this->actual = new Atk14TemplateIndexItem(null, null);

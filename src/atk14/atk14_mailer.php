@@ -89,70 +89,70 @@ class Atk14Mailer{
 	 *
 	 * @var string
 	 */
-	var $from = DEFAULT_EMAIL;
+	public $from = DEFAULT_EMAIL;
 
 	/**
 	 * senders name
 	 *
 	 * e.g. John Doe
 	 */
-	var $from_name = ATK14_APPLICATION_NAME; 
+	public $from_name = ATK14_APPLICATION_NAME; 
 
 	/**
 	 * if $return_path is not set, $from is used automatically  as $return_path
 	 *
 	 * @var string
 	 */
-	var $return_path = null;
+	public $return_path = null;
 
 	/**
 	 * email address for Reply-To header
 	 *
 	 * e.g. samantha@doe.com
 	 */
-	var $reply_to = "";
+	public $reply_to = "";
 
 	/**
 	 * name for Reply-To header
 	 *
 	 * e.g. Samantha Doe
 	 */
-	var $reply_to_name = "";
+	public $reply_to_name = "";
 
 	/**
 	 * recipients email address
 	 *
 	 * @var string
 	 */
-	var $to = "";
+	public $to = "";
 
 	/**
 	 * recipients name
 	 *
 	 * @var string
 	 */
-	var $to_name = "";
+	public $to_name = "";
 
 	/**
 	 * Subject
 	 * 
 	 * @var string
 	 */
-	var $subject = "";
+	public $subject = "";
 
 	/**
 	 * Message
 	 *
 	 * @var string
 	 */
-	var $body = "";
+	public $body = "";
 
 	/**
 	 * This is a HTML version of body for a multipart/alternative email
 	 *
 	 * Please note that sending multipart/related emails is an experimental feature
 	 */
-	var $body_html = "";
+	public $body_html = "";
 
 
 	/**
@@ -160,28 +160,28 @@ class Atk14Mailer{
 	 *
 	 * @var string
 	 */
-	var $cc = "";
+	public $cc = "";
 
 	/**
 	 * Blind carbon copy.
 	 *
 	 * @var string
 	 */
-	var $bcc = "";
+	public $bcc = "";
 
 	/**
 	 * Content type. Defaults to 'text/plain'.
 	 *
 	 * @var string
 	 */
-	var $content_type = "text/plain";
+	public $content_type = "text/plain";
 
 	/**
 	 * Content charset.
 	 *
 	 * @var string
 	 */
-	var $content_charset = DEFAULT_CHARSET;
+	public $content_charset = DEFAULT_CHARSET;
 
 	/**
 	 * Attachments
@@ -190,7 +190,7 @@ class Atk14Mailer{
 	 * @var array
 	 * @see Atk14Mailer::add_attachment()
 	 */
-	var $_attachments = array();
+	public $_attachments = array();
 
 	/**
 	 *
@@ -198,56 +198,56 @@ class Atk14Mailer{
 	 * @var protected
 	 * @see Atk14Mailer::add_html_image()
 	 */
-	var $_html_images = array();
+	public $_html_images = array();
 
 	/**
 	 * Template name
 	 *
 	 * @var string
 	 */
-	var $template_name = "";
+	public $template_name = "";
 
 	/**
 	 * Render message in a layout?
 	 *
 	 * Null stands for auto detection.
 	 */
-	var $render_layout = null;
+	public $render_layout = null;
 
 	/**
 	 * Name of the layout.
 	 *
 	 * e.g. "mailer", "christmas_mailer_theme" (looking for layouts/mailer.tpl, layouts/mailer.html.tpl, layouts/christmas_mailer_theme.tpl, layouts/christmas_mailer_theme.html.tpl)
 	 */
-	var $layout_name = "";
+	public $layout_name = "";
 
 	/**
 	 * Data passed to a template.
 	 *
 	 * @var array
 	 */
-	var $tpl_data = array();
+	public $tpl_data = array();
 
 	/**
 	 * Application namespace. Is copied from controller when new instance of Atk14Mailer is created.
 	 *
 	 * @var string
 	 */
-	var $namespace = null;
+	public $namespace = null;
 
 	/**
 	 * Name of action before current expected
 	 *
 	 * @var string
 	 */
-	var $action = null;
+	public $action = null;
 
 	/**
 	 * Instance of Logger
 	 *
 	 * @var Logger
 	 */
-	var $logger = null;
+	public $logger = null;
 
 
 	private $defaults = array();

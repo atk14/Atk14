@@ -26,9 +26,9 @@ class Atk14Session{
 	 * Instance of SessionStorer class that is responsible for storing values.
 	 *
 	 * @var SessionStorer
-	 * @access private
+	 * @access protected
 	 */
-	var $_SessionStorer = null;
+	protected $_SessionStorer = null;
 
 	/**
 	 * Constructor

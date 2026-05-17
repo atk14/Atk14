@@ -41,7 +41,7 @@ class Atk14Client{
 	 * @var Atk14Session
 	 * @see Atk14Session
 	 */
-	var $session = null;
+	public $session = null;
 
 	/**
 	 * Instance of Atk14Flash.
@@ -51,7 +51,7 @@ class Atk14Client{
 	 * @var Atk14Flash
 	 * @see Atk14Flash
 	 */
-	var $flash = null;
+	public $flash = null;
 
 	/**
 	 * Instance of Atk14Controller used by current request.
@@ -59,14 +59,14 @@ class Atk14Client{
 	 * @var ApplicationController
 	 * @see Atk14Controller
 	 */
-	var $controller = null;
+	public $controller = null;
 
 	/**
 	 * Current controllers namespace.
 	 *
 	 * @var string
 	 */
-	var $namespace = "";
+	public $namespace = "";
 
 	/**
 	 * Content sent in User-Agent HTTP header.
@@ -74,14 +74,14 @@ class Atk14Client{
 	 * @var string
 	 * @ignore
 	 */
-	var $_UserAgent = "Atk14 Testing Client";
+	protected $_UserAgent = "Atk14 Testing Client";
 
 	/**
 	 * @ignore
 	 */
-	var $_RemoteAddr = "127.0.0.1";
+	protected $_RemoteAddr = "127.0.0.1";
 
-	var $_HttpReferer = "";
+	protected $_HttpReferer = "";
 
 	/**
 	 * Basic authentication username.
@@ -89,14 +89,14 @@ class Atk14Client{
 	 * @var string
 	 * @ignore
 	 */
-	var $_BasicAuthUsername = null;
+	protected $_BasicAuthUsername = null;
 
 	/**
 	 *
 	 * @var boolean
 	 * @ignore
 	 */
-	var $_Xhr = false;
+	protected $_Xhr = false;
 
 	/**
 	 * Basic authentication password.
@@ -104,7 +104,7 @@ class Atk14Client{
 	 * @var string
 	 * @ignore
 	 */
-	var $_BasicAuthPassword = null;
+	protected $_BasicAuthPassword = null;
 
 	/**
 	 * Store for cookies
@@ -112,7 +112,7 @@ class Atk14Client{
 	 * @var HTTPCookie[]
 	 * @ignore
 	 */
-	var $_Cookies = array();
+	protected $_Cookies = array();
 
 	/**
 	 * Flag whether cookies are enabled
@@ -120,7 +120,7 @@ class Atk14Client{
 	 * @var boolean
 	 * @ignore
 	 */
-	var $_CookiesEnabled = true;
+	protected $_CookiesEnabled = true;
 
 	/**
 	 * The most recent request
@@ -128,7 +128,7 @@ class Atk14Client{
 	 * @var HTTPRequest
 	 * @ignore
 	 */
-	var $_RecentRequest = null;
+	protected $_RecentRequest = null;
 
 	/**
 	 * Constructor
