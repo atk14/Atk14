@@ -452,7 +452,7 @@ class Atk14Controller{
 		);
 
 		foreach($filters as $f){
-			if(is_a($f,"Closure")){
+			if($f instanceof Closure){
 				$f();
 				continue;
 			}

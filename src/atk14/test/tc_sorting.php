@@ -138,10 +138,10 @@ class TcSorting extends TcBase{
 		$order_desc = $sorting->getOrder("default-desc");
 
 		$this->assertEquals("articles.id DESC",(string)$order);
-		$this->assertTrue(is_a($order,"SpecialOrderingObject"));
+		$this->assertTrue($order instanceof SpecialOrderingObject);
 
 		$this->assertEquals("articles.id",(string)$order_desc);
-		$this->assertTrue(is_a($order_desc,"SpecialOrderingObject"));
+		$this->assertTrue($order_desc instanceof SpecialOrderingObject);
 
 		// only ascending orderings is a member of SpecialOrderingObject
 		$sorting = new Atk14Sorting();
@@ -151,7 +151,7 @@ class TcSorting extends TcBase{
 		$order_desc = $sorting->getOrder("default-desc");
 
 		$this->assertEquals("articles.created_at DESC",(string)$order);
-		$this->assertTrue(is_a($order,"SpecialOrderingObject"));
+		$this->assertTrue($order instanceof SpecialOrderingObject);
 
 		$this->assertEquals("articles.created_at ASC",(string)$order_desc);
 		$this->assertTrue(is_string($order_desc));

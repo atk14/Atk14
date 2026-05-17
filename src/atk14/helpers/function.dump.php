@@ -76,7 +76,7 @@ class Dumper{
 			"collapse_structure" => false,
 		];
 
-		if(is_a($obj,"Closure")){
+		if($obj instanceof Closure){
 			return $this->_Pad("Closure",$offset);
 		}
 
