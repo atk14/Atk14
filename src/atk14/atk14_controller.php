@@ -1037,7 +1037,7 @@ class Atk14Controller{
 
 		if(file_exists($filename) && ((time()-filemtime($filename))<=$recipe["expires"])){
 			$serialized = Files::GetFileContent($filename,$err,$err_msg);
-			if(($unserialized = unserialize($serialized)) && is_array($unserialized) && isset($unserialized["content"])){
+			if(($unserialized = unserialize($serialized,["allowed_classes" => false])) && is_array($unserialized) && isset($unserialized["content"])){
 				$cache = $unserialized;
 				return true;
 			}
