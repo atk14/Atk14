@@ -49,8 +49,9 @@ class TcAtk14Field extends TcAtk14Base{
 	function assertValid($value,$message = ""){
 		$cleaned_value = $this->clean($value,$err);
 		if(!is_null($err)){
-			$this->fail("not valid: $value [$err]" . ($message ? " ($message)" : ""));
+			$this->fail("not valid: ".$this->___stringifyValue($value)." [$err]" . ($message ? " ($message)" : ""));
 		}
+		$this->assertTrue(true); // On success, just one valid assertion is needed.
 		return $cleaned_value;
 	}
 
@@ -67,8 +68,18 @@ class TcAtk14Field extends TcAtk14Base{
 	function assertInvalid($value,$message = null){
 		$cleaned_value = $this->clean($value,$err);
 		if(is_null($err)){
-			$this->fail("valid: $value [$cleaned_value]" . ($message ? " ($message)" : ""));
+			$this->fail("valid: ".$this->___stringifyValue($value)." [".$this->___stringifyValue($cleaned_value)."]" . ($message ? " ($message)" : ""));
 		}
+		$this->assertTrue(true); // On success, just one valid assertion is needed.
 		return $err;
+	}
+
+	private function ___stringifyValue($value){
+		if(is_object($value)){
+			if(method_exists($value,"__toString")){ return "$value"; }
+			if(method_exists($value,"toString")){ return $value->toString(); }
+			return "instance of ".get_class($value);
+		}
+		return "$value";
 	}
 }
