@@ -253,11 +253,20 @@ class TcFiles extends TcBase{
 
 		$this->assertTrue($t1!=$t2);
 
-		// prefix sanitization
-		$t = Files::GetTempFilename("bad/joke");
+		// suffixes
+
+		$t_jpg = Files::GetTempFilename("image_",".jpg");
+		$this->assertTrue(!!preg_match('/image_[^\/]+\.jpg$/',$t_jpg));
+
+		$t_jpg = Files::GetTempFilename(".jpg");
+		$this->assertTrue(!!preg_match('/files_tmp_[^\/]+\.jpg$/',$t_jpg)); // default prefix
+
+		// prefix & suffix  sanitization
+		$t = Files::GetTempFilename("bad/joke",".bad/guess");
 
 		$this->assertStringNotContains("bad/joke",$t);
 		$this->assertStringContains("bad_joke",$t);
+		$this->assertStringContains(".bad_guess",$t);
 	}
 
 	function test_MoveFile(){

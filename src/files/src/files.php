@@ -26,7 +26,7 @@ if(defined("FILES_DEFAULT_DIR_PERMS")){
  */
 class Files{
 
-	const VERSION = "1.6.11";
+	const VERSION = "1.6.12";
 
 	static protected $_DefaultFilePerms = 0666;
 
@@ -805,15 +805,29 @@ class Files{
 	/**
 	 * Returns a filename for a new temporary file.
 	 *
+	 *	$tmp_filename = Files::GetTempFilename();
+	 *	$tmp_filename = Files::GetTempFilename("interim_calculation_");
+	 *	$tmp_filename = Files::GetTempFilename("scale_",".jpg");
+	 *	$tmp_filename = Files::GetTempFilename(".png");
+	 *
 	 * @return string name of the newly created file
 	 */
-	static function GetTempFilename($prefix = "files_tmp_"){
-		$prefix = preg_replace('/[^0-9a-z_.-]/i','_',$prefix); // sanitization
+	static function GetTempFilename($prefix_or_suffix = "files_tmp_",$suffix = null){
+		if(empty($suffix) && preg_match('/^\./',$prefix_or_suffix)){
+			$suffix = $prefix_or_suffix;
+			$prefix_or_suffix = "files_tmp_";
+		}
+		$prefix = $prefix_or_suffix;
+		$suffix = (string)$suffix;
+
+		 // sanitization
+		$prefix = preg_replace('/[^0-9a-z_.-]/i','_',$prefix);
+		$suffix = preg_replace('/[^0-9a-z_.-]/i','_',$suffix);
 
 		// Might be better, but oddly it breaks tests
 		//return tempnam(self::GetTempDir(), $prefix);
 
-		$temp_filename = self::GetTempDir() . "/$prefix".uniqid("",true);
+		$temp_filename = self::GetTempDir() . "/$prefix".uniqid("",true)."$suffix";
 		return $temp_filename;
 	}
 

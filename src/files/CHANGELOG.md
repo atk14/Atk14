@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.6.12] - 2026-05-20
+
+* 0d193a6 - The File::GetTempFilename() method also accepts a file extension as the first or second parameter
+
 ## [1.6.11] - 2026-05-09
 
 * 563695a - Added public method Files::NormalizeFilename()
