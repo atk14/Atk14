@@ -113,10 +113,12 @@ class TcAtk14Base extends TcSuperBase {
 	}
 
 	function getAnnotations():array{
+		/*
 		if(method_exists(get_parent_class($this), 'getAnnotations')){
 			// in case of PHPUnit <= 8.*
 			return parent::getAnnotations();
 		}
+		*/
 
 		$annotations = ["class" => []];
 
