@@ -150,7 +150,13 @@ class DbMole{
 	 */
 	protected $_start_utime;
 
+	/**
+	 * @ignore
+	 */
+	protected $_connection_swap_variable = null;
+
 	static private $__DMOLE_STATISTICS__;
+
 
 	/**
 	 * Constructor
@@ -730,7 +736,7 @@ class DbMole{
 			"sending_lock_file" => null, // "/tmp/dbmole_email_sent_".md5(__DIR__)
 		];
 
-		if(!$options["report_failed_database_connection"] && preg_match("/^can't connect to database/",$this->getErrorMessage())){
+		if(!$options["report_failed_database_connection"] && preg_match("/^can't connect to database/",(string)$this->getErrorMessage())){
 			return;
 		}
 
