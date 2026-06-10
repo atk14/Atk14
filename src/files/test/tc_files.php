@@ -159,7 +159,8 @@ class TcFiles extends TcBase{
 				"urls" => array(
 					//"https://filesamples.com/samples/video/mkv/sample_960x540.mkv",
 					//"https://getsamplefiles.com/download/mkv/sample-2.mkv",
-					"https://test-videos.co.uk/vids/jellyfish/mkv/1080/Jellyfish_1080_10s_1MB.mkv",
+					//"https://test-videos.co.uk/vids/jellyfish/mkv/1080/Jellyfish_1080_10s_1MB.mkv",
+					"https://github.com/ietf-wg-cellar/matroska-test-files/raw/refs/heads/master/test_files/test1.mkv",
 				),
 				"mime_types" => array("video/x-matroska"),
 			),
