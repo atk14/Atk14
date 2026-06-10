@@ -157,7 +157,6 @@ class DbMole{
 
 	static private $__DMOLE_STATISTICS__;
 
-
 	/**
 	 * Constructor
 	 *
