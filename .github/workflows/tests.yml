@@ -40,7 +40,7 @@ jobs:
           --health-retries=3
 
       mysql:
-        image: mysql:8.0
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
