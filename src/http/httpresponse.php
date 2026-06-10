@@ -513,7 +513,7 @@ class HTTPResponse{
 		$this->clearOutputBuffer();
 		if(!isset($message)){
 			$message = "
-				You don't have permission to access ".htmlspecialchars($GLOBALS["HTTP_REQUEST"]->getRequestURI())."
+				You don't have permission to access ".htmlspecialchars((string)$GLOBALS["HTTP_REQUEST"]->getRequestURI())."
 				on this server.
 			";
 		}
