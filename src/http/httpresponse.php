@@ -545,7 +545,7 @@ class HTTPResponse{
 		$this->setStatusCode(404);
 		$this->clearOutputBuffer();
 		if(!isset($message)){
-			$message = "The requested URL ".htmlspecialchars($GLOBALS["HTTP_REQUEST"]->getRequestURI())." was not found on this server.";
+			$message = "The requested URL ".htmlspecialchars((string)$GLOBALS["HTTP_REQUEST"]->getRequestURI())." was not found on this server.";
 		}
 		$this->_writeStatusMessage($message);
 	}
