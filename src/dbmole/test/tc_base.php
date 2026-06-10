@@ -1,4 +1,5 @@
 <?php
+#[\AllowDynamicProperties]
 class TcBase extends TcSuperBase{
 
 	function _setUp(){
