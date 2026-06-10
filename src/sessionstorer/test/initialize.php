@@ -9,6 +9,7 @@ define("CURRENT_TIME",time());
 require("../../stringbuffer/load.php");
 require("../../http/load.php");
 require("../../string4/load.php");
+require("../../translate/load.php");
 require("../load.php");
 
 // UF! we need dbmole
