@@ -61,7 +61,7 @@ class HTTPUploadedFile{
 
 	var $_ImageHeight;
 
-	var $_ImageGeomeryDetermined;
+	var $_ImageGeometryDetermined;
 
 	function __construct(){
 
@@ -357,14 +357,14 @@ class HTTPUploadedFile{
 	 * @access private
 	 */
 	function _determineImageGeometry(){
-		if(isset($this->_ImageGeomeryDetermined)){ return; }
+		if(isset($this->_ImageGeometryDetermined)){ return; }
 
 		$this->_ImageWidth = null;
 		$this->_ImageHeight = null;
 
 		if(!$this->isImage()){ return; }
 		$ar = Files::GetImageSize($this->getTmpFileName());
-		$this->_ImageGeomeryDetermined = true;
+		$this->_ImageGeometryDetermined = true;
 
 		list($this->_ImageWidth,$this->_ImageHeight) = $ar;
 	}
