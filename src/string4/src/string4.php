@@ -93,20 +93,54 @@ class String4{
 	 *
 	 * @return String4
 	 */
-	static function RandomString($length = 32,$options = array()){
+	static function RandomString($length = 32,$options = []){
 		if(is_array($length)){
 			$options = $length;
 			$length = 32;
 		}
 
-		$options += array(
+		$options += [
 			'extra_chars' => '',
 			'length' => $length,
-		);
+		];
 
-		$chars = array('a','i','o','s','t','u','v','3','4','5','8','B','C','D','E','F','7','G','H','I','J','K','L','M','N','O','j','k','l','6','P','Q','W','b','c','d','e','f','g','h','p','q','r','x','y','z','0','1','S','T','U','w','2','9','A','R','V','m','n');
-		foreach(preg_split('//',$options['extra_chars']) as $ch){
-			strlen($ch) && ($chars[] = $ch);
+		return self::_RandomString($options);
+	}
+
+	/**
+	 * Generates a random numeric string.
+	 *
+	 * @param int $length
+	 * @return String4
+	 */
+	static function RandomNumericString($length = 6){
+		$chars = ['1','2','3','4','5','6','7','8','9'];
+		$p1 = self::_RandomString([
+			'chars' => $chars,
+			'length' => 1,
+		]);
+		$chars[] = '0';
+		$p2 = self::_RandomString([
+			'chars' => $chars,
+			'length' => $length - 1,
+		]);
+		return $p1->append($p2);
+	}
+
+	static protected function _RandomString($options = []){
+		$options += [
+			'chars' => ['a','i','o','s','t','u','v','3','4','5','8','B','C','D','E','F','7','G','H','I','J','K','L','M','N','O','j','k','l','6','P','Q','W','b','c','d','e','f','g','h','p','q','r','x','y','z','0','1','S','T','U','w','2','9','A','R','V','m','n'],
+			'extra_chars' => '',
+			'length' => 32,
+		];
+
+		$chars = $options['chars'];
+		if(!is_array($chars)){ $chars = preg_split('//',(string)$chars); }
+
+		$extra_chars = self::ToObject($options['extra_chars'])->chars(["stringify" => true]);
+
+		foreach($extra_chars as $ch){
+			$chars[] = $ch;
 		}
 
 		$out = [];
@@ -199,7 +233,7 @@ class String4{
 	/**
 	 * @ignore
 	 */
-	static protected function _RandomArrayValue(&$ary){
+	static protected function _RandomArrayValue($ary){
 		$key = self::_Rand(0,sizeof($ary)-1);
 		return $ary[$key];
 	}
@@ -438,7 +472,6 @@ class String4{
 				'\xC2\x85', // Next Line
 				'\xC2\xA0', // No-Break Space (NBSP)
 				'\xE1\x9A\x80', // Ogham Space Mark
-				'\xE1\xA0\x8E', // Mongolian Vowel Separator
 				'\xE2\x80\x80', // En Quad
 				'\xE2\x80\x81', // Em Quad
 				'\xE2\x80\x82', // En Space

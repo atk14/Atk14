@@ -647,6 +647,18 @@ echo String4::RandomString([
 
 ---
 
+#### `String4::RandomNumericString($length = 6)` → `String4`
+
+Generates a random numeric string of exactly `$length` digits. The first digit is always `1–9` (never zero), so the result is suitable for use as a numeric code or PIN where leading zeros would cause problems.
+
+```php
+echo String4::RandomNumericString();     // e.g. "482917"
+echo String4::RandomNumericString(4);    // e.g. "3071"
+echo String4::RandomNumericString(8);    // e.g. "52847391"
+```
+
+---
+
 #### `String4::RandomPassword($length = 10)` → `String4`
 
 Generates a human-friendly random password. Visually ambiguous characters (`0`, `O`, `1`, `l`, `I`) are excluded to reduce transcription errors. The result mixes letters and digits in a pronounceable pattern.

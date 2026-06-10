@@ -73,7 +73,7 @@ class TcString4 extends TcBase{
 
 	function test_RandomString(){
 		$s1 = String4::RandomString();
-		$s2 = String4::RandomString();
+		$s2 = String4::RandomString(32);
 		$s3 = String4::RandomString(22);
 
 		$this->assertTrue(is_a($s1,"String4"));
@@ -91,6 +91,40 @@ class TcString4 extends TcBase{
 
 		$long = String4::RandomString(1000);
 		$this->assertEquals(1000,strlen($long));
+
+		// Extra chars
+		$matches_count = 0;
+		for($i=0;$i<=100;$i++){
+			$s = String4::RandomString(30,["extra_chars" => "!#"]);
+			if(preg_match('/[!#]/',"$s")){
+				$matches_count++;
+			}
+		}
+		$this->assertTrue($matches_count>0);
+	}
+
+	function test_RandomNumericString(){
+		$s1 = String4::RandomNumericString();
+		$s2 = String4::RandomNumericString(6);
+		$s3 = String4::RandomNumericString(10);
+		$s4 = String4::RandomNumericString(1);
+
+		$this->assertTrue(is_a($s1,"String4"));
+		$this->assertTrue(is_a($s2,"String4"));
+		$this->assertTrue(is_a($s3,"String4"));
+		$this->assertTrue(is_a($s4,"String4"));
+
+		$this->assertEquals(6,strlen($s1));
+		$this->assertEquals(6,strlen($s2));
+		$this->assertEquals(10,strlen($s3));
+		$this->assertEquals(1,strlen($s4));
+
+		$this->assertTrue("$s1"!="$s2");
+
+		$this->assertTrue(is_numeric("$s1"));
+		$this->assertTrue(is_numeric("$s2"));
+		$this->assertTrue(is_numeric("$s3"));
+		$this->assertTrue(is_numeric("$s4"));
 	}
 
 	function test_RandomPassword(){

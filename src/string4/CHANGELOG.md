@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to this project will be documented in this file.
 
+[0.6.2] - 2026-06-10
+--------------------
+
+* 7093b23 - Add method String4::RandomNumericString($length = 6)
+
 [0.6.1] - 2026-04-30
 --------------------
 
