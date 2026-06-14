@@ -188,7 +188,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * @param TableRecord $record
 	 */
 	function append($record){
-		$this->_add($record);
+		return $this->_add($record);
 	}
 
 	/**
@@ -203,7 +203,9 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @param TableRecord $record
 	 */
-	function prepend($record){ $this->_add($record,-1); }
+	function prepend($record){
+		return $this->_add($record,-1);
+	}
 
 	/**
 	 * Alias for TableRecord_Lister::prepend()
@@ -231,6 +233,7 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 *
 	 * @param TableRecord $record
 	 * @param integer $rank
+	 * @return TableRecord_ListerItem
 	 */
 	protected function _add($record,$rank = null){
 		$o = $this->_options;
@@ -250,13 +253,25 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 				":rank" => $rank,
 			]);
 		}
+
+		$id = $this->_dbmole->selectSequenceNextval($o["sequence_name"]);
 		$this->_dbmole->insertIntoTable($o["table_name"],[
-			$o["id_field_name"] => $this->_dbmole->selectSequenceNextval($o["sequence_name"]),
+			$o["id_field_name"] => $id,
 			$o["owner_field_name"] => $this->_owner,
 			$o["subject_field_name"] => $record,
 			$o["rank_field_name"] => $_rank,
 		]);
+
+		$out = new TableRecord_ListerItem($this,[
+			"id" => $id,
+			"owner_id" => $this->_owner,
+			"record_id" => TableRecord::ObjToId($record),
+			"rank" => $_rank, 
+		],$_rank);
+
 		$this->_clearCache();
+
+		return $out;
 	}
 
 	/**
@@ -451,11 +466,47 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 	 * @param TableRecord[] $records
 	 */
 	function setRecords($records){
+		$records = TableRecord::ObjToId($records);
+		$records = array_values($records);
 
-		$records = array_map(
-			function($v) { return is_object($v)?$v->getId():$v; },
-		$records);
-		$insert = [];
+		$items = $this->getItems();
+		$current_records = array_map(function($rec){ return $rec->getRecordId(); }, $items);
+
+		if($records == $current_records){ return; }
+
+		// For unique records, there is a new implementation that avoids unnecessary deletion
+		if(count($records)==count(array_unique($records))){
+			$assoc_records = array_combine($records,$records);
+			$assoc_items = [];
+
+			$_assoc_records = $assoc_records;
+			foreach($items as $item){
+				$rec_id = $item->getRecordId();
+				if(!isset($_assoc_records[$rec_id])){
+					$item->destroy();
+					continue;
+				}
+				unset($_assoc_records[$rec_id]);
+				$assoc_items[$rec_id] = $item;
+			}
+
+			foreach($records as $rec_id){
+				if(!isset($assoc_items[$rec_id])){
+					$item = $this->_add($rec_id);
+					$assoc_items[$rec_id] = $item;
+				}
+			}
+
+			foreach($records as $rank => $rec_id){
+				$assoc_items[$rec_id]->setRank($rank);
+			}
+
+			$this->_clearCache();
+			return;
+		}
+
+		// The original implementation follows
+		$inserts = [];
 
 		$rec = reset($records);
 		foreach($this->getItems() as $item){
@@ -464,13 +515,13 @@ class TableRecord_Lister implements ArrayAccess, Iterator, Countable {
 				continue;
 			}
 			if($item->getRecordId()!=$rec) {
-					$insert[] = [$rec, $item->getRank()];
+					$inserts[] = [$rec, $item->getRank()];
 					$item->destroy();
 			}
 			$rec = next($records);
 		}
 
-		foreach($insert as $i) {
+		foreach($inserts as $i) {
 			$this->_add($i[0], $i[1]);
 		}
 
