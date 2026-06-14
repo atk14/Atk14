@@ -157,6 +157,23 @@ class TcSorting extends TcBase{
 		$this->assertTrue(is_string($order_desc));
 	}
 
+	function test_title(){
+		$lang = "en";
+		Atk14Locale::Initialize($lang);
+
+		$sorting = new Atk14Sorting();
+		$sorting->add("default","id DESC","id ASC");
+		$sorting->add("price_lowest","price DESC","price ASC",[
+			"title" => "Price lowest",
+		]);
+
+		$this->assertEquals("Sort table by this column",$sorting->getTitle("default"));
+		$this->assertEquals("Price lowest",$sorting->getTitle("price_lowest"));
+
+		$sorting->setTitle("default","Default ordering");
+		$this->assertEquals("Default ordering",$sorting->getTitle("default"));
+	}
+
 	function _get_sorting($order = null){
 		$params = new Dictionary();
 		if($order){ $params->s("order",$order); }

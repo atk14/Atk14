@@ -250,6 +250,22 @@ class Atk14Sorting implements ArrayAccess, IteratorAggregate, Countable {
 	}
 
 	/**
+	 * Sets the title  of the given ordering key.
+	 *
+	 * @param string $key Name of the key
+	 * @param string $title Text to on the sorting link
+	 */
+	function setTitle($key,$title){
+		$key = (string)$key;
+		$title = (string)$title;
+		if(!isset($this->_Ordering[$key])){
+			trigger_error("Atk14Sorting::setTitle(): Unknown ordering key '$key'");
+			return;
+		}
+		$this->_Ordering[$key]["title"] = $title;
+	}
+
+	/**
 	 * Returns the string representation of the objects' instance.
 	 *
 	 */
