@@ -73,14 +73,14 @@ class HTTPCookie{
 	private $_SameSite;
 
 
-	static protected $DEFAULT_OPTIONS = array(
+	static protected $DEFAULT_OPTIONS = [
 		"expire" => 0,
 		"path" => "/",
 		"domain" => "",
 		"secure" => false,
 		"httponly" => false,
 		"samesite" => "", // None || Lax  || Strict
-	);
+	];
 
 	/**
 	 *
@@ -110,7 +110,7 @@ class HTTPCookie{
 	 * @param string $cookie_name
 	 * @param string $cookie_value
 	 */
-	function __construct($cookie_name,$cookie_value,$options = array()){
+	function __construct($cookie_name,$cookie_value,$options = []){
 		settype($cookie_name,"string");
 		settype($cookie_value,"string");
 

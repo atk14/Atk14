@@ -21,56 +21,56 @@ class tc_http_request extends tc_base{
 	function test_get_vars(){
 		global $_GET, $_POST, $_COOKIE;
 
-		$_GET = array(
+		$_GET = [
 			"clanek_id" => 123,
 			"sklonuj" => "on",
 			"offset" => "10",
-		);
+		];
  
-		$_POST = array(
+		$_POST = [
 			"sklonuj" => "off",
 			"lang" => "cs"
-		);
+		];
 
-		$_COOKIE = array(
+		$_COOKIE = [
 			"lang" => "en"
-		);
+		];
 
 		$req = new HTTPRequest();
 
-		$this->_compare_arrays(array(
+		$this->_compare_arrays([
 			"clanek_id" => 123,
 			"sklonuj" => "on",
 			"offset" => "10",
 			"lang" => "cs",
-		),$req->getVars());
+		],$req->getVars());
 		$this->assertEquals(123,$req->getGetVar("clanek_id"));
 		$this->assertNull($req->getGetVar("lang"));
 		$this->assertEquals("cs",$req->getPostVar("lang"));
 		$this->assertEquals("on",$req->getGetVar("sklonuj"));
 		$this->assertEquals("off",$req->getPostVar("sklonuj"));
 
-		$this->_compare_arrays(array(
+		$this->_compare_arrays([
 			"clanek_id" => 123,
 			"sklonuj" => "on",
 			"offset" => "10",
-		),$req->getVars("G"));
+		],$req->getVars("G"));
 
-		$this->_compare_arrays(array(
+		$this->_compare_arrays([
 			"sklonuj" => "off",
 			"lang" => "cs"
-		),$req->getVars("P"));
+		],$req->getVars("P"));
 
-		$this->_compare_arrays(array(
+		$this->_compare_arrays([
 			"lang" => "en"
-		),$req->getVars("C"));
+		],$req->getVars("C"));
 
-		$this->_compare_arrays(array(
+		$this->_compare_arrays([
 			"lang" => "en",
 			"sklonuj" => "off",
-		),$req->getVars("CP"));
+		],$req->getVars("CP"));
 
-		$this->_compare_arrays(array(),$req->getVars("??")); // nesmyslny parametr
+		$this->_compare_arrays([],$req->getVars("??")); // nesmyslny parametr
 	}
 
 	function test_get_content_type(){
@@ -93,7 +93,7 @@ class tc_http_request extends tc_base{
 		$file = $req->getUploadedFile("dousi");
 		$this->assertNull($file);
 
-		$file = $req->getUploadedFile("dousi",array("testing_mode" => true));
+		$file = $req->getUploadedFile("dousi",["testing_mode" => true]);
 		$this->assertTrue(is_object($file));
 		$this->assertEquals("dousi",$file->getName());
 		$this->assertEquals("Dousi.pdf",$file->getFileName());
@@ -105,7 +105,7 @@ class tc_http_request extends tc_base{
 		$this->assertNull($file->getImageHeight());
 
 		// pokud nazadame jmeno, bude vracen prvni soubor v poradi - zde to bude hlava
-		$file = $req->getUploadedFile(null,array("testing_mode" => true));
+		$file = $req->getUploadedFile(null,["testing_mode" => true]);
 		$this->assertEquals("hlava",$file->getName());
 		$this->assertEquals("Hlava.jpg",$file->getFileName());
 		$this->assertEquals("image/jpeg",$file->getMimeType());
@@ -134,9 +134,9 @@ class tc_http_request extends tc_base{
 
 	function test_get_reuqest_method(){
 		$GLOBALS["_SERVER"]["REQUEST_METHOD"] = "GET";
-		$GLOBALS["_POST"] = array();
-		$GLOBALS["_GET"] = array();
-		$GLOBALS["_COOKIE"] = array();
+		$GLOBALS["_POST"] = [];
+		$GLOBALS["_GET"] = [];
+		$GLOBALS["_COOKIE"] = [];
 		$m = &$GLOBALS["_SERVER"]["REQUEST_METHOD"];
 		$post = &$GLOBALS["_POST"];
 		$get = &$GLOBALS["_GET"];
@@ -168,7 +168,7 @@ class tc_http_request extends tc_base{
 		$m = "GET";
 		$this->_check_request_method($req,"GET");
 
-		$post = array();
+		$post = [];
 
 		$get["_method"] = "DELETE";
 		$m = "POST";
@@ -182,7 +182,7 @@ class tc_http_request extends tc_base{
 		$m = "GET";
 		$this->_check_request_method($req,"GET");
 
-		$get = array();
+		$get = [];
 		
 		$cookie["_method"] = "DELETE"; 
 		$m = "POST";
@@ -197,17 +197,17 @@ class tc_http_request extends tc_base{
 		$this->_check_request_method($req,"DELETE");
 
 		// 
-		$_POST = array(
+		$_POST = [
 			"first_compo" => "atari",
 			"second_compo" => "amiga"
-		);
+		];
 		$req = new HTTPRequest();
 		$this->assertEquals("atari",$req->getPostVar("first_compo"));
 		$this->assertEquals("amiga",$req->getPostVar("second_compo"));
 
-		$req->setPostVars(array(
+		$req->setPostVars([
 			"first_compo" => "didaktitk"
-		));
+		]);
 		$this->assertEquals("didaktitk",$req->getPostVar("first_compo"));
 		$this->assertNull($req->getPostVar("second_compo"));
 
@@ -325,25 +325,25 @@ class tc_http_request extends tc_base{
 		$this->assertTrue(is_array($req->getHeaders()));
 		$this->assertEquals(null,$req->getHeader("Non-Existing-Header"));
 
-		$req->_HTTPRequest_headers = array("Test-Header" => "Header_Value");
+		$req->setHeader("Test-Header","Header_Value");
 
 		$this->assertEquals("Header_Value",$req->getHeader("Test-Header"));
 		$this->assertEquals("Header_Value",$req->getHeader("TEST-HEADER"));
 		$this->assertEquals("Header_Value",$req->getHeader("test-header"));
 
-		// zjistovani xhr() se hlavicek tyka...
+		// zjistovani xhr() se hlavice tyka...
 		$this->assertEquals(false,$req->xhr());
 
-		$req->_HTTPRequest_headers = array("X-Requested-With" => "xmlhttprequest");
+		$req->setHeaders(["X-Requested-With" => "xmlhttprequest"]);
 		$this->assertEquals(true,$req->xhr());
 
-		$req->_HTTPRequest_headers = array("X-Requested-With" => "XmlHttpRequest");
+		$req->setHeaders(["X-Requested-With" => "XmlHttpRequest"]);
 		$this->assertEquals(true,$req->xhr());
 
-		$req->_HTTPRequest_headers = array("x-requested-with" => "XmlHttpRequest");
+		$req->setHeaders(["x-requested-with" => "XmlHttpRequest"]);
 		$this->assertEquals(true,$req->xhr());
 
-		$req->_HTTPRequest_headers = array("x-requXXestedwith" => "XmlHttpRequest");
+		$req->setHeaders(["x-requXXestedwith" => "XmlHttpRequest"]);
 		$this->assertEquals(false,$req->xhr());
 
 		// 
@@ -368,9 +368,9 @@ class tc_http_request extends tc_base{
 
 	function test_content_type(){
 		$uf = new UrlFetcher("https://jarek.plovarna.cz/atk14/src/http/test/dump_request.php");
-		$uf->post("testing data",array(
+		$uf->post("testing data",[
 			"content_type" => "text/plain; charset=UTF-8"
-		));
+		]);
 
 		$content = (string)$uf->getContent();
 
@@ -397,12 +397,12 @@ class tc_http_request extends tc_base{
 
 	function test_mobile_device(){
 		$request = new HTTPRequest();
-		foreach(array(
+		foreach([
 			/* Firefox on Linux */"Mozilla/5.0 (X11; Linux i686; rv:8.0.1) Gecko/20100101 Firefox/8.0.1" => false,
 			/* iPhone*/ "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543a Safari/419.3" => true,
 			/* iPod */ "Mozilla/5.0 (iPod; U; CPU like Mac OS X; en) AppleWebKit/420.1 (KHTML, like Gecko) Version/3.0 Mobile/3A101a Safari/419.3" => true,
 			/* iPad */ "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) version/4.0.4 Mobile/7B367 Safari/531.21.10" => false,
-		) as $user_agent => $is_mobile_device){
+		] as $user_agent => $is_mobile_device){
 			$request->setUserAgent($user_agent);
 			$this->assertEquals($is_mobile_device,$request->mobileDevice(),$user_agent);
 		}
@@ -410,12 +410,12 @@ class tc_http_request extends tc_base{
 
 	function test_iphone(){
 		$request = new HTTPRequest();
-		foreach(array(
+		foreach([
 			/* Firefox on Linux */"Mozilla/5.0 (X11; Linux i686; rv:8.0.1) Gecko/20100101 Firefox/8.0.1" => false,
 			/* iPhone*/ "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543a Safari/419.3" => true,
 			/* iPod */ "Mozilla/5.0 (iPod; U; CPU like Mac OS X; en) AppleWebKit/420.1 (KHTML, like Gecko) Version/3.0 Mobile/3A101a Safari/419.3" => true,
 			/* iPad */ "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) version/4.0.4 Mobile/7B367 Safari/531.21.10" => false,
-		) as $user_agent => $is_iphone){
+		] as $user_agent => $is_iphone){
 			$request->setUserAgent($user_agent);
 			$this->assertEquals($is_iphone,$request->iphone(),$user_agent);
 		}
@@ -616,25 +616,25 @@ class tc_http_request extends tc_base{
 
 	function test_getGetVars(){
 		global $_GET;
-		$_GET = array("id" => "123", "format" => "xml");
+		$_GET = ["id" => "123", "format" => "xml"];
 
 		$request = new HTTPRequest();
-		$this->assertEquals(array("id" => "123", "format" => "xml"),$request->getGetVars());
+		$this->assertEquals(["id" => "123", "format" => "xml"],$request->getGetVars());
 
-		$request->setGetVars(array("fake" => "1"));
+		$request->setGetVars(["fake" => "1"]);
 		$this->assertNull($request->getGetVar("id"));
-		$this->assertEquals(array("fake" => "1"),$request->getGetVars());
+		$this->assertEquals(["fake" => "1"],$request->getGetVars());
 	}
 
 	function test_getPostVars(){
 		global $_POST;
-		$_POST = array("id" => "123", "format" => "xml");
+		$_POST = ["id" => "123", "format" => "xml"];
 
 		$request = new HTTPRequest();
-		$this->assertEquals(array("id" => "123", "format" => "xml"),$request->getPostVars());
+		$this->assertEquals(["id" => "123", "format" => "xml"],$request->getPostVars());
 
-		$request->setPostVars(array("fake" => "1"));
-		$this->assertEquals(array("fake" => "1"),$request->getPostVars());
+		$request->setPostVars(["fake" => "1"]);
+		$this->assertEquals(["fake" => "1"],$request->getPostVars());
 	}
 
 	function _check_request_method($req,$type){
@@ -648,16 +648,16 @@ class tc_http_request extends tc_base{
 
 	function test_getCookieVar(){
 		global $_COOKIE;
-		$_COOKIE = array("session" => "123456abcd", "lang" => "en");
+		$_COOKIE = ["session" => "123456abcd", "lang" => "en"];
 
 		$request = new HTTPRequest();
-		$this->assertEquals(array("session" => "123456abcd", "lang" => "en"),$request->getCookieVars());
+		$this->assertEquals(["session" => "123456abcd", "lang" => "en"],$request->getCookieVars());
 		$this->assertEquals("en",$request->getCookie("lang"));
 
 		$request->setCookieVar("lang","fi");
 		$request->setCookieVar("check","1");
 		$this->assertEquals("fi",$request->getCookie("lang"));
-		$this->assertEquals(array("session" => "123456abcd", "lang" => "fi","check" => "1"),$request->getCookieVars());
+		$this->assertEquals(["session" => "123456abcd", "lang" => "fi","check" => "1"],$request->getCookieVars());
 	}
 
 	function test_server_port(){
@@ -706,7 +706,7 @@ class tc_http_request extends tc_base{
 	function test_getRemoteHostname(){
 		$_SERVER["REMOTE_ADDR"] = "127.0.0.1";
 		$request = new HTTPRequest();
-		$this->assertTrue(in_array($request->getRemoteHostname(),array("localhost.localdomain","localhost","ip6-localhost","ip4-localhost")),$request->getRemoteHostname());
+		$this->assertTrue(in_array($request->getRemoteHostname(),["localhost.localdomain","localhost","ip6-localhost","ip4-localhost"]),$request->getRemoteHostname());
 
 		$_SERVER["REMOTE_ADDR"] = "8.8.8.8";
 		$request = new HTTPRequest();
@@ -729,7 +729,7 @@ class tc_http_request extends tc_base{
 	* Porovna dve asociativni pole bez ohledu na poradi klicu.
 	*/
 	function _compare_arrays($template,$arry){
-		$this->assertEquals(sizeof($template),sizeof($arry));
+		$this->assertEquals(count($template),count($arry));
 
 		$arry_keys = array_keys($arry);
 

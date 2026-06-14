@@ -41,7 +41,7 @@ class _HTTPUtils{
 
 		$ar = explode(":",$auth);
 
-		if(sizeof($ar)<2){
+		if(count($ar)<2){
 			return;
 		}
 		

@@ -2,7 +2,7 @@
 class tc_http_cookie extends tc_base{
 
 	function test(){
-		$vals = array(
+		$vals = [
 			"name" => "session",
 			"value" => "1234abcd",
 			"expire" => 0,
@@ -10,7 +10,7 @@ class tc_http_cookie extends tc_base{
 			"domain" => "",
 			"secure" => false,
 			"httponly" => false,
-		);
+		];
 		$c = new HTTPCookie($vals["name"],$vals["value"]);
 		$this->_checkVals($c,$vals);
 
@@ -55,14 +55,14 @@ class tc_http_cookie extends tc_base{
 	}
 
 	function test_DefaultOptions(){
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"expire" => 0,
 			"path" => "/",
 			"domain" => "",
 			"secure" => false,
 			"httponly" => false,
 			"samesite" => ""
-		),HTTPCookie::DefaultOptions());
+		],HTTPCookie::DefaultOptions());
 		$this->assertEquals(false,HTTPCookie::DefaultOptions("secure"));
 		$this->assertEquals("",HTTPCookie::DefaultOptions("samesite"));
 
@@ -70,25 +70,25 @@ class tc_http_cookie extends tc_base{
 		$this->assertEquals(false,$c->isSecure());
 		$this->assertEquals("",$c->getSameSite());
 
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"expire" => 0,
 			"path" => "/",
 			"domain" => "",
 			"secure" => true,
 			"httponly" => false,
 			"samesite" => "Strict"
-		),HTTPCookie::DefaultOptions(array("secure" => true, "samesite" => "Strict")));
+		],HTTPCookie::DefaultOptions(["secure" => true, "samesite" => "Strict"]));
 		$this->assertEquals(true,HTTPCookie::DefaultOptions("secure"));
 		$this->assertEquals("Strict",HTTPCookie::DefaultOptions("samesite"));
 
-		$this->assertEquals(array(
+		$this->assertEquals([
 			"expire" => 0,
 			"path" => "/",
 			"domain" => "",
 			"secure" => true,
 			"httponly" => false,
 			"samesite" => "Strict"
-		),HTTPCookie::DefaultOptions());
+		],HTTPCookie::DefaultOptions());
 
 		$c = new HTTPCookie("test2","#2");
 		$this->assertEquals(true,$c->isSecure());
@@ -98,7 +98,7 @@ class tc_http_cookie extends tc_base{
 	function _checkVals($cookie,$vals){
 		foreach($vals as $k => $v){
 			$camel = String4::ToObject($k)->camelize();
-			$method = in_array($k,array("secure","httponly"))	? "is$camel" : "get$camel";
+			$method = in_array($k,["secure","httponly"])	? "is$camel" : "get$camel";
 
 			$this->assertEquals($v,$cookie->$method());
 		}

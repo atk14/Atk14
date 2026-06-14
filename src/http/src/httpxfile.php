@@ -28,12 +28,12 @@ class HTTPXFile extends HTTPUploadedFile{
 	 * @param array $options
 	 * - request HTTPRequest
 	 */
-	function __construct($options = array()){
+	function __construct($options = []){
 		global $HTTP_REQUEST;
 
-		$options += array(
+		$options += [
 			"request" => $HTTP_REQUEST
-		);
+		];
 
 		parent::__construct();
 
@@ -71,18 +71,18 @@ class HTTPXFile extends HTTPUploadedFile{
 	 * @param array $_ignore ignore it. it's present just for PHP7 compatibility because parent class has the same method with three params
 	 * @return HTTPXFile
 	 */
-	static function GetInstance($options = array(),$name = "file",$_ignore = array()){
+	static function GetInstance($options = [],$name = "file",$_ignore = []){
 		global $HTTP_REQUEST;
 
 		if(is_string($options)){
 			$name = $options;
-			$options = array();
+			$options = [];
 		}
 
-		$options += array(
+		$options += [
 			"name" => $name,
 			"request" => $HTTP_REQUEST,
-		);
+		];
 
 		$request = $options["request"];
 
@@ -102,7 +102,7 @@ class HTTPXFile extends HTTPUploadedFile{
 				}
 			}
 
-			$out = new HTTPXFile(array("request" => $request));
+			$out = new HTTPXFile(["request" => $request]);
 			$out->_writeTmpFile($content);
 			$out->_Name = $options["name"];
 			return $out;
@@ -174,19 +174,19 @@ class HTTPXFile extends HTTPUploadedFile{
 			$total_size = $crd["total_size"];
 
 			if($start_offset==0 && $end_offset+1==$total_size){
-				return array(1,1);
+				return [1,1];
 			}
 
 			if($start_offset==0){
-				return array(1,3);
+				return [1,3];
 			}
 
 			if($start_offset>0 && $end_offset+1<$total_size){
-				return array(2,3);
+				return [2,3];
 			}
 
 			if($start_offset>0 && $end_offset+1==$total_size){
-				return array(3,3);
+				return [3,3];
 			}
 
 			throw new Exception("HTTPXFile: Content range values out of expectations");
@@ -197,7 +197,7 @@ class HTTPXFile extends HTTPUploadedFile{
 		if(preg_match('/^(\d+)\/(\d+)$/',$ch,$matches)){
 			$order = $matches[1]+0;
 			$total = $matches[2]+0;
-			return array($order,$total);
+			return [$order,$total];
 		}
 	}
 
@@ -215,11 +215,11 @@ class HTTPXFile extends HTTPUploadedFile{
 			if(!($total_size>0 && $end_offset>$start_offset && $end_offset<$total_size)){ // sanitization never hurts
 				return null;
 			}
-			return array(
+			return [
 				"start_offset" => $start_offset,
 				"end_offset" => $end_offset,
 				"total_size" => $total_size,
-			);
+			];
 		}
 	}
 
@@ -249,10 +249,10 @@ class HTTPXFile extends HTTPUploadedFile{
 	 * - consider_remote_addr
 	 * @return string
 	 */
-	function getToken($options = array()){
-		$options += array(
+	function getToken($options = []){
+		$options += [
 			"consider_remote_addr" => true,
-		);
+		];
 
 		if($this->_Request->getHeader("X-File-Token")){ // legacy way
 			return substr(preg_replace('/[^a-z0-9_-]/i','',$this->_Request->getHeader("X-File-Token")),0,20); // little sanitization never harms

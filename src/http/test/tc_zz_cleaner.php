@@ -5,7 +5,7 @@ class tc_zz_cleaner extends tc_base{
 	function test(){
 		$this->_init_FILES();
 
-		foreach(HTTPUploadedFile::GetInstances(array("testing_mode" => true)) as $file){
+		foreach(HTTPUploadedFile::GetInstances(["testing_mode" => true]) as $file){
 			$file->cleanUp();
 		}
 

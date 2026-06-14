@@ -5,7 +5,7 @@ class tc_httpuploadedfile extends tc_base{
 		global $_FILES,$HTTP_RAW_POST_DATA,$HTTP_REQUEST;
 
 		$_FILES = null;
-		$this->assertEquals(array(),HTTPUploadedFile::GetInstances());
+		$this->assertEquals([],HTTPUploadedFile::GetInstances());
 
 		$this->assertNull($HTTP_REQUEST->getUploadedFile("file"));
 	}
@@ -14,10 +14,10 @@ class tc_httpuploadedfile extends tc_base{
 		$this->_init_FILES();
 
 		$files = HTTPUploadedFile::GetInstances();
-		$this->assertEquals(0,sizeof($files)); // zde se musi poznat, ze "podvrzene" soubory nejsou ve skutecnosti uploadnuty
+		$this->assertEquals(0,count($files)); // zde se musi poznat, ze "podvrzene" soubory nejsou ve skutecnosti uploadnuty
 
-		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
-		$this->assertEquals(2,sizeof($files));
+		$files = HTTPUploadedFile::GetInstances(["testing_mode" => true]);
+		$this->assertEquals(2,count($files));
 
 		$hlava = $files[0];
 		$this->assertTrue($hlava->isImage());
@@ -28,8 +28,8 @@ class tc_httpuploadedfile extends tc_base{
 
 		$GLOBALS["_FILES"]["hlava"]["error"] = 3; // The uploaded file was only partially uploaded.
 
-		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
-		$this->assertEquals(1,sizeof($files));
+		$files = HTTPUploadedFile::GetInstances(["testing_mode" => true]);
+		$this->assertEquals(1,count($files));
 		$this->assertEquals("Dousi.pdf",$files[0]->getFileName());
 
 		$this->assertEquals(15257,$files[0]->getFileSize());
@@ -39,7 +39,7 @@ class tc_httpuploadedfile extends tc_base{
 	function test_image_processing(){
 		$this->_init_FILES();
 
-		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
+		$files = HTTPUploadedFile::GetInstances(["testing_mode" => true]);
 
 		$hlava = $files[0];
 		$this->assertTrue($hlava->isImage());
@@ -60,7 +60,7 @@ class tc_httpuploadedfile extends tc_base{
 	function test_cleanUp(){
 		$this->_init_FILES();
 
-		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
+		$files = HTTPUploadedFile::GetInstances(["testing_mode" => true]);
 		$hlava = $files[0];
 		$dousi = $files[1];
 
@@ -82,7 +82,7 @@ class tc_httpuploadedfile extends tc_base{
 	function test_moveToTemp(){
 		$this->_init_FILES();
 
-		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
+		$files = HTTPUploadedFile::GetInstances(["testing_mode" => true]);
 		$hlava = $files[0];
 
 		$tmp_orig = $hlava->getTmpFilename();
@@ -124,7 +124,7 @@ class tc_httpuploadedfile extends tc_base{
 	function test_moveTo(){
 		$this->_init_FILES();
 
-		$files = HTTPUploadedFile::GetInstances(array("testing_mode" => true));
+		$files = HTTPUploadedFile::GetInstances(["testing_mode" => true]);
 		$hlava = $files[0];
 
 		$tmp_orig = $hlava->getTmpFilename();

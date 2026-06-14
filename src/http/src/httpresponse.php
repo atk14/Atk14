@@ -69,7 +69,7 @@ class HTTPResponse{
 	 * @access private
 	 * @ignore
 	 */
-	var $_Headers = array();
+	var $_Headers = [];
 	
 	/**
 	 * @access private
@@ -99,7 +99,7 @@ class HTTPResponse{
 	 * @access private
 	 * @ignore
 	 */
-	var $_HTTPCookies = array();
+	var $_HTTPCookies = [];
 
 	/**
 	 * Output buffer
@@ -177,7 +177,7 @@ class HTTPResponse{
 
 		//cerpano z
 		//http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
-		$status = array(
+		$status = [
 			// Informational 1xx
 			"100" => "Continue",
 			"101" => "Switching protocols",
@@ -246,7 +246,7 @@ class HTTPResponse{
 			"508" => "Loop Detected",
 			"510" => "Not Extended",
 			"511" => "Network Authentication Required",
-		);
+		];
 		return isset($status["$this->_StatusCode"]) ? $status["$this->_StatusCode"] : "Unknown";
 	}
 	
@@ -280,11 +280,11 @@ class HTTPResponse{
 	 * - **status** - explicitly set status code
 	 * - **moved_permanently** - causes status code to be set to 301
 	 */
-	function setLocation($url,$options = array()){
-		$options = array_merge(array(
+	function setLocation($url,$options = []){
+		$options = array_merge([
 			"moved_permanently" => false,
 			"status" => null,
-		),$options);
+		],$options);
 		settype($options["moved_permanently"],"boolean");
 		isset($options["status"]) && settype($options["status"],"integer");
 
@@ -620,7 +620,7 @@ class HTTPResponse{
 	 * @param string $value
 	 * @param array $options
 	 */
-	function addCookie($cookie_or_name,$value = null,$options = array()){
+	function addCookie($cookie_or_name,$value = null,$options = []){
 		if(is_a($cookie_or_name,"HTTPCookie")){
 			$cookie = $cookie_or_name;
 		}else{
@@ -639,7 +639,7 @@ class HTTPResponse{
 	 * @param string $value
 	 * @param array $options
 	 */
-	function setCookie($cookie_or_name,$value = null,$options = array()){
+	function setCookie($cookie_or_name,$value = null,$options = []){
 		$this->addCookie($cookie_or_name,$value,$options);
 	}
 
@@ -656,7 +656,7 @@ class HTTPResponse{
 	 * Cleares all previously set cookies.
 	 */
 	function clearCookies(){
-		$this->_HTTPCookies = array();
+		$this->_HTTPCookies = [];
 	}
 
 	/**
@@ -767,14 +767,14 @@ class HTTPResponse{
 
 			foreach($this->getCookies() as $cookie){
 				if(PHP_VERSION_ID >= 70300){
-					setcookie($cookie->getName(),$cookie->getValue(),array(
+					setcookie($cookie->getName(),$cookie->getValue(),[
 						"expires" => $cookie->getExpire(),
 						"path" => $cookie->getPath(),
 						"domain" => $cookie->getDomain(),
 						"secure" => $cookie->isSecure(),
 						"httponly" => $cookie->isHttponly(),
 						"samesite" => $cookie->getSameSite(),
-					));
+					]);
 				}else{
 					// Note that there is no samesite parameter for older versions of PHP.
 					setcookie($cookie->getName(),$cookie->getValue(),$cookie->getExpire(),$cookie->getPath(),$cookie->getDomain(),$cookie->isSecure(),$cookie->isHttponly());
@@ -817,7 +817,7 @@ class HTTPResponse{
 		// Redirection
 		$_location = $http_response->getLocation();
 		if(isset($_location) && strlen($_location)>0){
-			$this->setLocation($_location,array("moved_permanently" => $http_response->_LocationMovedPermanently, "status" => $this->_LocationMovedWithStatus));
+			$this->setLocation($_location,["moved_permanently" => $http_response->_LocationMovedPermanently, "status" => $this->_LocationMovedWithStatus]);
 		}
 
 		// HTTP status code

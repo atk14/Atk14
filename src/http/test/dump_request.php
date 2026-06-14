@@ -10,10 +10,10 @@ require_once(dirname(__FILE__)."/../load.php");
 $request = &$HTTP_REQUEST;
 $response = &$HTTP_RESPONSE;
 
-$result = array(
+$result = [
 	"content-type" => $request->getContentType(),
 	"content-charset" => $request->getContentCharset(),
-);
+];
 
 $response->setContentType("text/plain");
 $response->write(miniYAML::Dump($result));

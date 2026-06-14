@@ -8,13 +8,13 @@ class tc_http_response extends tc_base{
 		$response->setLocation("http://www.domenka.cz/");
 		$this->assertEquals(302,$response->getStatusCode()); 
 
-		$response->setLocation("http://www.domenka.cz/",array("moved_permanently" => true));
+		$response->setLocation("http://www.domenka.cz/",["moved_permanently" => true]);
 		$this->assertEquals(301,$response->getStatusCode()); 
 
-		$response->setLocation("http://www.domenka.cz/",array("status" => 301));
+		$response->setLocation("http://www.domenka.cz/",["status" => 301]);
 		$this->assertEquals(301,$response->getStatusCode()); 
 
-		$response->setLocation("http://www.domenka.cz/",array("status" => 303));
+		$response->setLocation("http://www.domenka.cz/",["status" => 303]);
 		$this->assertEquals(303,$response->getStatusCode()); 
 
 		$response->setLocation(null); // vynulovani presmerovani
@@ -77,7 +77,7 @@ class tc_http_response extends tc_base{
 		$this->assertEquals(302,$response->getStatusCode());
 		$this->assertTrue($response->redirected());
 
-		$response->setLocation("/new-uri/",array("moved_permanently" => true));
+		$response->setLocation("/new-uri/",["moved_permanently" => true]);
 		$this->assertEquals(301,$response->getStatusCode());
 		$this->assertTrue($response->redirected());
 	}
@@ -98,10 +98,10 @@ class tc_http_response extends tc_base{
 		$this->assertEquals("789",$response->getHeader("X-User-Id"));
 		$this->assertEquals("789",$response->getHeader("x-user-id"));
 
-		$response->setHeaders(array(
+		$response->setHeaders([
 			"X-User-Id" => "333",
 			"X-Powered-By" => "ATK14 Framework",
-		));
+		]);
 
 		$this->assertEquals("333",$response->getHeader("X-User-Id"));
 		$this->assertEquals("ATK14 Framework",$response->getHeader("X-Powered-By"));
@@ -114,14 +114,14 @@ class tc_http_response extends tc_base{
 
 		// setting cookies
 		$resp->addCookie(new HTTPCookie("check","1"));
-		$resp->addCookie("last_logged_at","2016-02-03",array("expire" => $far_future));
+		$resp->addCookie("last_logged_at","2016-02-03",["expire" => $far_future]);
 		// using alias
 		$resp->setCookie(new HTTPCookie("login","john"));
-		$resp->setCookie("last_logged_as","bob",array("expire" => $far_future + $day));
+		$resp->setCookie("last_logged_as","bob",["expire" => $far_future + $day]);
 
 		//
 		$cookies = $resp->getCookies();
-		$this->assertEquals(4,sizeof($cookies));
+		$this->assertEquals(4,count($cookies));
 
 		$this->assertEquals("check",$cookies[0]->getName());
 		$this->assertEquals("1",$cookies[0]->getValue());
@@ -138,9 +138,9 @@ class tc_http_response extends tc_base{
 		$this->assertEquals($far_future + $day,$cookies[3]->getExpire());
 
 		// clearing cookies
-		$this->assertEquals(4,sizeof($resp->getCookies()));
+		$this->assertEquals(4,count($resp->getCookies()));
 		$resp->clearCookies();
-		$this->assertEquals(0,sizeof($resp->getCookies()));
+		$this->assertEquals(0,count($resp->getCookies()));
 	}
 
 	function test_concatenate(){
@@ -151,8 +151,8 @@ class tc_http_response extends tc_base{
 		$final_resp->setHeader("X-Powered-By","PHP");
 		//
 		$this->assertEquals("text/html",$final_resp->getContentType());
-		$this->assertEquals(1,sizeof($final_resp->getCookies()));
-		$this->assertEquals(1,sizeof($final_resp->getHeaders()));
+		$this->assertEquals(1,count($final_resp->getCookies()));
+		$this->assertEquals(1,count($final_resp->getHeaders()));
 		$this->assertEquals(200,$final_resp->getStatusCode());
 		$this->assertEquals("OK",$final_resp->getStatusMessage());
 
@@ -171,16 +171,16 @@ class tc_http_response extends tc_base{
 		$this->assertEquals("text/plain",$final_resp->getContentType());
 		//
 		$cookies = $final_resp->getCookies();
-		$this->assertEquals(2,sizeof($cookies));
+		$this->assertEquals(2,count($cookies));
 		$this->assertEquals($cookies[0]->getName(),"check");
 		$this->assertEquals($cookies[1]->getName(),"secret");
 		//
 		$headers = $final_resp->getHeaders();
-		$this->assertEquals(2,sizeof($headers));
-		$this->assertEquals(array(
+		$this->assertEquals(2,count($headers));
+		$this->assertEquals([
 			"X-Powered-By" => "ATK14 Framework",
 			"X-Forwarded-For" => "1.2.3.4",
-		),$headers);
+		],$headers);
 
 		// _OutputBuffer_Flush_Started - a kind of testing :)
 		$final_resp = new HTTPResponse();
@@ -216,14 +216,14 @@ class tc_http_response extends tc_base{
 		$this->assertEquals("concatenated",$f->getContent());
 
 		$resp = new HTTPResponse();
-		$resp->setLocation("/new-perma-uri/",array("moved_permanently" => true));
+		$resp->setLocation("/new-perma-uri/",["moved_permanently" => true]);
 		$f = $this->_fetch_response($resp);
 		$this->assertEquals(301,$f->getStatusCode());
 		$this->assertEquals("/new-perma-uri/",$f->getHeaderValue("Location"));
 
 		$main_resp = new HTTPResponse();
 		$resp = new HTTPResponse();
-		$resp->setLocation("/new-perma-uri-concat/",array("moved_permanently" => true));
+		$resp->setLocation("/new-perma-uri-concat/",["moved_permanently" => true]);
 		$main_resp->concatenate($resp);
 		$main_resp->write("concatenated");
 		$f = $this->_fetch_response($main_resp);
@@ -296,7 +296,7 @@ TEST',$output);
 	function _fetch_response($response){
 		$ser = serialize($response);
 		Files::WriteToFile("response.ser",$ser,$err,$err_str);
-		$fetcher = new UrlFetcher("http://127.0.0.1/sources/http/test/response.php",array("max_redirections" => 0));
+		$fetcher = new UrlFetcher("http://127.0.0.1/sources/http/test/response.php",["max_redirections" => 0]);
 		//unlink("response.ser"); // s timto smazanim to nefunguje...!?
 		return $fetcher;
 	}

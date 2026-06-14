@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.9] - 2026-06-14
+
+* eaf1d54 - Fixes
+* Source code cleaned
+
 ## [0.8.8] - 2026-02-15
 
 * e685a83 - Added parameter $error_str to HTTPUploadedFile::moveTo($filename,&$error_str = null)

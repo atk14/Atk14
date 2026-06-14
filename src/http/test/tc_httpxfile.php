@@ -17,7 +17,7 @@ class tc_httpxfile extends tc_base{
 
 		$this->assertNotNull($file = HTTPXFile::GetInstance());
 		$this->assertEquals("hlavicka.jpg",$file->getFileName());
-		$this->assertEquals("hlavička.jpg",$file->getFileName(array("sanitize" => false)));
+		$this->assertEquals("hlavička.jpg",$file->getFileName(["sanitize" => false]));
 		$this->assertEquals(false,$file->chunkedUpload());
 		$this->assertEquals(21727,$file->getFileSize());
 		$this->assertEquals(21727,$file->getTotalFileSize());
@@ -104,8 +104,8 @@ class tc_httpxfile extends tc_base{
 		$req2->setHeader("Content-Range","bytes 200-255/256");
 		$req2->setRawPostData(Files::GetFileContent(__DIR__ . "/hlava.jpg"));
 
-		$file1 = HTTPXFile::GetInstance(array("request" => $req1));
-		$file2 = HTTPXFile::GetInstance(array("request" => $req2));
+		$file1 = HTTPXFile::GetInstance(["request" => $req1]);
+		$file2 = HTTPXFile::GetInstance(["request" => $req2]);
 
 		$this->assertEquals(32,strlen($file1->getToken()));
 		$this->assertTrue($file1->getToken()==$file2->getToken());
@@ -117,16 +117,16 @@ class tc_httpxfile extends tc_base{
 		$this->assertTrue($file1->getToken()==$file2->getToken());
 
 		$req2->setHeader("Content-Disposition",'attachment; filename="hlava.png"'); // different filename
-		$file2 = HTTPXFile::GetInstance(array("request" => $req2));
+		$file2 = HTTPXFile::GetInstance(["request" => $req2]);
 		$this->assertTrue($file1->getToken()!=$file2->getToken());
 
 		$req2->setHeader("Content-Disposition",'attachment; filename="hlava.jpg"');
-		$file2 = HTTPXFile::GetInstance(array("request" => $req2));
+		$file2 = HTTPXFile::GetInstance(["request" => $req2]);
 		$this->assertTrue($file1->getToken()==$file2->getToken());
 
 		$req2->setRemoteAddr("11.22.33.44"); // different remote address
 		$this->assertTrue($file1->getToken()!=$file2->getToken());
-		$this->assertTrue($file1->getToken(array("consider_remote_addr" => false))==$file2->getToken(array("consider_remote_addr" => false)));
+		$this->assertTrue($file1->getToken(["consider_remote_addr" => false])==$file2->getToken(["consider_remote_addr" => false]));
 
 		$req2->setRemoteAddr("10.20.30.40");
 		$this->assertTrue($file1->getToken()==$file2->getToken());
@@ -139,13 +139,13 @@ class tc_httpxfile extends tc_base{
 		$_FILES = null;
 
 		$HTTP_REQUEST->setMethod("post");
-		$HTTP_REQUEST->_HTTPRequest_headers = array("X-File-Name" => "hlava.jpg");
+		$HTTP_REQUEST->setHeader("X-File-Name","hlava.jpg");
 		$this->assertEquals("hlava.jpg",$HTTP_REQUEST->getHeader("x-file-name"));
 
 		$GLOBALS["HTTP_RAW_POST_DATA"] = Files::GetFileContent("hlava.jpg",$err,$err_str);
 		$this->assertTrue(strlen($HTTP_REQUEST->getRawPostData())>0);
 
-		$xfile = HTTPXFile::GetInstance(array("name" => "file.jpg"));
+		$xfile = HTTPXFile::GetInstance(["name" => "file.jpg"]);
 		$this->assertTrue(is_object($xfile));
 		$this->assertFalse($xfile->chunkedUpload());
 		$xfile->cleanUp();
@@ -168,8 +168,7 @@ class tc_httpxfile extends tc_base{
 		// cisteni
 		$HTTP_REQUEST->setMethod("get");
 		$HTTP_RAW_POST_DATA = null;
-		$HTTP_REQUEST->_HTTPRequest_headers = array();
-		$this->assertNull(HTTPXFile::GetInstance(array("name" => "file.jpg")));
+		$this->assertNull(HTTPXFile::GetInstance(["name" => "file.jpg"]));
 	}
 
 	function test_content_length(){
