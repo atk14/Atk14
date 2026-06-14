@@ -8,7 +8,7 @@ define("TEST",true);
 define("TEMP",dirname(__FILE__)."/temp/");
 define("DEFAULT_CHARSET","UTF-8");
 
-include("../httpuploadedfile.php");
+include("../src/httpuploadedfile.php");
 include("../../stringbuffer/load.php");
 include("../../string4/load.php");
 include("../../url_fetcher/load.php");
