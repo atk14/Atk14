@@ -55,7 +55,7 @@ defined("URL_FETCHER_VERIFY_PEER") || define("URL_FETCHER_VERIFY_PEER",true);
  */
 class UrlFetcher {
 
-	const VERSION = "1.8.9";
+	const VERSION = "1.8.10";
 
 	const READ_POLL_INTERVAL_US = 20000;   // 20ms between read attempts
 	const WRITE_RETRY_INTERVAL_US = 10000; // 10ms between write attempts
@@ -756,7 +756,7 @@ class UrlFetcher {
 		// detect TCP port number, defaults to 80 or 443 for SSL
 		if(preg_match("/^(.+):([0-9]{1,})$/",$_server,$matches)){
 			$_server = $matches[1];
-			$this->_Port = (integer)$matches[2];
+			$this->_Port = (int)$matches[2];
 		}else{
 			$this->_Port = $this->_Ssl ? 443 : 80;
 		}

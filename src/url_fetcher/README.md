@@ -1,6 +1,8 @@
 UrlFetcher
 ==========
 
+[![Tests](https://github.com/atk14/UrlFetcher/actions/workflows/tests.yml/badge.svg)](https://github.com/atk14/UrlFetcher/actions/workflows/tests.yml)
+
 UrlFetcher is a PHP class providing methods to make HTTP requests.
 
 - GET, POST, PUT, DELETE requests

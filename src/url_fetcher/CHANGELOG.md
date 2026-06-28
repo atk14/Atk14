@@ -3,6 +3,12 @@ Change Log
 
 All notable changes to this project will be documented in this file.
 
+
+[1.8.10] - 2026-06-26
+---------------------
+
+* 0d3e672 - Deprecation resolved: casting to an integer with (int)
+
 [1.8.9] - 2026-04-15
 --------------------
 
