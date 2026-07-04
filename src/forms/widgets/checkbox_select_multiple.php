@@ -14,6 +14,7 @@ class CheckboxSelectMultiple extends SelectMultiple
 	var $label_attrs;
 	var $bootstrap4_customized;
 	var $wrap_attrs;
+	var $list_attrs;
 	protected $_my_str_values;
 
 	/**
@@ -28,6 +29,7 @@ class CheckboxSelectMultiple extends SelectMultiple
 			"input_attrs" => array(),
 			"label_attrs" => array(),
 			"wrap_attrs" => array(),
+			"list_attrs" => array(),
 			"bootstrap4" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP4,
 			"bootstrap5" => FORMS_MARKUP_TUNED_FOR_BOOTSTRAP5,
 		);
@@ -47,11 +49,16 @@ class CheckboxSelectMultiple extends SelectMultiple
 			);
 		}
 
+		$options["list_attrs"] += [
+			"class" => $options["bootstrap4_customized"] || $options["bootstrap5_customized"] ? "list list--checkboxes" : "checkboxes",
+		];
+
 		$this->escape_labels = $options["escape_labels"];
 		$this->bootstrap4_customized = $options["bootstrap4_customized"];
 		$this->input_attrs = $options["input_attrs"];
 		$this->label_attrs = $options["label_attrs"];
 		$this->wrap_attrs = $options["wrap_attrs"];
+		$this->list_attrs = $options["list_attrs"];
 		parent::__construct($options);
 	}
 
@@ -70,7 +77,8 @@ class CheckboxSelectMultiple extends SelectMultiple
 		$final_attrs = $this->build_attrs($this->input_attrs,$options['attrs']);
 		$output = array();
 
-		$output[] = ($this->bootstrap4 || $this->bootstrap5) ? '<ul class="list list--checkboxes">' : '<ul class="checkboxes">';
+		$list_attrs = flatatt($this->list_attrs);
+		$output[] = ($this->bootstrap4 || $this->bootstrap5) ? "<ul{$list_attrs}>" : "<ul{$list_attrs}>";
 
 		$choices = my_array_merge(array($this->choices, $options['choices']));
 		$str_values = array();
