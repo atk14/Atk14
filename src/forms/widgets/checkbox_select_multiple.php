@@ -50,7 +50,7 @@ class CheckboxSelectMultiple extends SelectMultiple
 		}
 
 		$options["list_attrs"] += [
-			"class" => $options["bootstrap4_customized"] || $options["bootstrap5_customized"] ? "list list--checkboxes" : "checkboxes",
+			"class" => $options["bootstrap4_customized"] ? "list list--checkboxes" : "checkboxes",
 		];
 
 		$this->escape_labels = $options["escape_labels"];
