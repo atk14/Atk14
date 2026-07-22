@@ -27,6 +27,7 @@ class TcFinder extends TcBase{
 
 		$records = $finder->getRecords();
 		$this->assertEquals(3,$finder->getTotalAmount());
+		$this->assertEquals(false,$finder->hardLimitReached());
 		$this->assertEquals(1,$finder->getRecordsDisplayed());
 		$this->assertEquals(1,count($records));
 		$this->assertEquals(1,count($finder));
@@ -129,6 +130,7 @@ class TcFinder extends TcBase{
 		$this->assertEquals(0,count($finder));
 		$this->assertEquals(0,$finder->getTotalAmount());
 		$this->assertEquals(0,$finder->getRecordsDisplayed());
+		$this->assertEquals(false,$finder->hardLimitReached());
 
 		$this->assertEquals(true,$finder->atBeginning());
 		$this->assertEquals(true,$finder->atEnd());

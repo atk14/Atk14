@@ -207,6 +207,10 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 		return $this->getRecordsCount();
 	}
 
+	function hardLimitReached(){
+		return false;
+	}
+
 	/**
 	 * Checks if the returned recordset was empty.
 	 *
