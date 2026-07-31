@@ -420,7 +420,13 @@ function _test_runner($filename,$DIR){
 		);
 	}
 
-	$result = $suite->run();
+	if(class_exists('PHPUnit\Framework\TestResult')){
+		$result = new PHPUnit\Framework\TestResult;
+	}else{
+		$result = new PHPUnit_Framework_TestResult;
+	}
+	$result->addListener($printer);
+	$suite->run($result);
 
 	$printer->printResult($result);
 

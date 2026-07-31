@@ -715,8 +715,11 @@ class HTTPResponse{
 	 * In contrary to flush() method it also outputs the Content-Length HTTP header if it is possible.
 	 *
 	 */
-	function flushAll(){
-		if(!$this->_OutputBuffer_Flush_Started){
+	function flushAll($options = []){
+		$options += [
+			"set_content_length_header" => true,
+		];
+		if(!$this->_OutputBuffer_Flush_Started && $options["set_content_length_header"]){
 			$this->setHeader("Content-Length",$this->getContentLength());
 			$this->_flushHeaders();
 		}
