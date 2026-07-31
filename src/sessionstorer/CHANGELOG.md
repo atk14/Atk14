@@ -3,6 +3,10 @@ Change Log
 
 All notable changes to SessionStorer will be documented in this file.
 
+## [1.2.2] - 2026-04-27
+
+* bc77cd0 - Method SessionStorer::DeleteOldSessions() optimized
+
 ## [1.2.1] - 2026-04-25
 
 * ab7dab2 - Deep cleaning improved
