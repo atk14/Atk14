@@ -1,5 +1,6 @@
 <?php
 class TcSessionStorer extends TcBase{
+
 	function test_different_sections_on_same_session(){
 		global $_COOKIE;
 		$_COOKIE = array();
@@ -422,6 +423,216 @@ class TcSessionStorer extends TcBase{
 		HTTPCookie::DefaultOptions($defaults);
 	}
 
+	function test_disable_check_cookie(){
+		global $_COOKIE;
+
+		$_COOKIE = [];
+		$s = new SessionStorer([
+			"disable_check_cookie" => false,
+		]);
+
+		$sent_cookies = $s->getSentCookies();
+		$this->assertEquals(1,sizeof($sent_cookies));
+		$this->assertEquals("check",$sent_cookies[0][0]);
+
+		$_COOKIE = [];
+		$s = new SessionStorer([
+			"disable_check_cookie" => true,
+		]);
+
+		$sent_cookies = $s->getSentCookies();
+		$this->assertEquals(0,sizeof($sent_cookies));
+	}
+
+	function test_cookie_data_count_cleanup(){
+		global $_COOKIE;
+
+		$opts = ["session_name" => "c_session", "cookie_only" => true, "disable_check_cookie" => true];
+
+		// Write large data — needs multiple cookies
+		$_COOKIE = [];
+		$s = new SessionStorer($opts);
+		$s->writeValue("big",str_repeat("a",10000));
+		$sent = $s->getSentCookies();
+		$this->assertTrue(sizeof($sent)>1);
+		$this->_add_cookies($sent,$_COOKIE);
+
+		// Shrink data in a new request — only cookie 0 needed
+		$s2 = new SessionStorer($opts);
+		$s2->writeValue("big","small");
+		$sent2 = $s2->getSentCookies();
+
+		$sent2_names = array_column($sent2,0);
+
+		// cookie 0 must be set with new data
+		$this->assertTrue(in_array("c_session0",$sent2_names));
+
+		// cookies 1, 2, ... from previous write must be explicitly cleared (value = "")
+		$prev_cookie_count = sizeof($sent);
+		for($i=1;$i<$prev_cookie_count;$i++){
+			$found = false;
+			foreach($sent2 as $item){
+				if($item[0]==="c_session{$i}" && $item[1]===""){
+					$found = true;
+					break;
+				}
+			}
+			$this->assertTrue($found,"Cookie c_session{$i} should be cleared");
+		}
+
+		// Verify data is correct on next request
+		$this->_add_cookies($sent2,$_COOKIE);
+		$s3 = new SessionStorer($opts);
+		$this->assertEquals("small",$s3->readValue("big"));
+	}
+
+	function test_cookie_only_expiration(){
+		global $_COOKIE;
+
+		$opts = ["session_name" => "c_session", "cookie_only" => true, "disable_check_cookie" => true, "current_time" => CURRENT_TIME];
+
+		$_COOKIE = [];
+		$s = new SessionStorer($opts);
+		$s->writeValue("permanent","here forever");
+		$s->writeValue("temporary","gone soon", 60); // expires in 60 seconds
+		$this->_add_cookies($s->getSentCookies(),$_COOKIE);
+
+		// before expiration - both values readable
+		$s2 = new SessionStorer($opts);
+		$this->assertEquals("here forever",$s2->readValue("permanent"));
+		$this->assertEquals("gone soon",$s2->readValue("temporary"));
+
+		// after expiration - only permanent value readable
+		$s3 = new SessionStorer(array_merge($opts,["current_time" => CURRENT_TIME + 120]));
+		$this->assertEquals("here forever",$s3->readValue("permanent"));
+		$this->assertEquals(null,$s3->readValue("temporary"));
+
+		// s3 rewrites cookies to drop the expired entry even without an explicit writeValue
+		$this->assertTrue(sizeof($s3->getSentCookies())>0);
+		$this->_add_cookies($s3->getSentCookies(),$_COOKIE);
+
+		$s4 = new SessionStorer(array_merge($opts,["current_time" => CURRENT_TIME + 120]));
+		$this->assertEquals("here forever",$s4->readValue("permanent"));
+		$this->assertEquals(null,$s4->readValue("temporary"));
+	}
+
+	function test_cookie_data_cleared_when_all_values_deleted(){
+		global $_COOKIE;
+
+		$opts = ["session_name" => "c_session", "cookie_only" => true, "disable_check_cookie" => true];
+
+		// Write large data spanning multiple cookies
+		$_COOKIE = [];
+		$s = new SessionStorer($opts);
+		$s->writeValue("big",str_repeat("a",10000));
+		$sent = $s->getSentCookies();
+		$this->assertTrue(sizeof($sent)>1);
+		$this->_add_cookies($sent,$_COOKIE);
+
+		// In a new request, delete all values
+		$s2 = new SessionStorer($opts);
+		$s2->writeValue("big",null);
+		$sent2 = $s2->getSentCookies();
+
+		// All data cookies must be explicitly cleared (value = "")
+		$prev_count = sizeof($sent);
+		for($i=0;$i<$prev_count;$i++){
+			$found = false;
+			foreach($sent2 as $item){
+				if($item[0]==="c_session{$i}" && $item[1]===""){
+					$found = true;
+					break;
+				}
+			}
+			$this->assertTrue($found,"Cookie c_session{$i} should be cleared");
+		}
+
+		// Next request sees no values
+		$this->_add_cookies($sent2,$_COOKIE);
+		$s3 = new SessionStorer($opts);
+		$this->assertEquals(null,$s3->readValue("big"));
+	}
+
+	function test_cookie_only(){
+		global $_COOKIE;
+
+		$_COOKIE = [];
+		$s = new SessionStorer([
+			"session_name" => "c_session",
+			"cookie_only" => true,
+			"disable_check_cookie" => true,
+		]);
+		$this->assertEquals(0,sizeof($s->getSentCookies())); // Not even a check cookie is set
+
+		$s->writeValue("fruit","orange");
+		$this->assertEquals(1,sizeof($s->getSentCookies()));
+
+		$s->writeValue("count",42);
+		$this->assertEquals(2,sizeof($s->getSentCookies())); // Another writeValue call sets the same cookie with both values `fruit` and `count`
+
+		$this->_add_cookies($s->getSentCookies(),$_COOKIE);
+
+		$this->assertEquals(1,sizeof($_COOKIE));
+
+		// values are readable within the same instance
+		$this->assertEquals("orange",$s->readValue("fruit"));
+		$this->assertEquals(42,$s->readValue("count"));
+
+		// values survive into the next request via cookies
+		$s2 = new SessionStorer([
+			"session_name" => "c_session",
+			"cookie_only" => true,
+			"disable_check_cookie" => true,
+		]);
+
+		$this->assertEquals("orange",$s2->readValue("fruit"));
+		$this->assertEquals(42,$s2->readValue("count"));
+		$s2->writeValue("long_text",str_repeat("a",10000));
+
+		$this->assertTrue(sizeof($s2->getSentCookies())>5);
+
+		$this->_add_cookies($s2->getSentCookies(),$_COOKIE);
+
+		$s3 = new SessionStorer([
+			"session_name" => "c_session",
+			"cookie_only" => true,
+			"disable_check_cookie" => true,
+		]);
+
+		$this->assertEquals("orange",$s3->readValue("fruit"));
+		$this->assertEquals(42,$s3->readValue("count"));
+		$this->assertEquals(str_repeat("a",10000),$s3->readValue("long_text"));
+
+		$s3->writeValue("long_text","b");
+
+		$this->_add_cookies($s3->getSentCookies(),$_COOKIE);
+
+		$s4 = new SessionStorer([
+			"session_name" => "c_session",
+			"cookie_only" => true,
+			"disable_check_cookie" => true,
+		]);
+
+		$this->assertEquals("orange",$s4->readValue("fruit"));
+		$this->assertEquals(42,$s4->readValue("count"));
+		$this->assertEquals("b",$s4->readValue("long_text"));
+
+		$this->assertEquals(0,sizeof($s4->getSentCookies()));
+		$this->_add_cookies($s4->getSentCookies(),$_COOKIE);
+
+		$s5 = new SessionStorer([
+			"session_name" => "c_session",
+			"cookie_only" => true,
+			"disable_check_cookie" => true,
+		]);
+
+		$this->assertEquals("orange",$s5->readValue("fruit"));
+		$this->assertEquals(42,$s5->readValue("count"));
+		$this->assertEquals("b",$s5->readValue("long_text"));
+
+		// nothing was written to the database
+		$this->assertEquals(0,$this->dbmole->selectInt("SELECT COUNT(*) FROM sessions"));
+	}
 
 	function _add_cookies($send_cookies,&$store){
 		foreach($send_cookies as $item){

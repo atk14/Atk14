@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to SessionStorer will be documented in this file.
 
+## [1.3] - 2026-08-04
+
+* Cookie data storage rework - added new option cookie_only in the constructor
+* Added new options in SessionStorer`s constructor: cookie_only and disable_check_cookie
+
 ## [1.2.2] - 2026-04-27
 
 * bc77cd0 - Method SessionStorer::DeleteOldSessions() optimized
