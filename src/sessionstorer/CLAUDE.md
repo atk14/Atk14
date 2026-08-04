@@ -28,7 +28,7 @@ Each test method wraps in a transaction that is rolled back in `_tearDown()` (se
 ### Hybrid cookie/database storage
 
 Values are stored in two stages:
-1. **Before a valid session cookie exists**: all current values are serialized (via `Packer::Pack`) and written into one or more numbered cookies (`_ses_0`, `_ses_1`, …) as a temporary measure. The first cookie carries a length prefix (`<length>:<data>`); additional cookies continue the data. This is a single-request measure — the cookies are cleared at the start of the next request once a DB session is established.
+1. **Before a valid session cookie exists**: all current values are serialized (via `Packer::Pack`) and written into one or more numbered cookies (`_ses_0`, `_ses_1`, …) as a temporary measure. The first cookie carries a length prefix (`<length>-<data>`); additional cookies continue the data. This is a single-request measure — the cookies are cleared at the start of the next request once a DB session is established.
 2. **After a database session is established**: values migrate from cookies to the `session_values` table, and the session is identified by a cookie containing `{session_id}.{security_token}`.
 
 ### Cookie-only mode

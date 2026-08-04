@@ -58,7 +58,7 @@ $session->writeValue("step", 2);
 $step = $session->readValue("step"); // 2
 ```
 
-Values are packed into one or more numbered cookies (`cart0`, `cart1`, …) with a length prefix in the first cookie. The packed data is encrypted and signed via `Packer::Pack()`, making it resistant to tampering by the client. Expired values are automatically removed from cookies on the next read.
+Values are packed into one or more numbered cookies (`cart0`, `cart1`, …); the first cookie carries a length prefix separated by a dash (e.g. `1234-<data>`). The packed data is encrypted and signed via `Packer::Pack()`, making it resistant to tampering by the client. Expired values are automatically removed from cookies on the next read.
 
 By default, SessionStorer sends a separate check cookie to detect whether the client has cookies enabled. This can be suppressed with `disable_check_cookie => true` — useful when you know cookies are supported because another cookie is already being set elsewhere:
 

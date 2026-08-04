@@ -620,7 +620,7 @@ class SessionStorer{
 		$name = $this->getCookieName();
 
 		$cookie = $request->getCookie("{$name}0");
-		if(!$cookie || !preg_match('/^([1-9][0-9]*):(.+)$/',$cookie,$matches)){
+		if(!$cookie || !preg_match('/^([1-9][0-9]*)-(.+)$/',$cookie,$matches)){
 			return [];
 		}
 
@@ -1250,7 +1250,7 @@ class SessionStorer{
 			$data_str = Packer::Pack($data,["extra_salt" => "$class_name/$this->_SessionName"]);
 			$index = 0;
 			while(strlen($data_str)){
-				$cookie_val = $index === 0 ? strlen($data_str).":" : "";
+				$cookie_val = $index === 0 ? strlen($data_str)."-" : "";
 				$length = $COOKIE_MAX_LENGTH - strlen($cookie_val);
 				$cookie_val .= substr($data_str,0,$length);
 

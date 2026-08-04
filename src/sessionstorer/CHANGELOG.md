@@ -3,6 +3,10 @@ Change Log
 
 All notable changes to SessionStorer will be documented in this file.
 
+## [1.3.1] - 2026-08-04
+
+* bd05374 - [Cookie data storage rework] Use dash instead of colon as length prefix separator in cookie data
+
 ## [1.3] - 2026-08-04
 
 * Cookie data storage rework - added new option cookie_only in the constructor
