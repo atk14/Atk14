@@ -1,5 +1,5 @@
 <?php
-class tc_url_fetcher extends tc_base{
+class TcUrlFetcher extends TcBase{
 
 	function test(){
 		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing/dungeon-master.png");
@@ -300,5 +300,21 @@ class tc_url_fetcher extends tc_base{
 	function test_url_without_ending_slash(){
 		$f = new UrlFetcher("https://www.atk14.net");
 		$this->assertTrue($f->found());
+	}
+
+	function test_ip_address(){
+		$ip = gethostbyname("jarek.plovarna.cz");
+		$this->assertNotEquals("jarek.plovarna.cz",$ip); // sanity check: resolution actually happened
+
+		// connecting via an explicit IP address still works over https;
+		// Host header / SNI / certificate verification stays tied to the original hostname
+		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing/dungeon-master.png",array("ip_address" => $ip));
+		$this->assertTrue($f->found());
+		$this->assertEquals(11462,strlen($f->getContent()));
+
+		// a bogus IP address proves the option actually redirects the connection, rather than being ignored
+		$f = new UrlFetcher("https://jarek.plovarna.cz/unit-testing/dungeon-master.png",array("ip_address" => "127.0.0.1"));
+		@$this->assertFalse($f->found());
+		$this->assertTrue($f->errorOccurred());
 	}
 }

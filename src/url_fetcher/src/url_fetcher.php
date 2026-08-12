@@ -55,7 +55,7 @@ defined("URL_FETCHER_VERIFY_PEER") || define("URL_FETCHER_VERIFY_PEER",true);
  */
 class UrlFetcher {
 
-	const VERSION = "1.8.10";
+	const VERSION = "1.8.11";
 
 	const READ_POLL_INTERVAL_US = 20000;   // 20ms between read attempts
 	const WRITE_RETRY_INTERVAL_US = 10000; // 10ms between write attempts
@@ -175,6 +175,15 @@ class UrlFetcher {
 
 	protected $_Proxy = "";
 
+	/**
+	 * IP address to connect to instead of resolving it from the URL's hostname.
+	 *
+	 * The Host header (and, for HTTPS, SNI/certificate verification) still uses the original hostname.
+	 *
+	 * @var string
+	 */
+	protected $_IpAddress = "";
+
 	protected $_ForceContentLength = null;
 
 	/**
@@ -215,6 +224,7 @@ class UrlFetcher {
 	 * - **additional_headers** -
 	 * - **max_redirections** [default: 5]
 	 * - **user_agent** - content of User-Agent http header [default: "UrlFetcher/".self::VERSION]
+	 * - **ip_address** - IP address to connect to instead of resolving it from the URL's hostname; Host header and SSL certificate verification still use the original hostname [default: ""]
 	 */
 	function __construct($url = "", $options = array()){
 		$this->_reset();
@@ -231,6 +241,7 @@ class UrlFetcher {
 			"verify_peer" => URL_FETCHER_VERIFY_PEER,
 			"verify_peer_name" => true,
 			"proxy" => "", // e.g. "tcp://127.0.0.1:8118"
+			"ip_address" => "", // e.g. "192.0.2.1"
 			"socket_timeout" => $this->_SocketTimeout,
 			"read_timeout" => $this->_ReadTimeout,
 		);
@@ -245,6 +256,7 @@ class UrlFetcher {
 		$this->_VerifyPeer = $options["verify_peer"];
 		$this->_VerifyPeerName = $options["verify_peer_name"];
 		$this->_Proxy = $options["proxy"];
+		$this->_IpAddress = $options["ip_address"];
 		$this->_SocketTimeout = (float)$options["socket_timeout"];
 		$this->_ReadTimeout = (float)$options["read_timeout"];
 	}
@@ -839,11 +851,19 @@ class UrlFetcher {
 
 		if(!$this->_Proxy){
 
+			$_connect_host = strlen($this->_IpAddress) ? $this->_IpAddress : $this->_Server;
+			if(strpos($_connect_host,":")!==false){ $_connect_host = "[$_connect_host]"; } // IPv6 address
+
+			if($this->_Ssl && strlen($this->_IpAddress)){
+				// keep SNI / certificate verification tied to the original hostname, not the IP we actually connect to
+				$context_options["ssl"]["peer_name"] = $this->_Server;
+			}
+
 			$context = stream_context_create($context_options);
-			$f = stream_socket_client("$_proto://$this->_Server:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);
+			$f = stream_socket_client("$_proto://$_connect_host:$this->_Port", $errno, $errstr, $this->_SocketTimeout, STREAM_CLIENT_CONNECT, $context);
 			if(!$f){
 				if(strpos($errstr,"getaddrinfo failed")){
-					$errstr = "could not resolve host: $this->_Server ($errstr)";
+					$errstr = "could not resolve host: $_connect_host ($errstr)";
 				}
 				return $this->_setError("failed to open socket: $errstr [$errno]");
 			}

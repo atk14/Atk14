@@ -3,6 +3,10 @@ Change Log
 
 All notable changes to this project will be documented in this file.
 
+[1.8.11] - 2026-08-12
+---------------------
+
+* 1619799 - Added option ip_address
 
 [1.8.10] - 2026-06-26
 ---------------------

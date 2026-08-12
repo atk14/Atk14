@@ -144,6 +144,19 @@ Proxy
       "proxy" => "tcp://127.0.0.1:8118"
     ]);
 
+Connecting to a specific IP address
+------------------------------------
+
+By default, the socket is connected to the hostname resolved from the URL. To bypass DNS resolution and connect
+directly to a given IP address, use the `ip_address` option. The `Host` header (and, for HTTPS, SNI / certificate
+verification) still uses the original hostname:
+
+    $fetcher = new UrlFetcher("https://www.example.com/", [
+      "ip_address" => "192.0.2.1"
+    ]);
+
+This option has no effect when a `proxy` is configured.
+
 Timeouts
 --------
 
