@@ -25,7 +25,7 @@ class Atk14DeploymentStage{
 		}
 
 		// converting strings into booleans
-		foreach(["create_maintenance_file"] as $k){
+		foreach(["create_maintenance_file", "enable_ssh_multiplexing"] as $k){
 			$params[$k] = String4::ToObject($params[$k])->toBoolean();
 		}
 
@@ -58,12 +58,13 @@ class Atk14DeploymentStage{
 		$out = [];
 		$defaults =
 	
-		$very_very_defauls = [
+		$very_very_defaults = [
 			"extends" => null, // e.g. "production"
 			"url" => "", // e.g. http://www.example.com; just for information
 			"user" => null,
 			"server" => null,
 			"port" => null, // ssh port, e.g. "2222"
+			"enable_ssh_multiplexing" => "true", // reuse one ssh connection (ControlMaster/ControlPersist) for all ssh/rsync calls during a deployment; set to "false" to disable when a server or client doesn't cooperate well with it
 			"env" => "", // e.g. "PATH=/home/john/bin/:$PATH EDITOR=vim"; environment variable ATK14_ENV=production is set automatically
 			"directory" => null,
 			"create_maintenance_file" => "false",
@@ -74,14 +75,14 @@ class Atk14DeploymentStage{
 			"rsync" => [], // array of directories which have to be synchronized to the server
 			"after_deploy" => ["./scripts/migrate && ./scripts/delete_temporary_files dbmole_cache"],
 		];
-		$required_key_order = array_keys($very_very_defauls);
+		$required_key_order = array_keys($very_very_defaults);
 
 		$defaults = null;
 		$all_defaults = [];
 		foreach($ATK14_GLOBAL->getConfig("deploy") as $name => $ar){
 			if(!isset($defaults)){
 				// the default recipe is the one for the first stage
-				$defaults = $ar + $very_very_defauls;
+				$defaults = $ar + $very_very_defaults;
 			}
 
 			$_defaults = $defaults;
@@ -224,8 +225,28 @@ class Atk14DeploymentStage{
 		$user = $config["user"] ? "$config[user]@" : "";
 		$env = "ATK14_ENV=production";
 		$env .= $config["env"] ? " $config[env]" : "";
-		$cmd = "ssh $user$config[server]$port_spec \"{$cd_cmd}export $env && (".strtr($cmd,['"' => '\"', "\\" => "\\\\"]).")\"";
+		$cmd = "ssh".$this->_sshMultiplexingOptions()." $user$config[server]$port_spec \"{$cd_cmd}export $env && (".strtr($cmd,['"' => '\"', "\\" => "\\\\"]).")\"";
 		return $cmd;
+	}
+
+	/**
+	 * Ssh options enabling connection multiplexing (ControlMaster/ControlPersist).
+	 *
+	 * A deployment issues many separate ssh/rsync calls against the same host in a row
+	 * (git sync, submodule update, rsync, migrate, ...). Without multiplexing each of
+	 * them opens a brand new TCP connection and does a full ssh handshake, which on some
+	 * servers occasionally gets reset (e.g. sshd's MaxStartups or fail2ban throttling
+	 * concurrent/rapid connections), causing intermittent "kex_exchange_identification:
+	 * Connection reset by peer" failures. Passing these as -o flags keeps the whole
+	 * deployment on a single authenticated connection without requiring any ~/.ssh/config
+	 * setup on the machine running the deploy.
+	 *
+	 * Can be turned off per stage with `enable_ssh_multiplexing: false` in config/deploy.yml.
+	 */
+	protected function _sshMultiplexingOptions(){
+		if(!$this->enable_ssh_multiplexing){ return ""; }
+		$control_path = escapeshellarg(sys_get_temp_dir()."/atk14-deploy-ssh-%r@%h:%p");
+		return " -o ControlMaster=auto -o ControlPersist=10m -o ControlPath=$control_path";
 	}
 
 	/**
@@ -249,7 +270,9 @@ class Atk14DeploymentStage{
 
 		$delete = $options["delete"] ? " --delete" : "";
 
-		$port_spec = $config["port"] ? " -e 'ssh -p $config[port]'" : "";
+		$port_spec = $config["port"] ? " -p $config[port]" : "";
+		$ssh_multiplexing_options = $this->_sshMultiplexingOptions();
+		$e_spec = ($ssh_multiplexing_options || $port_spec) ? " -e ".escapeshellarg("ssh".$ssh_multiplexing_options.$port_spec) : "";
 		$user = $config["user"] ? "$config[user]@" : "";
 		$dest = "$config[directory]/$file";
 		$dest = preg_replace('/\/{2,}/','/',$dest);
@@ -263,7 +286,7 @@ class Atk14DeploymentStage{
 			$destination = $_destination;
 		}
 
-		return "rsync -av --checksum --no-times$delete$port_spec $source $destination";
+		return "rsync -av --checksum --no-times$delete$e_spec $source $destination";
 	}
 
 	/**

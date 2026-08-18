@@ -4,6 +4,8 @@ devel:
   user: "deploy"
   directory: "/home/deploy/apps/mushoomradar_{{ name }}/"
 # create_maintenance_file: "false" # this is default
+# disabled here so that compileRemoteShellCommand()/compileRsyncCommand() assertions in tests stay free of the -o ControlMaster/... noise
+  enable_ssh_multiplexing: false
   deploy_repository: "{{ user }}@{{server}}:repos/mushoomradar.git"
   deploy_branch: "master"
   before_deploy:
@@ -20,6 +22,8 @@ acceptation:
   url: "http://acceptation.mushoomradar.net"
   directory: "/home/deploy/apps/mushoomradar_acc/"
   create_maintenance_file: 1
+# explicitly enabled here to test the compiled ssh/rsync commands; disabled on devel/production to keep their assertions free of this noise
+  enable_ssh_multiplexing: true
   deploy_repository: "/home/{{user}}/repos/mushoomradar_acc.git"
   rsync: ""
 
@@ -41,5 +45,7 @@ production:
   env: "PATH=/home/{{user}}/bin:$PATH"
   url: "http://www.mushoomradar.net"
   create_maintenance_file: "False"
+# kept off here too, same reason as on devel
+  enable_ssh_multiplexing: false
 
 # vim: set et:

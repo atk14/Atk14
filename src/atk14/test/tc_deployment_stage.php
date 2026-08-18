@@ -36,6 +36,7 @@ class TcDeploymentStage extends TcBase{
 			"user",
 			"server",
 			"port",
+			"enable_ssh_multiplexing",
 			"env",
 			"directory",
 			"create_maintenance_file",
@@ -51,6 +52,7 @@ class TcDeploymentStage extends TcBase{
 			"user" => "deploy",
 			"server" => "devel.mushoomradar.net",
 			"port" => null,
+			"enable_ssh_multiplexing" => false,
 			"directory" => "/home/deploy/apps/mushoomradar_devel/",
 			"deploy_via" => "git_push",
 			"deploy_repository" => "deploy@devel.mushoomradar.net:repos/mushoomradar.git",
@@ -69,6 +71,7 @@ class TcDeploymentStage extends TcBase{
 			"user" => "deploy",
 			"server" => "zeus.mushoomradar.net",
 			"port" => "2222",
+			"enable_ssh_multiplexing" => false,
 			"env" => 'PATH=/home/deploy/bin:$PATH',
 			"directory" => "/home/deploy/apps/mushoomradar_production/",
 			"deploy_via" => "git_push",
@@ -86,6 +89,7 @@ class TcDeploymentStage extends TcBase{
 			"user" => "deploy",
 			"server" => "zeus.mushoomradar.net",
 			"port" => null,
+			"enable_ssh_multiplexing" => true,
 			"env" => "",
 			"directory" => "/home/deploy/apps/mushoomradar_acc/",
 			"deploy_via" => "git_push",
@@ -103,6 +107,7 @@ class TcDeploymentStage extends TcBase{
 			"user" => "deploy",
 			"server" => "zeus.mushoomradar.net",
 			"port" => null,
+			"enable_ssh_multiplexing" => true,
 			"env" => "",
 			"directory" => "/home/deploy/apps/mushoomradar_acc2/",
 			"deploy_via" => "git_push",
@@ -184,6 +189,21 @@ class TcDeploymentStage extends TcBase{
 		$production = Atk14DeploymentStage::GetStage("production");
 		$this->assertEquals("rsync -av --checksum --no-times -e 'ssh -p 2222' deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/ /tmp/dist/",$production->compileReverseRsyncCommand("public/dist/","/tmp/dist/"));
 		$this->assertEquals("rsync -av --checksum --no-times --delete -e 'ssh -p 2222' deploy@zeus.mushoomradar.net:/home/deploy/apps/mushoomradar_production/public/dist/ /tmp/dist/",$production->compileReverseRsyncCommand("public/dist/","/tmp/dist/",["delete" => true]));
+	}
+
+	function test_sshMultiplexing(){
+		// disabled on devel/production (see test/config/deploy.yml)
+		$devel = Atk14DeploymentStage::GetStage("devel");
+		$this->assertEquals(false,$devel->enable_ssh_multiplexing);
+		$this->assertFalse(strpos($devel->compileRemoteShellCommand("id"),"ControlMaster"));
+		$this->assertFalse(strpos($devel->compileRsyncCommand("vendor"),"ControlMaster"));
+
+		// explicitly enabled on acceptation
+		$acceptation = Atk14DeploymentStage::GetStage("acceptation");
+		$this->assertEquals(true,$acceptation->enable_ssh_multiplexing);
+		$this->assertTrue(strpos($acceptation->compileRemoteShellCommand("id"),"-o ControlMaster=auto")!==false);
+		$this->assertTrue(strpos($acceptation->compileRemoteShellCommand("id"),"-o ControlPersist=10m")!==false);
+		$this->assertTrue(strpos($acceptation->compileRsyncCommand("vendor"),"-o ControlMaster=auto")!==false);
 	}
 
 	function _compareArrays($exp_ar,$ar){
