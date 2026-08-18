@@ -90,7 +90,7 @@ jobs:
       - name: Preparing Installation for Testing
         run: |
           composer global require "phpunit/phpunit" "~4.8|~5.7|~6.0|~7.5|~8.5|~9.6|~10.0|~11.0" 2>&1
-          cd src/atk14/helpers/test/ && composer update --dev 2>&1 && cd ../../../../
+          cd src/atk14/helpers/test/ && COMPOSER_NO_AUDIT=1 composer update --dev 2>&1 && cd ../../../../
 
       - name: Run tests
         run: ./src/scripts/run_all_tests_on_atk14

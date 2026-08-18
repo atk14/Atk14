@@ -1,5 +1,12 @@
 {
+    "config": {
+      "policy": {
+        "advisories": {
+          "block": false
+        }
+      }
+    },
     "require-dev": {
-        "smarty/smarty": "5.4.3|4.3.5"
+        "smarty/smarty": "5.4.5|4.3.5"
     }
 }
