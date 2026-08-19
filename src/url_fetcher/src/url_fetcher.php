@@ -256,7 +256,7 @@ class UrlFetcher {
 		$this->_VerifyPeer = $options["verify_peer"];
 		$this->_VerifyPeerName = $options["verify_peer_name"];
 		$this->_Proxy = $options["proxy"];
-		$this->_IpAddress = $options["ip_address"];
+		$this->_IpAddress = (string)$options["ip_address"];
 		$this->_SocketTimeout = (float)$options["socket_timeout"];
 		$this->_ReadTimeout = (float)$options["read_timeout"];
 	}
