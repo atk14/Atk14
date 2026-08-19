@@ -41,6 +41,8 @@ class UrlFetcherViaCommand extends UrlFetcher {
 		$headers = "";
 		$_buffer = new StringBufferTemporary();
 		$content_length = null;
+		$is_chunked = null; // null = headers not read yet
+		$chunk_state = array("buffer" => "", "remaining" => 0, "need_crlf" => false, "done" => false);
 
 		$f = $pipes[1];
 
@@ -55,16 +57,35 @@ class UrlFetcherViaCommand extends UrlFetcher {
 				usleep(1000); // 1ms
 				continue;
 			}
-			$_buffer->addString($_b);
 
-			if(!strlen($headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$_buffer->toString(),$matches)){
-				$headers = $matches[1];
-				$_b = $matches[2];
-				$_buffer = new StringBufferTemporary();
-				(strlen($_b)>0) && ($_buffer->addString($_b));
-				if(preg_match('/Content-Length: ([1-9]\d+)/i',$headers,$matches)){
-					$content_length = $matches[1];
+			if(is_null($is_chunked)){
+				$_buffer->addString($_b);
+
+				if(preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$_buffer->toString(),$matches)){
+					$headers = $matches[1];
+					$_b = $matches[2];
+					$_buffer = new StringBufferTemporary();
+					$is_chunked = $this->_isChunkedTransferEncoding($headers);
+					if(!$is_chunked && preg_match('/Content-Length: ([1-9]\d+)/i',$headers,$matches)){
+						$content_length = $matches[1];
+					}
+					if(strlen($_b)>0){
+						if($is_chunked){
+							$this->_decodeChunkedBodyChunk($_b,$chunk_state,$_buffer);
+							if($chunk_state["done"]){ break; }
+						}else{
+							$_buffer->addString($_b);
+						}
+					}
 				}
+				continue;
+			}
+
+			if($is_chunked){
+				$this->_decodeChunkedBodyChunk($_b,$chunk_state,$_buffer);
+				if($chunk_state["done"]){ break; }
+			}else{
+				$_buffer->addString($_b);
 			}
 		}
 

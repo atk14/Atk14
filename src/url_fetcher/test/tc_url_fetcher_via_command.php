@@ -20,4 +20,13 @@ class tc_url_fetcher_via_command extends tc_base {
 		$this->assertEquals("",(string)$f->getContent());
 		$this->assertEquals("text/html",$f->getContentType());
 	}
+
+	function test_chunked_encoding(){
+		$cmd = __DIR__ . "/chunked_response.sh";
+		$f = new UrlFetcherViaCommand($cmd,"http://www.example.com/",array("http_version" => "1.1"));
+		$this->assertEquals(200,$f->getStatusCode());
+		$this->assertEquals("text/plain",$f->getContentType());
+		$this->assertEquals("Hello World!",(string)$f->getContent());
+		$this->assertEquals(12,$f->getContentLength());
+	}
 }

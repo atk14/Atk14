@@ -187,6 +187,15 @@ class UrlFetcher {
 	protected $_ForceContentLength = null;
 
 	/**
+	 * HTTP protocol version used in the request line
+	 *
+	 * "1.0" or "1.1"
+	 *
+	 * @var string
+	 */
+	protected $_HttpVersion = "1.0";
+
+	/**
 	 * @ignore
 	 */
 	function _reset(){
@@ -225,6 +234,7 @@ class UrlFetcher {
 	 * - **max_redirections** [default: 5]
 	 * - **user_agent** - content of User-Agent http header [default: "UrlFetcher/".self::VERSION]
 	 * - **ip_address** - IP address to connect to instead of resolving it from the URL's hostname; Host header and SSL certificate verification still use the original hostname [default: ""]
+	 * - **http_version** - HTTP protocol version used in the request line, "1.0" or "1.1" [default: "1.0"]
 	 */
 	function __construct($url = "", $options = array()){
 		$this->_reset();
@@ -244,6 +254,7 @@ class UrlFetcher {
 			"ip_address" => "", // e.g. "192.0.2.1"
 			"socket_timeout" => $this->_SocketTimeout,
 			"read_timeout" => $this->_ReadTimeout,
+			"http_version" => $this->_HttpVersion, // "1.0" or "1.1"
 		);
 
 		if(strlen($url)>0){
@@ -256,9 +267,10 @@ class UrlFetcher {
 		$this->_VerifyPeer = $options["verify_peer"];
 		$this->_VerifyPeerName = $options["verify_peer_name"];
 		$this->_Proxy = $options["proxy"];
-		$this->_IpAddress = $options["ip_address"];
+		$this->_IpAddress = (string)$options["ip_address"];
 		$this->_SocketTimeout = (float)$options["socket_timeout"];
 		$this->_ReadTimeout = (float)$options["read_timeout"];
+		$this->_HttpVersion = (string)$options["http_version"];
 	}
 	
 	/**
@@ -808,7 +820,7 @@ class UrlFetcher {
 	 */
 	protected function _buildRequestHeaders(){
 		$out = array();
-		$out[] = "$this->_RequestMethod $this->_Uri HTTP/1.0";
+		$out[] = "$this->_RequestMethod $this->_Uri HTTP/$this->_HttpVersion";
 		$_server = $this->_Server;
 		if((!$this->_Ssl && $this->_Port!=80) || ($this->_Ssl && $this->_Port!=443)){ $_server .= ":$this->_Port"; }
 		$out[] = "Host: $_server";
@@ -893,6 +905,7 @@ class UrlFetcher {
 				"request_fulluri"=> !$this->_Ssl,
 				"header" => $_header,
 				"content" => (string)$this->_BodyData,
+				"protocol_version" => (float)$this->_HttpVersion,
 			);
 			$context = stream_context_create($context_options);
 			$http_response_header = null;
@@ -917,6 +930,10 @@ class UrlFetcher {
 			}
 		}
 
+		// null = headers not read yet; once known, tells whether the body uses "Transfer-Encoding: chunked"
+		$is_chunked = strlen($response_headers) ? $this->_isChunkedTransferEncoding($response_headers) : null;
+		$chunk_state = array("buffer" => "", "remaining" => 0, "need_crlf" => false, "done" => false);
+
 		$start = microtime(true);
 		while(!feof($f)){
 			$_b = fread($f,self::SOCKET_CHUNK_SIZE); // 256kB
@@ -938,13 +955,32 @@ class UrlFetcher {
 				usleep(self::READ_POLL_INTERVAL_US);
 				continue;
 			}
-			$response_buffer->addString($_b);
 
-			if(!strlen($response_headers) && preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$response_buffer->toString(),$matches)){
-				$response_headers = $matches[1];
-				$_b = $matches[2];
-				$response_buffer = new StringBufferTemporary();
-				(strlen($_b)>0) && ($response_buffer->addString($_b));
+			if(is_null($is_chunked)){
+				$response_buffer->addString($_b);
+
+				if(preg_match("/^(.*?)\\r?\\n\\r?\\n(.*)$/s",$response_buffer->toString(),$matches)){
+					$response_headers = $matches[1];
+					$_b = $matches[2];
+					$response_buffer = new StringBufferTemporary();
+					$is_chunked = $this->_isChunkedTransferEncoding($response_headers);
+					if(strlen($_b)>0){
+						if($is_chunked){
+							$this->_decodeChunkedBodyChunk($_b,$chunk_state,$response_buffer);
+							if($chunk_state["done"]){ break; }
+						}else{
+							$response_buffer->addString($_b);
+						}
+					}
+				}
+				continue;
+			}
+
+			if($is_chunked){
+				$this->_decodeChunkedBodyChunk($_b,$chunk_state,$response_buffer);
+				if($chunk_state["done"]){ break; }
+			}else{
+				$response_buffer->addString($_b);
 			}
 		}
 		fclose($f);
@@ -963,6 +999,64 @@ class UrlFetcher {
 		}
 
 		return array($response_headers,$response_buffer);
+	}
+
+	/**
+	 * Checks whether raw response headers declare a chunked transfer encoding.
+	 *
+	 * Relevant only for HTTP/1.1 responses - chunked encoding is not defined for HTTP/1.0.
+	 *
+	 * @ignore
+	 */
+	protected function _isChunkedTransferEncoding($response_headers){
+		return (bool)preg_match("/^Transfer-Encoding:\\s*.*\\bchunked\\b/mi",$response_headers);
+	}
+
+	/**
+	 * Decodes a chunk of raw "Transfer-Encoding: chunked" body data, appending decoded bytes to $output_buffer.
+	 *
+	 * $state is carried across calls (one call per socket read) and tracks:
+	 * - buffer - undecoded bytes left over from the previous call (a partial chunk-size line or partial chunk data)
+	 * - remaining - number of chunk data bytes still expected before the chunk's trailing CRLF
+	 * - need_crlf - whether the trailing CRLF after chunk data still needs to be consumed
+	 * - done - whether the terminating zero-length chunk has been seen
+	 *
+	 * @ignore
+	 */
+	protected function _decodeChunkedBodyChunk($data,&$state,$output_buffer){
+		$state["buffer"] .= $data;
+
+		while(!$state["done"]){
+			if($state["remaining"]>0){
+				$take = min($state["remaining"],strlen($state["buffer"]));
+				if($take>0){
+					$output_buffer->addString(substr($state["buffer"],0,$take));
+					$state["buffer"] = substr($state["buffer"],$take);
+					$state["remaining"] -= $take;
+				}
+				if($state["remaining"]>0){ return; } // chunk data not complete yet, wait for more bytes
+				$state["need_crlf"] = true;
+			}
+
+			if($state["need_crlf"]){
+				if(strlen($state["buffer"])<2){ return; } // wait for the rest of the trailing CRLF
+				$state["buffer"] = substr($state["buffer"],2);
+				$state["need_crlf"] = false;
+			}
+
+			if(!preg_match("/^([0-9A-Fa-f]+)[^\\r\\n]*\\r\\n/",$state["buffer"],$matches)){
+				return; // chunk-size line not complete yet, wait for more bytes
+			}
+			$state["buffer"] = substr($state["buffer"],strlen($matches[0]));
+			$chunk_size = hexdec($matches[1]);
+
+			if($chunk_size===0){
+				$state["done"] = true;
+				return;
+			}
+
+			$state["remaining"] = $chunk_size;
+		}
 	}
 
 	/**
