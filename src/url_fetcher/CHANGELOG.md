@@ -3,6 +3,14 @@ Change Log
 
 All notable changes to this project will be documented in this file.
 
+[1.8.12] - 2026-08-20
+---------------------
+
+* faf6529 - Added option http_version (default "1.0")
+* 76d6c5b - Support chunked transfer encoding for HTTP/1.1 responses
+* c20a89a - Report an error on invalid or truncated chunked transfer encoding
+* 965db74 - Improved error message in the event of an invalid status code
+
 [1.8.11] - 2026-08-12
 ---------------------
 

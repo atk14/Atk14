@@ -95,6 +95,14 @@ class UrlFetcherViaCommand extends UrlFetcher {
 
 		$return_value = proc_close($process);
 
+		if($is_chunked && !$chunk_state["done"] && !$this->errorOccurred()){
+			$this->_setError("invalid or truncated chunked transfer encoding");
+		}
+
+		if($this->errorOccurred()){
+			return false;
+		}
+
 		if($return_value!==0){
 			return $this->_setError("command '$this->command' returned error code $return_value");
 		}

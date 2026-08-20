@@ -55,7 +55,7 @@ defined("URL_FETCHER_VERIFY_PEER") || define("URL_FETCHER_VERIFY_PEER",true);
  */
 class UrlFetcher {
 
-	const VERSION = "1.8.11";
+	const VERSION = "1.8.12";
 
 	const READ_POLL_INTERVAL_US = 20000;   // 20ms between read attempts
 	const WRITE_RETRY_INTERVAL_US = 10000; // 10ms between write attempts
@@ -492,7 +492,7 @@ class UrlFetcher {
 		}
 
 		if(!preg_match('/^2/',$this->getStatusCode())){
-			return $this->_setError("status code is ".$this->getStatusCode());
+			return $this->_setError("status code is ".$this->getStatusCode()." ".$this->getStatusMessage());
 		}
 
 		return true;
@@ -984,6 +984,10 @@ class UrlFetcher {
 			}
 		}
 		fclose($f);
+
+		if($is_chunked && !$chunk_state["done"] && !$this->errorOccurred()){
+			$this->_setError("invalid or truncated chunked transfer encoding");
+		}
 
 		if($this->errorOccurred()){
 			return false;

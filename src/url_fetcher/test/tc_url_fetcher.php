@@ -33,6 +33,7 @@ class TcUrlFetcher extends TcBase{
 		//$this->assertFalse($f->fetchContent()); // nemusi byt volano!
 		$this->assertFalse($f->found());
 		$this->assertTrue($f->errorOccurred());
+		$this->assertEquals("status code is 404 Not Found",$f->getErrorMessage());
 		$this->assertEquals(404,$f->getStatusCode()); // Not Found
 		$this->assertEquals("Not Found",$f->getStatusMessage());
 		$this->assertStringContains('<title>404 Not Found</title>',(string)$f->getContent());

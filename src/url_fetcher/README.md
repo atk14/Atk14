@@ -182,6 +182,15 @@ User-Agent
       "user_agent" => "MyApp/2.0"
     ]);
 
+HTTP version
+------------
+
+By default, requests are sent as HTTP/1.0. To use HTTP/1.1 instead, set the `http_version` option:
+
+    $fetcher = new UrlFetcher("http://www.example.com/", [
+      "http_version" => "1.1"
+    ]);
+
 UrlFetcherViaCommand
 --------------------
 
