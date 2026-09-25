@@ -49,4 +49,6 @@ require(__DIR__."/../modifier.strtoupper.php");
 require(__DIR__."/../block.trim.php");
 require(__DIR__."/../modifier.trim.php");
 
+require(__DIR__."/../function.paginator.php");
+
 $ATK14_GLOBAL = Atk14Global::GetInstance();

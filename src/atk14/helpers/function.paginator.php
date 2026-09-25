@@ -77,6 +77,7 @@ function smarty_function_paginator($params,$template){
 		$finder = $smarty->getTemplateVars("finder");
 	}
 
+	// Preparing default values for $total_amount, $max_amount and $limit
 	if(isset($finder)){
 		$total_amount = $finder->getTotalAmount();
 		$max_amount = method_exists($finder,"getPageSize") ? $finder->getPageSize() : $finder->getLimit(); // e.g. "20"
@@ -86,6 +87,19 @@ function smarty_function_paginator($params,$template){
 		$max_amount = isset($params["max_amount"]) ? (int)$params["max_amount"] : (int)$smarty->getTemplateVars("max_amount");
 		$limit = $max_amount;
 	}
+
+	// Adding default values to parameters
+	$params += [
+		"total_amount" => $total_amount,
+		"max_amount" => $max_amount,
+		"limit" => $limit,
+	];
+
+	// Getting $total_amount, $max_amount and $limit
+	$total_amount = (int)$params["total_amount"];
+	$max_amount = (int)$params["max_amount"];
+	$limit = (int)$params["limit"];
+
 	if($max_amount<=0){ $max_amount = 50; } // defaultni hodnota - nesmi dojit k zacykleni smycky while
 
 	$_from = defined("ATK14_PAGINATOR_OFFSET_PARAM_NAME") ? constant("ATK14_PAGINATOR_OFFSET_PARAM_NAME") : "from";
