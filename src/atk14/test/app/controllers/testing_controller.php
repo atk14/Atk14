@@ -121,6 +121,12 @@ class TestingController extends ApplicationController{
 		$this->mail_ar = $this->mailer->send_attachment();
 	}
 
+	function send_with_header_added_from_controller(){
+		$this->render_template = false;
+		$this->mailer->add_header("Message-Id","<from-controller@example.com>");
+		$this->mail_ar = $this->mailer->ordinary_notification("ORIGINAL_WAY");
+	}
+
 	function cookies_dumper(){
 		$this->render_template = false;
 		$this->response->write(var_export($this->request->getCookieVars(),true));

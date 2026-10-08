@@ -68,6 +68,14 @@ class ApplicationMailer extends Atk14Mailer {
 		$this->add_attachment("Hello world!","greeting.txt","text/plain");
 	}
 
+	function send_with_extra_headers(){
+		$this->render_layout = false;
+		$this->subject = "subject";
+		$this->body = "body";
+		$this->add_header("Message-Id","<abc@example.com>");
+		$this->add_header("In-Reply-To","<parent@example.com>");
+	}
+
 	function _before_filter(){
 		$this->tpl_data["value_added_in_before_filter"] = "OK (bf)";
 	}

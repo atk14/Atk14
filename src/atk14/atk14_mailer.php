@@ -201,6 +201,15 @@ class Atk14Mailer{
 	public $_html_images = [];
 
 	/**
+	 * Extra raw header lines (e.g. "Message-Id: <...>", "In-Reply-To: <...>") to be added to the outgoing message.
+	 *
+	 * @access protected
+	 * @var array
+	 * @see Atk14Mailer::add_header()
+	 */
+	public $_extra_headers = [];
+
+	/**
 	 * Template name
 	 *
 	 * @var string
@@ -566,6 +575,28 @@ class Atk14Mailer{
 	 */
 	function clear_html_images(){ $this->_html_images = []; }
 
+	/**
+	 * Adds a raw header line to the message, e.g. for threading a reply to an existing e-mail conversation.
+	 *
+	 * ```
+	 *	$this->add_header("Message-Id","<abc@example.com>");
+	 *	$this->add_header("In-Reply-To","<parent@example.com>");
+	 * ```
+	 *
+	 * @param string $name
+	 * @param string $value
+	 */
+	function add_header($name,$value){
+		$this->_extra_headers[] = "$name: $value";
+	}
+
+	/**
+	 * Removes all extra headers
+	 *
+	 * Should be usefull when several messages are sent through a single instance.
+	 */
+	function clear_headers(){ $this->_extra_headers = []; }
+
 
 	/**
 	 * This method is called before every action in ApplicationMailer
@@ -612,6 +643,7 @@ class Atk14Mailer{
 	 * - mime_type
 	 * - charset
 	 * - attachments
+	 * - extra_headers
 	 * - build_message_only
 	 *
 	 * @param array $params
@@ -635,6 +667,7 @@ class Atk14Mailer{
 			"mime_type" => $this->content_type,
 			"charset" => $this->content_charset,
 			"attachments" => $this->_attachments,
+			"extra_headers" => $this->_extra_headers,
 			"build_message_only" => false,
 		];
 		if(strlen($this->body_html) && strlen($this->body)){

@@ -39,6 +39,8 @@ class Atk14MailerProxy{
 			"clear_attachments",
 			"add_html_image",
 			"clear_html_images",
+			"add_header",
+			"clear_headers",
 			"getSentEmails",
 		];
 		if(in_array($method,$methods_to_proxy) || preg_match('/^_/',$method)){

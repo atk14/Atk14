@@ -104,6 +104,19 @@ class TcMailer extends TcBase{
 		$this->assertStringContains("password: krefERE34",$controller->mail_ar["body"]);
 	}
 
+	function test_extra_headers(){
+		$controller = $this->client->get("testing/test");
+		$mailer = $controller->mailer;
+
+		$mail = $mailer->send_with_extra_headers();
+		$this->assertStringContains("Message-Id: <abc@example.com>",$mail["headers"]);
+		$this->assertStringContains("In-Reply-To: <parent@example.com>",$mail["headers"]);
+
+		// add_header() can also be called proxy-side, from a controller, before executing an action
+		$controller = $this->client->get("testing/send_with_header_added_from_controller");
+		$this->assertStringContains("Message-Id: <from-controller@example.com>",$controller->mail_ar["headers"]);
+	}
+
 	function test_resetting_to_default_state(){
 		$controller = $this->client->get("testing/test");
 		$mailer = $controller->mailer;
