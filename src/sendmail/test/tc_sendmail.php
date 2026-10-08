@@ -72,10 +72,16 @@ class tc_sendmail extends tc_base{
 				"In-Reply-To: <parent@example.com>",
 			),
 		));
-		$this->assertStringContains("Message-Id: <abc@example.com>",$ar["headers"]);
-		$this->assertStringContains("In-Reply-To: <parent@example.com>",$ar["headers"]);
-		// extra headers must come after the standard ones, not break them
-		$this->assertStringContains("From: test@file",$ar["headers"]);
+		// checking that each extra header is its OWN line, not glued to the
+		// previous/next one because of a missing "\n" somewhere
+		$lines = explode("\n",$ar["headers"]);
+		$this->assertTrue(in_array("Message-Id: <abc@example.com>",$lines));
+		$this->assertTrue(in_array("In-Reply-To: <parent@example.com>",$lines));
+		$this->assertTrue(in_array("From: test@file",$lines));
+		// the two extra headers themselves must be cleanly newline-separated, not just present somewhere
+		$this->assertStringContains("Message-Id: <abc@example.com>\nIn-Reply-To: <parent@example.com>",$ar["headers"]);
+		// and the headers string must end exactly with the last extra header (nothing glued after it, no stray blank line)
+		$this->assertEquals("In-Reply-To: <parent@example.com>",$lines[sizeof($lines)-1]);
 
 		// attachments go through a different header-building branch; extra_headers must still apply
 		$ar = sendmail(array(
@@ -90,7 +96,12 @@ class tc_sendmail extends tc_base{
 				"mime_type" => "text/plain",
 			),
 		));
-		$this->assertStringContains("X-Testing: yes",$ar["headers"]);
+		$lines = explode("\n",$ar["headers"]);
+		$this->assertTrue(in_array("X-Testing: yes",$lines));
+		// the last header line built by _CMailFile ("Content-Transfer-Encoding: 8bit") must not
+		// have been glued to the extra one - it must be the second-to-last standalone line
+		$this->assertEquals("Content-Transfer-Encoding: 8bit",$lines[sizeof($lines)-2]);
+		$this->assertEquals("X-Testing: yes",$lines[sizeof($lines)-1]);
 
 		// no extra_headers given -> nothing weird happens
 		$ar = sendmail(array(
