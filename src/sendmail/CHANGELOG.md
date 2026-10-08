@@ -2,6 +2,10 @@
 
 All notable changes to Sendmail will be documented in this file.
 
+## [1.0.6] - 2026-10-08
+
+* 04355bf - Added extra_headers option
+
 ## [1.0.5] - 2026-04-23
 
 * Code cleaned and refactored
