@@ -39,6 +39,16 @@ class tc_sendhtmlmail extends tc_base{
 		$this->assertEquals('-finfo@test.cz',$ar["additional_parameters"]);
 		//var_dump($ar);
 
+		$ar = sendhtmlmail(array(
+			"from" => "info@test.cz",
+			"subject" => "subject",
+			"to" => "jarek@plovarna.cz",
+			"plain" => "Plain text version",
+			"html" => "<p>Html version</p>",
+			"extra_headers" => array("Message-Id: <abc@example.com>"),
+		));
+		$this->assertStringContains("Message-Id: <abc@example.com>",$ar["headers"]);
+
 		/*
 		echo "Subject: ".$ar["subject"]."\n";
 		echo "To: ".$ar["to"]."\n";

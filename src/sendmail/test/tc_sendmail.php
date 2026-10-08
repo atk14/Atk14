@@ -61,6 +61,47 @@ class tc_sendmail extends tc_base{
 		$this->assertStringContains("Content-Type: text/html\n",$ar["headers"]);
 	}
 
+	function test_extra_headers(){
+		$ar = sendmail(array(
+			"to" => "me@mydomain.com",
+			"from" => "test@file",
+			"subject" => "Hello from unit test",
+			"body" => "Hi there",
+			"extra_headers" => array(
+				"Message-Id: <abc@example.com>",
+				"In-Reply-To: <parent@example.com>",
+			),
+		));
+		$this->assertStringContains("Message-Id: <abc@example.com>",$ar["headers"]);
+		$this->assertStringContains("In-Reply-To: <parent@example.com>",$ar["headers"]);
+		// extra headers must come after the standard ones, not break them
+		$this->assertStringContains("From: test@file",$ar["headers"]);
+
+		// attachments go through a different header-building branch; extra_headers must still apply
+		$ar = sendmail(array(
+			"to" => "me@mydomain.com",
+			"from" => "test@file",
+			"subject" => "subject",
+			"body" => "body",
+			"extra_headers" => array("X-Testing: yes"),
+			"attachment" => array(
+				"body" => "Hello world!",
+				"filename" => "greeting.txt",
+				"mime_type" => "text/plain",
+			),
+		));
+		$this->assertStringContains("X-Testing: yes",$ar["headers"]);
+
+		// no extra_headers given -> nothing weird happens
+		$ar = sendmail(array(
+			"to" => "me@mydomain.com",
+			"from" => "test@file",
+			"subject" => "Hello from unit test",
+			"body" => "Hi there",
+		));
+		$this->assertFalse(!!preg_match('/Message-Id/',$ar["headers"]));
+	}
+
 	function test_mail_compatible_calling(){
 		$ar = sendmail("somebody@example.com","This is a message","Hello,\nthis is a testing e-mail.");
 		$this->assertEquals("somebody@example.com",$ar["to"]);

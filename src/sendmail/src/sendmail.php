@@ -48,14 +48,15 @@
 *			"to" => "",
 *			"mime_type" => "",
 *			"charset" => "",
-*			"attachments" => 
+*			"attachments" =>
 *				array(
 *					array(
 *						"body" => ""
 *						"filename" => ""
 *						"mime_type" => ""
 *					)
-*				)
+*				),
+*			"extra_headers" => array("Message-Id: <...>","In-Reply-To: <...>") // raw header lines, appended as-is; ignored when "headers" is set
 *		)
 *
 *	Every e-mail sent this way is also delivered to the BCC_EMAIL address,
@@ -96,6 +97,8 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		"attachments" => array(),
 		"attachment" => null,
 		"build_message_only" => false,
+
+		"extra_headers" => array(), // additional raw header lines (e.g. "Message-Id: <...>"), appended as-is; ignored when "headers" is set
 
 		"headers" => $additional_headers, // warning! if this is set, sending takes a different path, see below
 
@@ -262,6 +265,10 @@ function sendmail($params = array(),$subject = "",$message = "",$additional_head
 		$mail_ar = $mailfile->getfile();
 		$BODY = $mail_ar["body"];
 		$HEADERS = $mail_ar["headers"];
+	}
+
+	foreach((array)$params["extra_headers"] as $header_line){
+		$HEADERS .= "$header_line\n";
 	}
 
 	$HEADERS = trim($HEADERS); // trailing empty line in headers caused headers and body to be separated by 2 lines
