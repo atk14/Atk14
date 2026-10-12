@@ -155,7 +155,7 @@ function smarty_function_paginator($params,$template){
 	if($from>0){
 		$par["$from_name"] = $from - $max_amount;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = "<li class=\"page-item first-child prev\"><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$symbol_left $label_left</span></a></li>";
+		$out[] = "<li class=\"page-item first-child prev\"><a class=\"page-link\" href=\"$url$anchor\">$symbol_left $label_left</span></a></li>";
 		$first_child = false;
 	}
 
@@ -184,9 +184,9 @@ function smarty_function_paginator($params,$template){
 		$_class = $_class ? " class=\"".implode(" ",$_class)."\"" : "";
 
 		if($cur_from==$from){
-			$out[] = "<li$_class><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$screen</a></li>";
+			$out[] = "<li$_class><a class=\"page-link\" href=\"$url$anchor\">$screen</a></li>";
 		}else{
-			$out[] = "<li$_class><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$screen</a></li>";
+			$out[] = "<li$_class><a class=\"page-link\" href=\"$url$anchor\">$screen</a></li>";
 		}
 		$screen++;
 		
@@ -224,7 +224,7 @@ function smarty_function_paginator($params,$template){
 	if(($from + $limit) < $total_amount){
 		$par["$from_name"] = $from + $limit;
 		$url = _smarty_function_paginator_build_url($par,$smarty,$from_name);
-		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url$anchor\" rel=\"nofollow\">$label_right $symbol_right</a></li>";
+		$out[] = "<li class=\"page-item last-child next\"><a class=\"page-link\" href=\"$url$anchor\">$label_right $symbol_right</a></li>";
 	}
 
 	$out[] = "</ul>";
