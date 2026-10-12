@@ -520,7 +520,11 @@ class Logger{
 			}
 			if($this->_log_to_file){
 				if(!$fp){
-					$fp = fopen($this->_log_file,"a");
+					$fopen_mode = "a";
+					$fp = fopen($this->_log_file,$fopen_mode);
+					if(!$fp){
+						throw new Exception("Can't open log file $this->_log_file for writing in mode $fopen_mode");
+					}
 				}
 				fwrite($fp,$str);
 			}
