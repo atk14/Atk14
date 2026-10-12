@@ -39,10 +39,10 @@ class TcPaginator extends TcBase {
 		$this->assertStringContains('<span class="badge badge-secondary">111</span> items total',$output);
 
 		// First page
-		$this->assertStringContains('<li class="page-item"><a class="page-link" href="/en/articles/" rel="nofollow">1</a></li>',$output);
+		$this->assertStringContains('<li class="page-item"><a class="page-link" href="/en/articles/">1</a></li>',$output);
 
 		// Active page
-		$this->assertStringContains('<li class="page-item active"><a class="page-link" href="/en/articles/?offset=20" rel="nofollow">3</a></li>',$output);
+		$this->assertStringContains('<li class="page-item active"><a class="page-link" href="/en/articles/?offset=20">3</a></li>',$output);
 	}
 
 	function test_finder_assigned_into_the_template(){
@@ -63,7 +63,7 @@ class TcPaginator extends TcBase {
 		$this->assertStringContains('<span class="badge badge-secondary">123</span> items total',$output);
 
 		// First page
-		$this->assertStringContains('<li class="page-item active first-child"><a class="page-link" href="/en/articles/" rel="nofollow">1</a></li>',$output);
+		$this->assertStringContains('<li class="page-item active first-child"><a class="page-link" href="/en/articles/">1</a></li>',$output);
 
 	}
 
@@ -85,9 +85,9 @@ class TcPaginator extends TcBase {
 			"limit" => 20,
 		],$smarty);
 
-		$this->assertStringContains('<li class="page-item active"><a class="page-link" href="/en/articles/?offset=20" rel="nofollow">3</a></li>',$output);
-		$this->assertStringContains('<li class="page-item active"><a class="page-link" href="/en/articles/?offset=30" rel="nofollow">4</a></li>',$output);
-		$this->assertStringContains('<a class="page-link" href="/en/articles/?offset=40" rel="nofollow">Next',$output);
+		$this->assertStringContains('<li class="page-item active"><a class="page-link" href="/en/articles/?offset=20">3</a></li>',$output);
+		$this->assertStringContains('<li class="page-item active"><a class="page-link" href="/en/articles/?offset=30">4</a></li>',$output);
+		$this->assertStringContains('<a class="page-link" href="/en/articles/?offset=40">Next',$output);
 	}
 
 	// Explicitly passed params take precedence over a finder, but only for the fields
@@ -114,7 +114,7 @@ class TcPaginator extends TcBase {
 		$this->assertStringContains('<span class="badge badge-secondary">111</span> items total',$output);
 
 		// limit still taken from the finder (999), so every page is within the active range
-		$this->assertStringContains('<li class="page-item active"><a class="page-link" href="/en/articles/?offset=110" rel="nofollow">12</a></li>',$output);
+		$this->assertStringContains('<li class="page-item active"><a class="page-link" href="/en/articles/?offset=110">12</a></li>',$output);
 	}
 
 	// No pagination links are rendered when everything fits within max_amount.
