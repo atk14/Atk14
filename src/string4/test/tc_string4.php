@@ -730,4 +730,47 @@ Body?
 -- end --
 		"),(string)$s->eachLineFilter(function($line){ return !preg_match('/^\s*#/',$line->toString()); }));
 	}
+
+	function test_toOneLine(){
+		$s = new String4("Hello");
+		$this->assertEquals("Hello",(string)$s->toOneLine());
+
+		$s = new String4("Hello\nWorld");
+		$this->assertEquals("Hello, World",(string)$s->toOneLine());
+
+		// custom separator
+		$this->assertEquals("Hello World",(string)$s->toOneLine(" "));
+		$this->assertEquals("Hello|World",(string)$s->toOneLine("|"));
+
+		// different line endings
+		$s = new String4("Hello\r\nWorld");
+		$this->assertEquals("Hello, World",(string)$s->toOneLine());
+
+		$s = new String4("Hello\rWorld");
+		$this->assertEquals("Hello, World",(string)$s->toOneLine());
+
+		// empty lines are dropped, not turned into empty items
+		$s = new String4("Hello\n\n\nWorld");
+		$this->assertEquals("Hello, World",(string)$s->toOneLine());
+
+		// whitespace around each line is trimmed before joining
+		$s = new String4("  Hello  \n  World  ");
+		$this->assertEquals("Hello, World",(string)$s->toOneLine());
+
+		// leading/trailing blank lines are dropped entirely
+		$s = new String4("\n\nHello\nWorld\n\n");
+		$this->assertEquals("Hello, World",(string)$s->toOneLine());
+
+		// empty string
+		$s = new String4("");
+		$this->assertEquals("",(string)$s->toOneLine());
+
+		// whitespace-only string
+		$s = new String4("   \n   \n   ");
+		$this->assertEquals("",(string)$s->toOneLine());
+
+		// returns a String4 instance
+		$s = new String4("Hello\nWorld");
+		$this->assertTrue(is_a($s->toOneLine(),"String4"));
+	}
 }

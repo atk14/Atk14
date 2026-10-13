@@ -1291,6 +1291,28 @@ END;
 
 		return $this->_copy(join("",$out));
 	}
+
+	/**
+	 * Joins all non-empty lines of the content into a single line
+	 *
+	 * Splits the string on any line ending, trims whitespace from each line, drops empty lines and
+	 * joins the rest using the given separator.
+	 *
+	 * ```
+	 * $string = new String4("Hello\n\n  World  \n");
+	 * $string->toOneLine();      // "Hello, World"
+	 * $string->toOneLine(" ");   // "Hello World"
+	 * ```
+	 *
+	 * @param string $separator String used to join the lines
+	 * @return String4
+	 */
+	function toOneLine($separator = ", "){
+		$lines = preg_split('/\R/u', (string)$this);
+		$lines = array_map('trim', $lines);
+		$lines = array_filter($lines, 'strlen');
+		return $this->_copy(join($separator, $lines));
+	}
 	
 	/**
 	 * Magic method

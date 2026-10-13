@@ -622,6 +622,19 @@ $result = $s->eachLineFilter(function($line) {
 
 ---
 
+#### `toOneLine($separator = ", ")` → `String4`
+
+Joins all non-empty lines of the string into a single line. Splits on any line ending (`\n`, `\r\n`, `\r`), trims whitespace from each line, drops empty lines, and joins the rest with `$separator`.
+
+```php
+$s = new String4("Hello\n\n  World  \n");
+
+$s->toOneLine();      // "Hello, World"
+$s->toOneLine(" ");   // "Hello World"
+```
+
+---
+
 ### Random generation
 
 #### `String4::RandomString($length = 32, $options = [])` → `String4`

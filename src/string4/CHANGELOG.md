@@ -3,6 +3,11 @@ Change Log
 
 All notable changes to this project will be documented in this file.
 
+[0.6.3] - 2026-10-13
+--------------------
+
+* 485e7f3 - Added method String4::toOneLine($separator = ", ")
+
 [0.6.2] - 2026-06-10
 --------------------
 
