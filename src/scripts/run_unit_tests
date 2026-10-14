@@ -64,24 +64,34 @@ isset($_ENV["PWD"]) && chdir($_ENV["PWD"]);
 isset($argv) || ($argv = []);
 $arguments = getopt("c",["check-dependencies"]);
 
-$DIR = "";
-$RUN_TESTS_ONLY = [];
+// Requested tests are grouped by the directory they live in, so that tests
+// from several different directories can be given in a single invocation,
+// e.g. "run_unit_tests test/controllers/tc_a.php test/models/tc_b.inc"
+$GROUPS = []; // dir ("" means cwd) => list of requested filenames/classnames; an empty list means "run all tests in this dir"
 while($_a = array_shift($argv)){
-	if(is_dir($_a)){ $DIR = $_a; continue; }
+	if(is_dir($_a)){
+		$_d = preg_replace('/([^\/])$/','\1/',$_a);
+		if(!isset($GROUPS[$_d])){ $GROUPS[$_d] = []; }
+		continue;
+	}
 	if(preg_match('#(.*/)([^/]+$)#',$_a,$_m)){
-		$DIR = $_m[1];
-		$_a = $_m[2];
+		$_d = $_m[1];
+		if(!is_dir($_d)){
+			echo "Directory $_d does not exist\n";
+			exit(1);
+		}
+		if(!isset($GROUPS[$_d])){ $GROUPS[$_d] = []; }
+		$GROUPS[$_d][] = $_m[2];
+		continue;
 	}
-	$RUN_TESTS_ONLY[] = $_a;
+	// A bare name (no "/") always targets the current working directory,
+	// no matter which directories were named elsewhere on the command line,
+	// e.g. "run_unit_tests dir1/ dir2/ tc_successful_test.php" runs
+	// tc_successful_test.php from cwd, not as a filter on dir2/.
+	if(!isset($GROUPS[""])){ $GROUPS[""] = []; }
+	$GROUPS[""][] = $_a;
 }
-if($DIR){
-	$DIR = preg_replace('/([^\/])$/','\1/',$DIR);
-	if(!is_dir($DIR)){
-		echo "Directory $DIR does not exist\n";
-		exit(1);
-	}
-	chdir($DIR);
-}
+if(sizeof($GROUPS)==0){ $GROUPS[""] = []; }
 
 $exists = false;
 $_phpunit_path_ar = [];
@@ -216,36 +226,41 @@ if(PHPUNIT2){
 	eval("class TcSuperBase extends $_base_class{ $_methods_def }");
 }
 
-$ALLOWED_TESTS = [];
-$ALLOWED_DANGEROUS_TESTS = [];
-$tests_to_execute = [];
+$tests_to_execute = []; // list of ["dir" => ..., "file" => ...]
 
-$dir = opendir("./");
-while($file = readdir($dir)){
-	if(in_array($file,[".","..","initialize.inc","initialize.php","state.inc","state.php","tc_base.inc","tc_base.php"])){ continue; } // These files are ignored
+foreach($GROUPS as $_dir => $_only){
+	$_scan_path = $_dir===""?".":rtrim($_dir,"/");
 
-	if(preg_match("/^(tc_.*)\\.(inc|php)$/",$file,$matches)){
-		$ALLOWED_TESTS[$file] = $matches[1];
-	}elseif(preg_match("/^!(tc_.*)\\.(inc|php)$/",$file,$matches)){
-		$ALLOWED_DANGEROUS_TESTS[$file] = $matches[1];
+	$_allowed_tests = [];
+	$_allowed_dangerous_tests = [];
+
+	$dir = opendir($_scan_path);
+	while($file = readdir($dir)){
+		if(in_array($file,[".","..","initialize.inc","initialize.php","state.inc","state.php","tc_base.inc","tc_base.php"])){ continue; } // These files are ignored
+
+		if(preg_match("/^(tc_.*)\\.(inc|php)$/",$file,$matches)){
+			$_allowed_tests[$file] = $matches[1];
+		}elseif(preg_match("/^!(tc_.*)\\.(inc|php)$/",$file,$matches)){
+			$_allowed_dangerous_tests[$file] = $matches[1];
+		}
 	}
-}
-closedir($dir);
+	closedir($dir);
 
-ksort($ALLOWED_TESTS);
+	ksort($_allowed_tests);
 
-foreach($ALLOWED_TESTS as $filename => $classname){	
-	if(count($RUN_TESTS_ONLY)>0 && (!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
-		continue;
+	foreach($_allowed_tests as $filename => $classname){
+		if(count($_only)>0 && (!in_array($filename,$_only) && !in_array($classname,$_only))){
+			continue;
+		}
+		$tests_to_execute[] = ["dir" => $_dir, "file" => $filename];
 	}
-	$tests_to_execute[] = $filename;
-}
 
-foreach($ALLOWED_DANGEROUS_TESTS as $filename => $classname){	
-	if((!in_array($filename,$RUN_TESTS_ONLY) && !in_array($classname,$RUN_TESTS_ONLY))){
-		continue;
+	foreach($_allowed_dangerous_tests as $filename => $classname){
+		if((!in_array($filename,$_only) && !in_array($classname,$_only))){
+			continue;
+		}
+		$tests_to_execute[] = ["dir" => $_dir, "file" => $filename];
 	}
-	$tests_to_execute[] = $filename;
 }
 
 if(sizeof($tests_to_execute)==0){
@@ -255,9 +270,13 @@ if(sizeof($tests_to_execute)==0){
 
 // Only one test case should be processed in the current thread
 if(sizeof($tests_to_execute)==1){
+	$DIR = $tests_to_execute[0]["dir"];
+	$_filename = $tests_to_execute[0]["file"];
+	if($DIR!==""){ chdir($DIR); }
+
 	// global variable $_TEST may be useful in some special cases
 	$GLOBALS["_TEST"] = [
-		"FILENAME" => getcwd()."/".$tests_to_execute[0]
+		"FILENAME" => getcwd()."/".$_filename
 	];
 
 	if(file_exists($_f = "initialize.inc") || file_exists($_f = "initialize.php")){ require_once($_f); }
@@ -288,7 +307,7 @@ if(sizeof($tests_to_execute)==1){
 
 	register_shutdown_function("__shutdown_function");
 
-	$result = _test_runner($tests_to_execute[0],$DIR);
+	$result = _test_runner($_filename,$DIR);
 	__result_holder($result);
 
 	if(!$result || !$result->wasSuccessful()){
@@ -300,7 +319,8 @@ if(sizeof($tests_to_execute)==1){
 
 
 $exit_code = 0;
-foreach($tests_to_execute as $_f){
+foreach($tests_to_execute as $_t){
+	$_f = $_t["dir"].$_t["file"];
 	$cmd = escapeshellcmd($SCRIPT_ABSOLUTE)." ".escapeshellarg($_f)." 2>&1";
 	if(isset($_SERVER["_"]) && strlen($_SERVER["_"]) && $_SERVER["_"]!=$SCRIPT){
 		// v $_SERVER["_"] je interpret PHP: /usr/bin/php
