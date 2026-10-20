@@ -204,6 +204,7 @@ class Field
 	var $hidden_widget;
 	var $required;
 	var $label;
+	var $label_html;
 	var $initial;
 	var $help_text;
 	var $hint;
@@ -233,6 +234,7 @@ class Field
 				'required'       => true,
 				'widget'         => null,
 				'label'          => null,
+				'label_html'     => null,
 				'initial'        => null,
 				'help_text'      => '', // like "In this field you can write down your favourite numbers"
 				'hint'           => '', // value format hint, like "john.doe@example.com"
@@ -262,6 +264,10 @@ class Field
 		// inicializace podle parametru konstruktoru
 		$this->required = $options['required'];
 		$this->label = $options['label'];
+		$this->label_html = $options['label_html'];
+		if(!$this->label && $this->label_html){
+			$this->label = String::ToObject($this->label_html)->stripHtml()->toString();
+		}
 		$this->initial = $options['initial'];
 		$this->help_text = $options['help_text'];
 		$this->hint = $options['hint'];
