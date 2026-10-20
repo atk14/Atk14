@@ -266,7 +266,7 @@ class Field
 		$this->label = $options['label'];
 		$this->label_html = $options['label_html'];
 		if(!$this->label && $this->label_html){
-			$this->label = String::ToObject($this->label_html)->stripHtml()->toString();
+			$this->label = String4::ToObject($this->label_html)->stripHtml()->toString();
 		}
 		$this->initial = $options['initial'];
 		$this->help_text = $options['help_text'];
