@@ -61,7 +61,7 @@ var ATK14 = ( function() {
 	}
 
 	function handleMethod( $link ) {
-		var href = $link.attr( "href" ),
+		var href = $link.data( "href" ) ? $link.data( "href" ) : $link.attr( "href" ),
 			method = $link.data( "method" ),
 			formMethod = method.toLowerCase() === "get" ? "get" : "post",
 			$form = $( "<form method='" + formMethod + "' action='" + href + "'></form>" ).hide();
@@ -111,7 +111,7 @@ var ATK14 = ( function() {
 				}
 			} else {
 				$link = $element; // Remove later
-				url = $element.attr( "href" );
+				url = $element.data( "href" ) ? $element.data( "href" ) : $element.attr( "href" );
 				data = null;
 			}
 
