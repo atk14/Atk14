@@ -110,6 +110,8 @@ class BoundField {
 
 	var $label;
 
+	var $label_html;
+
 	var $help_text;
 
 	var $hint;
@@ -129,10 +131,10 @@ class BoundField {
 		$this->html_name = $form->add_prefix($name);
 		if (is_null($this->field->label)) {
 			$this->label = pretty_name($name);
-		}
-		else {
+		} else {
 			$this->label = $this->field->label;
 		}
+		$this->label_html = $this->field->label_html;
 		$this->help_text = $field->help_text;
 		$this->hint = $field->hint;
 		$this->hints = $field->hints;

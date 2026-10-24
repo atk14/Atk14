@@ -1145,4 +1145,29 @@ class TcFields extends TcBase
 
 		$this->_check($DATA);
 	}
+
+	function test_label_html(){
+		$field = new CharField([]);
+		$this->assertEquals(null,$field->label);
+		$this->assertEquals(null,$field->label_html);
+
+		$field = new CharField([
+			"label" => "Label",
+		]);
+		$this->assertEquals("Label",$field->label);
+		$this->assertEquals(null,$field->label_html);
+
+		$field = new CharField([
+			"label" => "Label",
+			"label_html" => "Label <em>HTML</em>",
+		]);
+		$this->assertEquals("Label",$field->label);
+		$this->assertEquals("Label <em>HTML</em>",$field->label_html);
+
+		$field = new CharField([
+			"label_html" => "Label <em>HTML</em>",
+		]);
+		$this->assertEquals("Label HTML",$field->label);
+		$this->assertEquals("Label <em>HTML</em>",$field->label_html);
+	}
 }

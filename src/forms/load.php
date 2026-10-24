@@ -1,8 +1,8 @@
 <?php
-require_once(__DIR__ . "/constants.php");
-require_once(__DIR__ . "/functions.php");
-require_once(__DIR__ . "/widgets.php");
-require_once(__DIR__ . "/fields.php");
-class_autoload(__DIR__ . "/widgets/");
-class_autoload(__DIR__ . "/fields/");
-require_once(__DIR__ . "/forms.php");
+require_once(__DIR__ . "/src/constants.php");
+require_once(__DIR__ . "/src/functions.php");
+require_once(__DIR__ . "/src/widgets.php");
+require_once(__DIR__ . "/src/fields.php");
+class_autoload(__DIR__ . "/src/widgets/");
+class_autoload(__DIR__ . "/src/fields/");
+require_once(__DIR__ . "/src/forms.php");
