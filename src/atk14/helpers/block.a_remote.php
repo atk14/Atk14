@@ -23,6 +23,7 @@
  *
  * @param array $params Uses same parameters as {@link smarty_block_a}. Here is description of additional parameters:
  * - <b>_method</b> - method for sending the request. Defaults to GET
+ * - <b>_hide_href</b> - when true, the real URL is not exposed in the href attribute (it's put into data-href instead), so crawlers won't follow/index it. When not set, defaults to the ATK14_AUTO_HIDE_HREF_IN_REMOTE_LINKS setting for non-GET methods (false for GET)
  * @param string $content link content
  * @param Smarty_Internal_Template $template
  * @param boolean &$repeat repeat flag
@@ -35,17 +36,25 @@ function smarty_block_a_remote($params, $content, $template, &$repeat){
 
 	$attributes = [];
 
-	$params = array_merge([
+	$params += [
 		"_method" => "get",
 		"_confirm" => null, // an confirmation message ('Are you sure?')
+		"_hide_href" => null, // don't expose the real url in href (put it into data-href instead), so that crawlers don't follow/index it
 		"__be_pretty_ugly__" => false // internal parameter, don't use it outside
-	],$params);
+	];
 
 	$be_pretty_ugly = $params["__be_pretty_ugly__"];
 	unset($params["__be_pretty_ugly__"]);
 
 	$method = strtolower($params["_method"]);
 	unset($params["_method"]);
+
+	$hide_href = $params["_hide_href"];
+	unset($params["_hide_href"]);
+
+	if(is_null($hide_href)){
+		$hide_href = constant("ATK14_AUTO_HIDE_HREF_IN_REMOTE_LINKS") && $method!=="get";
+	}
 
 	$url = Atk14Utils::BuildLink($params,$smarty);
 
@@ -58,10 +67,17 @@ function smarty_block_a_remote($params, $content, $template, &$repeat){
 	}
 	unset($params["_confirm"]);
 
-	if($method!="get"){ $attrs["data-method"] = $method; }
+	if($method !== "get"){ $attrs["data-method"] = $method; }
 
 	Atk14Utils::ExtractAttributes($params,$attrs);
-	$attrs["href"] = $url;
+
+	if($hide_href){
+		$attrs["href"] = "#";
+		$attrs["data-href"] = $url;
+	}else{
+		$attrs["href"] = $url;
+	}
+
 	if($be_pretty_ugly){
 		// TODO: doesn't check existance of the JS function before_remote_link()
 		$_data = "";

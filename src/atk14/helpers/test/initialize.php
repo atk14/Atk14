@@ -51,4 +51,6 @@ require(__DIR__."/../modifier.trim.php");
 
 require(__DIR__."/../function.paginator.php");
 
+require(__DIR__."/../block.a_remote.php");
+
 $ATK14_GLOBAL = Atk14Global::GetInstance();

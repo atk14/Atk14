@@ -94,6 +94,11 @@ __defaults__(array(
 	"ATK14_SMARTY_FILE_PERMS" => 0644, # default Smartys file permissions
 	"ATK14_SMARTY_FORCE_COMPILE" => !PRODUCTION, // It may be desirable that in DEVELOPMENT $smarty->force_compile is set to true, see https://www.smarty.net/docs/en/variable.force.compile.tpl
 
+	// By default, the a_remote helper puts the real url into the href attribute, even for non-GET remote links.
+	// Setting this to true makes it hide the real url for non-GET remote links (href becomes "#", the real url goes into data-href instead),
+	// so that search engine crawlers don't follow/index them. Can be overridden per link by the helper's own _hide_href parameter.
+	"ATK14_AUTO_HIDE_HREF_IN_REMOTE_LINKS" => false,
+
 	// For "filename" it is required to have proper rewrite rules in the .htaccess
 	//
 	//	RewriteCond %{REQUEST_URI} ^\/public\/[^?]+\.v[0-9a-f]{1,64}\.[a-zA-Z0-9]{1,10}(|\?.*)$
