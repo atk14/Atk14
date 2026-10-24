@@ -1,7 +1,7 @@
 var ATK14 = ( function() {
 	"use strict";
 
-	$( document ).on( "click", "a[data-remote], a[data-method]", function( e ) {
+	$( document ).on( "click", "a[data-remote], a[data-method], a[data-confirm]", function( e ) {
 		var $link = $( this );
 
 		if ( !allowAction( $link ) ) {
@@ -63,10 +63,14 @@ var ATK14 = ( function() {
 	function handleMethod( $link ) {
 		var href = $link.attr( "href" ),
 			method = $link.data( "method" ),
-			$form = $( "<form method='post' action='" + href + "'></form>" ),
-			metadataInput = "<input name='_method' value='" + method + "' type='hidden' />";
+			formMethod = method.toLowerCase() === "get" ? "get" : "post",
+			$form = $( "<form method='" + formMethod + "' action='" + href + "'></form>" ).hide();
 
-		$form.hide().append( metadataInput ).appendTo( "body" );
+		if ( method.toLowerCase() !== "get" && method.toLowerCase() !== "post" ) {
+			$form = $form.append( "<input name='_method' value='" + method + "' type='hidden' />" );
+		}
+
+		$form.appendTo( "body" );
 		$form.submit();
 		$form.remove();
 	}
