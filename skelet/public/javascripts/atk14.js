@@ -64,10 +64,16 @@ var ATK14 = ( function() {
 		var href = $link.data( "href" ) ? $link.data( "href" ) : $link.attr( "href" ),
 			method = $link.data( "method" ),
 			formMethod = method.toLowerCase() === "get" ? "get" : "post",
-			$form = $( "<form method='" + formMethod + "' action='" + href + "'></form>" ).hide();
+			$form = $( "<form></form>" ).attr( {
+				method: formMethod,
+				action: href
+			} ).hide();
 
 		if ( method.toLowerCase() !== "get" && method.toLowerCase() !== "post" ) {
-			$form = $form.append( "<input name='_method' value='" + method + "' type='hidden' />" );
+			$form.append( $( "<input type='hidden' />" ).attr( {
+				name: "_method",
+				value: method
+			} ) );
 		}
 
 		$form.appendTo( "body" );
@@ -100,9 +106,9 @@ var ATK14 = ( function() {
 			if ( $element.is( "form" ) ) {
 				$form = $element; // Remove later
 				url = $element.attr( "action" );
-				if ( method == "POST" && ( "FormData" in window ) ) {
+				if ( method === "POST" && ( "FormData" in window ) ) {
 					formData = new FormData( element );
-					for ( var i in extraParams ) {
+					for ( var i = 0; i < extraParams.length; i++ ) {
 						formData.append( extraParams[ i ].name, extraParams[ i ].value );
 					}
 				} else{
@@ -115,7 +121,7 @@ var ATK14 = ( function() {
 				data = null;
 			}
 
-			if ( method == "GET" ) {
+			if ( method === "GET" ) {
 				url += url.indexOf("?")>=0 ? "&" : "?";
 				url += "__xhr_request=1";
 			}
@@ -140,7 +146,7 @@ var ATK14 = ( function() {
 				error: function( xhr, status, error ) {
 					$element.trigger( "ajax:error", [ xhr, status, error ] );
 				}
-			}
+			};
 
 			if ( formData ) {
 				// https://www.mattlunn.me.uk/blog/2012/05/sending-formdata-with-jquery-ajax/
