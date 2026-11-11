@@ -1,7 +1,7 @@
 DbMole
 ======
 
-[![Build Status](https://app.travis-ci.com/atk14/DbMole.svg?branch=master)](https://app.travis-ci.com/atk14/DbMole)
+[![Tests](https://github.com/atk14/DbMole/actions/workflows/tests.yml/badge.svg)](https://github.com/atk14/DbMole/actions/workflows/tests.yml)
 
 DbMole provides basic functionality with database (Postgresql, MySQL or Oracle).
 

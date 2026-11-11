@@ -3,6 +3,10 @@ Change Log
 
 All notable changes to the DbMole Project will be documented in this file.
 
+## [1.2.5] - 2026-11-11
+
+* ab64bc5 - Fix `_ErrorRaised` flag not resetting between queries
+
 ## [1.2.4] - 2026-05-03
 
 * 8cf9880 - [Refactoring] Added method `DbMole::_scalarizeValue()`

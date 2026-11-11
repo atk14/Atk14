@@ -774,6 +774,7 @@ class DbMole{
 	 */
 	function _reset(){
 		$this->_ErrorMessage = null;
+		$this->_ErrorRaised = false;
 		$this->_Query = "";
 		$this->_BindAr = [];
 		$this->_Options = [];
