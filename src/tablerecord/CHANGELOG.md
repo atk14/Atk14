@@ -3,6 +3,13 @@ Change Log
 
 All notable changes to TableRecord will be documented in this file.
 
+## [1.3.4] - 2026-11-13
+
+* e7379cf - Added `TableRecord_Finder::iterateRecords()` for memory-bounded iteration over large resultsets; `Cache::Unprepare()` added to support it
+* 1dfaed4 - A new method `TableRecord_Finder::hardLimitReached()` has been added for future use; for the time being, it returns false
+* 8cb7085 - `TableRecord_Lister::setRecords()` improved
+* Project now tested using GitHub Actions instead of Travis
+
 ## [1.3.3] - 2026-05-01
 
 * minor fixes and refactoring
