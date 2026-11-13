@@ -762,7 +762,7 @@ class TcDbmole extends TcBase{
 
 		$exception_thrown = false;
 		try {
-			$dbmole->doQuery("UPDATE test_table SET title=:bad_value",[":bad_value" => "admin\xbf\x27 OR 1=1--"]);
+			@$dbmole->doQuery("UPDATE test_table SET title=:bad_value",[":bad_value" => "admin\xbf\x27 OR 1=1--"]);
 		}catch(Exception $e){
 			$exception_thrown = true;
 		}catch(Throwable $e){
