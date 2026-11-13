@@ -92,13 +92,154 @@ class TableRecord_Finder implements ArrayAccess, Iterator, Countable {
 	 */
 	function getRecords(){
 		if(!isset($this->_Records)){
-			if($this->_UseCache){
-				$this->_Records = Cache::Get($this->_ClassName,$this->getRecordIds());
-			}else{
-				$this->_Records = $this->_ClassName::GetInstanceById($this->getRecordIds());
-			}
+			$this->_Records = $this->_getRecordsByIds($this->getRecordIds());
 		}
 		return $this->_Records;
+	}
+
+	/**
+	 * Iterates over found records without loading them all into memory at once.
+	 *
+	 * Unlike {@link getRecords()}, which reads every matching id and every corresponding
+	 * record in one go, iterateRecords() streams ids from the database one by one and only
+	 * ever keeps one batch of records (see the <b>batch_size</b> option) in memory at a time.
+	 * When the finder uses the cache (the default), each batch is read via
+	 * {@link Cache::Prepare()}/{@link Cache::Get()} and evicted again via {@link Cache::Clear()}
+	 * right after being yielded -- see {@link _iterateRecordsByIds()} for why this method first
+	 * has to reclaim the prepare-queue for this class via {@link Cache::Unprepare()}.
+	 * This is useful when a finder is set up to match (and process) a large number of records,
+	 * e.g. with a high or no limit at all.
+	 *
+	 * ```
+	 * $finder = Book::Finder(["limit" => null]); // no limit -> finds all the records
+	 * foreach($finder->iterateRecords() as $book){
+	 * 	// $book is read from the database without all the other books being loaded into memory
+	 * }
+	 * ```
+	 *
+	 * @param array $options
+	 * <ul>
+	 * 	<li><b>batch_size</b> - how many records are kept resident (and, when the finder uses
+	 * 	the cache, identity-mapped) at a time (default: TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE).
+	 * 	This is a memory/query-count tradeoff, not a hard cap on a single query's size (both the
+	 * 	cache and non-cache paths already split any individual read into
+	 * 	TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE-sized SQL queries regardless of batch_size).
+	 * 	A bigger batch_size keeps more records resident simultaneously, so code that cross-references
+	 * 	other records of the same class while processing one (e.g. a related/accessory lookup)
+	 * 	is more likely to find them already cached instead of triggering an extra query -- at the
+	 * 	cost of proportionally higher peak memory. How much that matters depends entirely on how
+	 * 	much such cross-referencing the caller's own processing actually does.</li>
+	 * </ul>
+	 * @return \Generator yielding found records
+	 */
+	function iterateRecords($options = []){
+		$options += [
+			"batch_size" => TABLERECORD_MAX_NUMBER_OF_RECORDS_READ_AT_ONCE,
+		];
+		$batch_size = max(1,(int)$options["batch_size"]);
+
+		if($this->_UseCache){
+			// TableRecord::_Finder() already called Cache::Prepare() with *every* id matched by
+			// this finder (not just the ids of the first batch) -- a side effect of _Finder()'s
+			// own getRecords()-oriented optimization, unrelated to how iterateRecords() wants to
+			// batch things. If left in place, the first Cache::Get() call below would have
+			// ObjectCacher::_readToCache() drain a big, uncontrolled chunk of that queue -- not
+			// just the current batch -- on every single call, defeating the point of iterating
+			// in bounded batches. Cache::Unprepare() cancels just that still-unread queue (no
+			// need to know which ids are even in it) and leaves any already resolved -- and
+			// possibly unrelated -- cached objects of this class alone; this method refills the
+			// queue one batch at a time itself from here on.
+			Cache::Unprepare($this->_ClassName);
+		}
+
+		$ids = [];
+		foreach($this->_streamIds() as $id){
+			$ids[] = $id;
+
+			if(count($ids)>=$batch_size){
+				foreach($this->_iterateRecordsByIds($ids) as $record){
+					yield $record;
+				}
+				$ids = [];
+			}
+		}
+
+		if($ids){
+			foreach($this->_iterateRecordsByIds($ids) as $record){
+				yield $record;
+			}
+		}
+	}
+
+	/**
+	 * Yields the ids matched by this finder, one by one.
+	 *
+	 * If getRecordIds() has already been called -- which is always the case when the finder
+	 * uses the cache, see TableRecord::_Finder() -- this just reuses that already-fetched
+	 * array instead of running the very same id-query a second time. Otherwise, it streams
+	 * ids straight from the database via DbMole::iterateRows(), without ever materializing
+	 * the whole matched id list.
+	 *
+	 * @access private
+	 */
+	function _streamIds(){
+		if(isset($this->_RecordIds)){
+			foreach($this->_RecordIds as $id){
+				yield $id;
+			}
+			return;
+		}
+
+		$rows = $this->_dbmole->iterateRows($this->_Query,$this->_BindAr,$this->_QueryOptions);
+		if(!$rows){ return; }
+
+		foreach($rows as $row){
+			if(!isset($this->_RecordKey)){
+				$this->_RecordKey = key($row);
+			}
+			yield $row[$this->_RecordKey];
+		}
+	}
+
+	/**
+	 * Yields records one by one for the given window of ids.
+	 *
+	 * When the finder uses the cache, the batch is read via Cache::Prepare()/Cache::Get() (so
+	 * the whole batch is fetched in one query, on the first Cache::Get() call) and evicted again
+	 * via Cache::Clear() once the whole batch has been yielded, so that iterating over a large
+	 * number of records doesn't keep growing the cache indefinitely. This relies on
+	 * iterateRecords() having already reclaimed the prepare-queue for this class (via
+	 * Cache::Unprepare()) -- otherwise ObjectCacher::_readToCache() would read far more than just
+	 * this batch on every single Cache::Get() call.
+	 *
+	 * @access private
+	 */
+	function _iterateRecordsByIds($ids){
+		if(!$this->_UseCache){
+			$records = $this->_ClassName::GetInstanceById($ids,["use_cache" => false]);
+			foreach($records as $record){
+				if($record!==null){
+					yield $record;
+				}
+			}
+			return;
+		}
+
+		Cache::Prepare($this->_ClassName,$ids);
+		foreach($ids as $id){
+			yield Cache::Get($this->_ClassName,$id);
+		}
+		Cache::Clear($this->_ClassName,$ids);
+	}
+
+	/**
+	 * @access private
+	 */
+	function _getRecordsByIds($ids){
+		if($this->_UseCache){
+			return Cache::Get($this->_ClassName,$ids);
+		}
+		return $this->_ClassName::GetInstanceById($ids);
 	}
 
 	/**

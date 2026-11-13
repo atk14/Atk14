@@ -156,13 +156,36 @@ class ObjectCacher {
 
 	/**
 	 * Clears whole cache, or (by id) selected record(s) from cache
+	 *
+	 * Also unprepare()s the given (or, with no $ids, all) ids -- clearing an id should mean
+	 * forgetting it outright, whether it was already read or is still just promised to be read
+	 * on the next get() call.
 	 */
 	function clear($ids = null) {
+		$this->unprepare($ids);
 		if($ids === null) {
 			$this->cache = [];
 		} else {
 			$ids = self::_ToIds($ids);
 			$this->cache = array_diff_key($this->cache, array_flip($ids));
+		}
+	}
+
+	/**
+	 * Forgets ids queued by prepare() but not yet read, without touching already resolved
+	 * (cached) records.
+	 *
+	 * Unlike clear(), this doesn't need to know which ids are queued -- "forget whatever is
+	 * still just promised, I don't care what it is" -- and it never evicts anything already
+	 * resolved, even when that happens to be mixed in with unrelated prepare() calls made by
+	 * other code for the same class.
+	 */
+	function unprepare($ids = null) {
+		if($ids === null) {
+			$this->prepare = [];
+		} else {
+			$ids = self::_ToIds($ids);
+			$this->prepare = array_diff_key($this->prepare, array_flip($ids));
 		}
 	}
 
@@ -311,6 +334,9 @@ class Cache{
 	/**
 	 * Flushes out content of cache
 	 *
+	 * Also cancels any pending Cache::Prepare() for the given (or, with no ids, every) id
+	 * that hasn't been read yet -- Clear() means forgetting it outright, read or not.
+	 *
 	 * <code>
 	 *	Cache::Clear(); // flushes every object in cache
 	 *	Cache::Clear("Article"); // flushes every Article instance in cache, if there are any
@@ -339,6 +365,19 @@ class Cache{
 	 */
 	static function CachedIds($class){
 		return self::GetInstance()->getCacher($class)->cachedIds();
+	}
+
+	/**
+	 * Forgets ids queued by Cache::Prepare() but not yet read, without touching already
+	 * resolved (cached) records.
+	 *
+	 * <code>
+	 *	Cache::Unprepare("Article"); // forgets everything queued for Article, nothing is read
+	 *	Cache::Unprepare("Article",123); // forgets just id 123, other queued ids (if any) stay queued
+	 * </code>
+	 */
+	static function Unprepare($class,$ids = null){
+		self::GetInstance()->getCacher($class)->unprepare($ids);
 	}
 }
 

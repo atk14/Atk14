@@ -122,6 +122,141 @@ class TcFinder extends TcBase{
 		$this->assertEquals("Oranges",$finder[1]->getTitle());
 	}
 
+	function test_iterate_records(){
+		// an_integer is deliberately distinct for all three records -- order_by "an_integer"
+		// alone must then be unambiguous, without needing a title tie-break whose result would
+		// depend on the test database's collation (e.g. "and" vs "Apples")
+		$apples = TestTable::CreateNewRecord([
+			"title" => "Apples",
+			"an_integer" => 10,
+		]);
+
+		$and = TestTable::CreateNewRecord([
+			"title" => "and",
+			"an_integer" => 20,
+		]);
+
+		$oranges = TestTable::CreateNewRecord([
+			"title" => "Oranges",
+			"an_integer" => 30,
+		]);
+
+		// -- iterating with a small batch size, caching explicitly enabled on the finder
+		// (TABLERECORD_USE_CACHE_BY_DEFAULT is false in this test environment; the real
+		// application sets it to !TEST, i.e. true outside of tests)
+		$finder = TestTable::Finder([
+			"order_by" => "an_integer",
+			"limit" => null,
+			"use_cache" => true,
+		]);
+
+		Cache::Clear("TestTable");
+		$titles = [];
+		foreach($finder->iterateRecords(["batch_size" => 1]) as $record){
+			$titles[] = $record->getTitle();
+			// with a batch_size of 1, the cache never holds more than the one record just yielded
+			$this->assertTrue(count(Cache::CachedIds("TestTable"))<=1);
+		}
+		$this->assertEquals(["Apples","and","Oranges"],$titles);
+		// once the whole resultset has been iterated, nothing is left in the cache
+		$this->assertEquals([],Cache::CachedIds("TestTable"));
+
+		// -- a finder matching many records must not have its finder-construction-time
+		// Cache::Prepare() (done for *all* matched ids, see TableRecord::_Finder()) make
+		// iterateRecords() read much more than one batch at a time
+		$finder = TestTable::Finder([
+			"order_by" => "an_integer",
+			"limit" => null,
+			"use_cache" => true,
+		]);
+		$this->assertTrue(count(Cache::CachedIds("TestTable"))>1); // poisoned by _Finder() with all 3 ids
+
+		$titles = [];
+		foreach($finder->iterateRecords(["batch_size" => 1]) as $record){
+			$titles[] = $record->getTitle();
+			$this->assertTrue(count(Cache::CachedIds("TestTable"))<=1);
+		}
+		$this->assertEquals(["Apples","and","Oranges"],$titles);
+		$this->assertEquals([],Cache::CachedIds("TestTable"));
+
+		// -- iterateRecords() only reclaims the prepare-queue for its own matched ids; an
+		// unrelated, already-cached record of the same class (not matched by this finder)
+		// must survive the iteration
+		$grapes = TestTable::CreateNewRecord([
+			"title" => "Grapes",
+			"an_integer" => 99,
+		]);
+		Cache::Get("TestTable",$grapes); // cache it, unrelated to the finder below
+		$this->assertEquals([$grapes->getId() => $grapes->getId()],Cache::CachedIds("TestTable"));
+
+		$finder = TestTable::Finder([
+			"conditions" => ["title != 'Grapes'"],
+			"order_by" => "an_integer",
+			"limit" => null,
+			"use_cache" => true,
+		]);
+
+		$titles = [];
+		foreach($finder->iterateRecords(["batch_size" => 1]) as $record){
+			$titles[] = $record->getTitle();
+		}
+		$this->assertEquals(["Apples","and","Oranges"],$titles);
+		// grapes was never matched by this finder, so it must still be cached
+		$this->assertEquals([$grapes->getId() => $grapes->getId()],Cache::CachedIds("TestTable"));
+
+		Cache::Clear("TestTable");
+
+		// -- iterating with caching disabled on the finder; behaves the same
+		$finder = TestTable::Finder([
+			"conditions" => ["title != 'Grapes'"],
+			"order_by" => "an_integer",
+			"limit" => null,
+			"use_cache" => false,
+		]);
+
+		$titles = [];
+		foreach($finder->iterateRecords() as $record){
+			$titles[] = $record->getTitle();
+		}
+		$this->assertEquals(["Apples","and","Oranges"],$titles);
+
+		// -- iterating over an empty resultset
+		$finder = TestTable::Finder(["conditions" => ["1=0"]]);
+		$titles = [];
+		foreach($finder->iterateRecords() as $record){
+			$titles[] = $record->getTitle();
+		}
+		$this->assertEquals([],$titles);
+	}
+
+	function test_iterate_records_reuses_already_fetched_ids(){
+		TestTable::CreateNewRecord(["title" => "Apples","an_integer" => 10]);
+		TestTable::CreateNewRecord(["title" => "and","an_integer" => 20]);
+		TestTable::CreateNewRecord(["title" => "Oranges","an_integer" => 30]);
+		$dbmole = TestTable::GetDbmole();
+
+		// use_cache=>true: TableRecord::_Finder() already ran the id-query itself (for its own
+		// eager Cache::Prepare()) -- iterateRecords() must reuse that result, not run it again
+		$queries_executed = $dbmole->getQueriesExecuted();
+		$finder = TestTable::Finder(["order_by" => "an_integer","limit" => null,"use_cache" => true]);
+		$queries_after_construction = $dbmole->getQueriesExecuted();
+		$this->assertEquals($queries_executed+1,$queries_after_construction); // just _Finder()'s own id-query
+
+		foreach($finder->iterateRecords(["batch_size" => 1]) as $record){}
+		$this->assertEquals($queries_after_construction+3,$dbmole->getQueriesExecuted()); // 3 records, 1 query/record, no extra id-query
+
+		Cache::Clear("TestTable");
+
+		// use_cache=>false: _Finder() never fetches the ids up front, so iterateRecords() must
+		// still stream them (no id-query has run yet at construction time)
+		$queries_executed = $dbmole->getQueriesExecuted();
+		$finder = TestTable::Finder(["order_by" => "an_integer","limit" => null,"use_cache" => false]);
+		$this->assertEquals($queries_executed,$dbmole->getQueriesExecuted()); // nothing executed yet
+
+		foreach($finder->iterateRecords() as $record){}
+		$this->assertEquals($queries_executed+2,$dbmole->getQueriesExecuted()); // 1 id-query + 1 batched record read
+	}
+
 	function test_empty_finder(){
 		$finder = TableRecord::EmptyFinder();
 

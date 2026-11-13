@@ -118,6 +118,62 @@ class TcCache extends TcBase{
 		$this->assertEquals($queries_executed+2,$dbmole->getQueriesExecuted());
 	}
 
+	function test_clear_also_cancels_pending_prepare(){
+		$record1 = TestTable::CreateNewRecord([]);
+		$record2 = TestTable::CreateNewRecord([]);
+		$dbmole = TestTable::GetDbmole();
+
+		// Cache::Clear($class) with no ids forgets everything queued for the class, too
+		Cache::Prepare("TestTable",[$record1,$record2]);
+		$this->assertEquals([$record1->getId() => $record1->getId(),$record2->getId() => $record2->getId()],Cache::CachedIds("TestTable"));
+
+		Cache::Clear("TestTable");
+		$this->assertEquals([],Cache::CachedIds("TestTable"));
+
+		$queries_executed = $dbmole->getQueriesExecuted();
+		$this->assertEquals(null,Cache::GetObjectCacher("TestTable")->getCached([$record1->getId()])[0]);
+		$this->assertEquals($queries_executed,$dbmole->getQueriesExecuted()); // nothing was read, record1 was never actually fetched
+
+		// Cache::Clear($class,$ids) only cancels the given ids; the rest stays queued
+		Cache::Prepare("TestTable",[$record1,$record2]);
+		Cache::Clear("TestTable",$record1);
+		$this->assertEquals([$record2->getId() => $record2->getId()],Cache::CachedIds("TestTable"));
+
+		Cache::Clear("TestTable");
+	}
+
+	function test_unprepare(){
+		$record1 = TestTable::CreateNewRecord([]);
+		$record2 = TestTable::CreateNewRecord([]);
+		$dbmole = TestTable::GetDbmole();
+
+		// Cache::Unprepare($class) forgets everything queued, without needing to know what it is
+		Cache::Prepare("TestTable",[$record1,$record2]);
+		$this->assertEquals([$record1->getId() => $record1->getId(),$record2->getId() => $record2->getId()],Cache::CachedIds("TestTable"));
+
+		Cache::Unprepare("TestTable");
+		$this->assertEquals([],Cache::CachedIds("TestTable"));
+
+		$queries_executed = $dbmole->getQueriesExecuted();
+		$this->assertEquals(null,Cache::GetObjectCacher("TestTable")->getCached([$record1->getId()])[0]);
+		$this->assertEquals($queries_executed,$dbmole->getQueriesExecuted()); // nothing was read, record1 was never actually fetched
+
+		// Cache::Unprepare($class,$ids) only cancels the given ids; the rest stays queued
+		Cache::Prepare("TestTable",[$record1,$record2]);
+		Cache::Unprepare("TestTable",$record1);
+		$this->assertEquals([$record2->getId() => $record2->getId()],Cache::CachedIds("TestTable"));
+
+		// Unprepare() never touches already resolved (cached) records
+		Cache::Clear("TestTable");
+		$cached_r1 = Cache::Get("TestTable",$record1);
+		Cache::Prepare("TestTable",$record2);
+		Cache::Unprepare("TestTable");
+		$this->assertTrue(Cache::GetObjectCacher("TestTable")->inCache($record1));
+		$this->assertEquals([$record1->getId() => $record1->getId()],Cache::CachedIds("TestTable"));
+
+		Cache::Clear("TestTable");
+	}
+
 	function test_caching_null() {
 		# using empty string as caching key is ok
 		Cache::Get("TestTable", [1123,"",55,0, -1]);
