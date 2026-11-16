@@ -119,12 +119,17 @@ class HTTPRequest{
 	 */
 	protected $_ForceValues = [];
 
+	protected $_TestingMode = false;
 
 	/**
 	 * Constructor
 	 *
 	 */
-	function __construct(){
+	function __construct($options = []){
+		$options += [
+			"testing_mode" => defined("TEST") && constant("TEST"),
+		];
+		$this->_TestingMode = $options["testing_mode"];
 		$this->_autoInitialize();
 	}
 
@@ -1524,7 +1529,7 @@ class HTTPRequest{
 	 * @ignore
 	 */
 	private function _setForceValue($name,$value){
-		if(!defined("TEST") || !TEST){
+		if(!$this->_TestingMode){
 			trigger_error("HTTPRequest: setting force value in non testing environment: $name=$value",E_USER_WARNING);
 		}
 		$this->_ForceValues[$name] = $value;
