@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.10] - 2026-11-16
+
+* ccef075 - Added new option testing_mode into HTTPRequest::__construct()
+* 8aa078c - The set_content_length_header option has been added to the HTTPResponse::flushAll() method; the default value is true
+
 ## [0.8.9] - 2026-06-14
 
 * eaf1d54 - Fixes
