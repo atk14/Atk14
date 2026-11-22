@@ -56,7 +56,13 @@ var ATK14 = ( function() {
 	}
 
 	function allowAction( $element ) {
-		var message = $element.data( "confirm" );
+
+		// Read the live attribute, not $element.data( "confirm" ): jQuery's .data() lazily
+		// reads data-* attributes once and then caches the result independently of the DOM,
+		// so a later consumer that updates data-confirm via .attr()/.removeAttr() (eg. after
+		// an AJAX response changes what a link would do next) would otherwise keep tripping
+		// this check against the stale, first-seen value.
+		var message = $element.attr( "data-confirm" );
 		return !message || ( fire( $element, "confirm" ) && window.confirm( message ) );
 	}
 
