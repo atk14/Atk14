@@ -146,4 +146,18 @@ class TcUtils extends TcBase{
 		// special ascii chars \x00-\x1F
 		$this->assertEquals('\u0001 \u0005 \t \u001F',Atk14Utils::EscapeForJavascript(implode(" ",[chr(1),chr(5),chr(9),chr(31)])));
 	}
+
+	function test__CorrectActionForUrl(){
+		$params = ["controller" => "pages", "action" => "index"];
+		Atk14Utils::_CorrectActionForUrl($params);
+		$this->assertEquals(["controller" => "pages", "action" => "index"],$params);
+
+		$params = ["action" => "articles/detail"];
+		Atk14Utils::_CorrectActionForUrl($params);
+		$this->assertEquals(["action" => "detail", "controller" => "articles"],$params);
+
+		$params = ["id" => "123"];
+		Atk14Utils::_CorrectActionForUrl($params);
+		$this->assertEquals(["id" => "123"],$params);
+	}
 }
