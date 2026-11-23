@@ -716,9 +716,9 @@ class tc_http_request extends tc_base{
 		$request = new HTTPRequest();
 		$this->assertEquals(null,$request->getRemoteHostname());
 
-		$_SERVER["REMOTE_ADDR"] = "172.31.10.20";
+		$_SERVER["REMOTE_ADDR"] = "2.2.2.2";
 		$request = new HTTPRequest();
-		$this->assertEquals("172.31.10.20",$request->getRemoteHostname());
+		$this->assertEquals("2.2.2.2",$request->getRemoteHostname());
 
 		$_SERVER["REMOTE_ADDR"] = "nonsence";
 		$request = new HTTPRequest();
